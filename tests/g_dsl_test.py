@@ -25,6 +25,9 @@ class TestGlossaryDSL(TestGlossaryBase):
 				"dsl/002-m-tag_multiline-paragraph-v2.txt": "d5001afd",
 				"dsl/003-ref-target-c.dsl": "9c1396c4",
 				"dsl/003-ref-target-c.txt": "ab41cedf",
+				"dsl/006-include/included.dsl": "10ef1018",
+				"dsl/006-include/main.dsl": "8325d538",
+				"dsl/006-include/main.txt": "d7ed9f2b",
 			},
 		)
 
@@ -73,6 +76,31 @@ class TestGlossaryDSL(TestGlossaryBase):
 			compareText=f"dsl/{fname2}.txt",
 			**convertArgs,
 		)
+
+	def test_include(self):
+		dirName = "dsl/006-include"
+		fname = "main"
+		files = ["included.dsl", "main.dsl"]
+
+		inputDirPath = self.downloadDir(dirName, files)
+		inputFilePath = join(inputDirPath, f"{fname}.dsl")
+		outputFilePath = self.newTempFilePath(f"{fname}-2.txt")
+		expectedOutputFilePath = self.downloadFile(join(dirName, f"{fname}.txt"))
+		self.glos = Glossary()
+		result = self.glos.convert(
+			ConvertArgs(
+				inputFilename=inputFilePath,
+				outputFilename=outputFilePath,
+			)
+		)
+		self.assertIsNotNone(result)
+		self.assertEqual(result, outputFilePath)
+
+		self.compareTextFiles(
+			outputFilePath,
+			expectedOutputFilePath,
+		)
+
 
 	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(
