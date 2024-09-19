@@ -22,7 +22,7 @@ import html
 import html.entities
 import re
 from collections.abc import Iterator
-from os.path import dirname, isfile, join
+from os.path import abspath, dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.compression import (
@@ -38,6 +38,7 @@ from pyglossary.option import (
 	Option,
 	StrOption,
 )
+from pyglossary.os_utils import indir
 from pyglossary.text_reader import TextFilePosWrapper
 
 from .title import TitleTransformer
@@ -150,10 +151,13 @@ class Reader:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._filename = ""
+		self._dirPath = ""
 		self._file: "io.TextIOBase" = nullTextIO
 		self._fileSize = 0
 		self._bufferLine = ""
 		self._resFileSet: "set[str]" = set()
+		self._includes: list[Reader] = []
 
 	def transform(
 		self,
@@ -194,6 +198,7 @@ class Reader:
 		filename: str,
 	) -> None:
 		self._filename = filename
+		self._dirPath = abspath(dirname(self._filename))
 
 		encoding = self._encoding
 		if not encoding:
@@ -266,6 +271,16 @@ class Reader:
 			self._glos.sourceLangName = unwrap_quotes(line[16:].strip())
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
+		elif line.startswith("#INCLUDE"):
+			self.processInclude(unwrap_quotes(line[9:].strip()))
+
+	def processInclude(self, filename: str) -> None:
+		reader = Reader(self._glos)
+		reader._audio = self._audio
+		reader._example_color = self._example_color
+		with indir(self._dirPath):
+			reader.open(filename)
+		self._includes.append(reader)
 
 	def _iterLines(self) -> "Iterator[str]":
 		if self._bufferLine:
@@ -283,6 +298,10 @@ class Reader:
 		return line  # noqa: RET504
 
 	def __iter__(self) -> "Iterator[EntryType]":
+		for reader in self._includes:
+			yield from reader
+			reader.close()
+
 		term_lines: "list[str]" = []
 		text_lines: "list[str]" = []
 		for line in self._iterLines():
