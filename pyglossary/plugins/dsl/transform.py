@@ -3,7 +3,7 @@ from typing import NamedTuple, cast
 from xml.sax.saxutils import escape
 
 from ._types import ErrorType, LexType, TransformerType
-from .lex import lexRoot
+from .lex import lexRoot, processTagClose
 
 __all__ = ["Transformer"]
 
@@ -102,4 +102,6 @@ class Transformer:
 			lex, err = lex(tr)
 			if err:
 				return None, err
+		if tr.labelOpen:
+			processTagClose(tr, "p")
 		return Result(self.output, self.resFileSet), None

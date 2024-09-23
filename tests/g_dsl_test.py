@@ -163,6 +163,17 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 
+	def test_p_unclosed(self):
+		dsl = (
+			"headword\n"
+			"   [m1][p]test\n"
+		)
+		txt = (
+			"headword\t"
+			'<p style="padding-left:1em;margin:0"><i class="p"><font color="green">test\\n</font></i>'
+		)
+		self.convert_string_dsl_txt(dsl, txt)
+
 	def test_headword_paran(self):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
