@@ -19,11 +19,12 @@
 
 ### Read options
 
-| Name          | Default     | Type | Comment              |
-| ------------- | ----------- | ---- | -------------------- |
-| encoding      |             | str  | Encoding/charset     |
-| audio         | `True`      | bool | Enable audio objects |
-| example_color | `steelblue` | str  | Examples color       |
+| Name          | Default     | Type | Comment                                        |
+| ------------- | ----------- | ---- | ---------------------------------------------- |
+| encoding      |             | str  | Encoding/charset                               |
+| audio         | `True`      | bool | Enable audio objects                           |
+| example_color | `steelblue` | str  | Examples color                                 |
+| abbrev        |             | str  | Load and apply abbreviation file (`_abrv.dsl`) |
 
 ### Dictionary Applications/Tools
 

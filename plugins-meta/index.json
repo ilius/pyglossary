@@ -693,6 +693,16 @@
 				"type": "str",
 				"customValue": true,
 				"comment": "Examples color"
+			},
+			"abbrev": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"",
+					"hover"
+				],
+				"comment": "Load and apply abbreviation file (`_abrv.dsl`)"
 			}
 		},
 		"canRead": true,
@@ -700,7 +710,8 @@
 		"readOptions": {
 			"encoding": "",
 			"audio": true,
-			"example_color": "steelblue"
+			"example_color": "steelblue",
+			"abbrev": ""
 		},
 		"readCompressions": [
 			"gz",

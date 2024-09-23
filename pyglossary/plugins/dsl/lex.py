@@ -150,6 +150,22 @@ def lexTagAttrValue(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexTag, None
 
 
+def closeLabel(tr):
+	# print(f"Label: {tr.label!r}")
+	desc = None
+	if tr.abbrev:
+		desc = tr.abbrevDict.get(tr.label)
+	if desc:
+		tr.output += (
+			'<i class="p"><font color="green" '
+			f'title="{escape(desc)}">{tr.label}</font></i>'
+		)
+	else:
+		tr.output += '<i class="p"><font color="green">' + tr.label + "</font></i>"
+	tr.label = ""
+	tr.labelOpen = False
+
+
 def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	assert tag
 	if tag == "m":
@@ -167,10 +183,7 @@ def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	elif tag in {"c", "t"}:
 		tr.addHtml("</font>")
 	elif tag == "p":
-		# print(f"Label: {tr.label!r}")
-		tr.output += '<i class="p"><font color="green">' + tr.label + "</font></i>"
-		tr.label = ""
-		tr.labelOpen = False
+		closeLabel(tr)
 	elif tag == "*":
 		tr.addHtml("</span>")
 	elif tag == "ex":

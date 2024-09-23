@@ -17,12 +17,14 @@ class Result(NamedTuple):
 
 # called Lexer by Rob Pike in "Lexical Scanning" video)
 class Transformer:
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		input: str,
 		currentKey: str = "",
 		exampleColor: str = "steelblue",
 		audio: bool = True,
+		abbrev: str = "",  # "" or "css"
+		abbrevDict: dict[str, str] | None = None,
 	) -> None:
 		self.input = input
 		self.start = 0
@@ -31,6 +33,9 @@ class Transformer:
 		self.label = ""
 		self.output = ""
 		self.resFileSet: "set[str]" = set()
+
+		self.abbrev = abbrev
+		self.abbrevDict = abbrevDict
 
 		self.attrs: dict[str, str] = {}
 		self.attrName = ""

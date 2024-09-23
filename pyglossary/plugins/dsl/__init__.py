@@ -22,7 +22,7 @@ import html
 import html.entities
 import re
 from collections.abc import Iterator
-from os.path import abspath, dirname, isfile, join
+from os.path import abspath, dirname, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.compression import (
@@ -82,6 +82,11 @@ optionsProp: "dict[str, Option]" = {
 	),
 	"example_color": StrOption(
 		comment="Examples color",
+	),
+	"abbrev": StrOption(
+		customValue=False,
+		values=["", "hover"],
+		comment="Load and apply abbreviation file (`_abrv.dsl`)",
 	),
 }
 
@@ -148,6 +153,7 @@ class Reader:
 	_encoding: str = ""
 	_audio: bool = True
 	_example_color: str = "steelblue"
+	_abbrev: str = ""
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
@@ -158,6 +164,7 @@ class Reader:
 		self._bufferLine = ""
 		self._resFileSet: "set[str]" = set()
 		self._includes: list[Reader] = []
+		self._abbrevDict: dict[str, str] = {}
 
 	def transform(
 		self,
@@ -169,6 +176,8 @@ class Reader:
 			currentKey=header,
 			audio=self._audio,
 			exampleColor=self._example_color,
+			abbrev=self._abbrev,
+			abbrevDict=self._abbrevDict if self._abbrev else None,
 		)
 		try:
 			result, err = tr.transform()
@@ -233,6 +242,20 @@ class Reader:
 				self._bufferLine = line
 				break
 			self.processHeaderLine(line)
+
+		if self._abbrev:
+			self.loadAbbrevFile()
+
+	def loadAbbrevFile(self):
+		baseName, _ = splitext(self._filename)
+		abbrevName = baseName + "_abrv.dsl"
+		log.info(f"Reading abbrevation file {abbrevName!r}")
+		reader = Reader(self._glos)
+		reader.open(abbrevName)
+		for entry in reader:
+			for word in entry.l_word:
+				self._abbrevDict[word] = entry.defi
+		reader.close()
 
 	def detectEncoding(self) -> str:
 		for testEncoding in (
