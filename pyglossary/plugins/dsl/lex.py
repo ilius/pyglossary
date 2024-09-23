@@ -52,13 +52,14 @@ def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 
 	tr.addText(c)
 	tr.resetBuf()
+
 	return lexRoot, None
 
 
 def lexRootNewline(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	tr.skipAny(" \t")
 	if not tr.follows("[m"):
-		tr.output += "<br/>"
+		tr.addHtml("<br/>")
 	tr.resetBuf()
 	return lexRoot, None
 
@@ -66,7 +67,7 @@ def lexRootNewline(tr: TransformerType) -> tuple[LexType, ErrorType]:
 def lexBackslash(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	c = tr.next()
 	if c == " ":
-		tr.output += "&nbsp;"
+		tr.addHtml("&nbsp;")
 	elif c in "<>" and tr.follows(c):
 		tr.next()
 		tr.addText(2 * c)
@@ -152,25 +153,28 @@ def lexTagAttrValue(tr: TransformerType) -> tuple[LexType, ErrorType]:
 def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	assert tag
 	if tag == "m":
-		tr.output += "</p>"
+		tr.addHtml("</p>")
 	elif tag == "b":
-		tr.output += "</b>"
+		tr.addHtml("</b>")
 	elif tag in {"u", "'"}:
-		tr.output += "</u>"
+		tr.addHtml("</u>")
 	elif tag == "i":
-		tr.output += "</i>"
+		tr.addHtml("</i>")
 	elif tag == "sup":
-		tr.output += "</sup>"
+		tr.addHtml("</sup>")
 	elif tag == "sub":
-		tr.output += "</sub>"
+		tr.addHtml("</sub>")
 	elif tag in {"c", "t"}:
-		tr.output += "</font>"
+		tr.addHtml("</font>")
 	elif tag == "p":
-		tr.output += "</font></i>"
+		# print(f"Label: {tr.label!r}")
+		tr.output += '<i class="p"><font color="green">' + tr.label + "</font></i>"
+		tr.label = ""
+		tr.labelOpen = False
 	elif tag == "*":
-		tr.output += "</span>"
+		tr.addHtml("</span>")
 	elif tag == "ex":
-		tr.output += "</font></span>"
+		tr.addHtml("</font></span>")
 	elif tag in {
 		"ref",
 		"url",
@@ -248,7 +252,7 @@ def lexRefText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if not target:
 		target = text
 
-	tr.output += f'<a href={quoteattr("bword://" + target)}>{escape(text)}</a>'
+	tr.addHtml(f'<a href={quoteattr("bword://" + target)}>{escape(text)}</a>')
 	tr.resetBuf()
 	return lexRoot, None
 
@@ -277,7 +281,7 @@ def lexUrlText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if "://" not in target:
 		target = "http://" + target
 
-	tr.output += f"<a href={quoteattr(target)}>{escape(text)}</a>"
+	tr.addHtml(f"<a href={quoteattr(target)}>{escape(text)}</a>")
 	tr.resetBuf()
 	return lexRoot, None
 
@@ -298,14 +302,14 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	ext = ext.lstrip(".")
 	if ext in {"wav", "mp3"}:
 		if tr.audio:
-			tr.output += (
+			tr.addHtml(
 				rf'<object type="audio/x-wav" data="{fname}" '
 				'width="40" height="40">'
 				'<param name="autoplay" value="false" />'
 				"</object>"
 			)
 	elif ext in {"jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp"}:
-		tr.output += rf'<img align="top" src="{fname}" alt="{fname}" />'
+		tr.addHtml(rf'<img align="top" src="{fname}" alt="{fname}" />')
 	else:
 		log.warning(f"unknown file extension in {fname!r}")
 
@@ -321,7 +325,7 @@ def processTagM(tr: TransformerType, tag: str) -> None:
 		padding = tag[1:]
 		if padding == "0":
 			padding = "0.3"
-	tr.output += f'<p style="padding-left:{padding}em;margin:0">'
+	tr.addHtml(f'<p style="padding-left:{padding}em;margin:0">')
 
 
 def processTagC(tr: TransformerType) -> None:
@@ -330,7 +334,7 @@ def processTagC(tr: TransformerType) -> None:
 		if value is None:
 			color = key
 			break
-	tr.output += f'<font color="{color}">'
+	tr.addHtml(f'<font color="{color}">')
 
 
 # PLR0912 Too many branches (19 > 12)
@@ -361,25 +365,25 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:  # n
 		processTagC(tr)
 
 	elif tag == "*":
-		tr.output += '<span class="sec">'
+		tr.addHtml('<span class="sec">')
 	elif tag == "ex":
-		tr.output += f'<span class="ex"><font color="{tr.exampleColor}">'
+		tr.addHtml(f'<span class="ex"><font color="{tr.exampleColor}">')
 	elif tag == "t":
-		tr.output += '<font face="Helvetica" class="dsl_t">'
+		tr.addHtml('<font face="Helvetica" class="dsl_t">')
 	elif tag == "p":
-		tr.output += '<i class="p"><font color="green">'
+		tr.labelOpen = True
 	elif tag == "i":
-		tr.output += "<i>"
+		tr.addHtml("<i>")
 	elif tag == "b":
-		tr.output += "<b>"
+		tr.addHtml("<b>")
 	elif tag == "u":
-		tr.output += "<u>"
+		tr.addHtml("<u>")
 	elif tag == "'":
-		tr.output += '<u class="accent">'
+		tr.addHtml('<u class="accent">')
 	elif tag == "sup":
-		tr.output += "<sup>"
+		tr.addHtml("<sup>")
 	elif tag == "sub":
-		tr.output += "<sub>"
+		tr.addHtml("<sub>")
 	elif tag in {
 		"trn",
 		"!trn",

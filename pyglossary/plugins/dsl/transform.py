@@ -27,6 +27,8 @@ class Transformer:
 		self.input = input
 		self.start = 0
 		self.pos = 0
+		self.labelOpen = False
+		self.label = ""
 		self.output = ""
 		self.resFileSet: "set[str]" = set()
 
@@ -77,8 +79,18 @@ class Transformer:
 			pos += 1
 		self.pos = pos
 
+	def addHtml(self, st: str) -> None:
+		if self.labelOpen:
+			self.label += st
+			return
+		self.output += st
+
 	def addText(self, st: str) -> None:
-		self.output += escape(st)
+		st = escape(st)
+		if self.labelOpen:
+			self.label += st
+			return
+		self.output += st
 
 	def transform(self) -> tuple[Result | None, ErrorType]:
 		# TODO: implement these 2 with lex functions
