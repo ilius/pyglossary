@@ -2,8 +2,10 @@ import re
 from typing import NamedTuple, cast
 from xml.sax.saxutils import escape
 
+from pyglossary.core import log
+
 from ._types import ErrorType, LexType, TransformerType
-from .lex import lexRoot, processTagClose
+from .lex import lexRoot
 
 __all__ = ["Transformer"]
 
@@ -97,6 +99,61 @@ class Transformer:
 			return
 		self.output += st
 
+	def closeLabel(self):
+		# print(f"Label: {self.label!r}")
+		desc = None
+		if self.abbrev:
+			desc = self.abbrevDict.get(self.label)
+		if desc:
+			self.output += (
+				'<i class="p"><font color="green" '
+				f'title="{escape(desc)}">{self.label}</font></i>'
+			)
+		else:
+			self.output += (
+				'<i class="p"><font color="green">' + self.label + "</font></i>"
+			)
+		self.label = ""
+		self.labelOpen = False
+
+	def closeTag(self, tag: str) -> None:
+		assert tag
+		if tag == "m":
+			self.addHtml("</p>")
+		elif tag == "b":
+			self.addHtml("</b>")
+		elif tag in {"u", "'"}:
+			self.addHtml("</u>")
+		elif tag == "i":
+			self.addHtml("</i>")
+		elif tag == "sup":
+			self.addHtml("</sup>")
+		elif tag == "sub":
+			self.addHtml("</sub>")
+		elif tag in {"c", "t"}:
+			self.addHtml("</font>")
+		elif tag == "p":
+			self.closeLabel()
+		elif tag == "*":
+			self.addHtml("</span>")
+		elif tag == "ex":
+			self.addHtml("</font></span>")
+		elif tag in {
+			"ref",
+			"url",
+			"s",
+			"trn",
+			"!trn",
+			"trs",
+			"!trs",
+			"lang",
+			"com",
+		}:
+			pass
+		else:
+			log.warning(f"unknown close tag {tag!r}")
+		self.resetBuf()
+
 	def transform(self) -> tuple[Result | None, ErrorType]:
 		# TODO: implement these 2 with lex functions
 		self.input = re_comment_block.sub("", self.input)
@@ -107,6 +164,6 @@ class Transformer:
 			lex, err = lex(tr)
 			if err:
 				return None, err
-		if tr.labelOpen:
-			processTagClose(tr, "p")
+		if self.labelOpen:
+			self.closeLabel()
 		return Result(self.output, self.resFileSet), None

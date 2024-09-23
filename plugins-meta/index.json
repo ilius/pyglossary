@@ -711,7 +711,7 @@
 			"encoding": "",
 			"audio": true,
 			"example_color": "steelblue",
-			"abbrev": ""
+			"abbrev": "hover"
 		},
 		"readCompressions": [
 			"gz",

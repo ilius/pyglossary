@@ -150,62 +150,6 @@ def lexTagAttrValue(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexTag, None
 
 
-def closeLabel(tr):
-	# print(f"Label: {tr.label!r}")
-	desc = None
-	if tr.abbrev:
-		desc = tr.abbrevDict.get(tr.label)
-	if desc:
-		tr.output += (
-			'<i class="p"><font color="green" '
-			f'title="{escape(desc)}">{tr.label}</font></i>'
-		)
-	else:
-		tr.output += '<i class="p"><font color="green">' + tr.label + "</font></i>"
-	tr.label = ""
-	tr.labelOpen = False
-
-
-def processTagClose(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
-	assert tag
-	if tag == "m":
-		tr.addHtml("</p>")
-	elif tag == "b":
-		tr.addHtml("</b>")
-	elif tag in {"u", "'"}:
-		tr.addHtml("</u>")
-	elif tag == "i":
-		tr.addHtml("</i>")
-	elif tag == "sup":
-		tr.addHtml("</sup>")
-	elif tag == "sub":
-		tr.addHtml("</sub>")
-	elif tag in {"c", "t"}:
-		tr.addHtml("</font>")
-	elif tag == "p":
-		closeLabel(tr)
-	elif tag == "*":
-		tr.addHtml("</span>")
-	elif tag == "ex":
-		tr.addHtml("</font></span>")
-	elif tag in {
-		"ref",
-		"url",
-		"s",
-		"trn",
-		"!trn",
-		"trs",
-		"!trs",
-		"lang",
-		"com",
-	}:
-		pass
-	else:
-		log.warning(f"unknown close tag {tag!r}")
-	tr.resetBuf()
-	return lexRoot, None
-
-
 r"""
 [m{}] => <p style="padding-left:{}em;margin:0">
 [*]   => <span class="sec">
@@ -299,7 +243,7 @@ def lexUrlText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
+def lexTagS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if tr.end():
 		return None, None
 
@@ -332,22 +276,26 @@ def lexS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-def processTagM(tr: TransformerType, tag: str) -> None:
+def processTagM(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:
 	padding = "0.3"
 	if len(tag) > 1:
 		padding = tag[1:]
 		if padding == "0":
 			padding = "0.3"
 	tr.addHtml(f'<p style="padding-left:{padding}em;margin:0">')
+	tr.resetBuf()
+	return lexRoot, None
 
 
-def processTagC(tr: TransformerType) -> None:
+def lexTagC(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	color = "green"
 	for key, value in tr.attrs.items():
 		if value is None:
 			color = key
 			break
 	tr.addHtml(f'<font color="{color}">')
+	tr.resetBuf()
+	return lexRoot, None
 
 
 # PLR0912 Too many branches (19 > 12)
@@ -358,7 +306,8 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:  # n
 		return lexRoot, None
 
 	if tag[0] == "/":
-		return processTagClose(tr, tag[1:])
+		tr.closeTag(tag[1:])
+		return lexRoot, None
 
 	tag = tag.split(" ")[0]
 
@@ -369,22 +318,25 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:  # n
 		return lexUrlText(tr)
 
 	if tag == "s":
-		return lexS(tr)
+		return lexTagS(tr)
+
+	if tag == "c":
+		return lexTagC(tr)
 
 	if tag[0] == "m":
-		processTagM(tr, tag)
+		return processTagM(tr, tag)
 
-	elif tag == "c":
-		processTagC(tr)
+	if tag == "p":
+		tr.labelOpen = True
+		tr.resetBuf()
+		return lexRoot, None
 
-	elif tag == "*":
+	if tag == "*":
 		tr.addHtml('<span class="sec">')
 	elif tag == "ex":
 		tr.addHtml(f'<span class="ex"><font color="{tr.exampleColor}">')
 	elif tag == "t":
 		tr.addHtml('<font face="Helvetica" class="dsl_t">')
-	elif tag == "p":
-		tr.labelOpen = True
 	elif tag == "i":
 		tr.addHtml("<i>")
 	elif tag == "b":

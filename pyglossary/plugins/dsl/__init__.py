@@ -153,7 +153,7 @@ class Reader:
 	_encoding: str = ""
 	_audio: bool = True
 	_example_color: str = "steelblue"
-	_abbrev: str = ""
+	_abbrev: str = "hover"
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
@@ -249,6 +249,8 @@ class Reader:
 	def loadAbbrevFile(self):
 		baseName, _ = splitext(self._filename)
 		abbrevName = baseName + "_abrv.dsl"
+		if not isfile(abbrevName):
+			return
 		log.info(f"Reading abbrevation file {abbrevName!r}")
 		reader = Reader(self._glos)
 		reader.open(abbrevName)
