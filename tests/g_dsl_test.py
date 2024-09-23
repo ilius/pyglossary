@@ -101,7 +101,6 @@ class TestGlossaryDSL(TestGlossaryBase):
 			expectedOutputFilePath,
 		)
 
-
 	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",

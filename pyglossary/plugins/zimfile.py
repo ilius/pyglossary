@@ -206,7 +206,6 @@ class Reader:
 				continue
 			yield entry
 
-
 		log.info(f"ZIM Entry Count: {entryCount}")
 
 		if not fileNameTooLong:
