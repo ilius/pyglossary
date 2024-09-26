@@ -9,7 +9,7 @@ import tracemalloc
 import unittest
 import zipfile
 from collections.abc import Callable
-from os.path import abspath, dirname, isdir, isfile, join
+from os.path import abspath, dirname, isdir, isfile, join, realpath
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -33,7 +33,7 @@ repo = os.getenv(
 
 dataURL = f"https://raw.githubusercontent.com/{repo}/{{filename}}"
 
-testCacheDir = join(cacheDir, "test")
+testCacheDir = realpath(join(cacheDir, "test"))
 appTmpDir = join(cacheDir, "tmp")
 
 os.makedirs(testCacheDir, exist_ok=True)
