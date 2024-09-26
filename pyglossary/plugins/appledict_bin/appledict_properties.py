@@ -18,7 +18,7 @@ from dataclasses import dataclass
 __all__ = ["AppleDictProperties", "from_metadata"]
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class AppleDictProperties:
 	# in plist file: "IDXDictionaryVersion"
 	# values := (1 | 2 | 3)
