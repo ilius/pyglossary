@@ -222,8 +222,7 @@ class ProgressBar:
         if self.currval >= self.next_update or self.finished:
             return True
 
-        delta = time.perf_counter() - self.last_update_time
-        return self._time_sensitive and delta > self.poll
+        return self._time_sensitive and time.perf_counter() - self.last_update_time > self.poll
 
     def _update_widgets(self):
         """Checks all widgets for the time sensitive bit."""
