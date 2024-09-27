@@ -31,7 +31,7 @@ from os.path import (
 )
 from pickle import dumps as pickle_dumps
 from pickle import loads as pickle_loads
-from time import time as now
+from time import perf_counter as now
 from typing import (
 	TYPE_CHECKING,
 	cast,

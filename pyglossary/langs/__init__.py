@@ -69,7 +69,7 @@ class LangDict(dict):
 			self[name.lower()] = lang
 
 	def load(self) -> None:
-		from time import time as now
+		from time import perf_counter as now
 
 		if len(self) > 0:
 			return

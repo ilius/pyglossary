@@ -17,7 +17,7 @@ from os.path import (
 	splitext,
 )
 from pprint import pformat
-from time import time as now
+from time import perf_counter as now
 from typing import (
 	TYPE_CHECKING,
 	Any,

@@ -18,7 +18,7 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from time import time as now
+from time import perf_counter as now
 from typing import TYPE_CHECKING
 
 from .core import log

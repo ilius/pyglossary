@@ -318,15 +318,15 @@ class Writer:
 		self._filename = filename
 
 	def finish(self) -> None:
-		from time import time
+		from time import perf_counter
 
 		self._filename = ""
 		if self._slobWriter is None:
 			return
 		log.info("Finalizing slob file...")
-		t0 = time()
+		t0 = perf_counter()
 		self._slobWriter.finalize()
-		log.info(f"Finalizing slob file took {time() - t0:.1f} seconds")
+		log.info(f"Finalizing slob file took {perf_counter() - t0:.1f} seconds")
 		self._slobWriter = None
 
 	def addDataEntry(self, entry: "EntryType") -> None:
