@@ -222,7 +222,7 @@ class ProgressBar:
         if self.currval >= self.next_update or self.finished:
             return True
 
-        delta = time.time() - self.last_update_time
+        delta = time.perf_counter() - self.last_update_time
         return self._time_sensitive and delta > self.poll
 
     def _update_widgets(self):
@@ -248,7 +248,7 @@ class ProgressBar:
         if self.start_time is None:
             raise RuntimeError('You must call "start" before calling "update"')
 
-        now = time.time()
+        now = time.perf_counter()
         self.seconds_elapsed = now - self.start_time
         self.next_update = self.currval + self.update_interval
         self.fd.write(self._format_line() + '\r')
@@ -281,7 +281,7 @@ class ProgressBar:
                 raise ValueError('Value out of range')
             self.update_interval = self.maxval / self.num_intervals
 
-        self.start_time = self.last_update_time = time.time()
+        self.start_time = self.last_update_time = time.perf_counter()
         self.update(0)
 
         return self
