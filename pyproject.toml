@@ -324,7 +324,6 @@ exclude = [
     "pyglossary/reverse.py",
     "doc/lib-examples/",
     "pyglossary/plugin_lib/",
-    "pyglossary/text_utils_extra.py",
 ]
 # ignore_decorators = ["@require_*"]
 ignore_names = [
