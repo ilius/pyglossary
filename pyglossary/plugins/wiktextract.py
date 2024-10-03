@@ -508,17 +508,19 @@ class Reader:
 		self,
 		hf: "T_htmlfile",
 		word: str,
+		wordClass: str = "",
 	) -> None:
 		i = word.find(" [")
 		if i >= 0:
 			word = word[:i]
 		if not word:
 			return
+		attrib = {"href": f"bword://{word}"}
+		if wordClass:
+			attrib["class"] = wordClass
 		with hf.element(
 			"a",
-			attrib={
-				"href": f"bword://{word}",
-			},
+			attrib=attrib,
 		):
 			hf.write(word)
 
@@ -563,7 +565,7 @@ class Reader:
 				word = item.get("word")
 				if not word:
 					continue
-				self.addWordLink(hf, word)
+				self.addWordLink(hf, word, wordClass="antonym")
 
 	def writeRelated(
 		self,

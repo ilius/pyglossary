@@ -180,7 +180,11 @@ class Reader:
 				if i > 0:
 					with hf.element("big"):
 						hf.write(" | ")
-				with hf.element("a", href=f"bword://{word}"):
+				with hf.element(
+					"a",
+					href=f"bword://{word}",
+					attrib={"class": "antonym"},
+				):
 					hf.write(word)
 			hf.write(br())
 
