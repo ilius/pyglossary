@@ -24,7 +24,8 @@ import json
 import logging
 import os
 import sys
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -271,7 +272,7 @@ def shouldUseCMD(args: "argparse.Namespace") -> bool:
 	return bool(args.inputFilename and args.outputFilename)
 
 
-def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
+def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable | None":
 	if ui_type == "none":
 		return base_ui_run
 
@@ -291,7 +292,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 			from pyglossary.ui.ui_cmd_interactive import UI
 		else:
 			log.error("no input file given, try --help")
-			sys.exit(1)
+			return None
 		return UI(**uiArgs).run
 
 	if ui_type == "auto":
@@ -309,7 +310,7 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 			"no user interface module found! "
 			f'try "{sys.argv[0]} -h" to see command line usage',
 		)
-		sys.exit(1)
+		return None
 
 	ui_module = __import__(
 		f"pyglossary.ui.ui_{ui_type}",
@@ -318,9 +319,24 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable":
 	return ui_module.UI(**uiArgs).run
 
 
+@dataclass(slots=True, frozen=True)
+class MainPrepareResult:
+	args: argparse.Namespace
+	uiType: str
+	inputFilename: str
+	outputFilename: str
+	inputFormat: str | None
+	outputFormat: str | None
+	reverse: bool
+	config: dict
+	readOptions: dict[str, Any]
+	writeOptions: dict[str, Any]
+	convertOptions: dict[str, Any]
+
+
 # TODO: break it down
 # PLR0912 Too many branches (44 > 12)
-def main() -> None:  # noqa: PLR0912
+def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
 	global log
 
 	uiBase = UIBase()
@@ -592,12 +608,11 @@ def main() -> None:  # noqa: PLR0912
 
 	if args.version:
 		print(f"PyGlossary {getVersion()}")
-		sys.exit(0)
+		return True, None
 
 	log = logging.getLogger("pyglossary")
 
-	ui_type = args.ui_type
-	if ui_type == "none":
+	if args.ui_type == "none":
 		args.noColor = True
 
 	core.noColor = args.noColor
@@ -616,7 +631,7 @@ def main() -> None:  # noqa: PLR0912
 				f"--{param1.replace('_', '-')} and "
 				f"--{param2.replace('_', '-')}",
 			)
-			sys.exit(1)
+			return False, None
 
 	if args.sqlite:
 		# args.direct is None by default which means automatic
@@ -625,10 +640,10 @@ def main() -> None:  # noqa: PLR0912
 	if not args.sort:
 		if args.sortKeyName:
 			log.critical("Passed --sort-key without --sort")
-			sys.exit(1)
+			return False, None
 		if args.sortEncoding:
 			log.critical("Passed --sort-encoding without --sort")
-			sys.exit(1)
+			return False, None
 
 	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
 		_valuesStr = ", ".join(_sk.name for _sk in namedSortKeyList)
@@ -636,7 +651,7 @@ def main() -> None:  # noqa: PLR0912
 			f"Invalid sortKeyName={args.sortKeyName!r}"
 			f". Supported values:\n{_valuesStr}",
 		)
-		sys.exit(1)
+		return False, None
 
 	core.checkCreateConfDir()
 
@@ -659,12 +674,12 @@ def main() -> None:  # noqa: PLR0912
 
 	if args.help:
 		printHelp()
-		sys.exit(0)
+		return True, None
 
 	# only used in ui_cmd for now
 	readOptions = parseFormatOptionsStr(args.readOptions)
 	if readOptions is None:
-		return
+		return False, None
 	if args.jsonReadOptions:
 		newReadOptions = json.loads(args.jsonReadOptions)
 		if isinstance(newReadOptions, dict):
@@ -677,7 +692,7 @@ def main() -> None:  # noqa: PLR0912
 
 	writeOptions = parseFormatOptionsStr(args.writeOptions)
 	if writeOptions is None:
-		return
+		return False, None
 	if args.jsonWriteOptions:
 		newWriteOptions = json.loads(args.jsonWriteOptions)
 		if isinstance(newWriteOptions, dict):
@@ -755,13 +770,13 @@ def main() -> None:  # noqa: PLR0912
 			log.error(
 				f"Could not detect format for input file {args.inputFilename}",
 			)
-			sys.exit(1)
+			return False, None
 		inputFormat = inputArgs.formatName
 		readOptionsProp = Glossary.plugins[inputFormat].optionsProp
 		for optName, optValue in readOptions.items():
 			if optName not in Glossary.formatsReadOptions[inputFormat]:
 				log.error(f"Invalid option name {optName} for format {inputFormat}")
-				sys.exit(1)
+				return False, None
 			prop = readOptionsProp[optName]
 			optValueNew, ok = prop.evaluate(optValue)
 			if not ok or not prop.validate(optValueNew):
@@ -769,7 +784,7 @@ def main() -> None:  # noqa: PLR0912
 					f"Invalid option value {optName}={optValue!r}"
 					f" for format {inputFormat}",
 				)
-				sys.exit(1)
+				return False, None
 			readOptions[optName] = optValueNew
 
 	if args.outputFilename and writeOptions:
@@ -779,13 +794,13 @@ def main() -> None:  # noqa: PLR0912
 			inputFilename=args.inputFilename,
 		)
 		if outputArgs is None:
-			sys.exit(1)
+			return False, None
 		outputFormat = outputArgs.formatName
 		writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
 		for optName, optValue in writeOptions.items():
 			if optName not in Glossary.formatsWriteOptions[outputFormat]:
 				log.error(f"Invalid option name {optName} for format {outputFormat}")
-				sys.exit(1)
+				return False, None
 			prop = writeOptionsProp[optName]
 			optValueNew, ok = prop.evaluate(optValue)
 			if not ok or not prop.validate(optValueNew):
@@ -793,28 +808,50 @@ def main() -> None:  # noqa: PLR0912
 					f"Invalid option value {optName}={optValue!r}"
 					f" for format {outputFormat}",
 				)
-				sys.exit(1)
+				return False, None
 			writeOptions[optName] = optValueNew
 
 	if convertOptions:
 		log.debug(f"{convertOptions = }")
 
-	runKeywordArgs = {
-		"inputFilename": args.inputFilename,
-		"outputFilename": args.outputFilename,
-		"inputFormat": args.inputFormat,
-		"outputFormat": args.outputFormat,
-		"reverse": args.reverse,
-		"config": config,
-		"readOptions": readOptions,
-		"writeOptions": writeOptions,
-		"convertOptions": convertOptions,
-		"glossarySetAttrs": None,
-	}
+	return True, MainPrepareResult(
+		args=args,
+		uiType=args.ui_type,
+		inputFilename=args.inputFilename,
+		outputFilename=args.outputFilename,
+		inputFormat=args.inputFormat,
+		outputFormat=args.outputFormat,
+		reverse=args.reverse,
+		config=config,
+		readOptions=readOptions,
+		writeOptions=writeOptions,
+		convertOptions=convertOptions,
+	)
 
-	run = getRunner(args, ui_type)
+
+def main() -> None:  # noqa: PLR0912
+	ok, res = mainPrepare()
+	if res is None:
+		sys.exit(0 if ok else 1)
+	# import pprint;pprint.pprint(res)
+
+	run = getRunner(res.args, res.uiType)
+	if run is None:
+		sys.exit(1)
+
 	try:
-		ok = run(**runKeywordArgs)
+		ok = run(
+			inputFilename=res.inputFilename,
+			outputFilename=res.outputFilename,
+			inputFormat=res.inputFormat,
+			outputFormat=res.outputFormat,
+			reverse=res.reverse,
+			config=res.config,
+			readOptions=res.readOptions,
+			writeOptions=res.writeOptions,
+			convertOptions=res.convertOptions,
+			glossarySetAttrs=None,
+		)
 	except KeyboardInterrupt:
 		log.error("Cancelled")
 		ok = False
