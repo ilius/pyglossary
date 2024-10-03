@@ -336,18 +336,17 @@ class UI(UIBase):
 			self.setText("Reversing: ")
 			self.pbar.update_step = 0.1
 			self.reverseLoop(savePath=outputFilename)
-		else:
-			finalOutputFile = self.glos.convert(
-				ConvertArgs(
-					inputFilename,
-					inputFormat=inputFormat,
-					outputFilename=outputFilename,
-					outputFormat=outputFormat,
-					readOptions=readOptions,
-					writeOptions=writeOptions,
-					**convertOptions,
-				),
-			)
-			return bool(finalOutputFile)
+			return True
 
-		return True
+		finalOutputFile = self.glos.convert(
+			ConvertArgs(
+				inputFilename,
+				inputFormat=inputFormat,
+				outputFilename=outputFilename,
+				outputFormat=outputFormat,
+				readOptions=readOptions,
+				writeOptions=writeOptions,
+				**convertOptions,
+			),
+		)
+		return bool(finalOutputFile)
