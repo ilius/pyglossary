@@ -833,12 +833,12 @@ class SortOptionsBox(gtk.Box):
 		pack(self, hbox, 0, 0, padding=5)
 		###
 		hbox = self.encodingHBox = gtk.HBox()
-		encodingRadio = self.encodingRadio = gtk.RadioButton(label="Sort Encoding")
+		encodingCheck = self.encodingCheck = gtk.CheckButton(label="Sort Encoding")
 		encodingEntry = self.encodingEntry = gtk.Entry()
 		encodingEntry.set_text("utf-8")
 		encodingEntry.set_width_chars(15)
 		pack(hbox, gtk.Label(label="    "))
-		pack(hbox, encodingRadio, 0, 0)
+		pack(hbox, encodingCheck, 0, 0)
 		pack(hbox, encodingEntry, 0, 0, padding=5)
 		pack(self, hbox, 0, 0, padding=5)
 		###
@@ -852,11 +852,14 @@ class SortOptionsBox(gtk.Box):
 		#     so does group= argument to RadioButton()
 		# Note: RadioButton does not exist in Gtk 4.0,
 		# you have to use CheckButton with its new set_group() method
-		###
-		encodingRadio.set_active(True)
-		###
-		# sortRadioSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
-		# sortRadioSizeGroup.add_widget(encodingRadio)
+
+		hbox = self.localeHBox = gtk.HBox()
+		localeEntry = self.localeEntry = gtk.Entry()
+		localeEntry.set_width_chars(15)
+		pack(hbox, gtk.Label(label="    "))
+		pack(hbox, gtk.Label(label="Sort Locale"), 0, 0)
+		pack(hbox, localeEntry, 0, 0, padding=5)
+		pack(self, hbox, 0, 0, padding=5)
 		###
 		self.show_all()
 
@@ -864,6 +867,7 @@ class SortOptionsBox(gtk.Box):
 		sort = check.get_active()
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
+		self.localeHBox.set_sensitive(sort)
 
 	def updateWidgets(self):
 		convertOptions = self.ui.convertOptions
@@ -871,13 +875,17 @@ class SortOptionsBox(gtk.Box):
 		self.sortCheck.set_active(sort)
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
+		self.localeHBox.set_sensitive(sort)
 
 		sortKeyName = convertOptions.get("sortKeyName")
+		sortKeyName, _, localeName = sortKeyName.partition(":")
 		if sortKeyName:
 			self.sortKeyCombo.set_active(sortKeyNames.index(sortKeyName))
+		self.localeEntry.set_text(localeName)
 
-		sortEncoding = convertOptions.get("sortEncoding", "utf-8")
-		self.encodingEntry.set_text(sortEncoding)
+		if "sortEncoding" in convertOptions:
+			self.encodingCheck.set_active(True)
+			self.encodingEntry.set_text(convertOptions["sortEncoding"])
 
 	def applyChanges(self):
 		convertOptions = self.ui.convertOptions
@@ -889,9 +897,14 @@ class SortOptionsBox(gtk.Box):
 			return
 
 		sortKeyDesc = self.sortKeyCombo.get_active_text()
-		convertOptions["sort"] = sort
-		convertOptions["sortKeyName"] = sortKeyNameByDesc[sortKeyDesc]
-		if self.encodingRadio.get_active():
+		sortKeyName = sortKeyNameByDesc[sortKeyDesc]
+		sortLocale = self.localeEntry.get_text()
+		if sortLocale:
+			sortKeyName = f"{sortKeyName}:{sortLocale}"
+
+		convertOptions["sort"] = True
+		convertOptions["sortKeyName"] = sortKeyName
+		if self.encodingCheck.get_active():
 			convertOptions["sortEncoding"] = self.encodingEntry.get_text()
 
 
