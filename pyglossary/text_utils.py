@@ -21,7 +21,6 @@ import logging
 import re
 import struct
 import sys
-from collections.abc import Callable
 from typing import AnyStr
 
 __all__ = [
@@ -32,7 +31,6 @@ __all__ = [
 	"isASCII",
 	"joinByBar",
 	"replacePostSpaceChar",
-	"replaceStringTable",
 	"splitByBar",
 	"splitByBarUnescapeNTB",
 	"toBytes",
@@ -72,17 +70,6 @@ pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
-
-
-def replaceStringTable(
-	rplList: "list[tuple[str, str]]",
-) -> "Callable[[str], str]":
-	def replace(st: str) -> str:
-		for rpl in rplList:
-			st = st.replace(rpl[0], rpl[1])
-		return st
-
-	return replace
 
 
 def escapeNTB(st: str, bar: bool = False) -> str:

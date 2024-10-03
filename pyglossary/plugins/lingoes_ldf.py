@@ -16,7 +16,7 @@ from pyglossary.option import (
 	Option,
 )
 from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
-from pyglossary.text_utils import replaceStringTable, splitByBar
+from pyglossary.text_utils import splitByBar
 
 __all__ = [
 	"Reader",
@@ -142,6 +142,9 @@ class Writer:
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
+	def _defiEscapeFunc(self, defi: str) -> str:
+		return defi.replace("\n", "<br/>")
+
 	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 
@@ -160,11 +163,7 @@ class Writer:
 			entryFmt="{word}\n{defi}\n\n",
 			filename=self._filename,
 			writeInfo=False,
-			defiEscapeFunc=replaceStringTable(
-				[
-					("\n", "<br/>"),
-				],
-			),
+			defiEscapeFunc=self._defiEscapeFunc,
 			ext=".ldf",
 			head=head,
 			newline=newline,

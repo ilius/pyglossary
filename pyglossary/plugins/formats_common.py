@@ -47,7 +47,6 @@ from pyglossary.option import (
 )
 from pyglossary.os_utils import indir
 from pyglossary.text_utils import (
-	replaceStringTable,
 	toBytes,
 	toStr,
 )
@@ -109,7 +108,6 @@ __all__ = [
 	"os",
 	"pformat",
 	"pip",
-	"replaceStringTable",
 	"rootDir",
 	"singleFile",
 	"sortOnWrite",

@@ -3,7 +3,6 @@ from collections.abc import Generator
 
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
-from pyglossary.text_utils import replaceStringTable
 
 __all__ = [
 	"Writer",
@@ -55,6 +54,9 @@ class Writer:
 		# TODO: add another bool flag to only remove html tags that are not
 		# supported by GtkTextView
 
+	def _defiEscapeFunc(self, defi: str) -> str:
+		return defi.replace("\r", "")
+
 	def write(self) -> "Generator[None, EntryType, None]":
 		from pyglossary.text_writer import writeTxt
 
@@ -62,10 +64,6 @@ class Writer:
 			self._glos,
 			entryFmt=":{word}:{defi}\n",
 			filename=self._filename,
-			defiEscapeFunc=replaceStringTable(
-				[
-					("\r", ""),
-				],
-			),
+			defiEscapeFunc=self._defiEscapeFunc,
 			ext=".dtxt",
 		)
