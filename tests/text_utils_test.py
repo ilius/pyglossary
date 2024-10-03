@@ -11,7 +11,6 @@ from pyglossary.text_utils import (
 	crc32hex,
 	escapeNTB,
 	fixUtf8,
-	isASCII,
 	joinByBar,
 	replacePostSpaceChar,
 	splitByBar,
@@ -211,19 +210,6 @@ class TestTextUtils(unittest.TestCase):
 			f("First ,second.", ","),
 			"First, second.",
 		)
-
-	def test_isASCII(self):
-		f = isASCII
-		self.assertEqual(f(""), True)
-		self.assertEqual(f("abc"), True)
-		self.assertEqual(f("xyz"), True)
-		self.assertEqual(f("ABC"), True)
-		self.assertEqual(f("XYZ"), True)
-		self.assertEqual(f("1234567890"), True)
-		self.assertEqual(f("\n\r\t"), True)
-		self.assertEqual(f("\x80"), False)
-		self.assertEqual(f("abc\x80"), False)
-		self.assertEqual(f("abc\xff"), False)
 
 
 if __name__ == "__main__":

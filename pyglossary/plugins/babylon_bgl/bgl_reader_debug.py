@@ -24,12 +24,18 @@ from os.path import join
 
 from pyglossary.core import log
 from pyglossary.text_utils import (
-	isASCII,
 	toStr,
 	uintFromBytes,
 )
 
 from .bgl_reader import BGLGzipFile, BglReader, Block, FileOffS, tmpDir
+
+
+def isASCII(data: str) -> bool:
+	for c in data:  # noqa: SIM110
+		if ord(c) >= 128:
+			return False
+	return True
 
 
 class MetaData:
