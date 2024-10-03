@@ -10,6 +10,7 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 		self.dataFileCRC32.update(
 			{
 				"004-bar.ldf": "b1aa776d",
+				"100-en-fa.ldf": "503d1a9b",
 			},
 		)
 
@@ -33,6 +34,12 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 		self.convert_txt_ldf(
 			"004-bar",
 			"004-bar",
+		)
+
+	def test_convert_txt_ldf_2(self):
+		self.convert_txt_ldf(
+			"100-en-fa",
+			"100-en-fa",
 		)
 
 	def test_convert_ldf_txt_1(self):
