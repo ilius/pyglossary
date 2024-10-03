@@ -20,22 +20,14 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
 import argparse
-import json
 import logging
-import os
 import sys
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from pyglossary.option import Option
-
+from typing import Any
 
 from pyglossary import core  # essential
 from pyglossary.langs import langDict
-from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
+from pyglossary.ui.argparse_main import configFromArgs, defineFlags, validateFlags
 from pyglossary.ui.base import UIBase
 
 __all__ = ["main"]
@@ -80,193 +72,6 @@ __all__ = ["main"]
 
 log = None
 
-ui_list = ["gtk", "tk"]
-if os.sep == "\\":
-	ui_list = ["tk", "gtk"]
-
-
-def canRunGUI() -> bool:
-	if core.sysName == "linux":
-		return bool(os.getenv("DISPLAY"))
-
-	if core.sysName == "darwin":
-		try:
-			import tkinter  # noqa: F401
-		except ModuleNotFoundError:
-			return False
-
-	return True
-
-
-class StoreConstAction(argparse.Action):
-	def __init__(
-		self,
-		option_strings: "list[str]",
-		same_dest: str = "",
-		const_value: "bool | None" = None,
-		nargs: int = 0,
-		**kwargs,
-	) -> None:
-		if isinstance(option_strings, str):
-			option_strings = [option_strings]
-		argparse.Action.__init__(
-			self,
-			option_strings=option_strings,
-			nargs=nargs,
-			**kwargs,
-		)
-		self.same_dest = same_dest
-		self.const_value = const_value
-
-	def __call__(  # noqa: PLR0913
-		self,
-		parser: "argparse.ArgumentParser | None" = None,
-		namespace: "argparse.Namespace | None" = None,
-		values: list | None = None,  # noqa: ARG002
-		option_strings: list[str] | None = None,  # noqa: ARG002
-		required: bool = False,  # noqa: ARG002
-		dest: str | None = None,
-	) -> "StoreConstAction":
-		if not parser:
-			return self
-		dest = self.dest
-		if getattr(namespace, dest) is not None:
-			flag = self.option_strings[0]
-			if getattr(namespace, dest) == self.const_value:
-				parser.error(f"multiple {flag} options")
-			else:
-				parser.error(f"conflicting options: {self.same_dest} and {flag}")
-		setattr(namespace, dest, self.const_value)
-		return self
-
-
-def registerConfigOption(
-	parser: "argparse.ArgumentParser",
-	key: str,
-	option: "Option",
-) -> None:
-	if not option.hasFlag:
-		return
-	flag = option.customFlag
-	if not flag:
-		flag = key.replace("_", "-")
-
-	if option.typ != "bool":
-		parser.add_argument(
-			f"--{flag}",
-			dest=key,
-			default=None,
-			help=option.comment,
-		)
-		return
-
-	if not option.comment:
-		print(f"registerConfigOption: option has no comment: {option}")
-		return
-
-	if not option.falseComment:
-		parser.add_argument(
-			f"--{flag}",
-			dest=key,
-			action="store_true",
-			default=None,
-			help=option.comment,
-		)
-		return
-
-	parser.add_argument(
-		dest=key,
-		action=StoreConstAction(
-			f"--{flag}",
-			same_dest=f"--no-{flag}",
-			const_value=True,
-			dest=key,
-			default=None,
-			help=option.comment,
-		),
-	)
-	parser.add_argument(
-		dest=key,
-		action=StoreConstAction(
-			f"--no-{flag}",
-			same_dest=f"--{flag}",
-			const_value=False,
-			dest=key,
-			default=None,
-			help=option.falseComment,
-		),
-	)
-
-
-def base_ui_run(  # noqa: PLR0913
-	inputFilename: str = "",
-	outputFilename: str = "",
-	inputFormat: str = "",
-	outputFormat: str = "",
-	reverse: bool = False,
-	config: "dict | None" = None,
-	readOptions: "dict | None" = None,
-	writeOptions: "dict | None" = None,
-	convertOptions: "dict | None" = None,
-	glossarySetAttrs: "dict | None" = None,
-) -> bool:
-	from pyglossary.glossary_v2 import ConvertArgs, Glossary
-
-	if reverse:
-		log.error("--reverse does not work with --ui=none")
-		return False
-	ui = UIBase()
-	ui.loadConfig(**config)
-	glos = Glossary(ui=ui)
-	glos.config = ui.config
-	if glossarySetAttrs:
-		for attr, value in glossarySetAttrs.items():
-			setattr(glos, attr, value)
-	glos.convert(
-		ConvertArgs(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
-			inputFormat=inputFormat,
-			outputFormat=outputFormat,
-			readOptions=readOptions,
-			writeOptions=writeOptions,
-			**convertOptions,
-		),
-	)
-	return True
-
-
-def getGitVersion(gitDir: str) -> str:
-	import subprocess
-
-	try:
-		outputB, _err = subprocess.Popen(
-			[
-				"git",
-				"--git-dir",
-				gitDir,
-				"describe",
-				"--always",
-			],
-			stdout=subprocess.PIPE,
-		).communicate()
-	except Exception as e:
-		sys.stderr.write(str(e) + "\n")
-		return ""
-	# if _err is None:
-	return outputB.decode("utf-8").strip()
-
-
-def getVersion() -> str:
-	from pyglossary.core import rootDir
-
-	gitDir = os.path.join(rootDir, ".git")
-	if os.path.isdir(gitDir):
-		version = getGitVersion(gitDir)
-		if version:
-			return version
-	return core.VERSION
-
 
 def validateLangStr(st: str) -> "str | None":
 	lang = langDict[st]
@@ -293,314 +98,6 @@ infoOverrideSpec = (
 )
 
 
-def shouldUseCMD(args: "argparse.Namespace") -> bool:
-	if not canRunGUI():
-		return True
-	if args.interactive:
-		return True
-	return bool(args.inputFilename and args.outputFilename)
-
-
-def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable | None":
-	if ui_type == "none":
-		return base_ui_run
-
-	if ui_type == "auto" and shouldUseCMD(args):
-		ui_type = "cmd"
-
-	uiArgs = {
-		"progressbar": args.progressbar is not False,
-	}
-
-	if ui_type == "cmd":
-		if args.interactive:
-			from pyglossary.ui.ui_cmd_interactive import UI
-		elif args.inputFilename and args.outputFilename:
-			from pyglossary.ui.ui_cmd import UI
-		elif not args.no_interactive:
-			from pyglossary.ui.ui_cmd_interactive import UI
-		else:
-			log.error("no input file given, try --help")
-			return None
-		return UI(**uiArgs).run
-
-	if ui_type == "auto":
-		for ui_type2 in ui_list:
-			try:
-				ui_module = __import__(
-					f"pyglossary.ui.ui_{ui_type2}",
-					fromlist=f"ui_{ui_type2}",
-				)
-			except ImportError as e:  # noqa: PERF203
-				log.error(str(e))
-			else:
-				return ui_module.UI(**uiArgs).run
-		log.error(
-			"no user interface module found! "
-			f'try "{sys.argv[0]} -h" to see command line usage',
-		)
-		return None
-
-	ui_module = __import__(
-		f"pyglossary.ui.ui_{ui_type}",
-		fromlist=f"ui_{ui_type}",
-	)
-	return ui_module.UI(**uiArgs).run
-
-
-def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]):
-	defaultHasColor = config.get(
-		"color.enable.cmd.windows" if os.sep == "\\" else "color.enable.cmd.unix",
-		True,
-	)
-	parser.add_argument(
-		"-v",
-		"--verbosity",
-		action="store",
-		dest="verbosity",
-		type=int,
-		choices=(0, 1, 2, 3, 4, 5),
-		required=False,
-		default=int(os.getenv("VERBOSITY", "3")),
-	)
-
-	parser.add_argument(
-		"--version",
-		action="store_true",
-	)
-	parser.add_argument(
-		"-h",
-		"--help",
-		dest="help",
-		action="store_true",
-	)
-	parser.add_argument(
-		"-u",
-		"--ui",
-		dest="ui_type",
-		default="auto",
-		choices=(
-			"cmd",
-			"gtk",
-			"gtk4",
-			"tk",
-			# "qt",
-			"auto",
-			"none",
-		),
-	)
-	parser.add_argument(
-		"--cmd",
-		dest="ui_type",
-		action="store_const",
-		const="cmd",
-		default=None,
-		help="use command-line user interface",
-	)
-	parser.add_argument(
-		"--gtk",
-		dest="ui_type",
-		action="store_const",
-		const="gtk",
-		default=None,
-		help="use Gtk-based user interface",
-	)
-	parser.add_argument(
-		"--gtk4",
-		dest="ui_type",
-		action="store_const",
-		const="gtk4",
-		default=None,
-		help="use Gtk4-based user interface",
-	)
-	parser.add_argument(
-		"--tk",
-		dest="ui_type",
-		action="store_const",
-		const="tk",
-		default=None,
-		help="use Tkinter-based user interface",
-	)
-	parser.add_argument(
-		"--interactive",
-		"--inter",
-		dest="interactive",
-		action="store_true",
-		default=None,
-		help="switch to interactive command line interface",
-	)
-	parser.add_argument(
-		"--no-interactive",
-		"--no-inter",
-		dest="no_interactive",
-		action="store_true",
-		default=None,
-		help=(
-			"do not automatically switch to interactive command line"
-			" interface, for scripts"
-		),
-	)
-
-	parser.add_argument(
-		"-r",
-		"--read-options",
-		dest="readOptions",
-		default="",
-	)
-	parser.add_argument(
-		"-w",
-		"--write-options",
-		dest="writeOptions",
-		default="",
-	)
-
-	parser.add_argument(
-		"--json-read-options",
-		dest="jsonReadOptions",
-		default=None,
-	)
-	parser.add_argument(
-		"--json-write-options",
-		dest="jsonWriteOptions",
-		default=None,
-	)
-
-	parser.add_argument(
-		"--read-format",
-		dest="inputFormat",
-	)
-	parser.add_argument(
-		"--write-format",
-		dest="outputFormat",
-		action="store",
-	)
-
-	parser.add_argument(
-		"--direct",
-		dest="direct",
-		action="store_true",
-		default=None,
-		help="if possible, convert directly without loading into memory",
-	)
-	parser.add_argument(
-		"--indirect",
-		dest="direct",
-		action="store_false",
-		default=None,
-		help=(
-			"disable `direct` mode, load full data into memory before writing"
-			", this is default"
-		),
-	)
-	parser.add_argument(
-		"--sqlite",
-		dest="sqlite",
-		action="store_true",
-		default=None,
-		help=(
-			"use SQLite as middle storage instead of RAM in direct mode,"
-			"for very large glossaries"
-		),
-	)
-	parser.add_argument(
-		"--no-sqlite",
-		dest="sqlite",
-		action="store_false",
-		default=None,
-		help="do not use SQLite mode",
-	)
-
-	parser.add_argument(
-		"--no-progress-bar",
-		dest="progressbar",
-		action="store_false",
-		default=None,
-	)
-	parser.add_argument(
-		"--no-color",
-		dest="noColor",
-		action="store_true",
-		default=not defaultHasColor,
-	)
-
-	parser.add_argument(
-		"--sort",
-		dest="sort",
-		action="store_true",
-		default=None,
-	)
-	parser.add_argument(
-		"--no-sort",
-		dest="sort",
-		action="store_false",
-		default=None,
-	)
-	parser.add_argument(
-		"--sort-key",
-		action="store",
-		dest="sortKeyName",
-		default=None,
-		help="name of sort key",
-	)
-	parser.add_argument(
-		"--sort-encoding",
-		action="store",
-		dest="sortEncoding",
-		default=None,
-		help="encoding of sort (default utf-8)",
-	)
-
-	# _______________________________
-
-	parser.add_argument(
-		"--source-lang",
-		action="store",
-		dest="sourceLang",
-		default=None,
-		help="source/query language",
-	)
-	parser.add_argument(
-		"--target-lang",
-		action="store",
-		dest="targetLang",
-		default=None,
-		help="target/definition language",
-	)
-	parser.add_argument(
-		"--name",
-		action="store",
-		dest="name",
-		default=None,
-		help="glossary name/title",
-	)
-
-	# _______________________________
-
-	parser.add_argument(
-		"--reverse",
-		dest="reverse",
-		action="store_true",
-	)
-
-	parser.add_argument(
-		"inputFilename",
-		action="store",
-		default="",
-		nargs="?",
-	)
-	parser.add_argument(
-		"outputFilename",
-		action="store",
-		default="",
-		nargs="?",
-	)
-
-	# _______________________________
-
-	for key, option in UIBase.configDefDict.items():
-		registerConfigOption(parser, key, option)
-
-
 @dataclass(slots=True, frozen=True)
 class MainPrepareResult:
 	args: "argparse.Namespace"
@@ -614,154 +111,6 @@ class MainPrepareResult:
 	readOptions: dict[str, Any]
 	writeOptions: dict[str, Any]
 	convertOptions: dict[str, Any]
-
-
-def validateFlags(args: "argparse.Namespace") -> bool:
-	for param1, param2 in UIBase.conflictingParams:
-		if getattr(args, param1) and getattr(args, param2):
-			log.critical(
-				"Conflicting flags: "
-				f"--{param1.replace('_', '-')} and "
-				f"--{param2.replace('_', '-')}",
-			)
-			return False
-
-	if not args.sort:
-		if args.sortKeyName:
-			log.critical("Passed --sort-key without --sort")
-			return False
-		if args.sortEncoding:
-			log.critical("Passed --sort-encoding without --sort")
-			return False
-
-	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
-		_valuesStr = ", ".join(_sk.name for _sk in namedSortKeyList)
-		log.critical(
-			f"Invalid sortKeyName={args.sortKeyName!r}"
-			f". Supported values:\n{_valuesStr}",
-		)
-		return False
-
-	return True
-
-
-def evaluateReadOptions(
-	options: dict[str, Any],
-	inputFilename: str,
-	inputFormat: str | None,
-) -> dict[str, Any] | None:
-	from pyglossary.glossary_v2 import Glossary
-
-	inputArgs = Glossary.detectInputFormat(
-		inputFilename,
-		format=inputFormat,
-	)
-	if not inputArgs:
-		log.error(
-			f"Could not detect format for input file {inputFilename}",
-		)
-		return None
-	inputFormat = inputArgs.formatName
-	optionsProp = Glossary.plugins[inputFormat].optionsProp
-	for optName, optValue in options.items():
-		if optName not in Glossary.formatsReadOptions[inputFormat]:
-			log.error(f"Invalid option name {optName} for format {inputFormat}")
-			return None
-		prop = optionsProp[optName]
-		optValueNew, ok = prop.evaluate(optValue)
-		if not ok or not prop.validate(optValueNew):
-			log.error(
-				f"Invalid option value {optName}={optValue!r}"
-				f" for format {inputFormat}",
-			)
-			return False, None
-		options[optName] = optValueNew
-
-	return options
-
-
-def evaluateWriteOptions(
-	options: dict[str, Any],
-	inputFilename: str,
-	outputFilename: str,
-	outputFormat: str | None,
-) -> dict[str, Any] | None:
-	from pyglossary.glossary_v2 import Glossary
-
-	outputArgs = Glossary.detectOutputFormat(
-		filename=outputFilename,
-		format=outputFormat,
-		inputFilename=inputFilename,
-	)
-	if outputArgs is None:
-		return None
-	outputFormat = outputArgs.formatName
-	optionsProp = Glossary.plugins[outputFormat].optionsProp
-	for optName, optValue in options.items():
-		if optName not in Glossary.formatsWriteOptions[outputFormat]:
-			log.error(f"Invalid option name {optName} for format {outputFormat}")
-			return None
-		prop = optionsProp[optName]
-		optValueNew, ok = prop.evaluate(optValue)
-		if not ok or not prop.validate(optValueNew):
-			log.error(
-				f"Invalid option value {optName}={optValue!r}"
-				f" for format {outputFormat}",
-			)
-			return None
-		options[optName] = optValueNew
-
-	return options
-
-
-def parseReadWriteOptions(
-	args: "argparse.Namespace",
-) -> tuple[dict[str, Any], dict[str, Any]] | None:
-	from pyglossary.ui.ui_cmd import parseFormatOptionsStr
-
-	readOptions = parseFormatOptionsStr(args.readOptions)
-	if readOptions is None:
-		return None
-	if args.jsonReadOptions:
-		newReadOptions = json.loads(args.jsonReadOptions)
-		if not isinstance(newReadOptions, dict):
-			log.critical(
-				"invalid value for --json-read-options, "
-				f"must be an object/dict, not {type(newReadOptions)}",
-			)
-			return None
-		readOptions.update(newReadOptions)
-
-	writeOptions = parseFormatOptionsStr(args.writeOptions)
-	if writeOptions is None:
-		return None
-	if args.jsonWriteOptions:
-		newWriteOptions = json.loads(args.jsonWriteOptions)
-		if not isinstance(newWriteOptions, dict):
-			log.critical(
-				"invalid value for --json-write-options, "
-				f"must be an object/dict, not {type(newWriteOptions)}",
-			)
-			return None
-		writeOptions.update(newWriteOptions)
-
-	return readOptions, writeOptions
-
-
-def configFromArgs(args: "argparse.Namespace") -> dict[str, Any]:
-	config = {}
-	for key, option in UIBase.configDefDict.items():
-		if not option.hasFlag:
-			continue
-		value = getattr(args, key, None)
-		if value is None:
-			continue
-		log.debug(f"config: {key} = {value}")
-		if not option.validate(value):
-			log.error(f"invalid config value: {key} = {value!r}")
-			continue
-		config[key] = value
-	return config
 
 
 # TODO:
@@ -789,6 +138,8 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 	# parser.conflict_handler == "error"
 
 	if args.version:
+		from pyglossary.ui.version import getVersion
+
 		print(f"PyGlossary {getVersion()}")
 		return True, None
 
@@ -806,7 +157,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 	# with the logger set up, we can import other pyglossary modules, so they
 	# can do some logging in right way.
 
-	if not validateFlags(args):
+	if not validateFlags(args, log):
 		return False, None
 
 	if args.sqlite:
@@ -836,13 +187,21 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 		printHelp()
 		return True, None
 
+	from pyglossary.ui.option_ui import (
+		evaluateReadOptions,
+		evaluateWriteOptions,
+		parseReadWriteOptions,
+	)
+
 	# only used in ui_cmd for now
-	rwOpts = parseReadWriteOptions(args)
+	rwOpts, err = parseReadWriteOptions(args)
+	if err:
+		log.error(err)
 	if rwOpts is None:
 		return False, None
 	readOptions, writeOptions = rwOpts
 
-	config.update(configFromArgs(args))
+	config.update(configFromArgs(args, log))
 	logHandler.config = config
 
 	convertOptions = {}
@@ -864,21 +223,25 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 		convertOptions["infoOverride"] = infoOverride
 
 	if args.inputFilename and readOptions:
-		readOptions = evaluateReadOptions(
+		readOptions, err = evaluateReadOptions(
 			readOptions,
 			args.inputFilename,
 			args.inputFormat,
 		)
+		if err:
+			log.error(err)
 		if readOptions is None:
 			return False, None
 
 	if args.outputFilename and writeOptions:
-		writeOptions = evaluateWriteOptions(
+		writeOptions, err = evaluateWriteOptions(
 			writeOptions,
 			args.inputFilename,
 			args.outputFilename,
 			args.outputFormat,
 		)
+		if err:
+			log.error(err)
 		if writeOptions is None:
 			return False, None
 
@@ -906,7 +269,9 @@ def main() -> None:  # noqa: PLR0912
 		sys.exit(0 if ok else 1)
 	# import pprint;pprint.pprint(res)
 
-	run = getRunner(res.args, res.uiType)
+	from pyglossary.ui.runner import getRunner
+
+	run = getRunner(res.args, res.uiType, log)
 	if run is None:
 		sys.exit(1)
 
