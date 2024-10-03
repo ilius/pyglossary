@@ -46,10 +46,7 @@ from pyglossary.option import (
 	StrOption,
 )
 from pyglossary.os_utils import indir
-from pyglossary.text_utils import (
-	toBytes,
-	toStr,
-)
+from pyglossary.text_utils import toStr
 
 log = logging.getLogger("pyglossary")
 
@@ -114,7 +111,6 @@ __all__ = [
 	"split",
 	"splitext",
 	"stdCompressions",
-	"toBytes",
 	"toStr",
 	"website",
 	"wiki",

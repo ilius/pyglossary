@@ -32,7 +32,6 @@ __all__ = [
 	"replacePostSpaceChar",
 	"splitByBar",
 	"splitByBarUnescapeNTB",
-	"toBytes",
 	"toStr",
 	"uint32FromBytes",
 	"uint32ToBytes",
@@ -49,12 +48,6 @@ log = logging.getLogger("pyglossary")
 endFormat = "\x1b[0;0;0m"  # len=8
 
 
-def toBytes(s: "AnyStr") -> bytes:
-	if isinstance(s, str):
-		return bytes(s, "utf-8")
-	return bytes(s)
-
-
 def toStr(s: "AnyStr") -> str:
 	if isinstance(s, bytes):
 		return str(s, "utf-8")
@@ -62,7 +55,9 @@ def toStr(s: "AnyStr") -> str:
 
 
 def fixUtf8(st: "AnyStr") -> str:
-	return toBytes(st).replace(b"\x00", b"").decode("utf-8", "replace")
+	if isinstance(st, str):
+		st = bytes(st, "utf-8")
+	return st.replace(b"\x00", b"").decode("utf-8", "replace")
 
 
 pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")

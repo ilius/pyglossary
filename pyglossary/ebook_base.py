@@ -32,7 +32,6 @@ from os.path import join
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.os_utils import indir, rmtree
-from pyglossary.text_utils import toBytes
 
 if TYPE_CHECKING:
 	import io
@@ -183,7 +182,6 @@ class EbookWriter:
 		if mode is None:
 			mode = zipfile.ZIP_DEFLATED
 		file_path = os.path.join(self._tmpDir, relative_path)
-		contents = toBytes(contents)
 		with self.myOpen(file_path, "wb") as file_obj:
 			file_obj.write(contents)
 		self.files.append(
