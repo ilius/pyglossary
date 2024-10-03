@@ -142,7 +142,8 @@ class Writer:
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def _defiEscapeFunc(self, defi: str) -> str:
+	@staticmethod
+	def _defiEscapeFunc(defi: str) -> str:
 		return defi.replace("\n", "<br/>")
 
 	def write(self) -> "Generator[None, EntryType, None]":

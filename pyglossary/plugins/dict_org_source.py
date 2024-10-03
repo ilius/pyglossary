@@ -54,7 +54,8 @@ class Writer:
 		# TODO: add another bool flag to only remove html tags that are not
 		# supported by GtkTextView
 
-	def _defiEscapeFunc(self, defi: str) -> str:
+	@staticmethod
+	def _defiEscapeFunc(defi: str) -> str:
 		return defi.replace("\r", "")
 
 	def write(self) -> "Generator[None, EntryType, None]":

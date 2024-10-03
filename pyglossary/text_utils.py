@@ -181,5 +181,3 @@ def replacePostSpaceChar(st: str, ch: str) -> str:
 		.replace(f"{ch}  ", f"{ch} ")
 		.removesuffix(" ")
 	)
-
-
