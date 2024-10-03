@@ -241,7 +241,6 @@ In the case of passing `--sort`, you can also pass:
   - UTF-8 is the default encoding for all sort keys and all output formats (unless mentioned otherwise)
   - This will only effect the order of entries, and will not corrupt words / definition
   - Non-encodable characters are replaced with `?` byte (*only for sorting*)
-  - Conflicts with `--sort-locale`
 
 ## Cache directory
 
