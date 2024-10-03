@@ -40,6 +40,21 @@ from pyglossary.ui.base import UIBase
 
 __all__ = ["main"]
 
+# TODO: move to docs:
+# examples for read and write options:
+# --read-options testOption=stringValue
+# --read-options enableFoo=True
+# --read-options fooList=[1,2,3]
+# --read-options 'fooList=[1, 2, 3]'
+# --read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
+# --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
+
+# if a desired value contains ";", you can use --json-read-options
+# or --json-write-options flags instead, with json object as value,
+# quoted for command line. for example:
+# 	'--json-write-options={"delimiter": ";"}'
+
+
 # the first thing to do is to set up logger.
 # other modules also using logger "root", so it is essential to set it up prior
 # to importing anything else; with exception to pyglossary.core which sets up
@@ -264,6 +279,20 @@ def validateLangStr(st: str) -> "str | None":
 	return None
 
 
+convertOptionsKeys = (
+	"direct",
+	"sort",
+	"sortKeyName",
+	"sortEncoding",
+	"sqlite",
+)
+infoOverrideSpec = (
+	("sourceLang", validateLangStr),
+	("targetLang", validateLangStr),
+	("name", str),
+)
+
+
 def shouldUseCMD(args: "argparse.Namespace") -> bool:
 	if not canRunGUI():
 		return True
@@ -319,40 +348,11 @@ def getRunner(args: "argparse.Namespace", ui_type: str) -> "Callable | None":
 	return ui_module.UI(**uiArgs).run
 
 
-@dataclass(slots=True, frozen=True)
-class MainPrepareResult:
-	args: argparse.Namespace
-	uiType: str
-	inputFilename: str
-	outputFilename: str
-	inputFormat: str | None
-	outputFormat: str | None
-	reverse: bool
-	config: dict
-	readOptions: dict[str, Any]
-	writeOptions: dict[str, Any]
-	convertOptions: dict[str, Any]
-
-
-# TODO: break it down
-# PLR0912 Too many branches (44 > 12)
-def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
-	global log
-
-	uiBase = UIBase()
-	uiBase.loadConfig()
-	config = uiBase.config
+def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]):
 	defaultHasColor = config.get(
 		"color.enable.cmd.windows" if os.sep == "\\" else "color.enable.cmd.unix",
 		True,
 	)
-
-	parser = argparse.ArgumentParser(
-		prog=sys.argv[0],
-		add_help=False,
-		# allow_abbrev=False,
-	)
-
 	parser.add_argument(
 		"-v",
 		"--verbosity",
@@ -600,6 +600,188 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
 	for key, option in UIBase.configDefDict.items():
 		registerConfigOption(parser, key, option)
 
+
+@dataclass(slots=True, frozen=True)
+class MainPrepareResult:
+	args: "argparse.Namespace"
+	uiType: str
+	inputFilename: str
+	outputFilename: str
+	inputFormat: str | None
+	outputFormat: str | None
+	reverse: bool
+	config: dict
+	readOptions: dict[str, Any]
+	writeOptions: dict[str, Any]
+	convertOptions: dict[str, Any]
+
+
+def validateFlags(args: "argparse.Namespace") -> bool:
+	for param1, param2 in UIBase.conflictingParams:
+		if getattr(args, param1) and getattr(args, param2):
+			log.critical(
+				"Conflicting flags: "
+				f"--{param1.replace('_', '-')} and "
+				f"--{param2.replace('_', '-')}",
+			)
+			return False
+
+	if not args.sort:
+		if args.sortKeyName:
+			log.critical("Passed --sort-key without --sort")
+			return False
+		if args.sortEncoding:
+			log.critical("Passed --sort-encoding without --sort")
+			return False
+
+	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
+		_valuesStr = ", ".join(_sk.name for _sk in namedSortKeyList)
+		log.critical(
+			f"Invalid sortKeyName={args.sortKeyName!r}"
+			f". Supported values:\n{_valuesStr}",
+		)
+		return False
+
+	return True
+
+
+def evaluateReadOptions(
+	options: dict[str, Any],
+	inputFilename: str,
+	inputFormat: str | None,
+) -> dict[str, Any] | None:
+	from pyglossary.glossary_v2 import Glossary
+
+	inputArgs = Glossary.detectInputFormat(
+		inputFilename,
+		format=inputFormat,
+	)
+	if not inputArgs:
+		log.error(
+			f"Could not detect format for input file {inputFilename}",
+		)
+		return None
+	inputFormat = inputArgs.formatName
+	optionsProp = Glossary.plugins[inputFormat].optionsProp
+	for optName, optValue in options.items():
+		if optName not in Glossary.formatsReadOptions[inputFormat]:
+			log.error(f"Invalid option name {optName} for format {inputFormat}")
+			return None
+		prop = optionsProp[optName]
+		optValueNew, ok = prop.evaluate(optValue)
+		if not ok or not prop.validate(optValueNew):
+			log.error(
+				f"Invalid option value {optName}={optValue!r}"
+				f" for format {inputFormat}",
+			)
+			return False, None
+		options[optName] = optValueNew
+
+	return options
+
+
+def evaluateWriteOptions(
+	options: dict[str, Any],
+	inputFilename: str,
+	outputFilename: str,
+	outputFormat: str | None,
+) -> dict[str, Any] | None:
+	from pyglossary.glossary_v2 import Glossary
+
+	outputArgs = Glossary.detectOutputFormat(
+		filename=outputFilename,
+		format=outputFormat,
+		inputFilename=inputFilename,
+	)
+	if outputArgs is None:
+		return None
+	outputFormat = outputArgs.formatName
+	optionsProp = Glossary.plugins[outputFormat].optionsProp
+	for optName, optValue in options.items():
+		if optName not in Glossary.formatsWriteOptions[outputFormat]:
+			log.error(f"Invalid option name {optName} for format {outputFormat}")
+			return None
+		prop = optionsProp[optName]
+		optValueNew, ok = prop.evaluate(optValue)
+		if not ok or not prop.validate(optValueNew):
+			log.error(
+				f"Invalid option value {optName}={optValue!r}"
+				f" for format {outputFormat}",
+			)
+			return None
+		options[optName] = optValueNew
+
+	return options
+
+
+def parseReadWriteOptions(
+	args: "argparse.Namespace",
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+	from pyglossary.ui.ui_cmd import parseFormatOptionsStr
+
+	readOptions = parseFormatOptionsStr(args.readOptions)
+	if readOptions is None:
+		return None
+	if args.jsonReadOptions:
+		newReadOptions = json.loads(args.jsonReadOptions)
+		if not isinstance(newReadOptions, dict):
+			log.critical(
+				"invalid value for --json-read-options, "
+				f"must be an object/dict, not {type(newReadOptions)}",
+			)
+			return None
+		readOptions.update(newReadOptions)
+
+	writeOptions = parseFormatOptionsStr(args.writeOptions)
+	if writeOptions is None:
+		return None
+	if args.jsonWriteOptions:
+		newWriteOptions = json.loads(args.jsonWriteOptions)
+		if not isinstance(newWriteOptions, dict):
+			log.critical(
+				"invalid value for --json-write-options, "
+				f"must be an object/dict, not {type(newWriteOptions)}",
+			)
+			return None
+		writeOptions.update(newWriteOptions)
+
+	return readOptions, writeOptions
+
+
+def configFromArgs(args: "argparse.Namespace") -> dict[str, Any]:
+	config = {}
+	for key, option in UIBase.configDefDict.items():
+		if not option.hasFlag:
+			continue
+		value = getattr(args, key, None)
+		if value is None:
+			continue
+		log.debug(f"config: {key} = {value}")
+		if not option.validate(value):
+			log.error(f"invalid config value: {key} = {value!r}")
+			continue
+		config[key] = value
+	return config
+
+
+# TODO:
+# PLR0911 Too many return statements (7 > 6)
+# PLR0915 Too many statements (56 > 50)
+def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
+	global log
+
+	uiBase = UIBase()
+	uiBase.loadConfig()
+	config = uiBase.config
+
+	parser = argparse.ArgumentParser(
+		prog=sys.argv[0],
+		add_help=False,
+		# allow_abbrev=False,
+	)
+
+	defineFlags(parser, config)
+
 	# _______________________________
 
 	args = parser.parse_args()
@@ -624,34 +806,12 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
 	# with the logger set up, we can import other pyglossary modules, so they
 	# can do some logging in right way.
 
-	for param1, param2 in UIBase.conflictingParams:
-		if getattr(args, param1) and getattr(args, param2):
-			log.critical(
-				"Conflicting flags: "
-				f"--{param1.replace('_', '-')} and "
-				f"--{param2.replace('_', '-')}",
-			)
-			return False, None
+	if not validateFlags(args):
+		return False, None
 
 	if args.sqlite:
 		# args.direct is None by default which means automatic
 		args.direct = False
-
-	if not args.sort:
-		if args.sortKeyName:
-			log.critical("Passed --sort-key without --sort")
-			return False, None
-		if args.sortEncoding:
-			log.critical("Passed --sort-encoding without --sort")
-			return False, None
-
-	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
-		_valuesStr = ", ".join(_sk.name for _sk in namedSortKeyList)
-		log.critical(
-			f"Invalid sortKeyName={args.sortKeyName!r}"
-			f". Supported values:\n{_valuesStr}",
-		)
-		return False, None
 
 	core.checkCreateConfDir()
 
@@ -661,7 +821,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
 	##############################
 
 	from pyglossary.glossary_v2 import Glossary
-	from pyglossary.ui.ui_cmd import parseFormatOptionsStr, printHelp
+	from pyglossary.ui.ui_cmd import printHelp
 
 	Glossary.init()
 
@@ -677,70 +837,12 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
 		return True, None
 
 	# only used in ui_cmd for now
-	readOptions = parseFormatOptionsStr(args.readOptions)
-	if readOptions is None:
+	rwOpts = parseReadWriteOptions(args)
+	if rwOpts is None:
 		return False, None
-	if args.jsonReadOptions:
-		newReadOptions = json.loads(args.jsonReadOptions)
-		if isinstance(newReadOptions, dict):
-			readOptions.update(newReadOptions)
-		else:
-			log.error(
-				"invalid value for --json-read-options, "
-				f"must be an object/dict, not {type(newReadOptions)}",
-			)
+	readOptions, writeOptions = rwOpts
 
-	writeOptions = parseFormatOptionsStr(args.writeOptions)
-	if writeOptions is None:
-		return False, None
-	if args.jsonWriteOptions:
-		newWriteOptions = json.loads(args.jsonWriteOptions)
-		if isinstance(newWriteOptions, dict):
-			writeOptions.update(newWriteOptions)
-		else:
-			log.error(
-				"invalid value for --json-write-options, "
-				f"must be an object/dict, not {type(newWriteOptions)}",
-			)
-
-	# examples for read and write options:
-	# --read-options testOption=stringValue
-	# --read-options enableFoo=True
-	# --read-options fooList=[1,2,3]
-	# --read-options 'fooList=[1, 2, 3]'
-	# --read-options 'testOption=stringValue; enableFoo=True; fooList=[1, 2, 3]'
-	# --read-options 'testOption=stringValue;enableFoo=True;fooList=[1,2,3]'
-
-	# if a desired value contains ";", you can use --json-read-options
-	# or --json-write-options flags instead, with json object as value,
-	# quoted for command line. for example:
-	# 	'--json-write-options={"delimiter": ";"}'
-
-	convertOptionsKeys = (
-		"direct",
-		"sort",
-		"sortKeyName",
-		"sortEncoding",
-		"sqlite",
-	)
-	infoOverrideSpec = (
-		("sourceLang", validateLangStr),
-		("targetLang", validateLangStr),
-		("name", str),
-	)
-
-	for key, option in uiBase.configDefDict.items():
-		if not option.hasFlag:
-			continue
-		value = getattr(args, key, None)
-		if value is None:
-			continue
-		log.debug(f"config: {key} = {value}")
-		if not option.validate(value):
-			log.error(f"invalid config value: {key} = {value!r}")
-			continue
-		config[key] = value
-
+	config.update(configFromArgs(args))
 	logHandler.config = config
 
 	convertOptions = {}
@@ -762,54 +864,23 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0912
 		convertOptions["infoOverride"] = infoOverride
 
 	if args.inputFilename and readOptions:
-		inputArgs = Glossary.detectInputFormat(
+		readOptions = evaluateReadOptions(
+			readOptions,
 			args.inputFilename,
-			format=args.inputFormat,
+			args.inputFormat,
 		)
-		if not inputArgs:
-			log.error(
-				f"Could not detect format for input file {args.inputFilename}",
-			)
+		if readOptions is None:
 			return False, None
-		inputFormat = inputArgs.formatName
-		readOptionsProp = Glossary.plugins[inputFormat].optionsProp
-		for optName, optValue in readOptions.items():
-			if optName not in Glossary.formatsReadOptions[inputFormat]:
-				log.error(f"Invalid option name {optName} for format {inputFormat}")
-				return False, None
-			prop = readOptionsProp[optName]
-			optValueNew, ok = prop.evaluate(optValue)
-			if not ok or not prop.validate(optValueNew):
-				log.error(
-					f"Invalid option value {optName}={optValue!r}"
-					f" for format {inputFormat}",
-				)
-				return False, None
-			readOptions[optName] = optValueNew
 
 	if args.outputFilename and writeOptions:
-		outputArgs = Glossary.detectOutputFormat(
-			filename=args.outputFilename,
-			format=args.outputFormat,
-			inputFilename=args.inputFilename,
+		writeOptions = evaluateWriteOptions(
+			writeOptions,
+			args.inputFilename,
+			args.outputFilename,
+			args.outputFormat,
 		)
-		if outputArgs is None:
+		if writeOptions is None:
 			return False, None
-		outputFormat = outputArgs.formatName
-		writeOptionsProp = Glossary.plugins[outputFormat].optionsProp
-		for optName, optValue in writeOptions.items():
-			if optName not in Glossary.formatsWriteOptions[outputFormat]:
-				log.error(f"Invalid option name {optName} for format {outputFormat}")
-				return False, None
-			prop = writeOptionsProp[optName]
-			optValueNew, ok = prop.evaluate(optValue)
-			if not ok or not prop.validate(optValueNew):
-				log.error(
-					f"Invalid option value {optName}={optValue!r}"
-					f" for format {outputFormat}",
-				)
-				return False, None
-			writeOptions[optName] = optValueNew
 
 	if convertOptions:
 		log.debug(f"{convertOptions = }")
