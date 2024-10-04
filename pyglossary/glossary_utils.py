@@ -34,6 +34,11 @@ log = logging.getLogger("pyglossary")
 MAX_EXT_LEN = 4  # FIXME
 
 
+
+class Error(Exception):
+	pass
+
+
 def splitFilenameExt(
 	filename: str = "",
 ) -> "tuple[str, str, str, str]":

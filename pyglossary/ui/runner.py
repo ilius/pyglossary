@@ -5,6 +5,7 @@ import sys
 from typing import TYPE_CHECKING
 
 from pyglossary import core
+from pyglossary.glossary_v2 import Error
 from pyglossary.ui.base import UIBase
 
 if TYPE_CHECKING:
@@ -63,17 +64,21 @@ def base_ui_run(  # noqa: PLR0913
 	if glossarySetAttrs:
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
-	glos.convert(
-		ConvertArgs(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
-			inputFormat=inputFormat,
-			outputFormat=outputFormat,
-			readOptions=readOptions,
-			writeOptions=writeOptions,
-			**convertOptions,
-		),
-	)
+	try:
+		glos.convert(
+			ConvertArgs(
+				inputFilename=inputFilename,
+				outputFilename=outputFilename,
+				inputFormat=inputFormat,
+				outputFormat=outputFormat,
+				readOptions=readOptions,
+				writeOptions=writeOptions,
+				**convertOptions,
+			),
+		)
+	except Error as e:
+		log.critical(str(e))
+		return False
 	return True
 
 

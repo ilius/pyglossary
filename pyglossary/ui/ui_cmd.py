@@ -26,7 +26,7 @@ from os.path import join
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import dataDir, log
-from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 
 from .base import UIBase, fread
 from .wcwidth import wcswidth
@@ -338,15 +338,19 @@ class UI(UIBase):
 			self.reverseLoop(savePath=outputFilename)
 			return True
 
-		finalOutputFile = self.glos.convert(
-			ConvertArgs(
-				inputFilename,
-				inputFormat=inputFormat,
-				outputFilename=outputFilename,
-				outputFormat=outputFormat,
-				readOptions=readOptions,
-				writeOptions=writeOptions,
-				**convertOptions,
-			),
-		)
+		try:
+			finalOutputFile = self.glos.convert(
+				ConvertArgs(
+					inputFilename,
+					inputFormat=inputFormat,
+					outputFilename=outputFilename,
+					outputFormat=outputFormat,
+					readOptions=readOptions,
+					writeOptions=writeOptions,
+					**convertOptions,
+				),
+			)
+		except Error as e:
+			log.critical(str(e))
+			return False
 		return bool(finalOutputFile)

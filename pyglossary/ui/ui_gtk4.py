@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, Any
 import gi
 
 from pyglossary import core
-from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
@@ -1569,6 +1569,10 @@ check {
 			if finalOutputFile:
 				self.status("Convert finished")
 			return bool(finalOutputFile)
+
+		except Error as e:
+			log.critical(str(e))
+			return False
 
 		finally:
 			self.convertButton.set_sensitive(True)

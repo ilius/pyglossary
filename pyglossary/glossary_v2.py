@@ -69,7 +69,7 @@ from .glossary_types import (
 	GlossaryType,
 	RawEntryType,
 )
-from .glossary_utils import splitFilenameExt
+from .glossary_utils import Error, splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
 from .plugin_manager import PluginManager
