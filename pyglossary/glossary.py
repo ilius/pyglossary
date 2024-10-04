@@ -22,7 +22,7 @@ from time import perf_counter as now
 from typing import TYPE_CHECKING
 
 from .core import log
-from .glossary_v2 import ConvertArgs, GlossaryCommon
+from .glossary_v2 import ConvertArgs, Error, GlossaryCommon
 from .sort_keys import lookupSortKey
 
 if TYPE_CHECKING:
@@ -135,6 +135,22 @@ class Glossary(GlossaryCommon):
 		self._sort = True
 		self._iter = self._loadedEntryGen()
 
+	@classmethod
+	def detectInputFormat(cls, *args, **kwargs):
+		try:
+			return GlossaryCommon.detectInputFormat(*args, **kwargs)
+		except Error as e:
+			log.critical(str(e))
+			return None
+
+	@classmethod
+	def detectOutputFormat(cls, *args, **kwargs):
+		try:
+			return GlossaryCommon.detectOutputFormat(*args, **kwargs)
+		except Error as e:
+			log.critical(str(e))
+			return None
+
 	def convert(  # noqa: PLR0913
 		self,
 		inputFilename: str,
@@ -152,20 +168,24 @@ class Glossary(GlossaryCommon):
 		infoOverride: "dict[str, str] | None" = None,
 	) -> "str | None":
 		self.progressbar = progressbar
-		return GlossaryCommon.convertV2(
-			self,
-			ConvertArgs(
-				inputFilename=inputFilename,
-				inputFormat=inputFormat,
-				direct=direct,
-				outputFilename=outputFilename,
-				outputFormat=outputFormat,
-				sort=sort,
-				sortKeyName=sortKeyName,
-				sortEncoding=sortEncoding,
-				readOptions=readOptions,
-				writeOptions=writeOptions,
-				sqlite=sqlite,
-				infoOverride=infoOverride,
-			),
-		)
+		try:
+			return GlossaryCommon.convertV2(
+				self,
+				ConvertArgs(
+					inputFilename=inputFilename,
+					inputFormat=inputFormat,
+					direct=direct,
+					outputFilename=outputFilename,
+					outputFormat=outputFormat,
+					sort=sort,
+					sortKeyName=sortKeyName,
+					sortEncoding=sortEncoding,
+					readOptions=readOptions,
+					writeOptions=writeOptions,
+					sqlite=sqlite,
+					infoOverride=infoOverride,
+				),
+			)
+		except Error as e:
+			log.critical(str(e))
+			return None
