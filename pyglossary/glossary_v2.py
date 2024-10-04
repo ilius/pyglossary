@@ -69,7 +69,7 @@ from .glossary_types import (
 	GlossaryType,
 	RawEntryType,
 )
-from .glossary_utils import Error, splitFilenameExt
+from .glossary_utils import Error, ReadError, WriteError, splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
 from .plugin_manager import PluginManager
@@ -199,6 +199,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				self.setInfo(key, value)
 
 	def cleanup(self) -> None:
+		self._closeReaders()
 		if not self._cleanupPathList:
 			return
 		if not self._config.get("cleanup", True):
@@ -639,8 +640,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	) -> "Any":
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
-			log.critical("_createReader: readerClass is None")
-			return None
+			raise ReadError("_createReader: readerClass is None")
 		reader = readerClass(self)
 		for name, value in options.items():
 			setattr(reader, f"_{name}", value)
@@ -680,7 +680,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				)
 				del options[key]
 
-	def _openReader(self, reader: "Any", filename: str) -> bool:
+	def _openReader(self, reader: "Any", filename: str):
 		# reader.open returns "Iterator[tuple[int, int]] | None"
 		progressbar: bool = self.progressbar
 		try:
@@ -694,11 +694,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 						lastPos = pos
 				self.progressEnd()
 		except (FileNotFoundError, LookupError) as e:
-			log.critical(str(e))
-			return False
-		except Exception:
-			log.exception("")
-			return False
+			raise ReadError(str(e)) from e
 
 		hasTitleStr = self._info.get("definition_has_headwords", "")
 		if hasTitleStr:
@@ -706,7 +702,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				self._defiHasWordTitle = True
 			else:
 				log.error(f"bad info value: definition_has_headwords={hasTitleStr!r}")
-		return True
 
 	def directRead(
 		self,
@@ -756,8 +751,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			self.updateEntryFilters()
 
 		reader = self._createReader(format, options)
-		if not self._openReader(reader, filename):
-			return False
+		self._openReader(reader, filename)
 
 		self._readOptions = options
 
@@ -799,8 +793,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	) -> "Any":
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
-			log.critical(f"No write support for {format!r} format")
-			return None
+			raise WriteError(f"No write support for {format!r} format")
 		validOptionKeys = list(validOptions.keys())
 		for key in list(options.keys()):
 			if key not in validOptionKeys:
@@ -811,8 +804,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		writerClass = self.plugins[format].writerClass
 		if writerClass is None:
-			log.critical("_createWriter: writerClass is None")
-			return None
+			raise WriteError("_createWriter: writerClass is None")
 		writer = writerClass(self)
 		for name, value in options.items():
 			setattr(writer, f"_{name}", value)
@@ -823,7 +815,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		filename: str,
 		format: str,
 		**kwargs,
-	) -> "str | None":
+	) -> str:
 		"""
 		Write to a given glossary file, with given format (optional).
 		Return absolute path of output file, or None if failed.
@@ -891,16 +883,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _openWriter(
 		writer: "Any",
 		filename: str,
-	) -> bool:
+	):
 		try:
 			writer.open(filename)
 		except (FileNotFoundError, LookupError) as e:
-			log.critical(str(e))
-			return False
-		except Exception:
-			log.exception("")
-			return False
-		return True
+			raise WriteError(str(e)) from e
 
 	def _write(
 		self,
@@ -908,12 +895,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		format: str,
 		sort: bool = False,
 		**options,
-	) -> "str | None":
+	) -> str:
 		filename = os.path.abspath(filename)
 
 		if format not in self.plugins or not self.plugins[format].canWrite:
-			log.critical(f"No Writer class found for plugin {format}")
-			return None
+			raise WriteError(f"No Writer class found for plugin {format}")
 
 		if self._readers and sort:
 			log.warning(
@@ -938,8 +924,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			self._iter = self._readersEntryGen()
 		else:
 			self._iter = self._loadedEntryGen()
-		if not self._openWriter(writer, filename):
-			return None
+		self._openWriter(writer, filename)
 
 		showMemoryUsage()
 
@@ -947,11 +932,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		try:
 			self._writeEntries(writerList, filename)
 		except (FileNotFoundError, LookupError) as e:
-			log.critical(str(e))
-			return None
-		except Exception:
-			log.exception("Exception while calling plugin's write function")
-			return None
+			raise WriteError(str(e)) from e
 		finally:
 			showMemoryUsage()
 			log.debug("Running writer.finish()")
@@ -983,17 +964,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		try:
-			self._data = SqEntryList(
-				entryToRaw=self._entryToRaw,
-				entryFromRaw=self._entryFromRaw,
-				filename=sq_fpath,
-				create=True,
-				persist=True,
-			)
-		except Exception:
-			log.exception("Failed to create SQLite file")
-			return
+		self._data = SqEntryList(
+			entryToRaw=self._entryToRaw,
+			entryFromRaw=self._entryFromRaw,
+			filename=sq_fpath,
+			create=True,
+			persist=True,
+		)
 		self._cleanupPathList.add(sq_fpath)
 
 		if not self.alts:
@@ -1007,7 +984,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _checkSortFlag(
 		plugin: "PluginProp",
 		sort: "bool | None",
-	) -> "bool | None":
+	) -> bool:
 		sortOnWrite = plugin.sortOnWrite
 		if sortOnWrite == ALWAYS:
 			if sort is False:
@@ -1035,11 +1012,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		args: ConvertArgs,
 		plugin: "PluginProp",
-	) -> "tuple[bool, bool] | None":
+	) -> "tuple[bool, bool]":
 		"""
 		sortKeyName: see doc/sort-key.md.
 
-		returns (sort, direct) or None if fails
+		returns (sort, direct)
 		"""
 		if args.direct and args.sqlite:
 			raise ValueError(
@@ -1069,8 +1046,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			args.sortKeyName,
 			args.sortEncoding,
 		)
-		if sortKeyTuple is None:
-			return None
 		namedSortKey, sortEncoding = sortKeyTuple
 
 		if sqlite:
@@ -1091,17 +1066,16 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		plugin: "PluginProp",
 		sortKeyName: "str | None",
 		sortEncoding: "str | None",
-	) -> "tuple[NamedSortKey, str] | None":
+	) -> "tuple[NamedSortKey, str]":
 		"""
 		Check sortKeyName, sortEncoding and (output) plugin's params
-		returns (namedSortKey, sortEncoding) or None.
+		returns (namedSortKey, sortEncoding).
 		"""
 		writerSortKeyName = plugin.sortKeyName
 		writerSortEncoding = getattr(plugin, "sortEncoding", None)
 		if plugin.sortOnWrite == ALWAYS:
 			if not writerSortKeyName:
-				log.critical("No sortKeyName was found in plugin")
-				return None
+				raise Error("No sortKeyName was found in plugin")
 
 			if sortKeyName and sortKeyName != writerSortKeyName:
 				log.warning(
@@ -1117,8 +1091,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		namedSortKey = lookupSortKey(sortKeyName)
 		if namedSortKey is None:
-			log.critical(f"invalid {sortKeyName = }")
-			return None
+			raise Error(f"invalid {sortKeyName = }")
 
 		log.info(f"Using sortKeyName = {namedSortKey.name!r}")
 
@@ -1146,10 +1119,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		outputFormat: str = "",
 	) -> "bool | None":
 		if isdir(outputFilename) and os.listdir(outputFilename):
-			log.critical(
+			raise Error(
 				f"Directory already exists and not empty: {relpath(outputFilename)}",
 			)
-			return None
 
 		outputPlugin = self.plugins[outputFormat]
 
@@ -1157,8 +1129,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			args=args,
 			plugin=outputPlugin,
 		)
-		if sortParams is None:
-			return None
 		direct, sort = sortParams
 
 		showMemoryUsage()
@@ -1167,21 +1137,18 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		readOptions = args.readOptions or {}
 
-		if not self._read(
+		self._read(
 			args.inputFilename,
 			format=args.inputFormat,
 			direct=direct,
 			**readOptions,
-		):
-			log.critical(f"Reading file {relpath(args.inputFilename)!r} failed.")
-			self.cleanup()
-			return None
+		)
 
 		self.detectLangsFromName()
 
 		return sort
 
-	def convertV2(self, args: ConvertArgs) -> "str | None":
+	def convertV2(self, args: ConvertArgs) -> str:
 		"""
 		Return absolute path of output file, or None if failed.
 
@@ -1198,8 +1165,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		"""
 		self._convertValidateStrings(args)
 		if args.outputFilename == args.inputFilename:
-			log.critical("Input and output files are the same")
-			return None
+			raise Error("Input and output files are the same")
 
 		tm0 = now()
 
@@ -1209,8 +1175,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			inputFilename=args.inputFilename,
 		)
 		if not outputArgs:
-			log.critical(f"Writing file {relpath(args.outputFilename)!r} failed.")
-			return None
+			raise Error(f"Writing file {relpath(args.outputFilename)!r} failed.")
 		outputFilename, outputFormat, compression = outputArgs
 
 		sort = self._convertPrepare(
@@ -1236,11 +1201,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			sort=sort,
 			**writeOptions,
 		)
-		if not finalOutputFile:
-			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
-			self._closeReaders()
-			self.cleanup()
-			return None
 
 		if compression:
 			finalOutputFile = self._compressOutput(finalOutputFile, compression)

@@ -34,8 +34,15 @@ log = logging.getLogger("pyglossary")
 MAX_EXT_LEN = 4  # FIXME
 
 
-
 class Error(Exception):
+	pass
+
+
+class ReadError(Error):
+	pass
+
+
+class WriteError(Error):
 	pass
 
 

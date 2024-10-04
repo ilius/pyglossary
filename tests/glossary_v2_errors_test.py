@@ -10,7 +10,7 @@ sys.path.insert(0, rootDir)
 from glossary_v2_test import TestGlossaryBase, appTmpDir
 
 from pyglossary.core_test import getMockLogger
-from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.os_utils import rmtree
 
 __all__ = ["TestGlossaryErrorsBase"]
@@ -90,36 +90,50 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertLogCritical(f"Invalid plugin directory: {path!r}")
 
 	def test_detectInputFormat_err1(self):
-		res = Glossary.detectInputFormat(
-			filename="",
-			format="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Unable to detect input format!")
+		err = None
+		try:
+			Glossary.detectInputFormat(
+				filename="",
+				format="",
+			)
+		except Error as e:
+			err = str(e)
+
+		self.assertEqual(err, "Unable to detect input format!")
 
 	def test_detectInputFormat_err2(self):
-		res = Glossary.detectInputFormat(
-			filename="test.abcd",
-			format="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Unable to detect input format!")
+		err = None
+		try:
+			Glossary.detectInputFormat(
+				filename="test.abcd",
+				format="",
+			)
+		except Error as e:
+			err = str(e)
+
+		self.assertEqual(err, "Unable to detect input format!")
 
 	def test_detectInputFormat_err3(self):
-		res = Glossary.detectInputFormat(
-			filename="test.sql",
-			format="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("plugin Sql does not support reading")
+		err = None
+		try:
+			Glossary.detectInputFormat(
+				filename="test.sql",
+				format="",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "plugin Sql does not support reading")
 
 	def test_detectInputFormat_err4(self):
-		res = Glossary.detectInputFormat(
-			filename="test",
-			format="FooBar",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Invalid format 'FooBar'")
+		err = None
+		try:
+			Glossary.detectInputFormat(
+				filename="test",
+				format="FooBar",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "Invalid format 'FooBar'")
 
 	def test_detectInputFormat_ok1(self):
 		res = Glossary.detectInputFormat(
@@ -136,58 +150,75 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertEqual(res, ("test2.txt", "Tabfile", "zip"))
 
 	def test_detectOutputFormat_err1(self):
-		res = Glossary.detectOutputFormat(
-			filename="",
-			format="",
-			inputFilename="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Invalid filename ''")
+		err = None
+		try:
+			Glossary.detectOutputFormat(
+				filename="",
+				format="",
+				inputFilename="",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "Invalid filename ''")
 
 	def test_detectOutputFormat_err2(self):
-		res = Glossary.detectOutputFormat(
-			filename="test",
-			format="FooBar",
-			inputFilename="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Invalid format FooBar")
+		try:
+			Glossary.detectOutputFormat(
+				filename="test",
+				format="FooBar",
+				inputFilename="",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "Invalid format FooBar")
 
 	def test_detectOutputFormat_err3(self):
-		res = Glossary.detectOutputFormat(
-			filename="",
-			format="",
-			inputFilename="test",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("No filename nor format is given for output file")
+		err = None
+		try:
+			Glossary.detectOutputFormat(
+				filename="",
+				format="",
+				inputFilename="test",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "No filename nor format is given for output file")
 
 	def test_detectOutputFormat_err4_1(self):
-		res = Glossary.detectOutputFormat(
-			filename="",
-			format="BabylonBgl",
-			inputFilename="test3.txt",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("plugin BabylonBgl does not support writing")
+		err = None
+		try:
+			Glossary.detectOutputFormat(
+				filename="",
+				format="BabylonBgl",
+				inputFilename="test3.txt",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "plugin BabylonBgl does not support writing")
 
 	def test_detectOutputFormat_err4_2(self):
-		res = Glossary.detectOutputFormat(
-			filename="test.bgl",
-			format="",
-			inputFilename="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("plugin BabylonBgl does not support writing")
+		err = None
+		try:
+			Glossary.detectOutputFormat(
+				filename="test.bgl",
+				format="",
+				inputFilename="",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "plugin BabylonBgl does not support writing")
 
 	def test_detectOutputFormat_err5(self):
-		res = Glossary.detectOutputFormat(
-			filename="test",
-			format="",
-			inputFilename="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Unable to detect output format!")
+		err = None
+		try:
+			Glossary.detectOutputFormat(
+				filename="test",
+				format="",
+				inputFilename="",
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "Unable to detect output format!")
 
 	def test_detectOutputFormat_err6(self):
 		res = Glossary.detectOutputFormat(
@@ -362,59 +393,75 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 
 	def test_convert_sameFilename(self):
 		glos = Glossary()
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename="test4.txt",
-				outputFilename="test4.txt",
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Input and output files are the same")
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename="test4.txt",
+					outputFilename="test4.txt",
+				),
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(err, "Input and output files are the same")
 
 	def test_convert_dirExists(self):
 		glos = Glossary()
 		tempFilePath = self.newTempFilePath("test_convert_dirExists")
 		with open(tempFilePath, mode="w", encoding="utf-8") as _file:
 			_file.write("")
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename="test5.txt",
-				outputFilename=self.tempDir,
-				outputFormat="Stardict",
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical(
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename="test5.txt",
+					outputFilename=self.tempDir,
+					outputFormat="Stardict",
+				),
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(
+			err,
 			f"Directory already exists and not empty: {relpath(self.tempDir)}",
 		)
 
 	def test_convert_fileNotFound(self):
 		glos = Glossary()
 		inputFilename = join(osRoot(), "abc", "def", "test6.txt")
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename=inputFilename,
-				outputFilename="test2.txt",
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical(
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename=inputFilename,
+					outputFilename="test2.txt",
+				),
+			)
+		except Error as e:
+			err = str(e)
+
+		self.assertEqual(
+			err,
 			f"[Errno 2] No such file or directory: {inputFilename!r}",
 		)
-		self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
+		# self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
 
 	def test_convert_unableDetectOutputFormat(self):
 		glos = Glossary()
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename="test7.txt",
-				outputFilename="test",
-				outputFormat="",
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("Unable to detect output format!")
-		self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename="test7.txt",
+					outputFilename="test",
+					outputFormat="",
+				),
+			)
+		except Error as e:
+			err = str(e)
+
+		self.assertEqual(err, "Unable to detect output format!")
+		# self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
 
 	def test_convert_writeFileNotFound_txt(self):
 		outputFilename = join(
@@ -423,46 +470,59 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 			"7de8cf6f17bc4c9abb439e71adbec95d.txt",
 		)
 		glos = Glossary()
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename=self.downloadFile("100-en-fa.txt"),
-				outputFilename=outputFilename,
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical(
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename=self.downloadFile("100-en-fa.txt"),
+					outputFilename=outputFilename,
+				),
+			)
+		except Error as e:
+			err = str(e)
+		self.assertEqual(
+			err,
 			f"[Errno 2] No such file or directory: {outputFilename!r}",
 		)
-		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
+		# self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
 	def test_convert_writeFileNotFound_hdir(self):
 		outputFilename = join(osRoot(), "test", "40e20107f5b04087bfc0ec0d61510017.hdir")
 		glos = Glossary()
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename=self.downloadFile("100-en-fa.txt"),
-				outputFilename=outputFilename,
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical(
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename=self.downloadFile("100-en-fa.txt"),
+					outputFilename=outputFilename,
+				),
+			)
+		except Error as e:
+			err = str(e)
+
+		self.assertEqual(
+			err,
 			f"{osNoSuchFileOrDir} {outputFilename!r}",
 		)
-		self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
+		# self.assertLogCritical(f"Writing file {relpath(outputFilename)!r} failed.")
 
 	def test_convert_invalidSortKeyName(self):
 		glos = self.glos = Glossary()
 		outputFilename = self.newTempFilePath("none.txt")
-		res = glos.convert(
-			ConvertArgs(
-				inputFilename=self.downloadFile("100-en-fa.txt"),
-				outputFilename=outputFilename,
-				sort=True,
-				sortKeyName="blah",
-			),
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("invalid sortKeyName = 'blah'")
+		err = None
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename=self.downloadFile("100-en-fa.txt"),
+					outputFilename=outputFilename,
+					sort=True,
+					sortKeyName="blah",
+				),
+			)
+		except Error as e:
+			err = str(e)
+
+		self.assertEqual(err, "invalid sortKeyName = 'blah'")
 
 	# def test_collectDefiFormat_direct(self):
 	# 	from pyglossary.glossary import Glossary as GlossaryLegacy

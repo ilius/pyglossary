@@ -18,11 +18,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from os.path import relpath
 from time import perf_counter as now
 from typing import TYPE_CHECKING
 
 from .core import log
-from .glossary_v2 import ConvertArgs, Error, GlossaryCommon
+from .glossary_v2 import ConvertArgs, Error, GlossaryCommon, ReadError, WriteError
 from .sort_keys import lookupSortKey
 
 if TYPE_CHECKING:
@@ -186,6 +187,14 @@ class Glossary(GlossaryCommon):
 					infoOverride=infoOverride,
 				),
 			)
+		except ReadError as e:
+			log.critical(str(e))
+			log.critical(f"Reading file {relpath(inputFilename)!r} failed.")
+		except WriteError as e:
+			log.critical(str(e))
+			log.critical(f"Writing file {relpath(outputFilename)!r} failed.")
 		except Error as e:
 			log.critical(str(e))
-			return None
+
+		self.cleanup()
+		return None
