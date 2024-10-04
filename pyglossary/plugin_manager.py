@@ -31,6 +31,7 @@ from .core import (
 	userPluginsDir,
 )
 from .glossary_utils import (
+	Error,
 	splitFilenameExt,
 )
 from .plugin_prop import PluginProp
@@ -207,12 +208,8 @@ class PluginManager:
 		cls: "type[PluginManager]",
 		filename: str,
 		format: str = "",
-		quiet: bool = False,
-	) -> "DetectedFormat | None":
-		def error(msg: str) -> None:
-			if not quiet:
-				log.critical(msg)
-
+		quiet: bool = False,  # noqa: ARG003
+	) -> "DetectedFormat":
 		filenameOrig = filename
 		_, filename, ext, compression = splitFilenameExt(filename)
 
@@ -220,19 +217,16 @@ class PluginManager:
 		if format:
 			plugin = cls.plugins.get(format)
 			if plugin is None:
-				error(f"Invalid format {format!r}")
-				return None
+				raise Error(f"Invalid format {format!r}")
 		else:
 			plugin = cls.pluginByExt.get(ext)
 			if not plugin:
 				plugin = cls._findPlugin(filename)
 				if not plugin:
-					error("Unable to detect input format!")
-					return None
+					raise Error("Unable to detect input format!")
 
 		if not plugin.canRead:
-			error(f"plugin {plugin.name} does not support reading")
-			return None
+			raise Error(f"plugin {plugin.name} does not support reading")
 
 		if compression in plugin.readCompressions:
 			compression = ""
@@ -267,9 +261,9 @@ class PluginManager:
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
-		quiet: bool = False,  # TODO: remove
+		quiet: bool = False,  # noqa: ARG003, TODO: remove
 		addExt: bool = False,
-	) -> "DetectedFormat | None":
+	) -> "DetectedFormat":
 		from os.path import splitext
 
 		# Ugh, mymy
@@ -280,20 +274,16 @@ class PluginManager:
 		# > I don't think there's a bug here.
 		# Sorry, but that's not the job of a type checker at all!
 
-		def error(msg: str) -> None:
-			if not quiet:
-				log.critical(msg)
-
 		plugin, err = cls._outputPluginByFormat(format)
 		if err:
-			return error(err)  # type: ignore
+			raise Error(err)
 
 		if not filename:
 			# FIXME: not covered in tests
 			if not inputFilename:
-				return error(f"Invalid filename {filename!r}")  # type: ignore
+				raise Error(f"Invalid filename {filename!r}")  # type: ignore
 			if not plugin:
-				return error(
+				raise Error(
 					"No filename nor format is given for output file",
 				)  # type: ignore
 			filename = splitext(inputFilename)[0] + plugin.ext
@@ -308,10 +298,10 @@ class PluginManager:
 				plugin = cls._findPlugin(filename)
 
 		if not plugin:
-			return error("Unable to detect output format!")  # type: ignore
+			raise Error("Unable to detect output format!")  # type: ignore
 
 		if not plugin.canWrite:
-			return error(
+			raise Error(
 				f"plugin {plugin.name} does not support writing",
 			)  # type: ignore
 
