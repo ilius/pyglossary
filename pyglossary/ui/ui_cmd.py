@@ -352,5 +352,6 @@ class UI(UIBase):
 			)
 		except Error as e:
 			log.critical(str(e))
+			glos.cleanup()
 			return False
 		return bool(finalOutputFile)

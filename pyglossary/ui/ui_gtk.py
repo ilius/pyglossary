@@ -1487,6 +1487,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		except Error as e:
 			log.critical(str(e))
+			glos.cleanup()
 			return False
 
 		finally:

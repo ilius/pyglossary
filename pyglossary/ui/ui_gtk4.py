@@ -1572,6 +1572,7 @@ check {
 
 		except Error as e:
 			log.critical(str(e))
+			glos.cleanup()
 			return False
 
 		finally:

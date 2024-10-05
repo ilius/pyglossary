@@ -78,6 +78,7 @@ def base_ui_run(  # noqa: PLR0913
 		)
 	except Error as e:
 		log.critical(str(e))
+		glos.cleanup()
 		return False
 	return True
 
