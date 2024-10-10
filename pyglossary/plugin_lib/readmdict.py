@@ -383,8 +383,7 @@ class MDict:
 		if header_tag.get("StyleSheet"):
 			lines = header_tag["StyleSheet"].splitlines()
 			self._stylesheet = {
-				lines[i]: (lines[i + 1], lines[i + 2])
-				for i in range(0, len(lines), 3)
+				lines[i]: (lines[i + 1], lines[i + 2]) for i in range(0, len(lines), 3)
 			}
 
 		# before version 2.0, number is 4 bytes integer

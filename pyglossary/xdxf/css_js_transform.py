@@ -224,7 +224,7 @@ class XdxfTransformer:
 
 		index = child.getparent().index(child)
 		if index == 0:
-			with (hf.element("div", attrib={"class": child.tag})):
+			with hf.element("div", attrib={"class": child.tag}):
 				# with hf.element(glos.titleTag(child.text)):
 				# ^ no glos object here!
 				self.writeChildrenOf(hf, child)
@@ -439,11 +439,21 @@ class XdxfTransformer:
 		from itertools import chain
 
 		from lxml.etree import tostring
-		children = [chunk for chunk in chain(
+
+		children = [
+			chunk
+			for chunk in chain(
 				(elem.text,),
-				chain(*((tostring(child, with_tail=False), child.tail)
-						for child in elem.getchildren())),
-				(elem.tail,)) if chunk]
+				chain(
+					*(
+						(tostring(child, with_tail=False), child.tail)
+						for child in elem.getchildren()
+					)
+				),
+				(elem.tail,),
+			)
+			if chunk
+		]
 		normalized_children = ""
 		for chunk in children:
 			if isinstance(chunk, str):

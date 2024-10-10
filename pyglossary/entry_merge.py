@@ -90,13 +90,13 @@ def mergePlaintextEntriesWithSameHeadword(
 			continue
 
 		defi = (
-			last.defi +
-			"\n\n" +
-			"-" * 40 +
-			"\n" +
-			", ".join(entry.l_word) +
-			"\n" +
-			entry.defi
+			last.defi
+			+ "\n\n"
+			+ "-" * 40
+			+ "\n"
+			+ ", ".join(entry.l_word)
+			+ "\n"
+			+ entry.defi
 		)
 
 		last = Entry(

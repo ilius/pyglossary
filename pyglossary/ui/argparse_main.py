@@ -292,8 +292,8 @@ def validateFlags(args: "argparse.Namespace", log: logging.Logger) -> bool:
 
 
 def configFromArgs(
-    args: "argparse.Namespace",
-    log: logging.Logger,
+	args: "argparse.Namespace",
+	log: logging.Logger,
 ) -> dict[str, Any]:
 	config = {}
 	for key, option in UIBase.configDefDict.items():

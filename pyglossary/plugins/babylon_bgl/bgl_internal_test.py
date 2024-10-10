@@ -1,4 +1,3 @@
-
 import unittest
 
 from pyglossary.plugins.babylon_bgl.bgl_reader_debug import isASCII

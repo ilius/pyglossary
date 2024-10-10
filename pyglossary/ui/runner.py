@@ -84,9 +84,9 @@ def base_ui_run(  # noqa: PLR0913
 
 
 def getRunner(
-    args: "argparse.Namespace",
-    ui_type: str,
-    logArg: logging.Logger,
+	args: "argparse.Namespace",
+	ui_type: str,
+	logArg: logging.Logger,
 ) -> "Callable | None":
 	global log
 	log = logArg

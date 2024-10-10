@@ -389,9 +389,7 @@ class Reader:
 					if isinstance(item, str):
 						textList.append((prefix, value))
 					elif isinstance(item, list):
-						textList += [
-							(prefix, item2) for item2 in item
-						]
+						textList += [(prefix, item2) for item2 in item]
 			else:
 				log.error(f"writeSenseExample: invalid type for {value=}")
 

@@ -10,7 +10,6 @@ from pyglossary.glossary_types import (
 from pyglossary.info_writer import InfoWriter as Writer
 
 if TYPE_CHECKING:
-
 	from pyglossary.option import Option
 
 __all__ = [
