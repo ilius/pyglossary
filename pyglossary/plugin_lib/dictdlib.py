@@ -342,7 +342,7 @@ class DictDB:
 
 			self.update(" listing")
 
-			normalizedentries = list(sortmap.keys())
+			normalizedentries = list(sortmap)
 
 			self.update(" sorting")
 

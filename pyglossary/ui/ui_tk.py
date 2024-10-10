@@ -577,7 +577,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		self.format = format
 		self.kind = kind
 		self.values = values
-		self.options = list(self.kindFormatsOptions[kind][format].keys())
+		self.options = list(self.kindFormatsOptions[kind][format])
 		self.optionsProp = Glossary.plugins[format].optionsProp
 
 		self.createOptionsList()

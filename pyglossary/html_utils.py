@@ -323,7 +323,7 @@ def build_name2codepoint_dict() -> None:
 		name2str[k] = chr(v)
 	for k, v in html.entities.name2codepoint.items():
 		name2str[k] = chr(v)
-	for key in sorted(name2str.keys(), key=lambda s: (s.lower(), s)):
+	for key in sorted(name2str, key=lambda s: (s.lower(), s)):
 		value = name2str[key]
 		if len(value) > 1:
 			raise ValueError(f"{value = }")

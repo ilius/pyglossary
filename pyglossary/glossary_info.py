@@ -47,7 +47,7 @@ class GlossaryInfo:
 		self._info: "dict[str, str]" = odict()
 
 	def infoKeys(self) -> "list[str]":
-		return list(self._info.keys())
+		return list(self._info)
 
 	# def formatInfoKeys(self, format: str):# FIXME
 

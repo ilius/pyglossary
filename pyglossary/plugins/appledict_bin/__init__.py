@@ -344,7 +344,7 @@ class Reader:
 			)
 
 		entryElem.tag = "div"
-		for attr in list(entryElem.attrib.keys()):
+		for attr in list(entryElem.attrib):
 			# if attr == "id" or attr.endswith("title"):
 			del entryElem.attrib[attr]
 

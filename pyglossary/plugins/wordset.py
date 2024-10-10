@@ -105,7 +105,7 @@ class Reader:
 				continue
 			with open(fpath, encoding=encoding) as fileObj:
 				data = load(fileObj)
-				words = list(data.keys())
+				words = list(data)
 				namedSortKey = lookupSortKey("headword_lower")
 				if namedSortKey is None:
 					raise RuntimeError("namedSortKey is None")

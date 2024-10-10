@@ -467,7 +467,7 @@ class UI(ui_cmd.UI):
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
 		completer = MyPathCompleter(
 			reading=reading,
-			fs_action_names=list(self._fsActions.keys()),
+			fs_action_names=list(self._fsActions),
 		)
 		default = getattr(self, varName)
 		while True:
@@ -611,7 +611,7 @@ class UI(ui_cmd.UI):
 		history = FileHistory(join(histDir, f"read-options-{self._inputFormat}"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
-			options.keys(),
+			list(options),
 			ignore_case=True,
 			match_middle=True,
 			sentence=True,
@@ -687,7 +687,7 @@ class UI(ui_cmd.UI):
 		history = FileHistory(join(histDir, f"write-options-{self._outputFormat}"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
-			options.keys(),
+			list(options),
 			ignore_case=True,
 			match_middle=True,
 			sentence=True,
@@ -780,7 +780,7 @@ class UI(ui_cmd.UI):
 		)
 
 	def askConfig(self):
-		configKeys = sorted(self.configDefDict.keys())
+		configKeys = sorted(self.configDefDict)
 		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -892,7 +892,7 @@ class UI(ui_cmd.UI):
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
-			list(self._finalActions.keys()),
+			list(self._finalActions),
 			ignore_case=False,
 			match_middle=True,
 			sentence=True,

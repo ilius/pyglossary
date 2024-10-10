@@ -672,8 +672,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		format: str,
 		options: "dict[str, Any]",
 	) -> None:
-		validOptionKeys = set(self.formatsReadOptions[format].keys())
-		for key in list(options.keys()):
+		validOptionKeys = set(self.formatsReadOptions[format])
+		for key in list(options):
 			if key not in validOptionKeys:
 				log.error(
 					f"Invalid read option {key!r} given for {format} format",
@@ -794,8 +794,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
 			raise WriteError(f"No write support for {format!r} format")
-		validOptionKeys = list(validOptions.keys())
-		for key in list(options.keys()):
+		validOptionKeys = list(validOptions)
+		for key in list(options):
 			if key not in validOptionKeys:
 				log.error(
 					f"Invalid write option {key!r} given for {format} format",

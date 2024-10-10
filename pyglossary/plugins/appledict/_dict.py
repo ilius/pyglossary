@@ -80,7 +80,7 @@ def indexes_generator(
 
 		indexer = idxs.languages.get(indexes_lang, None)
 		if not indexer:
-			keys_str = ", ".join(list(idxs.languages.keys()))
+			keys_str = ", ".join(idxs.languages)
 			msg = (
 				"extended indexes not supported for the"
 				f" specified language: {indexes_lang}.\n"

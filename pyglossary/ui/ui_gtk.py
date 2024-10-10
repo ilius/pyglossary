@@ -680,7 +680,7 @@ class InputFormatBox(FormatBox):
 		formatName = self.getActive()
 		if not formatName:
 			return None
-		return list(Glossary.formatsReadOptions[formatName].keys())
+		return list(Glossary.formatsReadOptions[formatName])
 
 
 class OutputFormatBox(FormatBox):
@@ -694,7 +694,7 @@ class OutputFormatBox(FormatBox):
 		return "w"
 
 	def getActiveOptions(self):
-		return list(Glossary.formatsWriteOptions[self.getActive()].keys())
+		return list(Glossary.formatsWriteOptions[self.getActive()])
 
 
 class GtkTextviewLogHandler(logging.Handler):
