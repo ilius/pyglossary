@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
-from collections.abc import Generator, Iterator
-from os.path import isdir, isfile, join
+from collections.abc import Generator
 
 from pyglossary.compression import stdCompressions
 from pyglossary.core import log
@@ -49,33 +47,6 @@ optionsProp: "dict[str, Option]" = {
 
 
 class Reader(TextGlossaryReader):
-	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
-		TextGlossaryReader.__init__(self, glos, hasInfo=hasInfo)
-		self._resDir = ""
-		self._resFileNames: "list[str]" = []
-
-	def open(self, filename: str) -> "Iterator[tuple[int, int]] | None":
-		yield from TextGlossaryReader.openGen(self, filename)
-		resDir = f"{filename}_res"
-		if isdir(resDir):
-			self._resDir = resDir
-			self._resFileNames = os.listdir(self._resDir)
-		return None  # noqa: B901 because of mypy
-
-	def __iter__(self) -> "Iterator[EntryType | None]":
-		yield from TextGlossaryReader.__iter__(self)
-		resDir = self._resDir
-		for fname in self._resFileNames:
-			fpath = join(resDir, fname)
-			if not isfile(fpath):
-				log.error(f"No such file: {fpath}")
-				continue
-			with open(fpath, "rb") as _file:
-				yield self._glos.newDataEntry(
-					fname,
-					_file.read(),
-				)
-
 	@classmethod
 	def isInfoWord(cls, word: str) -> bool:
 		return word.startswith("#")

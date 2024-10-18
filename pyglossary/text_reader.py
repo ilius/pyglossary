@@ -1,7 +1,8 @@
 import io
 import logging
+import os
 import typing
-from os.path import isfile
+from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -69,6 +70,24 @@ class TextGlossaryReader:
 		self._fileCount = 1
 		self._fileIndex = -1
 		self._bufferLine = ""
+		self._resDir = ""
+		self._resFileNames: "list[str]" = []
+
+	def _setResDir(self, resDir: str) -> bool:
+		if isdir(resDir):
+			self._resDir = resDir
+			self._resFileNames = os.listdir(self._resDir)
+			return True
+		return False
+
+	def detectResDir(self, filename: str) -> bool:
+		if self._setResDir(f"{filename}_res"):
+			return True
+		filenameNoExt, ext = splitext(filename)
+		ext = ext.lstrip(".")
+		if ext not in self.compressions:
+			return False
+		return self._setResDir(f"{filenameNoExt}_res")
 
 	def readline(self) -> str:
 		if self._bufferLine:
@@ -105,6 +124,8 @@ class TextGlossaryReader:
 		self._file = TextFilePosWrapper(cfile, self._encoding)
 		if self._hasInfo:
 			yield from self.loadInfo()
+
+		self.detectResDir(filename)
 
 	def _open(self, filename: str) -> None:
 		for _ in self._openGen(filename):
@@ -234,6 +255,18 @@ class TextGlossaryReader:
 				yield from self._genDataEntries(resList, resPathSet)
 
 			yield self.newEntry(word, defi)
+
+		resDir = self._resDir
+		for fname in self._resFileNames:
+			fpath = join(resDir, fname)
+			if not isfile(fpath):
+				log.error(f"No such file: {fpath}")
+				continue
+			with open(fpath, "rb") as _file:
+				yield self._glos.newDataEntry(
+					fname,
+					_file.read(),
+				)
 
 	def __len__(self) -> int:
 		return self._wordCount
