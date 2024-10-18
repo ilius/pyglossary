@@ -39,6 +39,7 @@ from .base import (
 	licenseText,
 	logo,
 )
+from .version import getVersion
 
 log = logging.getLogger("pyglossary")
 
@@ -1174,7 +1175,7 @@ class UI(tix.Frame, UIBase):
 		label.pack(side="left")
 		##
 		##
-		label = tk.Label(aboutFrame2, text=f"PyGlossary\nVersion {core.VERSION}")
+		label = tk.Label(aboutFrame2, text=f"PyGlossary\nVersion {getVersion()}")
 		label.pack(side="left")
 		##
 		aboutFrame2.pack(side="top", fill="x")

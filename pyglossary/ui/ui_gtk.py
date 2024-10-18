@@ -39,6 +39,7 @@ from .base import (
 	logo,
 )
 from .dependency import checkDepends
+from .version import getVersion
 
 gi.require_version("Gtk", "3.0")
 
@@ -1262,7 +1263,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		######
 		about = AboutWidget(
 			logo=logo,
-			header=f"PyGlossary\nVersion {core.VERSION}",
+			header=f"PyGlossary\nVersion {getVersion()}",
 			# about=summary,
 			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
 			authors="\n".join(authors),
