@@ -43,7 +43,7 @@ main()""")
 root_data_file_names = [
 	"about",
 	"LICENSE",
-	"license-dialog",
+	"_license-dialog",
 	"Dockerfile",
 	"pyglossary.pyw",
 	"pyproject.toml",

@@ -48,7 +48,7 @@ def fread(path: str) -> str:
 log = logging.getLogger("pyglossary")
 logo = join(appResDir, "pyglossary.png")
 aboutText = fread(join(dataDir, "about"))
-licenseText = fread(join(dataDir, "license-dialog"))
+licenseText = fread(join(dataDir, "_license-dialog"))
 authors = fread(join(dataDir, "AUTHORS")).split("\n")
 
 summary = (
