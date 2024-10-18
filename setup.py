@@ -10,7 +10,7 @@ from os.path import dirname, exists, isdir, join
 from setuptools import setup
 from setuptools.command.install import install
 
-from pyglossary.core import VERSION
+from pyglossary.ui.version import getVersion
 
 log = logging.getLogger("root")
 relRootDir = "share/pyglossary"
@@ -100,7 +100,7 @@ with open("README.md", encoding="utf-8") as fh:
 
 setup(
 	name="pyglossary",
-	version=VERSION,
+	version=getVersion(),
 	python_requires=">=3.10.0",
 	cmdclass={
 		"install": my_install,
