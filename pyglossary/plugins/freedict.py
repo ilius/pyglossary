@@ -103,7 +103,7 @@ class Reader:
 
 	_discover: bool = False
 	_auto_rtl: "bool | None" = None
-	_auto_comma: bool = False
+	_auto_comma: bool = True
 	_comma: str = ", "
 	_word_title: bool = False
 	_pron_color: str = "gray"
@@ -556,7 +556,7 @@ class Reader:
 		if sample and self._auto_comma:
 			ws = getWritingSystemFromText(sample)
 			if ws:
-				return ws.comma + " "
+				return ws.comma
 		return self._comma
 
 	def writeGramGroups(

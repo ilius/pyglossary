@@ -1057,7 +1057,7 @@
 		"readOptions": {
 			"discover": false,
 			"auto_rtl": null,
-			"auto_comma": false,
+			"auto_comma": true,
 			"comma": ", ",
 			"word_title": false,
 			"pron_color": "gray",

@@ -23,7 +23,7 @@
 | --------------- | ------- | ---- | ------------------------------------------------ |
 | discover        | `False` | bool | Find and show unsupported tags                   |
 | auto_rtl        | `None`  | bool | Auto-detect and mark Right-to-Left text          |
-| auto_comma      | `False` | bool | Auto-detect comma sign based on text             |
+| auto_comma      | `True`  | bool | Auto-detect comma sign based on text             |
 | comma           | `, `    | str  | Comma sign (following space) to use as separator |
 | word_title      | `False` | bool | Add headwords title to beginning of definition   |
 | pron_color      | `gray`  | str  | Pronunciation color                              |
