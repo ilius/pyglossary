@@ -237,7 +237,7 @@ class Reader:
 				child = child.strip()  # noqa: PLW2901
 				if child:
 					hf.write(child)
-					log.warning("text directly inside <cit>")
+					log.warning(f"text directly inside <cit>: {child}")
 				continue
 
 			if child.__class__.__name__ == "_Comment":
