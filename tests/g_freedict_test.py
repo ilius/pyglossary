@@ -28,7 +28,6 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"100-en-de-v4",
 			readOptions={"auto_comma": False},
 		)
-	def test_convert_tei_txt_1(self):
 		self.convert_tei_txt(
 			"100-en-de",
 			"100-en-de-v4",
