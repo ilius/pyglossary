@@ -1013,6 +1013,21 @@
 				"type": "bool",
 				"comment": "Auto-detect and mark Right-to-Left text"
 			},
+			"auto_comma": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Auto-detect comma sign based on text"
+			},
+			"comma": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					", ",
+					"\u060c "
+				],
+				"comment": "Comma sign (following space) to use as separator"
+			},
 			"word_title": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -1042,6 +1057,8 @@
 		"readOptions": {
 			"discover": false,
 			"auto_rtl": null,
+			"auto_comma": false,
+			"comma": ", ",
 			"word_title": false,
 			"pron_color": "gray",
 			"gram_color": "green",

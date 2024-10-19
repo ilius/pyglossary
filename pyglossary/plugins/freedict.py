@@ -68,6 +68,14 @@ optionsProp: "dict[str, Option]" = {
 		allowNone=True,
 		comment="Auto-detect and mark Right-to-Left text",
 	),
+	"auto_comma": BoolOption(
+		comment="Auto-detect comma sign based on text",
+	),
+	"comma": StrOption(
+		customValue=True,
+		values=[", ", "، "],
+		comment="Comma sign (following space) to use as separator",
+	),
 	"word_title": BoolOption(
 		comment="Add headwords title to beginning of definition",
 	),
@@ -95,6 +103,8 @@ class Reader:
 
 	_discover: bool = False
 	_auto_rtl: "bool | None" = None
+	_auto_comma: bool = False
+	_comma: str = ", "
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
@@ -264,7 +274,7 @@ class Reader:
 		hf: "T_htmlfile",
 		elem: "Element",
 	) -> None:
-		sep = ", "  # TODO: self.getCommaSep(sample)
+		# sep = None
 		# if self._cif_newline:
 		# 	sep = ET.Element("br")
 		count = 0
@@ -276,14 +286,14 @@ class Reader:
 				if not item:
 					return
 				if count > 0:
-					hf.write(sep)
+					hf.write(self.getCommaSep(item))
 				# with hf.element(self.getTitleTag(item)):
 				hf.write(item)
 				return
 
 			if item.tag == f"{tei}ref":
 				if count > 0:
-					hf.write(sep)
+					hf.write(self.getCommaSep(item.text))
 				self.writeRef(hf, item)
 				return
 
@@ -543,11 +553,11 @@ class Reader:
 		return len(transCits) + len(exampleCits)
 
 	def getCommaSep(self, sample: str) -> str:
-		if self._auto_rtl:
+		if sample and self._auto_comma:
 			ws = getWritingSystemFromText(sample)
 			if ws:
 				return ws.comma + " "
-		return ", "
+		return self._comma
 
 	def writeGramGroups(
 		self,
