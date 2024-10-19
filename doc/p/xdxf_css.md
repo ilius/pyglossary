@@ -17,6 +17,12 @@
 | Wiki            | [XDXF](https://en.wikipedia.org/wiki/XDXF)                                                                     |
 | Website         | [XDXF standard - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/tree/master/format_standard) |
 
+### Read options
+
+| Name | Default | Type | Comment          |
+| ---- | ------- | ---- | ---------------- |
+| html | `True`  | bool | Entries are HTML |
+
 ### Dependencies for reading
 
 PyPI Links: [lxml](https://pypi.org/project/lxml)

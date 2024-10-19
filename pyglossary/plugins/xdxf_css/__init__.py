@@ -27,6 +27,8 @@ from collections.abc import Iterator, Sequence
 from os.path import join
 from typing import TYPE_CHECKING, cast
 
+from pyglossary.option import BoolOption
+
 if TYPE_CHECKING:
 	import io
 
@@ -73,7 +75,9 @@ website = (
 	"https://github.com/soshial/xdxf_makedict/tree/master/format_standard",
 	"XDXF standard - @soshial/xdxf_makedict",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: "dict[str, Option]" = {
+	"html": BoolOption(comment="Entries are HTML"),
+}
 
 """
 new format

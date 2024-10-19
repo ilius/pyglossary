@@ -1841,10 +1841,18 @@
 		"description": "XDXF with CSS and JS",
 		"extensions": [],
 		"singleFile": true,
-		"optionsProp": {},
+		"optionsProp": {
+			"html": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Entries are HTML"
+			}
+		},
 		"canRead": true,
 		"canWrite": false,
-		"readOptions": {},
+		"readOptions": {
+			"html": true
+		},
 		"readDepends": {
 			"lxml": "lxml"
 		},
