@@ -117,6 +117,7 @@ class Reader:
 			return
 		emptyContentCount = 0
 		invalidMimeTypeCount = 0
+		undefinedMimeTypeCount = 0
 		entryCount = zimfile.entry_count
 
 		redirectCount = 0
@@ -172,6 +173,12 @@ class Reader:
 				invalidMimeTypeCount += 1
 				yield glos.newDataEntry(word, b_content)
 
+			if mimetype == "undefined":
+				undefinedMimeTypeCount += 1
+				continue
+
+			mimetype = mimetype.split(";")[0]
+
 			if mimetype.startswith("text/html"):
 				# can be "text/html;raw=true"
 				defi = b_content.decode("utf-8", errors=html_unicode_errors)
@@ -215,5 +222,7 @@ class Reader:
 			log.info(f"Empty Content Count: {emptyContentCount}")
 		if invalidMimeTypeCount > 0:
 			log.info(f"Invalid MIME-Type Count: {invalidMimeTypeCount}")
+		if undefinedMimeTypeCount > 0:
+			log.info(f"MIME-Type 'undefined' Count: {invalidMimeTypeCount}")
 		if redirectCount > 0:
 			log.info(f"Redirect Count: {redirectCount}")
