@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from libzim.reader import Archive  # type: ignore
@@ -10,6 +11,22 @@ if TYPE_CHECKING:
 
 from pyglossary.core import cacheDir, log, pip
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.option import UnicodeErrorsOption
+
+__all__ = [
+	"Reader",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"format",
+	"kind",
+	"lname",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
+]
 
 enable = True
 lname = "zim"
@@ -24,7 +41,14 @@ website = (
 	"https://wiki.openzim.org/wiki/OpenZIM",
 	"OpenZIM",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: "dict[str, Option]" = {
+	"text_unicode_errors": UnicodeErrorsOption(
+		comment="Unicode Errors for plaintext, values: `strict`, `ignore`, `replace`",
+	),
+	"html_unicode_errors": UnicodeErrorsOption(
+		comment="Unicode Errors for HTML, values: `strict`, `ignore`, `replace`",
+	),
+}
 
 # https://wiki.kiwix.org/wiki/Software
 
@@ -37,6 +61,8 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
+	_text_unicode_errors = "strict"
+	_html_unicode_errors = "strict"
 	depends = {
 		"libzim": "libzim>=1.0",
 	}
@@ -48,10 +74,8 @@ class Reader:
 		"image/svg+xml",
 		"image/webp",
 		"image/x-icon",
-
 		"text/css",
 		"text/javascript",
-
 		"application/javascript",
 		"application/json",
 		"application/octet-stream",
@@ -86,7 +110,7 @@ class Reader:
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self) -> "Iterator[EntryType | None]":  # noqa: PLR0912
 		glos = self._glos
 		zimfile = self._zimfile
 		if zimfile is None:
@@ -97,13 +121,20 @@ class Reader:
 
 		redirectCount = 0
 
+		windows = os.sep == "\\"
+
 		try:
 			f_namemax = os.statvfs(cacheDir).f_namemax  # type: ignore
 		except AttributeError:
-			# FIXME
-			raise OSError("Unsupported operating system (no os.statvfs)") from None
+			log.warning("Unsupported operating system (no os.statvfs)")
+			# Windows: CreateFileA has a limit of 260 characters.
+			# CreateFileW supports names up to about 32760 characters (64kB).
+			f_namemax = 200
 
 		fileNameTooLong = []
+
+		text_unicode_errors = self._text_unicode_errors
+		html_unicode_errors = self._html_unicode_errors
 
 		for entryIndex in range(entryCount):
 			zEntry = zimfile._get_entry_by_id(entryIndex)
@@ -143,14 +174,15 @@ class Reader:
 
 			if mimetype.startswith("text/html"):
 				# can be "text/html;raw=true"
-				defi = b_content.decode("utf-8")
+				defi = b_content.decode("utf-8", errors=html_unicode_errors)
 				defi = defi.replace(' src="../I/', ' src="./')
 				yield glos.newEntry(word, defi, defiFormat="h")
 				continue
 
 			if mimetype == "text/plain":
 				yield glos.newEntry(
-					word, b_content.decode("utf-8"),
+					word,
+					b_content.decode("utf-8", errors=text_unicode_errors),
 					defiFormat="m",
 				)
 				continue
@@ -163,9 +195,17 @@ class Reader:
 				continue
 
 			if "|" in word:
-				log.error(f"resource title: {word}")
+				log.warning(f"resource title: {word}")
+				if windows:
+					continue
 
-			yield glos.newDataEntry(word, b_content)
+			try:
+				entry = glos.newDataEntry(word, b_content)
+			except Exception as e:
+				log.error(f"error creating file: {e}")
+				continue
+			yield entry
+
 
 		log.info(f"ZIM Entry Count: {entryCount}")
 
