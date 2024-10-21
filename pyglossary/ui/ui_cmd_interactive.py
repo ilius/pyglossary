@@ -79,7 +79,7 @@ from prompt_toolkit.shortcuts import PromptSession, confirm
 
 from pyglossary import core
 from pyglossary.core import confDir
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v2 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 
@@ -947,8 +947,11 @@ class UI(ui_cmd.UI):
 
 	def checkInputFormat(self, forceAsk: bool = False):
 		if not forceAsk:
-			inputArgs = Glossary.detectInputFormat(self._inputFilename, quiet=True)
-			if inputArgs:
+			try:
+				inputArgs = Glossary.detectInputFormat(self._inputFilename)
+			except Error:
+				pass
+			else:
 				inputFormat = inputArgs.formatName
 				self._inputFormat = inputFormat
 				return
@@ -956,12 +959,14 @@ class UI(ui_cmd.UI):
 
 	def checkOutputFormat(self, forceAsk: bool = False):
 		if not forceAsk:
-			outputArgs = Glossary.detectOutputFormat(
-				filename=self._outputFilename,
-				inputFilename=self._inputFilename,
-				quiet=True,
-			)
-			if outputArgs:
+			try:
+				outputArgs = Glossary.detectOutputFormat(
+					filename=self._outputFilename,
+					inputFilename=self._inputFilename,
+				)
+			except Error:
+				pass
+			else:
 				self._outputFormat = outputArgs.formatName
 				return
 		self._outputFormat = self.askOutputFormat()

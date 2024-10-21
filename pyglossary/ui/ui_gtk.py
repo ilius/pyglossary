@@ -1506,8 +1506,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.convertInputEntry.set_text(inPath)
 
 		if self.config["ui_autoSetFormat"] and not inFormat:
-			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
-			if inputArgs:
+			try:
+				inputArgs = Glossary.detectInputFormat(inPath)
+			except Error:
+				pass
+			else:
 				self.convertInputFormatCombo.setActive(inputArgs.formatName)
 
 		if not isfile(inPath):
@@ -1525,12 +1528,14 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.convertOutputEntry.set_text(outPath)
 
 		if self.config["ui_autoSetFormat"] and not outFormat:
-			outputArgs = Glossary.detectOutputFormat(
-				filename=outPath,
-				inputFilename=self.convertInputEntry.get_text(),
-				quiet=True,
-			)
-			if outputArgs:
+			try:
+				outputArgs = Glossary.detectOutputFormat(
+					filename=outPath,
+					inputFilename=self.convertInputEntry.get_text(),
+				)
+			except Error:
+				pass
+			else:
 				outFormat = outputArgs.formatName
 				self.convertOutputFormatCombo.setActive(outFormat)
 
@@ -1603,8 +1608,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 			self.config["ui_autoSetFormat"]
 			and not self.reverseInputFormatCombo.getActive()
 		):
-			inputArgs = Glossary.detectInputFormat(inPath, quiet=True)
-			if inputArgs:
+			try:
+				inputArgs = Glossary.detectInputFormat(inPath)
+			except Error:
+				pass
+			else:
 				inFormat = inputArgs[1]
 				self.reverseInputFormatCombo.setActive(inFormat)
 

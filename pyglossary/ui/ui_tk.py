@@ -29,7 +29,7 @@ from typing import Any, Literal
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
-from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.text_utils import urlToPath
 
 from .base import (
@@ -1408,8 +1408,11 @@ class UI(tix.Frame, UIBase):
 		if self.config["ui_autoSetFormat"]:
 			formatDesc = self.formatButtonInputConvert.get()
 			if not formatDesc:
-				inputArgs = Glossary.detectInputFormat(pathI, quiet=True)
-				if inputArgs:
+				try:
+					inputArgs = Glossary.detectInputFormat(pathI)
+				except Error:
+					pass
+				else:
 					plugin = Glossary.plugins.get(inputArgs.formatName)
 					if plugin:
 						self.formatButtonInputConvert.setValue(plugin.description)
@@ -1428,12 +1431,14 @@ class UI(tix.Frame, UIBase):
 		if self.config["ui_autoSetFormat"]:
 			formatDesc = self.formatButtonOutputConvert.get()
 			if not formatDesc:
-				outputArgs = Glossary.detectOutputFormat(
-					filename=pathO,
-					inputFilename=self.entryInputConvert.get(),
-					quiet=True,
-				)
-				if outputArgs:
+				try:
+					outputArgs = Glossary.detectOutputFormat(
+						filename=pathO,
+						inputFilename=self.entryInputConvert.get(),
+					)
+				except Error:
+					pass
+				else:
 					self.formatButtonOutputConvert.setValue(
 						Glossary.plugins[outputArgs.formatName].description,
 					)
