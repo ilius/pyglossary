@@ -40,6 +40,7 @@ def make_entry(
 	pinyin: str,
 	eng: list[str],
 	traditional_title: bool,
+	colorize_tones: bool,
 ) -> "tuple[list[str], str]":
 	eng_names = list(map(summarize, eng))
 	names = [
@@ -47,7 +48,7 @@ def make_entry(
 		simp if traditional_title else trad,
 		pinyin,
 	] + eng_names
-	article = render_article(trad, simp, pinyin, eng, traditional_title)
+	article = render_article(trad, simp, pinyin, eng, traditional_title, colorize_tones)
 	return names, article
 
 
@@ -55,9 +56,14 @@ def colorize(
 	hf: "T_htmlfile",
 	syllables: "Sequence[str]",
 	tones: "Sequence[str]",
+	colorize_tones: bool,
 ) -> None:
-	if len(syllables) != len(tones):
-		log.warning(f"unmatched tones: {syllables=}, {tones=}")
+
+	if (len(syllables) != len(tones)) or (colorize_tones is False):
+
+		if (len(syllables) != len(tones)):
+			log.warning(f"unmatched tones: {syllables=}, {tones=}")
+
 		with hf.element("div", style="display: inline-block"):
 			for syllable in syllables:
 				with hf.element("font", color=""):
@@ -76,6 +82,7 @@ def render_article(
 	pinyin: str,
 	eng: list[str],
 	traditional_title: bool,
+	colorize_tones: bool,
 ) -> str:
 	from io import BytesIO
 
@@ -98,6 +105,7 @@ def render_article(
 						cast("T_htmlfile", hf),
 						trad if traditional_title else simp,
 						tones,
+						colorize_tones,
 					)
 				if trad != simp:
 					hf.write("\xa0/\xa0")  # "\xa0" --> "&#160;" == "&nbsp;"
@@ -105,6 +113,7 @@ def render_article(
 						cast("T_htmlfile", hf),
 						simp if traditional_title else trad,
 						tones,
+						colorize_tones,
 					)
 				hf.write(ET.Element("br"))
 				with hf.element("big"):
@@ -112,6 +121,7 @@ def render_article(
 						cast("T_htmlfile", hf),
 						pinyin_list,
 						tones,
+						colorize_tones,
 					)
 
 			with hf.element("div"):
