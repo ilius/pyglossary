@@ -15,6 +15,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 import gc
 import os
@@ -93,7 +94,7 @@ class Reader:
 	_same_dir_data_files: bool = False
 	_audio: bool = False
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 		self._re_internal_link = re.compile("href=([\"'])(entry://|[dx]:)")
@@ -104,7 +105,7 @@ class Reader:
 	def clear(self) -> None:
 		self._filename = ""
 		self._mdx: "MDX | None" = None
-		self._mdd: "list[MDD]" = []
+		self._mdd: list[MDD] = []
 		self._wordCount = 0
 		self._dataEntryCount = 0
 

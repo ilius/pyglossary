@@ -53,7 +53,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 	def convert_appledict_binary_to_txt(
 		self,
 		baseName: str,
-		files: "list[str]",
+		files: list[str],
 		html_full: bool = False,
 		resFiles: "dict[str, str] | None" = None,
 	):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright © 2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #
 # This program is a free software; you can redistribute it and/or modify
@@ -13,6 +12,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 import os
 import re
@@ -51,6 +51,7 @@ if TYPE_CHECKING:
 		HtmlProcessingInstruction,
 	)
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element
 
 	from .appledict_properties import AppleDictProperties
@@ -60,7 +61,6 @@ from zlib import decompress
 from pyglossary import core
 from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import BoolOption, Option
 
@@ -144,7 +144,7 @@ class Reader:
 			method="html",
 		).decode("utf-8")
 
-	def fixLink(self, a: "Element") -> "Element":
+	def fixLink(self, a: Element) -> Element:
 		href = a.attrib.get("href", "")
 
 		if href.startswith("x-dictionary:d:"):
@@ -335,7 +335,7 @@ class Reader:
 
 	def _getDefi(
 		self,
-		entryElem: "Element",
+		entryElem: Element,
 	) -> str:
 		if not self._html:
 			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
@@ -396,7 +396,7 @@ class Reader:
 	def createEntry(
 		self,
 		entryBytes: bytes,
-		articleAddress: "ArticleAddress",
+		articleAddress: ArticleAddress,
 	) -> "EntryType | None":
 		# 1. create and validate XML of the entry's body
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
@@ -415,7 +415,7 @@ class Reader:
 
 		words = [word]
 
-		keyDataList: "list[KeyData]" = [
+		keyDataList: list[KeyData] = [
 			KeyData.fromRaw(rawKeyData, keyTextFieldOrder)
 			for rawKeyData in self._keyTextData.get(articleAddress, [])
 		]
@@ -488,7 +488,7 @@ class Reader:
 	def setKeyTextData(
 		self,
 		morphoFilePath: str,
-		properties: "AppleDictProperties",
+		properties: AppleDictProperties,
 	) -> "Iterator[tuple[int, int]]":
 		"""
 		Prepare `KeyText.data` file for extracting morphological data.
@@ -539,7 +539,7 @@ class Reader:
 		buff: "io.BufferedIOBase",
 		bufferOffset: int,
 		bufferLimit: int,
-		properties: "AppleDictProperties",
+		properties: AppleDictProperties,
 	) -> "Iterator[tuple[int, int]]":
 		"""
 		Returns an iterator/generator for the progress
@@ -615,7 +615,7 @@ class Reader:
 					)
 					return
 
-				keyTextFields: "list[str]" = []
+				keyTextFields: list[str] = []
 				while buff.tell() < next_lexeme_offset:
 					word_form_len = read_2_bytes_here(buff)
 					if word_form_len == 0:
@@ -707,7 +707,7 @@ class Reader:
 	def yieldEntryBytes(
 		self,
 		body_file: "io.BufferedIOBase",
-		properties: "AppleDictProperties",
+		properties: AppleDictProperties,
 	) -> "Iterator[tuple[bytes, ArticleAddress]]":
 		fileDataOffset, fileLimit = guessFileOffsetLimit(body_file)
 		sectionOffset = fileDataOffset

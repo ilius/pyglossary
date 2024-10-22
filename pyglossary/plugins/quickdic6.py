@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import datetime as dt
 import functools
@@ -15,9 +16,10 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from typing import Any, Literal
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
+
 from pyglossary.core import log
 from pyglossary.flags import NEVER
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.langs import langDict
 from pyglossary.option import (
 	Option,
@@ -546,7 +548,7 @@ class QuickDic:
 		self.created = dt.datetime.now() if created is None else created
 
 	@classmethod
-	def from_path(cls: "type[QuickDic]", path_str: str) -> "QuickDic":
+	def from_path(cls: type[QuickDic], path_str: str) -> QuickDic:
 		path = pathlib.Path(path_str)
 		if path.suffix != ".zip":
 			with open(path, "rb") as fp:
@@ -557,7 +559,7 @@ class QuickDic:
 				return cls.from_fp(fp)
 
 	@classmethod
-	def from_fp(cls: "type[QuickDic]", fp: IO[bytes]) -> "QuickDic":
+	def from_fp(cls: type[QuickDic], fp: IO[bytes]) -> QuickDic:
 		version = read_int(fp)
 		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)  # noqa: DTZ006
 		name = read_string(fp)

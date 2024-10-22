@@ -15,13 +15,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-
 # FIXME:
 # MDX-specific parts should be isolated and moved to MDX Reader
 # and parts that are specific to one glossary
 # (like Oxford_Advanced_English-Chinese_Dictionary_9th_Edition.mdx)
 # should be moved to separate modules (like content processors) and enabled
 # per-glossary (by title or something else)
+from __future__ import annotations
 
 import logging
 import re
@@ -55,7 +55,7 @@ re_margin = re.compile(r"margin-left:(\d)em")
 def prepare_content(
 	title: "str | None",
 	body: str,
-	BeautifulSoup: "Any",
+	BeautifulSoup: Any,
 ) -> str:
 	# heavily integrated with output of dsl reader plugin!
 	# and with xdxf also.
@@ -169,7 +169,7 @@ def _prepare_onclick(soup) -> None:
 def prepare_content_with_soup(  # noqa: PLR0912
 	title: "str | None",
 	body: str,
-	BeautifulSoup: "Any",
+	BeautifulSoup: Any,
 ) -> str:
 	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
 	# difference between "lxml" and "html.parser"

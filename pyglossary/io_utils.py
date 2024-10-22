@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 from typing import TYPE_CHECKING
 
@@ -72,10 +74,10 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def readline(self, size: "int | None" = -1) -> bytes:
 		raise NotImplementedError
 
-	def readlines(self, hint: int = -1) -> "list[bytes]":
+	def readlines(self, hint: int = -1) -> list[bytes]:
 		raise NotImplementedError
 
-	def writelines(self, lines: "list[bytes]") -> None:  # type: ignore
+	def writelines(self, lines: list[bytes]) -> None:  # type: ignore
 		raise NotImplementedError
 
 
@@ -132,7 +134,7 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 		raise NotImplementedError
 
 	# data: "bytearray|memoryview|array[Any]|io.mmap|io._CData|io.PickleBuffer"
-	def write(self, data: "bytes") -> int:  # type: ignore
+	def write(self, data: bytes) -> int:  # type: ignore
 		raise NotImplementedError
 
 	def __iter__(self) -> "Iterator[str]":  # type: ignore
@@ -144,10 +146,10 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def readline(self, size: "int | None" = -1) -> str:  # type: ignore
 		raise NotImplementedError
 
-	def readlines(self, hint: int = -1) -> "list[str]":  # type: ignore
+	def readlines(self, hint: int = -1) -> list[str]:  # type: ignore
 		raise NotImplementedError
 
-	def writelines(self, lines: "list[str]") -> None:  # type: ignore
+	def writelines(self, lines: list[str]) -> None:  # type: ignore
 		raise NotImplementedError
 
 

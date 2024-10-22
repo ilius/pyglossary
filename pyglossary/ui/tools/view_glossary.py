@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # mypy: ignore-errors
+from __future__ import annotations
 
 import os.path
 import shlex
@@ -41,7 +42,7 @@ def getEntryHighlighter() -> "Callable[[EntryType], None] | None":
 	h_lexer = HtmlLexer()
 	x_lexer = XmlLexer()
 
-	def highlightEntry(entry: "EntryType") -> None:
+	def highlightEntry(entry: EntryType) -> None:
 		entry.detectDefiFormat()
 		if entry.defiFormat == "h":
 			entry._defi = highlight(entry.defi, h_lexer, formatter)
@@ -77,7 +78,7 @@ def viewGlossary(
 
 	entrySep = "_" * 50
 
-	def handleEntry(entry: "EntryType") -> None:
+	def handleEntry(entry: EntryType) -> None:
 		nonlocal index
 		if highlightEntry:
 			highlightEntry(entry)

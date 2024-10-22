@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3
 # as published by the Free Software Foundation.
@@ -14,6 +13,7 @@
 # Copyright (C) 2015 Igor Tkach
 #
 # This plugin is based on https://github.com/itkach/wordnet2slob
+from __future__ import annotations
 
 import io
 import os
@@ -335,7 +335,7 @@ class WordNet:
 
 
 class Reader:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0

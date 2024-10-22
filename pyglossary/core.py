@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import inspect
 import logging
 import os
@@ -78,11 +80,11 @@ def trace(log: logging.Logger, msg: str) -> None:
 class _Formatter(logging.Formatter):
 	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN101
 		logging.Formatter.__init__(self, *args, **kwargs)
-		self.fill: "Callable[[str], str] | None" = None
+		self.fill: Callable[[str], str] | None = None
 
 	def formatMessage(
 		self,
-		record: "logging.LogRecord",
+		record: logging.LogRecord,
 	) -> str:
 		msg = logging.Formatter.formatMessage(self, record)
 		if self.fill is not None:
@@ -125,7 +127,7 @@ class _MyLogger(logging.Logger):
 	def trace(self, msg: str) -> None:
 		self.log(TRACE, msg)
 
-	def pretty(self, data: "Any", header: str = "") -> None:
+	def pretty(self, data: Any, header: str = "") -> None:
 		from pprint import pformat
 
 		self.debug(header + pformat(data))
@@ -144,7 +146,7 @@ class _MyLogger(logging.Logger):
 		for handler in self.handlers:
 			handler.setFormatter(formatter)
 
-	def addHandler(self, hdlr: "logging.Handler") -> None:
+	def addHandler(self, hdlr: logging.Handler) -> None:
 		# if want to add separate format (new config keys and flags) for ui_gtk
 		# and ui_tk, you need to remove this function and run handler.setFormatter
 		# in ui_gtk and ui_tk
@@ -153,7 +155,7 @@ class _MyLogger(logging.Logger):
 
 
 def _formatVarDict(
-	dct: "dict[str, Any]",
+	dct: dict[str, Any],
 	indent: int = 4,
 	max_width: int = 80,
 ) -> str:
@@ -174,7 +176,7 @@ def _formatVarDict(
 
 
 def format_exception(
-	exc_info: "ExcInfoType | None" = None,
+	exc_info: ExcInfoType | None = None,
 	add_locals: bool = False,
 	add_globals: bool = False,
 ) -> str:
@@ -341,8 +343,8 @@ def isDebug() -> bool:
 if os.sep == "\\":
 
 	def _windows_show_exception(
-		_type: "type[BaseException]",
-		exc: "BaseException",
+		_type: type[BaseException],
+		exc: BaseException,
 		tback: "TracebackType | None",
 	) -> None:
 		if not (_type and exc and tback):
@@ -362,8 +364,8 @@ if os.sep == "\\":
 else:
 
 	def _unix_show_exception(
-		_type: "type[BaseException]",
-		exc: "BaseException",
+		_type: type[BaseException],
+		exc: BaseException,
 		tback: "TracebackType | None",
 	) -> None:
 		if not (_type and exc and tback):

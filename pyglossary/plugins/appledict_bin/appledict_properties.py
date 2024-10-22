@@ -12,6 +12,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 from dataclasses import dataclass
 
@@ -20,11 +21,11 @@ __all__ = ["AppleDictProperties", "from_metadata"]
 
 @dataclass(slots=True, frozen=True)
 class AppleDictProperties:
-	# in plist file: "IDXDictionaryVersion"
+	# in plist file: IDXDictionaryVersion
 	# values := (1 | 2 | 3)
 	format_version: int
 
-	# in plist file: "HeapDataCompressionType" values := (absent | 1 | 2)
+	# in plist file: HeapDataCompressionType values := (absent | 1 | 2)
 	body_compression_type: int
 
 	# in plist file: for field with "IDXDataFieldName" equal "DCSExternalBodyID"
@@ -35,11 +36,11 @@ class AppleDictProperties:
 	# 'TrieAuxiliaryDataOptions' -> 'HeapDataCompressionType'
 	key_text_compression_type: int
 
-	# in plist file: "IDXIndexDataFields" / "IDXFixedDataFields"
+	# in plist file: IDXIndexDataFields / "IDXFixedDataFields"
 	# Example: ["DCSPrivateFlag"]
 	key_text_fixed_fields: list[str]
 
-	# in plist file: "IDXIndexDataFields" / "IDXVariableDataFields"
+	# in plist file: IDXIndexDataFields / "IDXVariableDataFields"
 	# Example: ["DCSKeyword", "DCSHeadword", "DCSEntryTitle",
 	# "DCSAnchor", "DCSYomiWord"]
 	key_text_variable_fields: list[str]

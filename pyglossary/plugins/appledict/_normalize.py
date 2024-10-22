@@ -17,6 +17,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 import re
 from typing import Any
@@ -110,7 +111,7 @@ def truncate(text: str, length: int = 449) -> str:
 	return text  # noqa: RET504
 
 
-def title(title: str, BeautifulSoup: "Any") -> str:
+def title(title: str, BeautifulSoup: Any) -> str:
 	"""Strip double quotes and html tags."""
 	if BeautifulSoup:
 		title = title.replace("\xef\xbb\xbf", "")
@@ -135,7 +136,7 @@ def title_long(s: str) -> str:
 
 	Example:
 	-------
-	title_long("str[ing]") -> "string".
+	title_long("str[ing]") -> string.
 
 	"""
 	return s.replace("[", "").replace("]", "")
@@ -147,7 +148,7 @@ def title_short(s: str) -> str:
 
 	Example:
 	-------
-	title_short("str[ing]") -> "str".
+	title_short("str[ing]") -> str.
 
 	"""
 	return spaces(re_title_short.sub("", s))

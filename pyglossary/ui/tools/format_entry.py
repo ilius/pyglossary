@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -6,7 +8,7 @@ if TYPE_CHECKING:
 __all__ = ["formatEntry"]
 
 
-def formatEntry(entry: "EntryType") -> str:
+def formatEntry(entry: EntryType) -> str:
 	words = entry.l_word
 	headword = ""
 	if words:

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 from pyglossary.compression import (
 	# compressionOpen,
@@ -8,7 +10,6 @@ from pyglossary.compression import (
 )
 from pyglossary.core import log
 from pyglossary.file_utils import fileCountLines
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -17,6 +18,9 @@ from pyglossary.option import (
 )
 from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 from pyglossary.text_utils import splitByBar
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -83,7 +87,7 @@ class Reader(TextGlossaryReader):
 
 		return word
 
-	def nextBlock(self) -> "nextBlockResultType":
+	def nextBlock(self) -> nextBlockResultType:
 		if not self._file:
 			raise StopIteration
 		entryLines = []

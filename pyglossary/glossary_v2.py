@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import os
 import os.path
@@ -89,7 +90,7 @@ if TYPE_CHECKING:
 
 __all__ = ["ConvertArgs", "Glossary", "GlossaryCommon"]
 
-# sortKeyType = Callable[
+# SortKeyType = Callable[
 # 	[[list[str]],
 # 	Any,
 # ]
@@ -151,13 +152,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				reader.close()
 			except Exception:  # noqa: PERF203
 				log.exception("")
-		self._readers: "list[Any]" = []
+		self._readers: list[Any] = []
 		self._defiHasWordTitle = False
 
-		self._iter: "Iterator[EntryType] | None" = None
-		self._entryFilters: "list[EntryFilterType]" = []
-		self._entryFiltersExtra: "list[EntryFilterType]" = []
-		self._entryFiltersName: "set[str]" = set()
+		self._iter: Iterator[EntryType] | None = None
+		self._entryFilters: list[EntryFilterType] = []
+		self._entryFiltersExtra: list[EntryFilterType] = []
+		self._entryFiltersName: set[str] = set()
 		self._sort = False
 
 		self._filename = ""
@@ -178,13 +179,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
 		self._config: "dict[str, Any]" = {}
-		self._data: "EntryListType" = EntryList(
+		self._data: EntryListType = EntryList(
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
 		)
 		self._sqlite = False
 		self._rawEntryCompress = False
-		self._cleanupPathList: "set[str]" = set()
+		self._cleanupPathList: set[str] = set()
 		self._readOptions: dict[str, Any] | None = None
 
 		self.clear()
@@ -221,7 +222,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				log.error(f"no such file or directory: {cleanupPath}")
 		self._cleanupPathList = set()
 
-	def _dataEntryToRaw(self, entry: "DataEntry") -> "RawEntryType":
+	def _dataEntryToRaw(self, entry: DataEntry) -> RawEntryType:
 		b_fpath = b""
 		if self.tmpDataDir:
 			b_fpath = entry.save(self.tmpDataDir).encode("utf-8")
@@ -234,7 +235,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			return zlib_compress(pickle_dumps(tpl), level=9)
 		return tpl
 
-	def _entryToRaw(self, entry: "EntryType") -> "RawEntryType":
+	def _entryToRaw(self, entry: EntryType) -> RawEntryType:
 		"""
 		Return a tuple (word, defi) or (word, defi, defiFormat)
 		where both word and defi might be string or list of strings.
@@ -254,7 +255,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		return tpl
 
-	def _entryFromRaw(self, rawEntryArg: "RawEntryType") -> "EntryType":
+	def _entryFromRaw(self, rawEntryArg: RawEntryType) -> EntryType:
 		if isinstance(rawEntryArg, bytes):
 			rawEntry = pickle_loads(zlib_decompress(rawEntryArg))
 		else:
@@ -434,7 +435,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	# no point of returning None entries anymore.
 	def _applyEntryFiltersGen(
 		self,
-		gen: "Iterator[EntryType]",
+		gen: Iterator[EntryType],
 	) -> "Iterator[EntryType]":
 		entry: "EntryType | None"
 		for entry in gen:
@@ -576,16 +577,16 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def getConfig(self, name: str, default: "str | None") -> "str | None":
 		return self._config.get(name, default)
 
-	def addEntry(self, entry: "EntryType") -> None:
+	def addEntry(self, entry: EntryType) -> None:
 		self._data.append(entry)
 
 	def newEntry(
 		self,
-		word: "MultiStr",
+		word: MultiStr,
 		defi: str,
 		defiFormat: str = "",
 		byteProgress: "tuple[int, int] | None" = None,
-	) -> "Entry":
+	) -> Entry:
 		"""
 		Create and return a new entry object.
 
@@ -604,7 +605,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			byteProgress=byteProgress,
 		)
 
-	def newDataEntry(self, fname: str, data: bytes) -> "EntryType":
+	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
 		import uuid
 
 		if self._readers:
@@ -637,7 +638,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		format: str,
 		options: "dict[str, Any]",
-	) -> "Any":
+	) -> Any:
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
 			raise ReadError("_createReader: readerClass is None")
@@ -680,7 +681,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				)
 				del options[key]
 
-	def _openReader(self, reader: "Any", filename: str):
+	def _openReader(self, reader: Any, filename: str):
 		# reader.open returns "Iterator[tuple[int, int]] | None"
 		progressbar: bool = self.progressbar
 		try:
@@ -767,7 +768,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		return True
 
-	def loadReader(self, reader: "Any") -> None:
+	def loadReader(self, reader: Any) -> None:
 		"""
 		Iterate over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function.
@@ -790,7 +791,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		format: str,
 		options: "dict[str, Any]",
-	) -> "Any":
+	) -> Any:
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
 			raise WriteError(f"No write support for {format!r} format")
@@ -849,7 +850,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def _writeEntries(
 		self,
-		writerList: "list[Any]",
+		writerList: list[Any],
 		filename: str,
 	) -> None:
 		writer = writerList[0]
@@ -881,7 +882,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	@staticmethod
 	def _openWriter(
-		writer: "Any",
+		writer: Any,
 		filename: str,
 	):
 		try:
@@ -982,7 +983,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	@staticmethod
 	def _checkSortFlag(
-		plugin: "PluginProp",
+		plugin: PluginProp,
 		sort: "bool | None",
 	) -> bool:
 		sortOnWrite = plugin.sortOnWrite
@@ -1011,7 +1012,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _resolveSortParams(
 		self,
 		args: ConvertArgs,
-		plugin: "PluginProp",
+		plugin: PluginProp,
 	) -> "tuple[bool, bool]":
 		"""
 		sortKeyName: see doc/sort-key.md.
@@ -1063,7 +1064,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	@staticmethod
 	def _checkSortKey(
-		plugin: "PluginProp",
+		plugin: PluginProp,
 		sortKeyName: "str | None",
 		sortEncoding: "str | None",
 	) -> "tuple[NamedSortKey, str]":

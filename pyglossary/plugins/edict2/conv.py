@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 from typing import TYPE_CHECKING, cast
 
@@ -53,8 +55,8 @@ def make_entry(
 
 def colorize(
 	hf: "T_htmlfile",
-	syllables: "Sequence[str]",
-	tones: "Sequence[str]",
+	syllables: Sequence[str],
+	tones: Sequence[str],
 ) -> None:
 	if len(syllables) != len(tones):
 		log.warning(f"unmatched tones: {syllables=}, {tones=}")

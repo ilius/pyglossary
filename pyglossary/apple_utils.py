@@ -12,6 +12,8 @@
 # also see:
 # https://github.com/servo/servo/blob/master/components/style/properties/counted_unknown_properties.py
 
+from __future__ import annotations
+
 import re
 
 from .core import log
@@ -35,7 +37,7 @@ cssKeyRemovePattern = re.compile(
 	rb"[ \t]*(" + b"|".join(cssKeyRemove) + rb")\s*:[^;}]*;\s*",
 )
 
-cssMapping: "dict[str, str]" = {
+cssMapping: dict[str, str] = {
 	# I didn't actually find these font values:
 	"-apple-system-body": '"Helvetica Neue"',
 	"-apple-system": '"Helvetica Neue"',
@@ -98,7 +100,7 @@ cssParamPattern = re.compile(
 )
 
 
-def _subCSS(m: "re.Match") -> bytes:
+def _subCSS(m: re.Match) -> bytes:
 	b_key = m.group(0)
 	value = cssMapping.get(b_key.decode("ascii"))
 	if value is None:

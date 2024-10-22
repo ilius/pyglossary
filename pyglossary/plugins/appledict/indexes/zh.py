@@ -39,7 +39,7 @@ pinyinPattern = re.compile(r",|;")
 nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")
 
 
-def zh(titles: "Sequence[str]", content: str) -> "set[str]":
+def zh(titles: Sequence[str], content: str) -> "set[str]":
 	"""
 	Chinese indexes.
 

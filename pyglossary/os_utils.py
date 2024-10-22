@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import os
 import shutil
@@ -119,7 +121,7 @@ def runDictzip(filename: str | Path, method: str = "") -> None:
 
 
 def _rmtreeError(
-	_func: "Callable",
+	_func: Callable,
 	_direc: str,
 	exc_info: "tuple[type, Exception, types.TracebackType] | None",
 ) -> None:

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 import re
@@ -10,9 +11,9 @@ if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 
 	from pyglossary import slob
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 from pyglossary.core import cacheDir, log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	FileSizeOption,
@@ -116,7 +117,7 @@ class Reader:
 		"icu": "PyICU",  # >=1.5
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 		self._re_bword = re.compile(
@@ -329,7 +330,7 @@ class Writer:
 		log.info(f"Finalizing slob file took {perf_counter() - t0:.1f} seconds")
 		self._slobWriter = None
 
-	def addDataEntry(self, entry: "EntryType") -> None:
+	def addDataEntry(self, entry: EntryType) -> None:
 		slobWriter = self._slobWriter
 		if slobWriter is None:
 			raise ValueError("slobWriter is None")
@@ -349,7 +350,7 @@ class Writer:
 			return
 		slobWriter.add(content, key, content_type=content_type)
 
-	def addEntry(self, entry: "EntryType") -> None:
+	def addEntry(self, entry: EntryType) -> None:
 		words = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
 		_ctype = self._content_type

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import collections
 from io import BytesIO, IOBase
@@ -9,6 +10,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
 	from typing import Any
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
@@ -17,7 +19,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
@@ -94,7 +95,7 @@ class Reader:
 
 	_audio: bool = True
 
-	_audio_formats: "list[str]" = ["ogg", "mp3"]
+	_audio_formats: list[str] = ["ogg", "mp3"]
 
 	topicStyle = (
 		"color:white;"
@@ -108,7 +109,7 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "IOBase" = nullBinaryIO
+		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
 
@@ -165,13 +166,13 @@ class Reader:
 	def warning(self, msg):
 		self._warnings[msg] += 1
 
-	def makeEntry(self, data: "dict[str, Any]") -> "EntryType":
+	def makeEntry(self, data: "dict[str, Any]") -> EntryType:
 		from lxml import etree as ET
 
 		glos = self._glos
 		f = BytesIO()
 
-		def br() -> "Element":
+		def br() -> Element:
 			return ET.Element("br")
 
 		keywords = []
@@ -223,7 +224,7 @@ class Reader:
 
 				# TODO: data.get("translations")
 				# list[dict[str, str]]
-				# dict keys: "code", "lang", "sense", "word"
+				# dict keys: code, "lang", "sense", "word"
 
 				etymology: str = data.get("etymology_text", "")
 				if etymology:
@@ -367,7 +368,7 @@ class Reader:
 		hf: "T_htmlfile",
 		example: "dict[str, str]",
 	) -> None:
-		# example keys: "text", "english", "ref", "type"
+		# example keys: text, "english", "ref", "type"
 		textList: list[tuple[str, str]] = []
 		_text = example.pop("example", "")
 		if _text:
@@ -533,7 +534,7 @@ class Reader:
 		#   "word": "str",
 		#   "sense": "str",
 		#   "_dis1": "str",
-		#   "tags": "list[str]"
+		#   "tags": list[str]
 		#   "extra": "str",
 		#   "english": "str"
 
@@ -554,7 +555,7 @@ class Reader:
 	) -> None:
 		if not antonyms:
 			return
-		# dict keys: "word"
+		# dict keys: word
 		with hf.element("div"):
 			hf.write("Antonyms: ")
 			for i, item in enumerate(antonyms):
@@ -572,7 +573,7 @@ class Reader:
 	) -> None:
 		if not relatedList:
 			return
-		# dict keys: "sense", "word", "english"
+		# dict keys: sense, "word", "english"
 		with hf.element("div"):
 			hf.write("Related: ")
 			for i, item in enumerate(relatedList):
@@ -673,8 +674,8 @@ class Reader:
 	@staticmethod
 	def makeList(  # noqa: PLR0913
 		hf: "T_htmlfile",
-		input_objects: "list[Any]",
-		processor: "Callable",
+		input_objects: list[Any],
+		processor: Callable,
 		single_prefix: str = "",
 		skip_single: bool = True,
 		ordered: bool = True,

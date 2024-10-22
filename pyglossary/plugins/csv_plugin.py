@@ -113,7 +113,7 @@ class Reader:
 		self._pos = -1
 		self._csvReader: "Iterable[list[str]] | None" = None
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 		self._bufferRow: "list[str] | None" = None
 
 	def open(
@@ -189,7 +189,7 @@ class Reader:
 			yield self._bufferRow
 		yield from self._csvReader
 
-	def _processRow(self, row: "list[str]") -> "EntryType | None":
+	def _processRow(self, row: list[str]) -> "EntryType | None":
 		if not row:
 			return None
 

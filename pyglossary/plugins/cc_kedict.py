@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
+from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 from io import BytesIO
@@ -58,7 +59,7 @@ class YamlReader(TextGlossaryReader):
 
 	def __init__(  # noqa: PLR0913
 		self,
-		glos: "GlossaryType",
+		glos: GlossaryType,
 		spellKey: str = "",
 		posKey: str = "",
 		synsKey: str = "",
@@ -97,8 +98,8 @@ class YamlReader(TextGlossaryReader):
 	@staticmethod
 	def _makeList(
 		hf: "lxml.etree.htmlfile",
-		input_objects: "list[Any]",
-		processor: "Callable",
+		input_objects: list[Any],
+		processor: Callable,
 		single_prefix: "str | None" = None,
 		skip_single: bool = True,
 	) -> None:
@@ -122,7 +123,7 @@ class YamlReader(TextGlossaryReader):
 	def _processExample(  # noqa: PLR6301
 		self,
 		hf: "lxml.etree.htmlfile",
-		exampleDict: "dict",
+		exampleDict: dict,
 		_count: int,
 	) -> None:
 		from lxml import etree as ET
@@ -148,7 +149,7 @@ class YamlReader(TextGlossaryReader):
 	def _processDef(
 		self,
 		hf: "lxml.etree.htmlfile",
-		defDict: "dict",
+		defDict: dict,
 		count: int,
 	) -> None:
 		from lxml import etree as ET
@@ -183,7 +184,7 @@ class YamlReader(TextGlossaryReader):
 	def _processEntry(
 		self,
 		hf: "lxml.etree.htmlfile",
-		edict: "dict",
+		edict: dict,
 	) -> None:
 		from lxml import etree as ET
 
@@ -270,7 +271,7 @@ class YamlReader(TextGlossaryReader):
 		defi = f.getvalue().decode("utf-8")
 		return word, defi, None
 
-	def nextBlock(self) -> "EntryType":
+	def nextBlock(self) -> EntryType:
 		if not self._file:
 			raise StopIteration
 		lines = []
@@ -301,7 +302,7 @@ class Reader:
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._yaml = YamlReader(
 			glos,

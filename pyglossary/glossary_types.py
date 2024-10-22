@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from collections.abc import (
 	Callable,
@@ -26,15 +28,13 @@ __all__ = [
 	"RawEntryType",
 ]
 
-MultiStr: "TypeAlias" = "str | list[str]"
+MultiStr: TypeAlias = "str | list[str]"
 
 # 3 different types in order:
 # - compressed
 # - uncompressed, without defiFormat
 # - uncompressed, with defiFormat
-RawEntryType: "TypeAlias" = (
-	"bytes |tuple[list[str], bytes] |tuple[list[str], bytes, str]"
-)
+RawEntryType: TypeAlias = "bytes |tuple[list[str], bytes] |tuple[list[str], bytes, str]"
 
 
 class EntryType(typing.Protocol):  # noqa: PLR0904
@@ -55,7 +55,7 @@ class EntryType(typing.Protocol):  # noqa: PLR0904
 	def s_word(self) -> str: ...
 
 	@property
-	def l_word(self) -> "list[str]": ...
+	def l_word(self) -> list[str]: ...
 
 	@property
 	def defi(self) -> str: ...
@@ -112,7 +112,7 @@ class EntryListType(typing.Protocol):
 	@rawEntryCompress.setter
 	def rawEntryCompress(self, enable: bool) -> None: ...
 
-	def append(self, entry: "EntryType") -> None: ...
+	def append(self, entry: EntryType) -> None: ...
 
 	def clear(self) -> None: ...
 
@@ -122,7 +122,7 @@ class EntryListType(typing.Protocol):
 
 	def setSortKey(
 		self,
-		namedSortKey: "NamedSortKey",
+		namedSortKey: NamedSortKey,
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None: ...
@@ -158,7 +158,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def setInfo(self, key: str, value: str) -> None: ...
 
-	def getExtraInfos(self, excludeKeys: "list[str]") -> "OrderedDict": ...
+	def getExtraInfos(self, excludeKeys: list[str]) -> OrderedDict: ...
 
 	@property
 	def author(self) -> str: ...
@@ -208,7 +208,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def newEntry(
 		self,
-		word: "MultiStr",
+		word: MultiStr,
 		defi: str,
 		defiFormat: str = "",
 		byteProgress: "tuple[int, int] | None" = None,

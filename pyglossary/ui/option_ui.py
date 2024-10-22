@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import json
 from typing import TYPE_CHECKING, Any
@@ -11,7 +13,7 @@ if TYPE_CHECKING:
 def registerConfigOption(
 	parser: "argparse.ArgumentParser",
 	key: str,
-	option: "Option",
+	option: Option,
 ) -> None:
 	if not option.hasFlag:
 		return

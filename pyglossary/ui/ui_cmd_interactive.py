@@ -19,6 +19,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 """
 To use this user interface:
 sudo pip3 install prompt_toolkit.
@@ -327,7 +329,7 @@ class UI(ui_cmd.UI):
 		)
 
 	@staticmethod
-	def fs_pwd(args: "list[str]"):
+	def fs_pwd(args: list[str]):
 		if args:
 			print(f"extra arguments: {args}")
 		print(os.getcwd())
@@ -362,7 +364,7 @@ class UI(ui_cmd.UI):
 			details.append(f"-> {os.readlink(argPath)}")
 		return "  ".join(details)
 
-	def fs_ls(self, args: "list[str]"):
+	def fs_ls(self, args: list[str]):
 		opts, args = self.ls_parser.parse_known_args(args=args)
 
 		if opts.help:
@@ -408,7 +410,7 @@ class UI(ui_cmd.UI):
 				)
 
 	@staticmethod
-	def fs_cd_parent(args: "list[str]"):
+	def fs_cd_parent(args: list[str]):
 		if args:
 			log.error("This command does not take arguments")
 			return
@@ -417,7 +419,7 @@ class UI(ui_cmd.UI):
 		print(f"Changed current directory to: {newDir}")
 
 	@staticmethod
-	def fs_cd(args: "list[str]"):
+	def fs_cd(args: list[str]):
 		if len(args) != 1:
 			log.error("This command takes exactly one argument")
 			return
@@ -583,14 +585,14 @@ class UI(ui_cmd.UI):
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
 	@staticmethod
-	def getOptionValueSuggestValues(option: "Option"):
+	def getOptionValueSuggestValues(option: Option):
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
 			return ["True", "False"]
 		return None
 
-	def getOptionValueCompleter(self, option: "Option"):
+	def getOptionValueCompleter(self, option: Option):
 		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
@@ -932,7 +934,7 @@ class UI(ui_cmd.UI):
 
 		return True  # convert
 
-	def getRunKeywordArgs(self) -> "dict":
+	def getRunKeywordArgs(self) -> dict:
 		return {
 			"inputFilename": self._inputFilename,
 			"outputFilename": self._outputFilename,

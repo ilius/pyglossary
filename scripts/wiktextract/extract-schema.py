@@ -44,7 +44,7 @@ schema = Node(Type="dict")
 valueSet: "dict[str, set]" = {}
 
 
-def addToValueSet(value: "str | int | float | bool", path: "list[str]"):
+def addToValueSet(value: "str | int | float | bool", path: list[str]):
 	if isinstance(value, str) and "://" in value:
 		return
 	pathStr = ".".join(path)
@@ -54,7 +54,7 @@ def addToValueSet(value: "str | int | float | bool", path: "list[str]"):
 	valueSet[pathStr] = {value}
 
 
-def getSchemaNode(path: "list[str]"):
+def getSchemaNode(path: list[str]):
 	node = schema
 	for name in path:
 		if name == "[]":
@@ -76,7 +76,7 @@ def getSchemaNode(path: "list[str]"):
 	return node
 
 
-def updateSchema(_type: str, path: "list[str]"):
+def updateSchema(_type: str, path: list[str]):
 	node = getSchemaNode(path)
 	prevType = node.Type
 	if prevType and prevType != _type:
@@ -86,7 +86,7 @@ def updateSchema(_type: str, path: "list[str]"):
 	node.Type = _type
 
 
-def parseList(data: "list[Any]", path: "list[str]", node: Node):
+def parseList(data: list[Any], path: list[str], node: Node):
 	node.Type = "list"
 	if not node.ListOf:
 		node.ListOf = Node()
@@ -109,7 +109,7 @@ def parseList(data: "list[Any]", path: "list[str]", node: Node):
 	updateSchema(itemTypesStr, path + ["[]"])
 
 
-def parseDict(data: "dict[str, Any]", path: "list[str]", node: Node):
+def parseDict(data: "dict[str, Any]", path: list[str], node: Node):
 	if not node.Dict:
 		node.Dict = {}
 		node.KeyScore = Counter()

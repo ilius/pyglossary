@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
+from __future__ import annotations
 
 from collections.abc import Iterator
 from io import BytesIO
@@ -53,7 +54,7 @@ class Reader:
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file = None
@@ -117,7 +118,7 @@ class Reader:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header: "Element") -> None:
+	def setMetadata(self, header: Element) -> None:
 		if header is None:
 			return
 
@@ -143,7 +144,7 @@ class Reader:
 
 	@staticmethod
 	def tostring(
-		elem: "Element",
+		elem: Element,
 	) -> str:
 		from lxml import etree as ET
 
@@ -158,7 +159,7 @@ class Reader:
 		)
 
 	@staticmethod
-	def innerXML(elem: "Element") -> str:
+	def innerXML(elem: Element) -> str:
 		from lxml import etree as ET
 
 		elemName = elem.xpath("name(/*)")
@@ -171,7 +172,7 @@ class Reader:
 
 		return resultStr
 
-	def getTerm(self, termE: "Element") -> str:  # noqa: PLR6301
+	def getTerm(self, termE: Element) -> str:  # noqa: PLR6301
 		from lxml import etree as ET
 
 		term = (

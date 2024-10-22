@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from .sort_keys_types import sortKeyType, sqliteSortKeyType
+	from .sort_keys_types import SortKeyType, SQLiteSortKeyType
 
 
 desc = "ASCII-Lowercase Headword"
@@ -10,8 +12,8 @@ desc = "ASCII-Lowercase Headword"
 def normal(
 	sortEncoding: str = "utf-8",
 	**_options,
-) -> "sortKeyType":
-	def sortKey(words: "list[str]") -> bytes:
+) -> SortKeyType:
+	def sortKey(words: list[str]) -> bytes:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
 	return sortKey
@@ -19,12 +21,12 @@ def normal(
 
 # def locale(
 # 	collator: "T_Collator",  # noqa: F821
-# ) -> "sortKeyType":
+# ) -> SortKeyType:
 # 	raise NotImplementedError("")
 
 
-def sqlite(sortEncoding: str = "utf-8", **_options) -> "sqliteSortKeyType":
-	def sortKey(words: "list[str]") -> bytes:
+def sqlite(sortEncoding: str = "utf-8", **_options) -> SQLiteSortKeyType:
+	def sortKey(words: list[str]) -> bytes:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
 	return [

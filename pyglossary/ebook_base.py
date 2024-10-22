@@ -22,6 +22,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from __future__ import annotations
+
 import logging
 import os
 import shutil
@@ -46,7 +48,7 @@ log = logging.getLogger("pyglossary")
 
 
 class GroupState:
-	def __init__(self, writer: "EbookWriter") -> None:
+	def __init__(self, writer: EbookWriter) -> None:
 		self.writer = writer
 		self.last_prefix = ""
 		self.group_index = -1
@@ -55,12 +57,12 @@ class GroupState:
 	def reset(self) -> None:
 		self.first_word = ""
 		self.last_word = ""
-		self.group_contents: "list[str]" = []
+		self.group_contents: list[str] = []
 
 	def is_new(self, prefix: str) -> bool:
 		return bool(self.last_prefix) and prefix != self.last_prefix
 
-	def add(self, entry: "EntryType", prefix: str) -> None:
+	def add(self, entry: EntryType, prefix: str) -> None:
 		word = entry.s_word
 		defi = entry.defi
 		if not self.first_word:
@@ -137,7 +139,7 @@ class EbookWriter:
 
 	def __init__(
 		self,
-		glos: "GlossaryType",
+		glos: GlossaryType,
 		escape_strings: bool = False,
 		# ignore_synonyms=False,
 		# flatten_synonyms=False,
@@ -157,9 +159,9 @@ class EbookWriter:
 
 		self._tmpDir = tempfile.mkdtemp()
 		self.cover = ""
-		self.files: "list[dict[str, Any]]" = []
-		self.manifest_files: "list[dict[str, str]]" = []
-		self._group_labels: "list[str]" = []
+		self.files: list[dict[str, Any]] = []
+		self.manifest_files: list[dict[str, str]] = []
+		self._group_labels: list[str] = []
 
 	def finish(self) -> None:
 		self._filename = ""
@@ -245,13 +247,13 @@ class EbookWriter:
 	def get_prefix(self, word: str) -> str:
 		raise NotImplementedError
 
-	def sortKey(self, words: "list[str]") -> "Any":
+	def sortKey(self, words: list[str]) -> Any:
 		raise NotImplementedError
 
 	def _add_group(
 		self,
-		group_labels: "list[str]",
-		state: "GroupState",
+		group_labels: list[str],
+		state: GroupState,
 	) -> None:
 		if not state.last_prefix:
 			return
@@ -284,7 +286,7 @@ class EbookWriter:
 			"application/xhtml+xml",
 		)
 
-	def write_data_entry(self, entry: "EntryType") -> None:
+	def write_data_entry(self, entry: EntryType) -> None:
 		if entry.getFileName() == "style.css":
 			self.add_file_manifest(
 				"OEBPS/style.css",
@@ -297,7 +299,7 @@ class EbookWriter:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
-		group_labels: "list[str]" = []
+		group_labels: list[str] = []
 
 		state = GroupState(self)
 		while True:
@@ -323,7 +325,7 @@ class EbookWriter:
 		self,
 		word: str,
 		defi: str,
-		variants: "list[str] | None" = None,  # noqa: ARG002
+		variants: list[str] | None = None,  # noqa: ARG002
 	) -> str:
 		return self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
 			headword=self.escape_if_needed(word),
@@ -342,7 +344,7 @@ class EbookWriter:
 			.replace("<", "&lt;")
 		)
 
-	def write_index(self, group_labels: "list[str]") -> None:
+	def write_index(self, group_labels: list[str]) -> None:
 		"""group_labels: a list of labels."""
 		links = []
 		for label_i, label in enumerate(group_labels):
@@ -420,7 +422,7 @@ class EbookWriter:
 
 		self.add_file("OEBPS/content.opf", opf_contents)
 
-	def write_ncx(self, group_labels: "list[str]") -> None:
+	def write_ncx(self, group_labels: list[str]) -> None:
 		"""
 		write_ncx.
 

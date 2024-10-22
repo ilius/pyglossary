@@ -1,4 +1,6 @@
 
+
+from __future__ import annotations
 import typing
 # -*- coding: utf-8 -*-
 
@@ -39,7 +41,7 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
@@ -88,7 +90,7 @@ class Reader:
 
 
 class Writer:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 

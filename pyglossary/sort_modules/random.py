@@ -1,16 +1,18 @@
+from __future__ import annotations
+
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from pyglossary.icu_types import T_Collator
 
-	from .sort_keys_types import sortKeyType, sqliteSortKeyType
+	from .sort_keys_types import SortKeyType, SQLiteSortKeyType
 
 
 desc = "Random"
 
 
-def normal(**_options) -> "sortKeyType":
+def normal(**_options) -> SortKeyType:
 	from random import random
 
 	return lambda _words: random()
@@ -18,13 +20,13 @@ def normal(**_options) -> "sortKeyType":
 
 def locale(
 	_collator: "T_Collator",  # noqa: F821
-) -> "sortKeyType":
+) -> SortKeyType:
 	from random import random
 
 	return lambda **_options: lambda _words: random()
 
 
-def sqlite(**_options) -> "sqliteSortKeyType":
+def sqlite(**_options) -> SQLiteSortKeyType:
 	from random import random
 
 	return [
@@ -39,7 +41,7 @@ def sqlite(**_options) -> "sqliteSortKeyType":
 def sqlite_locale(
 	_collator: "T_Collator",  # noqa: F821
 	**_options,
-) -> "Callable[..., sqliteSortKeyType]":
+) -> "Callable[..., SQLiteSortKeyType]":
 	from random import random
 
 	return lambda **_opt: [

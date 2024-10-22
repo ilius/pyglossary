@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import os
 from os.path import dirname, isdir, join
 from typing import TYPE_CHECKING, cast
@@ -9,6 +11,7 @@ if TYPE_CHECKING:
 
 	from lxml import builder
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element
 	from pyglossary.xdxf.transform import XdxfTransformer
 
@@ -18,7 +21,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
@@ -75,14 +77,14 @@ class Reader:
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase" = nullBinaryIO
 		self._fileSize = 0
 		self._xdxfTr: "XdxfTransformer | None" = None
 
-	def xdxf_setup(self) -> "XdxfTransformer":
+	def xdxf_setup(self) -> XdxfTransformer:
 		from pyglossary.xdxf.transform import XdxfTransformer
 
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
@@ -137,7 +139,7 @@ class Reader:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setMetadata(self, header: "Element") -> None:
+	def setMetadata(self, header: Element) -> None:
 		if (elem := header.find("./bookname")) is not None and elem.text:
 			self.setGlosInfo("name", elem.text)
 
@@ -329,7 +331,7 @@ class Writer:
 	def writeDataEntry(
 		self,
 		maker: "builder.ElementMaker",  # noqa: ARG002
-		entry: "EntryType",
+		entry: EntryType,
 	) -> None:
 		entry.save(self._resDir)
 		# TODO: create article tag with "definition-r" in it?

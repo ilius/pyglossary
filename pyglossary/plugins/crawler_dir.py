@@ -1,15 +1,16 @@
 # mypy: ignore-errors
+from __future__ import annotations
 
 from collections.abc import Generator, Iterator
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
+from typing import TYPE_CHECKING
 
 from pyglossary.compression import (
 	compressionOpenFunc,
 )
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	Option,
 	StrOption,
@@ -18,6 +19,9 @@ from pyglossary.text_utils import (
 	escapeNTB,
 	splitByBarUnescapeNTB,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -158,7 +162,7 @@ class Reader:
 	def __len__(self) -> int:
 		return self._wordCount
 
-	def _fromFile(self, fpath: str) -> "EntryType":
+	def _fromFile(self, fpath: str) -> EntryType:
 		_, ext = splitext(fpath)
 		c_open = compressionOpenFunc(ext.lstrip("."))
 		if not c_open:

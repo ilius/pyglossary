@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import html
 from typing import TYPE_CHECKING
@@ -42,7 +43,7 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 

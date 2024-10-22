@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import re
 from io import BytesIO, IOBase
@@ -9,6 +10,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
 	from typing import Any
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
@@ -17,7 +19,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.langs import langDict
@@ -168,8 +169,8 @@ class Reader:
 	@staticmethod
 	def makeList(  # noqa: PLR0913
 		hf: "T_htmlfile",
-		input_objects: "list[Any]",
-		processor: "Callable",
+		input_objects: list[Any],
+		processor: Callable,
 		single_prefix: str = "",
 		skip_single: bool = True,
 		ordered: bool = True,
@@ -204,7 +205,7 @@ class Reader:
 	def writeRef(  # noqa: PLR6301
 		self,
 		hf: "T_htmlfile",
-		ref: "Element",
+		ref: Element,
 	) -> None:
 		target = ref.get("target")
 		attrib: "dict[str, str]" = {}
@@ -219,14 +220,14 @@ class Reader:
 	def writeQuote(
 		self,
 		hf: "T_htmlfile",
-		elem: "Element",
+		elem: Element,
 	) -> None:
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
 		self,
 		hf: "T_htmlfile",
-		elem: "Element",
+		elem: Element,
 	) -> None:
 		from lxml import etree as ET
 
@@ -272,7 +273,7 @@ class Reader:
 	def writeDef(
 		self,
 		hf: "T_htmlfile",
-		elem: "Element",
+		elem: Element,
 	) -> None:
 		# sep = None
 		# if self._cif_newline:
@@ -308,7 +309,7 @@ class Reader:
 	def writeWithDirection(
 		self,
 		hf: "T_htmlfile",
-		child: "Element",
+		child: Element,
 		tag: str,
 	) -> None:
 		attrib = dict(child.attrib)
@@ -338,7 +339,7 @@ class Reader:
 	def writeRichText(
 		self,
 		hf: "T_htmlfile",
-		el: "Element",
+		el: Element,
 	) -> None:
 		from lxml import etree as ET
 
@@ -365,7 +366,7 @@ class Reader:
 
 			self.writeRichText(hf, child)
 
-	def getLangDesc(self, elem: "Element") -> "str | None":
+	def getLangDesc(self, elem: Element) -> "str | None":
 		lang = elem.attrib.get(self.xmlLang)
 		if lang:
 			langObj = langDict[lang]
@@ -384,7 +385,7 @@ class Reader:
 	def writeLangTag(
 		self,
 		hf: "T_htmlfile",
-		elem: "Element",
+		elem: Element,
 	) -> None:
 		langDesc = self.getLangDesc(elem)
 		if not langDesc:
@@ -398,7 +399,7 @@ class Reader:
 	def writeNote(
 		self,
 		hf: "T_htmlfile",
-		note: "Element",
+		note: Element,
 	) -> None:
 		self.writeRichText(hf, note)
 
@@ -407,7 +408,7 @@ class Reader:
 	def writeSenseSense(  # noqa: PLR0912
 		self,
 		hf: "T_htmlfile",
-		sense: "Element",
+		sense: Element,
 	) -> int:
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
@@ -562,7 +563,7 @@ class Reader:
 	def writeGramGroups(
 		self,
 		hf: "T_htmlfile",
-		gramGrpList: "list[Element]",
+		gramGrpList: list[Element],
 	) -> None:
 		from lxml import etree as ET
 
@@ -593,14 +594,14 @@ class Reader:
 	def writeSenseGrams(
 		self,
 		hf: "T_htmlfile",
-		sense: "Element",
+		sense: Element,
 	) -> None:
 		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
 
 	def writeSense(
 		self,
 		hf: "T_htmlfile",
-		sense: "Element",
+		sense: Element,
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
 		self.writeSenseGrams(hf, sense)
@@ -612,7 +613,7 @@ class Reader:
 		)
 		self.writeSenseSense(hf, sense)
 
-	def getDirection(self, elem: "Element") -> str:
+	def getDirection(self, elem: Element) -> str:
 		lang = elem.get(self.xmlLang)
 		if lang is None:
 			return ""
@@ -627,7 +628,7 @@ class Reader:
 	def writeSenseList(
 		self,
 		hf: "T_htmlfile",
-		senseList: "list[Element]",
+		senseList: list[Element],
 	) -> None:
 		# these <sense> elements are 1st-level (directly under <entry>)
 		if not senseList:
@@ -650,7 +651,7 @@ class Reader:
 			# list_type="A",
 		)
 
-	def normalizeGramGrpChild(self, elem: "Element") -> str:  # noqa: PLR0912
+	def normalizeGramGrpChild(self, elem: Element) -> str:  # noqa: PLR0912
 		# child can be "pos" or "gen"
 		tag = elem.tag
 		text = elem.text
@@ -695,8 +696,8 @@ class Reader:
 
 	def getEntryByElem(  # noqa: PLR0912
 		self,
-		entry: "Element",
-	) -> "EntryType":
+		entry: Element,
+	) -> EntryType:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -709,7 +710,7 @@ class Reader:
 				if elem.tag not in self.supportedTags:
 					self._discoveredTags[elem.tag] = elem
 
-		def br() -> "Element":
+		def br() -> Element:
 			return ET.Element("br")
 
 		inflectedKeywords = []
@@ -771,7 +772,7 @@ class Reader:
 			byteProgress=(_file.tell(), self._fileSize),
 		)
 
-	def setWordCount(self, header: "Element") -> None:
+	def setWordCount(self, header: Element) -> None:
 		extent_elem = header.find(".//extent", self.ns)
 		if extent_elem is None:
 			log.warning(
@@ -788,7 +789,7 @@ class Reader:
 			log.exception(f"unexpected {extent=}")
 
 	@staticmethod
-	def tostring(elem: "Element") -> str:
+	def tostring(elem: Element) -> str:
 		from lxml import etree as ET
 
 		return (
@@ -801,14 +802,14 @@ class Reader:
 			.strip()
 		)
 
-	def stripParag(self, elem: "Element") -> str:
+	def stripParag(self, elem: Element) -> str:
 		text = self.tostring(elem)
 		text = self._p_pattern.sub("\\2", text)
 		return text  # noqa: RET504
 
 	def stripParagList(
 		self,
-		elems: "list[Element]",
+		elems: list[Element],
 	) -> str:
 		lines = []
 		for elem in elems:
@@ -822,7 +823,7 @@ class Reader:
 	def setGlosInfo(self, key: str, value: str) -> None:
 		self._glos.setInfo(key, unescape_unicode(value))
 
-	def setCopyright(self, header: "Element") -> None:
+	def setCopyright(self, header: Element) -> None:
 		elems = header.findall(".//availability//p", self.ns)
 		if not elems:
 			log.warning("did not find copyright")
@@ -832,14 +833,14 @@ class Reader:
 		self.setGlosInfo("copyright", _copyright)
 		log.debug(f"Copyright: {_copyright!r}")
 
-	def setPublisher(self, header: "Element") -> None:
+	def setPublisher(self, header: Element) -> None:
 		elem = header.find(".//publisher", self.ns)
 		if elem is None or not elem.text:
 			log.warning("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 
-	def setCreationTime(self, header: "Element") -> None:
+	def setCreationTime(self, header: Element) -> None:
 		elem = header.find(".//publicationStmt/date", self.ns)
 		if elem is None or not elem.text:
 			return
@@ -848,7 +849,7 @@ class Reader:
 	def replaceRefLink(self, text: str) -> str:
 		return self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 
-	def setDescription(self, header: "Element") -> None:
+	def setDescription(self, header: Element) -> None:
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", self.ns)
@@ -875,7 +876,7 @@ class Reader:
 			"--------------------------------------",
 		)
 
-	def setMetadata(self, header: "Element") -> None:
+	def setMetadata(self, header: Element) -> None:
 		self.setWordCount(header)
 		title = header.find(".//title", self.ns)
 		if title is not None and title.text:
@@ -894,7 +895,7 @@ class Reader:
 		self._glos = glos
 		self._filename = ""
 		self._dirname = ""
-		self._file: "IOBase" = nullBinaryIO
+		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
 		self._discoveredTags: "dict[str, Element]" = {}
@@ -957,7 +958,7 @@ class Reader:
 
 		cfile.close()
 
-	def loadInclude(self, elem: "Element") -> "Reader | None":
+	def loadInclude(self, elem: Element) -> "Reader | None":
 		href = elem.attrib.get("href")
 		if not href:
 			log.error(f"empty href in {elem}")

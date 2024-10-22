@@ -25,7 +25,7 @@
 __all__ = ["checkDepends"]
 
 
-def checkDepends(depends: "dict[str, str]") -> "list[str]":
+def checkDepends(depends: "dict[str, str]") -> list[str]:
 	"""Return the list of non-installed dependencies."""
 	if not depends:
 		return []

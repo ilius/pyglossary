@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import html
 from collections.abc import Callable, Iterator
@@ -47,7 +48,7 @@ optionsProp: "dict[str, Option]" = {}
 
 
 class Reader:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
@@ -75,8 +76,8 @@ class Reader:
 	@staticmethod
 	def makeList(
 		hf: "T_htmlfile",
-		input_elements: "list[Element]",
-		processor: "Callable",
+		input_elements: list[Element],
+		processor: Callable,
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:

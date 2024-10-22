@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 #
+from __future__ import annotations
+
 """Lax implementation of xdxf reader."""
 #
 # Copyright © 2023 Saeed Rasooli
@@ -31,12 +33,13 @@ if TYPE_CHECKING:
 
 	from lxml.html import HtmlElement as Element
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
+
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
@@ -85,7 +88,7 @@ optionsProp: "dict[str, Option]" = {
 if TYPE_CHECKING:
 
 	class TransformerType(typing.Protocol):
-		def transform(self, article: "Element") -> str: ...
+		def transform(self, article: Element) -> str: ...
 
 
 class Reader:
@@ -220,7 +223,7 @@ class Reader:
 
 	@staticmethod
 	def tostring(
-		elem: "Element",
+		elem: Element,
 	) -> str:
 		from lxml.html import tostring
 
@@ -234,14 +237,14 @@ class Reader:
 			.strip()
 		)
 
-	def titles(self, article: "Element") -> "list[str]":
+	def titles(self, article: Element) -> list[str]:
 		"""
 		:param article: <ar> tag
 		:return: (title (str) | None, alternative titles (set))
 		"""
 		from itertools import combinations
 
-		titles: "list[str]" = []
+		titles: list[str] = []
 		for title_element in article.findall("k"):
 			if title_element.text is None:
 				# TODO: look for <opt> tag?
@@ -249,9 +252,11 @@ class Reader:
 				continue
 			n_opts = len([c for c in title_element if c.tag == "opt"])
 			if n_opts:
-				for j in range(n_opts + 1):
-					for comb in combinations(list(range(n_opts)), j):
-						titles.append(self._mktitle(title_element, comb))
+				titles += [
+					self._mktitle(title_element, comb)
+					for j in range(n_opts + 1)
+					for comb in combinations(list(range(n_opts)), j)
+				]
 			else:
 				titles.append(self._mktitle(title_element))
 
@@ -259,7 +264,7 @@ class Reader:
 
 	def _mktitle(  # noqa: PLR6301
 		self,
-		title_element: "Element",
+		title_element: Element,
 		include_opts: "Sequence | None" = None,
 	) -> str:
 		if include_opts is None:
