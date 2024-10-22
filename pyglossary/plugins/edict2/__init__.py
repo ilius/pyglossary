@@ -65,6 +65,9 @@ optionsProp: "dict[str, Option]" = {
 	"traditional_title": BoolOption(
 		comment="Use traditional Chinese for entry titles/keys",
 	),
+	"colorize_tones": BoolOption(
+		comment="Set to false to disable tones coloring",
+	),
 }
 
 
@@ -75,6 +78,7 @@ class Reader:
 
 	_encoding: str = "utf-8"
 	_traditional_title: bool = False
+	_colorize_tones: bool = True
 
 	def __init__(self, glos: "GlossaryType") -> None:
 		self._glos = glos
@@ -121,6 +125,7 @@ class Reader:
 			names, article = conv.make_entry(
 				*parts,
 				traditional_title=self._traditional_title,
+				colorize_tones=self._colorize_tones
 			)
 			entry = self._glos.newEntry(
 				names,
