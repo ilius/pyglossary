@@ -34,7 +34,7 @@ def parse_line(line: str) -> "tuple[str, str, str, list[str]] | None":
 	return trad, simp, pinyin, eng.split("/")
 
 
-def make_entry(
+def make_entry( # noqa: PLR0913
 	trad: str,
 	simp: str,
 	pinyin: str,
@@ -76,7 +76,7 @@ def colorize(
 				hf.write(syllable)
 
 
-def render_article(
+def render_article( # noqa: PLR0913
 	trad: str,
 	simp: str,
 	pinyin: str,
