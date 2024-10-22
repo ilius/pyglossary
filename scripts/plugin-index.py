@@ -73,5 +73,6 @@ with open(
 	join(rootDir, "plugins-meta", "index.json"),
 	mode="w",
 	encoding="utf-8",
+	newline="\n",
 ) as _file:
 	_file.write(jsonText)
