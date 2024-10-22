@@ -59,7 +59,7 @@ def colorize(
 	colorize_tones: bool,
 ) -> None:
 
-	if (len(syllables) != len(tones) or not colorize_tones:
+	if len(syllables) != len(tones) or not colorize_tones:
 
 		if len(syllables) != len(tones):
 			log.warning(f"unmatched tones: {syllables=}, {tones=}")
