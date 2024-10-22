@@ -36,6 +36,7 @@ if TYPE_CHECKING:
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS, DEFAULT_YES
 from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.glossary_utils import Error
 from pyglossary.option import (
 	BoolOption,
 	Option,
@@ -960,11 +961,9 @@ class Writer:
 			wordCount += 1
 
 			if dictMark > dictMarkMax:
-				log.error(
-					f"StarDict: {dictMark = } is too big, "
-					"set option large_file=true",
+				raise Error(
+					f"StarDict: {dictMark = } is too big, set option large_file=true",
 				)
-				break
 
 		dictFile.close()
 		idxFile.close()
@@ -1041,11 +1040,9 @@ class Writer:
 			wordCount += 1
 
 			if dictMark > dictMarkMax:
-				log.error(
-					f"StarDict: {dictMark = } is too big, "
-					"set option large_file=true",
+				raise Error(
+					f"StarDict: {dictMark = } is too big, set option large_file=true",
 				)
-				break
 
 		dictFile.close()
 		idxFile.close()
@@ -1141,11 +1138,9 @@ class Writer:
 			dictMark += blockLen
 
 			if dictMark > dictMarkMax:
-				log.error(
-					f"StarDict: {dictMark = } is too big, "
-					"set option large_file=true",
+				raise Error(
+					f"StarDict: {dictMark = } is too big, set option large_file=true",
 				)
-				break
 
 		wordCount = self.writeIdxFile(idxBlockList)
 
@@ -1214,11 +1209,9 @@ class Writer:
 			dictMark += blockLen
 
 			if dictMark > dictMarkMax:
-				log.error(
-					f"StarDict: {dictMark = } is too big, "
-					"set option large_file=true",
+				raise Error(
+					f"StarDict: {dictMark = } is too big, set option large_file=true",
 				)
-				break
 
 		wordCount = self.writeIdxFile(idxBlockList)
 
