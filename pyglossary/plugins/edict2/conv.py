@@ -59,9 +59,9 @@ def colorize(
 	colorize_tones: bool,
 ) -> None:
 
-	if (len(syllables) != len(tones)) or (colorize_tones is False):
+	if (len(syllables) != len(tones) or not colorize_tones:
 
-		if (len(syllables) != len(tones)):
+		if len(syllables) != len(tones):
 			log.warning(f"unmatched tones: {syllables=}, {tones=}")
 
 		with hf.element("div", style="display: inline-block"):
