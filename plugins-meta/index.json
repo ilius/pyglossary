@@ -944,13 +944,19 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Use traditional Chinese for entry titles/keys"
+			},
+			"colorize_tones": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Set to false to disable tones coloring"
 			}
 		},
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
 			"encoding": "utf-8",
-			"traditional_title": false
+			"traditional_title": false,
+			"colorize_tones": true
 		},
 		"readDepends": {
 			"lxml": "lxml"
