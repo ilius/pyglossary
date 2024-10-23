@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 from os.path import join
@@ -10,8 +12,8 @@ log = logging.getLogger("pyglossary")
 class Lang:
 	def __init__(
 		self,
-		codes: "list[str]",
-		names: "list[str]",
+		codes: list[str],
+		names: list[str],
 		titleTag: str = "b",
 		rtl: int = 0,
 	) -> None:
@@ -33,11 +35,11 @@ class Lang:
 		return f"Lang({self._codes + self._names})"
 
 	@property
-	def codes(self) -> "list[str]":
+	def codes(self) -> list[str]:
 		return self._codes
 
 	@property
-	def names(self) -> "list[str]":
+	def names(self) -> list[str]:
 		return self._names
 
 	@property
@@ -58,7 +60,7 @@ class Lang:
 
 
 class LangDict(dict):
-	def _addLang(self, lang: "Lang") -> None:
+	def _addLang(self, lang: Lang) -> None:
 		for key in lang.codes:
 			if key in self:
 				log.error(f"duplicate language code: {key}")

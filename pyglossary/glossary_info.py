@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import logging
 from collections import OrderedDict as odict
@@ -46,7 +47,7 @@ class GlossaryInfo:
 	def __init__(self) -> None:
 		self._info: "dict[str, str]" = odict()
 
-	def infoKeys(self) -> "list[str]":
+	def infoKeys(self) -> list[str]:
 		return list(self._info)
 
 	# def formatInfoKeys(self, format: str):# FIXME
@@ -79,7 +80,7 @@ class GlossaryInfo:
 		key = infoKeysAliasDict.get(key.lower(), key)
 		self._info[key] = value
 
-	def getExtraInfos(self, excludeKeys: "list[str]") -> "odict":
+	def getExtraInfos(self, excludeKeys: list[str]) -> odict:
 		"""
 		excludeKeys: a list of (basic) info keys to be excluded
 		returns an OrderedDict including the rest of info keys,

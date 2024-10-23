@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 from collections.abc import Generator, Iterator
 from typing import (
@@ -51,7 +52,7 @@ optionsProp: "dict[str, Option]" = {
 
 
 class Reader:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
@@ -107,7 +108,7 @@ class Reader:
 class Writer:
 	_fuzzy: int = True
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
@@ -230,7 +231,7 @@ class Writer:
 		if cur is None:
 			raise ValueError("cur is None")
 		for term in terms:
-			subs: "set[str]" = set()
+			subs: set[str] = set()
 			for word in term.split(" "):
 				eword = "\n" + word
 				subs.update(eword[i : i + 3] for i in range(len(eword) - 2))

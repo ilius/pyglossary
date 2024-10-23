@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -20,7 +22,7 @@ class StrWithDesc(str):
 	desc: str
 	__slots__ = ["desc"]
 
-	def __new__(cls: "type", name: str, desc: str) -> "StrWithDesc":
+	def __new__(cls: type, name: str, desc: str) -> StrWithDesc:
 		s: StrWithDesc = str.__new__(cls, name)
 		s.desc = desc
 		flagsByName[name] = s
@@ -33,4 +35,4 @@ DEFAULT_NO = StrWithDesc("default_no", "No (by default)")
 NEVER = StrWithDesc("never", "Never")
 
 # to satisfy mypy:
-YesNoAlwaysNever: "TypeAlias" = StrWithDesc
+YesNoAlwaysNever: TypeAlias = StrWithDesc

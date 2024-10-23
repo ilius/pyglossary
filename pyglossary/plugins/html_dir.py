@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import html
 import os
@@ -12,11 +13,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	import io
 
+	from pyglossary.glossary_types import (
+		EntryType,
+		GlossaryType,
+	)
+
 from pyglossary.core import log
-from pyglossary.glossary_types import (
-	EntryType,
-	GlossaryType,
-)
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -111,7 +113,7 @@ class Writer:
 	_word_title: bool = True
 
 	@staticmethod
-	def stripFullHtmlError(entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(entry: EntryType, error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
 	def __init__(self, glos: GlossaryType) -> None:
@@ -121,7 +123,7 @@ class Writer:
 		self._encoding = "utf-8"
 		self._filename_format = "{n:05d}.html"
 		self._tail = "</body></html>"
-		self._filenameList: "list[str]" = []
+		self._filenameList: list[str] = []
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 		self._resSrcPattern = re.compile(' src="([^"]*)"')
@@ -344,7 +346,7 @@ class Writer:
 
 		entry_url_fmt = glos.getInfo("entry_url")
 
-		def getEntryWebLink(entry: "EntryType") -> str:
+		def getEntryWebLink(entry: EntryType) -> str:
 			if not entry_url_fmt:
 				return ""
 			url = entry_url_fmt.format(word=html.escape(entry.l_word[0]))

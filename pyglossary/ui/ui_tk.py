@@ -16,6 +16,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 import logging
 import os
@@ -140,7 +141,7 @@ def newReadOnlyText(
 	widget.insert(1.0, text)
 	widget.pack()
 
-	# widget.bind("<Key>", lambda e: "break")
+	# widget.bind("<Key>", lambda e: break)
 	widget.configure(state="disabled")
 
 	# if tkinter is 8.5 or above you'll want the selection background
@@ -315,10 +316,10 @@ class ProgressBar(tix.Frame):
 class FormatDialog(tix.Toplevel):
 	def __init__(  # noqa: PLR0913
 		self,
-		descList: "list[str]",
+		descList: list[str],
 		title: str,
-		onOk: "Callable",
-		button: "FormatButton",
+		onOk: Callable,
+		button: FormatButton,
 		activeDesc: str = "",
 	) -> None:
 		tix.Toplevel.__init__(self)
@@ -505,9 +506,9 @@ class FormatButton(tk.Button):
 
 	def __init__(
 		self,
-		descList: "list[str]",
+		descList: list[str],
 		dialogTitle: str,
-		onChange: "Callable",
+		onChange: Callable,
 		master=None,
 	) -> None:
 		self.var = tk.StringVar()
@@ -867,8 +868,8 @@ class FormatOptionsButton(tk.Button):
 	def __init__(
 		self,
 		kind: "Literal['Read', 'Write']",
-		values: "dict",
-		formatInput: "FormatButton",
+		values: dict,
+		formatInput: FormatButton,
 		master=None,
 	) -> None:
 		tk.Button.__init__(

@@ -162,7 +162,7 @@ class Reader:
 		self._file: "io.TextIOBase" = nullTextIO
 		self._fileSize = 0
 		self._bufferLine = ""
-		self._resFileSet: "set[str]" = set()
+		self._resFileSet: set[str] = set()
 		self._includes: list[Reader] = []
 		self._abbrevDict: dict[str, str] = {}
 
@@ -327,8 +327,8 @@ class Reader:
 			yield from reader
 			reader.close()
 
-		term_lines: "list[str]" = []
-		text_lines: "list[str]" = []
+		term_lines: list[str] = []
+		text_lines: list[str] = []
 		for line in self._iterLines():
 			if not line.strip():
 				continue
@@ -359,8 +359,8 @@ class Reader:
 
 	def parseEntryBlock(
 		self,
-		term_lines: "list[str]",
-		text_lines: "list[str]",
+		term_lines: list[str],
+		text_lines: list[str],
 	) -> EntryType:
 		terms = []
 		defiTitles = []

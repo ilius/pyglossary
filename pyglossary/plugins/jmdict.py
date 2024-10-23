@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 import re
@@ -10,6 +11,10 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Iterator
 
+	from pyglossary.glossary_types import (
+		EntryType,
+		GlossaryType,
+	)
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 from pyglossary.compression import (
@@ -17,10 +22,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import pip
-from pyglossary.glossary_types import (
-	EntryType,
-	GlossaryType,
-)
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
@@ -100,8 +101,8 @@ class Reader:
 	@staticmethod
 	def makeList(
 		hf: "T_htmlfile",
-		input_objects: "list[Element]",
-		processor: "Callable",
+		input_objects: list[Element],
+		processor: Callable,
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:
@@ -124,11 +125,11 @@ class Reader:
 	def writeSense(  # noqa: PLR0912
 		self,
 		hf: "T_htmlfile",
-		sense: "Element",
+		sense: Element,
 	) -> None:
 		from lxml import etree as ET
 
-		def br() -> "Element":
+		def br() -> Element:
 			return ET.Element("br")
 
 		for elem in sense.findall("pos"):
@@ -233,7 +234,7 @@ class Reader:
 						if not textElem.text:
 							continue
 						text = textElem.text
-						sentList: "list[str]" = []
+						sentList: list[str] = []
 						for sentElem in elem.findall("ex_sent"):
 							if not sentElem.text:
 								continue
@@ -251,8 +252,8 @@ class Reader:
 	# TODO: break it down
 	def getEntryByElem(  # noqa: PLR0912
 		self,
-		entry: "Element",
-	) -> "EntryType":
+		entry: Element,
+	) -> EntryType:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -260,13 +261,13 @@ class Reader:
 		f = BytesIO()
 		translit = self._translitation
 
-		def br() -> "Element":
+		def br() -> Element:
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
-			kebList: "list[str]" = []
-			rebList: "list[str]" = []
-			kebDisplayList: "list[str]" = []
+			kebList: list[str] = []
+			rebList: list[str] = []
+			kebDisplayList: list[str] = []
 			rebDisplayList: "list[tuple[str, list[str]]]" = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
@@ -372,7 +373,7 @@ class Reader:
 		)
 
 	@staticmethod
-	def tostring(elem: "Element") -> str:
+	def tostring(elem: Element) -> str:
 		from lxml import etree as ET
 
 		return (

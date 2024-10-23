@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import gzip
 import os
@@ -30,12 +31,12 @@ if TYPE_CHECKING:
 	import io
 	import sqlite3
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.langs import Lang
 
 
 from pyglossary.core import log
 from pyglossary.flags import ALWAYS, DEFAULT_YES
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.glossary_utils import Error
 from pyglossary.option import (
 	BoolOption,
@@ -180,7 +181,7 @@ class T_SdList(Protocol[T_SDListItem_contra]):
 
 class MemSdList:
 	def __init__(self) -> None:
-		self._l: "list[Any]" = []
+		self._l: list[Any] = []
 
 	def append(self, x: Any) -> None:
 		self._l.append(x)
@@ -248,7 +249,7 @@ class BaseSqList:
 	def __len__(self) -> int:
 		return self._len
 
-	def append(self, item: "Sequence") -> None:
+	def append(self, item: Sequence) -> None:
 		if self._cur is None or self._con is None:
 			raise RuntimeError("db is closed")
 		self._len += 1
@@ -334,7 +335,7 @@ class Reader:
 			a dict { entryIndex -> altList }
 		"""
 
-	def xdxf_setup(self) -> "XdxfTransformerType":
+	def xdxf_setup(self) -> XdxfTransformerType:
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
@@ -360,7 +361,7 @@ class Reader:
 		self._synDict: "dict[int, list[str]]" = {}
 		self._sametypesequence = ""
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 		self._wordCount: "int | None" = None
 
 	def open(self, filename: str) -> None:

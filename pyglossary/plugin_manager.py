@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import logging
 import os
@@ -50,17 +51,17 @@ class DetectedFormat(NamedTuple):
 class PluginManager:
 	plugins: "dict[str, PluginProp]" = {}
 	pluginByExt: "dict[str, PluginProp]" = {}
-	loadedModules: "set[str]" = set()
+	loadedModules: set[str] = set()
 
 	formatsReadOptions: "dict[str, dict[str, Any]]" = {}
 	formatsWriteOptions: "dict[str, dict[str, Any]]" = {}
 	# for example formatsReadOptions[format][optName] gives you the default value
 
-	readFormats: "list[str]" = []
-	writeFormats: "list[str]" = []
+	readFormats: list[str] = []
+	writeFormats: list[str] = []
 
 	@classmethod
-	def loadPluginsFromJson(cls: "type[PluginManager]", jsonPath: str) -> None:
+	def loadPluginsFromJson(cls: type[PluginManager], jsonPath: str) -> None:
 		import json
 
 		with open(jsonPath, encoding="utf-8") as _file:
@@ -76,7 +77,7 @@ class PluginManager:
 
 	@classmethod
 	def loadPlugins(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		directory: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -105,7 +106,7 @@ class PluginManager:
 
 	@classmethod
 	def _loadPluginByDict(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -144,7 +145,7 @@ class PluginManager:
 
 	@classmethod
 	def _loadPlugin(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		moduleName: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -191,7 +192,7 @@ class PluginManager:
 
 	@classmethod
 	def _findPlugin(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		query: str,
 	) -> "PluginProp | None":
 		"""Find plugin by name or extension."""
@@ -205,11 +206,11 @@ class PluginManager:
 
 	@classmethod
 	def detectInputFormat(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		filename: str,
 		format: str = "",
 		quiet: bool = False,  # noqa: ARG003
-	) -> "DetectedFormat":
+	) -> DetectedFormat:
 		filenameOrig = filename
 		_, filename, ext, compression = splitFilenameExt(filename)
 
@@ -236,7 +237,7 @@ class PluginManager:
 
 	@classmethod
 	def _outputPluginByFormat(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		format: str,
 	) -> "tuple[PluginProp | None, str]":
 		if not format:
@@ -257,13 +258,13 @@ class PluginManager:
 	# PLR0912	Too many branches (14 > 12)
 	@classmethod
 	def detectOutputFormat(  # noqa: PLR0912, PLR0913, C901
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
 		quiet: bool = False,  # noqa: ARG003, TODO: remove
 		addExt: bool = False,
-	) -> "DetectedFormat":
+	) -> DetectedFormat:
 		from os.path import splitext
 
 		# Ugh, mymy
@@ -323,7 +324,7 @@ class PluginManager:
 
 	@classmethod
 	def init(
-		cls: "type[PluginManager]",
+		cls: type[PluginManager],
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
 	) -> None:

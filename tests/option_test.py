@@ -112,7 +112,7 @@ class TestOptionValidateBoolNumber(unittest.TestCase):
 
 
 class TestOptionValidateStr(unittest.TestCase):
-	def newTester(self, customValue: bool, values: "list[str]"):
+	def newTester(self, customValue: bool, values: list[str]):
 		def test(raw: str, valid: bool):
 			opt = StrOption(customValue=customValue, values=values)
 			valueActual, evalOkActual = opt.evaluate(raw)

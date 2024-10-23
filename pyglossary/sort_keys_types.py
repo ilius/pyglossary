@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from collections.abc import Callable
 from typing import Any, TypeAlias
 
-sortKeyType: "TypeAlias" = Callable[
+SortKeyType: TypeAlias = Callable[
 	[list[str]],
 	Any,
 ]
 
-sqliteSortKeyType: "TypeAlias" = list[tuple[str, str, sortKeyType]]
+SQLiteSortKeyType: TypeAlias = list[tuple[str, str, SortKeyType]]
 
 __all__ = [
-	"sortKeyType",
-	"sqliteSortKeyType",
+	"SQLiteSortKeyType",
+	"SortKeyType",
 ]

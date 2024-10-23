@@ -20,6 +20,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 __all__ = ["partOfSpeechByCode"]
 
 partOfSpeechByCode = {

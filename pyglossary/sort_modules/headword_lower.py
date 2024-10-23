@@ -1,17 +1,19 @@
+from __future__ import annotations
+
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from pyglossary.icu_types import T_Collator
 
-	from .sort_keys_types import sortKeyType, sqliteSortKeyType
+	from .sort_keys_types import SortKeyType, SQLiteSortKeyType
 
 
 desc = "Lowercase Headword"
 
 
-def normal(sortEncoding: str = "utf-8", **_options) -> "sortKeyType":
-	def sortKey(words: "list[str]") -> bytes:
+def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
+	def sortKey(words: list[str]) -> bytes:
 		return words[0].lower().encode(sortEncoding, errors="replace")
 
 	return sortKey
@@ -19,10 +21,10 @@ def normal(sortEncoding: str = "utf-8", **_options) -> "sortKeyType":
 
 def locale(
 	collator: "T_Collator",  # noqa: F821
-) -> "sortKeyType":
+) -> SortKeyType:
 	cSortKey = collator.getSortKey
 
-	def sortKey(words: "list[str]") -> bytes:
+	def sortKey(words: list[str]) -> bytes:
 		return cSortKey(words[0].lower())
 
 	return lambda **_options: sortKey
@@ -31,8 +33,8 @@ def locale(
 def sqlite(
 	sortEncoding: str = "utf-8",
 	**_options,
-) -> "sqliteSortKeyType":
-	def sortKey(words: "list[str]") -> bytes:
+) -> SQLiteSortKeyType:
+	def sortKey(words: list[str]) -> bytes:
 		return words[0].lower().encode(sortEncoding, errors="replace")
 
 	return [
@@ -46,10 +48,10 @@ def sqlite(
 
 def sqlite_locale(
 	collator: "T_Collator",  # noqa: F821
-) -> "Callable[..., sqliteSortKeyType]":
+) -> "Callable[..., SQLiteSortKeyType]":
 	cSortKey = collator.getSortKey
 
-	def sortKey(words: "list[str]") -> bytes:
+	def sortKey(words: list[str]) -> bytes:
 		return cSortKey(words[0].lower())
 
 	return lambda **_options: [("sortkey", "BLOB", sortKey)]

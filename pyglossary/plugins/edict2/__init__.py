@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
@@ -80,7 +82,7 @@ class Reader:
 	_traditional_title: bool = False
 	_colorize_tones: bool = True
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.file: "io.TextIOBase" = nullTextIO
 		self._fileSize = 0

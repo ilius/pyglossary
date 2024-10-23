@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import unicodedata
 from typing import Literal, NamedTuple
 
@@ -362,7 +364,7 @@ writingSystemList = [
 		titleTag="big",
 	),
 	WritingSystem(
-		name="Khudabadi",  # aka: "Khudawadi", "Sindhi"
+		name="Khudabadi",  # aka: Khudawadi, "Sindhi"
 		iso=[(318, "Sind")],
 		unicode=["KHUDAWADI"],
 		titleTag="big",

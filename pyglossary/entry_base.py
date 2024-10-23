@@ -10,7 +10,7 @@ MultiStr: "typing.TypeAlias" = "str | list[str]"
 
 
 class BaseEntry:
-	__slots__: "list[str]" = [
+	__slots__: list[str] = [
 		"_word",
 	]
 

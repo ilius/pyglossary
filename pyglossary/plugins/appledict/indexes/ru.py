@@ -16,6 +16,8 @@
 # GNU General Public License for more details.
 """Russian indexes based on pymorphy."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -38,20 +40,20 @@ Or by running: {pip} install pymorphy2""",
 morphy = pymorphy2.MorphAnalyzer()
 
 
-def ru(titles: "Sequence[str]", _: str) -> "set[str]":
+def ru(titles: Sequence[str], _: str) -> "set[str]":
 	"""
 	Give a set of all declines, cases and other forms of word `title`.
 	note that it works only if title is one word.
 	"""
-	indexes: "set[str]" = set()
-	indexes_norm: "set[str]" = set()
+	indexes: set[str] = set()
+	indexes_norm: set[str] = set()
 	for title in titles:
 		# in-place modification
 		_ru(title, indexes, indexes_norm)
 	return indexes
 
 
-def _ru(title: str, a: "set[str]", a_norm: "set[str]") -> None:
+def _ru(title: str, a: set[str], a_norm: "set[str]") -> None:
 	# uppercase abbreviature
 	if title.isupper():
 		return

@@ -14,11 +14,11 @@ xmlTagRE = re.compile(
 )
 
 
-def plainWordSplit(text: str) -> "list[str]":
+def plainWordSplit(text: str) -> list[str]:
 	return [word for word in wordRE.split(text) if word]
 
 
-def xmlWordSplit(text: str) -> "list[str]":
+def xmlWordSplit(text: str) -> list[str]:
 	pos = 0
 	words = []
 

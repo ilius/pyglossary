@@ -64,7 +64,7 @@ class Reader:
 		self._file: "io.TextIOBase" = nullTextIO
 		self._wordCount: "int | None" = None
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 
 	def open(self, filename: str) -> None:
 		self._filename = filename

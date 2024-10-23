@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, NamedTuple
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 	from .icu_types import T_Collator, T_Locale
-	from .sort_keys_type import sortKeyType, sqliteSortKeyType
+	from .sort_keys_type import SortKeyType, SQLiteSortKeyType
 
 __all__ = [
 	"LocaleNamedSortKey",
@@ -40,8 +41,8 @@ defaultSortKeyName = "headword_lower"
 class NamedSortKey(NamedTuple):
 	name: str
 	desc: str
-	normal: "sortKeyType"
-	sqlite: "sqliteSortKeyType"
+	normal: SortKeyType
+	sqlite: SQLiteSortKeyType
 
 
 @dataclass(slots=True)  # not frozen because of mod
@@ -62,19 +63,19 @@ class LocaleNamedSortKey:
 		return mod
 
 	@property
-	def normal(self) -> "sortKeyType":
+	def normal(self) -> SortKeyType:
 		return self.module.normal
 
 	@property
-	def sqlite(self) -> "sqliteSortKeyType":
+	def sqlite(self) -> SQLiteSortKeyType:
 		return self.module.sqlite
 
 	@property
-	def locale(self) -> "sortKeyType | None":
+	def locale(self) -> "SortKeyType | None":
 		return getattr(self.module, "locale", None)
 
 	@property
-	def sqlite_locale(self) -> "Callable[..., sqliteSortKeyType] | None":
+	def sqlite_locale(self) -> "Callable[..., SQLiteSortKeyType] | None":
 		return getattr(self.module, "sqlite_locale", None)
 
 

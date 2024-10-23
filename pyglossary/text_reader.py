@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 import logging
 import os
@@ -8,6 +10,7 @@ from typing import TYPE_CHECKING, cast
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 
+	from pyglossary.entry_base import MultiStr
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 from pyglossary.compression import (
@@ -15,7 +18,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.entry import DataEntry
-from pyglossary.entry_base import MultiStr
 from pyglossary.io_utils import nullTextIO
 
 __all__ = ["TextFilePosWrapper", "TextGlossaryReader", "nextBlockResultType"]
@@ -58,12 +60,12 @@ class TextGlossaryReader:
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: "GlossaryType", hasInfo: bool = True) -> None:
+	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.TextIOBase" = nullTextIO
 		self._hasInfo = hasInfo
-		self._pendingEntries: "list[EntryType]" = []
+		self._pendingEntries: list[EntryType] = []
 		self._wordCount = 0
 		self._fileSize = 0
 		self._pos = -1
@@ -71,7 +73,7 @@ class TextGlossaryReader:
 		self._fileIndex = -1
 		self._bufferLine = ""
 		self._resDir = ""
-		self._resFileNames: "list[str]" = []
+		self._resFileNames: list[str] = []
 
 	def _setResDir(self, resDir: str) -> bool:
 		if isdir(resDir):
@@ -166,7 +168,7 @@ class TextGlossaryReader:
 			log.exception(f"error while closing file {self._filename!r}")
 		self._file = nullTextIO
 
-	def newEntry(self, word: MultiStr, defi: str) -> "EntryType":
+	def newEntry(self, word: MultiStr, defi: str) -> EntryType:
 		byteProgress: "tuple[int, int] | None" = None
 		if self._fileSize and self._file is not None:
 			byteProgress = (self._file.tell(), self._fileSize)
@@ -230,7 +232,7 @@ class TextGlossaryReader:
 			)
 
 	def __iter__(self) -> "Iterator[EntryType | None]":
-		resPathSet: "set[str]" = set()
+		resPathSet: set[str] = set()
 		while True:
 			self._pos += 1
 			if self._pendingEntries:

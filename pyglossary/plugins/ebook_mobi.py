@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
-
 # Copyright © 2012-2016 Alberto Pettarin (alberto@albertopettarin.it)
 # Copyright © 2016-2022 Saeed Rasooli <saeed.gnu@gmail.com>
-
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from __future__ import annotations
 
 import os
 from collections.abc import Generator
@@ -126,16 +123,16 @@ extraDocs = [
 
 
 class GroupStateBySize:
-	def __init__(self, writer: "Writer") -> None:
+	def __init__(self, writer: Writer) -> None:
 		self.writer = writer
 		self.group_index = -1
 		self.reset()
 
 	def reset(self) -> None:
-		self.group_contents: "list[str]" = []
+		self.group_contents: list[str] = []
 		self.group_size = 0
 
-	def add(self, entry: "EntryType") -> None:
+	def add(self, entry: EntryType) -> None:
 		defi = entry.defi
 		content = self.writer.format_group_content(
 			entry.l_word[0],
@@ -230,7 +227,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <guide></guide>
 </package>"""
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		import uuid
 
 		EbookWriter.__init__(
@@ -252,7 +249,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 	def format_group_content(
 		self,
-		word: "str",
+		word: str,
 		defi: str,
 		variants: "list[str] | None" = None,
 	) -> str:
@@ -319,7 +316,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		).encode("utf-8")
 
 	def write_groups(self) -> "Generator[None, EntryType, None]":
-		def add_group(state: "GroupStateBySize") -> None:
+		def add_group(state: GroupStateBySize) -> None:
 			if state.group_size <= 0:
 				return
 			state.group_index += 1

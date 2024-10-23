@@ -15,6 +15,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 import binascii
 import logging
@@ -48,13 +49,13 @@ log = logging.getLogger("pyglossary")
 endFormat = "\x1b[0;0;0m"  # len=8
 
 
-def toStr(s: "AnyStr") -> str:
+def toStr(s: AnyStr) -> str:
 	if isinstance(s, bytes):
 		return str(s, "utf-8")
 	return str(s)
 
 
-def fixUtf8(st: "AnyStr") -> str:
+def fixUtf8(st: AnyStr) -> str:
 	if isinstance(st, str):
 		st = bytes(st, "utf-8")
 	return st.replace(b"\x00", b"").decode("utf-8", "replace")
@@ -87,7 +88,7 @@ def unescapeNTB(st: str, bar: bool = False) -> str:
 	return st  # noqa: RET504
 
 
-def splitByBarUnescapeNTB(st: str) -> "list[str]":
+def splitByBarUnescapeNTB(st: str) -> list[str]:
 	r"""
 	Split by "|" (and not "\\|") then unescapes Newline (\\n),
 	Tab (\\t), Baskslash (\\) and Bar (\\|) in each part
@@ -107,7 +108,7 @@ def unescapeBar(st: str) -> str:
 	return pattern_bar_us.sub(r"\1|", st).replace("\\\\", "\\")
 
 
-def splitByBar(st: str) -> "list[str]":
+def splitByBar(st: str) -> list[str]:
 	r"""
 	Split by "|" (and not "\\|")
 	then unescapes Baskslash (\\) and Bar (\\|) in each part.
@@ -115,7 +116,7 @@ def splitByBar(st: str) -> "list[str]":
 	return [unescapeBar(part) for part in pattern_bar_sp.split(st)]
 
 
-def joinByBar(parts: "list[str]") -> "str":
+def joinByBar(parts: list[str]) -> str:
 	return "|".join(escapeBar(part) for part in parts)
 
 

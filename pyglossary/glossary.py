@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 from os.path import relpath
 from time import perf_counter as now
@@ -90,7 +91,7 @@ class Glossary(GlossaryCommon):
 			**kwargs,
 		)
 
-	def addEntryObj(self, entry: "EntryType") -> None:
+	def addEntryObj(self, entry: EntryType) -> None:
 		self._data.append(entry)
 
 	@staticmethod
@@ -99,8 +100,8 @@ class Glossary(GlossaryCommon):
 
 	def sortWords(
 		self,
-		sortKeyName: "str" = "headword_lower",
-		sortEncoding: "str" = "utf-8",
+		sortKeyName: str = "headword_lower",
+		sortEncoding: str = "utf-8",
 		writeOptions: "dict[str, Any] | None" = None,
 	) -> None:
 		"""sortKeyName: see doc/sort-key.md."""

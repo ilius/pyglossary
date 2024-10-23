@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import os
 import re
 from io import BytesIO
@@ -8,6 +10,10 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Iterator
 
+	from pyglossary.glossary_types import (
+		EntryType,
+		GlossaryType,
+	)
 	from pyglossary.lxml_types import Element, T_htmlfile
 	from pyglossary.option import Option
 
@@ -16,10 +22,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import pip
-from pyglossary.glossary_types import (
-	EntryType,
-	GlossaryType,
-)
 from pyglossary.io_utils import nullBinaryIO
 
 __all__ = [
@@ -78,8 +80,8 @@ class Reader:
 	@staticmethod
 	def makeList(
 		hf: "T_htmlfile",
-		input_objects: "list[Element]",
-		processor: "Callable",
+		input_objects: list[Element],
+		processor: Callable,
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:
@@ -100,11 +102,11 @@ class Reader:
 	def writeTrans(
 		self,
 		hf: "T_htmlfile",
-		trans: "Element",
+		trans: Element,
 	) -> None:
 		from lxml import etree as ET
 
-		def br() -> "Element":
+		def br() -> Element:
 			return ET.Element("br")
 
 		for elem in trans.findall("name_type"):
@@ -142,19 +144,19 @@ class Reader:
 
 	def getEntryByElem(  # noqa: PLR0912
 		self,
-		entry: "Element",
-	) -> "EntryType":
+		entry: Element,
+	) -> EntryType:
 		from lxml import etree as ET
 
 		glos = self._glos
 		keywords = []
 		f = BytesIO()
 
-		def br() -> "Element":
+		def br() -> Element:
 			return ET.Element("br")
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
-			kebList: "list[str]" = []
+			kebList: list[str] = []
 			rebList: "list[tuple[str, list[str]]]" = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
@@ -237,7 +239,7 @@ class Reader:
 		)
 
 	@staticmethod
-	def tostring(elem: "Element") -> str:
+	def tostring(elem: Element) -> str:
 		from lxml import etree as ET
 
 		return (

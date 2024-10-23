@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import logging
 from collections import OrderedDict as odict
@@ -54,7 +55,7 @@ def optionsPropFromDict(
 	return props
 
 
-def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> "StrWithDesc":
+def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> StrWithDesc:
 	if sortOnWriteStr is None:
 		return DEFAULT_NO
 	return flagsByName[sortOnWriteStr]
@@ -93,10 +94,10 @@ class PluginProp:  # noqa: PLR0904
 	]
 
 	def __init__(self) -> None:
-		self._mod: "Any"
-		self._Reader: "Any"
+		self._mod: Any
+		self._Reader: Any
 		self._ReaderLoaded: bool
-		self._Writer: "Any"
+		self._Writer: Any
 		self._WriterLoaded: bool
 
 		self._moduleName: str
@@ -105,7 +106,7 @@ class PluginProp:  # noqa: PLR0904
 		self._lname: str
 		self._name: str
 		self._description: str
-		self._extensions: "list[str]"
+		self._extensions: list[str]
 		self._extensionCreate: str
 		self._singleFile: bool
 		self._optionsProp: "dict[str, Option]"
@@ -115,13 +116,13 @@ class PluginProp:  # noqa: PLR0904
 		self._canWrite: bool
 		self._readOptions: "dict[str, Any]"
 		self._writeOptions: "dict[str, Any]"
-		self._readCompressions: "list[str]"
+		self._readCompressions: list[str]
 		self._readDepends: "dict[str, str]"
 		self._writeDepends: "dict[str, str]"
 
 	@classmethod
 	def fromDict(
-		cls: "type",
+		cls: type,
 		attrs: "dict[str, Any]",
 		modulePath: str,
 	) -> None:
@@ -155,7 +156,7 @@ class PluginProp:  # noqa: PLR0904
 		return self
 
 	@classmethod
-	def fromModule(cls: "type", mod: "Any") -> "PluginProp":
+	def fromModule(cls: type, mod: Any) -> PluginProp:
 		self = cls()
 		self._mod = mod
 		self._Reader = None
@@ -198,7 +199,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._enable
 
 	@property
-	def module(self) -> "Any":
+	def module(self) -> Any:
 		if self._mod is not None:
 			return self._mod
 		moduleName = self._moduleName
@@ -237,7 +238,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._description
 
 	@property
-	def extensions(self) -> "list[str]":
+	def extensions(self) -> list[str]:
 		return self._extensions
 
 	@property
@@ -304,7 +305,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._canWrite
 
 	@staticmethod
-	def _getOptionAttrNamesFromClass(rwclass: "type") -> "list[str]":
+	def _getOptionAttrNamesFromClass(rwclass: type) -> list[str]:
 		nameList = []
 
 		for cls in (*rwclass.__bases__, rwclass):
@@ -320,7 +321,7 @@ class PluginProp:  # noqa: PLR0904
 
 		return nameList
 
-	def _getOptionsFromClass(self, rwclass: "type") -> "dict[str, Any]":
+	def _getOptionsFromClass(self, rwclass: type) -> "dict[str, Any]":
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
@@ -360,7 +361,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._writeOptions
 
 	@property
-	def readCompressions(self) -> "list[str]":
+	def readCompressions(self) -> list[str]:
 		if self._readCompressions is None:
 			self._readCompressions = getattr(self.readerClass, "compressions", [])
 		return self._readCompressions
@@ -489,13 +490,13 @@ class PluginProp:  # noqa: PLR0904
 
 		return True
 
-	# def _getReadExtraOptions(self) -> "list[str]":  # noqa: F811
+	# def _getReadExtraOptions(self) -> list[str]:  # noqa: F811
 	# 	cls = self.readerClass
 	# 	if cls is None:
 	# 		return []
 	# 	return self.__class__.getExtraOptionsFromFunc(cls.open, self.name)
 
-	# def _getWriteExtraOptions(self) -> "list[str]":  # noqa: F811
+	# def _getWriteExtraOptions(self) -> list[str]:  # noqa: F811
 	# 	cls = self.writerClass
 	# 	if cls is None:
 	# 		return []
@@ -503,10 +504,10 @@ class PluginProp:  # noqa: PLR0904
 
 	# @classmethod
 	# def getExtraOptionsFromFunc(
-	# 	cls: "type",
-	# 	func: "Callable",
+	# 	cls: type,
+	# 	func: Callable,
 	# 	format: str,
-	# ) -> "list[str]":
+	# ) -> list[str]:
 	# 	import inspect
 
 	# 	extraOptNames = []

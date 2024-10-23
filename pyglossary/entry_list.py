@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
@@ -41,7 +42,7 @@ class EntryList:
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
 		entryFromRaw: "Callable[[RawEntryType], EntryType]",
 	) -> None:
-		self._l: "list[RawEntryType]" = []
+		self._l: list[RawEntryType] = []
 		self._entryToRaw = entryToRaw
 		self._entryFromRaw = entryFromRaw
 		self._sortKey: "Callable[[RawEntryType], Any] | None" = None
@@ -55,7 +56,7 @@ class EntryList:
 	def rawEntryCompress(self, enable: bool) -> None:
 		self._rawEntryCompress = enable
 
-	def append(self, entry: "EntryType") -> None:
+	def append(self, entry: EntryType) -> None:
 		self._l.append(self._entryToRaw(entry))
 
 	def clear(self) -> None:
@@ -71,7 +72,7 @@ class EntryList:
 
 	def setSortKey(
 		self,
-		namedSortKey: "NamedSortKey",
+		namedSortKey: NamedSortKey,
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:

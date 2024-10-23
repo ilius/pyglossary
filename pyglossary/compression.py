@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import logging
 import os
@@ -85,7 +86,7 @@ def zipFileOrDir(filename: str) -> None:
 
 	from .os_utils import indir
 
-	def _zipFileAdd(zf: "zipfile.ZipFile", filename: str) -> None:
+	def _zipFileAdd(zf: zipfile.ZipFile, filename: str) -> None:
 		if isfile(filename):
 			zf.write(filename)
 			return
@@ -115,7 +116,7 @@ def zipFileOrDir(filename: str) -> None:
 				_zipFileAdd(zf, fname)
 
 
-def compress(_glos: "GlossaryType", filename: str, compression: str) -> str:
+def compress(_glos: GlossaryType, filename: str, compression: str) -> str:
 	"""
 	Filename is the existing file path.
 

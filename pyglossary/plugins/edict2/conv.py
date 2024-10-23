@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 from typing import TYPE_CHECKING, cast
 
@@ -34,7 +36,7 @@ def parse_line(line: str) -> "tuple[str, str, str, list[str]] | None":
 	return trad, simp, pinyin, eng.split("/")
 
 
-def make_entry( # noqa: PLR0913
+def make_entry(  # noqa: PLR0913
 	trad: str,
 	simp: str,
 	pinyin: str,
@@ -54,8 +56,8 @@ def make_entry( # noqa: PLR0913
 
 def colorize(
 	hf: "T_htmlfile",
-	syllables: "Sequence[str]",
-	tones: "Sequence[str]",
+	syllables: Sequence[str],
+	tones: Sequence[str],
 	colorize_tones: bool,
 ) -> None:
 
@@ -76,7 +78,7 @@ def colorize(
 				hf.write(syllable)
 
 
-def render_article( # noqa: PLR0913
+def render_article(  # noqa: PLR0913
 	trad: str,
 	simp: str,
 	pinyin: str,

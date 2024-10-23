@@ -34,7 +34,7 @@ class Transformer:
 		self.labelOpen = False
 		self.label = ""
 		self.output = ""
-		self.resFileSet: "set[str]" = set()
+		self.resFileSet: set[str] = set()
 
 		self.abbrev = abbrev
 		self.abbrevDict = abbrevDict

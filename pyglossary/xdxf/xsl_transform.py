@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from os.path import join
 from typing import TYPE_CHECKING
@@ -53,7 +55,7 @@ class XslXdxfTransformer:
 			.strip()
 		)
 
-	def transform(self, article: "Element") -> str:
+	def transform(self, article: Element) -> str:
 		result_tree = self._transform(article)
 		text = self.tostring(result_tree)
 		text = text.replace("<br/> ", "<br/>")

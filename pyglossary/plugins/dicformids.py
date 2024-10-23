@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
+from __future__ import annotations
 
 import operator
 import os
@@ -88,7 +89,7 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 class Reader:
 	re_number = re.compile(r"\d+")
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._tabFileNames = []
 		self._tabFileReader = None
@@ -118,7 +119,7 @@ class Reader:
 	def __iter__(self) -> "Iterator[EntryType]":
 		return self
 
-	def __next__(self) -> "EntryType":
+	def __next__(self) -> EntryType:
 		for _ in range(10):
 			try:
 				return next(self._tabFileReader)
@@ -146,7 +147,7 @@ class Reader:
 
 
 class Writer:
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000

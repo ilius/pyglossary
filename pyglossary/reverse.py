@@ -1,3 +1,5 @@
+
+from __future__ import annotations
 import logging
 import re
 from operator import itemgetter
@@ -12,7 +14,7 @@ log = logging.getLogger("pyglossary")
 
 
 def reverseGlossary(
-	glos: "GlossaryExtendedType",
+	glos: GlossaryExtendedType,
 	savePath: str = "",
 	words: "list[str] | None" = None,
 	includeDefs: bool = False,
@@ -41,7 +43,7 @@ def reverseGlossary(
 		minWordLen = 3
 		includeDefs = False
 		showRel = "None"
-			allowed values: "None", "Percent", "Percent At First"
+			allowed values: None, "Percent", "Percent At First"
 	"""
 	if not savePath:
 		savePath = glos.getInfo("name") + ".txt"
@@ -49,7 +51,7 @@ def reverseGlossary(
 	if saveStep < 2:
 		raise ValueError("saveStep must be more than 1")
 
-	entries: "list[EntryType]" = list(glos)
+	entries: list[EntryType] = list(glos)
 	log.info(f"loaded {len(entries)} entries into memory")
 
 	if words:
@@ -97,10 +99,10 @@ def reverseGlossary(
 
 
 def takeOutputWords(
-	glos: "GlossaryExtendedType",
-	entryIter: "Iterable[EntryType]",
+	glos: GlossaryExtendedType,
+	entryIter: Iterable[EntryType],
 	minWordLen: int = 3,
-) -> "list[str]":
+) -> list[str]:
 	# fr"[\w]{{{minWordLen},}}"
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
 	words = set()
@@ -114,7 +116,7 @@ def takeOutputWords(
 
 
 def searchWordInDef(
-	entryIter: "Iterable[EntryType]",
+	entryIter: Iterable[EntryType],
 	st: str,
 	matchWord: bool = True,
 	sepChars: str = ".,،",
@@ -123,7 +125,7 @@ def searchWordInDef(
 	minWordLen: int = 3,
 	includeDefs: bool = False,
 	showRel: str = "Percent",  # "Percent" | "Percent At First" | ""
-) -> "list[str]":
+) -> list[str]:
 	# searches word "st" in definitions of the glossary
 	splitPattern = re.compile(
 		"|".join(re.escape(x) for x in sepChars),

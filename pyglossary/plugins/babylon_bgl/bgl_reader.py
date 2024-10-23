@@ -20,6 +20,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import io
 import os
@@ -341,7 +342,7 @@ class BglReader:
 	selected encoding, so the user may fix the encoding if needed.
 	"""
 
-	def __init__(self, glos: "GlossaryType") -> None:  # no more arguments
+	def __init__(self, glos: GlossaryType) -> None:  # no more arguments
 		self._glos = glos
 		self._filename = ""
 		self.info = odict()
@@ -565,7 +566,7 @@ class BglReader:
 			log.debug(f"BGL: unknown html entity: {entity}")
 
 	# returns False if error
-	def readBlock(self, block: "Block") -> bool:
+	def readBlock(self, block: Block) -> bool:
 		block.offset = self.file.tell()
 		length = self.readBytes(1)
 		if length == -1:
@@ -617,7 +618,7 @@ class BglReader:
 			return -1
 		return uintFromBytes(buf)
 
-	def readType0(self, block: "Block") -> bool:
+	def readType0(self, block: Block) -> bool:
 		code = block.data[0]
 		if code == 2:
 			# this number is vary close to self.bgl_numEntries,
@@ -634,7 +635,7 @@ class BglReader:
 			return False
 		return True
 
-	def readType2(self, block: "Block") -> "EntryType | None":
+	def readType2(self, block: Block) -> "EntryType | None":
 		"""
 		Process type 2 block.
 
@@ -679,7 +680,7 @@ class BglReader:
 			b_data,
 		)
 
-	def readType3(self, block: "Block") -> None:
+	def readType3(self, block: Block) -> None:
 		"""
 		Reads block with type 3, and updates self.info
 		returns None.
@@ -760,7 +761,7 @@ class BglReader:
 		else:
 			self.targetEncoding = self.defaultEncoding
 
-	def logUnknownBlock(self, block: "Block") -> None:
+	def logUnknownBlock(self, block: Block) -> None:
 		log.debug(
 			f"Unknown block: type={block.type}"
 			f", number={self.numBlocks}"
@@ -830,7 +831,7 @@ class BglReader:
 
 	def readEntryWord(
 		self,
-		block: "Block",
+		block: Block,
 		pos: int,
 	) -> "EntryWordData | None":
 		"""
@@ -878,7 +879,7 @@ class BglReader:
 
 	def readEntryDefi(
 		self,
-		block: "Block",
+		block: Block,
 		pos: int,
 		word: EntryWordData,
 	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
@@ -922,7 +923,7 @@ class BglReader:
 
 	def readEntryAlts(
 		self,
-		block: "Block",
+		block: Block,
 		pos: int,
 		word: EntryWordData,
 	) -> "tuple[bool, int | None, list[str] | None]":
@@ -964,7 +965,7 @@ class BglReader:
 
 	def readEntry_Type11(
 		self,
-		block: "Block",
+		block: Block,
 	) -> "tuple[bool, str | None, list[str] | None, str | None]":
 		"""Return (succeed, u_word, u_alts, u_defi)."""
 		Err = (False, None, None, None)

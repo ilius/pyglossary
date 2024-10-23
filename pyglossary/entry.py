@@ -101,7 +101,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 		return self._fname
 
 	@property
-	def l_word(self) -> "list[str]":
+	def l_word(self) -> list[str]:
 		return [self._fname]
 
 	@property
@@ -259,7 +259,7 @@ class Entry(BaseEntry):
 		return joinByBar(self._word)
 
 	@property
-	def l_word(self) -> "list[str]":
+	def l_word(self) -> list[str]:
 		"""Returns list of the word and all the alternate words."""
 		if isinstance(self._word, str):
 			return [self._word]

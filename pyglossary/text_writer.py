@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import os
 from os.path import (
@@ -36,7 +38,7 @@ class TextGlossaryWriter:
 
 	def __init__(
 		self,
-		glos: "GlossaryType",
+		glos: GlossaryType,
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
 		outInfoKeysAliasDict: "dict[str, str] | None" = None,
@@ -212,7 +214,7 @@ class TextGlossaryWriter:
 
 
 def writeTxt(  # noqa: PLR0913
-	glos: "GlossaryType",
+	glos: GlossaryType,
 	entryFmt: str = "",  # contain {word} and {defi}
 	filename: str = "",
 	writeInfo: bool = True,

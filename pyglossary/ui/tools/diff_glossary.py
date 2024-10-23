@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # mypy: ignore-errors
+from __future__ import annotations
 
 import atexit
 import difflib
@@ -120,7 +121,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		entry2 = next(iter2)
 		index2 += 1
 
-	def printEntry(color: str, prefix: str, index: int, entry: "EntryType") -> None:
+	def printEntry(color: str, prefix: str, index: int, entry: EntryType) -> None:
 		formatted = (
 			f"{color}{prefix}#{index} "
 			+ formatEntry(entry).replace("\n", "\n" + color)

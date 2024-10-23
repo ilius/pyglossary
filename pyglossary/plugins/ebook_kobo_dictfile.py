@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
-
 # Copyright © 2020-2021 Saeed Rasooli <saeed.gnu@gmail.com>
-
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,6 +16,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from __future__ import annotations
 
 import os
 from collections.abc import Generator
@@ -27,7 +24,6 @@ from os.path import isdir
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
@@ -39,6 +35,8 @@ from pyglossary.text_reader import TextGlossaryReader
 
 if TYPE_CHECKING:
 	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -92,7 +90,7 @@ class Reader(TextGlossaryReader):
 
 	_extract_inline_images: bool = True
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=False)
 
 	def open(self, filename: str) -> None:
@@ -144,8 +142,8 @@ class Reader(TextGlossaryReader):
 	def nextBlock(
 		self,
 	) -> "tuple[list[str], str, list[tuple[str, str]] | None]":
-		words: "list[str]" = []
-		defiLines: "list[str]" = []
+		words: list[str] = []
+		defiLines: list[str] = []
 		html = False
 
 		while True:
@@ -184,7 +182,7 @@ class Writer:
 	_encoding: str = "utf-8"
 
 	@staticmethod
-	def stripFullHtmlError(entry: "EntryType", error: str) -> None:
+	def stripFullHtmlError(entry: EntryType, error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
 	def __init__(self, glos: GlossaryType) -> None:

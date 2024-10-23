@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import logging
 import re
@@ -22,7 +23,7 @@ __all__ = [
 log = logging.getLogger("pyglossary")
 
 
-def optionFromDict(data: "dict[str, Any]") -> "Option":
+def optionFromDict(data: "dict[str, Any]") -> Option:
 	className = data.pop("class")
 	optClass: type
 	if className == "Option":
@@ -38,7 +39,7 @@ class Option:
 	classes: "dict[str, type]" = {}
 
 	@classmethod
-	def register(cls: "type[Option]", optClass: "type") -> "type":
+	def register(cls: type[Option], optClass: type) -> type:
 		cls.classes[optClass.__name__] = optClass
 		return optClass
 
@@ -46,7 +47,7 @@ class Option:
 		self,
 		typ: str,
 		customValue: bool = False,
-		values: "list[Any] | None" = None,
+		values: list[Any] | None = None,
 		allowNone: bool = False,
 		comment: str = "",
 		multiline: bool = False,
@@ -108,7 +109,7 @@ class Option:
 			return None, True
 		return raw, True
 
-	def validate(self, value: "Any") -> bool:
+	def validate(self, value: Any) -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -140,7 +141,7 @@ class BoolOption(Option):
 		allowNone: bool = False,
 		**kwargs,  # noqa: ANN003
 	) -> None:
-		values: "list[bool | None]" = [False, True]
+		values: list[bool | None] = [False, True]
 		if allowNone:
 			values.append(None)
 		Option.__init__(
@@ -190,7 +191,7 @@ class StrOption(Option):
 			**kwargs,
 		)
 
-	def validate(self, value: "Any") -> bool:
+	def validate(self, value: Any) -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -448,7 +449,7 @@ class EncodingOption(Option):
 		from collections import OrderedDict
 
 		groups: "dict[str, list[str]]" = OrderedDict()
-		others: "list[str]" = []
+		others: list[str] = []
 		for value in self.values or []:
 			cats = self.re_category.findall(value)
 			if not cats:

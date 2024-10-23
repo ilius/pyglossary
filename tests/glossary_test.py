@@ -119,7 +119,7 @@ class TestGlossaryBase(unittest.TestCase):
 			_file.write(data)
 		return fpath
 
-	def downloadDir(self, dirName: str, files: "list[str]") -> str:
+	def downloadDir(self, dirName: str, files: list[str]) -> str:
 		dirPath = join(testCacheDir, self.fixDownloadFilename(dirName))
 		for fileRelPath in files:
 			newFilePath = join(dirPath, fileRelPath)

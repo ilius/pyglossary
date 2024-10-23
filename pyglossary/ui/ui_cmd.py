@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import os
 import sys
@@ -55,11 +56,11 @@ else:
 COMMAND = "pyglossary"
 
 
-def getColWidth(subject: str, strings: "list[str]") -> int:
+def getColWidth(subject: str, strings: list[str]) -> int:
 	return max(len(x) for x in [subject] + strings)
 
 
-def getFormatsTable(names: "list[str]", header: str) -> str:
+def getFormatsTable(names: list[str], header: str) -> str:
 	descriptions = [Glossary.plugins[name].description for name in names]
 	extensions = [" ".join(Glossary.plugins[name].extensions) for name in names]
 
@@ -142,19 +143,19 @@ def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
 
 
 class NullObj:
-	def __getattr__(self, attr: str) -> "NullObj":
+	def __getattr__(self, attr: str) -> NullObj:
 		return self
 
-	def __setattr__(self, attr: str, value: "Any") -> None:
+	def __setattr__(self, attr: str, value: Any) -> None:
 		pass
 
-	def __setitem__(self, key: str, value: "Any") -> None:
+	def __setitem__(self, key: str, value: Any) -> None:
 		pass
 
 	def __call__(
 		self,
-		*args: "tuple[Any]",
-		**kwargs: "Mapping[Any]",
+		*args: tuple[Any],
+		**kwargs: Mapping[Any],
 	) -> None:
 		pass
 
@@ -173,7 +174,7 @@ class UI(UIBase):
 
 	def onSigInt(
 		self,
-		*_args: "tuple[Any]",
+		*_args: tuple[Any],
 	) -> None:
 		log.info("")
 		if self._toPause:
@@ -228,8 +229,8 @@ class UI(UIBase):
 
 	def reverseLoop(
 		self,
-		*_args: "tuple[Any]",
-		**kwargs: "Mapping[Any]",
+		*_args: tuple[Any],
+		**kwargs: Mapping[Any],
 	) -> None:
 		from pyglossary.reverse import reverseGlossary
 

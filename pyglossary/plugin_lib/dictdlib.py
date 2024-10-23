@@ -87,7 +87,7 @@ def sortNormalize(inp: str) -> str:
 	return st2.upper() + "\0" + inp.upper()
 
 
-def sortKey(x: str) -> "list[str]":
+def sortKey(x: str) -> list[str]:
 	"""Emulate sort -df."""
 	return x.split("\0")
 
@@ -287,7 +287,7 @@ class DictDB:
 	def addEntry(
 		self,
 		s_defi: str,
-		headwords: "list[str]",
+		headwords: list[str],
 	) -> None:
 		r"""
 		Writes an entry.  defstr holds the content of the definition.
@@ -322,12 +322,11 @@ class DictDB:
 		if dosort:
 			self.update("Sorting index: converting")
 
-			indexList: "list[str]" = []
-			for word, defs in self.indexEntries.items():
-				for thisdef in defs:
-					indexList.append(
-						f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}",
-					)
+			indexList: list[str] = [
+				f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}"
+				for word, defs in self.indexEntries.items()
+				for thisdef in defs
+			]
 
 			self.update(" mapping")
 
@@ -392,7 +391,7 @@ class DictDB:
 		matching definitions.  This is an *exact* match, not a
 		case-insensitive one.  Returns [] if word is not in the dictionary.
 		"""
-		retval: "list[bytes]" = []
+		retval: list[bytes] = []
 		if not self.hasDef(word):
 			return retval
 		for start, length in self.indexEntries[word]:

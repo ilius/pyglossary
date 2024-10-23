@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 from collections.abc import Generator
 from typing import TYPE_CHECKING
@@ -57,7 +58,7 @@ class Writer:
 	_newline: str = "<br>"
 	_transaction: bool = False
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: "io.IOBase | None" = None
@@ -126,7 +127,7 @@ class Writer:
 					f"'{key2}', '{value2}');\n",
 				)
 
-	def _getInfoKeys(self) -> "list[str]":
+	def _getInfoKeys(self) -> list[str]:
 		info_keys = self._info_keys
 		if info_keys:
 			return info_keys

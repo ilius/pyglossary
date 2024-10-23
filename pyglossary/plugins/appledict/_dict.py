@@ -17,6 +17,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
 import logging
 import string
@@ -56,7 +57,7 @@ def id_generator() -> "Iterator[str]":
 		cnt += 1
 
 
-def quote_string(value: str, BeautifulSoup: "Any") -> str:
+def quote_string(value: str, BeautifulSoup: Any) -> str:
 	if BeautifulSoup:
 		return BeautifulSoup.dammit.EntitySubstitution.substitute_xml(
 			value,
@@ -91,9 +92,9 @@ def indexes_generator(
 
 	def generate_indexes(
 		title: str,
-		alts: "list[str]",
+		alts: list[str],
 		content: str,
-		BeautifulSoup: "Any",
+		BeautifulSoup: Any,
 	) -> str:
 		indexes = [title]
 		indexes.extend(alts)

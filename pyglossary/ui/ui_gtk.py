@@ -118,7 +118,7 @@ def buffer_get_text(b):
 class FormatDialog(gtk.Dialog):
 	def __init__(
 		self,
-		descList: "list[str]",
+		descList: list[str],
 		parent=None,
 		**kwargs,
 	) -> None:
@@ -264,7 +264,7 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: "list[str]", parent=None) -> None:
+	def __init__(self, descList: list[str], parent=None) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
@@ -313,7 +313,7 @@ class FormatOptionsDialog(gtk.Dialog):
 	def __init__(
 		self,
 		formatName: str,
-		options: "list[str]",
+		options: list[str],
 		optionsValues: "dict[str, Any]",
 		parent=None,
 	) -> None:
@@ -583,7 +583,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: "list[str]", parent=None) -> None:
+	def __init__(self, descList: list[str], parent=None) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}

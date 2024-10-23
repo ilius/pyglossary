@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import encodings
 import io
@@ -228,7 +229,7 @@ class IncorrectFileSize(FileFormatException):
 def sortkey(
 	strength: int,
 	maxlength: "int | None" = None,
-) -> "Callable":
+) -> Callable:
 	# pass empty locale to use root locale
 	# if you pass no arg, it will use system locale
 	c: "T_Collator" = Collator.createInstance(Locale(""))
@@ -247,7 +248,7 @@ class MultiFileReader(BufferedIOBase):
 		self,
 		*args: str,
 	) -> None:
-		filenames: "list[str]" = list(args)
+		filenames: list[str] = list(args)
 		files = []
 		ranges = []
 		offset = 0
@@ -263,7 +264,7 @@ class MultiFileReader(BufferedIOBase):
 		self._offset = -1
 		self.seek(0)
 
-	def __enter__(self) -> "MultiFileReader":
+	def __enter__(self) -> MultiFileReader:
 		return self
 
 	def __exit__(
@@ -387,7 +388,7 @@ class Blob:
 		key: str,
 		fragment: str,
 		read_content_type_func: "Callable[[], str]",
-		read_func: "Callable",
+		read_func: Callable,
 	) -> None:
 		# print(f"read_func is {type(read_func)}")
 		# read_func is <class 'functools._lru_cache_wrapper'>
@@ -424,7 +425,7 @@ class Blob:
 		return f"<{self.__class__.__module__}.{self.__class__.__name__} {self.key}>"
 
 
-def read_byte_string(f: "IOBase", len_spec: str) -> bytes:
+def read_byte_string(f: IOBase, len_spec: str) -> bytes:
 	length = unpack(len_spec, f.read(calcsize(len_spec)))[0]
 	return f.read(length)
 
@@ -432,7 +433,7 @@ def read_byte_string(f: "IOBase", len_spec: str) -> bytes:
 class StructReader:
 	def __init__(
 		self,
-		_file: "IOBase",
+		_file: IOBase,
 		encoding: "str | None" = None,
 	) -> None:
 		self._file = _file
@@ -575,7 +576,7 @@ class StructWriter:
 		return self._file.write(data)
 
 
-def read_header(_file: "MultiFileReader") -> Header:
+def read_header(_file: MultiFileReader) -> Header:
 	_file.seek(0)
 
 	magic = _file.read(len(MAGIC))
@@ -599,7 +600,7 @@ def read_header(_file: "MultiFileReader") -> Header:
 	tags = read_tags()
 
 	def read_content_types() -> "Sequence[str]":
-		content_types: "list[str]" = []
+		content_types: list[str] = []
 		count = reader.read_byte()
 		for _ in range(count):
 			content_type = reader.read_text()
@@ -669,7 +670,7 @@ class Slob:
 			self._header.content_types,
 		)
 
-	def __enter__(self) -> "Slob":
+	def __enter__(self) -> Slob:
 		return self
 
 	def __exit__(
@@ -719,11 +720,11 @@ class Slob:
 		# just to comply with Sequence and make type checker happy
 		raise NotImplementedError
 
-	def index(self, x: "Blob") -> int:
+	def index(self, x: Blob) -> int:
 		# just to comply with Sequence and make type checker happy
 		raise NotImplementedError
 
-	def getBlobByIndex(self, i: int) -> "Blob":
+	def getBlobByIndex(self, i: int) -> Blob:
 		ref = self._refs[i]
 
 		def read_func() -> bytes:
@@ -750,7 +751,7 @@ class Slob:
 
 	@cache
 	def as_dict(
-		self: "Slob",
+		self: Slob,
 		strength: int = TERTIARY,
 		maxlength: "int | None" = None,
 	) -> KeydItemDict:
@@ -771,9 +772,9 @@ def open(*filenames: str) -> Slob:
 
 class BinMemWriter:
 	def __init__(self) -> None:
-		self.content_type_ids: "list[int]" = []
-		self.item_dir: "list[bytes]" = []
-		self.items: "list[bytes]" = []
+		self.content_type_ids: list[int] = []
+		self.item_dir: list[bytes] = []
+		self.items: list[bytes] = []
 		self.current_offset = 0
 
 	def add(self, content_type_id: int, blob_bytes: bytes) -> None:
@@ -788,7 +789,7 @@ class BinMemWriter:
 
 	def finalize(
 		self,
-		fout: "BufferedIOBase",
+		fout: BufferedIOBase,
 		compress: "Callable[[bytes], bytes]",
 	) -> None:
 		count = len(self)
@@ -810,7 +811,7 @@ ItemT = TypeVar("ItemT")
 class ItemList(Generic[ItemT]):
 	def __init__(
 		self,
-		reader: "StructReader",
+		reader: StructReader,
 		offset: int,
 		count_or_spec: "str | int",
 		pos_spec: str,
@@ -858,7 +859,7 @@ class ItemList(Generic[ItemT]):
 class RefList(ItemList[Ref]):
 	def __init__(
 		self,
-		f: "IOBase",
+		f: IOBase,
 		encoding: str,
 		offset: int = 0,
 		count: "int | None" = None,
@@ -874,12 +875,12 @@ class RefList(ItemList[Ref]):
 	def __getitem__(
 		self,
 		i: int,
-	) -> "Ref":
+	) -> Ref:
 		if i >= len(self) or i < 0:
 			raise IndexError("index out of range")
 		return cast(Ref, self.read(self.pos(i)))
 
-	def _read_item(self) -> "Ref":
+	def _read_item(self) -> Ref:
 		key = self.reader.read_text()
 		bin_index = self.reader.read_int()
 		item_index = self.reader.read_short()
@@ -893,7 +894,7 @@ class RefList(ItemList[Ref]):
 
 	@cache
 	def as_dict(
-		self: "RefList",
+		self: RefList,
 		strength: int = TERTIARY,
 		maxlength: "int | None" = None,
 	) -> KeydItemDict:
@@ -930,10 +931,10 @@ class StoreItem(NamedTuple):
 class Store(ItemList[StoreItem]):
 	def __init__(
 		self,
-		_file: "IOBase",
+		_file: IOBase,
 		offset: int,
 		decompress: "Callable[[bytes], bytes]",
-		content_types: "Sequence[str]",
+		content_types: Sequence[str],
 	) -> None:
 		super().__init__(
 			reader=StructReader(_file),
@@ -948,12 +949,12 @@ class Store(ItemList[StoreItem]):
 	def __getitem__(
 		self,
 		i: int,
-	) -> "StoreItem":
+	) -> StoreItem:
 		if i >= len(self) or i < 0:
 			raise IndexError("index out of range")
 		return cast(StoreItem, self.read(self.pos(i)))
 
-	def _read_item(self) -> "StoreItem":
+	def _read_item(self) -> StoreItem:
 		bin_item_count = self.reader.read_int()
 		packed_content_type_ids = self.reader.read(bin_item_count * U_CHAR_SIZE)
 		content_type_ids = []
@@ -1242,7 +1243,7 @@ class Writer:
 		self._fire_event("begin_resolve_aliases")
 		self.f_aliases.finalize()
 
-		def read_key_frag(item: "Blob", default_fragment: str) -> "tuple[str, str]":
+		def read_key_frag(item: Blob, default_fragment: str) -> "tuple[str, str]":
 			key_frag = pickle.loads(item.content)
 			if isinstance(key_frag, str):
 				return key_frag, default_fragment
@@ -1344,7 +1345,7 @@ class Writer:
 
 		buf_size = 10 * 1024 * 1024
 
-		def write_tags(tags: "MappingProxyType[str, Any]", f: "StructWriter") -> None:
+		def write_tags(tags: "MappingProxyType[str, Any]", f: StructWriter) -> None:
 			f.write(pack(U_CHAR, len(tags)))
 			for key, value in tags.items():
 				f.write_tiny_text(key)
@@ -1361,7 +1362,7 @@ class Writer:
 
 			def write_content_types(
 				content_types: "dict[str, int]",
-				f: "StructWriter",
+				f: StructWriter,
 			) -> None:
 				count = len(content_types)
 				f.write(pack(U_CHAR, count))
@@ -1391,7 +1392,7 @@ class Writer:
 			file_size += sum(os.stat(f.name).st_size for f in files)
 			out.write_long(file_size)
 
-			def mv(src: "StructWriter", out: "StructWriter") -> None:
+			def mv(src: StructWriter, out: StructWriter) -> None:
 				fname = src.name
 				self._fire_event("begin_move", fname)
 				with fopen(fname, mode="rb") as f:
@@ -1462,7 +1463,7 @@ class Writer:
 		)
 		return sum(os.stat(f.name).st_size for f in files)
 
-	def __enter__(self) -> "Slob":
+	def __enter__(self) -> Slob:
 		return cast("Slob", self)
 
 	def close(self) -> None:

@@ -17,6 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
@@ -219,7 +220,7 @@ p.groupDefinition {
 
 	COVER_TEMPLATE = '<meta name="cover" content="{cover}" />'
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		import uuid
 
 		EbookWriter.__init__(
@@ -230,7 +231,7 @@ p.groupDefinition {
 
 	@classmethod
 	def cls_get_prefix(
-		cls: "type[EbookWriter]",
+		cls: type[EbookWriter],
 		options: "dict[str, Any]",
 		word: str,
 	) -> str:
@@ -251,7 +252,7 @@ p.groupDefinition {
 			return "SPECIAL"
 		return prefix
 
-	def write_ncx(self, group_labels: "list[str]") -> None:
+	def write_ncx(self, group_labels: list[str]) -> None:
 		"""
 		write_ncx
 		only for epub.

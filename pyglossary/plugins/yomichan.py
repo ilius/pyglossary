@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import json
 import re
 from collections.abc import Generator, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pyglossary import os_utils
 from pyglossary.flags import ALWAYS
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
 	Option,
 	StrOption,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Writer",
@@ -201,7 +204,7 @@ def _isKanji(char: str) -> bool:
 	)
 
 
-def _uniqueList(lst: "Sequence") -> "list[Any]":
+def _uniqueList(lst: Sequence) -> "list[Any]":
 	seen = set()
 	result = []
 	for elem in lst:
@@ -230,7 +233,7 @@ class Writer:
 	_rule_vk_defi_pattern = ""
 	_rule_adji_defi_pattern = ""
 
-	def __init__(self, glos: "GlossaryType") -> None:
+	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		# Yomichan technically supports "structured content" that renders to
@@ -276,7 +279,7 @@ class Writer:
 
 	def _getExpressionsAndReadingFromEntry(
 		self,
-		entry: "EntryType",
+		entry: EntryType,
 	) -> "tuple[list[str], str]":
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
@@ -342,7 +345,7 @@ class Writer:
 
 	def _getTermsFromEntry(
 		self,
-		entry: "EntryType",
+		entry: EntryType,
 		sequenceNumber: int,
 	) -> "list[list[Any]]":
 		termExpressions, reading = self._getExpressionsAndReadingFromEntry(entry)
@@ -379,7 +382,7 @@ class Writer:
 
 			entryCount = 0
 			termBankIndex = 0
-			terms: "list[list[Any]]" = []
+			terms: list[list[Any]] = []
 
 			def flushTerms() -> None:
 				nonlocal termBankIndex

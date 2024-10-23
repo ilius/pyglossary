@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+from __future__ import annotations
 
 import logging
 import os
@@ -96,7 +97,7 @@ class SqEntryList:
 
 	def setSortKey(
 		self,
-		namedSortKey: "NamedSortKey",
+		namedSortKey: NamedSortKey,
 		sortEncoding: "str | None",
 		writeOptions: "dict[str, Any]",
 	) -> None:
@@ -135,7 +136,7 @@ class SqEntryList:
 	def __len__(self) -> int:
 		return self._len
 
-	def append(self, entry: "EntryType") -> None:
+	def append(self, entry: EntryType) -> None:
 		if self._sqliteSortKey is None:
 			raise RuntimeError("self._sqliteSortKey is None")
 		rawEntry = self._entryToRaw(entry)
@@ -159,7 +160,7 @@ class SqEntryList:
 		if self._len % 1000 == 0:
 			self._con.commit()
 
-	def __iadd__(self, other: "Iterable"):  # -> Self
+	def __iadd__(self, other: Iterable):  # -> Self
 		for item in other:
 			self.append(item)
 		return self

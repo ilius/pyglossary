@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import argparse
 
 
 class StoreConstAction(argparse.Action):
 	def __init__(
 		self,
-		option_strings: "list[str]",
+		option_strings: list[str],
 		same_dest: str = "",
 		const_value: "bool | None" = None,
 		nargs: int = 0,
@@ -29,7 +31,7 @@ class StoreConstAction(argparse.Action):
 		option_strings: list[str] | None = None,  # noqa: ARG002
 		required: bool = False,  # noqa: ARG002
 		dest: str | None = None,
-	) -> "StoreConstAction":
+	) -> StoreConstAction:
 		if not parser:
 			return self
 		dest = self.dest
