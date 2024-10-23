@@ -127,7 +127,7 @@ class Reader:
 			names, article = conv.make_entry(
 				*parts,
 				traditional_title=self._traditional_title,
-				colorize_tones=self._colorize_tones
+				colorize_tones=self._colorize_tones,
 			)
 			entry = self._glos.newEntry(
 				names,
