@@ -50,3 +50,7 @@ vertical-align: -6%;
 """
 		fixed_actual = substituteAppleCSS(css)
 		self.assertEqual(fixed_actual, fixed_expected)
+
+
+if __name__ == "__main__":
+	unittest.main()

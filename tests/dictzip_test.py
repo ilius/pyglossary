@@ -1,5 +1,6 @@
 import gzip
 import logging
+import unittest
 from pathlib import Path
 
 from glossary_v2_errors_test import TestGlossaryErrorsBase
@@ -78,3 +79,7 @@ class TestDictzip(TestGlossaryErrorsBase):
 		self.skip_on_dep(method)
 		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
 		self.assertIsNotNone(err)
+
+
+if __name__ == "__main__":
+	unittest.main()
