@@ -45,7 +45,7 @@ class NamedSortKey(NamedTuple):
 	sqlite: SQLiteSortKeyType
 
 
-@dataclass(slots=True)  # not frozen because of mod
+@dataclass  # not frozen because of mod
 class LocaleNamedSortKey:
 	name: str
 	desc: str
