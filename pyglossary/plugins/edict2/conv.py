@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, cast
+from collections.abc import Callable
+from io import BytesIO
+from typing import TYPE_CHECKING, NamedTuple, cast
+
+from lxml import etree as ET
 
 from pyglossary.core import log
 
@@ -26,7 +30,7 @@ COLORS = {
 }
 
 
-def parse_line(line: str) -> tuple[str, str, str, list[str]] | None:
+def parse_line_trad(line: str) -> tuple[str, str, str, list[str]] | None:
 	line = line.strip()
 	match = line_reg.match(line)
 	if match is None:
@@ -36,106 +40,88 @@ def parse_line(line: str) -> tuple[str, str, str, list[str]] | None:
 	return trad, simp, pinyin, eng.split("/")
 
 
-def make_entry(  # noqa: PLR0913
-	trad: str,
-	simp: str,
-	pinyin: str,
-	eng: list[str],
-	traditional_title: bool,
-	colorize_tones: bool,
-) -> tuple[list[str], str]:
-	eng_names = list(map(summarize, eng))
-	names = [
-		trad if traditional_title else simp,
-		simp if traditional_title else trad,
-		pinyin,
-	] + eng_names
-	article = render_article(
-		trad=trad,
-		simp=simp,
-		pinyin=pinyin,
-		eng=eng,
-		traditional_title=traditional_title,
-		colorize_tones=colorize_tones,
-	)
-	return names, article
+def parse_line_simp(line: str) -> tuple[str, str, str, list[str]] | None:
+	line = line.strip()
+	match = line_reg.match(line)
+	if match is None:
+		return None
+	trad, simp, pinyin, eng = match.groups()
+	pinyin = pinyin.replace("u:", "v")
+	return simp, trad, pinyin, eng.split("/")
 
 
-def colorize(
+class Article(NamedTuple):
+	first: str
+	second: str
+	pinyin: str
+	eng: list[str]
+
+	def names(self) -> list[str]:
+		return [self.first, self.second, self.pinyin] + list(map(summarize, self.eng))
+
+
+def render_syllables_no_color(
 	hf: "T_htmlfile",
 	syllables: Sequence[str],
-	tones: Sequence[str],
-	colorize_tones: bool,
+	_tones: Sequence[str],
 ) -> None:
-	if colorize_tones and len(syllables) != len(tones):
-		log.warning(f"unmatched tones: {syllables=}, {tones=}")
-		colorize_tones = False
-
-	if not colorize_tones:
-		with hf.element("div", style="display: inline-block"):
-			for syllable in syllables:
-				with hf.element("font", color=""):
-					hf.write(syllable)
-		return
-
 	with hf.element("div", style="display: inline-block"):
-		for syllable, tone in zip(syllables, tones, strict=False):
-			with hf.element("font", color=COLORS[tone]):
+		for syllable in syllables:
+			with hf.element("font", color=""):
 				hf.write(syllable)
 
 
-def render_article(  # noqa: PLR0913
-	trad: str,
-	simp: str,
-	pinyin: str,
-	eng: list[str],
-	traditional_title: bool,
-	colorize_tones: bool,
-) -> str:
-	from io import BytesIO
+def render_syllables_color(
+	hf: "T_htmlfile",
+	syllables: Sequence[str],
+	tones: Sequence[str],
+) -> None:
+	if len(syllables) != len(tones):
+		log.warning(f"unmatched tones: {syllables=}, {tones=}")
+		render_syllables_no_color(hf, syllables, tones)
+		return
 
-	from lxml import etree as ET
+	with hf.element("div", style="display: inline-block"):
+		for index, syllable in enumerate(syllables):
+			with hf.element("font", color=COLORS[tones[index]]):
+				hf.write(syllable)
+
+
+# @lru_cache(maxsize=128)
+def convert_pinyin(pinyin: str) -> tuple[Sequence[str], Sequence[str]]:
+	return tuple(zip(*map(convert, pinyin.split()), strict=False))
+
+
+def render_article(
+	render_syllables: Callable,
+	article: Article,
+) -> tuple[list[str], str]:
+	names = article.names()
 
 	# pinyin_tones = [convert(syl) for syl in pinyin.split()]
-	pinyin_list = []
-	tones = []
-	for syllable in pinyin.split():
-		nice_syllable, tone = convert(syllable)
-		pinyin_list.append(nice_syllable)
-		tones.append(tone)
+	pinyin_list, tones = convert_pinyin(article.pinyin)
 
 	f = BytesIO()
-	with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
+	with ET.htmlfile(f, encoding="utf-8") as _hf:  # noqa: PLR1702
+		hf = cast("T_htmlfile", _hf)
 		with hf.element("div", style="border: 1px solid; padding: 5px"):
 			with hf.element("div"):
 				with hf.element("big"):
-					colorize(
-						cast("T_htmlfile", hf),
-						trad if traditional_title else simp,
-						tones,
-						colorize_tones,
-					)
-				if trad != simp:
+					render_syllables(hf, names[0], tones)
+
+				if names[1] != names[0]:
 					hf.write("\xa0/\xa0")  # "\xa0" --> "&#160;" == "&nbsp;"
-					colorize(
-						cast("T_htmlfile", hf),
-						simp if traditional_title else trad,
-						tones,
-						colorize_tones,
-					)
+					render_syllables(hf, names[1], tones)
+
 				hf.write(ET.Element("br"))
+
 				with hf.element("big"):
-					colorize(
-						cast("T_htmlfile", hf),
-						pinyin_list,
-						tones,
-						colorize_tones,
-					)
+					render_syllables(hf, pinyin_list, tones)
 
 			with hf.element("div"):
 				with hf.element("ul"):
-					for defn in eng:
+					for defn in article.eng:
 						with hf.element("li"):
 							hf.write(defn)
 
-	return f.getvalue().decode("utf-8")
+	return names, f.getvalue().decode("utf-8")

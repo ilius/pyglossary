@@ -111,6 +111,16 @@ class Reader:
 	def __iter__(self) -> Iterator[EntryType]:
 		_file = self.file
 		_fileSize = self._fileSize
+
+		render_syllables = (
+			conv.render_syllables_color
+			if self._colorize_tones
+			else conv.render_syllables_no_color
+		)
+		parse_line = (
+			conv.parse_line_trad if self._traditional_title else conv.parse_line_simp
+		)
+
 		while True:
 			line = _file.readline()
 			if not line:
@@ -120,18 +130,17 @@ class Reader:
 				continue
 			if line.startswith("#"):
 				continue
-			parts = conv.parse_line(line)
+			parts = parse_line(line)
 			if parts is None:
 				log.warning(f"bad line: {line!r}")
 				continue
-			names, article = conv.make_entry(
-				*parts,
-				traditional_title=self._traditional_title,
-				colorize_tones=self._colorize_tones,
+			names, article_text = conv.render_article(
+				render_syllables,
+				conv.Article(*parts),
 			)
 			entry = self._glos.newEntry(
 				names,
-				article,
+				article_text,
 				defiFormat="h",
 				byteProgress=(_file.tell(), _fileSize) if self._fileSize else None,
 			)
