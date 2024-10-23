@@ -23,6 +23,7 @@
 | ----------------- | ------- | ---- | --------------------------------------------- |
 | encoding          | `utf-8` | str  | Encoding/charset                              |
 | traditional_title | `False` | bool | Use traditional Chinese for entry titles/keys |
+| colorize_tones    | `True`  | bool | Set to false to disable tones coloring        |
 
 ### Dependencies for reading
 
