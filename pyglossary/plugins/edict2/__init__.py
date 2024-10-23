@@ -110,7 +110,8 @@ class Reader:
 
 	def __iter__(self) -> Iterator[EntryType]:
 		_file = self.file
-		_fileSize = self._fileSize
+		fileSize = self._fileSize
+		glos = self._glos
 
 		render_syllables = (
 			conv.render_syllables_color
@@ -138,10 +139,10 @@ class Reader:
 				render_syllables,
 				conv.Article(*parts),
 			)
-			entry = self._glos.newEntry(
+			entry = glos.newEntry(
 				names,
 				article_text,
 				defiFormat="h",
-				byteProgress=(_file.tell(), _fileSize) if self._fileSize else None,
+				byteProgress=(_file.tell(), fileSize) if fileSize else None,
 			)
 			yield entry
