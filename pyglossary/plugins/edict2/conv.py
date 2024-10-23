@@ -60,10 +60,11 @@ def colorize(
 	tones: Sequence[str],
 	colorize_tones: bool,
 ) -> None:
-	if len(syllables) != len(tones) or not colorize_tones:
-		if len(syllables) != len(tones):
-			log.warning(f"unmatched tones: {syllables=}, {tones=}")
+	if colorize_tones and len(syllables) != len(tones):
+		log.warning(f"unmatched tones: {syllables=}, {tones=}")
+		colorize_tones = False
 
+	if not colorize_tones:
 		with hf.element("div", style="display: inline-block"):
 			for syllable in syllables:
 				with hf.element("font", color=""):
