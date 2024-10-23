@@ -1,14 +1,17 @@
-from typing import NamedTuple, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, NamedTuple, cast
 from xml.sax.saxutils import escape
 
 from pyglossary.core import log
 
-from ._types import (
-	ErrorType,
-)
-from ._types import TitleLexType as LexType
-from ._types import TitleTransformerType as TransformerType
 from .transform import Transformer
+
+if TYPE_CHECKING:
+	from ._types import ErrorType
+	from ._types import TitleLexType as LexType
+	from ._types import TitleTransformerType as TransformerType
+
 
 __all__ = ["TitleTransformer"]
 
@@ -139,7 +142,7 @@ class TitleTransformer:
 
 	def transform(self) -> tuple[TitleResult | None, ErrorType]:
 		lex: LexType = lexRoot
-		tr = cast(TransformerType, self)
+		tr = cast("TransformerType", self)
 		while lex is not None:
 			lex, err = lex(tr)
 			if err:

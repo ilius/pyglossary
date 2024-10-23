@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 from os.path import splitext
+from typing import TYPE_CHECKING
 from xml.sax.saxutils import escape, quoteattr
 
 from pyglossary.core import log
 
-from ._types import ErrorType, LexType, TransformerType
+if TYPE_CHECKING:
+	from ._types import ErrorType, LexType, TransformerType
 
 __all__ = ["lexRoot"]
 

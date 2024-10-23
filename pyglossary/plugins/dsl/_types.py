@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import typing
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 __all__ = [
 	"ErrorType",
@@ -55,9 +58,13 @@ class TitleTransformerType(TransformerType, typing.Protocol):
 		pass
 
 
-ErrorType = str | None
+if TYPE_CHECKING:
+	ErrorType = str | None
 
-# it is an State Function (state as in state machine)
-LexType = Callable[[TransformerType], tuple["LexType", ErrorType]] | None
+	# it is an State Function (state as in state machine)
+	LexType = Callable[[TransformerType], tuple["LexType", ErrorType]] | None
 
-TitleLexType = Callable[[TitleTransformerType], tuple["TitleLexType", ErrorType]] | None
+	TitleLexType = Callable[
+		[TitleTransformerType],
+		tuple["TitleLexType", ErrorType],
+	] | None

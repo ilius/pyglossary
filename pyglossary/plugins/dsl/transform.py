@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import re
-from typing import NamedTuple, cast
+from typing import TYPE_CHECKING, NamedTuple, cast
 from xml.sax.saxutils import escape
 
 from pyglossary.core import log
 
-from ._types import ErrorType, LexType, TransformerType
 from .lex import lexRoot
+
+if TYPE_CHECKING:
+	from ._types import ErrorType, LexType, TransformerType
+
 
 __all__ = ["Transformer"]
 
@@ -159,7 +164,7 @@ class Transformer:
 		self.input = re_comment_block.sub("", self.input)
 
 		lex: LexType = lexRoot
-		tr = cast(TransformerType, self)
+		tr = cast("TransformerType", self)
 		while lex is not None:
 			lex, err = lex(tr)
 			if err:
