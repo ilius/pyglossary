@@ -1,5 +1,6 @@
 import sys
 import unittest
+import uuid
 from os.path import abspath, dirname, relpath
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -17,6 +18,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		self,
 		fname,
 		fname2="",
+		testId=None,
 		syn=True,
 		dictzip=False,
 		config=None,
@@ -25,6 +27,9 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		info=None,
 		**convertArgs,
 	):
+		if not testId:
+			testId = uuid.uuid1().hex
+
 		if not fname2:
 			fname2 = fname
 
@@ -33,8 +38,8 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 			binExtList.append("syn")
 
 		inputFilename = self.downloadFile(f"{fname}.txt")
-		outputFilename = self.newTempFilePath(f"{fname}.ifo")
-		otherFiles = {ext: self.newTempFilePath(f"{fname}.{ext}") for ext in binExtList}
+		outputFilename = self.newTempFilePath(f"{fname}-{testId}.ifo")
+		otherFiles = {ext: self.newTempFilePath(f"{fname}-{testId}.{ext}") for ext in binExtList}
 
 		glos = self.glos = Glossary(info=info)
 

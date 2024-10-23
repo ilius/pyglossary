@@ -7,6 +7,7 @@ import sys
 import tempfile
 import tracemalloc
 import unittest
+import uuid
 import zipfile
 from collections.abc import Callable
 from os.path import abspath, dirname, isdir, isfile, join, realpath
@@ -229,7 +230,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fname,  # input file with extension
 		fname2,  # output file with extension
-		testId="tmp",  # noqa: ARG002
+		testId=None,  # noqa: ARG002
 		compareText="",
 		compareBinary="",
 		sha1sum=None,
@@ -238,6 +239,8 @@ class TestGlossaryBase(unittest.TestCase):
 		showDiff=False,
 		**convertKWArgs,
 	):
+		if not testId:
+			testId = uuid.uuid1().hex
 		inputFilename = self.downloadFile(fname)
 		outputFilename = self.newTempFilePath(fname2)
 		glos = self.glos = Glossary()
@@ -562,13 +565,13 @@ class TestGlossary(TestGlossaryBase):
 		self,
 		fname,  # input txt file without extension
 		fname2,  # expected output txt file without extension
-		testId="tmp",
+		testId=None,
 		config=None,
 		**convertArgs,
 	):
 		self.convert(
 			f"{fname}.txt",
-			f"{fname2}-{testId}.txt",
+			f"{fname2}-{testId}-v2.txt",
 			compareText=f"{fname2}.txt",
 			testId=testId,
 			config=config,
@@ -579,12 +582,12 @@ class TestGlossary(TestGlossaryBase):
 		self,
 		fname,  # input file with extension
 		fname2,  # expected output file without extensions
-		testId="tmp",
+		testId=None,
 		config=None,
 		**convertKWArgs,
 	):
 		inputFilename = self.downloadFile(fname)
-		outputTxtName = f"{fname2}-{testId}.txt"
+		outputTxtName = f"{fname2}-{testId}-v2.txt"
 		outputFilename = self.newTempFilePath(f"{outputTxtName}.zip")
 		expectedFilename = self.downloadFile(f"{fname2}.txt")
 		glos = self.glos = Glossary()
@@ -725,7 +728,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_save_info_json(self):
 		fname = "100-en-fa"
 		testId = "save_info_json"
-		infoPath = self.newTempFilePath(f"{fname}-{testId}.info")
+		infoPath = self.newTempFilePath(f"{fname}-{testId}-v2.info")
 		self.convert_txt_txt(
 			fname,
 			fname,

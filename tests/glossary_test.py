@@ -7,6 +7,7 @@ import sys
 import tempfile
 import tracemalloc
 import unittest
+import uuid
 import zipfile
 from collections.abc import Callable
 from os.path import abspath, dirname, isdir, isfile, join
@@ -228,7 +229,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fname,  # input file with extension
 		fname2,  # output file with extension
-		testId="tmp",  # noqa: ARG002
+		testId=None,  # noqa: ARG002
 		compareText="",
 		compareBinary="",
 		sha1sum=None,
@@ -237,6 +238,8 @@ class TestGlossaryBase(unittest.TestCase):
 		showDiff=False,
 		**convertArgs,
 	):
+		if not testId:
+			testId = uuid.uuid1().hex
 		inputFilename = self.downloadFile(fname)
 		outputFilename = self.newTempFilePath(fname2)
 		glos = self.glos = Glossary()
@@ -559,7 +562,7 @@ class TestGlossary(TestGlossaryBase):
 		self,
 		fname,  # input txt file without extension
 		fname2,  # expected output txt file without extension
-		testId="tmp",
+		testId=None,
 		config=None,
 		**convertArgs,
 	):
@@ -576,7 +579,7 @@ class TestGlossary(TestGlossaryBase):
 		self,
 		fname,  # input file with extension
 		fname2,  # expected output file without extensions
-		testId="tmp",
+		testId=None,
 		config=None,
 		**convertArgs,
 	):
