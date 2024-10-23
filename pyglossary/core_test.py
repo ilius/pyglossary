@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 __all__ = [
@@ -21,7 +23,7 @@ class MockLogHandler(logging.Handler):
 		else:
 			self.recordsByLevel[level] = [record]
 
-	def popLog(self, level: int, msg: str, partial=False) -> "logging.LogRecord | None":
+	def popLog(self, level: int, msg: str, partial=False) -> logging.LogRecord | None:
 		if level not in self.recordsByLevel:
 			return None
 		records = self.recordsByLevel[level]

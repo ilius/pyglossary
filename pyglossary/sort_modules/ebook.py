@@ -18,7 +18,7 @@ def normal(
 	length = options.get("group_by_prefix_length", 2)
 
 	# FIXME: return bytes
-	def sortKey(words: list[str]) -> "tuple[str, str]":
+	def sortKey(words: list[str]) -> tuple[str, str]:
 		word = words[0]
 		if not word:
 			return "", ""

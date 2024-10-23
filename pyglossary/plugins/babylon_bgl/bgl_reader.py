@@ -635,7 +635,7 @@ class BglReader:
 			return False
 		return True
 
-	def readType2(self, block: Block) -> "EntryType | None":
+	def readType2(self, block: Block) -> EntryType | None:
 		"""
 		Process type 2 block.
 
@@ -768,7 +768,7 @@ class BglReader:
 			f", data={block.data!r}",
 		)
 
-	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
+	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
 		if not self.file:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -833,7 +833,7 @@ class BglReader:
 		self,
 		block: Block,
 		pos: int,
-	) -> "EntryWordData | None":
+	) -> EntryWordData | None:
 		"""
 		Read word part of entry.
 
@@ -882,7 +882,7 @@ class BglReader:
 		block: Block,
 		pos: int,
 		word: EntryWordData,
-	) -> "tuple[bool, int | None, bytes | None, bytes | None]":
+	) -> tuple[bool, int | None, bytes | None, bytes | None]:
 		"""
 		Read defi part of entry.
 
@@ -926,7 +926,7 @@ class BglReader:
 		block: Block,
 		pos: int,
 		word: EntryWordData,
-	) -> "tuple[bool, int | None, list[str] | None]":
+	) -> tuple[bool, int | None, list[str] | None]:
 		"""
 		Returns
 		-------
@@ -966,7 +966,7 @@ class BglReader:
 	def readEntry_Type11(
 		self,
 		block: Block,
-	) -> "tuple[bool, str | None, list[str] | None, str | None]":
+	) -> tuple[bool, str | None, list[str] | None, str | None]:
 		"""Return (succeed, u_word, u_alts, u_defi)."""
 		Err = (False, None, None, None)
 		pos = 0
@@ -1113,7 +1113,7 @@ class BglReader:
 		self,
 		b_text: bytes,
 		defaultEncoding: str,
-	) -> "tuple[str, str]":
+	) -> tuple[str, str]:
 		"""
 		b_text is a bytes
 		Decode html text taking into account charset tags and default encoding.
@@ -1181,7 +1181,7 @@ class BglReader:
 			)
 		return u_text, defaultEncodingOnly
 
-	def processKey(self, b_word: bytes) -> "tuple[str, str]":
+	def processKey(self, b_word: bytes) -> tuple[str, str]:
 		"""
 		b_word is a bytes instance
 		returns (u_word: str, u_word_html: str)

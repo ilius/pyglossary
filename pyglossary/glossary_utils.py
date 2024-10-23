@@ -18,6 +18,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import logging
 from os.path import (
 	splitext,
@@ -48,7 +50,7 @@ class WriteError(Error):
 
 def splitFilenameExt(
 	filename: str = "",
-) -> "tuple[str, str, str, str]":
+) -> tuple[str, str, str, str]:
 	"""Return (filenameNoExt, filename, ext, compression)."""
 	compression = ""
 	filenameNoExt, ext = splitext(filename)

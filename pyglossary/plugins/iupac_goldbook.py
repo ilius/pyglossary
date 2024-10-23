@@ -189,7 +189,7 @@ class Reader:
 		term = term.replace("<i>", "").replace("</i>", "")
 		return term  # noqa: RET504
 
-	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
+	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
 		from lxml import etree as ET
 
 		glos = self._glos

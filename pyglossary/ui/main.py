@@ -19,6 +19,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import argparse
 import logging
 import sys
@@ -73,7 +75,7 @@ __all__ = ["main"]
 log = None
 
 
-def validateLangStr(st: str) -> "str | None":
+def validateLangStr(st: str) -> str | None:
 	lang = langDict[st]
 	if lang:
 		return lang.name

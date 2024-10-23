@@ -52,7 +52,7 @@ class GlossaryInfo:
 
 	# def formatInfoKeys(self, format: str):# FIXME
 
-	def iterInfo(self) -> "Iterator[tuple[str, str]]":
+	def iterInfo(self) -> Iterator[tuple[str, str]]:
 		return iter(self._info.items())
 
 	def getInfo(self, key: str) -> str:
@@ -110,21 +110,21 @@ class GlossaryInfo:
 		return ""
 
 	@staticmethod
-	def _getLangByStr(st: str) -> "Lang | None":
+	def _getLangByStr(st: str) -> Lang | None:
 		lang = langDict[st]
 		if lang:
 			return lang
 		log.error(f"unknown language {st!r}")
 		return None
 
-	def _getLangByInfoKey(self, key: str) -> "Lang | None":
+	def _getLangByInfoKey(self, key: str) -> Lang | None:
 		st = self._info.get(key, "")
 		if not st:
 			return None
 		return self._getLangByStr(st)
 
 	@property
-	def sourceLang(self) -> "Lang | None":
+	def sourceLang(self) -> Lang | None:
 		return self._getLangByInfoKey(c_sourceLang)
 
 	@sourceLang.setter
@@ -134,7 +134,7 @@ class GlossaryInfo:
 		self._info[c_sourceLang] = lang.name
 
 	@property
-	def targetLang(self) -> "Lang | None":
+	def targetLang(self) -> Lang | None:
 		return self._getLangByInfoKey(c_targetLang)
 
 	@targetLang.setter

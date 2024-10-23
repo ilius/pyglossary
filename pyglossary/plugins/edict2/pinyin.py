@@ -1,6 +1,8 @@
 # coding=utf-8
 # based on https://github.com/zkoch/CEDICT_Parser
 
+from __future__ import annotations
+
 __all__ = ["convert"]
 
 TONES = {
@@ -34,7 +36,7 @@ TONES = {
 VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
 
 
-def convert(word: str) -> "tuple[str, str]":
+def convert(word: str) -> tuple[str, str]:
 	tone = word[-1]
 	pinyin = word[0:-1].lower()
 	result = pinyin

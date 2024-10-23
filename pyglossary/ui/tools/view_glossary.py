@@ -26,7 +26,7 @@ if noColor:
 	yellow = reset = ""  # noqa: F811
 
 
-def getEntryHighlighter() -> "Callable[[EntryType], None] | None":
+def getEntryHighlighter() -> Callable[[EntryType], None] | None:
 	if noColor:
 		return None
 	try:

@@ -315,7 +315,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			spine=spine_contents,
 		).encode("utf-8")
 
-	def write_groups(self) -> "Generator[None, EntryType, None]":
+	def write_groups(self) -> Generator[None, EntryType, None]:
 		def add_group(state: GroupStateBySize) -> None:
 			if state.group_size <= 0:
 				return
@@ -349,7 +349,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 		add_group(state)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		import shutil
 		import subprocess
 

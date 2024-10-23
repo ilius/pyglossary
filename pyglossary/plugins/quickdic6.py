@@ -497,7 +497,7 @@ class Comparator:
 		self,
 		tup1: "tuple[str, str]",
 		tup2: "tuple[str, str]",
-	) -> "Literal[0, 1, -1]":
+	) -> Literal[0, 1, -1]:
 		# assert isinstance(tup1, tuple)
 		# assert isinstance(tup2, tuple)
 		s1, n1 = tup1
@@ -514,7 +514,7 @@ class Comparator:
 		self,
 		a: str,
 		b: str,
-	) -> "Literal[0, 1, -1]":
+	) -> Literal[0, 1, -1]:
 		if self.version < 7:
 			return 0
 		s1 = self._without_dash(a)
@@ -782,7 +782,7 @@ class Reader:
 			return 0
 		return sum(len(p) for _, p in self._dic.pairs) + len(self._dic.htmls)
 
-	def __iter__(self) -> "typing.Iterator[EntryType]":
+	def __iter__(self) -> typing.Iterator[EntryType]:
 		if self._dic is None:
 			raise RuntimeError("dictionary not open")
 		for idx, (_, pairs) in enumerate(self._dic.pairs):
@@ -822,7 +822,7 @@ class Writer:
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def write(self) -> "typing.Generator[None, EntryType, None]":
+	def write(self) -> typing.Generator[None, EntryType, None]:
 		synonyms: dict[str, list[str]] = {}
 		htmls = []
 		log.info("Converting individual entries ...")

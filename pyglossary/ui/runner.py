@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import logging
 import os
@@ -87,7 +89,7 @@ def getRunner(
 	args: "argparse.Namespace",
 	ui_type: str,
 	logArg: logging.Logger,
-) -> "Callable | None":
+) -> Callable | None:
 	global log
 	log = logArg
 

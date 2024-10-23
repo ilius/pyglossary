@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 import os
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
@@ -7,10 +9,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from libzim.reader import Archive  # type: ignore
 
+	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 
 from pyglossary.core import cacheDir, log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import UnicodeErrorsOption
 
 __all__ = [
@@ -110,7 +112,7 @@ class Reader:
 			return 0
 		return self._zimfile.entry_count
 
-	def __iter__(self) -> "Iterator[EntryType | None]":  # noqa: PLR0912
+	def __iter__(self) -> Iterator[EntryType | None]:  # noqa: PLR0912
 		glos = self._glos
 		zimfile = self._zimfile
 		if zimfile is None:

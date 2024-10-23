@@ -170,7 +170,7 @@ class Reader:
 		return a
 
 	# TODO: PLR0912 Too many branches (17 > 12)
-	def open(self, filename: str) -> "Iterator[tuple[int, int]]":  # noqa: PLR0912
+	def open(self, filename: str) -> Iterator[tuple[int, int]]:  # noqa: PLR0912
 		from os.path import dirname
 
 		try:
@@ -257,7 +257,7 @@ class Reader:
 		)
 
 	@staticmethod
-	def parseMetadata(infoPlistPath: str) -> "dict[str, Any]":
+	def parseMetadata(infoPlistPath: str) -> dict[str, Any]:
 		import biplist
 
 		if not isfile(infoPlistPath):
@@ -367,7 +367,7 @@ class Reader:
 	def getChunkLenOffset(
 		pos: int,
 		buffer: bytes,
-	) -> "tuple[int, int]":
+	) -> tuple[int, int]:
 		"""
 		@return chunk byte length and offset.
 
@@ -397,7 +397,7 @@ class Reader:
 		self,
 		entryBytes: bytes,
 		articleAddress: ArticleAddress,
-	) -> "EntryType | None":
+	) -> EntryType | None:
 		# 1. create and validate XML of the entry's body
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
 		if entryRoot is None:
@@ -438,7 +438,7 @@ class Reader:
 	def convertEntryBytesToXml(
 		self,
 		entryBytes: bytes,
-	) -> "Element | None":
+	) -> Element | None:
 		if not entryBytes.strip():
 			return None
 		try:
@@ -489,7 +489,7 @@ class Reader:
 		self,
 		morphoFilePath: str,
 		properties: AppleDictProperties,
-	) -> "Iterator[tuple[int, int]]":
+	) -> Iterator[tuple[int, int]]:
 		"""
 		Prepare `KeyText.data` file for extracting morphological data.
 
@@ -540,7 +540,7 @@ class Reader:
 		bufferOffset: int,
 		bufferLimit: int,
 		properties: AppleDictProperties,
-	) -> "Iterator[tuple[int, int]]":
+	) -> Iterator[tuple[int, int]]:
 		"""
 		Returns an iterator/generator for the progress
 		Sets self._keyTextData when done.
@@ -708,7 +708,7 @@ class Reader:
 		self,
 		body_file: "io.BufferedIOBase",
 		properties: AppleDictProperties,
-	) -> "Iterator[tuple[bytes, ArticleAddress]]":
+	) -> Iterator[tuple[bytes, ArticleAddress]]:
 		fileDataOffset, fileLimit = guessFileOffsetLimit(body_file)
 		sectionOffset = fileDataOffset
 		while sectionOffset < fileLimit:

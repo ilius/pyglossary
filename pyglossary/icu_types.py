@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from collections.abc import Callable
 from typing import AnyStr
@@ -23,7 +25,7 @@ class T_Collator(typing.Protocol):
 	# mypy: error: Self argument missing for a non-static method
 	# (or an invalid type for self)  [misc]
 	@classmethod
-	def createInstance(cls: "T_Locale | None" = None) -> "T_Collator":  # type: ignore
+	def createInstance(cls: "T_Locale | None" = None) -> T_Collator:  # type: ignore
 		pass
 
 	@property

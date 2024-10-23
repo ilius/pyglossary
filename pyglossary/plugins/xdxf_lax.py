@@ -115,7 +115,7 @@ class Reader:
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
 
-	def readUntil(self, untilByte: bytes) -> "tuple[int, bytes]":
+	def readUntil(self, untilByte: bytes) -> tuple[int, bytes]:
 		_file = self._file
 		buf = b""
 		while True:
@@ -180,7 +180,7 @@ class Reader:
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		from lxml.html import fromstring, tostring
 
 		while True:

@@ -65,7 +65,7 @@ class EntryList:
 	def __len__(self) -> int:
 		return len(self._l)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		entryFromRaw = self._entryFromRaw
 		for rawEntry in self._l:
 			yield entryFromRaw(rawEntry)

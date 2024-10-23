@@ -49,7 +49,7 @@ def base36(x: int) -> str:
 	return "".join(digits)
 
 
-def id_generator() -> "Iterator[str]":
+def id_generator() -> Iterator[str]:
 	cnt = 1
 
 	while True:

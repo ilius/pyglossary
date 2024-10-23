@@ -81,7 +81,7 @@ class Reader:
 		self._cur.execute("select count(id) from entry")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		from json import loads
 
 		if self._cur is None:
@@ -183,7 +183,7 @@ class Writer:
 			self.xdxf_setup()
 		return self._xdxfTr.transformByInnerString(text)  # type: ignore
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		import hashlib
 
 		cur = self._cur

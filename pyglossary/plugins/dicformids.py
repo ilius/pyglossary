@@ -116,7 +116,7 @@ class Reader:
 	def __len__(self) -> int:
 		raise NotImplementedError  # FIXME
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		return self
 
 	def __next__(self) -> EntryType:

@@ -168,7 +168,7 @@ class Glossary(GlossaryCommon):
 		writeOptions: "dict[str, Any] | None" = None,
 		sqlite: "bool | None" = None,
 		infoOverride: "dict[str, str] | None" = None,
-	) -> "str | None":
+	) -> str | None:
 		self.progressbar = progressbar
 		try:
 			return GlossaryCommon.convertV2(

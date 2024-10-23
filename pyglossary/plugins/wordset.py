@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 from collections.abc import Iterator
 from json import load
 from os import listdir
 from os.path import isfile, join, splitext
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	EncodingOption,
 	Option,
 )
 from pyglossary.sort_keys import lookupSortKey
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -92,7 +97,7 @@ class Reader:
 			return "\x80"
 		return fname
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if not self._filename:
 			raise RuntimeError("iterating over a reader while it's not open")
 

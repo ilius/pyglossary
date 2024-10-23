@@ -220,7 +220,7 @@ class Reader:
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		context = ET.iterparse(  # type: ignore
 			self._file,
 			events=("end",),

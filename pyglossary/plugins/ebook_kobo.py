@@ -154,7 +154,7 @@ class Writer:
 		# for now we just skip data entries and remove '<img' tags
 		return self._img_pattern.sub("[Image: \\1]", defi)
 
-	def write_groups(self) -> "Generator[None, EntryType, None]":
+	def write_groups(self) -> Generator[None, EntryType, None]:
 		import gzip
 		from collections import OrderedDict
 
@@ -259,7 +259,7 @@ class Writer:
 			raise e
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		with indir(self._filename, create=True):
 			yield from self.write_groups()
 

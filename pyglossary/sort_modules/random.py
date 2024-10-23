@@ -41,7 +41,7 @@ def sqlite(**_options) -> SQLiteSortKeyType:
 def sqlite_locale(
 	_collator: "T_Collator",  # noqa: F821
 	**_options,
-) -> "Callable[..., SQLiteSortKeyType]":
+) -> Callable[..., SQLiteSortKeyType]:
 	from random import random
 
 	return lambda **_opt: [

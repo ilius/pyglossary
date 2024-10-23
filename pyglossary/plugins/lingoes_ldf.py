@@ -150,7 +150,7 @@ class Writer:
 	def _defiEscapeFunc(defi: str) -> str:
 		return defi.replace("\n", "<br/>")
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from pyglossary.text_writer import writeTxt
 
 		newline = self._newline

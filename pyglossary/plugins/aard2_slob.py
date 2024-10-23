@@ -193,7 +193,7 @@ class Reader:
 			"href='bword://",
 		)
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self) -> Iterator[EntryType | None]:
 		from pyglossary.slob import MIME_HTML, MIME_TEXT
 
 		if self._slobObj is None:
@@ -288,7 +288,7 @@ class Writer:
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
-	def _open(self, filename: str, namePostfix: str) -> "slob.Writer":
+	def _open(self, filename: str, namePostfix: str) -> slob.Writer:
 		from pyglossary import slob
 
 		if isfile(filename):
@@ -416,7 +416,7 @@ class Writer:
 				content_type=_ctype,
 			)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		slobWriter = self._slobWriter
 		if slobWriter is None:
 			raise ValueError("slobWriter is None")

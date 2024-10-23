@@ -22,6 +22,8 @@
 # Gregorian calendar:
 # http://en.wikipedia.org/wiki/Gregorian_calendar
 
+from __future__ import annotations
+
 from datetime import datetime
 
 __all__ = ["isLeap", "jd_to", "to_jd"]
@@ -65,7 +67,7 @@ def to_jd(year: int, month: int, day: int) -> int:
 	)
 
 
-def jd_to(jd: int) -> "tuple[int, int, int]":
+def jd_to(jd: int) -> tuple[int, int, int]:
 	ordinal = jd - 1721425
 	if 0 < ordinal < 3652060:  # > 4x faster  # noqa: PLR2004
 		# datetime(9999, 12, 31).toordinal() == 3652059

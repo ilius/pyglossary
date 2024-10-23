@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import logging
 import os
 import re
@@ -108,7 +110,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def defi(self) -> str:
 		return f"File: {self._fname}"
 
-	def byteProgress(self) -> "tuple[int, int] | None":
+	def byteProgress(self) -> tuple[int, int] | None:
 		return self._byteProgress
 
 	@property
@@ -146,7 +148,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def removeEmptyAndDuplicateAltWords(self) -> None:
 		pass
 
-	def stripFullHtml(self) -> "str | None":
+	def stripFullHtml(self) -> str | None:
 		pass
 
 
@@ -195,7 +197,7 @@ class Entry(BaseEntry):
 	def getRawEntrySortKey(
 		key: "Callable[[bytes], Any]",
 		rawEntryCompress: bool,
-	) -> "Callable[[RawEntryType], Any]":
+	) -> Callable[[RawEntryType], Any]:
 		# FIXME: this type for `key` is only for rawEntryCompress=False
 		# for rawEntryCompress=True, it is Callable[[bytes], Any]
 		# here `x` is raw entity, meaning a tuple of form (word, defi) or
@@ -305,7 +307,7 @@ class Entry(BaseEntry):
 			self._defiFormat = "h"
 			return
 
-	def byteProgress(self) -> "tuple[int, int] | None":
+	def byteProgress(self) -> tuple[int, int] | None:
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
@@ -372,7 +374,7 @@ class Entry(BaseEntry):
 		l_word = list(unique_everseen(l_word))
 		self._word = l_word
 
-	def stripFullHtml(self) -> "str | None":
+	def stripFullHtml(self) -> str | None:
 		"""Remove <html><head><body> tags and returns error."""
 		defi = self._defi
 		if not defi.startswith("<"):

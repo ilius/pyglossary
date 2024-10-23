@@ -194,7 +194,7 @@ class PluginManager:
 	def _findPlugin(
 		cls: type[PluginManager],
 		query: str,
-	) -> "PluginProp | None":
+	) -> PluginProp | None:
 		"""Find plugin by name or extension."""
 		plugin = cls.plugins.get(query)
 		if plugin:
@@ -239,7 +239,7 @@ class PluginManager:
 	def _outputPluginByFormat(
 		cls: type[PluginManager],
 		format: str,
-	) -> "tuple[PluginProp | None, str]":
+	) -> tuple[PluginProp | None, str]:
 		if not format:
 			return None, ""
 		plugin = cls.plugins.get(format, None)

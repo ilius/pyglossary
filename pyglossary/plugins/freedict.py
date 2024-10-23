@@ -366,7 +366,7 @@ class Reader:
 
 			self.writeRichText(hf, child)
 
-	def getLangDesc(self, elem: Element) -> "str | None":
+	def getLangDesc(self, elem: Element) -> str | None:
 		lang = elem.attrib.get(self.xmlLang)
 		if lang:
 			langObj = langDict[lang]
@@ -958,7 +958,7 @@ class Reader:
 
 		cfile.close()
 
-	def loadInclude(self, elem: Element) -> "Reader | None":
+	def loadInclude(self, elem: Element) -> Reader | None:
 		href = elem.attrib.get("href")
 		if not href:
 			log.error(f"empty href in {elem}")
@@ -975,7 +975,7 @@ class Reader:
 		reader.open(filename)
 		return reader
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		from lxml import etree as ET
 
 		if self._auto_rtl is None:

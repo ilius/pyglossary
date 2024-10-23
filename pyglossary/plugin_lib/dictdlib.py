@@ -18,6 +18,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from __future__ import annotations
+
 import gzip
 import os
 import string
@@ -375,7 +377,7 @@ class DictDB:
 		self.indexFile.close()
 		self.dictFile.close()
 
-	def getDefList(self) -> "Iterable[str]":
+	def getDefList(self) -> Iterable[str]:
 		"""
 		Returns a list of strings naming all definitions contained
 		in this dictionary.
@@ -385,7 +387,7 @@ class DictDB:
 	def hasDef(self, word: str) -> bool:
 		return word in self.indexEntries
 
-	def getDef(self, word: str) -> "list[bytes]":
+	def getDef(self, word: str) -> list[bytes]:
 		"""
 		Given a definition name, returns a list of strings with all
 		matching definitions.  This is an *exact* match, not a

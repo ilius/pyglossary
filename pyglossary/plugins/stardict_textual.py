@@ -170,7 +170,7 @@ class Reader:
 	def renderDefiList(
 		self,
 		defisWithFormat: "list[tuple[str, str]]",
-	) -> "tuple[str, str]":
+	) -> tuple[str, str]:
 		if not defisWithFormat:
 			return "", ""
 		if len(defisWithFormat) == 1:
@@ -197,7 +197,7 @@ class Reader:
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -344,7 +344,7 @@ class Writer:
 		# 	)
 		# )
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from lxml import builder
 		from lxml import etree as ET
 

@@ -18,12 +18,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import os
 from collections.abc import Generator, Iterator
 from os.path import dirname, isdir, isfile, join
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -34,6 +36,9 @@ from pyglossary.text_utils import (
 	splitByBarUnescapeNTB,
 	unescapeNTB,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -126,7 +131,7 @@ class Reader:
 			return 0
 		return self._wordCount + len(self._resFileNames)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if not self._rootPath:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -264,7 +269,7 @@ class Writer:
 				),
 			)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from collections import OrderedDict as odict
 
 		from pyglossary.json_utils import dataToPrettyJson

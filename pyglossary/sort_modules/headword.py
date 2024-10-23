@@ -45,7 +45,7 @@ def sqlite(sortEncoding: str = "utf-8", **_options) -> SQLiteSortKeyType:
 
 def sqlite_locale(
 	collator: "T_Collator",  # noqa: F821
-) -> "Callable[..., SQLiteSortKeyType]":
+) -> Callable[..., SQLiteSortKeyType]:
 	cSortKey = collator.getSortKey
 
 	def sortKey(words: list[str]) -> bytes:

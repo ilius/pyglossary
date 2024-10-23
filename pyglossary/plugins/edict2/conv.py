@@ -26,7 +26,7 @@ COLORS = {
 }
 
 
-def parse_line(line: str) -> "tuple[str, str, str, list[str]] | None":
+def parse_line(line: str) -> tuple[str, str, str, list[str]] | None:
 	line = line.strip()
 	match = line_reg.match(line)
 	if match is None:
@@ -43,7 +43,7 @@ def make_entry(  # noqa: PLR0913
 	eng: list[str],
 	traditional_title: bool,
 	colorize_tones: bool,
-) -> "tuple[list[str], str]":
+) -> tuple[list[str], str]:
 	eng_names = list(map(summarize, eng))
 	names = [
 		trad if traditional_title else simp,

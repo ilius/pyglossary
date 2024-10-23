@@ -21,6 +21,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from typing import Any
 
@@ -62,7 +64,7 @@ def decodeBglBinTime(b_value: bytes) -> str:
 	return f"{year:04d}/{month:02d}/{day:02d}, {hour:02d}:{minute:02d}"
 
 
-def languageInfoDecode(b_value: bytes) -> "BabylonLanguage | None":
+def languageInfoDecode(b_value: bytes) -> BabylonLanguage | None:
 	"""Returns BabylonLanguage instance."""
 	intValue = uintFromBytes(b_value)
 	try:
@@ -72,7 +74,7 @@ def languageInfoDecode(b_value: bytes) -> "BabylonLanguage | None":
 		return None
 
 
-def charsetInfoDecode(b_value: bytes) -> "str | None":
+def charsetInfoDecode(b_value: bytes) -> str | None:
 	value = b_value[0]
 	try:
 		return charsetByCode[value]
@@ -81,7 +83,7 @@ def charsetInfoDecode(b_value: bytes) -> "str | None":
 	return None
 
 
-def aboutInfoDecode(b_value: bytes) -> "dict[str, any]":
+def aboutInfoDecode(b_value: bytes) -> dict[str, any]:
 	if not b_value:
 		return None
 	b_aboutExt, _, aboutContents = b_value.partition(b"\x00")
@@ -99,7 +101,7 @@ def aboutInfoDecode(b_value: bytes) -> "dict[str, any]":
 	}
 
 
-def utf16InfoDecode(b_value: bytes) -> "str | None":
+def utf16InfoDecode(b_value: bytes) -> str | None:
 	r"""
 	Decode info values from UTF-16.
 
@@ -145,7 +147,7 @@ def utf16InfoDecode(b_value: bytes) -> "str | None":
 	return b_value[8:].decode("utf16")  # str
 
 
-def flagsInfoDecode(b_value: bytes) -> "dict[str, bool]":
+def flagsInfoDecode(b_value: bytes) -> dict[str, bool]:
 	"""
 	Returns a dict with these keys:
 	utf8Encoding

@@ -151,7 +151,7 @@ class Writer:
 			n=len(self._filenameList),
 		)
 
-	def nextFile(self) -> "io.TextIOBase":
+	def nextFile(self) -> io.TextIOBase:
 		if self._fileObj:
 			self._fileObj.write(self._tail)
 			self._fileObj.close()
@@ -195,7 +195,7 @@ class Writer:
 		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
 
 		@lru_cache(maxsize=10)
-		def getLinksByFile(fileIndex: int) -> "io.TextIOBase":
+		def getLinksByFile(fileIndex: int) -> io.TextIOBase:
 			return open(
 				join(dirn, f"links{fileIndex}"),
 				mode="a",
@@ -327,7 +327,7 @@ class Writer:
 		url = "res/" + url
 		return f' src="{url}"'
 
-	def write(self) -> "Generator[None, EntryType, None]":  # noqa: PLR0912
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912
 		encoding = self._encoding
 		resources = self._resources
 		max_file_size = self._max_file_size

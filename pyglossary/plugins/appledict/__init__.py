@@ -18,6 +18,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+from __future__ import annotations
+
 import os
 import pkgutil
 import shutil
@@ -26,7 +28,6 @@ from os.path import basename, isdir, join
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	DictOption,
@@ -46,6 +47,8 @@ from ._dict import (
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Writer",
@@ -133,7 +136,7 @@ def loadBeautifulSoup() -> None:
 		)
 
 
-def abspath_or_None(path: "str | None") -> "str | None":
+def abspath_or_None(path: "str | None") -> str | None:
 	if not path:
 		return None
 	return os.path.abspath(os.path.expanduser(path))
@@ -258,7 +261,7 @@ class Writer:
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> "Generator[None, EntryType, None]":  # noqa: PLR0912
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912
 		global BeautifulSoup
 		from pyglossary.xdxf.transform import XdxfTransformer
 

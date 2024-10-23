@@ -403,7 +403,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			"}"
 		)
 
-	def _loadedEntryGen(self) -> "Iterator[EntryType]":
+	def _loadedEntryGen(self) -> Iterator[EntryType]:
 		if not self.progressbar:
 			yield from self._data
 			return
@@ -420,7 +420,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			yield entry
 		self.progressEnd()
 
-	def _readersEntryGen(self) -> "Iterator[EntryType]":
+	def _readersEntryGen(self) -> Iterator[EntryType]:
 		for reader in self._readers:
 			self.progressInit("Converting")
 			try:
@@ -436,7 +436,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _applyEntryFiltersGen(
 		self,
 		gen: Iterator[EntryType],
-	) -> "Iterator[EntryType]":
+	) -> Iterator[EntryType]:
 		entry: "EntryType | None"
 		for entry in gen:
 			if entry is None:
@@ -448,7 +448,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			else:
 				yield entry
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._iter is not None:
 			return self._iter
 
@@ -474,7 +474,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def collectDefiFormat(
 		self,
 		maxCount: int,
-	) -> "dict[str, float] | None":
+	) -> dict[str, float] | None:
 		"""
 		Collect definition format.
 
@@ -514,7 +514,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		return len(self._data) + sum(len(reader) for reader in self._readers)
 
 	@property
-	def config(self) -> "dict[str, Any]":
+	def config(self) -> dict[str, Any]:
 		raise NotImplementedError
 
 	@config.setter
@@ -574,7 +574,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			return f'<{tag} class="{_class}">{word}</{tag}><br>'
 		return f"<{tag}>{word}</{tag}><br>"
 
-	def getConfig(self, name: str, default: "str | None") -> "str | None":
+	def getConfig(self, name: str, default: "str | None") -> str | None:
 		return self._config.get(name, default)
 
 	def addEntry(self, entry: EntryType) -> None:
@@ -1013,7 +1013,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		args: ConvertArgs,
 		plugin: PluginProp,
-	) -> "tuple[bool, bool]":
+	) -> tuple[bool, bool]:
 		"""
 		sortKeyName: see doc/sort-key.md.
 
@@ -1067,7 +1067,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		plugin: PluginProp,
 		sortKeyName: "str | None",
 		sortEncoding: "str | None",
-	) -> "tuple[NamedSortKey, str]":
+	) -> tuple[NamedSortKey, str]:
 		"""
 		Check sortKeyName, sortEncoding and (output) plugin's params
 		returns (namedSortKey, sortEncoding).
@@ -1118,7 +1118,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		args: ConvertArgs,
 		outputFilename: str = "",
 		outputFormat: str = "",
-	) -> "bool | None":
+	) -> bool | None:
 		if isdir(outputFilename) and os.listdir(outputFilename):
 			raise Error(
 				f"Directory already exists and not empty: {relpath(outputFilename)}",
@@ -1231,5 +1231,5 @@ class Glossary(GlossaryCommon):
 
 	GLOSSARY_API_VERSION = "2.0"
 
-	def convert(self, args: ConvertArgs) -> "str | None":
+	def convert(self, args: ConvertArgs) -> str | None:
 		return self.convertV2(args)

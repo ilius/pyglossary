@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-from collections.abc import Generator
+from __future__ import annotations
 
-from pyglossary.glossary_types import EntryType, GlossaryType
+from collections.abc import Generator
+from typing import TYPE_CHECKING
+
 from pyglossary.option import BoolOption, Option
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Writer",
@@ -58,7 +63,7 @@ class Writer:
 	def _defiEscapeFunc(defi: str) -> str:
 		return defi.replace("\r", "")
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from pyglossary.text_writer import writeTxt
 
 		yield from writeTxt(

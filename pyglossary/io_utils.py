@@ -46,7 +46,7 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def writable(self) -> bool:
 		raise NotImplementedError
 
-	def detach(self) -> "io.RawIOBase":
+	def detach(self) -> io.RawIOBase:
 		raise NotImplementedError
 
 	def read(self, n: "int | None" = None) -> bytes:
@@ -65,7 +65,7 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def write(self, data: bytes) -> int:  # type: ignore
 		raise NotImplementedError
 
-	def __iter__(self) -> "Iterator[bytes]":
+	def __iter__(self) -> Iterator[bytes]:
 		raise NotImplementedError
 
 	def __next__(self) -> bytes:
@@ -118,7 +118,7 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def writable(self) -> bool:
 		raise NotImplementedError
 
-	def detach(self) -> "io.IOBase":  # type: ignore
+	def detach(self) -> io.IOBase:  # type: ignore
 		raise NotImplementedError
 
 	def read(self, n: "int | None" = None) -> str:
@@ -127,17 +127,17 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def read1(self, n: "int | None" = None) -> str:
 		raise NotImplementedError
 
-	def readinto(self, buffer) -> "io.BufferedIOBase":
+	def readinto(self, buffer) -> io.BufferedIOBase:
 		raise NotImplementedError
 
-	def readinto1(self, buffer) -> "io.BufferedIOBase":
+	def readinto1(self, buffer) -> io.BufferedIOBase:
 		raise NotImplementedError
 
 	# data: "bytearray|memoryview|array[Any]|io.mmap|io._CData|io.PickleBuffer"
 	def write(self, data: bytes) -> int:  # type: ignore
 		raise NotImplementedError
 
-	def __iter__(self) -> "Iterator[str]":  # type: ignore
+	def __iter__(self) -> Iterator[str]:  # type: ignore
 		raise NotImplementedError
 
 	def __next__(self) -> str:  # type: ignore

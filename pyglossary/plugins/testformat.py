@@ -73,7 +73,7 @@ class Reader:
 		# if you need to clean up temp files, do it here
 		pass
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		# the easiest and simplest way to implement an Iterator is
 		# by writing a generator, by calling: yield glos.newEntry(word, defi)
 		# inside a loop (typically iterating over a file object for text file)
@@ -97,7 +97,7 @@ class Writer:
 	def open(self, filename: str) -> None:
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		glos = self._glos
 		filename = self._filename  # noqa
 		# log.info(f"some useful message")

@@ -118,7 +118,7 @@ def printHelp() -> None:
 	print(text)
 
 
-def parseFormatOptionsStr(st: str) -> "dict[str, Any] | None":
+def parseFormatOptionsStr(st: str) -> dict[str, Any] | None:
 	"""Prints error and returns None if failed to parse one option."""
 	st = st.strip()
 	if not st:

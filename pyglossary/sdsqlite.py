@@ -49,7 +49,7 @@ class Writer:
 			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
 		)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		con = self._con
 		cur = self._cur
 		if not (con and cur):
@@ -119,7 +119,7 @@ class Reader:
 		self._cur.execute("select count(*) from dict")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
 			return
 		self._cur.execute(

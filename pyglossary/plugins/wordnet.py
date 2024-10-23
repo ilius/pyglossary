@@ -103,7 +103,7 @@ class SynSet:
 		return [self.meta_parts[4 + 2 * i].replace("_", " ") for i in range(self.w_cnt)]
 
 	@property
-	def pointers(self) -> "list[Pointer]":
+	def pointers(self) -> list[Pointer]:
 		p_cnt_index = 4 + 2 * self.w_cnt
 		p_cnt = self.meta_parts[p_cnt_index]
 		pointer_count = int(p_cnt)
@@ -317,7 +317,7 @@ class WordNet:
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
-	def process(self) -> "Iterator[tuple[str, str]]":
+	def process(self) -> Iterator[tuple[str, str]]:
 		article_template = self.article_template
 
 		for title in self.collector:
@@ -354,7 +354,7 @@ class Reader:
 	def close(self) -> None:
 		self.wordnet = None
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self.wordnet is None:
 			raise ValueError("self.wordnet is None")
 		glos = self._glos

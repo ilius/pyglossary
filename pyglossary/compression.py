@@ -27,7 +27,7 @@ __all__ = [
 ]
 
 
-def compressionOpenFunc(c: str) -> "Callable | None":
+def compressionOpenFunc(c: str) -> Callable | None:
 	if not c:
 		return open
 	if c == "gz":
@@ -53,7 +53,7 @@ def compressionOpen(
 	filename: str,
 	dz: bool = False,
 	**kwargs,  # noqa: ANN003
-) -> "io.IOBase":
+) -> io.IOBase:
 	from os.path import splitext
 
 	filenameNoExt, ext = splitext(filename)

@@ -40,7 +40,7 @@ class TextFilePosWrapper(io.TextIOBase):
 		self._encoding = encoding
 		self.pos = 0
 
-	def __iter__(self) -> "Iterator[str]":  # type: ignore
+	def __iter__(self) -> Iterator[str]:  # type: ignore
 		return self
 
 	def close(self) -> None:
@@ -101,7 +101,7 @@ class TextGlossaryReader:
 		except StopIteration:
 			return ""
 
-	def _openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
+	def _openGen(self, filename: str) -> Iterator[tuple[int, int]]:
 		self._fileIndex += 1
 		log.info(f"Reading file: {filename}")
 		cfile = cast(
@@ -133,12 +133,12 @@ class TextGlossaryReader:
 		for _ in self._openGen(filename):
 			pass
 
-	def open(self, filename: str) -> "Iterator[tuple[int, int]] | None":
+	def open(self, filename: str) -> Iterator[tuple[int, int]] | None:
 		self._filename = filename
 		self._open(filename)
 		return None
 
-	def openGen(self, filename: str) -> "Iterator[tuple[int, int]]":
+	def openGen(self, filename: str) -> Iterator[tuple[int, int]]:
 		"""
 		Like open() but return a generator / iterator to track the progress
 		example for reader.open:
@@ -201,7 +201,7 @@ class TextGlossaryReader:
 		self.setInfo(key, value)
 		return False
 
-	def loadInfo(self) -> "Generator[tuple[int, int], None, None]":
+	def loadInfo(self) -> Generator[tuple[int, int], None, None]:
 		self._pendingEntries = []
 		try:
 			while True:
@@ -221,7 +221,7 @@ class TextGlossaryReader:
 	def _genDataEntries(
 		resList: list[tuple[str, str]],
 		resPathSet: set[str],
-	) -> "Iterator[DataEntry]":
+	) -> Iterator[DataEntry]:
 		for relPath, fullPath in resList:
 			if relPath in resPathSet:
 				continue
@@ -231,7 +231,7 @@ class TextGlossaryReader:
 				tmpPath=fullPath,
 			)
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self) -> Iterator[EntryType | None]:
 		resPathSet: set[str] = set()
 		while True:
 			self._pos += 1

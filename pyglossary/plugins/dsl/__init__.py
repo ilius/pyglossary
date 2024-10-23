@@ -18,6 +18,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+from __future__ import annotations
+
 import html
 import html.entities
 import re
@@ -30,7 +32,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
@@ -46,6 +47,8 @@ from .transform import Transformer
 
 if TYPE_CHECKING:
 	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -307,7 +310,7 @@ class Reader:
 			reader.open(filename)
 		self._includes.append(reader)
 
-	def _iterLines(self) -> "Iterator[str]":
+	def _iterLines(self) -> Iterator[str]:
 		if self._bufferLine:
 			line = self._bufferLine
 			self._bufferLine = ""
@@ -322,7 +325,7 @@ class Reader:
 		line = line.replace("[/']", "")
 		return line  # noqa: RET504
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		for reader in self._includes:
 			yield from reader
 			reader.close()

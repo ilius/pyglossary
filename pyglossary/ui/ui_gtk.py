@@ -17,6 +17,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+from __future__ import annotations
+
 import logging
 import sys
 import traceback
@@ -99,7 +101,7 @@ def getMonitor():
 	return None
 
 
-def getWorkAreaSize() -> "tuple[int, int] | None":
+def getWorkAreaSize() -> tuple[int, int] | None:
 	monitor = getMonitor()
 	if monitor is None:
 		return None
@@ -234,7 +236,7 @@ class FormatDialog(gtk.Dialog):
 		if self.activeDesc:
 			self.setCursor(self.activeDesc)
 
-	def getActive(self) -> "PluginProp | None":
+	def getActive(self) -> PluginProp | None:
 		_iter = self.treev.get_selection().get_selected()[1]
 		if _iter is None:
 			return None

@@ -108,7 +108,7 @@ class Reader:
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		_file = self.file
 		_fileSize = self._fileSize
 		while True:

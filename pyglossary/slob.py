@@ -149,7 +149,7 @@ class CompressionModule(typing.Protocol):
 		raise NotImplementedError
 
 
-def init_compressions() -> "dict[str, Compression]":
+def init_compressions() -> dict[str, Compression]:
 	def ident(x: bytes) -> bytes:
 		return x
 
@@ -356,7 +356,7 @@ class KeydItemDict:
 
 	# https://docs.python.org/3/library/bisect.html
 	# key= parameter to bisect_left is added in Python 3.10
-	def __getitem__(self, key: str) -> "Iterator[Blob | Ref]":
+	def __getitem__(self, key: str) -> Iterator[Blob | Ref]:
 		blobs = self.blobs
 		key_as_sk = self.sortkey(key)
 		i = bisect_left(
@@ -593,13 +593,13 @@ def read_header(_file: MultiFileReader) -> Header:
 	if compression not in COMPRESSIONS:
 		raise UnknownCompression(compression)
 
-	def read_tags() -> "dict[str, str]":
+	def read_tags() -> dict[str, str]:
 		count = reader.read_byte()
 		return {reader.read_tiny_text(): reader.read_tiny_text() for _ in range(count)}
 
 	tags = read_tags()
 
-	def read_content_types() -> "Sequence[str]":
+	def read_content_types() -> Sequence[str]:
 		content_types: list[str] = []
 		count = reader.read_byte()
 		for _ in range(count):
@@ -632,7 +632,7 @@ def meld_ints(a: int, b: int) -> int:
 	return (a << 16) | b
 
 
-def unmeld_ints(c: int) -> "tuple[int, int]":
+def unmeld_ints(c: int) -> tuple[int, int]:
 	bstr = bin(c).lstrip("0b").zfill(48)
 	a, b = bstr[-48:-16], bstr[-16:]
 	return int(a, 2), int(b, 2)
@@ -686,7 +686,7 @@ class Slob:
 		return self._header.uuid.hex
 
 	@property
-	def content_types(self) -> "Sequence[str]":
+	def content_types(self) -> Sequence[str]:
 		return self._header.content_types
 
 	@property
@@ -712,7 +712,7 @@ class Slob:
 		# this is called by bisect_left
 		return self.getBlobByIndex(i)
 
-	def __iter__(self) -> "Iterator[Blob]":
+	def __iter__(self) -> Iterator[Blob]:
 		for i in range(len(self._refs)):
 			yield self.getBlobByIndex(i)
 
@@ -744,7 +744,7 @@ class Slob:
 			read_func=read_func,
 		)
 
-	def get(self, blob_id: int) -> "tuple[str, bytes]":
+	def get(self, blob_id: int) -> tuple[str, bytes]:
 		"""Returns (content_type: str, content: bytes)."""
 		bin_index, bin_item_index = unmeld_ints(blob_id)
 		return self._store.get(bin_index, bin_item_index)
@@ -972,7 +972,7 @@ class Store(ItemList[StoreItem]):
 		self,
 		bin_index: int,
 		item_index: int,
-	) -> "tuple[str, StoreItem]":
+	) -> tuple[str, StoreItem]:
 		store_item = self[bin_index]
 		content_type_id = store_item.content_type_ids[item_index]
 		content_type = self.content_types[content_type_id]
@@ -994,7 +994,7 @@ class Store(ItemList[StoreItem]):
 		self,
 		bin_index: int,
 		item_index: int,
-	) -> "tuple[str, bytes]":
+	) -> tuple[str, bytes]:
 		content_type, store_item = self._content_type(bin_index, item_index)
 		content = self._decompress(bin_index)
 		count = len(store_item.content_type_ids)
@@ -1115,7 +1115,7 @@ class Writer:
 	@staticmethod
 	def _split_key(
 		key: str | tuple[str, str],
-	) -> "tuple[str, str]":
+	) -> tuple[str, str]:
 		if isinstance(key, str):
 			actual_key = key
 			fragment = ""
@@ -1243,7 +1243,7 @@ class Writer:
 		self._fire_event("begin_resolve_aliases")
 		self.f_aliases.finalize()
 
-		def read_key_frag(item: Blob, default_fragment: str) -> "tuple[str, str]":
+		def read_key_frag(item: Blob, default_fragment: str) -> tuple[str, str]:
 			key_frag = pickle.loads(item.content)
 			if isinstance(key_frag, str):
 				return key_frag, default_fragment

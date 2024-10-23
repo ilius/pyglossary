@@ -18,6 +18,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import logging
 from collections import OrderedDict
 from os.path import isfile, join
@@ -63,7 +65,7 @@ _entryFilterConfigDict = {
 }
 
 
-def getEntryFilterConfigPair(name: str) -> "tuple[str, Option]":
+def getEntryFilterConfigPair(name: str) -> tuple[str, Option]:
 	filterClass, default = _entryFilterConfigDict[name]
 	if isinstance(default, bool):
 		optClass = BoolOption

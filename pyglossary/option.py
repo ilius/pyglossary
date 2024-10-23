@@ -83,7 +83,7 @@ class Option:
 			comment += self.comment
 		return comment
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		data = {
 			"class": self.__class__.__name__,
 			"type": self.typ,
@@ -103,7 +103,7 @@ class Option:
 		return data
 
 	@classmethod
-	def evaluate(cls, raw: str) -> "tuple[Any, bool]":
+	def evaluate(cls, raw: str) -> tuple[Any, bool]:
 		"""Return (value, isValid)."""
 		if raw == "None":
 			return None, True
@@ -130,7 +130,7 @@ class Option:
 			return False
 		return self.validate(value)
 
-	def groupValues(self) -> "dict[str, Any] | None":  # noqa: PLR6301
+	def groupValues(self) -> dict[str, Any] | None:  # noqa: PLR6301
 		return None
 
 
@@ -153,7 +153,7 @@ class BoolOption(Option):
 			**kwargs,  # noqa: ANN003
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		data = Option.toDict(self)
 		del data["customValue"]
 		del data["values"]
@@ -163,7 +163,7 @@ class BoolOption(Option):
 	def evaluate(
 		cls,
 		raw: "str | bool",
-	) -> "tuple[bool | None, bool]":
+	) -> tuple[bool | None, bool]:
 		if raw is None:
 			return None, True
 		if isinstance(raw, bool):
@@ -202,7 +202,7 @@ class StrOption(Option):
 			return value in self.values
 		return type(value).__name__ == "str"
 
-	def groupValues(self) -> "dict[str, Any] | None":  # noqa: PLR6301
+	def groupValues(self) -> dict[str, Any] | None:  # noqa: PLR6301
 		return None
 
 
@@ -219,7 +219,7 @@ class IntOption(Option):
 		)
 
 	@classmethod
-	def evaluate(cls, raw: "str | int") -> "tuple[int | None, bool]":
+	def evaluate(cls, raw: "str | int") -> tuple[int | None, bool]:
 		"""Return (value, isValid)."""
 		try:
 			value = int(raw)
@@ -271,7 +271,7 @@ class FileSizeOption(IntOption):
 		return ""
 
 	@classmethod
-	def evaluate(cls, raw: "str | int") -> "tuple[int | None, bool]":
+	def evaluate(cls, raw: "str | int") -> tuple[int | None, bool]:
 		if not raw:
 			return 0, True
 		factor = 1
@@ -308,7 +308,7 @@ class FloatOption(Option):
 	def evaluate(
 		cls,
 		raw: "str | float | int",
-	) -> "tuple[float | None, bool]":
+	) -> tuple[float | None, bool]:
 		"""Return (value, isValid)."""
 		try:
 			value = float(raw)
@@ -332,7 +332,7 @@ class DictOption(Option):
 			**kwargs,
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
@@ -341,7 +341,7 @@ class DictOption(Option):
 	def evaluate(
 		cls,
 		raw: "str | dict",
-	) -> "tuple[dict | None, bool]":
+	) -> tuple[dict | None, bool]:
 		import ast
 
 		if isinstance(raw, dict):
@@ -369,13 +369,13 @@ class ListOption(Option):
 			**kwargs,  # noqa: ANN003
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data
 
 	@classmethod
-	def evaluate(cls, raw: str) -> "tuple[list | None, bool]":
+	def evaluate(cls, raw: str) -> tuple[list | None, bool]:
 		import ast
 
 		if raw == "":  # noqa: PLC1901
@@ -440,12 +440,12 @@ class EncodingOption(Option):
 			**kwargs,  # noqa: ANN003
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		data = Option.toDict(self)
 		del data["values"]
 		return data
 
-	def groupValues(self) -> "dict[str, Any] | None":
+	def groupValues(self) -> dict[str, Any] | None:
 		from collections import OrderedDict
 
 		groups: "dict[str, list[str]]" = OrderedDict()
@@ -512,7 +512,7 @@ class UnicodeErrorsOption(Option):
 			comment=comment,
 		)
 
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		return {
 			"class": "UnicodeErrorsOption",
 			"type": "str",
@@ -522,7 +522,7 @@ class UnicodeErrorsOption(Option):
 
 @Option.register
 class HtmlColorOption(Option):
-	def toDict(self) -> "dict[str, Any]":
+	def toDict(self) -> dict[str, Any]:
 		data = Option.toDict(self)
 		del data["customValue"]
 		return data

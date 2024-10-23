@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 from pyglossary.compression import stdCompressions
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
@@ -16,6 +18,9 @@ from pyglossary.text_utils import (
 	splitByBarUnescapeNTB,
 	unescapeNTB,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = ["Reader"]
 
@@ -55,7 +60,7 @@ class Reader(TextGlossaryReader):
 	def fixInfoWord(cls, word: str) -> str:
 		return word.lstrip("#")
 
-	def nextBlock(self) -> "tuple[str | list[str], str, None] | None":
+	def nextBlock(self) -> tuple[str | list[str], str, None] | None:
 		if not self._file:
 			raise StopIteration
 		line = self.readline()
@@ -107,7 +112,7 @@ class Writer:
 	def finish(self) -> None:
 		pass
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from pyglossary.text_utils import escapeNTB, joinByBar
 		from pyglossary.text_writer import TextGlossaryWriter
 

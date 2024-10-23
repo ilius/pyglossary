@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import logging
 import re
@@ -16,7 +18,7 @@ def extractInlineHtmlImages(
 	defi: str,
 	outDir: str,
 	fnamePrefix: str = "",
-) -> "tuple[str, list[tuple[str, str]]]":
+) -> tuple[str, list[tuple[str, str]]]:
 	imageDataDict: "dict[str, bytes]" = {}
 
 	def subFunc(m: "re.Match[str]") -> str:

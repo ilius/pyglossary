@@ -40,7 +40,7 @@ Or by running: {pip} install pymorphy2""",
 morphy = pymorphy2.MorphAnalyzer()
 
 
-def ru(titles: Sequence[str], _: str) -> "set[str]":
+def ru(titles: Sequence[str], _: str) -> set[str]:
 	"""
 	Give a set of all declines, cases and other forms of word `title`.
 	note that it works only if title is one word.

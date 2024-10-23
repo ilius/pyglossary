@@ -71,11 +71,11 @@ class LocaleNamedSortKey:
 		return self.module.sqlite
 
 	@property
-	def locale(self) -> "SortKeyType | None":
+	def locale(self) -> SortKeyType | None:
 		return getattr(self.module, "locale", None)
 
 	@property
-	def sqlite_locale(self) -> "Callable[..., SQLiteSortKeyType] | None":
+	def sqlite_locale(self) -> Callable[..., SQLiteSortKeyType] | None:
 		return getattr(self.module, "sqlite_locale", None)
 
 
@@ -117,7 +117,7 @@ namedSortKeyList = [
 _sortKeyByName = {item.name: item for item in namedSortKeyList}
 
 
-def lookupSortKey(sortKeyId: str) -> "NamedSortKey | None":
+def lookupSortKey(sortKeyId: str) -> NamedSortKey | None:
 	localeName: "str | None" = None
 
 	parts = sortKeyId.split(":")

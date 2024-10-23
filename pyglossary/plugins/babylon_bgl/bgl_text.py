@@ -20,6 +20,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import re
 
 from pyglossary import core
@@ -256,7 +258,7 @@ def fixImgLinks(u_text: str) -> str:
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
-def stripDollarIndexes(b_word: bytes) -> "tuple[bytes, int]":
+def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 	if core.isDebug():
 		assert isinstance(b_word, bytes)
 	i = 0

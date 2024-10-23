@@ -151,7 +151,7 @@ class Reader:
 	def __len__(self) -> int:
 		return 0
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		while line := self._file.readline():
 			line = line.strip()
 			if not line:

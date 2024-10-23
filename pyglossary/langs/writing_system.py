@@ -413,7 +413,7 @@ unicodeNextWord = {
 }
 
 
-def _getWritingSystemFromChar(char: str) -> "WritingSystem | None":
+def _getWritingSystemFromChar(char: str) -> WritingSystem | None:
 	try:
 		unicodeWords = unicodedata.name(char).split(" ")
 	except ValueError:
@@ -433,7 +433,7 @@ def _getWritingSystemFromText(
 	st: str,
 	start: int,
 	end: int,
-) -> "WritingSystem | None":
+) -> WritingSystem | None:
 	for char in st[start:end]:
 		ws = _getWritingSystemFromChar(char)
 		if ws:
@@ -444,7 +444,7 @@ def _getWritingSystemFromText(
 def getWritingSystemFromText(
 	st: str,
 	beginning: bool = False,
-) -> "WritingSystem | None":
+) -> WritingSystem | None:
 	st = st.strip()
 	if not st:
 		return None
@@ -459,7 +459,7 @@ def getWritingSystemFromText(
 
 def getAllWritingSystemsFromText(
 	st: str,
-) -> "set[str]":
+) -> set[str]:
 	st = st.strip()
 	if not st:
 		return set()

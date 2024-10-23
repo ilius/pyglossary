@@ -94,7 +94,7 @@ class LangDict(dict):
 			f"took {(now() - t0) * 1000:.1f} ms",
 		)
 
-	def __getitem__(self, key: str) -> "Lang | None":
+	def __getitem__(self, key: str) -> Lang | None:
 		self.load()
 		return self.get(key.lower(), None)
 

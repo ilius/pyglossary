@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 import os
 from collections.abc import Generator, Iterator
 from os.path import isdir
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log, pip
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
@@ -15,6 +16,8 @@ from pyglossary.option import (
 
 if TYPE_CHECKING:
 	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -92,7 +95,7 @@ class Reader:
 			)
 		return self._wordCount
 
-	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
+	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
@@ -162,7 +165,7 @@ class Writer:
 		self._file.close()
 		self._file = nullTextIO
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:

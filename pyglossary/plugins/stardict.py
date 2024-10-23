@@ -174,7 +174,7 @@ class T_SdList(Protocol[T_SDListItem_contra]):
 
 	def __len__(self) -> int: ...
 
-	def __iter__(self) -> "Iterator[Any]": ...
+	def __iter__(self) -> Iterator[Any]: ...
 
 	def sort(self) -> None: ...
 
@@ -189,10 +189,10 @@ class MemSdList:
 	def __len__(self) -> int:
 		return len(self._l)
 
-	def __iter__(self) -> "Iterator[Any]":
+	def __iter__(self) -> Iterator[Any]:
 		return iter(self._l)
 
-	def sortKey(self, item: "tuple[bytes, Any]") -> "tuple[bytes, bytes]":  # noqa: PLR6301
+	def sortKey(self, item: "tuple[bytes, Any]") -> tuple[bytes, bytes]:  # noqa: PLR6301
 		return (
 			item[0].lower(),
 			item[0],
@@ -242,7 +242,7 @@ class BaseSqList:
 		self._con.commit()
 
 	@classmethod
-	def getExtraColumns(cls) -> "list[tuple[str, str]]":
+	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]
 		return []
 
@@ -279,7 +279,7 @@ class BaseSqList:
 		except AttributeError as e:
 			log.error(str(e))
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
 			raise RuntimeError("db is closed")
 		query = f"SELECT * FROM data ORDER BY {self._orderBy}"
@@ -290,7 +290,7 @@ class BaseSqList:
 
 class IdxSqList(BaseSqList):
 	@classmethod
-	def getExtraColumns(cls) -> "list[tuple[str, str]]":
+	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]
 		return [
 			("idx_block", "BLOB"),
@@ -299,7 +299,7 @@ class IdxSqList(BaseSqList):
 
 class SynSqList(BaseSqList):
 	@classmethod
-	def getExtraColumns(cls) -> "list[tuple[str, str]]":
+	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]
 		return [
 			("entry_index", "INTEGER"),
@@ -430,7 +430,7 @@ class Reader:
 			else:
 				raise ValueError(f"invalid {idxoffsetbits = }")
 
-	def readIdxFile(self) -> "list[tuple[bytes, int, int]]":
+	def readIdxFile(self) -> list[tuple[bytes, int, int]]:
 		if isfile(self._filename + ".idx.gz"):
 			with gzip.open(self._filename + ".idx.gz") as g_file:
 				idxBytes = g_file.read()
@@ -443,11 +443,11 @@ class Reader:
 
 		if self._large_file:
 
-			def getOffset() -> "tuple[int, int]":
+			def getOffset() -> tuple[int, int]:
 				return uint64FromBytes(idxBytes[pos : pos + 8]), pos + 8
 		else:
 
-			def getOffset() -> "tuple[int, int]":
+			def getOffset() -> tuple[int, int]:
 				return uint32FromBytes(idxBytes[pos : pos + 4]), pos + 4
 
 		while pos < len(idxBytes):
@@ -473,7 +473,7 @@ class Reader:
 		b_defiPart: bytes,
 		i_type: int,
 		unicode_errors: str,
-	) -> "tuple[str, str]":
+	) -> tuple[str, str]:
 		_type = chr(i_type)
 
 		"""
@@ -520,7 +520,7 @@ class Reader:
 		self,
 		rawDefiList: "list[tuple[bytes, int]]",
 		unicode_errors: str,
-	) -> "tuple[str, str]":
+	) -> tuple[str, str]:
 		if len(rawDefiList) == 1:
 			b_defiPart, i_type = rawDefiList[0]
 			_format, _defi = self.decodeRawDefiPart(
@@ -563,7 +563,7 @@ class Reader:
 			defis.append(_defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> "Iterator[EntryType]":  # noqa: PLR0912
+	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
 		indexData = self._indexData
 		synDict = self._synDict
 		sametypesequence = self._sametypesequence
@@ -631,7 +631,7 @@ class Reader:
 						_file.read(),
 					)
 
-	def readSynFile(self) -> "dict[int, list[str]]":
+	def readSynFile(self) -> dict[int, list[str]]:
 		"""Return synDict, a dict { entryIndex -> altList }."""
 		if self._wordCount is None:
 			raise RuntimeError("self._wordCount is None")
@@ -684,7 +684,7 @@ class Reader:
 	def parseDefiBlockCompact(
 		b_block: bytes,
 		sametypesequence: str,
-	) -> "list[tuple[bytes, int]] | None":
+	) -> list[tuple[bytes, int]] | None:
 		"""
 		Parse definition block when sametypesequence option is specified.
 
@@ -734,7 +734,7 @@ class Reader:
 	@staticmethod
 	def parseDefiBlockGeneral(
 		b_block: bytes,
-	) -> "list[tuple[bytes, int]] | None":
+	) -> list[tuple[bytes, int]] | None:
 		"""
 		Parse definition block when sametypesequence option is not specified.
 
@@ -848,7 +848,7 @@ class Writer:
 					log.info("Auto-selecting sametypesequence=h")
 					self._sametypesequence = "h"
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from pyglossary.os_utils import runDictzip
 
 		if self._sametypesequence:
@@ -890,23 +890,23 @@ class Writer:
 		# defi = defi.replace(' src="./', ' src="./res/')
 		return defi
 
-	def newIdxList(self) -> "T_SdList":
+	def newIdxList(self) -> T_SdList:
 		if not self._sqlite:
 			return MemSdList()
 		return IdxSqList(join(self._glos.tmpDataDir, "stardict-idx.db"))
 
-	def newSynList(self) -> "T_SdList":
+	def newSynList(self) -> T_SdList:
 		if not self._sqlite:
 			return MemSdList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def dictMarkToBytesFunc(self) -> "tuple[Callable, int]":
+	def dictMarkToBytesFunc(self) -> tuple[Callable, int]:
 		if self._large_file:
 			return uint64ToBytes, 0xFFFFFFFFFFFFFFFF
 
 		return uint32ToBytes, 0xFFFFFFFF
 
-	def writeCompact(self, defiFormat: str) -> "Generator[None, EntryType, None]":
+	def writeCompact(self, defiFormat: str) -> Generator[None, EntryType, None]:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.
@@ -979,7 +979,7 @@ class Writer:
 			defiFormat=defiFormat,
 		)
 
-	def writeGeneral(self) -> "Generator[None, EntryType, None]":
+	def writeGeneral(self) -> Generator[None, EntryType, None]:
 		"""
 		Build StarDict dictionary in general case.
 		Every item definition may consist of an arbitrary number of articles.
@@ -1091,7 +1091,7 @@ class Writer:
 	def writeCompactMergeSyns(
 		self,
 		defiFormat: str,
-	) -> "Generator[None, EntryType, None]":
+	) -> Generator[None, EntryType, None]:
 		"""
 		Build StarDict dictionary with sametypesequence option specified.
 		Every item definition consists of a single article.
@@ -1156,7 +1156,7 @@ class Writer:
 			defiFormat=defiFormat,
 		)
 
-	def writeGeneralMergeSyns(self) -> "Generator[None, EntryType, None]":
+	def writeGeneralMergeSyns(self) -> Generator[None, EntryType, None]:
 		"""
 		Build StarDict dictionary in general case.
 		Every item definition may consist of an arbitrary number of articles.

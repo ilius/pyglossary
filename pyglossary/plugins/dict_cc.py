@@ -143,7 +143,7 @@ class Reader:
 		self,
 		column1: str,
 		column2: str,
-	) -> "Iterator[tuple[str, str, str]]":
+	) -> Iterator[tuple[str, str, str]]:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(
@@ -163,7 +163,7 @@ class Reader:
 				log.error(f"html.unescape({term2!r}) -> {e}")
 			yield term1, term2, row[2]
 
-	def parseGender(self, headword: str) -> "tuple[str | None, str]":  # noqa: PLR6301
+	def parseGender(self, headword: str) -> tuple[str | None, str]:  # noqa: PLR6301
 		# {m}	masc	masculine	German: maskulin
 		# {f}	fem 	feminine	German: feminin
 		# {n}	neut	neutral		German: neutral
@@ -193,7 +193,7 @@ class Reader:
 		self,
 		column1: str,
 		column2: str,
-	) -> "Iterator[EntryType]":
+	) -> Iterator[EntryType]:
 		from io import BytesIO
 		from itertools import groupby
 
@@ -224,7 +224,7 @@ class Reader:
 			defi = f.getvalue().decode("utf-8")
 			yield glos.newEntry(headword, defi, defiFormat="h")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		yield from self._iterOneDirection("term1", "term2")
 		yield from self._iterOneDirection("term2", "term1")
 

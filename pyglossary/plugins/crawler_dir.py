@@ -184,7 +184,7 @@ class Reader:
 		self,
 		dpath: str,
 		exclude: "set[str] | None",
-	) -> "Generator[EntryType, None, None]":
+	) -> Generator[EntryType, None, None]:
 		children = listdir(dpath)
 		if exclude:
 			children = [name for name in children if name not in exclude]
@@ -199,7 +199,7 @@ class Reader:
 				continue
 			log.error(f"Not a file nor a directory: {cpath}")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		yield from self._readDir(
 			self._filename,
 			{

@@ -17,6 +17,8 @@
 # GNU General Public License for more details.
 
 
+from __future__ import annotations
+
 from . import gtk
 from .utils import (
 	VBox,
@@ -44,7 +46,7 @@ class AboutTabTitleBox(gtk.Box):
 		pack(self, VBox(), expand=0)
 		self.set_size_request(60, 60)
 
-	# def do_get_preferred_height_for_width(self, size: int) -> "tuple[int, int]":
+	# def do_get_preferred_height_for_width(self, size: int) -> tuple[int, int]:
 	# 	height = int(size * 1.5)
 	# 	return height, height
 

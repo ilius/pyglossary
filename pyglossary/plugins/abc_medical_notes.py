@@ -67,7 +67,7 @@ class Reader:
 		self._cur.execute("select count(*) from NEW_TABLE")
 		return self._cur.fetchone()[0]
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(

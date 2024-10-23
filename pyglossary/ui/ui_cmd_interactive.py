@@ -235,7 +235,7 @@ class MyPathCompleter(PathCompleter):
 		self,
 		document: "prompt_toolkit.Document",
 		complete_event: "prompt_toolkit.CompleteEvent",
-	) -> "Iterable[Completion]":
+	) -> Iterable[Completion]:
 		text = document.text_before_cursor
 
 		for action in self.fs_action_names:
@@ -254,7 +254,7 @@ class MyPathCompleter(PathCompleter):
 
 
 class AbsolutePathHistory(FileHistory):
-	def load_history_strings(self) -> "Iterable[str]":
+	def load_history_strings(self) -> Iterable[str]:
 		# pwd = os.getcwd()
 		pathList = FileHistory.load_history_strings(self)
 		return [relpath(p) for p in pathList]
@@ -519,7 +519,7 @@ class UI(ui_cmd.UI):
 		)
 
 	@staticmethod
-	def pluginByNameOrDesc(value: str) -> "PluginProp | None":
+	def pluginByNameOrDesc(value: str) -> PluginProp | None:
 		plugin = pluginByDesc.get(value)
 		if plugin:
 			return plugin
@@ -890,7 +890,7 @@ class UI(ui_cmd.UI):
 		if not self._convertOptions.get("sort"):
 			self.setSort()
 
-	def askFinalAction(self) -> "str | None":
+	def askFinalAction(self) -> str | None:
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -914,7 +914,7 @@ class UI(ui_cmd.UI):
 				continue
 			return action
 
-	def askFinalOptions(self) -> "bool | Literal['back']":
+	def askFinalOptions(self) -> bool | Literal["back"]:
 		while True:
 			try:
 				action = self.askFinalAction()

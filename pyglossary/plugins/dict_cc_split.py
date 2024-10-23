@@ -72,7 +72,7 @@ class Reader:
 		self,
 		column1: str,
 		column2: str,
-	) -> "Iterator[tuple[str, str, str]]":
+	) -> Iterator[tuple[str, str, str]]:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(
@@ -96,13 +96,13 @@ class Reader:
 		self,
 		column1: str,
 		column2: str,
-	) -> "Iterator[EntryType]":
+	) -> Iterator[EntryType]:
 		for word, defi, entry_type in self.iterRows(column1, column2):
 			if entry_type:
 				word = f"{word} {{{entry_type}}}"  # noqa: PLW2901
 			yield self._glos.newEntry(word, defi, defiFormat="m")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		yield from self._iterOneDirection("term1", "term2")
 		yield from self._iterOneDirection("term2", "term1")
 

@@ -143,7 +143,7 @@ class Writer:
 			"description",
 		]
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		newline = self._newline
 
 		fileObj = self._file

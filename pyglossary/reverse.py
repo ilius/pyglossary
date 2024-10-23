@@ -21,7 +21,7 @@ def reverseGlossary(
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
 	**kwargs,
-) -> "Iterator[int]":
+) -> Iterator[int]:
 	"""
 	This is a generator
 	Usage:

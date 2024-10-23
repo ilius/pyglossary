@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 import os
 import re
 from collections.abc import Generator, Iterator
 from os.path import isdir, splitext
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.flags import DEFAULT_NO
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import BoolOption, Option
 from pyglossary.plugin_lib.dictdlib import DictDB
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -129,7 +134,7 @@ class Reader:
 			return 0
 		return len(self._dictdb)
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
@@ -176,7 +181,7 @@ class Writer:
 		self._dictdb = DictDB(filename, "write", 1)
 		self._filename = filename
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		dictdb = self._dictdb
 		if dictdb is None:
 			raise RuntimeError("self._dictdb is None")

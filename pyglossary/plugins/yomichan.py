@@ -204,7 +204,7 @@ def _isKanji(char: str) -> bool:
 	)
 
 
-def _uniqueList(lst: Sequence) -> "list[Any]":
+def _uniqueList(lst: Sequence) -> list[Any]:
 	seen = set()
 	result = []
 	for elem in lst:
@@ -248,7 +248,7 @@ class Writer:
 	def _getAuthor(self) -> str:
 		return self._glos.author.replace("\n", "<br>")
 
-	def _getDictionaryIndex(self) -> "dict[str, Any]":
+	def _getDictionaryIndex(self) -> dict[str, Any]:
 		# Schema: https://github.com/FooSoft/yomichan/
 		# blob/master/ext/data/schemas/dictionary-index-schema.json
 		return {
@@ -280,7 +280,7 @@ class Writer:
 	def _getExpressionsAndReadingFromEntry(
 		self,
 		entry: EntryType,
-	) -> "tuple[list[str], str]":
+	) -> tuple[list[str], str]:
 		term_expressions = list(entry.l_word)
 		if self._alternates_from_word_pattern:
 			for word in entry.l_word:
@@ -347,7 +347,7 @@ class Writer:
 		self,
 		entry: EntryType,
 		sequenceNumber: int,
-	) -> "list[list[Any]]":
+	) -> list[list[Any]]:
 		termExpressions, reading = self._getExpressionsAndReadingFromEntry(entry)
 		ruleIdentifiers = self._getRuleIdentifiersFromEntry(entry)
 
@@ -375,7 +375,7 @@ class Writer:
 	def finish(self) -> None:
 		self._filename = ""
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		with os_utils.indir(self._filename, create=True):
 			with open("index.json", "w", encoding="utf-8") as f:
 				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)

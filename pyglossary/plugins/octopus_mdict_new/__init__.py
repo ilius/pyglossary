@@ -217,7 +217,7 @@ class Reader:
 
 		return defi
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._mdx is None:
 			log.error("trying to iterate on a closed MDX file")
 			return

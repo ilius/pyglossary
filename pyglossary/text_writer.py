@@ -135,7 +135,7 @@ class TextGlossaryWriter:
 				),
 			)
 
-	def _open(self, filename: str) -> "io.TextIOBase":
+	def _open(self, filename: str) -> io.TextIOBase:
 		if not filename:
 			filename = self._glos.filename + self._ext
 
@@ -156,7 +156,7 @@ class TextGlossaryWriter:
 		_file.flush()
 		return _file
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		glos = self._glos
 		_file = self._file
 		entryFmt = self._entryFmt
@@ -228,7 +228,7 @@ def writeTxt(  # noqa: PLR0913
 	newline: str = "\n",
 	resources: bool = True,
 	word_title: bool = False,
-) -> "Generator[None, EntryType, None]":
+) -> Generator[None, EntryType, None]:
 	writer = TextGlossaryWriter(
 		glos,
 		entryFmt=entryFmt,

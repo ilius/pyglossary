@@ -1,16 +1,19 @@
+from __future__ import annotations
+
 from collections.abc import Generator
 from os.path import splitext
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.glossary_types import (
-	EntryType,
-	GlossaryType,
-)
 from pyglossary.io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io
+
+	from pyglossary.glossary_types import (
+		EntryType,
+		GlossaryType,
+	)
 
 
 class InfoWriter:
@@ -28,7 +31,7 @@ class InfoWriter:
 		self._file.close()
 		self._file = nullTextIO
 
-	def write(self) -> "Generator[None, EntryType, None]":  # noqa: PLR0912, C901
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, C901
 		import re
 		from collections import Counter, OrderedDict
 

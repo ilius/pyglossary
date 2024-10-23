@@ -14,6 +14,8 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
+
 """Chinese wildcard and pinyin indexes."""
 
 import re
@@ -39,7 +41,7 @@ pinyinPattern = re.compile(r",|;")
 nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")
 
 
-def zh(titles: Sequence[str], content: str) -> "set[str]":
+def zh(titles: Sequence[str], content: str) -> set[str]:
 	"""
 	Chinese indexes.
 
@@ -65,7 +67,7 @@ def zh(titles: Sequence[str], content: str) -> "set[str]":
 	return indexes
 
 
-def pinyin_indexes(content: str) -> "set[str]":
+def pinyin_indexes(content: str) -> set[str]:
 	pinyin = find_pinyin(content)
 	# assert type(pinyin) == unicode
 
@@ -104,7 +106,7 @@ def pinyin_indexes(content: str) -> "set[str]":
 	return indexes
 
 
-def find_pinyin(content: str) -> "str | None":
+def find_pinyin(content: str) -> str | None:
 	# assume that content is HTML and pinyin is inside second tag
 	# (first is <h1>)
 	soup = bs4.BeautifulSoup(content.splitlines()[0], features="lxml")

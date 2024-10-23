@@ -43,7 +43,7 @@ log = logging.getLogger("pyglossary")
 
 def optionsPropFromDict(
 	optionsPropDict: "dict[str, Any]",
-) -> "dict[str, Option]":
+) -> dict[str, Option]:
 	props = {}
 	for name, propDict in optionsPropDict.items():
 		try:
@@ -257,7 +257,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._singleFile
 
 	@property
-	def optionsProp(self) -> "dict[str, Option]":
+	def optionsProp(self) -> dict[str, Option]:
 		return self._optionsProp
 
 	@property
@@ -265,17 +265,17 @@ class PluginProp:  # noqa: PLR0904
 		return self._sortOnWrite
 
 	@property
-	def sortKeyName(self) -> "str | None":
+	def sortKeyName(self) -> str | None:
 		return self._sortKeyName
 
 	@property
-	def path(self) -> "pathlib.Path":
+	def path(self) -> pathlib.Path:
 		from pathlib import Path
 
 		return Path(self._modulePath)
 
 	@property
-	def readerClass(self) -> "Any | None":
+	def readerClass(self) -> Any | None:
 		if self._ReaderLoaded:
 			return self._Reader
 		cls = getattr(self.module, "Reader", None)
@@ -286,7 +286,7 @@ class PluginProp:  # noqa: PLR0904
 		return cls
 
 	@property
-	def writerClass(self) -> "Any | None":
+	def writerClass(self) -> Any | None:
 		if self._WriterLoaded:
 			return self._Writer
 		cls = getattr(self.module, "Writer", None)
@@ -321,7 +321,7 @@ class PluginProp:  # noqa: PLR0904
 
 		return nameList
 
-	def _getOptionsFromClass(self, rwclass: type) -> "dict[str, Any]":
+	def _getOptionsFromClass(self, rwclass: type) -> dict[str, Any]:
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:
@@ -350,12 +350,12 @@ class PluginProp:  # noqa: PLR0904
 
 		return options
 
-	def getReadOptions(self) -> "dict[str, Any]":
+	def getReadOptions(self) -> dict[str, Any]:
 		if self._readOptions is None:
 			self._readOptions = self._getOptionsFromClass(self.readerClass)
 		return self._readOptions
 
-	def getWriteOptions(self) -> "dict[str, Any]":
+	def getWriteOptions(self) -> dict[str, Any]:
 		if self._writeOptions is None:
 			self._writeOptions = self._getOptionsFromClass(self.writerClass)
 		return self._writeOptions
@@ -367,13 +367,13 @@ class PluginProp:  # noqa: PLR0904
 		return self._readCompressions
 
 	@property
-	def readDepends(self) -> "dict[str, str]":
+	def readDepends(self) -> dict[str, str]:
 		if self._readDepends is None:
 			self._readDepends = getattr(self.readerClass, "depends", {})
 		return self._readDepends
 
 	@property
-	def writeDepends(self) -> "dict[str, str]":
+	def writeDepends(self) -> dict[str, str]:
 		if self._writeDepends is None:
 			self._writeDepends = getattr(self.writerClass, "depends", {})
 		return self._writeDepends

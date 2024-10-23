@@ -166,7 +166,7 @@ class EbookWriter:
 	def finish(self) -> None:
 		self._filename = ""
 
-	def myOpen(self, fname: str, mode: str) -> "io.IOBase":
+	def myOpen(self, fname: str, mode: str) -> io.IOBase:
 		return cast(
 			"io.IOBase",
 			open(
@@ -295,7 +295,7 @@ class EbookWriter:
 				"text/css",
 			)
 
-	def write_groups(self) -> "Generator[None, EntryType, None]":
+	def write_groups(self) -> Generator[None, EntryType, None]:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)
 
@@ -446,7 +446,7 @@ class EbookWriter:
 		if not self._keep:
 			rmtree(self._tmpDir)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		filename = self._filename
 		# self._group_by_prefix_length
 		# self._include_index_page

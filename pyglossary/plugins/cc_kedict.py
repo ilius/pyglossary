@@ -247,7 +247,7 @@ class YamlReader(TextGlossaryReader):
 	def _createEntry(
 		self,
 		yamlBlock: str,
-	) -> "tuple[str, str, None] | None":
+	) -> tuple[str, str, None] | None:
 		from lxml import etree as ET
 		from yaml import load
 
@@ -335,5 +335,5 @@ class Reader:
 	def close(self) -> None:
 		self._yaml.close()
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		yield from self._yaml

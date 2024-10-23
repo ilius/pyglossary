@@ -114,7 +114,7 @@ class Reader(TextGlossaryReader):
 		self,
 		defi: str,
 		html: bool,
-	) -> "tuple[str, list[tuple[str, str]] | None]":
+	) -> tuple[str, list[tuple[str, str]] | None]:
 		import mistune
 
 		defi = (
@@ -141,7 +141,7 @@ class Reader(TextGlossaryReader):
 
 	def nextBlock(
 		self,
-	) -> "tuple[list[str], str, list[tuple[str, str]] | None]":
+	) -> tuple[list[str], str, list[tuple[str, str]] | None]:
 		words: list[str] = []
 		defiLines: list[str] = []
 		html = False
@@ -204,7 +204,7 @@ class Writer:
 
 	def write(
 		self,
-	) -> "Generator[None, EntryType, None]":
+	) -> Generator[None, EntryType, None]:
 		fileObj = self._file
 		resDir = self._resDir
 		while True:

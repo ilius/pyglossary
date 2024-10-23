@@ -2,19 +2,24 @@
 # mypy: ignore-errors
 # from https://github.com/maxim-saplin/pyglossary
 
+from __future__ import annotations
+
 import re
 from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 from pyglossary.compression import (
 	# compressionOpen,
 	stdCompressions,
 )
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	Option,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Writer",
@@ -70,7 +75,7 @@ class Writer:
 	def finish(self) -> None:
 		self._filename = None
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		from json import dumps
 
 		from pyglossary.text_writer import writeTxt

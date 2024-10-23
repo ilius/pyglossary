@@ -14,6 +14,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+from __future__ import annotations
+
 from struct import unpack
 from typing import TYPE_CHECKING
 
@@ -33,7 +35,7 @@ APPLEDICT_FILE_OFFSET = 0x40
 # addressing of AppleDict binary files always ignores first 0x40 bytes
 
 
-def readIntPair(buffer: "io.BufferedIOBase") -> "tuple[int, int]":
+def readIntPair(buffer: "io.BufferedIOBase") -> tuple[int, int]:
 	# to satisfy mymy, put them in vars with declared type
 	a: int
 	b: int
@@ -55,7 +57,7 @@ def read_2_bytes_here(buffer: "io.BufferedIOBase") -> int:
 	return ord(higher_byte) * 0x100 + ord(lower_byte)
 
 
-def guessFileOffsetLimit(file: "io.BufferedIOBase") -> "tuple[int, int]":
+def guessFileOffsetLimit(file: "io.BufferedIOBase") -> tuple[int, int]:
 	"""Returns address offset to start parsing from and EOF address."""
 	file.seek(APPLEDICT_FILE_OFFSET)
 	limit = readInt(file)

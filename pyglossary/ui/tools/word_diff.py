@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import difflib
 import re
 import sys
@@ -36,7 +38,7 @@ def xmlWordSplit(text: str) -> list[str]:
 	return words
 
 
-def xmlDiff(text1: str, text2: str) -> "Iterator[str]":
+def xmlDiff(text1: str, text2: str) -> Iterator[str]:
 	words1 = xmlWordSplit(text1)
 	words2 = xmlWordSplit(text2)
 	return difflib.ndiff(words1, words2, linejunk=None, charjunk=None)

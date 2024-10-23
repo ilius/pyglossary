@@ -40,7 +40,7 @@ class EntryFilterType(typing.Protocol):
 	def prepare(self) -> None:
 		raise NotImplementedError
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		raise NotImplementedError
 
 
@@ -55,7 +55,7 @@ class EntryFilter:
 	def prepare(self) -> None:
 		"""Run this after glossary info is set and ready."""
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		"""
 		Return an Entry object, or None to skip.
 
@@ -70,7 +70,7 @@ class TrimWhitespaces(EntryFilter):
 	name = "trim_whitespaces"
 	desc = "Remove leading/trailing whitespaces from word(s) and definition"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		entry.strip()
 		entry.replace("\r", "")
 		return entry
@@ -80,7 +80,7 @@ class NonEmptyWordFilter(EntryFilter):
 	name = "non_empty_word"
 	desc = "Skip entries with empty word"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		if not entry.s_word:
 			return None
 		return entry
@@ -90,7 +90,7 @@ class NonEmptyDefiFilter(EntryFilter):
 	name = "non_empty_defi"
 	desc = "Skip entries with empty definition"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		if not entry.defi:
 			return None
 		return entry
@@ -100,7 +100,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 	name = "remove_empty_dup_alt_words"
 	desc = "Remove empty and duplicate alternate words"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		entry.removeEmptyAndDuplicateAltWords()
 		if not entry.l_word:
 			return None
@@ -112,7 +112,7 @@ class FixUnicode(EntryFilter):
 	desc = "Fix Unicode in word(s) and definition"
 	falseComment = "Do not fix Unicode in word(s) and definition"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		entry.editFuncWord(fixUtf8)
 		entry.editFuncDefi(fixUtf8)
 		return entry
@@ -133,7 +133,7 @@ class LowerWord(EntryFilter):
 			defi,
 		)
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		entry.editFuncWord(str.lower)
 		entry.editFuncDefi(self.lowerWordRefs)
 		return entry
@@ -143,7 +143,7 @@ class RTLDefi(EntryFilter):
 	name = "rtl"
 	desc = "Make definition right-to-left"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
 		return entry
 
@@ -169,7 +169,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 			re.IGNORECASE,
 		)
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		from bs4 import BeautifulSoup
 
 		def fixStr(st: str) -> str:
@@ -201,7 +201,7 @@ class RemoveHtmlTags(EntryFilter):
 		tagsRE = "|".join(self.tags)
 		self.pattern = re.compile(f"</?({tagsRE})( [^>]*)?>")
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		def fixStr(st: str) -> str:
 			return self.pattern.sub("", st)
 
@@ -220,7 +220,7 @@ class StripFullHtml(EntryFilter):
 	) -> None:
 		self._errorHandler = errorHandler
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		err = entry.stripFullHtml()
 		if err and self._errorHandler:
 			self._errorHandler(entry, err)
@@ -273,7 +273,7 @@ class NormalizeHtml(EntryFilter):
 	def _fixDefi(self, st: str) -> str:
 		return self._pattern.sub(self._subLower, st)
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		entry.editFuncDefi(self._fixDefi)
 		return entry
 
@@ -282,7 +282,7 @@ class SkipDataEntry(EntryFilter):
 	name = "skip_resources"
 	desc = "Skip resources / data files"
 
-	def run(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		if entry.isData():
 			return None
 		return entry
@@ -306,7 +306,7 @@ class LanguageCleanup(EntryFilter):
 			self._run_func = self.run_fa
 			log.info("Using Persian filter")
 
-	def run_fa(self, entry: EntryType) -> "EntryType | None":  # noqa: PLR6301
+	def run_fa(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		from .persian_utils import faEditStr
 
 		entry.editFuncWord(faEditStr)
@@ -316,7 +316,7 @@ class LanguageCleanup(EntryFilter):
 		# for GoldenDict ^^ FIXME
 		return entry
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		if self._run_func:
 			return self._run_func(entry)
 		return entry
@@ -350,7 +350,7 @@ class TextListSymbolCleanup(EntryFilter):
 
 		return st  # noqa: RET504
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		entry.editFuncDefi(self.cleanDefi)
 		return entry
 
@@ -363,7 +363,7 @@ class PreventDuplicateWords(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._wordSet: set[str] = set()
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		if entry.isData():
 			return entry
 
@@ -394,7 +394,7 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._wset: set[str] = set()
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		word = entry.l_word[0]
 		if word in self._wset:
 			return None
@@ -410,7 +410,7 @@ class TrimArabicDiacritics(EntryFilter):
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile("[\u064b-\u065f]")
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		words = list(entry.l_word)
 		hw = words[0]
 		hw_t = self._pat.sub("", hw)
@@ -438,7 +438,7 @@ class UnescapeWordLinks(EntryFilter):
 	def _sub(self, m: "re.Match") -> str:
 		return self._unescape(m.group(0))
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		if entry.isData():
 			return entry
 		entry._defi = self._pat.sub(self._sub, entry.defi)  # type: ignore
@@ -457,7 +457,7 @@ class ShowProgressBar(EntryFilter):
 		self._lastPos = 0
 		self._index = 0
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		index = self._index
 		self._index = index + 1
 
@@ -497,7 +497,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 		self._process = psutil.Process(os.getpid())
 		self._max_mem_usage = 0
 
-	def run(self, entry: EntryType) -> "EntryType | None":
+	def run(self, entry: EntryType) -> EntryType | None:
 		usage = self._process.memory_info().rss // 1024
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage

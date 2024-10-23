@@ -17,6 +17,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import csv
 import os
 from collections.abc import Generator, Iterable, Iterator
@@ -28,7 +30,6 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
@@ -39,6 +40,8 @@ from pyglossary.option import (
 
 if TYPE_CHECKING:
 	import io
+
+	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [
 	"Reader",
@@ -182,14 +185,14 @@ class Reader:
 			self._wordCount = fileCountLines(self._filename) - self._leadingLinesCount
 		return self._wordCount + len(self._resFileNames)
 
-	def _iterRows(self) -> "Iterator[list[str]]":
+	def _iterRows(self) -> Iterator[list[str]]:
 		if self._csvReader is None:
 			raise RuntimeError("self._csvReader is None")
 		if self._bufferRow:
 			yield self._bufferRow
 		yield from self._csvReader
 
-	def _processRow(self, row: list[str]) -> "EntryType | None":
+	def _processRow(self, row: list[str]) -> EntryType | None:
 		if not row:
 			return None
 
@@ -216,7 +219,7 @@ class Reader:
 			),
 		)
 
-	def __iter__(self) -> "Iterator[EntryType | None]":
+	def __iter__(self) -> Iterator[EntryType | None]:
 		if not self._csvReader:
 			raise RuntimeError("iterating over a reader while it's not open")
 
@@ -282,7 +285,7 @@ class Writer:
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
-	def write(self) -> "Generator[None, EntryType, None]":
+	def write(self) -> Generator[None, EntryType, None]:
 		resources = self._resources
 		add_defi_format = self._add_defi_format
 		glos = self._glos

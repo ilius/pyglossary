@@ -309,7 +309,7 @@ class Reader:
 
 		self._file = compressionOpen(filename, mode="rb")
 
-	def __iter__(self) -> "Iterator[EntryType]":
+	def __iter__(self) -> Iterator[EntryType]:
 		from lxml import etree as ET
 
 		context = ET.iterparse(  # type: ignore # noqa: PGH003

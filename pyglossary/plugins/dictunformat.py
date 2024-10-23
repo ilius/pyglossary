@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pyglossary.core import log
 from pyglossary.option import EncodingOption, Option, StrOption
 from pyglossary.text_reader import TextGlossaryReader
@@ -78,7 +80,7 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self) -> "tuple[str | list[str], str, None] | None":
+	def nextBlock(self) -> tuple[str | list[str], str, None] | None:
 		if not self._file:
 			raise StopIteration
 		word = ""
