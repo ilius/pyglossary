@@ -50,7 +50,14 @@ def make_entry(  # noqa: PLR0913
 		simp if traditional_title else trad,
 		pinyin,
 	] + eng_names
-	article = render_article(trad, simp, pinyin, eng, traditional_title, colorize_tones)
+	article = render_article(
+		trad=trad,
+		simp=simp,
+		pinyin=pinyin,
+		eng=eng,
+		traditional_title=traditional_title,
+		colorize_tones=colorize_tones,
+	)
 	return names, article
 
 
