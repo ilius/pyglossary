@@ -24,6 +24,8 @@ from os.path import isfile
 from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
+from .glossary_utils import Error
+
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
 	from typing import Any
@@ -234,7 +236,7 @@ class SqEntryList:
 
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
-			return
+			raise Error("SQLite cursor is closed")
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
 		entryFromRaw = self._entryFromRaw

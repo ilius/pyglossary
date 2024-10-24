@@ -5,6 +5,7 @@ from os.path import isfile
 from typing import TYPE_CHECKING
 
 from .core import log
+from .glossary_utils import Error
 
 if TYPE_CHECKING:
 	import sqlite3
@@ -121,7 +122,7 @@ class Reader:
 
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
-			return
+			raise Error("SQLite cursor is closed")
 		self._cur.execute(
 			"select word, alts, defi, defiFormat from dict order by wordlower, word",
 		)
