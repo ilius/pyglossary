@@ -148,8 +148,6 @@ class SqEntryList:
 			+ [dumps(self._entryToRaw(entry), protocol=PICKLE_PROTOCOL)],
 		)
 		self._len += 1
-		if self._len % 1000 == 0:
-			self._con.commit()
 
 	def __iadd__(self, other: Iterable):  # -> Self
 		for item in other:
