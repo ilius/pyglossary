@@ -92,10 +92,14 @@ class Reader:
 			"FROM entry LEFT JOIN alt ON entry.id=alt.id "
 			"GROUP BY entry.id;",
 		)
-		for row in self._cur.fetchall():
-			terms = [row[0]] + [alt for alt in loads(row[2]) if alt]
-			article = row[1]
-			yield self._glos.newEntry(terms, article, defiFormat="h")
+		return (
+			self._glos.newEntry(
+				[row[0]] + [alt for alt in loads(row[2]) if alt],
+				row[1],
+				defiFormat="h",
+			)
+			for row in self._cur.fetchall()
+		)
 
 	def close(self) -> None:
 		if self._cur:

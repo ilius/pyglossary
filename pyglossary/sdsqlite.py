@@ -126,11 +126,14 @@ class Reader:
 		self._cur.execute(
 			"select word, alts, defi, defiFormat from dict order by wordlower, word",
 		)
-		for row in self._cur:
-			words = [row[0]] + splitByBar(row[1])
-			defi = row[2]
-			defiFormat = row[3]
-			yield self._glos.newEntry(words, defi, defiFormat=defiFormat)
+		return (
+			self._glos.newEntry(
+				[row[0]] + splitByBar(row[1]),
+				row[2],
+				defiFormat=row[3],
+			)
+			for row in self._cur
+		)
 
 	def close(self) -> None:
 		if self._cur:

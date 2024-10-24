@@ -67,8 +67,8 @@ class EntryList:
 
 	def __iter__(self) -> Iterator[EntryType]:
 		entryFromRaw = self._entryFromRaw
-		for rawEntry in self._l:
-			yield entryFromRaw(rawEntry)
+		return (entryFromRaw(rawEntry) for rawEntry in self._l)
+		# return map(entryFromRaw, self._l)
 
 	def setSortKey(
 		self,
