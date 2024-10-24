@@ -21,7 +21,7 @@ from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.core import pip
+from pyglossary.core import exc_note, pip
 from pyglossary.io_utils import nullBinaryIO
 
 __all__ = [
@@ -285,8 +285,8 @@ class Reader:
 		try:
 			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install lxml` to install")
+			raise
 
 		self._filename = filename
 		self._fileSize = os.path.getsize(filename)

@@ -17,7 +17,7 @@ from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.html_utils import unescape_unicode
 
 __all__ = [
@@ -76,8 +76,8 @@ class Reader:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install lxml` to install")
+			raise
 
 		self._filename = filename
 		_file = compressionOpen(filename, mode="rb")

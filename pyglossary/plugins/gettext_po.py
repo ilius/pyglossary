@@ -7,7 +7,7 @@ from collections.abc import Generator, Iterator
 from os.path import isdir
 from typing import TYPE_CHECKING
 
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
@@ -99,8 +99,8 @@ class Reader:
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install polib` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install polib` to install")
+			raise
 
 		_file = self._file
 
@@ -169,8 +169,8 @@ class Writer:
 		try:
 			from polib import escape as po_escape
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install polib` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install polib` to install")
+			raise
 
 		_file = self._file
 

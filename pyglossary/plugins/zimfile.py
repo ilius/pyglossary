@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 
-from pyglossary.core import cacheDir, log, pip
+from pyglossary.core import cacheDir, exc_note, log, pip
 from pyglossary.option import UnicodeErrorsOption
 
 __all__ = [
@@ -96,8 +96,8 @@ class Reader:
 		try:
 			from libzim.reader import Archive
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install libzim` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install libzim` to install")
+			raise
 
 		self._filename = filename
 		self._zimfile = Archive(filename)

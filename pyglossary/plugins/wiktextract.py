@@ -18,7 +18,7 @@ from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import (
 	BoolOption,
@@ -120,8 +120,8 @@ class Reader:
 		try:
 			pass
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install lxml` to install")
+			raise
 
 		self._filename = filename
 		cfile = compressionOpen(filename, mode="rt", encoding="utf-8")

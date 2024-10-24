@@ -29,7 +29,7 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 from pyglossary import core
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.flags import NEVER
 from pyglossary.os_utils import indir
 
@@ -255,8 +255,8 @@ class Writer:
 		try:
 			import marisa_trie  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install marisa-trie` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install marisa-trie` to install")
+			raise
 		self._filename = filename
 
 	def write(self) -> Generator[None, EntryType, None]:

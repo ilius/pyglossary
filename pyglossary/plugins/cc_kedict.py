@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.text_reader import TextGlossaryReader
 
 __all__ = [
@@ -319,8 +319,8 @@ class Reader:
 		try:
 			from lxml import etree as ET  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install lxml` to install")
+			raise
 
 		if isdir(filename):
 			filename = join(filename, "kedict.yml")

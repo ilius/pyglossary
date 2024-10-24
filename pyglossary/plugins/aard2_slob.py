@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 	from pyglossary import slob
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
-from pyglossary.core import cacheDir, log, pip
+from pyglossary.core import cacheDir, exc_note, log, pip
 from pyglossary.option import (
 	BoolOption,
 	FileSizeOption,
@@ -139,8 +139,8 @@ class Reader:
 		try:
 			import icu  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install PyICU` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install PyICU` to install")
+			raise
 		from pyglossary import slob
 
 		self._filename = filename
@@ -308,8 +308,8 @@ class Writer:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install PyICU` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install PyICU` to install")
+			raise
 		if isfile(filename):
 			raise OSError(f"File '{filename}' already exists")
 		namePostfix = ""

@@ -60,7 +60,7 @@ from zlib import decompress
 
 from pyglossary import core
 from pyglossary.apple_utils import substituteAppleCSS
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.option import BoolOption, Option
 
@@ -176,13 +176,13 @@ class Reader:
 		try:
 			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install lxml` to install"
-			raise e from None
+			exc_note(e, f"Run `{pip} install lxml` to install")
+			raise
 		try:
 			import biplist  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install biplist` to install"
-			raise e from None
+			exc_note(e, f"Run `{pip} install biplist` to install")
+			raise
 
 		self._defiFormat = "h" if self._html else "m"
 

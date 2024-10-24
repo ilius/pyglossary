@@ -23,7 +23,7 @@ from collections.abc import Generator
 from os.path import isdir
 from typing import TYPE_CHECKING
 
-from pyglossary.core import log, pip
+from pyglossary.core import exc_note, log, pip
 from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
@@ -97,8 +97,8 @@ class Reader(TextGlossaryReader):
 		try:
 			import mistune  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{pip} install mistune` to install"
-			raise e
+			exc_note(e, f"Run `{pip} install mistune` to install")
+			raise
 		TextGlossaryReader.open(self, filename)
 		self._glos.setDefaultDefiFormat("h")
 

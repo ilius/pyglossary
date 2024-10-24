@@ -30,6 +30,14 @@ if TYPE_CHECKING:
 	)
 
 
+def exc_note(e: Exception, note: str) -> Exception:
+	try:
+		e.add_note(note)
+	except AttributeError:
+		e.msg += "\n" + note
+	return e
+
+
 __all__ = [
 	"TRACE",
 	"VERSION",
