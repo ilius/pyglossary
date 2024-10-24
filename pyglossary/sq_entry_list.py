@@ -141,24 +141,13 @@ class SqEntryList:
 	def append(self, entry: EntryType) -> None:
 		if self._sqliteSortKey is None:
 			raise RuntimeError("self._sqliteSortKey is None")
-		rawEntry = self._entryToRaw(entry)
-		self._len += 1
-		colCount = len(self._sqliteSortKey)
-		try:
-			values = [col[2](entry.l_word) for col in self._sqliteSortKey]
-		except Exception:
-			log.critical(f"error in _sqliteSortKey funcs for {rawEntry = }")
-			raise
-		try:
-			pickleEntry = dumps(rawEntry, protocol=PICKLE_PROTOCOL)
-		except Exception:
-			log.critical(f"error in pickle.dumps for {rawEntry = }")
-			raise
 		self._cur.execute(
 			f"insert into data({self._columnNames}, pickle)"
-			f" values (?{', ?' * colCount})",
-			values + [pickleEntry],
+			f" values (?{', ?' * len(self._sqliteSortKey)})",
+			[col[2](entry.l_word) for col in self._sqliteSortKey]
+			+ [dumps(self._entryToRaw(entry), protocol=PICKLE_PROTOCOL)],
 		)
+		self._len += 1
 		if self._len % 1000 == 0:
 			self._con.commit()
 
