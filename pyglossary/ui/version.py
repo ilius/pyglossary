@@ -5,6 +5,8 @@ from os.path import isdir, join
 
 from pyglossary import core
 
+__all__ = ["getVersion"]
+
 
 def getGitVersion(gitDir: str) -> str:
 	import subprocess

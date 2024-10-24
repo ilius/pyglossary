@@ -88,7 +88,14 @@ if TYPE_CHECKING:
 	from .ui_type import UIType
 
 
-__all__ = ["ConvertArgs", "Glossary", "GlossaryCommon"]
+__all__ = [
+	"ConvertArgs",
+	"Error",
+	"Glossary",
+	"GlossaryCommon",
+	"ReadError",
+	"WriteError",
+]
 
 # SortKeyType = Callable[
 # 	[[list[str]],

@@ -341,7 +341,7 @@ sort_by_size = false
 verbose = false
 
 [tool.import-analyzer]
-exclude = ["pyglossary/ui/wcwidth/"]
+exclude = ["pyglossary/ui/wcwidth/", "build/"]
 
 
 # [project]

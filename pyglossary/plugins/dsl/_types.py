@@ -64,7 +64,10 @@ if TYPE_CHECKING:
 	# it is an State Function (state as in state machine)
 	LexType = Callable[[TransformerType], tuple["LexType", ErrorType]] | None
 
-	TitleLexType = Callable[
-		[TitleTransformerType],
-		tuple["TitleLexType", ErrorType],
-	] | None
+	TitleLexType = (
+		Callable[
+			[TitleTransformerType],
+			tuple["TitleLexType", ErrorType],
+		]
+		| None
+	)

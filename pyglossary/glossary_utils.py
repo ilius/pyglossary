@@ -29,7 +29,7 @@ from .compression import (
 	stdCompressions,
 )
 
-__all__ = ["splitFilenameExt"]
+__all__ = ["Error", "ReadError", "WriteError", "splitFilenameExt"]
 
 log = logging.getLogger("pyglossary")
 
