@@ -37,6 +37,7 @@ from typing import (
 	TYPE_CHECKING,
 	cast,
 )
+from uuid import uuid1
 from zlib import compress as zlib_compress
 from zlib import decompress as zlib_decompress
 
@@ -613,8 +614,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		)
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
-		import uuid
-
 		if self._readers:
 			return DataEntry(fname, data)
 
@@ -631,7 +630,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		return DataEntry(
 			fname,
 			data,
-			tmpPath=join(tmpDir, uuid.uuid1().hex),
+			tmpPath=join(tmpDir, uuid1().hex),
 		)
 
 	# ________________________________________________________________________#
@@ -655,8 +654,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		return reader
 
 	def _setTmpDataDir(self, filename: str) -> None:
-		import uuid
-
 		# good thing about cacheDir is that we don't have to clean it up after
 		# conversion is finished.
 		# specially since dataEntry.save(...) will move the file from cacheDir
@@ -669,7 +666,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		# 	self._tmpDataDir = f"{filename}_res"
 		# else:
 		if not filename:
-			filename = uuid.uuid1().hex
+			filename = uuid1().hex
 		self._tmpDataDir = join(cacheDir, os.path.basename(filename) + "_res")
 		log.debug(f"tmpDataDir = {self._tmpDataDir}")
 		os.makedirs(self._tmpDataDir, mode=0o700, exist_ok=True)
