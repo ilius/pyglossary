@@ -21,7 +21,7 @@ from __future__ import annotations
 import logging
 import os
 from os.path import isfile
-from pickle import dumps, loads
+from pickle import dumps
 from typing import TYPE_CHECKING
 
 from .glossary_utils import Error
@@ -57,7 +57,7 @@ class SqEntryList:
 	def __init__(  # noqa: PLR0913
 		self,
 		entryToRaw: "Callable[[EntryType], RawEntryType]",
-		entryFromRaw: "Callable[[RawEntryType], EntryType]",
+		entryFromBytesRow: "Callable[[list[bytes]], EntryType]",
 		filename: str,
 		create: bool = True,
 		persist: bool = False,
@@ -70,7 +70,7 @@ class SqEntryList:
 		import sqlite3
 
 		self._entryToRaw = entryToRaw
-		self._entryFromRaw = entryFromRaw
+		self._entryFromBytesRow = entryFromBytesRow
 		self._filename = filename
 
 		self._persist = persist
@@ -228,6 +228,8 @@ class SqEntryList:
 			raise Error("SQLite cursor is closed")
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
-		entryFromRaw = self._entryFromRaw
+		entryFromBytesRow = self._entryFromBytesRow
 		for row in self._cur:
-			yield entryFromRaw(loads(row[0]))
+			yield entryFromBytesRow(row)
+		# return (entryFromBytesRow(row) for row in self._cur)
+		# return map(entryFromBytesRow, self._cur)

@@ -281,6 +281,20 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		return Entry(word, defi, defiFormat=defiFormat)
 
+	def _entryFromBytesRow(self, row: list[bytes]) -> EntryType:
+		rawEntry = pickle_loads(row[0])
+		if len(rawEntry) > 2:  # noqa: PLR2004
+			defiFormat = rawEntry[2]
+			if defiFormat == "b":
+				fname = rawEntry[0]
+				if isinstance(fname, list):
+					fname = fname[0]  # NESTED 4
+				return DataEntry(fname, tmpPath=rawEntry[1].decode("utf-8"))
+		else:
+			defiFormat = self._defaultDefiFormat
+
+		return Entry(rawEntry[0], rawEntry[1].decode("utf-8"), defiFormat=defiFormat)
+
 	@property
 	def rawEntryCompress(self) -> bool:
 		return self._rawEntryCompress
@@ -974,7 +988,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		self._data = SqEntryList(
 			entryToRaw=self._entryToRaw,
-			entryFromRaw=self._entryFromRaw,
+			entryFromBytesRow=self._entryFromBytesRow,
 			filename=sq_fpath,
 			create=True,
 			persist=True,
