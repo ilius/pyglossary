@@ -139,8 +139,6 @@ class SqEntryList:
 		return self._len
 
 	def append(self, entry: EntryType) -> None:
-		if self._sqliteSortKey is None:
-			raise RuntimeError("self._sqliteSortKey is None")
 		self._cur.execute(
 			f"insert into data({self._columnNames}, pickle)"
 			f" values (?{', ?' * len(self._sqliteSortKey)})",
