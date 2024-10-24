@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import logging
 import os
@@ -292,7 +294,7 @@ def validateFlags(args: "argparse.Namespace", log: logging.Logger) -> bool:
 
 
 def configFromArgs(
-	args: "argparse.Namespace",
+	args: argparse.Namespace,
 	log: logging.Logger,
 ) -> dict[str, Any]:
 	config = {}

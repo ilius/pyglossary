@@ -6,6 +6,8 @@
 # under Apache License, Version 2.0, January 2004
 # http://www.apache.org/licenses/
 
+from __future__ import annotations
+
 import typing
 from collections.abc import Mapping  # noqa: TCH003
 from contextlib import (
@@ -46,19 +48,19 @@ Element = _Element
 class IncrementalFileWriter(typing.Protocol):
 	def write_declaration(
 		self,
-		version: "AnyStr | None" = ...,
-		standalone: "bool | None" = ...,
-		doctype: "AnyStr | None" = ...,
+		version: AnyStr | None = ...,
+		standalone: bool | None = ...,
+		doctype: AnyStr | None = ...,
 	) -> None: ...
 
 	def write_doctype(
 		self,
-		doctype: "AnyStr | None",
+		doctype: AnyStr | None,
 	) -> None: ...
 
 	def write(
 		self,
-		*args: "AnyStr | Element",
+		*args: AnyStr | Element,
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
 		method: _OutputMethodArg | None = ...,
@@ -68,16 +70,16 @@ class IncrementalFileWriter(typing.Protocol):
 
 	def method(
 		self,
-		method: "_OutputMethodArg | None",
+		method: _OutputMethodArg | None,
 	) -> ContextManager[None]:
 		raise NotImplementedError
 
 	def element(
 		self,
 		tag: _TagName,
-		attrib: "Mapping[str, AnyStr] | None" = ...,
-		nsmap: "dict[str | None, AnyStr] | None" = ...,
-		method: "_OutputMethodArg | None" = ...,
+		attrib: Mapping[str, AnyStr] | None = ...,
+		nsmap: dict[str | None, AnyStr] | None = ...,
+		method: _OutputMethodArg | None = ...,
 		**_extra: AnyStr,
 	) -> ContextManager[None]:
 		raise NotImplementedError
@@ -86,38 +88,38 @@ class IncrementalFileWriter(typing.Protocol):
 class AsyncIncrementalFileWriter(typing.Protocol):
 	async def write_declaration(
 		self,
-		version: "AnyStr | None" = ...,
-		standalone: "bool | None" = ...,
-		doctype: "AnyStr | None" = ...,
+		version: AnyStr | None = ...,
+		standalone: bool | None = ...,
+		doctype: AnyStr | None = ...,
 	) -> None: ...
 
 	async def write_doctype(
 		self,
-		doctype: "AnyStr | None",
+		doctype: AnyStr | None,
 	) -> None: ...
 
 	async def write(
 		self,
-		*args: "AnyStr | Element | None",
+		*args: AnyStr | Element | None,
 		with_tail: bool = ...,
 		pretty_print: bool = ...,
-		method: "_OutputMethodArg | None" = ...,
+		method: _OutputMethodArg | None = ...,
 	) -> None: ...
 
 	async def flush(self) -> None: ...
 
 	def method(
 		self,
-		method: "_OutputMethodArg | None",
+		method: _OutputMethodArg | None,
 	) -> AsyncContextManager[None]:
 		raise NotImplementedError
 
 	def element(
 		self,
 		tag: _TagName,
-		attrib: "Mapping[str, AnyStr] | None" = ...,
-		nsmap: "dict[str | None, AnyStr] | None" = ...,
-		method: "_OutputMethodArg | None" = ...,
+		attrib: Mapping[str, AnyStr] | None = ...,
+		nsmap: dict[str | None, AnyStr] | None = ...,
+		method: _OutputMethodArg | None = ...,
 		**_extra: AnyStr,
 	) -> AsyncContextManager[None]:
 		raise NotImplementedError

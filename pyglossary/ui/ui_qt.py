@@ -17,8 +17,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
 # GNU General Public License for more details.
 
-import typing
-
+from __future__ import annotations
 from os.path import join
 
 from PyQt4 import QtGui as qt

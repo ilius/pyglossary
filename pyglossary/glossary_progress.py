@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from .core import log
@@ -11,7 +13,7 @@ __all__ = ["GlossaryProgress"]
 class GlossaryProgress:
 	def __init__(
 		self,
-		ui: "UIType | None" = None,  # noqa: F821
+		ui: UIType | None = None,  # noqa: F821
 	) -> None:
 		self._ui = ui
 		self._progressbar = True

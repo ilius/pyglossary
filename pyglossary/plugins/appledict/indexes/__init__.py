@@ -14,6 +14,8 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
+
 """extended indexes generation with respect to source language."""
 
 import os
@@ -27,7 +29,7 @@ from pyglossary.core import log
 
 __all__ = ["languages", "log"]
 
-languages: "dict[str, Callable[[Sequence[str], str], set[str]]]" = {}
+languages: dict[str, Callable[[Sequence[str], str], set[str]]] = {}
 """
 submodules must register languages by adding (language name -> function)
 pairs to the mapping.

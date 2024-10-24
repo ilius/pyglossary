@@ -17,6 +17,8 @@
 # GNU General Public License for more details.
 
 
+from __future__ import annotations
+
 from . import gdk, gtk
 from .utils import imageFromFile
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Jing, a validator for RELAX NG and other schema languages."""
 
 import logging

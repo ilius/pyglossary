@@ -17,6 +17,8 @@
 # GNU General Public License for more details.
 
 
+from __future__ import annotations
+
 from . import gtk
 from .utils import (
 	VBox,
@@ -75,7 +77,7 @@ class AboutWidget(gtk.Box):
 	def newTabWidgetTextView(
 		text: str,
 		wrap: bool = False,
-		justification: "gtk.Justification | None" = None,
+		justification: gtk.Justification | None = None,
 	):
 		tv = gtk.TextView()
 		tv.set_editable(False)

@@ -1,5 +1,7 @@
 # mypy: ignore-errors
 
+from __future__ import annotations
+
 from tqdm import tqdm
 
 __all__ = ["createProgressBar"]

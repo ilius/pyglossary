@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 import typing
 
 # from typing import TYPE_CHECKING
 
 __all__ = ["BaseEntry", "MultiStr"]
 
-MultiStr: "typing.TypeAlias" = "str | list[str]"
+MultiStr: typing.TypeAlias = "str | list[str]"
 
 
 class BaseEntry:
@@ -15,7 +17,7 @@ class BaseEntry:
 	]
 
 	def __init__(self) -> None:
-		self._word: "str | list[str]"
+		self._word: str | list[str]
 
 	@property
 	def s_word(self) -> str:

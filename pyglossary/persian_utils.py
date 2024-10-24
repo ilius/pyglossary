@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 from .text_utils import replacePostSpaceChar
 
 __all__ = ["faEditStr"]

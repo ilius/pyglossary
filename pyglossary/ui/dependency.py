@@ -22,10 +22,12 @@
 # ^ this takes about 3 seconds
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
+from __future__ import annotations
+
 __all__ = ["checkDepends"]
 
 
-def checkDepends(depends: "dict[str, str]") -> list[str]:
+def checkDepends(depends: dict[str, str]) -> list[str]:
 	"""Return the list of non-installed dependencies."""
 	if not depends:
 		return []

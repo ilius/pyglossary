@@ -20,6 +20,7 @@
 
 """Default ProgressBar widgets."""
 
+from __future__ import annotations
 from __future__ import division
 
 import datetime

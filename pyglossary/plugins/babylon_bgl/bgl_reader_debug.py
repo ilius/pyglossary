@@ -17,6 +17,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+from __future__ import annotations
+
 import gzip
 import os
 import re
@@ -524,7 +526,7 @@ class DebugBglReader(BglReader):
 			return res
 		if not self.targetCharsArray:
 			log.error(
-				"findCharSamples: self.targetCharsArray={self.targetCharsArray}",
+				f"findCharSamples: self.targetCharsArray={self.targetCharsArray}",
 			)
 			return res
 		for i, char in enumerate(b_data):

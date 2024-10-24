@@ -1,6 +1,8 @@
 # from xml.sax.saxutils import escape as xml_escape
 # from xml.sax.saxutils import unescape as xml_unescape
 
+from __future__ import annotations
+
 __all__ = ["xml_escape"]
 
 
