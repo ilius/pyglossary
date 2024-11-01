@@ -113,7 +113,7 @@ class TextGlossaryReader:
 			),
 		)
 
-		if not self._wordCount:
+		if self._glos.progressbar and not self._wordCount:
 			if cfile.seekable():
 				cfile.seek(0, 2)
 				self._fileSize = cfile.tell()
