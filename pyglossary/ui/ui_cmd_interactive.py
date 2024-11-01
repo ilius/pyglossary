@@ -846,7 +846,7 @@ class UI(ui_cmd.UI):
 		print("Switched to SQLite mode")
 
 	def setNoProgressbar(self):
-		self._convertOptions["progressbar"] = False
+		self._glossarySetAttrs["progressbar"] = False
 		print("Disabled progress bar")
 
 	def setSort(self):
