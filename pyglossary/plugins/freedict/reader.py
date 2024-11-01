@@ -23,9 +23,11 @@ from pyglossary.langs.writing_system import getWritingSystemFromText
 
 from .options import optionsProp
 
-tei = "{http://www.tei-c.org/ns/1.0}"
-ENTRY = f"{tei}entry"
+TEI = "{http://www.tei-c.org/ns/1.0}"
+ENTRY = f"{TEI}entry"
 INCLUDE = "{http://www.w3.org/2001/XInclude}include"
+NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
+XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 
 class Reader:
@@ -44,11 +46,10 @@ class Reader:
 
 	_example_padding: int = 10
 
-	ns = {None: "http://www.tei-c.org/ns/1.0"}
-	xmlLang = "{http://www.w3.org/XML/1998/namespace}lang"
+	gramClass = "grammar"
 
 	supportedTags: set[str] = {
-		f"{tei}{tag}"
+		f"{TEI}{tag}"
 		for tag in (
 			"entry",
 			"form",  # entry.form
@@ -94,7 +95,6 @@ class Reader:
 		"t": "transitive",
 		"i": "intransitive",
 	}
-	gramClass = "grammar"
 	noteTypes: set[str] = {
 		"sense",
 		"stagr",
@@ -176,7 +176,7 @@ class Reader:
 		from lxml import etree as ET
 
 		quotes = []
-		sense = ET.Element(f"{tei}sense")
+		sense = ET.Element(f"{TEI}sense")
 		for child in elem.xpath("child::node()"):
 			if isinstance(child, str):
 				child = child.strip()  # noqa: PLW2901
@@ -188,15 +188,15 @@ class Reader:
 			if child.__class__.__name__ == "_Comment":
 				continue
 
-			if child.tag == f"{tei}quote":
+			if child.tag == f"{TEI}quote":
 				quotes.append(child)
 				continue
 
-			if child.tag in {f"{tei}gramGrp", f"{tei}usg", f"{tei}note"}:
+			if child.tag in {f"{TEI}gramGrp", f"{TEI}usg", f"{TEI}note"}:
 				sense.append(child)
 				continue
 
-			if child.tag == f"{tei}cit":
+			if child.tag == f"{TEI}cit":
 				# TODO
 				continue
 
@@ -236,7 +236,7 @@ class Reader:
 				hf.write(item)
 				return
 
-			if item.tag == f"{tei}ref":
+			if item.tag == f"{TEI}ref":
 				if count > 0:
 					hf.write(self.getCommaSep(item.text))
 				self.writeRef(hf, item)
@@ -258,7 +258,7 @@ class Reader:
 	) -> None:
 		attrib = dict(child.attrib)
 		try:
-			lang = attrib.pop(self.xmlLang)
+			lang = attrib.pop(XMLLANG)
 		except KeyError:
 			pass
 		else:
@@ -291,27 +291,27 @@ class Reader:
 			if isinstance(child, str):
 				hf.write(child)
 				continue
-			if child.tag == f"{tei}ref":
+			if child.tag == f"{TEI}ref":
 				self.writeRef(hf, child)
 				continue
-			if child.tag == f"{tei}br":
+			if child.tag == f"{TEI}br":
 				hf.write(ET.Element("br"))
 				continue
-			if child.tag == f"{tei}p":
+			if child.tag == f"{TEI}p":
 				with hf.element("p", **child.attrib):
 					self.writeRichText(hf, child)
 					continue
-			if child.tag == f"{tei}div":
+			if child.tag == f"{TEI}div":
 				self.writeWithDirection(hf, child, "div")
 				continue
-			if child.tag == f"{tei}span":
+			if child.tag == f"{TEI}span":
 				self.writeWithDirection(hf, child, "span")
 				continue
 
 			self.writeRichText(hf, child)
 
 	def getLangDesc(self, elem: Element) -> str | None:
-		lang = elem.attrib.get(self.xmlLang)
+		lang = elem.attrib.get(XMLLANG)
 		if lang:
 			langObj = langDict[lang]
 			if not langObj:
@@ -365,7 +365,7 @@ class Reader:
 		xrList = []
 		exampleCits = []
 		for child in sense.iterchildren():
-			if child.tag == f"{tei}cit":
+			if child.tag == f"{TEI}cit":
 				if child.attrib.get("type", "trans") == "trans":
 					transCits.append(child)
 				elif child.attrib.get("type") == "example":
@@ -374,11 +374,11 @@ class Reader:
 					log.warning(f"unknown cit type: {self.tostring(child)}")
 				continue
 
-			if child.tag == f"{tei}def":
+			if child.tag == f"{TEI}def":
 				defList.append(child)
 				continue
 
-			if child.tag == f"{tei}note":
+			if child.tag == f"{TEI}note":
 				_type = child.attrib.get("type")
 				if not _type:
 					noteList.append(child)
@@ -391,25 +391,25 @@ class Reader:
 					noteList.append(child)
 				continue
 
-			if child.tag == f"{tei}ref":
+			if child.tag == f"{TEI}ref":
 				refList.append(child)
 				continue
 
-			if child.tag == f"{tei}usg":
+			if child.tag == f"{TEI}usg":
 				if not child.text:
 					log.warning(f"empty usg: {self.tostring(child)}")
 					continue
 				usgList.append(child)
 				continue
 
-			if child.tag == f"{tei}lang":
+			if child.tag == f"{TEI}lang":
 				self.writeLangTag(hf, child)
 				continue
 
-			if child.tag in {f"{tei}sense", f"{tei}gramGrp"}:
+			if child.tag in {f"{TEI}sense", f"{TEI}gramGrp"}:
 				continue
 
-			if child.tag == f"{tei}xr":
+			if child.tag == f"{TEI}xr":
 				xrList.append(child)
 				continue
 
@@ -475,10 +475,10 @@ class Reader:
 						"style": f"padding: {self._example_padding}px 0px;",
 					},
 				):
-					for quote in cit.findall("quote", self.ns):
+					for quote in cit.findall("quote", NAMESPACE):
 						self.writeWithDirection(hf, quote, "div")
-					for cit2 in cit.findall("cit", self.ns):
-						for quote in cit2.findall("quote", self.ns):
+					for cit2 in cit.findall("cit", NAMESPACE):
+						for quote in cit2.findall("quote", NAMESPACE):
 							quote.attrib.update(cit2.attrib)
 							self.writeWithDirection(hf, quote, "div")
 
@@ -527,7 +527,7 @@ class Reader:
 		hf: "T_htmlfile",
 		sense: Element,
 	) -> None:
-		self.writeGramGroups(hf, sense.findall("gramGrp", self.ns))
+		self.writeGramGroups(hf, sense.findall("gramGrp", NAMESPACE))
 
 	def writeSense(
 		self,
@@ -538,14 +538,15 @@ class Reader:
 		self.writeSenseGrams(hf, sense)
 		self.makeList(
 			hf,
-			sense.findall("sense", self.ns),
+			sense.findall("sense", NAMESPACE),
 			self.writeSenseSense,
 			single_prefix="",
 		)
 		self.writeSenseSense(hf, sense)
 
-	def getDirection(self, elem: Element) -> str:
-		lang = elem.get(self.xmlLang)
+	@staticmethod
+	def getDirection(elem: Element) -> str:
+		lang = elem.get(XMLLANG)
 		if lang is None:
 			return ""
 		langObj = langDict[lang]
@@ -589,15 +590,15 @@ class Reader:
 		if not text:
 			return ""
 		text = text.strip()
-		if tag == f"{tei}pos":
+		if tag == f"{TEI}pos":
 			return self.posMapping.get(text.lower(), text)
-		if tag == f"{tei}gen":
+		if tag == f"{TEI}gen":
 			return self.genderMapping.get(text.lower(), text)
-		if tag in {f"{tei}num", f"{tei}number"}:
+		if tag in {f"{TEI}num", f"{TEI}number"}:
 			return self.numberMapping.get(text.lower(), text)
-		if tag == f"{tei}subc":
+		if tag == f"{TEI}subc":
 			return self.subcMapping.get(text.lower(), text)
-		if tag == f"{tei}gram":
+		if tag == f"{TEI}gram":
 			_type = elem.get("type")
 			if _type:
 				if _type == "pos":
@@ -614,10 +615,10 @@ class Reader:
 			log.warning(f"<gram> with no type: {self.tostring(elem)}")
 			return text
 
-		if tag == f"{tei}note":
+		if tag == f"{TEI}note":
 			return text
 
-		if tag == f"{tei}colloc":
+		if tag == f"{TEI}colloc":
 			return ""
 
 		log.warning(
@@ -646,9 +647,9 @@ class Reader:
 
 		inflectedKeywords = []
 
-		for form in entry.findall("form", self.ns):
+		for form in entry.findall("form", NAMESPACE):
 			inflected = form.get("type") == "infl"
-			for orth in form.findall("orth", self.ns):
+			for orth in form.findall("orth", NAMESPACE):
 				if not orth.text:
 					continue
 				if inflected:
@@ -660,10 +661,10 @@ class Reader:
 
 		pronList = [
 			pron.text.strip("/")
-			for pron in entry.findall("form/pron", self.ns)
+			for pron in entry.findall("form/pron", NAMESPACE)
 			if pron.text
 		]
-		senseList = entry.findall("sense", self.ns)
+		senseList = entry.findall("sense", NAMESPACE)
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div"):
@@ -690,7 +691,7 @@ class Reader:
 					hf.write("\n")
 
 				_hf = cast("T_htmlfile", hf)
-				self.writeGramGroups(_hf, entry.findall("gramGrp", self.ns))
+				self.writeGramGroups(_hf, entry.findall("gramGrp", NAMESPACE))
 				self.writeSenseList(_hf, senseList)
 
 		defi = f.getvalue().decode("utf-8")
@@ -704,7 +705,7 @@ class Reader:
 		)
 
 	def setWordCount(self, header: Element) -> None:
-		extent_elem = header.find(".//extent", self.ns)
+		extent_elem = header.find(".//extent", NAMESPACE)
 		if extent_elem is None:
 			log.warning(
 				"did not find 'extent' tag in metedata, progress bar will not word",
@@ -755,7 +756,7 @@ class Reader:
 		self._glos.setInfo(key, unescape_unicode(value))
 
 	def setCopyright(self, header: Element) -> None:
-		elems = header.findall(".//availability//p", self.ns)
+		elems = header.findall(".//availability//p", NAMESPACE)
 		if not elems:
 			log.warning("did not find copyright")
 			return
@@ -765,14 +766,14 @@ class Reader:
 		log.debug(f"Copyright: {_copyright!r}")
 
 	def setPublisher(self, header: Element) -> None:
-		elem = header.find(".//publisher", self.ns)
+		elem = header.find(".//publisher", NAMESPACE)
 		if elem is None or not elem.text:
 			log.warning("did not find publisher")
 			return
 		self.setGlosInfo("publisher", elem.text)
 
 	def setCreationTime(self, header: Element) -> None:
-		elem = header.find(".//publicationStmt/date", self.ns)
+		elem = header.find(".//publicationStmt/date", NAMESPACE)
 		if elem is None or not elem.text:
 			return
 		self.setGlosInfo("creationTime", elem.text)
@@ -783,7 +784,7 @@ class Reader:
 	def setDescription(self, header: Element) -> None:
 		elems = []
 		for tag in ("sourceDesc", "projectDesc"):
-			elems += header.findall(f".//{tag}//p", self.ns)
+			elems += header.findall(f".//{tag}//p", NAMESPACE)
 		desc = self.stripParagList(elems)
 		if not desc:
 			return
@@ -809,11 +810,11 @@ class Reader:
 
 	def setMetadata(self, header: Element) -> None:
 		self.setWordCount(header)
-		title = header.find(".//title", self.ns)
+		title = header.find(".//title", NAMESPACE)
 		if title is not None and title.text:
 			self.setGlosInfo("name", title.text)
 
-		edition = header.find(".//edition", self.ns)
+		edition = header.find(".//edition", NAMESPACE)
 		if edition is not None and edition.text:
 			self.setGlosInfo("edition", edition.text)
 
@@ -884,7 +885,7 @@ class Reader:
 		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			cfile,
 			events=("end",),
-			tag=f"{tei}teiHeader",
+			tag=f"{TEI}teiHeader",
 		)
 		for _, elem in context:
 			self.setMetadata(elem)  # type: ignore
