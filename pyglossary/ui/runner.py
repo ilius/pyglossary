@@ -59,10 +59,11 @@ def base_ui_run(  # noqa: PLR0913
 	if reverse:
 		log.error("--reverse does not work with --ui=none")
 		return False
-	ui = UIBase()
+	ui = UIBase(progressbar=False)
 	ui.loadConfig(**config)
 	glos = Glossary(ui=ui)
 	glos.config = ui.config
+	glos.progressbar = False
 	if glossarySetAttrs:
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
