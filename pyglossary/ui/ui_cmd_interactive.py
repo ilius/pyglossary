@@ -167,7 +167,6 @@ writeFormatDescList = [
 convertOptionsFlags = {
 	"direct": ("indirect", "direct"),
 	"sqlite": ("", "sqlite"),
-	"progressbar": ("no-progress-bar", ""),
 	"sort": ("no-sort", "sort"),
 }
 infoOverrideFlags = {
@@ -1052,6 +1051,12 @@ class UI(ui_cmd.UI):
 					flag = ftup[0]
 					cmd.append(f"--{flag}={value}")
 
+		if (
+			"progressbar" in self._glossarySetAttrs
+			and not self._glossarySetAttrs["progressbar"]
+		):
+			cmd.append("--no-progress-bar")
+
 		print()
 		print(
 			"If you want to repeat this conversion later, you can use this command:",
@@ -1140,6 +1145,9 @@ class UI(ui_cmd.UI):
 		self._writeOptions = writeOptions
 		self._convertOptions = convertOptions
 		self._glossarySetAttrs = glossarySetAttrs
+
+		if not self._progressbar:
+			self._glossarySetAttrs["progressbar"] = False
 
 		self.loadConfig()
 		self.savedConfig = dict(self.config)
