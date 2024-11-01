@@ -769,7 +769,7 @@ class Reader:
 			keywords,
 			defi,
 			defiFormat="h",
-			byteProgress=(_file.tell(), self._fileSize) if self._fileSize else None,
+			byteProgress=(_file.tell(), self._fileSize) if self._progress else None,
 		)
 
 	def setWordCount(self, header: Element) -> None:
@@ -897,6 +897,7 @@ class Reader:
 		self._dirname = ""
 		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
+		self._progress = True
 		self._wordCount = 0
 		self._discoveredTags: "dict[str, Element]" = {}
 
@@ -934,14 +935,15 @@ class Reader:
 		self._dirname = dirname(filename)
 		cfile = compressionOpen(filename, mode="rb")
 
-		if self._glos.progressbar:
-			if cfile.seekable():
-				cfile.seek(0, 2)
-				self._fileSize = cfile.tell()
-				cfile.seek(0)
-				self._glos.setInfo("input_file_size", f"{self._fileSize}")
-			else:
-				log.warning("FreeDict Reader: file is not seekable")
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("FreeDict Reader: file is not seekable")
+
+		self._progress = self._glos.progressbar and self._fileSize
 
 		self._glos.setDefaultDefiFormat("h")
 

@@ -68,6 +68,7 @@ class TextGlossaryReader:
 		self._pendingEntries: list[EntryType] = []
 		self._wordCount = 0
 		self._fileSize = 0
+		self._progress = True
 		self._pos = -1
 		self._fileCount = 1
 		self._fileIndex = -1
@@ -113,15 +114,16 @@ class TextGlossaryReader:
 			),
 		)
 
-		if self._glos.progressbar and not self._wordCount:
-			if cfile.seekable():
-				cfile.seek(0, 2)
-				self._fileSize = cfile.tell()
-				cfile.seek(0)
-				log.debug(f"File size of {filename}: {self._fileSize}")
-				self._glos.setInfo("input_file_size", f"{self._fileSize}")
-			else:
-				log.warning("TextGlossaryReader: file is not seekable")
+		if cfile.seekable():
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			log.debug(f"File size of {filename}: {self._fileSize}")
+			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		else:
+			log.warning("TextGlossaryReader: file is not seekable")
+
+		self._progress = self._glos.progressbar and self._fileSize
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)
 		if self._hasInfo:
@@ -170,7 +172,7 @@ class TextGlossaryReader:
 
 	def newEntry(self, word: MultiStr, defi: str) -> EntryType:
 		byteProgress: "tuple[int, int] | None" = None
-		if self._fileSize and self._file is not None:
+		if self._progress:
 			byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			word,
