@@ -14,82 +14,14 @@ if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
-from pyglossary.compression import (
-	compressionOpen,
-	stdCompressions,
-)
+from pyglossary.compression import compressionOpen, stdCompressions
 from pyglossary.core import exc_note, log, pip
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
-from pyglossary.option import (
-	BoolOption,
-	IntOption,
-	Option,
-	StrOption,
-)
 
-__all__ = [
-	"Reader",
-	"description",
-	"enable",
-	"extensionCreate",
-	"extensions",
-	"format",
-	"kind",
-	"lname",
-	"optionsProp",
-	"singleFile",
-	"website",
-	"wiki",
-]
-
-enable = True
-lname = "freedict"
-format = "FreeDict"
-description = "FreeDict (.tei)"
-extensions = (".tei",)
-extensionCreate = ".tei"
-singleFile = True
-kind = "text"
-wiki = "https://github.com/freedict/fd-dictionaries/wiki"
-website = (
-	"https://freedict.org/",
-	"FreeDict.org",
-)
-optionsProp: "dict[str, Option]" = {
-	"resources": BoolOption(
-		comment="Enable resources / data files",
-	),
-	"discover": BoolOption(
-		comment="Find and show unsupported tags",
-	),
-	"auto_rtl": BoolOption(
-		allowNone=True,
-		comment="Auto-detect and mark Right-to-Left text",
-	),
-	"auto_comma": BoolOption(
-		comment="Auto-detect comma sign based on text",
-	),
-	"comma": StrOption(
-		customValue=True,
-		values=[", ", "، "],
-		comment="Comma sign (following space) to use as separator",
-	),
-	"word_title": BoolOption(
-		comment="Add headwords title to beginning of definition",
-	),
-	"pron_color": StrOption(
-		comment="Pronunciation color",
-	),
-	"gram_color": StrOption(
-		comment="Grammar color",
-	),
-	"example_padding": IntOption(
-		comment="Padding for examples (in px)",
-	),
-}
+from .options import optionsProp
 
 tei = "{http://www.tei-c.org/ns/1.0}"
 ENTRY = f"{tei}entry"
@@ -112,12 +44,10 @@ class Reader:
 
 	_example_padding: int = 10
 
-	ns = {
-		None: "http://www.tei-c.org/ns/1.0",
-	}
+	ns = {None: "http://www.tei-c.org/ns/1.0"}
 	xmlLang = "{http://www.w3.org/XML/1998/namespace}lang"
 
-	supportedTags = {
+	supportedTags: set[str] = {
 		f"{tei}{tag}"
 		for tag in (
 			"entry",
@@ -134,7 +64,7 @@ class Reader:
 			"num",  # entry.sense.cit.gramGrp.num
 		)
 	}
-	posMapping = {
+	posMapping: dict[str, str] = {
 		"n": "noun",
 		"v": "verb",
 		"pn": "pronoun",
@@ -146,7 +76,7 @@ class Reader:
 		# "numeral", "interjection", "suffix", "particle"
 		# "indefinitePronoun"
 	}
-	genderMapping = {
+	genderMapping: dict[str, str] = {
 		"m": "male",
 		"masc": "male",
 		"f": "female",
@@ -156,15 +86,29 @@ class Reader:
 		# "m;f"
 		"adj": "adjective",
 	}
-	numberMapping = {
+	numberMapping: dict[str, str] = {
 		"pl": "plural",
 		"sing": "singular",
 	}
-	subcMapping = {
+	subcMapping: dict[str, str] = {
 		"t": "transitive",
 		"i": "intransitive",
 	}
 	gramClass = "grammar"
+	noteTypes: set[str] = {
+		"sense",
+		"stagr",
+		"stagk",
+		"def",
+		"usage",
+		"hint",
+		"status",
+		"editor",
+		"dom",
+		"infl",
+		"obj",
+		"lbl",
+	}
 
 	@staticmethod
 	def makeList(  # noqa: PLR0913
@@ -440,20 +384,7 @@ class Reader:
 					noteList.append(child)
 				elif _type in {"pos", "gram"}:
 					gramList.append(child)
-				elif _type in {
-					"sense",
-					"stagr",
-					"stagk",
-					"def",
-					"usage",
-					"hint",
-					"status",
-					"editor",
-					"dom",
-					"infl",
-					"obj",
-					"lbl",
-				}:
+				elif _type in self.noteTypes:
 					noteList.append(child)
 				else:
 					log.warning(f"unknown note type {_type}")
