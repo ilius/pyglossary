@@ -570,11 +570,11 @@ class QuickDic:
 		indices = read_list(fp, read_entry_index)
 		assert read_string(fp) == "END OF DICTIONARY"
 		return cls(
-			name,
-			sources,
-			pairs,
-			texts,
-			htmls,
+			name=name,
+			sources=sources,
+			pairs=pairs,
+			texts=texts,
+			htmls=htmls,
 			version=version,
 			indices=indices,
 			created=created,
@@ -877,7 +877,16 @@ class Writer:
 		sources = [("", len(htmls))]
 		pairs = []
 		texts = []
-		self._dic = QuickDic(name, sources, pairs, texts, htmls)
+		self._dic = QuickDic(
+			name=name,
+			sources=sources,
+			pairs=pairs,
+			texts=texts,
+			htmls=htmls,
+			created=None,
+			# version: int = 6,
+			# indices: list[EntryIndexTuple] | None = None,
+		)
 
 		short_name = long_name = iso = sourceLang
 		normalizer_rules = self._normalizer_rules or (
