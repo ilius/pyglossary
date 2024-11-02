@@ -6,6 +6,7 @@ import functools
 import gzip
 import io
 import math
+import os
 import pathlib
 import struct
 import typing
@@ -877,13 +878,20 @@ class Writer:
 		sources = [("", len(htmls))]
 		pairs = []
 		texts = []
+
+		created = None
+		createdStr = os.getenv("QUICKDIC_CREATION_TIME")
+		if createdStr:
+			created = dt.datetime.fromisoformat(createdStr)
+			log.info(f"QuickDic: using created={created.isoformat()!r}")
+
 		self._dic = QuickDic(
 			name=name,
 			sources=sources,
 			pairs=pairs,
 			texts=texts,
 			htmls=htmls,
-			created=None,
+			created=created,
 			# version: int = 6,
 			# indices: list[EntryIndexTuple] | None = None,
 		)
