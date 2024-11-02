@@ -880,10 +880,8 @@ class Writer:
 		self._dic = QuickDic(name, sources, pairs, texts, htmls)
 
 		short_name = long_name = iso = sourceLang
-		normalizer_rules = (
-			self._normalizer_rules or default_de_normalizer_rules
-			if iso == "DE"
-			else default_normalizer_rules
+		normalizer_rules = self._normalizer_rules or (
+			default_de_normalizer_rules if iso == "DE" else default_normalizer_rules
 		)
 		self._dic.add_index(
 			short_name,
