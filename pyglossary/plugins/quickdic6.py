@@ -341,7 +341,7 @@ def write_entry_html(fp: IO[bytes], entry: tuple[int, str, str]) -> int:
 	src_idx, title, html = entry
 	b_html = "".join(c if ord(c) < 128 else f"&#{ord(c)};" for c in html).encode()
 	ib_compr = io.BytesIO()
-	with gzip.GzipFile(fileobj=ib_compr, mode="wb") as zf:
+	with gzip.GzipFile(fileobj=ib_compr, mode="wb", mtime=0) as zf:
 		# note that the compressed bytes might differ from the original Java
 		# implementation that uses GZIPOutputStream
 		zf.write(b_html)
