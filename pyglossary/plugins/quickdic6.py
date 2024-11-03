@@ -884,7 +884,7 @@ class Writer:
 		created = None
 		createdStr = os.getenv("QUICKDIC_CREATION_TIME")
 		if createdStr:
-			created = dt.datetime.fromisoformat(createdStr)
+			created = dt.datetime.fromtimestamp(int(createdStr), tz=dt.timezone.utc)
 			log.info(f"QuickDic: using created={created.isoformat()!r}")
 
 		self._dic = QuickDic(

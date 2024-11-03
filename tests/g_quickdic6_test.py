@@ -16,7 +16,7 @@ class TestGlossaryQuickDic6(TestGlossaryBase):
 			},
 		)
 
-		os.environ["QUICKDIC_CREATION_TIME"] = "2024-11-03T00:00:00.000000"
+		os.environ["QUICKDIC_CREATION_TIME"] = "1730579400"
 
 	def convert_txt_quickdic(self, fname, sha1sum, **convertArgs):
 		self.convert(
