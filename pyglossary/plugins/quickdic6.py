@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 from pyglossary.flags import NEVER
+from pyglossary.html_utils import unescape_unicode
 from pyglossary.langs import langDict
 from pyglossary.option import (
 	Option,
@@ -803,7 +804,8 @@ class Reader:
 		for idx, (_, word, defi) in enumerate(self._dic.htmls):
 			syns = self._synonyms.get((4, idx), set())
 			l_word = [word] + sorted(syns.difference({word}))
-			yield self._glos.newEntry(l_word, defi, defiFormat="h")
+			defi_new = unescape_unicode(defi)
+			yield self._glos.newEntry(l_word, defi_new, defiFormat="h")
 
 
 class Writer:
