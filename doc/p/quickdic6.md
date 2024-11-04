@@ -19,11 +19,9 @@
 
 ### Write options
 
-| Name             | Default | Type | Comment                                            |
-| ---------------- | ------- | ---- | -------------------------------------------------- |
-| normalizer_rules |         | str  | ICU normalizer rules to use for index sorting      |
-| source_lang      |         | str  | The language of the tokens in the dictionary index |
-| target_lang      |         | str  | The language of the dictionary entries             |
+| Name             | Default | Type | Comment                                       |
+| ---------------- | ------- | ---- | --------------------------------------------- |
+| normalizer_rules |         | str  | ICU normalizer rules to use for index sorting |
 
 ### Dependencies for reading
 

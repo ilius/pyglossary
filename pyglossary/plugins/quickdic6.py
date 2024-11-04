@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 from pyglossary.core import log
 from pyglossary.flags import NEVER
 from pyglossary.html_utils import unescape_unicode
-from pyglossary.langs import langDict
 from pyglossary.option import (
 	Option,
 	StrOption,
@@ -64,12 +63,6 @@ website = (
 optionsProp: "dict[str, Option]" = {
 	"normalizer_rules": StrOption(
 		comment="ICU normalizer rules to use for index sorting",
-	),
-	"source_lang": StrOption(
-		comment="The language of the tokens in the dictionary index",
-	),
-	"target_lang": StrOption(
-		comment="The language of the dictionary entries",
 	),
 }
 
@@ -810,8 +803,6 @@ class Reader:
 
 class Writer:
 	_normalizer_rules = ""
-	_source_lang = ""
-	_target_lang = ""
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
@@ -852,28 +843,20 @@ class Writer:
 			# specifies the entry type to use.
 			htmls.append((0, words[0], entry.defi))
 
-		log.info("Collecting meta data ...")
-		name = self._glos.getInfo("bookname")
-		if not name:
-			name = self._glos.getInfo("description")
+		glos = self._glos
 
-		sourceLang = (
-			self._glos.sourceLang
-			if not self._source_lang
-			else langDict[self._source_lang]
-		)
-		targetLang = (
-			self._glos.targetLang
-			if not self._target_lang
-			else langDict[self._target_lang]
-		)
-		if sourceLang and targetLang:
-			sourceLang = sourceLang.code
-			targetLang = targetLang.code
-		else:
-			# fallback if no languages are specified
-			sourceLang = targetLang = "EN"
-		langs = f"{sourceLang}->{targetLang}"
+		log.info("Collecting meta data ...")
+		name = glos.getInfo("bookname")
+		if not name:
+			name = glos.getInfo("description")
+
+		sourceLangCode, targetLangCode = "EN", "EN"
+		if glos.sourceLang:
+			sourceLangCode = glos.sourceLang.code
+		if glos.targetLang:
+			targetLangCode = glos.targetLang.code
+
+		langs = f"{sourceLangCode}->{targetLangCode}"
 		if langs not in name.lower():
 			name = f"{self._glos.getInfo('name')} ({langs})"
 
@@ -898,7 +881,7 @@ class Writer:
 			# indices: list[EntryIndexTuple] | None = None,
 		)
 
-		short_name = long_name = iso = sourceLang
+		short_name = long_name = iso = sourceLangCode
 		normalizer_rules = self._normalizer_rules or (
 			default_de_normalizer_rules if iso == "DE" else default_normalizer_rules
 		)
