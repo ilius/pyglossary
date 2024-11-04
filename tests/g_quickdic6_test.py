@@ -13,6 +13,8 @@ class TestGlossaryQuickDic6(TestGlossaryBase):
 				"100-en-de-v4.txt": "d420a669",
 				"100-en-de-v4.txt.quickdic": "9d4ccc13",
 				"100-en-de-v4.txt.quickdic.txt": "2dc4fc17",
+				"100-en-fa.txt.quickdic": "2bd483df",
+				"100-en-fa.txt.quickdic.txt": "50994fb5",
 			},
 		)
 
@@ -44,6 +46,18 @@ class TestGlossaryQuickDic6(TestGlossaryBase):
 		self.convert_quickdic_txt(
 			"100-en-de-v4.txt",
 			"100-en-de-v4.txt.quickdic",
+		)
+
+	def test_convert_txt_quickdic_2(self):
+		self.convert_txt_quickdic(
+			"100-en-fa",
+			"371ac30d5ddedffe0a1c54b8a050aef62e5b91a5",
+		)
+
+	def test_convert_quickdic_txt_2(self):
+		self.convert_quickdic_txt(
+			"100-en-fa.txt",
+			"100-en-fa.txt.quickdic",
 		)
 
 
