@@ -881,10 +881,11 @@ class SortOptionsBox(gtk.Box):
 		self.localeHBox.set_sensitive(sort)
 
 		sortKeyName = convertOptions.get("sortKeyName")
-		sortKeyName, _, localeName = sortKeyName.partition(":")
 		if sortKeyName:
-			self.sortKeyCombo.set_active(sortKeyNames.index(sortKeyName))
-		self.localeEntry.set_text(localeName)
+			sortKeyName, _, localeName = sortKeyName.partition(":")
+			if sortKeyName:
+				self.sortKeyCombo.set_active(sortKeyNames.index(sortKeyName))
+			self.localeEntry.set_text(localeName)
 
 		if "sortEncoding" in convertOptions:
 			self.encodingCheck.set_active(True)
