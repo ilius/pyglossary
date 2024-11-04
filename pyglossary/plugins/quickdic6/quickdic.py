@@ -8,17 +8,6 @@ from typing import TYPE_CHECKING
 from pyglossary.core import log
 
 from .comparator import Comparator
-from .write_funcs import (
-	write_entry_html,
-	write_entry_index,
-	write_entry_pairs,
-	write_entry_source,
-	write_entry_text,
-	write_int,
-	write_list,
-	write_long,
-	write_string,
-)
 
 if TYPE_CHECKING:
 	from .commons import EntryIndexTuple, IndexEntryType
@@ -147,17 +136,3 @@ class QuickDic:
 				rows,
 			),
 		)
-
-
-	def write(self, path: str) -> None:
-		with open(path, "wb") as fp:
-			log.info(f"Writing to {path} ...")
-			write_int(fp, self.version)
-			write_long(fp, int(self.created.timestamp() * 1000))
-			write_string(fp, self.name)
-			write_list(fp, write_entry_source, self.sources)
-			write_list(fp, write_entry_pairs, self.pairs)
-			write_list(fp, write_entry_text, self.texts)
-			write_list(fp, write_entry_html, self.htmls)
-			write_list(fp, write_entry_index, self.indices)
-			write_string(fp, "END OF DICTIONARY")

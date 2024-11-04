@@ -12,6 +12,17 @@ if TYPE_CHECKING:
 from pyglossary.core import log
 
 from .quickdic import QuickDic
+from .write_funcs import (
+	write_entry_html,
+	write_entry_index,
+	write_entry_pairs,
+	write_entry_source,
+	write_entry_text,
+	write_int,
+	write_list,
+	write_long,
+	write_string,
+)
 
 default_de_normalizer_rules = (
 	":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
@@ -38,6 +49,20 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
+
+	@staticmethod
+	def write_quickdic(dic: QuickDic, path: str) -> None:
+		with open(path, "wb") as fp:
+			log.info(f"Writing to {path} ...")
+			write_int(fp, dic.version)
+			write_long(fp, int(dic.created.timestamp() * 1000))
+			write_string(fp, dic.name)
+			write_list(fp, write_entry_source, dic.sources)
+			write_list(fp, write_entry_pairs, dic.pairs)
+			write_list(fp, write_entry_text, dic.texts)
+			write_list(fp, write_entry_html, dic.htmls)
+			write_list(fp, write_entry_index, dic.indices)
+			write_string(fp, "END OF DICTIONARY")
 
 	def write(self) -> typing.Generator[None, EntryType, None]:
 		synonyms: dict[str, list[str]] = {}
@@ -118,4 +143,4 @@ class Writer:
 			synonyms=synonyms,
 		)
 
-		self._dic.write(self._filename)
+		self.write_quickdic(self._dic, self._filename)

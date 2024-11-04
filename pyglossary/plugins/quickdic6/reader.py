@@ -77,7 +77,6 @@ class Reader:
 			created=created,
 		)
 
-
 	def _extract_synonyms_from_indices(self) -> None:
 		self._text_tokens: dict[int, str] = {}
 		self._synonyms: dict[tuple[int, int], set[str]] = {}
