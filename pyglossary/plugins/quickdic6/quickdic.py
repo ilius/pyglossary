@@ -3,24 +3,11 @@ from __future__ import annotations
 
 import datetime as dt
 import functools
-import pathlib
-import zipfile
-from typing import IO, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 
 from .comparator import Comparator
-from .read_funcs import (
-	read_entry_html,
-	read_entry_index,
-	read_entry_pairs,
-	read_entry_source,
-	read_entry_text,
-	read_int,
-	read_list,
-	read_long,
-	read_string,
-)
 from .write_funcs import (
 	write_entry_html,
 	write_entry_index,
@@ -57,39 +44,6 @@ class QuickDic:
 		self.version = version
 		self.indices = [] if indices is None else indices
 		self.created = dt.datetime.now() if created is None else created
-
-	@classmethod
-	def from_path(cls: type[QuickDic], path_str: str) -> QuickDic:
-		path = pathlib.Path(path_str)
-		if path.suffix != ".zip":
-			with open(path, "rb") as fp:
-				return cls.from_fp(fp)
-		with zipfile.ZipFile(path, mode="r") as zf:
-			fname = next(n for n in zf.namelist() if n.endswith(".quickdic"))
-			with zf.open(fname) as fp:
-				return cls.from_fp(fp)
-
-	@classmethod
-	def from_fp(cls: type[QuickDic], fp: IO[bytes]) -> QuickDic:
-		version = read_int(fp)
-		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)  # noqa: DTZ006
-		name = read_string(fp)
-		sources = read_list(fp, read_entry_source)
-		pairs = read_list(fp, read_entry_pairs)
-		texts = read_list(fp, read_entry_text)
-		htmls = read_list(fp, read_entry_html)
-		indices = read_list(fp, read_entry_index)
-		assert read_string(fp) == "END OF DICTIONARY"
-		return cls(
-			name=name,
-			sources=sources,
-			pairs=pairs,
-			texts=texts,
-			htmls=htmls,
-			version=version,
-			indices=indices,
-			created=created,
-		)
 
 	def add_index(  # noqa: PLR0913
 		self,
@@ -193,6 +147,7 @@ class QuickDic:
 				rows,
 			),
 		)
+
 
 	def write(self, path: str) -> None:
 		with open(path, "wb") as fp:

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import datetime as dt
+import pathlib
 import typing
-from typing import TYPE_CHECKING
+import zipfile
+from typing import IO, TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, GlossaryType
@@ -12,6 +15,17 @@ if TYPE_CHECKING:
 from pyglossary.html_utils import unescape_unicode
 
 from .quickdic import QuickDic
+from .read_funcs import (
+	read_entry_html,
+	read_entry_index,
+	read_entry_pairs,
+	read_entry_source,
+	read_entry_text,
+	read_int,
+	read_list,
+	read_long,
+	read_string,
+)
 
 
 class Reader:
@@ -25,10 +39,44 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._dic = QuickDic.from_path(self._filename)
+		self._dic = self.quickdic_from_path(self._filename)
 		self._glos.setDefaultDefiFormat("h")
 		self._extract_synonyms_from_indices()
 		# TODO: read glossary name and langs?
+
+	@classmethod
+	def quickdic_from_path(cls: type[Reader], path_str: str) -> QuickDic:
+		path = pathlib.Path(path_str)
+		if path.suffix != ".zip":
+			with open(path, "rb") as fp:
+				return cls.quickdic_from_fp(fp)
+		with zipfile.ZipFile(path, mode="r") as zf:
+			fname = next(n for n in zf.namelist() if n.endswith(".quickdic"))
+			with zf.open(fname) as fp:
+				return cls.quickdic_from_fp(fp)
+
+	@staticmethod
+	def quickdic_from_fp(fp: IO[bytes]) -> QuickDic:
+		version = read_int(fp)
+		created = dt.datetime.fromtimestamp(float(read_long(fp)) / 1000.0)  # noqa: DTZ006
+		name = read_string(fp)
+		sources = read_list(fp, read_entry_source)
+		pairs = read_list(fp, read_entry_pairs)
+		texts = read_list(fp, read_entry_text)
+		htmls = read_list(fp, read_entry_html)
+		indices = read_list(fp, read_entry_index)
+		assert read_string(fp) == "END OF DICTIONARY"
+		return QuickDic(
+			name=name,
+			sources=sources,
+			pairs=pairs,
+			texts=texts,
+			htmls=htmls,
+			version=version,
+			indices=indices,
+			created=created,
+		)
+
 
 	def _extract_synonyms_from_indices(self) -> None:
 		self._text_tokens: dict[int, str] = {}
