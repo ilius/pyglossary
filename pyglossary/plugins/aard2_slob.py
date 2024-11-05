@@ -94,6 +94,7 @@ extraDocs = [
 ]
 
 t_created_at = "created.at"
+t_converted_at = "converted.at"
 t_label = "label"
 t_created_by = "created.by"
 t_copyright = "copyright"
@@ -101,6 +102,7 @@ t_license_name = "license.name"
 t_license_url = "license.url"
 t_uri = "uri"
 t_edition = "edition"
+t_python = "version.python"
 
 supported_tags = {
 	t_label,
@@ -288,20 +290,43 @@ class Writer:
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
-	def _open(self, filename: str, namePostfix: str) -> slob.Writer:
+	def _open(self, filepath: str, namePostfix: str) -> slob.Writer:
 		from pyglossary import slob
 
-		if isfile(filename):
-			shutil.move(filename, f"{filename}.bak")
-			log.warning(f"renamed existing {filename!r} to {filename + '.bak'!r}")
+		if isfile(filepath):
+			shutil.move(filepath, f"{filepath}.bak")
+			log.warning(f"renamed existing {filepath!r} to {filepath + '.bak'!r}")
 		self._slobWriter = slobWriter = slob.Writer(
-			filename,
+			filepath,
 			observer=self._slobObserver,
 			workdir=cacheDir,
 			compression=self._compression,
 			version_info=self._version_info,
 		)
-		slobWriter.tag("label", self._glos.getInfo("name") + namePostfix)
+
+		# "label" tag is a dictionary name shown in UI
+		slobWriter.tag(t_label, self._glos.getInfo("name") + namePostfix)
+
+		createdAt = self._glos.getInfo("creationTime")
+		if createdAt is not None:
+			slobWriter.tag(t_created_at, createdAt)
+		createdBy = self._glos.getInfo("author")
+		if createdBy is not None:
+			slobWriter.tag(t_created_by, createdBy)
+
+		filename = os.path.basename(filepath)
+		dic_uri = re.sub(r"[^A-Za-z0-9_-]+", "_", filename)
+		# "uri" tag is not web url, it's a part of gloss addressing ID: uri + article ID
+		# setting the tag allows bookmark & history migration, if dict file is updated
+		# we use source filename as "uri", since it is stable (most likely)
+		slobWriter.tag(t_uri, dic_uri)
+
+		import sys
+		slobWriter.tag(t_python, sys.version)
+
+		from datetime import datetime, timezone
+		slobWriter.tag(t_converted_at, datetime.now(timezone.utc).isoformat())
+
 		return slobWriter
 
 	def open(self, filename: str) -> None:
