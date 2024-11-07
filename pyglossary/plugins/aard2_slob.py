@@ -321,11 +321,11 @@ class Writer:
 		# we use source filename as "uri", since it is stable (most likely)
 		slobWriter.tag(t_uri, dic_uri)
 
-		import sys
-		slobWriter.tag(t_python, sys.version)
+		# import sys
+		# slobWriter.tag(t_python, sys.version)
 
-		from datetime import datetime, timezone
-		slobWriter.tag(t_converted_at, datetime.now(timezone.utc).isoformat())
+		# from datetime import datetime, timezone
+		# slobWriter.tag(t_converted_at, datetime.now(timezone.utc).isoformat())
 
 		return slobWriter
 
