@@ -21,6 +21,7 @@ from __future__ import annotations
 import logging
 import os
 import sys
+import warnings
 from os.path import isdir, join
 from typing import Any, NamedTuple
 
@@ -250,9 +251,7 @@ class PluginManager:
 		return plugin, ""
 
 	# TODO: breaking change:
-	# return "tuple[DetectedFormat | None, str]"
-	# where the str is error
-	# and remove `quiet` argument, and local `error` function
+	# remove `kwargs` and the check for `quiet`
 	# also:
 	# C901		`detectOutputFormat` is too complex (16 > 13)
 	# PLR0912	Too many branches (14 > 12)
@@ -262,18 +261,20 @@ class PluginManager:
 		filename: str = "",
 		format: str = "",
 		inputFilename: str = "",
-		quiet: bool = False,  # noqa: ARG003, TODO: remove
 		addExt: bool = False,
+		**kwargs
 	) -> DetectedFormat:
 		from os.path import splitext
 
-		# Ugh, mymy
-		# https://github.com/python/mypy/issues/6549
-		# > Mypy assumes that the return value of methods that return None should not
-		# > be used. This helps guard against mistakes where you accidentally use the
-		# > return value of such a method (e.g., saying new_list = old_list.sort()).
-		# > I don't think there's a bug here.
-		# Sorry, but that's not the job of a type checker at all!
+		if "quiet" in kwargs:
+			warnings.warn(
+				"quiet= argument is no longer used and will be removed, "
+				"because we raise exception `Error` on error",
+				stacklevel=2,
+			)
+			del kwargs["quiet"]
+		if kwargs:
+			raise TypeError(f"invalid arguments: {kwargs}")
 
 		plugin, err = cls._outputPluginByFormat(format)
 		if err:
