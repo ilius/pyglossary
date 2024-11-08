@@ -5,9 +5,7 @@ skip-magic-trailing-comma = false
 line-ending = "lf"
 docstring-code-format = false
 exclude = [
-	"pyglossary/plugins/cc_cedict/summarize.py",
 	"pyglossary/plugin_lib/ripemd128.py",
-	"pyglossary/gregorian.py",
 ]
 
 [tool.ruff]

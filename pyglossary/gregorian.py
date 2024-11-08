@@ -56,14 +56,15 @@ def to_jd(year: int, month: int, day: int) -> int:
 		tm = -2
 
 	return (
-		epoch - 1 +
-		365 * (year - 1) +
-		(year - 1) // 4 +
-		-((year - 1) // 100) +
-		(year - 1) // 400 +
-		(367 * month - 362) // 12 +
-		tm +
-		day
+		epoch
+		- 1
+		+ 365 * (year - 1)
+		+ (year - 1) // 4
+		+ -((year - 1) // 100)
+		+ (year - 1) // 400
+		+ (367 * month - 362) // 12
+		+ tm
+		+ day
 	)
 
 
@@ -80,11 +81,7 @@ def jd_to(jd: int) -> tuple[int, int, int]:
 	quad, dquad = divmod(dcent, 1461)
 	yindex = dquad // 365  # divmod(dquad, 365)[0]
 	year = (
-		qc * 400 +
-		cent * 100 +
-		quad * 4 +
-		yindex +
-		(cent != 4 and yindex != 4)  # noqa: PLR2004
+		qc * 400 + cent * 100 + quad * 4 + yindex + (cent != 4 and yindex != 4)  # noqa: PLR2004
 	)
 	yearday = jd - to_jd(year, 1, 1)
 

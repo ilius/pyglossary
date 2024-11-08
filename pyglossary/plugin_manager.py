@@ -262,7 +262,7 @@ class PluginManager:
 		format: str = "",
 		inputFilename: str = "",
 		addExt: bool = False,
-		**kwargs
+		**kwargs,
 	) -> DetectedFormat:
 		from os.path import splitext
 
