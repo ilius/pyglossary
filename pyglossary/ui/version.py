@@ -38,3 +38,14 @@ def getVersion() -> str:
 		if version:
 			return version
 	return core.VERSION
+
+
+def getPipSafeVersion() -> str:
+	from pyglossary.core import rootDir
+
+	gitDir = join(rootDir, ".git")
+	if isdir(gitDir):
+		version = getGitVersion(gitDir)
+		if version:
+			return "-".join(version.split("-")[:2])
+	return core.VERSION
