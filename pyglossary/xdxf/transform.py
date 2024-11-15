@@ -72,7 +72,7 @@ class XdxfTransformer:
 		)
 
 	@staticmethod
-	def hasPrevText(prev: "None | str | Element") -> bool:
+	def hasPrevText(prev: "str | Element | None") -> bool:
 		if isinstance(prev, str):
 			return True
 		if prev is None:
@@ -103,7 +103,7 @@ class XdxfTransformer:
 		hf: "T_htmlfile",
 		child: str,
 		parent: Element,
-		prev: "None | str | Element",
+		prev: "str | Element | None",
 		stringSep: "str | None" = None,
 	) -> None:
 		from lxml import etree as ET
@@ -337,7 +337,7 @@ class XdxfTransformer:
 		hf: "T_htmlfile",
 		child: Element,
 		parent: Element,  # noqa: ARG002
-		prev: "None | str | Element",
+		prev: "str | Element | None",
 		stringSep: "str | None" = None,  # noqa: ARG002
 	) -> None:
 		func = self._childTagWriteMapping.get(child.tag, None)
@@ -362,7 +362,7 @@ class XdxfTransformer:
 		hf: "T_htmlfile",
 		child: "str | Element",
 		parent: Element,
-		prev: "None | str | Element",
+		prev: "str | Element | None",
 		stringSep: "str | None" = None,
 	) -> None:
 		if isinstance(child, str):
