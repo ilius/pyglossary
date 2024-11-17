@@ -9,9 +9,9 @@ if [ -d "$gitDir" ]; then
 	exit 0
 fi
 
-cat "$sourceDir/pyglossary/core.py" | while read line; do
+while read -r line; do
 	if [[ $line = VERSION* ]]; then
-		echo $line | sed 's/VERSION\s*=\s*//' | sed 's/"//g'
+		echo "$line" | sed 's/VERSION\s*=\s*//' | sed 's/"//g'
 		exit 0
 	fi
-done
+done < "$sourceDir/pyglossary/core.py"
