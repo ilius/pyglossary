@@ -14,4 +14,4 @@ while read -r line; do
 		echo "$line" | sed 's/VERSION\s*=\s*//' | sed 's/"//g'
 		exit 0
 	fi
-done < "$sourceDir/pyglossary/core.py"
+done <"$sourceDir/pyglossary/core.py"
