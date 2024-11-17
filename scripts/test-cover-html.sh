@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-myPath=$(realpath "$0")
-myDir1=$(dirname "$myPath")
-rootDir=$(dirname "$myDir1")
+rootDir=$(dirname $(dirname "$0"))
 
 cd "$rootDir/tests"
 coverage run -m unittest ./*_test.py

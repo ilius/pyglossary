@@ -1,16 +1,14 @@
 #!/bin/bash
-
+set -x
 if [ -z "$1" ]; then
-	myPath=$(realpath "$0")
-	myDir1=$(dirname "$myPath")
-	cd $(dirname "$myDir1")
+	cd $(dirname "$0")/..
 	set .
 fi
 
-# ruff "$@" | grep -E --color=always '\:[0-9]+\:' | less -R
+# ruff check "$@" | grep -E --color=always '\:[0-9]+\:' | less -R
 # no 'grep -P' on *BSD / Mac
 
 if [ -z "$NO_COLOR" ]; then
 	export CLICOLOR_FORCE=1
 fi
-ruff "$@" | less -R
+ruff check "$@" | less -R

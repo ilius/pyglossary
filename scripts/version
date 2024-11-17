@@ -1,9 +1,7 @@
 #!/bin/bash
 set -e
 
-myPath=$(realpath "$0")
-myDir=$(dirname "$myPath")
-sourceDir=$(dirname "$myDir")
+sourceDir=$(dirname $(dirname "$0"))
 gitDir="$sourceDir/.git"
 
 if [ -d "$gitDir" ]; then

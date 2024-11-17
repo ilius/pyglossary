@@ -2,9 +2,7 @@
 set -e
 
 if [ -z "$1" ]; then
-	myPath=$(realpath "$0")
-	myDir1=$(dirname "$myPath")
-	cd $(dirname "$myDir1")
+	cd $(dirname "$0")/..
 	set .
 fi
 
@@ -12,8 +10,8 @@ if [ -z "$NO_COLOR" ]; then
 	export CLICOLOR_FORCE=1
 fi
 
-ruff --fix "$@"
-ruff --select ANN "$@" |
+ruff check --fix "$@"
+ruff check --select ANN "$@" |
 	grep -v 'Missing type annotation for `\*\*' |
 	grep -v _test.py |
 	grep -v _debug.py |

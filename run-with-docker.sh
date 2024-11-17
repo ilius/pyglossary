@@ -22,9 +22,7 @@ function shouldBuild() {
 	return 1
 }
 
-myPath=$(realpath "$0")
-myDir=$(dirname "$myPath")
-cd "$myDir"
+cd $(dirname "$0")
 
 if [ -n "$1" ]; then
 	version="$1"

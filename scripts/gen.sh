@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-myPath=$(realpath "$0")
-myDir1=$(dirname "$myPath")
+myDir1=$(dirname "$0")
 
 set -x
 
