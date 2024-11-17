@@ -1,0 +1,17 @@
+run-with-docker.sh
+scripts/autofix-plugin-types
+scripts/check-missing-types
+scripts/check-style
+scripts/check-style-slow
+scripts/docker-deb-setup.sh
+scripts/doc-pypi-links.sh
+scripts/format-code
+scripts/gen.sh
+scripts/get-unlisted-formats.sh
+scripts/mypy-deps.sh
+scripts/test-cover-html-plugin.sh
+scripts/test-cover-html.sh
+scripts/test-deps.sh
+scripts/test-glossary.sh
+scripts/test.sh
+scripts/version
