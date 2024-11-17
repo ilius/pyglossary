@@ -15,7 +15,6 @@ sed -i -E 's/(def is.*\)):$/\1 -> bool:/g' "$@"
 
 #sed -i -E 's/(def setMetadata\(.*\)):$/\1 -> None:/g' "$@"
 
-
 #sed -i -E 's/(def .* filename)([^:])/\1: str\2/g' "$@"
 
 #sed -i -E 's/(def .*, glos)([^:])/\1: "GlossaryType"\2/g' "$@"
