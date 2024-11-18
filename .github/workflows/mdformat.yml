@@ -25,7 +25,7 @@ jobs:
           ls -l
       - name: Download dependencies
         run: |
-          python -m pip install mdformat
+          python -m pip install mdformat==0.7.18
       - name: Format .md files
         run: |
           find . -name '*.md' -print -exec mdformat '{}' \;
