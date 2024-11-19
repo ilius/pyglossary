@@ -1,9 +1,10 @@
-## EDICT2 (CEDICT) (.u8)
+EDICT2 (CEDICT) (.u8)
+---------------------
 
 ### General Information
 
 | Attribute       | Value                                          |
-| --------------- | ---------------------------------------------- |
+|-----------------|------------------------------------------------|
 | Name            | EDICT2                                         |
 | snake_case_name | edict2                                         |
 | Description     | EDICT2 (CEDICT) (.u8)                          |
@@ -11,16 +12,16 @@
 | Read support    | Yes                                            |
 | Write support   | No                                             |
 | Single-file     | Yes                                            |
-| Kind            | 📝 text                                         |
+| Kind            | 📝 text                                        |
 | Sort-on-write   | default_no                                     |
-| Sort key        | (`headword_lower`)                             |
+| Sort key        | \(`headword_lower`\)                           |
 | Wiki            | [CEDICT](https://en.wikipedia.org/wiki/CEDICT) |
 | Website         | ―                                              |
 
 ### Read options
 
 | Name              | Default | Type | Comment                                       |
-| ----------------- | ------- | ---- | --------------------------------------------- |
+|-------------------|---------|------|-----------------------------------------------|
 | encoding          | `utf-8` | str  | Encoding/charset                              |
 | traditional_title | `False` | bool | Use traditional Chinese for entry titles/keys |
 | colorize_tones    | `True`  | bool | Set to false to disable tones coloring        |

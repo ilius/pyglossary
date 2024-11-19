@@ -1,9 +1,10 @@
-## EPUB-2 E-Book
+EPUB-2 E-Book
+-------------
 
 ### General Information
 
 | Attribute       | Value                                      |
-| --------------- | ------------------------------------------ |
+|-----------------|--------------------------------------------|
 | Name            | Epub2                                      |
 | snake_case_name | epub2                                      |
 | Description     | EPUB-2 E-Book                              |
@@ -11,7 +12,7 @@
 | Read support    | No                                         |
 | Write support   | Yes                                        |
 | Single-file     | Yes                                        |
-| Kind            | 📦 package                                  |
+| Kind            | 📦 package                                 |
 | Sort-on-write   | always                                     |
 | Sort key        | `ebook`                                    |
 | Wiki            | [EPUB](https://en.wikipedia.org/wiki/EPUB) |
@@ -20,7 +21,7 @@
 ### Write options
 
 | Name                   | Default | Type | Comment                    |
-| ---------------------- | ------- | ---- | -------------------------- |
+|------------------------|---------|------|----------------------------|
 | keep                   | `False` | bool | Keep temp files            |
 | group_by_prefix_length | `2`     | int  | Prefix length for grouping |
 | include_index_page     | `False` | bool | Include index page         |
@@ -31,7 +32,7 @@
 ### Dictionary Applications/Tools
 
 | Name & Website                                                             | Source code | License     | Platforms           | Language |
-| -------------------------------------------------------------------------- | ----------- | ----------- | ------------------- | -------- |
+|----------------------------------------------------------------------------|-------------|-------------|---------------------|----------|
 | [calibre](https://calibre-ebook.com/)                                      | ―           | GPL         | Linux, Windows, Mac |          |
 | [Okular](https://okular.kde.org/)                                          | ―           | GPL         | Linux, Windows, Mac |          |
 | [Book Reader](https://f-droid.org/en/packages/com.github.axet.bookreader/) | ―           | GPL         | Android             |          |

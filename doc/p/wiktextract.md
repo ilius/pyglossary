@@ -1,9 +1,10 @@
-## Wiktextract (.jsonl)
+Wiktextract (.jsonl)
+--------------------
 
 ### General Information
 
 | Attribute       | Value                                                                |
-| --------------- | -------------------------------------------------------------------- |
+|-----------------|----------------------------------------------------------------------|
 | Name            | Wiktextract                                                          |
 | snake_case_name | wiktextract                                                          |
 | Description     | Wiktextract (.jsonl)                                                 |
@@ -11,16 +12,16 @@
 | Read support    | Yes                                                                  |
 | Write support   | No                                                                   |
 | Single-file     | Yes                                                                  |
-| Kind            | 📝 text                                                               |
+| Kind            | 📝 text                                                              |
 | Sort-on-write   | default_no                                                           |
-| Sort key        | (`headword_lower`)                                                   |
+| Sort key        | \(`headword_lower`\)                                                 |
 | Wiki            | ―                                                                    |
 | Website         | [@tatuylonen/wiktextract](https://github.com/tatuylonen/wiktextract) |
 
 ### Read options
 
 | Name            | Default          | Type | Comment                                        |
-| --------------- | ---------------- | ---- | ---------------------------------------------- |
+|-----------------|------------------|------|------------------------------------------------|
 | word_title      | `False`          | bool | Add headwords title to beginning of definition |
 | pron_color      | `gray`           | str  | Pronunciation color                            |
 | gram_color      | `green`          | str  | Grammar color                                  |

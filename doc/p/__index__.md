@@ -1,5 +1,5 @@
 | Description                    | Name            | Doc Link                                       |
-| ------------------------------ | --------------- | ---------------------------------------------- |
+|--------------------------------|-----------------|------------------------------------------------|
 | Aard 2 (.slob)                 | Aard2Slob       | [aard2_slob.md](./aard2_slob.md)               |
 | ABC Medical Notes (SQLite3)    | ABCMedicalNotes | [abc_medical_notes.md](./abc_medical_notes.md) |
 | Almaany.com (SQLite3)          | Almaany         | [almaany.md](./almaany.md)                     |

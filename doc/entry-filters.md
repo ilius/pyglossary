@@ -1,7 +1,8 @@
-## Entry Filters
+Entry Filters
+-------------
 
 | Name                         | Default Enabled | Command Flags                        | Description                                                                 |
-| ---------------------------- | --------------- | ------------------------------------ | --------------------------------------------------------------------------- |
+|------------------------------|-----------------|--------------------------------------|-----------------------------------------------------------------------------|
 | `trim_whitespaces`           | Yes             |                                      | Remove leading/trailing whitespaces from word(s) and definition             |
 | `non_empty_word`             | Yes             |                                      | Skip entries with empty word                                                |
 | `skip_resources`             | No              | `--skip-resources`                   | Skip resources / data files                                                 |

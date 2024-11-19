@@ -1,9 +1,10 @@
-## Mobipocket (.mobi) E-Book
+Mobipocket (.mobi) E-Book
+-------------------------
 
 ### General Information
 
 | Attribute       | Value                                                  |
-| --------------- | ------------------------------------------------------ |
+|-----------------|--------------------------------------------------------|
 | Name            | Mobi                                                   |
 | snake_case_name | mobi                                                   |
 | Description     | Mobipocket (.mobi) E-Book                              |
@@ -11,7 +12,7 @@
 | Read support    | No                                                     |
 | Write support   | Yes                                                    |
 | Single-file     | No                                                     |
-| Kind            | 📦 package                                              |
+| Kind            | 📦 package                                             |
 | Sort-on-write   | default_yes                                            |
 | Sort key        | `ebook`                                                |
 | Wiki            | [Mobipocket](https://en.wikipedia.org/wiki/Mobipocket) |
@@ -20,7 +21,7 @@
 ### Write options
 
 | Name                   | Default  | Type | Comment                                                        |
-| ---------------------- | -------- | ---- | -------------------------------------------------------------- |
+|------------------------|----------|------|----------------------------------------------------------------|
 | keep                   | `False`  | bool | Keep temp files                                                |
 | group_by_prefix_length | `2`      | int  | Prefix length for grouping                                     |
 | css                    |          | str  | Path to css file                                               |
@@ -38,7 +39,7 @@ Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen) for creating Mob
 ### Dictionary Applications/Tools
 
 | Name & Website                                                             | Source code | License     | Platforms           | Language |
-| -------------------------------------------------------------------------- | ----------- | ----------- | ------------------- | -------- |
+|----------------------------------------------------------------------------|-------------|-------------|---------------------|----------|
 | [Amazon Kindle](https://www.amazon.com/kindle)                             | ―           | Proprietary | Amazon Kindle       |          |
 | [calibre](https://calibre-ebook.com/)                                      | ―           | GPL         | Linux, Windows, Mac |          |
 | [Okular](https://okular.kde.org/)                                          | ―           | GPL         | Linux, Windows, Mac |          |

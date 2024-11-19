@@ -1,9 +1,10 @@
-## cc-kedict
+cc-kedict
+---------
 
 ### General Information
 
 | Attribute       | Value                                                          |
-| --------------- | -------------------------------------------------------------- |
+|-----------------|----------------------------------------------------------------|
 | Name            | cc-kedict                                                      |
 | snake_case_name | cc_kedict                                                      |
 | Description     | cc-kedict                                                      |
@@ -11,9 +12,9 @@
 | Read support    | Yes                                                            |
 | Write support   | No                                                             |
 | Single-file     | Yes                                                            |
-| Kind            | 📝 text                                                         |
+| Kind            | 📝 text                                                        |
 | Sort-on-write   | default_no                                                     |
-| Sort key        | (`headword_lower`)                                             |
+| Sort key        | \(`headword_lower`\)                                           |
 | Wiki            | ―                                                              |
 | Website         | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict) |
 

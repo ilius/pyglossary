@@ -1,9 +1,10 @@
-## XDXF Lax (.xdxf)
+XDXF Lax (.xdxf)
+----------------
 
 ### General Information
 
 | Attribute       | Value                                                                                                          |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
+|-----------------|----------------------------------------------------------------------------------------------------------------|
 | Name            | XdxfLax                                                                                                        |
 | snake_case_name | xdxf_lax                                                                                                       |
 | Description     | XDXF Lax (.xdxf)                                                                                               |
@@ -11,16 +12,16 @@
 | Read support    | Yes                                                                                                            |
 | Write support   | No                                                                                                             |
 | Single-file     | Yes                                                                                                            |
-| Kind            | 📝 text                                                                                                         |
+| Kind            | 📝 text                                                                                                        |
 | Sort-on-write   | default_no                                                                                                     |
-| Sort key        | (`headword_lower`)                                                                                             |
+| Sort key        | \(`headword_lower`\)                                                                                           |
 | Wiki            | [XDXF](https://en.wikipedia.org/wiki/XDXF)                                                                     |
 | Website         | [XDXF standard - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/tree/master/format_standard) |
 
 ### Read options
 
 | Name | Default | Type | Comment                |
-| ---- | ------- | ---- | ---------------------- |
+|------|---------|------|------------------------|
 | html | `True`  | bool | Entries are HTML       |
 | xsl  | `False` | bool | Use XSL transformation |
 

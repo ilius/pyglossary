@@ -1,9 +1,10 @@
-## DIKT JSON (.json)
+DIKT JSON (.json)
+-----------------
 
 ### General Information
 
 | Attribute       | Value                                |
-| --------------- | ------------------------------------ |
+|-----------------|--------------------------------------|
 | Name            | DiktJson                             |
 | snake_case_name | dikt_json                            |
 | Description     | DIKT JSON (.json)                    |
@@ -11,16 +12,16 @@
 | Read support    | No                                   |
 | Write support   | Yes                                  |
 | Single-file     | Yes                                  |
-| Kind            | 📝 text                               |
+| Kind            | 📝 text                              |
 | Sort-on-write   | default_no                           |
-| Sort key        | (`headword_lower`)                   |
+| Sort key        | \(`headword_lower`\)                 |
 | Wiki            | ―                                    |
 | Website         | https://github.com/maxim-saplin/dikt |
 
 ### Write options
 
 | Name        | Default | Type | Comment                                        |
-| ----------- | ------- | ---- | ---------------------------------------------- |
+|-------------|---------|------|------------------------------------------------|
 | encoding    | `utf-8` | str  | Encoding/charset                               |
 | enable_info | `True`  | bool | Enable glossary info / metedata                |
 | resources   | `True`  | bool | Enable resources / data files                  |

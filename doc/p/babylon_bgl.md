@@ -1,26 +1,27 @@
-## Babylon (.BGL)
+Babylon (.BGL)
+--------------
 
 ### General Information
 
-| Attribute       | Value              |
-| --------------- | ------------------ |
-| Name            | BabylonBgl         |
-| snake_case_name | babylon_bgl        |
-| Description     | Babylon (.BGL)     |
-| Extensions      | `.bgl`             |
-| Read support    | Yes                |
-| Write support   | No                 |
-| Single-file     | Yes                |
-| Kind            | 🔢 binary           |
-| Sort-on-write   | default_no         |
-| Sort key        | (`headword_lower`) |
-| Wiki            | ―                  |
-| Website         | ―                  |
+| Attribute       | Value                |
+|-----------------|----------------------|
+| Name            | BabylonBgl           |
+| snake_case_name | babylon_bgl          |
+| Description     | Babylon (.BGL)       |
+| Extensions      | `.bgl`               |
+| Read support    | Yes                  |
+| Write support   | No                   |
+| Single-file     | Yes                  |
+| Kind            | 🔢 binary            |
+| Sort-on-write   | default_no           |
+| Sort key        | \(`headword_lower`\) |
+| Wiki            | ―                    |
+| Website         | ―                    |
 
 ### Read options
 
 | Name                        | Default  | Type | Comment                                     |
-| --------------------------- | -------- | ---- | ------------------------------------------- |
+|-----------------------------|----------|------|---------------------------------------------|
 | default_encoding_overwrite  |          | str  | Default encoding (overwrite)                |
 | source_encoding_overwrite   |          | str  | Source encoding (overwrite)                 |
 | target_encoding_overwrite   |          | str  | Target encoding (overwrite)                 |
@@ -33,7 +34,7 @@
 ### Dictionary Applications/Tools
 
 | Name & Website                                          | Source code | License     | Platforms      | Language |
-| ------------------------------------------------------- | ----------- | ----------- | -------------- | -------- |
+|---------------------------------------------------------|-------------|-------------|----------------|----------|
 | [Babylon Translator](https://www.babylon-software.com/) | ―           | Freemium    | Windows        |          |
 | [GoldenDict](http://goldendict.org/)                    | ―           | GPL         | Linux, Windows |          |
 | [GoldenDict Mobile (Free)](http://goldendict.mobi/)     | ―           | Freeware    | Android        |          |

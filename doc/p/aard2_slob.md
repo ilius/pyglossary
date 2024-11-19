@@ -1,9 +1,10 @@
-## Aard 2 (.slob)
+Aard 2 (.slob)
+--------------
 
 ### General Information
 
 | Attribute       | Value                                                    |
-| --------------- | -------------------------------------------------------- |
+|-----------------|----------------------------------------------------------|
 | Name            | Aard2Slob                                                |
 | snake_case_name | aard2_slob                                               |
 | Description     | Aard 2 (.slob)                                           |
@@ -11,16 +12,16 @@
 | Read support    | Yes                                                      |
 | Write support   | Yes                                                      |
 | Single-file     | Yes                                                      |
-| Kind            | 🔢 binary                                                 |
+| Kind            | 🔢 binary                                                |
 | Sort-on-write   | default_no                                               |
-| Sort key        | (`headword_lower`)                                       |
+| Sort key        | \(`headword_lower`\)                                     |
 | Wiki            | [@itkach/slob/wiki](https://github.com/itkach/slob/wiki) |
 | Website         | [aarddict.org](http://aarddict.org/)                     |
 
 ### Write options
 
 | Name                               | Default | Type | Comment                                                         |
-| ---------------------------------- | ------- | ---- | --------------------------------------------------------------- |
+|------------------------------------|---------|------|-----------------------------------------------------------------|
 | compression                        | `zlib`  | str  | Compression Algorithm                                           |
 | content_type                       |         | str  | Content Type                                                    |
 | file_size_approx                   | `0`     | int  | split up by given approximate file size<br />examples: 100m, 1g |
@@ -47,6 +48,6 @@ See [doc/pyicu.md](../pyicu.md) file for more detailed instructions on how to in
 ### Dictionary Applications/Tools
 
 | Name & Website                             | Source code                                                      | License | Platforms | Language |
-| ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- | -------- |
+|--------------------------------------------|------------------------------------------------------------------|---------|-----------|----------|
 | [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL     | Android   | Java     |
 | [Aard2 for Web](http://aarddict.org/)      | [@itkach/aard2-web](https://github.com/itkach/aard2-web)         | MPL     | Web       | Java     |

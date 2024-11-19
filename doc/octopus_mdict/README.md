@@ -1,22 +1,27 @@
-# An Analysis of MDX/MDD File Format
+An Analysis of MDX/MDD File Format
+==================================
 
 > MDict is a multi-platform open dictionary
 
-which are both questionable. It is not available for every platform, e.g. OS X, Linux. Its  dictionary file format is not open. But this has not hindered its popularity, and many dictionaries have been created for it.
+which are both questionable. It is not available for every platform, e.g. OS X, Linux. Its dictionary file format is not open. But this has not hindered its popularity, and many dictionaries have been created for it.
 
 This is an attempt to reveal MDX/MDD file format, so that my favarite dictionaries, created by MDict users, could be used elsewhere.
 
-# MDict Files
+MDict Files
+===========
 
 MDict stores the dictionary definitions, i.e. (key word, explanation) in MDX file and the dictionary reference data, e.g. images, pronunciations, stylesheets in MDD file. Although holding different contents, these two file formats share the same structure.
 
-# MDX and MDD File Formats
+MDX and MDD File Formats
+========================
 
 See [MDX.svgz](./MDX.svgz) and [MDD.svgz](./MDD.svgz)
 
-# Example Programs
+Example Programs
+================
 
-## readmdict.py
+readmdict.py
+------------
 
 readmdict.py is an example implementation in Python. This program can read/extract mdx/mdd files.
 
@@ -51,8 +56,7 @@ Out[4]:
  '<span style=\'display:block;color:black;\'>.........')
 ```
 
-`mdx` is an object having all info from a MDX file. `items` is an iterator producing 2-item tuples.
-Of each tuple, the first element is the entry text and the second is the explanation. Both are UTF-8 encoded strings.
+`mdx` is an object having all info from a MDX file. `items` is an iterator producing 2-item tuples. Of each tuple, the first element is the entry text and the second is the explanation. Both are UTF-8 encoded strings.
 
 Read MDD file and print the first entry::
 
@@ -67,6 +71,4 @@ Out[7]:
 '\xff\xd8\xff\xe0\x00\x10JFIF...........')
 ```
 
-`mdd` is an object having all info from a MDD file. `items` is an iterator producing 2-item tuples.
-Of each tuple, the first element is the file name and the second element is the corresponding file content.
-The file name is encoded in UTF-8. The file content is a plain bytes array.
+`mdd` is an object having all info from a MDD file. `items` is an iterator producing 2-item tuples. Of each tuple, the first element is the file name and the second element is the corresponding file content. The file name is encoded in UTF-8. The file content is a plain bytes array.

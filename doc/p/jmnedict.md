@@ -1,9 +1,10 @@
-## JMnedict
+JMnedict
+--------
 
 ### General Information
 
 | Attribute       | Value                                                        |
-| --------------- | ------------------------------------------------------------ |
+|-----------------|--------------------------------------------------------------|
 | Name            | JMnedict                                                     |
 | snake_case_name | jmnedict                                                     |
 | Description     | JMnedict                                                     |
@@ -11,9 +12,9 @@
 | Read support    | Yes                                                          |
 | Write support   | No                                                           |
 | Single-file     | Yes                                                          |
-| Kind            | 📝 text                                                       |
+| Kind            | 📝 text                                                      |
 | Sort-on-write   | default_no                                                   |
-| Sort key        | (`headword_lower`)                                           |
+| Sort key        | \(`headword_lower`\)                                         |
 | Wiki            | [JMdict](https://en.wikipedia.org/wiki/JMdict)               |
 | Website         | [EDRDG Wiki](https://www.edrdg.org/wiki/index.php/Main_Page) |
 

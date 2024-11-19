@@ -1,9 +1,10 @@
-## StarDict (.ifo)
+StarDict (.ifo)
+---------------
 
 ### General Information
 
 | Attribute       | Value                                                |
-| --------------- | ---------------------------------------------------- |
+|-----------------|------------------------------------------------------|
 | Name            | Stardict                                             |
 | snake_case_name | stardict                                             |
 | Description     | StarDict (.ifo)                                      |
@@ -11,7 +12,7 @@
 | Read support    | Yes                                                  |
 | Write support   | Yes                                                  |
 | Single-file     | No                                                   |
-| Kind            | 📁 directory                                          |
+| Kind            | 📁 directory                                         |
 | Sort-on-write   | always                                               |
 | Sort key        | `stardict`                                           |
 | Wiki            | [StarDict](https://en.wikipedia.org/wiki/StarDict)   |
@@ -20,7 +21,7 @@
 ### Read options
 
 | Name           | Default  | Type | Comment                                 |
-| -------------- | -------- | ---- | --------------------------------------- |
+|----------------|----------|------|-----------------------------------------|
 | xdxf_to_html   | `True`   | bool | Convert XDXF entries to HTML            |
 | xsl            | `False`  | bool | Use XSL transformation                  |
 | unicode_errors | `strict` | str  | What to do with Unicode decoding errors |
@@ -28,7 +29,7 @@
 ### Write options
 
 | Name             | Default | Type | Comment                                         |
-| ---------------- | ------- | ---- | ----------------------------------------------- |
+|------------------|---------|------|-------------------------------------------------|
 | large_file       | `False` | bool | Use idxoffsetbits=64 bits, for large files only |
 | dictzip          | `True`  | bool | Compress .dict file to .dict.dz                 |
 | sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf  |
@@ -41,7 +42,7 @@
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                            | Source code                                                              | License     | Platforms                                                   | Language |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- | ----------------------------------------------------------- | -------- |
+|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|-------------|-------------------------------------------------------------|----------|
 | [AyanDict](https://github.com/ilius/ayandict)                                             | [@ilius/ayandict](https://github.com/ilius/ayandict)                     | GPL         | Linux, Windows, Mac                                         | Go       |
 | [The Next Generation GoldenDict](https://github.com/xiaoyifang/goldendict-ng)             | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL         | Linux, Windows, Mac                                         | C++      |
 | [GoldenDict](http://goldendict.org/)                                                      | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL         | Linux, Windows, Mac                                         | C++      |

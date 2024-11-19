@@ -1,16 +1,15 @@
-## bgl_numEntries (0x0c)
+bgl_numEntries (0x0c)
+---------------------
 
-`bgl_numEntries` does not always matches the number of entries in the dictionary, but it's close to it.
-The difference is usually +-1 or 2, in rare cases may be 9, 29 and more.
+`bgl_numEntries` does not always matches the number of entries in the dictionary, but it's close to it. The difference is usually +-1 or 2, in rare cases may be 9, 29 and more.
 
-## bgl_length (0x43)
+bgl_length (0x43)
+-----------------
 
-The length of the substring match in a term.
-For example, if your glossary contains the term "Dog" and the substring length is 2,
-search of the substrings "Do" or "og" will retrieve the term dog.
-Use substring length 0 for exact match.
+The length of the substring match in a term. For example, if your glossary contains the term "Dog" and the substring length is 2, search of the substrings "Do" or "og" will retrieve the term dog. Use substring length 0 for exact match.
 
-## bgl_contractions (0x3b)
+bgl_contractions (0x3b)
+-----------------------
 
 Contains a value like this:
 
@@ -20,10 +19,10 @@ V-0#Verb|V-0.0#|V-0.1#Infinitive|V-0.1.1#|V-1.0#|V-1.1#|V-1.1.1#Present Simple|V
 
 Value format: `(<contraction> "#" [<value>] "|")+`
 
-The value is in second language, that is for `Babylon Russian-English.BGL` the value in russian.
-For `Babylon English-Spanish.BGL` the value is spanish (I guess), etc.
+The value is in second language, that is for `Babylon Russian-English.BGL` the value in russian. For `Babylon English-Spanish.BGL` the value is spanish (I guess), etc.
 
-## bgl_about: Glossary manual file (0x41)
+bgl_about: Glossary manual file (0x41)
+--------------------------------------
 
 Additional information about the dictionary in `.txt` format this may be short info like this:
 
@@ -38,15 +37,14 @@ English biological articles to fluent Farsi
 Copyright (c) 2009 All rights reserved.
 ```
 
-In `.pdf` format this may be a quite large document (about 30 pages),
-an introduction into the dictionary. It describing structure of an article,
-editors, how to use the dictionary.
+In `.pdf` format this may be a quite large document (about 30 pages), an introduction into the dictionary. It describing structure of an article, editors, how to use the dictionary.
 
 Format: `<file extension> "\x00" <file contents>`
 
 File extension may be: ".txt", ".pdf"
 
-## bgl_purchaseLicenseMsg (0x2c)
+bgl_purchaseLicenseMsg (0x2c)
+-----------------------------
 
 Contains a value like this:
 
@@ -55,7 +53,8 @@ In order to view this glossary, you must purchase a license.
 <br /><a href="http://www.babylon.com/redirects/purchase.cgi?type=170&trid=BPCWHAR">Click here</a> to purchase.
 ```
 
-## bgl_licenseExpiredMsg (0x2d)
+bgl_licenseExpiredMsg (0x2d)
+----------------------------
 
 Contains a value like this:
 
@@ -65,7 +64,8 @@ In order to view this glossary, you must have a valid license.
 <br><a href="http://www.babylon.com/redirects/purchase.cgi?type=130&trid=BPCBRTBR">Renew</a> your license today.
 ```
 
-## bgl_purchaseAddress (0x2e)
+bgl_purchaseAddress (0x2e)
+--------------------------
 
 Contains a value like this:
 

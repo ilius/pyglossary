@@ -1,9 +1,10 @@
-## XDXF with CSS and JS
+XDXF with CSS and JS
+--------------------
 
 ### General Information
 
 | Attribute       | Value                                                                                                          |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
+|-----------------|----------------------------------------------------------------------------------------------------------------|
 | Name            | XdxfCss                                                                                                        |
 | snake_case_name | xdxf_css                                                                                                       |
 | Description     | XDXF with CSS and JS                                                                                           |
@@ -11,16 +12,16 @@
 | Read support    | Yes                                                                                                            |
 | Write support   | No                                                                                                             |
 | Single-file     | Yes                                                                                                            |
-| Kind            | 📝 text                                                                                                         |
+| Kind            | 📝 text                                                                                                        |
 | Sort-on-write   | default_no                                                                                                     |
-| Sort key        | (`headword_lower`)                                                                                             |
+| Sort key        | \(`headword_lower`\)                                                                                           |
 | Wiki            | [XDXF](https://en.wikipedia.org/wiki/XDXF)                                                                     |
 | Website         | [XDXF standard - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/tree/master/format_standard) |
 
 ### Read options
 
 | Name | Default | Type | Comment          |
-| ---- | ------- | ---- | ---------------- |
+|------|---------|------|------------------|
 | html | `True`  | bool | Entries are HTML |
 
 ### Dependencies for reading
