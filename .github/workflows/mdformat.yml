@@ -28,7 +28,7 @@ jobs:
           python -m pip install mdformat==0.7.18
       - name: Format .md files
         run: |
-          find . -name '*.md' -print -exec mdformat '{}' \;
+          find . -name '*.md' | xargs mdformat
           git checkout doc/p/octopus_mdict.md
       - name: Check for changes
         run: |
