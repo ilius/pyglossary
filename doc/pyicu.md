@@ -29,7 +29,7 @@ python3 -m pip install PyICU
 
 ## Installation on Windows
 
-- Open https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyicu
+- Open https://github.com/cgohlke/pyicu-build/releases
 
 - Download latest file that matches your system:
 
