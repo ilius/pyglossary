@@ -111,7 +111,7 @@ def kindEmoji(kind):
 def renderLink(title, url):
 	if "(" in title or ")" in title:
 		url = f"<{url}>"
-	title = title.replace("|", "\\|")
+	title = title.replace("|", "-")
 	return f"[{title}]({url})"
 
 

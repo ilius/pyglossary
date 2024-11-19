@@ -29,7 +29,6 @@ jobs:
       - name: Format .md files
         run: |
           find . -name '*.md' | xargs mdformat
-          git checkout doc/p/octopus_mdict.md
       - name: Check for changes
         run: |
           CHANGES=$(git diff --name-only HEAD --)
