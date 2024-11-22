@@ -103,6 +103,7 @@ select = [
 	"RUF",  # Ruff-specific rules
 ]
 ignore = [
+	"RUF039", # First argument to `re.compile()` is not raw string
 	"FURB189",
 	# FURB189 Subclassing `dict` can be error prone, use `collections.UserDict` instead
 	# FURB189 Subclassing `str` can be error prone, use `collections.UserStr` instead
@@ -158,7 +159,7 @@ ignore = [
 	"UP037",   # Remove quotes from type annotation
 	"W191",    # Indentation contains tabs
 	"SIM115",  # Use context handler for opening files
-	"TCH003",  # Move standard library import `...` into a type-checking block
+	"TC003",   # Move standard library import `...` into a type-checking block
 	"ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in ...
 ]
 
