@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import csv
 import os
-from collections.abc import Generator, Iterable, Iterator
 from os.path import isdir, join
 from typing import TYPE_CHECKING, cast
 
@@ -40,6 +39,7 @@ from pyglossary.option import (
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator, Iterable, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

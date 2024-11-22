@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import argparse
-import logging
 import os
 import sys
 from typing import TYPE_CHECKING
@@ -11,6 +9,8 @@ from pyglossary.glossary_v2 import Error
 from pyglossary.ui.base import UIBase
 
 if TYPE_CHECKING:
+	import argparse
+	import logging
 	from collections.abc import Callable
 
 

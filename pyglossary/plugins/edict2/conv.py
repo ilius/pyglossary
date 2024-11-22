@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
 from io import BytesIO
 from typing import TYPE_CHECKING, NamedTuple, cast
 
@@ -13,7 +12,7 @@ from .pinyin import convert
 from .summarize import summarize
 
 if TYPE_CHECKING:
-	from collections.abc import Sequence
+	from collections.abc import Callable, Sequence
 
 	from pyglossary.lxml_types import T_htmlfile
 

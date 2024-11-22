@@ -22,11 +22,10 @@ import logging
 import os
 import tkinter as tk
 import traceback
-from collections.abc import Callable
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, tix, ttk
 from tkinter import font as tkFont
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
@@ -41,6 +40,9 @@ from .base import (
 	logo,
 )
 from .version import getVersion
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
 
 log = logging.getLogger("pyglossary")
 

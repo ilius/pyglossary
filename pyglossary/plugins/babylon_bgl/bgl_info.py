@@ -23,8 +23,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pyglossary import gregorian
 from pyglossary.core import log
@@ -34,6 +33,9 @@ from pyglossary.text_utils import (
 
 from .bgl_charset import charsetByCode
 from .bgl_language import BabylonLanguage, languageByCode
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
 
 __all__ = ["charsetInfoDecode", "infoType3ByCode"]
 

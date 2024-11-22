@@ -8,7 +8,6 @@ import os
 import os.path
 import shlex
 import sys
-from collections.abc import Iterator
 from subprocess import PIPE, Popen
 from typing import TYPE_CHECKING
 
@@ -27,6 +26,8 @@ from pyglossary.ui.tools.word_diff import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType
 
 __all__ = ["diffGlossary"]

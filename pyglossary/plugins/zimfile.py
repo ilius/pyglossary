@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from libzim.reader import Archive  # type: ignore
 
 	from pyglossary.glossary_types import EntryType, GlossaryType

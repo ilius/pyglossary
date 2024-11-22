@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-import argparse
-import logging
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.ui.base import UIBase
 from pyglossary.ui.option_ui import registerConfigOption
+
+if TYPE_CHECKING:
+	import argparse
+	import logging
 
 
 def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]):

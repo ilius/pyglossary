@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import gzip
 import os
-from collections.abc import Iterator
 from os.path import (
 	dirname,
 	isdir,
@@ -19,6 +18,7 @@ from typing import (
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

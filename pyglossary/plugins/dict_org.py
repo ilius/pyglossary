@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 import re
-from collections.abc import Generator, Iterator
 from os.path import isdir, splitext
 from typing import TYPE_CHECKING
 
@@ -14,6 +13,8 @@ from pyglossary.option import BoolOption, Option
 from pyglossary.plugin_lib.dictdlib import DictDB
 
 if TYPE_CHECKING:
+	from collections.abc import Generator, Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import TYPE_CHECKING
 
 from pyglossary.option import (
@@ -14,6 +13,7 @@ from pyglossary.option import (
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

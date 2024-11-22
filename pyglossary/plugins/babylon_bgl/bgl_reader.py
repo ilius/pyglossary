@@ -26,7 +26,6 @@ import io
 import os
 import re
 from collections import OrderedDict as odict
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, NamedTuple
 
 from pyglossary.core import log
@@ -63,6 +62,8 @@ from .bgl_text import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = ["BGLGzipFile", "BglReader", "Block", "FileOffS", "optionsProp", "tmpDir"]

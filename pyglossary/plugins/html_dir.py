@@ -5,13 +5,13 @@ import html
 import os
 import re
 import time
-from collections.abc import Generator
 from functools import lru_cache
 from os.path import isdir, isfile, join
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator
 
 	from pyglossary.glossary_types import (
 		EntryType,

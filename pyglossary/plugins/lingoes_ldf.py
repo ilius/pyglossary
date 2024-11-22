@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import TYPE_CHECKING
 
 from pyglossary.compression import (
@@ -20,6 +19,8 @@ from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 from pyglossary.text_utils import splitByBar
 
 if TYPE_CHECKING:
+	from collections.abc import Generator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

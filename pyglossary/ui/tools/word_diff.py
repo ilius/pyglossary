@@ -3,9 +3,12 @@ from __future__ import annotations
 import difflib
 import re
 import sys
-from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from pyglossary.ui.tools.colors import green, red, reset
+
+if TYPE_CHECKING:
+	from collections.abc import Iterator
 
 __all__ = ["formatDiff", "xmlDiff"]
 

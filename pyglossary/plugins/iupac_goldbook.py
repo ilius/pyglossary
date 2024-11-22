@@ -2,11 +2,12 @@
 # mypy: ignore-errors
 from __future__ import annotations
 
-from collections.abc import Iterator
 from io import BytesIO
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import (
 		EntryType,
 		GlossaryType,

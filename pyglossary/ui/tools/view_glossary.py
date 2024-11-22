@@ -5,11 +5,12 @@ from __future__ import annotations
 import os.path
 import shlex
 import sys
-from collections.abc import Callable
 from subprocess import PIPE, Popen
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 from pyglossary.core import log

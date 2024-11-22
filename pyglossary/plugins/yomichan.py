@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from pyglossary import os_utils
@@ -16,6 +15,8 @@ from pyglossary.option import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Generator, Sequence
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

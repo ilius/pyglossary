@@ -8,17 +8,21 @@ import tempfile
 import tracemalloc
 import unittest
 import zipfile
-from collections.abc import Callable
 from os.path import abspath, dirname, isdir, isfile, join, realpath
 from urllib.request import urlopen
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+from typing import TYPE_CHECKING
+
 from pyglossary.core import cacheDir, log, tmpDir
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
 
 __all__ = ["TestGlossaryBase", "appTmpDir", "testCacheDir"]
 

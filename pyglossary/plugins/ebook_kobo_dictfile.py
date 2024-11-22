@@ -19,7 +19,6 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Generator
 from os.path import isdir
 from typing import TYPE_CHECKING
 
@@ -35,6 +34,7 @@ from pyglossary.text_reader import TextGlossaryReader
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

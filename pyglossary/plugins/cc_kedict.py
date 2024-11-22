@@ -2,12 +2,13 @@
 # mypy: ignore-errors
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
 from io import BytesIO
 from os.path import isdir, join
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+	from collections.abc import Callable, Iterator
+
 	import lxml
 
 	from pyglossary.glossary_types import EntryType, GlossaryType

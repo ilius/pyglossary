@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Generator
 from typing import TYPE_CHECKING
 
 from pyglossary.compression import (
@@ -19,6 +18,8 @@ from pyglossary.option import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Generator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

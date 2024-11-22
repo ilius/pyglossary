@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from collections.abc import Generator, Iterator
 from typing import (
 	TYPE_CHECKING,
 )
 
 if TYPE_CHECKING:
 	import sqlite3
+	from collections.abc import Generator, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.xdxf.transform import XdxfTransformer

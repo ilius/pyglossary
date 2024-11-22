@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Generator
 from datetime import datetime
 from os.path import join
 from typing import TYPE_CHECKING
@@ -38,6 +37,8 @@ from pyglossary.option import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Generator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

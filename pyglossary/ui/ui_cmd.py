@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import os
 import sys
-from collections.abc import Mapping
 from os.path import join
 from typing import TYPE_CHECKING, Any
 
@@ -34,6 +33,7 @@ from .wcwidth import wcswidth
 
 if TYPE_CHECKING:
 	import logging
+	from collections.abc import Mapping
 
 __all__ = ["COMMAND", "UI", "parseFormatOptionsStr", "printHelp"]
 

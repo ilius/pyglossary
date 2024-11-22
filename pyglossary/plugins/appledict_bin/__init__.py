@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import os
 import re
-from collections.abc import Iterator
 from datetime import datetime
 from io import BytesIO
 from operator import attrgetter
@@ -43,6 +42,7 @@ from .key_data import KeyData, RawKeyData
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Iterator
 
 	from lxml.html import (  # type: ignore
 		HtmlComment,

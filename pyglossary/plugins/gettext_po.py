@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Generator, Iterator
 from os.path import isdir
 from typing import TYPE_CHECKING
 
@@ -16,6 +15,7 @@ from pyglossary.option import (
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

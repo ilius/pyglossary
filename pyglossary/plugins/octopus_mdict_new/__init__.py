@@ -21,11 +21,12 @@ import gc
 import os
 import re
 import sys
-from collections.abc import Iterator
 from os.path import dirname, extsep, isfile, join, splitext
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.plugin_lib.readmdict import MDD, MDX
 

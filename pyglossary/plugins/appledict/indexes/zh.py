@@ -19,7 +19,6 @@ from __future__ import annotations
 """Chinese wildcard and pinyin indexes."""
 
 import re
-from collections.abc import Sequence
 
 import bs4
 
@@ -35,7 +34,12 @@ except ImportError:
 	)
 	raise
 
+from typing import TYPE_CHECKING
+
 from . import languages, log
+
+if TYPE_CHECKING:
+	from collections.abc import Sequence
 
 pinyinPattern = re.compile(r",|;")
 nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")

@@ -1,7 +1,6 @@
 # mypy: ignore-errors
 from __future__ import annotations
 
-from collections.abc import Generator, Iterator
 from hashlib import sha1
 from os import listdir, makedirs
 from os.path import dirname, isdir, isfile, join, splitext
@@ -21,6 +20,8 @@ from pyglossary.text_utils import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Generator, Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

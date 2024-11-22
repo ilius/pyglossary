@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from collections.abc import Iterator
 from json import load
 from os import listdir
 from os.path import isfile, join, splitext
@@ -15,6 +14,8 @@ from pyglossary.option import (
 from pyglossary.sort_keys import lookupSortKey
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

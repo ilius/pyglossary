@@ -25,11 +25,11 @@ from __future__ import annotations
 
 import re
 import typing
-from collections.abc import Iterator, Sequence
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Iterator, Sequence
 
 	from lxml.html import HtmlElement as Element
 

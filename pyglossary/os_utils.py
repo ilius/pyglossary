@@ -4,11 +4,14 @@ import logging
 import os
 import shutil
 import sys
-import types
-from collections.abc import Callable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pyglossary import core
+
+if TYPE_CHECKING:
+	import types
+	from collections.abc import Callable
 
 __all__ = ["indir", "rmtree", "runDictzip", "showMemoryUsage"]
 

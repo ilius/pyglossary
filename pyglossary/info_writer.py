@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Generator
 from os.path import splitext
 from typing import TYPE_CHECKING
 
@@ -9,6 +8,7 @@ from pyglossary.io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Generator
 
 	from pyglossary.glossary_types import (
 		EntryType,

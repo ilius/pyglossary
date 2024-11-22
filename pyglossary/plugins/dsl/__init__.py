@@ -23,7 +23,6 @@ from __future__ import annotations
 import html
 import html.entities
 import re
-from collections.abc import Iterator
 from os.path import abspath, dirname, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
@@ -47,6 +46,7 @@ from .transform import Transformer
 
 if TYPE_CHECKING:
 	import io
+	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 

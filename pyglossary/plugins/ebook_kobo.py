@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from collections.abc import Generator
 from gzip import compress, decompress
 from operator import itemgetter
 from pathlib import Path
@@ -34,6 +33,8 @@ from pyglossary.flags import NEVER
 from pyglossary.os_utils import indir
 
 if TYPE_CHECKING:
+	from collections.abc import Generator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 

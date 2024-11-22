@@ -5,7 +5,6 @@ from __future__ import annotations
 import operator
 import os
 import re
-from collections.abc import Iterator
 from os.path import join
 from typing import TYPE_CHECKING
 
@@ -14,6 +13,8 @@ from pyglossary.flags import ALWAYS
 from pyglossary.plugins.tabfile import Reader as TabfileReader
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 

@@ -21,7 +21,6 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Generator, Iterator
 from os.path import dirname, isdir, isfile, join
 from typing import TYPE_CHECKING
 
@@ -38,6 +37,8 @@ from pyglossary.text_utils import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Generator, Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
 __all__ = [

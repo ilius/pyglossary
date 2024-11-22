@@ -9,7 +9,7 @@
 from __future__ import annotations
 
 import typing
-from collections.abc import Mapping  # noqa: TC003
+from collections.abc import Mapping
 from contextlib import (
 	AbstractAsyncContextManager as AsyncContextManager,
 )

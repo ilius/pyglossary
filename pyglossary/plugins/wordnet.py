@@ -15,17 +15,18 @@
 # This plugin is based on https://github.com/itkach/wordnet2slob
 from __future__ import annotations
 
-import io
 import os
 import re
 import sys
 from collections import defaultdict
-from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 
 if TYPE_CHECKING:
+	import io
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
 

@@ -5,7 +5,6 @@ import os
 import re
 import typing
 from collections import Counter
-from collections.abc import Callable, Generator, Iterator, Sequence
 from os.path import (
 	dirname,
 	getsize,
@@ -28,6 +27,7 @@ from typing import (
 
 if TYPE_CHECKING:
 	import sqlite3
+	from collections.abc import Callable, Generator, Iterator, Sequence
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.langs import Lang

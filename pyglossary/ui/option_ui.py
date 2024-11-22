@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import argparse
 import json
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.ui.argparse_utils import StoreConstAction
 
 if TYPE_CHECKING:
+	import argparse
+
 	from pyglossary.option import Option
 
 

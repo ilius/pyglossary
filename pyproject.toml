@@ -159,7 +159,6 @@ ignore = [
 	"UP037",   # Remove quotes from type annotation
 	"W191",    # Indentation contains tabs
 	"SIM115",  # Use context handler for opening files
-	"TC003",   # Move standard library import `...` into a type-checking block
 	"ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in ...
 ]
 
@@ -174,6 +173,10 @@ mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
 
 
 [tool.ruff.lint.per-file-ignores]
+
+"*_types.py" = [
+	"TC003",   # Move standard library import `...` into a type-checking block
+]
 "pyglossary/plugins/**/*.py" = [
 	"PLR0904", # Too many public methods
 	"C90",     # mccabe: C901: {name} is too complex ({complexity})

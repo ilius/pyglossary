@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from collections.abc import (
 	Callable,
-	Iterator,  # noqa: TC003
+	Iterator,
 )
 
 # -*- coding: utf-8 -*-
