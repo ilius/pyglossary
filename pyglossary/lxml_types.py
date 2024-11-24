@@ -42,6 +42,9 @@ _OutputMethodArg = Literal[
 
 # Element type can not be a protocol or interface or even TypeAlias
 # it's stupid!
+# And now pyright complains at every usage of it:
+# error: Variable not allowed in type expression (reportInvalidTypeForm)
+
 Element = _Element
 
 

@@ -207,6 +207,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			for key, value in info.items():
 				self.setInfo(key, value)
 
+	def addCleanupPath(self, path: str) -> None:
+		self._cleanupPathList.add(path)
+
 	def cleanup(self) -> None:
 		self._closeReaders()
 		if not self._cleanupPathList:
@@ -276,11 +279,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				fname = word
 				if isinstance(fname, list):
 					fname = fname[0]  # NESTED 4
-				return DataEntry(fname, tmpPath=defi)
+				return DataEntry(fname, tmpPath=defi)  # pyright: ignore[reportReturnType]
 		else:
 			defiFormat = self._defaultDefiFormat
 
-		return Entry(word, defi, defiFormat=defiFormat)
+		return Entry(word, defi, defiFormat=defiFormat)  # pyright: ignore[reportReturnType]
 
 	@property
 	def rawEntryCompress(self) -> bool:
@@ -359,7 +362,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if name in self._entryFiltersName:
 			return
 		self._entryFilters.append(
-			StripFullHtml(
+			StripFullHtml(  # pyright: ignore[reportArgumentType]
 				cast("GlossaryType", self),
 				errorHandler=errorHandler,
 			),
@@ -401,6 +404,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		"""
 		from pyglossary.entry_merge import mergePlaintextEntriesWithSameHeadword
 
+		assert self._iter
 		self._iter = mergePlaintextEntriesWithSameHeadword(self._iter)
 
 	def __str__(self) -> str:
@@ -418,14 +422,15 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		filters = self._entryFiltersExtra
 		if self.progressbar:
-			filters.append(ShowProgressBar(cast("GlossaryExtendedType", self)))
+			filters.append(ShowProgressBar(cast("GlossaryExtendedType", self)))  # pyright: ignore[reportArgumentType]
 
 		self.progressInit("Writing")
 		for _entry in self._data:
 			entry = _entry
 			for f in filters:
-				entry = f.run(entry)
-			yield entry
+				entry = f.run(entry)  # pyright: ignore[reportArgumentType]
+				# assert entry  # TODO: measure running time in non-optimized mode
+			yield entry  # pyright: ignore[reportReturnType]
 		self.progressEnd()
 
 	def _readersEntryGen(self) -> Iterator[EntryType]:
@@ -615,10 +620,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
 		if self._readers:
-			return DataEntry(fname, data)
+			return DataEntry(fname, data)  # pyright: ignore[reportReturnType]
 
 		if self._tmpDataDir:
-			return DataEntry(
+			return DataEntry(  # pyright: ignore[reportReturnType]
 				fname,
 				data,
 				tmpPath=join(self._tmpDataDir, fname.replace("/", "_")),
@@ -627,7 +632,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		tmpDir = join(cacheDir, "tmp")
 		os.makedirs(tmpDir, mode=0o700, exist_ok=True)
 		self._cleanupPathList.add(tmpDir)
-		return DataEntry(
+		return DataEntry(  # pyright: ignore[reportReturnType]
 			fname,
 			data,
 			tmpPath=join(tmpDir, uuid1().hex),
@@ -969,7 +974,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		self._data = SqEntryList(
+		self._data = SqEntryList(  # pyright: ignore[reportAttributeAccessIssue]
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
 			filename=sq_fpath,

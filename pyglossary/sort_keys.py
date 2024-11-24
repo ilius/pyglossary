@@ -22,10 +22,14 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
 
 	from .icu_types import T_Collator, T_Locale
-	from .sort_keys_type import SortKeyType, SQLiteSortKeyType
+	from .sort_keys_types import (
+		LocaleSortKeyMakerType,
+		SortKeyMakerType,
+		SQLiteLocaleSortKeyMakerType,
+		SQLiteSortKeyMakerType,
+	)
 
 __all__ = [
 	"LocaleNamedSortKey",
@@ -41,8 +45,8 @@ defaultSortKeyName = "headword_lower"
 class NamedSortKey(NamedTuple):
 	name: str
 	desc: str
-	normal: SortKeyType
-	sqlite: SQLiteSortKeyType
+	normal: SortKeyMakerType
+	sqlite: SQLiteSortKeyMakerType
 
 
 @dataclass(slots=True)  # not frozen because of mod
@@ -63,19 +67,19 @@ class LocaleNamedSortKey:
 		return mod
 
 	@property
-	def normal(self) -> SortKeyType:
+	def normal(self) -> SortKeyMakerType:
 		return self.module.normal
 
 	@property
-	def sqlite(self) -> SQLiteSortKeyType:
+	def sqlite(self) -> SQLiteSortKeyMakerType:
 		return self.module.sqlite
 
 	@property
-	def locale(self) -> SortKeyType | None:
+	def locale(self) -> LocaleSortKeyMakerType | None:
 		return getattr(self.module, "locale", None)
 
 	@property
-	def sqlite_locale(self) -> Callable[..., SQLiteSortKeyType] | None:
+	def sqlite_locale(self) -> SQLiteLocaleSortKeyMakerType | None:
 		return getattr(self.module, "sqlite_locale", None)
 
 
@@ -152,8 +156,8 @@ def lookupSortKey(sortKeyId: str) -> NamedSortKey | None:
 	return NamedSortKey(
 		name=f"{localeSK.name}:{localeNameFull}",
 		desc=f"{localeSK.desc}:{localeNameFull}",
-		normal=localeSK.locale(collator) if localeSK.locale else None,
-		sqlite=localeSK.sqlite_locale(collator) if localeSK.sqlite_locale else None,
+		normal=localeSK.locale(collator) if localeSK.locale else None,  # pyright: ignore[reportArgumentType]
+		sqlite=localeSK.sqlite_locale(collator) if localeSK.sqlite_locale else None,  # pyright: ignore[reportArgumentType]
 	)
 
 

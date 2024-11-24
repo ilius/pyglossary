@@ -8,11 +8,9 @@ __all__ = ["T_Collator", "T_Locale"]
 
 
 class T_Locale(typing.Protocol):
-	def __init__(self, _id: str) -> None:
-		pass
+	def __init__(self, _id: str) -> None: ...
 
-	def getName(self) -> str:
-		pass
+	def getName(self) -> str: ...
 
 
 class T_Collator(typing.Protocol):
@@ -24,19 +22,15 @@ class T_Collator(typing.Protocol):
 
 	# mypy: error: Self argument missing for a non-static method
 	# (or an invalid type for self)  [misc]
-	@classmethod
-	def createInstance(cls: T_Locale | None = None) -> T_Collator:  # type: ignore
-		pass
+	@classmethod  # pyright: ignore[reportArgumentType]
+	def createInstance(cls: T_Locale) -> T_Collator: ...  # type: ignore
 
 	@property
-	def getSortKey(self) -> Callable[[AnyStr], bytes]:
-		pass
+	def getSortKey(self) -> Callable[[AnyStr], bytes]: ...
 
-	def setStrength(self, strength: int) -> None:
-		pass
+	def setStrength(self, strength: int) -> None: ...
 
-	def setAttribute(self, attr: int, value: int) -> None:
-		pass
+	def setAttribute(self, attr: int, value: int) -> None: ...
 
 
 class T_UCollAttribute(typing.Protocol):

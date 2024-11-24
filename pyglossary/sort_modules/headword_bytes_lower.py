@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from .sort_keys_types import SortKeyType, SQLiteSortKeyType
+	from pyglossary.sort_keys_types import SortKeyType, SQLiteSortKeyType
 
 
 desc = "ASCII-Lowercase Headword"

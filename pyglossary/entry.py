@@ -247,6 +247,9 @@ class Entry(BaseEntry):
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # tuple[int, int] | None
 
+	def getFileName(self) -> str:  # noqa: PLR6301
+		return ""
+
 	def __repr__(self) -> str:
 		return (
 			f"Entry({self._word!r}, {self._defi!r}, "

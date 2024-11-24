@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING
 from pyglossary import core
 
 if TYPE_CHECKING:
-	import types
 	from collections.abc import Callable
+	from types import TracebackType
 
 __all__ = ["indir", "rmtree", "runDictzip", "showMemoryUsage"]
 
@@ -56,7 +56,7 @@ class indir:
 		self,
 		exc_type: type[BaseException] | None,
 		exc_val: BaseException | None,
-		exc_tb: types.TracebackType | None,
+		exc_tb: TracebackType | None,
 	) -> None:
 		if self.old_pwd:
 			os.chdir(self.old_pwd)
@@ -65,7 +65,7 @@ class indir:
 
 def _idzip(filename: str | Path) -> bool:
 	try:
-		import idzip
+		from idzip import compressor
 	except ModuleNotFoundError:
 		return False
 	filename = Path(filename)
@@ -74,7 +74,7 @@ def _idzip(filename: str | Path) -> bool:
 		with open(filename, "rb") as inp_file, open(destination, "wb") as out_file:
 			inputInfo = os.fstat(inp_file.fileno())
 			log.debug("compressing %s to %s with idzip", filename, destination)
-			idzip.compressor.compress(
+			compressor.compress(
 				inp_file,
 				inputInfo.st_size,
 				out_file,
@@ -126,11 +126,19 @@ def runDictzip(filename: str | Path, method: str = "") -> None:
 def _rmtreeError(
 	_func: Callable,
 	_direc: str,
-	exc_info: tuple[type, Exception, types.TracebackType] | None,
+	exc_info: tuple[type[BaseException], BaseException, TracebackType],
 ) -> None:
 	if exc_info is None:
 		return
 	_, exc_val, _ = exc_info
+	log.error(exc_val)
+
+
+def _rmtreeException(
+	_func: Callable,
+	_direc: str,
+	exc_val: BaseException,
+) -> None:
 	log.error(exc_val)
 
 
@@ -140,7 +148,7 @@ def _rmtree(direc: str) -> None:
 	if sys.version_info < (3, 12):
 		shutil.rmtree(direc, onerror=_rmtreeError)
 		return
-	shutil.rmtree(direc, onexc=_rmtreeError)
+	shutil.rmtree(direc, onexc=_rmtreeException)
 
 
 def rmtree(direc: str) -> None:

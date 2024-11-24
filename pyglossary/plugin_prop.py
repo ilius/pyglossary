@@ -275,7 +275,7 @@ class PluginProp:  # noqa: PLR0904
 		return Path(self._modulePath)
 
 	@property
-	def readerClass(self) -> Any | None:
+	def readerClass(self) -> type | None:
 		if self._ReaderLoaded:
 			return self._Reader
 		cls = getattr(self.module, "Reader", None)
@@ -286,7 +286,7 @@ class PluginProp:  # noqa: PLR0904
 		return cls
 
 	@property
-	def writerClass(self) -> Any | None:
+	def writerClass(self) -> type | None:
 		if self._WriterLoaded:
 			return self._Writer
 		cls = getattr(self.module, "Writer", None)
@@ -321,7 +321,7 @@ class PluginProp:  # noqa: PLR0904
 
 		return nameList
 
-	def _getOptionsFromClass(self, rwclass: type) -> dict[str, Any]:
+	def _getOptionsFromClass(self, rwclass: type | None) -> dict[str, Any]:
 		optionsProp = self.optionsProp
 		options = odict()
 		if rwclass is None:

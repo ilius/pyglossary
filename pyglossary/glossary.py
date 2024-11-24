@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 	from typing import Any
 
 	from .glossary_types import EntryType
+	from .plugin_manager import DetectedFormat
 
 __all__ = ["Glossary"]
 
@@ -138,7 +139,7 @@ class Glossary(GlossaryCommon):
 		self._iter = self._loadedEntryGen()
 
 	@classmethod
-	def detectInputFormat(cls, *args, **kwargs):
+	def detectInputFormat(cls, *args, **kwargs) -> DetectedFormat | None:  # pyright: ignore[reportIncompatibleMethodOverride]
 		try:
 			return GlossaryCommon.detectInputFormat(*args, **kwargs)
 		except Error as e:
@@ -146,7 +147,7 @@ class Glossary(GlossaryCommon):
 			return None
 
 	@classmethod
-	def detectOutputFormat(cls, *args, **kwargs):
+	def detectOutputFormat(cls, *args, **kwargs) -> DetectedFormat | None:  # pyright: ignore[reportIncompatibleMethodOverride]
 		try:
 			return GlossaryCommon.detectOutputFormat(*args, **kwargs)
 		except Error as e:

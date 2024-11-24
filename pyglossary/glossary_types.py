@@ -228,6 +228,8 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def removeHtmlTagsAll(self) -> None: ...
 
+	def addCleanupPath(self, path: str) -> None: ...
+
 
 class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(

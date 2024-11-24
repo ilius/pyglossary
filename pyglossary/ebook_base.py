@@ -502,7 +502,7 @@ class EbookWriter:
 
 			if os.sep == "\\":
 				shutil.copytree(self._tmpDir, filename)
-				self._glos._cleanupPathList.add(self._tmpDir)  # noqa: SLF001, type: ignore
+				self._glos.addCleanupPath(self._tmpDir)
 				return
 
 			shutil.move(self._tmpDir, filename)

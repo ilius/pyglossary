@@ -22,9 +22,9 @@ if TYPE_CHECKING:
 
 def exc_note(e: Exception, note: str) -> Exception:
 	try:
-		e.add_note(note)
+		e.add_note(note)  # # pyright: ignore[reportAttributeAccessIssue]
 	except AttributeError:
-		e.msg += "\n" + note
+		e.msg += "\n" + note  # # pyright: ignore[reportAttributeAccessIssue]
 	return e
 
 
