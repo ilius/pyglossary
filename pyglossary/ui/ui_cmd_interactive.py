@@ -60,12 +60,15 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from collections.abc import Iterable
-	from typing import Literal
+
+	from prompt_toolkit.completion import CompleteEvent
+	from prompt_toolkit.document import Document
+	from prompt_toolkit.formatted_text import StyleAndTextTuples
+	from prompt_toolkit.key_binding.key_processor import KeyPressEvent
 
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
-import prompt_toolkit
 from prompt_toolkit import ANSI
 from prompt_toolkit import prompt as promptLow
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -109,21 +112,21 @@ class MiniCheckBoxPrompt:
 		# msg = ANSI(msg)  # NOT SUPPORTED
 		return msg  # noqa: RET504
 
-	def __pt_formatted_text__(self):  # noqa: PLW3201
+	def __pt_formatted_text__(self) -> StyleAndTextTuples:  # noqa: PLW3201
 		return [("", self.formatMessage())]
 
 
 def checkbox_prompt(
 	message: str,
 	default: bool,
-) -> PromptSession[bool]:
+) -> bool:
 	"""Create a `PromptSession` object for the 'confirm' function."""
 	bindings = KeyBindings()
 
 	check = MiniCheckBoxPrompt(message=message, value=default)
 
 	@bindings.add(" ")
-	def space(_event: "prompt_toolkit.E") -> None:
+	def space(_event: KeyPressEvent) -> None:
 		check.value = not check.value
 		# cursor_pos = check.formatMessage().find("[") + 1
 		# cur_cursor_pos = session.default_buffer.cursor_position
@@ -131,7 +134,7 @@ def checkbox_prompt(
 		# session.default_buffer.cursor_position = cursor_pos
 
 	@bindings.add(Keys.Any)
-	def _(_event: "prompt_toolkit.E") -> None:
+	def _(_event: KeyPressEvent) -> None:
 		"""Disallow inserting other text."""
 
 	complete_message = check
@@ -186,7 +189,7 @@ def dataToPrettyJson(data, ensure_ascii=False, sort_keys=False):
 
 
 def prompt(
-	message: str,
+	message: ANSI | str,
 	multiline: bool = False,
 	**kwargs,
 ):
@@ -232,8 +235,8 @@ class MyPathCompleter(PathCompleter):
 
 	def get_completions(
 		self,
-		document: "prompt_toolkit.Document",
-		complete_event: "prompt_toolkit.CompleteEvent",
+		document: Document,
+		complete_event: CompleteEvent,
 	) -> Iterable[Completion]:
 		text = document.text_before_cursor
 
@@ -271,10 +274,10 @@ class UI(ui_cmd.UI):
 		self._outputFilename = ""
 		self._inputFormat = ""
 		self._outputFormat = ""
-		self.config = None
-		self._readOptions = None
-		self._writeOptions = None
-		self._convertOptions = None
+		self.config = {}
+		self._readOptions = {}
+		self._writeOptions = {}
+		self._convertOptions = {}
 		ui_cmd.UI.__init__(
 			self,
 			progressbar=progressbar,
@@ -913,7 +916,7 @@ class UI(ui_cmd.UI):
 				continue
 			return action
 
-	def askFinalOptions(self) -> bool | Literal["back"]:
+	def askFinalOptions(self) -> bool | str:
 		while True:
 			try:
 				action = self.askFinalAction()

@@ -81,7 +81,7 @@ def getEntryFilterConfigPair(name: str) -> tuple[str, Option]:
 
 
 class UIBase:
-	configDefDict = OrderedDict(
+	configDefDict: dict[str, Option] = OrderedDict(
 		[
 			(
 				"log_time",
@@ -228,6 +228,7 @@ class UIBase:
 		from pyglossary.json_utils import jsonToData
 
 		data = jsonToData(fread(rootConfJsonFile))
+		assert isinstance(data, dict)
 		if user and isfile(confJsonFile):
 			try:
 				userData = jsonToData(fread(confJsonFile))

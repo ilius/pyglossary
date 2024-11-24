@@ -25,7 +25,7 @@ import argparse
 import logging
 import sys
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from pyglossary import core, logger  # essential
 from pyglossary.langs import langDict
@@ -72,7 +72,7 @@ __all__ = ["main"]
 # -v (verbose or version?)
 # -r (reverse or read-options)
 
-log = None
+log: logger.Logger | None = None
 
 
 def validateLangStr(st: str) -> str | None:
@@ -82,6 +82,7 @@ def validateLangStr(st: str) -> str | None:
 	lang = langDict[st.lower()]
 	if lang:
 		return lang.name
+	assert log
 	log.error(f"unknown language {st!r}")
 	return None
 
@@ -145,7 +146,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 		print(f"PyGlossary {getVersion()}")
 		return True, None
 
-	log = logging.getLogger("pyglossary")
+	log = cast(logger.Logger, logging.getLogger("pyglossary"))
 
 	if args.ui_type == "none":
 		args.noColor = True
@@ -273,6 +274,7 @@ def main() -> None:  # noqa: PLR0912
 
 	from pyglossary.ui.runner import getRunner
 
+	assert log
 	run = getRunner(res.args, res.uiType, log)
 	if run is None:
 		sys.exit(1)
