@@ -27,7 +27,7 @@ import sys
 from dataclasses import dataclass
 from typing import Any
 
-from pyglossary import core  # essential
+from pyglossary import core, logger  # essential
 from pyglossary.langs import langDict
 from pyglossary.ui.argparse_main import configFromArgs, defineFlags, validateFlags
 from pyglossary.ui.base import UIBase
@@ -151,7 +151,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 		args.noColor = True
 
 	core.noColor = args.noColor
-	logHandler = core.StdLogHandler(
+	logHandler = logger.StdLogHandler(
 		noColor=args.noColor,
 	)
 	log.setVerbosity(args.verbosity)

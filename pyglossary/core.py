@@ -14,7 +14,7 @@ from os.path import (
 from typing import TYPE_CHECKING
 
 from . import logger
-from .logger import TRACE, StdLogHandler
+from .logger import TRACE
 
 if TYPE_CHECKING:
 	import logging
@@ -31,7 +31,6 @@ def exc_note(e: Exception, note: str) -> Exception:
 __all__ = [
 	"TRACE",
 	"VERSION",
-	"StdLogHandler",
 	"appResDir",
 	"cacheDir",
 	"checkCreateConfDir",
