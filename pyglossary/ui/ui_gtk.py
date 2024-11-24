@@ -1021,6 +1021,20 @@ class GeneralOptionsButton(gtk.Button):
 		self.dialog.present()
 
 
+class LanguagesButton(gtk.Button):
+	def __init__(self, ui) -> None:
+		gtk.Button.__init__(self, label="Languages")
+		self.ui = ui
+		self.connect("clicked", self.onClick)
+		self.dialog = None
+
+	def onClick(self, _widget):
+		pass
+		# if self.dialog is None:
+		# self.dialog = GeneralOptionsDialog(self.ui)
+		# self.dialog.present()
+
+
 class UI(gtk.Dialog, MyDialog, UIBase):
 	def status(self, msg):
 		# try:
@@ -1152,8 +1166,12 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		label = gtk.Label(label="")
 		pack(hbox, label, 1, 1, 5)
 		##
+		button = LanguagesButton(self)
+		button.set_size_request(0, 40)
+		pack(hbox, button, 0, 0, 0)
+		##
 		button = GeneralOptionsButton(self)
-		button.set_size_request(300, 40)
+		button.set_size_request(0, 40)
 		pack(hbox, button, 0, 0, 0)
 		##
 		self.convertButton = gtk.Button()
