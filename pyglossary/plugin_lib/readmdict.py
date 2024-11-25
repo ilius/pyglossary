@@ -319,11 +319,13 @@ class MDict:
 				delimiter = b"\x00"
 				width = 1
 			i = key_start_index + self._number_width
+			key_end_index = None
 			while i < len(key_block):
 				if key_block[i : i + width] == delimiter:
 					key_end_index = i
 					break
 				i += width
+			assert key_end_index is not None
 			key_text = (
 				key_block[key_start_index + self._number_width : key_end_index]
 				.decode(self._encoding, errors="ignore")
