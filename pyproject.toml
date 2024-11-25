@@ -4,9 +4,7 @@ indent-style = "tab"
 skip-magic-trailing-comma = false
 line-ending = "lf"
 docstring-code-format = false
-exclude = [
-	"pyglossary/plugin_lib/ripemd128.py",
-]
+exclude = ["pyglossary/plugin_lib/ripemd128.py"]
 
 [tool.ruff]
 line-length = 88
@@ -103,7 +101,7 @@ select = [
 	"RUF",  # Ruff-specific rules
 ]
 ignore = [
-	"RUF039", # First argument to `re.compile()` is not raw string
+	"RUF039",  # First argument to `re.compile()` is not raw string
 	"FURB189",
 	# FURB189 Subclassing `dict` can be error prone, use `collections.UserDict` instead
 	# FURB189 Subclassing `str` can be error prone, use `collections.UserStr` instead
@@ -175,7 +173,7 @@ mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
 [tool.ruff.lint.per-file-ignores]
 
 "*_types.py" = [
-	"TC003",   # Move standard library import `...` into a type-checking block
+	"TC003", # Move standard library import `...` into a type-checking block
 ]
 "pyglossary/plugins/**/*.py" = [
 	"PLR0904", # Too many public methods
@@ -236,7 +234,6 @@ mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
 "scripts/*.py" = ["ANN", "T201", "INP001"]
 "scripts/*/*.py" = ["ANN", "T201", "INP001"]
 "doc/lib-examples/*.py" = ["ANN", "INP"]
-
 
 
 [tool.mypy]
@@ -349,6 +346,42 @@ verbose = false
 
 [tool.import-analyzer]
 exclude = ["pyglossary/ui/wcwidth/", "build/"]
+
+[tool.pyright]
+pythonVersion = "3.10"
+pythonPlatform = "Linux"
+reportMissingImports = "error"
+reportMissingTypeStubs = false
+exclude = [
+	"pyglossary/slob.py",
+	"setup.py",
+	"whitelist.py",       # for vulture
+	# "pyglossary/ui/gtk4_utils/*",
+	# "pyglossary/ui/gtk3_utils/*",
+	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
+	"pyglossary/plugins/testformat.py",
+	# "pyglossary/plugin_lib/*",
+	"pyglossary/ui/gtk*_utils/__init__.py",
+	"pyglossary/ui/ui_qt.py",
+	"pyglossary/ui/progressbar/",
+	"pyglossary/reverse.py",
+	"wcwidth*",
+	".direnv",
+	".eggs",
+	".git",
+	".mypy_cache",
+	".nox",
+	".pants.d",
+	".ruff_cache",
+	".tox",
+	".venv",
+	"__pypackages__",
+	"_build",
+	"buck-out",
+	"build",
+	"dist",
+	"venv",
+]
 
 
 # [project]
