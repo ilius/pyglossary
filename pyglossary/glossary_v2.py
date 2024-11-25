@@ -1122,7 +1122,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		args: ConvertArgs,
 		outputFilename: str = "",
 		outputFormat: str = "",
-	) -> bool | None:
+	) -> bool:
 		if isdir(outputFilename) and os.listdir(outputFilename):
 			raise Error(
 				f"Directory already exists and not empty: {relpath(outputFilename)}",
@@ -1188,8 +1188,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			outputFilename=outputFilename,
 			outputFormat=outputFormat,
 		)
-		if sort is None:
-			return None
 
 		if args.infoOverride:
 			for key, value in args.infoOverride.items():

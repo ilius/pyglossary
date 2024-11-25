@@ -40,7 +40,7 @@ def mergeHtmlEntriesWithSameHeadword(
 	entryIter: Iterator[EntryType],
 ) -> Iterator[EntryType]:
 	try:
-		last: EntryType = next(entryIter)
+		last: EntryType | None = next(entryIter)
 	except StopIteration:
 		return
 	last.detectDefiFormat()
@@ -77,7 +77,7 @@ def mergePlaintextEntriesWithSameHeadword(
 	entryIter: Iterator[EntryType],
 ) -> Iterator[EntryType]:
 	try:
-		last: EntryType = next(entryIter)
+		last: EntryType | None = next(entryIter)
 	except StopIteration:
 		return
 	for entry in entryIter:
