@@ -155,6 +155,9 @@ class Reader:
 			pass
 		else:
 			title = title.strip()
+			if title == "Title (No HTML code allowed)":
+				# TODO: how to avoid this?
+				title = ""
 			if title:
 				self._glos.setInfo("name", title)
 		desc = toStr(self._mdx.header.get(b"Description", ""))
