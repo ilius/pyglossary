@@ -130,7 +130,7 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			self._glos.setInfo("input_file_size", str(self._fileSize))
 		else:
 			self.warning("Wiktextract Reader: file is not seekable")
 
@@ -253,7 +253,7 @@ class Reader:
 			if not value:
 				continue
 			with hf.element("font", color=self._pron_color):
-				hf.write(f"{value}")
+				hf.write(str(value))
 			hf.write(f" ({key})")
 
 	def writeSoundAudio(

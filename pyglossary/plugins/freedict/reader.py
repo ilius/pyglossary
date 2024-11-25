@@ -338,7 +338,7 @@ class Reader:
 		if elem.text:
 			hf.write(f"{langDesc}: {elem.text}")
 		else:
-			hf.write(f"{langDesc}")
+			hf.write(f"{langDesc}")  # noqa: FURB183
 
 	def writeNote(
 		self,
@@ -685,7 +685,7 @@ class Reader:
 							hf.write(self.getCommaSep(pron))
 						hf.write("/")
 						with hf.element("font", color=pron_color):
-							hf.write(f"{pron}")
+							hf.write(pron)
 						hf.write("/")
 					hf.write(br())
 					hf.write("\n")
@@ -871,7 +871,7 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			self._glos.setInfo("input_file_size", str(self._fileSize))
 		else:
 			log.warning("FreeDict Reader: file is not seekable")
 

@@ -204,7 +204,7 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			self._glos.setInfo("input_file_size", str(self._fileSize))
 		else:
 			log.warning("XDXF Reader: file is not seekable")
 			self._file.close()
@@ -220,7 +220,7 @@ class Reader:
 			tag="ar",
 		)
 
-		if self._has_added_css is False:
+		if not self._has_added_css:
 			self._has_added_css = True
 			cssPath = join(rootDir, "pyglossary", "xdxf", "xdxf.css")
 			with open(cssPath, "rb") as css_file:
@@ -281,7 +281,7 @@ class Reader:
 					abbr_v_text = self._htmlTr.stringify_children(child)
 			# TODO escape apostrophes
 			for abbr_k in abbr_k_list:
-				if len(abbr_k) > 0 and len(abbr_v_text) > 0:
+				if abbr_k and abbr_v_text:
 					abbr_map_js += f"abbr_map.set('{abbr_k}', '{abbr_v_text}');\n"
 		with open(join(rootDir, "pyglossary", "xdxf", "xdxf.js"), "rb") as js_file:
 			return abbr_map_js.encode(encoding="utf-8") + js_file.read()

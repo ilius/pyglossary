@@ -584,7 +584,7 @@ class Reader:
 						chunkOffset=chunkOffset,
 					)
 
-				if len(properties.key_text_fixed_fields) == 0:
+				if not properties.key_text_fixed_fields:
 					priority = 0
 					parentalControl = 0
 				elif len(properties.key_text_fixed_fields) == 1:

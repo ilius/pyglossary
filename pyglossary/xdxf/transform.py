@@ -325,12 +325,12 @@ class XdxfTransformer:
 	def _write_abbr(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
 		# FIXME: may need an space or newline before it
 		with hf.element("i"):
-			hf.write(f"{child.text}")
+			hf.write(child.text or "")
 
 	def _write_etm(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
 		# Etymology (history and origin)
 		# TODO: formatting?
-		hf.write(f"{child.text}")
+		hf.write(child.text or "")
 
 	def writeChildElem(  # noqa: PLR0913
 		self,

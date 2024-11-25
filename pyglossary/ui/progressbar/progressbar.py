@@ -20,6 +20,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from __future__ import annotations
+
 """Main ProgressBar class."""
 
 
@@ -84,15 +85,29 @@ class ProgressBar:
      - percentage(): progress in percent [0..100]
     """
 
-    __slots__ = ('currval', 'fd', 'finished', 'last_update_time',
-                 'left_justify', 'maxval', 'next_update', 'num_intervals',
-                 'poll', 'seconds_elapsed', 'signal_set', 'start_time',
-                 'term_width', 'update_interval', 'widgets', '_time_sensitive',
-                 '__iterable')
+    __slots__ = (
+        "__iterable",
+        "_time_sensitive",
+        "currval",
+        "fd",
+        "finished",
+        "last_update_time",
+        "left_justify",
+        "maxval",
+        "next_update",
+        "num_intervals",
+        "poll",
+        "seconds_elapsed",
+        "signal_set",
+        "start_time",
+        "term_width",
+        "update_interval",
+        "widgets",
+    )
 
     _DEFAULT_MAXVAL = 100
     _DEFAULT_TERMSIZE = 80
-    _DEFAULT_WIDGETS = [widgets.Percentage(), ' ', widgets.Bar()]
+    _DEFAULT_WIDGETS = [widgets.Percentage(), " ", widgets.Bar()]
 
     def __init__(
         self,
@@ -106,7 +121,7 @@ class ProgressBar:
         """Initializes a progress bar with sane defaults."""
         # Don't share a reference with any other progress bars
         if widgets is None:
-            widgets = list(self._DEFAULT_WIDGETS)
+            widgets = self._DEFAULT_WIDGETS.copy()
 
         self.maxval = maxval
         self.widgets = widgets
@@ -167,11 +182,11 @@ class ProgressBar:
 
     def _env_size(self):
         """Tries to find the term_width from the environment."""
-        return int(os.environ.get('COLUMNS', self._DEFAULT_TERMSIZE)) - 1
+        return int(os.environ.get("COLUMNS", self._DEFAULT_TERMSIZE)) - 1
 
     def _handle_resize(self, signum=None, frame=None):
         """Tries to catch resize signals sent from the terminal."""
-        h, w = array('h', ioctl(self.fd, termios.TIOCGWINSZ, '\0' * 8))[:2]
+        h, w = array("h", ioctl(self.fd, termios.TIOCGWINSZ, "\0" * 8))[:2]
         self.term_width = w
 
     def percentage(self):
@@ -212,7 +227,7 @@ class ProgressBar:
 
     def _format_line(self):
         """Joins the widgets and justifies the line."""
-        widgets = ''.join(self._format_widgets())
+        widgets = "".join(self._format_widgets())
 
         if self.left_justify:
             return widgets.ljust(self.term_width)
@@ -228,7 +243,7 @@ class ProgressBar:
     def _update_widgets(self):
         """Checks all widgets for the time sensitive bit."""
         self._time_sensitive = any(
-            getattr(w, 'TIME_SENSITIVE', False)
+            getattr(w, "TIME_SENSITIVE", False)
             for w in self.widgets
         )
 
@@ -239,7 +254,7 @@ class ProgressBar:
                 self.maxval is not widgets.UnknownLength and
                 not 0 <= value <= self.maxval
             ):
-                raise ValueError('Value out of range')
+                raise ValueError("Value out of range")
 
             self.currval = value
 
@@ -251,7 +266,7 @@ class ProgressBar:
         now = time.perf_counter()
         self.seconds_elapsed = now - self.start_time
         self.next_update = self.currval + self.update_interval
-        self.fd.write(self._format_line() + '\r')
+        self.fd.write(self._format_line() + "\r")
         self.fd.flush()
         self.last_update_time = now
 
@@ -278,7 +293,7 @@ class ProgressBar:
 
         if self.maxval is not widgets.UnknownLength:
             if self.maxval < 0:
-                raise ValueError('Value out of range')
+                raise ValueError("Value out of range")
             self.update_interval = self.maxval / self.num_intervals
 
         self.start_time = self.last_update_time = time.perf_counter()
@@ -292,6 +307,6 @@ class ProgressBar:
             return
         self.finished = True
         self.update(self.maxval)
-        self.fd.write('\n')
+        self.fd.write("\n")
         if self.signal_set:
             signal.signal(signal.SIGWINCH, signal.SIG_DFL)

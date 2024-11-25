@@ -139,7 +139,7 @@ class Reader:
 			if desc == "unclassified":
 				continue
 			with hf.element("i"):
-				hf.write(f"{desc.capitalize()}")
+				hf.write(desc.capitalize())
 			hf.write(br())
 
 		glossList = [elem.text.strip() for elem in sense.findall("gloss") if elem.text]

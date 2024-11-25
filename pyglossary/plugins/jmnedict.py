@@ -114,14 +114,14 @@ class Reader:
 				continue
 			desc = elem.text
 			with hf.element("i"):
-				hf.write(f"{desc.capitalize()}")
+				hf.write(desc.capitalize())
 			hf.write(br())
 
 		for elem in trans.findall("trans_det"):
 			if not elem.text:
 				continue
 			desc = elem.text
-			hf.write(f"{desc}")
+			hf.write(desc)
 			hf.write(br())
 
 		relatedWords = []
