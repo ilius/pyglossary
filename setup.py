@@ -25,13 +25,12 @@ class my_install(install):
 			if not exists(self.install_scripts):
 				os.makedirs(self.install_scripts)
 				# let it fail on wrong permissions.
-			else:
-				if not isdir(self.install_scripts):
-					raise OSError(
-						"installation path already exists "
-						f"but is not a directory: {self.install_scripts}",
-					)
-			open(binPath, "w").write("""#!/usr/bin/env python3
+			elif not isdir(self.install_scripts):
+				raise OSError(
+					"installation path already exists "
+					f"but is not a directory: {self.install_scripts}",
+				)
+			open(binPath, "w").write("""#!/usr/bin/env -S python3 -O
 import sys
 from os.path import dirname
 sys.path.insert(0, dirname(__file__))
