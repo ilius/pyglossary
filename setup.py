@@ -5,15 +5,45 @@ import glob
 import logging
 import os
 import re
+import sys
 from os.path import dirname, exists, isdir, join
 
 from setuptools import setup
 from setuptools.command.install import install
 
-from pyglossary.ui.version import getPipSafeVersion
-
+VERSION = "4.7.1"
 log = logging.getLogger("root")
 relRootDir = "share/pyglossary"
+
+
+def getGitVersion(gitDir: str) -> str:
+	import subprocess
+
+	try:
+		outputB, _err = subprocess.Popen(
+			[
+				"git",
+				"--git-dir",
+				gitDir,
+				"describe",
+				"--always",
+			],
+			stdout=subprocess.PIPE,
+		).communicate()
+	except Exception as e:
+		sys.stderr.write(str(e) + "\n")
+		return ""
+	# if _err is None:
+	return outputB.decode("utf-8").strip()
+
+
+def getPipSafeVersion() -> str:
+	gitDir = ".git"
+	if isdir(gitDir):
+		version = getGitVersion(gitDir)
+		if version:
+			return "-".join(version.split("-")[:2])
+	return VERSION
 
 
 class my_install(install):
