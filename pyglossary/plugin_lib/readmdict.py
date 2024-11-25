@@ -97,6 +97,7 @@ class MDict:
 		self._fname = fname
 		self._encoding = encoding.upper()
 		self._encrypted_key = None
+		self._passcode = passcode
 
 		self.header = self._read_header()
 
