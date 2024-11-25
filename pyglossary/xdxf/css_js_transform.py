@@ -358,7 +358,7 @@ class XdxfTransformer:
 	def _write_etm(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
 		# Etymology (history and origin)
 		# TODO: formatting?
-		hf.write(f"{child.text}")
+		hf.write(child.text or "")
 
 	def writeChildElem(  # noqa: PLR0913
 		self,

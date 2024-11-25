@@ -53,7 +53,7 @@ def id_generator() -> Iterator[str]:
 	cnt = 1
 
 	while True:
-		yield "_" + str(base36(cnt))
+		yield "_" + base36(cnt)
 		cnt += 1
 
 

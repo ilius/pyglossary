@@ -175,7 +175,7 @@ class Reader:
 		cfile.seek(0, 2)
 		self._fileSize = cfile.tell()
 		cfile.seek(0)
-		self._glos.setInfo("input_file_size", f"{self._fileSize}")
+		self._glos.setInfo("input_file_size", str(self._fileSize))
 
 	def __len__(self) -> int:
 		return 0

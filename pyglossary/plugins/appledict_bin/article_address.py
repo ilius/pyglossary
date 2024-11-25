@@ -26,4 +26,4 @@ class ArticleAddress(NamedTuple):
 	chunkOffset: int
 
 	def __str__(self) -> str:
-		return f"Addr[{hex(self.sectionOffset)}, {hex(self.chunkOffset)}]"
+		return f"Addr[{self.sectionOffset:#x}, {self.chunkOffset:#x}]"

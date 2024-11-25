@@ -1153,7 +1153,7 @@ class UI(ui_cmd.UI):
 			self._glossarySetAttrs["progressbar"] = False
 
 		self.loadConfig()
-		self.savedConfig = dict(self.config)
+		self.savedConfig = self.config.copy()
 		self.config = config
 
 		del inputFilename, outputFilename, inputFormat, outputFormat

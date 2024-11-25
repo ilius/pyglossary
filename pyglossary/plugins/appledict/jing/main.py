@@ -58,7 +58,7 @@ def run(filename: str) -> None:
 	cmd = ["java", "-Xmx2G", "-jar", jing_jar_path, rng_path, filename]
 
 	log.info("running Jing check:")
-	log.info(f"{cmd}")
+	log.info(str(cmd))
 	log.info("...")
 
 	pipe = subprocess.Popen(

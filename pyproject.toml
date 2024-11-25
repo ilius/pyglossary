@@ -243,6 +243,8 @@ exclude = [
 
 [tool.refurb]
 ignore = [
+	117, # Replace `open(filename, "rb")` with `filename.open("rb")`
+	184, # Assignment statement should be chained
 	101, # Replace `with open(x, ...) as f: y = f.read()` with `y = Path(x).read_bytes()`
 	103, # Replace `with open(x, ...) as f: f.write(y)` with `Path(x).write_bytes(y)`
 	104, # Replace `os.getcwd()` with `Path.cwd()`
@@ -254,9 +256,6 @@ ignore = [
 	155, # Replace `os.path.getsize(x)` with `Path(x).stat().st_size`
 ]
 # refurb has no exclude param!
-#exclude = [
-#    "pyglossary/plugin_lib/readmdict.py",
-#]
 #load = ["some_module"]
 #quiet = true
 

@@ -71,7 +71,7 @@ class QuickDic:
 			(t, comparator.normalize(t), ttype, tidx) for t, ttype, tidx in tokens1 if t
 		]
 
-		if len(synonyms) > 0:
+		if synonyms:
 			log.info(
 				f"Insert synonyms into token list ({len(tokens)} entries) ...",
 			)
@@ -93,7 +93,7 @@ class QuickDic:
 		rows: list[tuple[int, int]] = []
 		index_entries: list[IndexEntryType] = []
 		for token, token_norm, ttype, tidx in tokens:
-			prev_token = "" if len(index_entries) == 0 else index_entries[-1][0]
+			prev_token = index_entries[-1][0] if index_entries else ""
 			if prev_token == token:
 				(
 					token,  # noqa: PLW2901

@@ -119,7 +119,7 @@ class TextGlossaryReader:
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
 			log.debug(f"File size of {filename}: {self._fileSize}")
-			self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			self._glos.setInfo("input_file_size", str(self._fileSize))
 		else:
 			log.warning("TextGlossaryReader: file is not seekable")
 

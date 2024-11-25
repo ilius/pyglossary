@@ -127,7 +127,7 @@ class Reader:
 		trans, entry_type = row
 		if entry_type:
 			with hf.element("i"):
-				hf.write(f"{entry_type}")
+				hf.write(f"{entry_type}")  # noqa: FURB183
 			hf.write(ET.Element("br"))
 		try:
 			hf.write(trans + " ")
