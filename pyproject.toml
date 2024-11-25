@@ -383,28 +383,31 @@ exclude = [
 	"venv",
 ]
 
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
-# [project]
-# name = "pyglossary"
-# description = "A tool for converting dictionary files aka glossaries."
-# readme = "README.md"
-# version = "4.6.1"
-# authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
-# license = { text = "GPLv3+" }
-# keywords = ["dictionary", "glossary"]
-# classifiers = [
-#     "Development Status :: 5 - Production/Stable",
-#     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-#     "Operating System :: Unix",
-#     "Operating System :: MacOS :: MacOS X",
-#     "Operating System :: Microsoft :: Windows",
-#     "Typing :: Typed",
-#     "Programming Language :: Python :: 3.10",
-#     "Programming Language :: Python :: 3.11",
-#     "Programming Language :: Python :: 3.12",
-# ]
-# requires-python = ">= 3.10"
-# dependencies = ["PyICU", "lxml", "beautifulsoup4"]
+[project]
+name = "pyglossary"
+version = "4.7.1"
+description = "A tool for converting dictionary files aka glossaries."
+readme = "README.md"
+authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
+license = { text = "GPLv3+" }
+keywords = ["dictionary", "glossary"]
+classifiers = [
+	"Development Status :: 5 - Production/Stable",
+	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+	"Operating System :: Unix",
+	"Operating System :: MacOS :: MacOS X",
+	"Operating System :: Microsoft :: Windows",
+	"Typing :: Typed",
+	"Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+]
+requires-python = ">= 3.10"
+dependencies = ["PyICU", "lxml", "beautifulsoup4"]
 
 # [project.urls]
 # "Source code" = "https://github.com/ilius/pyglossary"
