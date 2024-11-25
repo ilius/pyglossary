@@ -95,7 +95,7 @@ PyGlossary requires **Python 3.10 or higher**, and works in practically all
 modern operating systems. While primarily designed for *GNU/Linux*, it works
 on *Windows*, *Mac OS X* and other Unix-based operating systems as well.
 
-As shown in the screenshots, there are multiple User Interface types (multiple
+As shown in screenshots, there are multiple User Interface types (multiple
 ways to use the program).
 
 - **Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
@@ -110,8 +110,8 @@ ways to use the program).
   - Mac OS X: `brew install pygobject3 gtk+3`
   - Nix / NixOS: `nix-shell -p pkgs.gobject-introspection python38Packages.pygobject3 python38Packages.pycairo`
 
-- **Tkinter-based interface**, works in the lack of Gtk. Specially on
-  Windows where Tkinter library is installed with the Python itself.
+- **Tkinter-based interface**, meant to be used in the lack of Gtk. Specially on
+  Windows where Tkinter library is installed with Python itself.
   You can also install it on:
 
   - Debian/Ubuntu: `apt-get install python3-tk tix`
@@ -121,9 +121,7 @@ ways to use the program).
   - Nix / NixOS: `nix-shell -p python38Packages.tkinter tix`
 
 - **Command-line interface**, works in all operating systems without
-  any specific requirements, just type:
-
-  `python3 main.py --help`
+  any specific requirements, just type `./main.py --help` or `pyglossary --help`
 
   - **Interactive command-line interface**
     - Requires: `pip install prompt_toolkit`
@@ -133,7 +131,7 @@ ways to use the program).
         - For example when you are using a remote Linux machine over SSH
       - On Mac and no `tkinter` module is found
     - Manually select with `--cmd` or `--ui=cmd`
-      - Minimally: `python3 main.py --cmd`
+      - Minimally: `./main.py --cmd`
       - You can still pass input file, or any flag/option
     - If both input and output files are passed, non-interactive cmd ui will be default
     - If you are writing a script, you can pass `--no-interactive` to force disable interactive ui
@@ -146,16 +144,16 @@ ways to use the program).
 ## UI (User Interface) selection
 
 When you run PyGlossary without any command-line arguments or options/flags,
-PyGlossary tries to find PyGI and open the Gtk3-based interface. If it fails,
-it tries to find Tkinter and open the Tkinter-based interface. If that fails,
+PyGlossary tries to find PyGI and open Gtk3-based interface. If it fails,
+it tries to find Tkinter and open Tkinter-based interface. If that fails,
 it tries to find `prompt_toolkit` and run interactive command-line interface.
 And if none of these libraries are found, it exits with an error.
 
-But you can explicitly determine the user interface type using `--ui`
+But you can explicitly select user interface type using `--ui`
 
-- `python3 main.py --ui=gtk`
-- `python3 main.py --ui=tk`
-- `python3 main.py --ui=cmd`
+- `./main.py --ui=gtk`
+- `./main.py --ui=tk`
+- `./main.py --ui=cmd`
 
 ## Installation on Windows
 
@@ -186,12 +184,12 @@ See [doc/config.rst](./doc/config.rst).
 
 ## Direct and indirect modes
 
-Indirect mode means the input glossary is completely read and loaded into RAM, then converted
-into the output format. This was the only method available in old versions (before [3.0.0](https://github.com/ilius/pyglossary/releases/tag/3.0.0)).
+Indirect mode means that input glossary is completely read and loaded into RAM, then converted
+into output format. This was the only method available in old versions (before [3.0.0](https://github.com/ilius/pyglossary/releases/tag/3.0.0)).
 
 Direct mode means entries are one-at-a-time read, processed and written into output glossary.
 
-Direct mode was added to limit the memory usage for large glossaries; But it may reduce the
+Direct mode was added to limit memory usage for large glossaries; But it may reduce the
 conversion time for most cases as well.
 
 Converting glossaries into these formats requires [sorting](#sorting) entries:
@@ -203,7 +201,7 @@ Converting glossaries into these formats requires [sorting](#sorting) entries:
 That's why direct mode will not work for these formats, and PyGlossary has to
 switch to indirect mode (or it previously had to, see [SQLite mode](#sqlite-mode)).
 
-For other formats, direct mode will be the default. You may override this by `--indirect` flag.
+For other formats, direct mode will be default. You may override this by `--indirect` flag.
 
 ## SQLite mode
 
@@ -219,7 +217,7 @@ The temporary SQLite file is stored in [cache directory](#cache-directory) then
 deleted after conversion (unless you pass `--no-cleanup` flag).
 
 SQLite mode is automatically enabled for writing these formats if `auto_sqlite`
-[config parameter](./doc/config.rst) is `true` (which is the default).
+[config parameter](./doc/config.rst) is `true` (which is default).
 This also applies to when you pass `--sort` flag for any format.
 You may use `--no-sqlite` to override this and switch to indirect mode.
 
