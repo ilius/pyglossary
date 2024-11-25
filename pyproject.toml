@@ -384,7 +384,12 @@ exclude = [
 ]
 
 [build-system]
-requires = ["setuptools"]
+requires = [
+	"setuptools", # min version?
+	# "setuptools_scm[toml] >= 4, <6",
+	# "setuptools_scm_git_archive",
+	# "wheel >= 0.29.0",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -407,23 +412,12 @@ classifiers = [
 	"Programming Language :: Python :: 3.12",
 ]
 requires-python = ">= 3.10"
-dependencies = ["PyICU", "lxml", "beautifulsoup4"]
+dependencies = []
 
-# [project.urls]
-# "Source code" = "https://github.com/ilius/pyglossary"
-# Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
-# "Issue tracker" = "https://github.com/ilius/pyglossary/issues"
+[project.optional-dependencies]
+all = ["PyICU", "lxml", "beautifulsoup4"]
 
-# [project.optional-dependencies]
-# all = [
-#     # TODO
-# ]
-
-# [build-system]
-# requires = [
-#     "setuptools", # min version?
-#     # "setuptools_scm[toml] >= 4, <6",
-#     # "setuptools_scm_git_archive",
-#     # "wheel >= 0.29.0",
-# ]
-# build-backend = 'setuptools.build_meta'
+[project.urls]
+"Source code" = "https://github.com/ilius/pyglossary"
+Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
+"Issue tracker" = "https://github.com/ilius/pyglossary/issues"
