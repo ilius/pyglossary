@@ -383,6 +383,21 @@ exclude = [
 	"venv",
 ]
 
+[tool.fixit]
+disable = ["fixit.rules.no_namedtuple"]
+
+[[tool.fixit.overrides]]
+path = "pyglossary/reverse.py"
+disable = ["fixit.rules"]
+
+[[tool.fixit.overrides]]
+path = "pyglossary/ui/wcwidth/"
+disable = ["fixit.rules"]
+
+[[tool.fixit.overrides]]
+path = "pyglossary/ui/progressbar/"
+disable = ["fixit.rules"]
+
 [build-system]
 requires = [
 	"setuptools", # min version?
