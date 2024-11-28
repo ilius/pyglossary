@@ -92,7 +92,7 @@ website = (
 	"https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
 	"Dictionary User Guide for Mac",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"html": BoolOption(comment="Entries are HTML"),
 	"html_full": BoolOption(
 		comment="Turn every entry's definition into an HTML document",
@@ -122,19 +122,20 @@ class Reader:
 		self._glos: GlossaryType = glos
 		self._dictDirPath = ""
 		self._contentsPath = ""
-		self._file: "io.BufferedIOBase" = nullBinaryIO
+		self._file: io.BufferedIOBase = nullBinaryIO
 		self._encoding = "utf-8"
 		self._defiFormat = "m"
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
-		self._titleById: "dict[str, str]" = {}
+		self._titleById: dict[str, str] = {}
 		self._wordCount = 0
-		self._keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
+		self._keyTextData: dict[ArticleAddress, list[RawKeyData]] = {}
 		self._cssName = ""
 
 	@staticmethod
 	def tostring(
-		elem: "Element | HtmlComment | HtmlElement | "
-		"HtmlEntity | HtmlProcessingInstruction",
+		elem: (
+			Element | HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction
+		),
 	) -> str:
 		from lxml.html import tostring
 
@@ -266,7 +267,7 @@ class Reader:
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		metadata: "dict[str, Any]"
+		metadata: dict[str, Any]
 		try:
 			metadata = biplist.readPlist(infoPlistPath)
 		except (biplist.InvalidPlistException, biplist.NotBinaryPlistException):
@@ -282,7 +283,7 @@ class Reader:
 				) from e
 		return metadata
 
-	def setMetadata(self, metadata: "dict[str, Any]") -> None:
+	def setMetadata(self, metadata: dict[str, Any]) -> None:
 		name = metadata.get("CFBundleDisplayName")
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
@@ -311,7 +312,7 @@ class Reader:
 		self._properties = from_metadata(metadata)
 		self._cssName = self._properties.css_name or "DefaultStyle.css"
 
-	def setLangs(self, metadata: "dict[str, Any]") -> None:
+	def setLangs(self, metadata: dict[str, Any]) -> None:
 		import locale
 
 		langsList = metadata.get("DCSDictionaryLanguages")
@@ -402,7 +403,7 @@ class Reader:
 		entryRoot = self.convertEntryBytesToXml(entryBytes)
 		if entryRoot is None:
 			return None
-		namespaces: "dict[str, str]" = {
+		namespaces: dict[str, str] = {
 			key: value for key, value in entryRoot.nsmap.items() if key and value
 		}
 		entryElems = entryRoot.xpath("/d:entry", namespaces=namespaces)
@@ -536,7 +537,7 @@ class Reader:
 	# TODO: PLR0912 Too many branches (16 > 12)
 	def readKeyTextData(  # noqa: PLR0912
 		self,
-		buff: "io.BufferedIOBase",
+		buff: io.BufferedIOBase,
 		bufferOffset: int,
 		bufferLimit: int,
 		properties: AppleDictProperties,
@@ -546,7 +547,7 @@ class Reader:
 		Sets self._keyTextData when done.
 		"""
 		buff.seek(bufferOffset)
-		keyTextData: "dict[ArticleAddress, list[RawKeyData]]" = {}
+		keyTextData: dict[ArticleAddress, list[RawKeyData]] = {}
 		while bufferOffset < bufferLimit:
 			yield (bufferOffset, bufferLimit)
 			buff.seek(bufferOffset)
@@ -706,7 +707,7 @@ class Reader:
 
 	def yieldEntryBytes(
 		self,
-		body_file: "io.BufferedIOBase",
+		body_file: io.BufferedIOBase,
 		properties: AppleDictProperties,
 	) -> Iterator[tuple[bytes, ArticleAddress]]:
 		fileDataOffset, fileLimit = guessFileOffsetLimit(body_file)
