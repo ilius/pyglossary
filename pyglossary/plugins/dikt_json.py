@@ -47,7 +47,7 @@ singleFile = True
 kind = "text"
 wiki = ""
 website = "https://github.com/maxim-saplin/dikt"
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),
 	"resources": BoolOption(comment="Enable resources / data files"),

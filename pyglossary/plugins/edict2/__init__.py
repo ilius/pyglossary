@@ -62,7 +62,7 @@ website = None
 # in Jyutping transcription to CC-CEDICT
 # "https://cantonese.org/download.html",
 
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"traditional_title": BoolOption(
 		comment="Use traditional Chinese for entry titles/keys",
@@ -84,7 +84,7 @@ class Reader:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self.file: "io.TextIOBase" = nullTextIO
+		self.file: io.TextIOBase = nullTextIO
 		self._fileSize = 0
 
 	def open(self, filename: str) -> None:

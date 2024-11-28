@@ -38,7 +38,7 @@ website = (
 	"https://github.com/cheusov/dictd",
 	"@cheusov/dictd",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }
 

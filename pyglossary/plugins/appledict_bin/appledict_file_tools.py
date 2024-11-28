@@ -35,7 +35,7 @@ APPLEDICT_FILE_OFFSET = 0x40
 # addressing of AppleDict binary files always ignores first 0x40 bytes
 
 
-def readIntPair(buffer: "io.BufferedIOBase") -> tuple[int, int]:
+def readIntPair(buffer: io.BufferedIOBase) -> tuple[int, int]:
 	# to satisfy mymy, put them in vars with declared type
 	a: int
 	b: int
@@ -43,21 +43,21 @@ def readIntPair(buffer: "io.BufferedIOBase") -> tuple[int, int]:
 	return a, b
 
 
-def readInt(buffer: "io.BufferedIOBase") -> int:
+def readInt(buffer: io.BufferedIOBase) -> int:
 	return unpack("i", buffer.read(4))[0]
 
 
-def read_x_bytes_as_word(buffer: "io.BufferedIOBase", x: int) -> str:
+def read_x_bytes_as_word(buffer: io.BufferedIOBase, x: int) -> str:
 	return buffer.read(x).decode("UTF-16LE")
 
 
-def read_2_bytes_here(buffer: "io.BufferedIOBase") -> int:
+def read_2_bytes_here(buffer: io.BufferedIOBase) -> int:
 	lower_byte = buffer.read(1)
 	higher_byte = buffer.read(1)
 	return ord(higher_byte) * 0x100 + ord(lower_byte)
 
 
-def guessFileOffsetLimit(file: "io.BufferedIOBase") -> tuple[int, int]:
+def guessFileOffsetLimit(file: io.BufferedIOBase) -> tuple[int, int]:
 	"""Returns address offset to start parsing from and EOF address."""
 	file.seek(APPLEDICT_FILE_OFFSET)
 	limit = readInt(file)

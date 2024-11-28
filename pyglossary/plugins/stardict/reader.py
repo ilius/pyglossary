@@ -54,7 +54,7 @@ class Reader:
 		self._glos = glos
 		self.clear()
 
-		self._xdxfTr: "XdxfTransformerType | None" = None
+		self._xdxfTr: XdxfTransformerType | None = None
 		self._large_file = False
 
 		"""
@@ -94,14 +94,14 @@ class Reader:
 		self.clear()
 
 	def clear(self) -> None:
-		self._dictFile: "io.IOBase | None" = None
+		self._dictFile: io.IOBase | None = None
 		self._filename = ""  # base file path, no extension
-		self._indexData: "list[tuple[bytes, int, int]]" = []
-		self._synDict: "dict[int, list[str]]" = {}
+		self._indexData: list[tuple[bytes, int, int]] = []
+		self._synDict: dict[int, list[str]] = {}
 		self._sametypesequence = ""
 		self._resDir = ""
 		self._resFileNames: list[str] = []
-		self._wordCount: "int | None" = None
+		self._wordCount: int | None = None
 
 	def open(self, filename: str) -> None:
 		if splitext(filename)[1].lower() == ".ifo":
@@ -257,7 +257,7 @@ class Reader:
 
 	def renderRawDefiList(
 		self,
-		rawDefiList: "list[tuple[bytes, int]]",
+		rawDefiList: list[tuple[bytes, int]],
 		unicode_errors: str,
 	) -> tuple[str, str]:
 		if len(rawDefiList) == 1:
@@ -343,7 +343,7 @@ class Reader:
 				log.error(f"Data file is corrupted. Word {b_word!r}")
 				continue
 
-			word: "str | list[str]"
+			word: str | list[str]
 			word = b_word.decode("utf-8", errors=unicode_errors)
 			try:
 				alts = synDict[entryIndex]
@@ -388,7 +388,7 @@ class Reader:
 			return {}
 
 		synBytesLen = len(synBytes)
-		synDict: "dict[int, list[str]]" = {}
+		synDict: dict[int, list[str]] = {}
 		pos = 0
 		while pos < synBytesLen:
 			beg = pos

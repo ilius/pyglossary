@@ -16,7 +16,7 @@ log = logging.getLogger("pyglossary")
 def reverseGlossary(
 	glos: GlossaryExtendedType,
 	savePath: str = "",
-	words: "list[str] | None" = None,
+	words: list[str] | None = None,
 	includeDefs: bool = False,
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
@@ -132,7 +132,7 @@ def searchWordInDef(
 		re.UNICODE,
 	)
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
-	outRel: "list[tuple[str, float] | tuple[str, float, str]]" = []
+	outRel: list[tuple[str, float] | tuple[str, float, str]] = []
 	for entry in entryIter:
 		words = entry.l_word
 		defi = entry.defi

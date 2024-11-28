@@ -49,7 +49,7 @@ website = (
 	"https://foosoft.net/projects/yomichan/",
 	"foosoft.net",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"term_bank_size": IntOption(
 		comment="The number of terms in each term bank json file.",
 	),

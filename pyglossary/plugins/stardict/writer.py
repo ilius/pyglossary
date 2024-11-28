@@ -90,7 +90,7 @@ class MemSdList:
 	def __iter__(self) -> Iterator[Any]:
 		return iter(self._l)
 
-	def sortKey(self, item: "tuple[bytes, Any]") -> tuple[bytes, bytes]:  # noqa: PLR6301
+	def sortKey(self, item: tuple[bytes, Any]) -> tuple[bytes, bytes]:  # noqa: PLR6301
 		return (
 			item[0].lower(),
 			item[0],
@@ -113,8 +113,8 @@ class BaseSqList:
 
 		self._filename = filename
 
-		self._con: "sqlite3.Connection | None" = connect(filename)
-		self._cur: "sqlite3.Cursor | None" = self._con.cursor()
+		self._con: sqlite3.Connection | None = connect(filename)
+		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
 		if not filename:
 			raise ValueError(f"invalid {filename=}")
@@ -207,7 +207,7 @@ class SynSqList(BaseSqList):
 class Writer:
 	_large_file: bool = False
 	_dictzip: bool = True
-	_sametypesequence: "Literal['', 'h', 'm', 'x'] | None" = ""
+	_sametypesequence: Literal["", "h", "m", "x"] | None = ""
 	_stardict_client: bool = False
 	_merge_syns: bool = False
 	_audio_goldendict: bool = False
@@ -218,8 +218,8 @@ class Writer:
 		self._glos = glos
 		self._filename = ""
 		self._resDir = ""
-		self._sourceLang: "Lang | None" = None
-		self._targetLang: "Lang | None" = None
+		self._sourceLang: Lang | None = None
+		self._targetLang: Lang | None = None
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",
 			re.DOTALL,
@@ -421,7 +421,7 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		defiFormatCounter: "typing.Counter[str]" = Counter()
+		defiFormatCounter: typing.Counter[str] = Counter()
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
@@ -486,7 +486,7 @@ class Writer:
 			defiFormat="",
 		)
 
-	def writeSynFile(self, altIndexList: "T_SdList[tuple[bytes, int]]") -> None:
+	def writeSynFile(self, altIndexList: T_SdList[tuple[bytes, int]]) -> None:
 		"""Build .syn file."""
 		if not altIndexList:
 			return
@@ -598,7 +598,7 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		defiFormatCounter: "typing.Counter[str]" = Counter()
+		defiFormatCounter: typing.Counter[str] = Counter()
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
@@ -655,7 +655,7 @@ class Writer:
 			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: "T_SdList[tuple[bytes, bytes]]") -> int:
+	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]) -> int:
 		filename = self._filename + ".idx"
 		if not indexList:
 			return 0
@@ -695,7 +695,7 @@ class Writer:
 				bookname = f"{bookname} ({langs})"
 			log.info(f"bookname: {bookname}")
 
-		ifo: "list[tuple[str, str]]" = [
+		ifo: list[tuple[str, str]] = [
 			("version", "3.0.0"),
 			("bookname", bookname),
 			("wordcount", str(wordCount)),

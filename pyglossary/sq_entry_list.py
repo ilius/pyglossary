@@ -56,8 +56,8 @@ PICKLE_PROTOCOL = 4
 class SqEntryList:
 	def __init__(  # noqa: PLR0913
 		self,
-		entryToRaw: "Callable[[EntryType], RawEntryType]",
-		entryFromRaw: "Callable[[RawEntryType], EntryType]",
+		entryToRaw: Callable[[EntryType], RawEntryType],
+		entryFromRaw: Callable[[RawEntryType], EntryType],
 		filename: str,
 		create: bool = True,
 		persist: bool = False,
@@ -74,8 +74,8 @@ class SqEntryList:
 		self._filename = filename
 
 		self._persist = persist
-		self._con: "sqlite3.Connection | None" = sqlite3.connect(filename)
-		self._cur: "sqlite3.Cursor | None" = self._con.cursor()
+		self._con: sqlite3.Connection | None = sqlite3.connect(filename)
+		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
 		if not filename:
 			raise ValueError(f"invalid {filename=}")
@@ -100,8 +100,8 @@ class SqEntryList:
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,
-		sortEncoding: "str | None",
-		writeOptions: "dict[str, Any]",
+		sortEncoding: str | None,
+		writeOptions: dict[str, Any],
 	) -> None:
 		"""sqliteSortKey[i] == (name, type, valueFunc)."""
 		if self._con is None:

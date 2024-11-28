@@ -32,7 +32,7 @@ website = (
 	"https://github.com/cheusov/dictd/blob/master/dictunformat.1.in",
 	"dictd/dictunformat.1.in - @cheusov/dictd",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"headword_separator": StrOption(
 		comment="separator for headword and alternates",

@@ -46,7 +46,7 @@ website = (
 	"https://github.com/wordset/wordset-dictionary",
 	"@wordset/wordset-dictionary",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 }
 

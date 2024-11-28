@@ -63,7 +63,7 @@ website = None
 
 # EPUB-3: https://www.w3.org/community/epub3/
 
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"group_by_prefix_length": IntOption(
 		comment="Prefix length for grouping",
 	),
@@ -232,7 +232,7 @@ p.groupDefinition {
 	@classmethod
 	def cls_get_prefix(
 		cls: type[EbookWriter],
-		options: "dict[str, Any]",
+		options: dict[str, Any],
 		word: str,
 	) -> str:
 		if not word:

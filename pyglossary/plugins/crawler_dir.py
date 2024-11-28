@@ -50,7 +50,7 @@ singleFile = True
 kind = "directory"
 wiki = ""
 website = None
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"compression": StrOption(
 		values=["", "gz", "bz2", "lzma"],
 		comment="Compression Algorithm",
@@ -184,7 +184,7 @@ class Reader:
 	def _readDir(
 		self,
 		dpath: str,
-		exclude: "set[str] | None",
+		exclude: set[str] | None,
 	) -> Generator[EntryType, None, None]:
 		children = listdir(dpath)
 		if exclude:

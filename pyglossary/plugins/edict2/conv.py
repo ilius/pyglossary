@@ -60,7 +60,7 @@ class Article(NamedTuple):
 
 
 def render_syllables_no_color(
-	hf: "T_htmlfile",
+	hf: T_htmlfile,
 	syllables: Sequence[str],
 	_tones: Sequence[str],
 ) -> None:
@@ -71,7 +71,7 @@ def render_syllables_no_color(
 
 
 def render_syllables_color(
-	hf: "T_htmlfile",
+	hf: T_htmlfile,
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:

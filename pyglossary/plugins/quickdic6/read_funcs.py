@@ -77,7 +77,7 @@ T = TypeVar("T")
 
 def read_list(
 	fp: IO[bytes],
-	fun: "Callable[[IO[bytes]], T]",
+	fun: Callable[[IO[bytes]], T],
 ) -> list[T]:
 	size = read_int(fp)
 	toc = struct.unpack(f">{size + 1}q", fp.read(8 * (size + 1)))

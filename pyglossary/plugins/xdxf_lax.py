@@ -77,7 +77,7 @@ website = (
 	"https://github.com/soshial/xdxf_makedict/tree/master/format_standard",
 	"XDXF standard - @soshial/xdxf_makedict",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"html": BoolOption(comment="Entries are HTML"),
 	"xsl": BoolOption(
 		comment="Use XSL transformation",
@@ -108,9 +108,9 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._encoding = "utf-8"
-		self._htmlTr: "TransformerType | None" = None
+		self._htmlTr: TransformerType | None = None
 		self._re_span_k = re.compile(
 			'<span class="k">[^<>]*</span>(<br/>)?',
 		)
@@ -265,7 +265,7 @@ class Reader:
 	def _mktitle(  # noqa: PLR6301
 		self,
 		title_element: Element,
-		include_opts: "Sequence | None" = None,
+		include_opts: Sequence | None = None,
 	) -> str:
 		if include_opts is None:
 			include_opts = ()

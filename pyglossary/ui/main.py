@@ -103,7 +103,7 @@ infoOverrideSpec = (
 
 @dataclass(slots=True, frozen=True)
 class MainPrepareResult:
-	args: "argparse.Namespace"
+	args: argparse.Namespace
 	uiType: str
 	inputFilename: str
 	outputFilename: str

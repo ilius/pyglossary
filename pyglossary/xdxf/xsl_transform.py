@@ -42,7 +42,7 @@ class XslXdxfTransformer:
 		self._encoding = encoding
 
 	@staticmethod
-	def tostring(elem: "_XSLTResultTree | Element") -> str:
+	def tostring(elem: _XSLTResultTree | Element) -> str:
 		from lxml import etree as ET
 
 		return (

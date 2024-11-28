@@ -41,7 +41,7 @@ entrySep = f"\n{'_' * 40}\n\n"
 noInfo = os.getenv("GLOSSARY_DIFF_NO_INFO") == "1"
 
 
-def formatInfoValueDiff(diff: "Iterator[str]") -> str:
+def formatInfoValueDiff(diff: Iterator[str]) -> str:
 	a = ""
 	b = ""
 	for part in diff:
@@ -61,8 +61,8 @@ def formatInfoValueDiff(diff: "Iterator[str]") -> str:
 def diffGlossary(  # noqa: PLR0912, PLR0913
 	filename1: str,
 	filename2: str,
-	format1: "str | None" = None,
-	format2: "str | None" = None,
+	format1: str | None = None,
+	format2: str | None = None,
 	header: str = "",
 	pager: bool = True,
 ) -> None:
@@ -130,14 +130,14 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		)
 		write(formatted)
 
-	def printInfo(color: str, prefix: str, pair: "tuple[str, str]") -> None:
+	def printInfo(color: str, prefix: str, pair: tuple[str, str]) -> None:
 		key, value = pair
 		spaces = " " * (len(prefix) + 7)
 		valueColor = color + spaces + value.replace("\n", "\n" + spaces + color)
 		formatted = f"{color}{prefix} Info: {key}\n{valueColor}" + entrySep
 		write(formatted)
 
-	def printChangedEntry(entry1: "EntryType", entry2: "EntryType") -> None:
+	def printChangedEntry(entry1: EntryType, entry2: EntryType) -> None:
 		defiDiff = formatDiff(xmlDiff(entry1.defi, entry2.defi))
 		entry1._defi = defiDiff
 		if index1 < 0:
@@ -181,8 +181,8 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		infoPair2 = None
 
 	def printAltsChangedEntry(
-		entry1: "EntryType",
-		entry2: "EntryType",
+		entry1: EntryType,
+		entry2: EntryType,
 		showDefi: bool = True,
 	) -> None:
 		ids = f"#{index1}" if index1 == index2 else f"A#{index1} B#{index2}"

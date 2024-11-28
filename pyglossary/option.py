@@ -23,7 +23,7 @@ __all__ = [
 log = logging.getLogger("pyglossary")
 
 
-def optionFromDict(data: "dict[str, Any]") -> Option:
+def optionFromDict(data: dict[str, Any]) -> Option:
 	className = data.pop("class")
 	optClass: type
 	if className == "Option":
@@ -36,7 +36,7 @@ def optionFromDict(data: "dict[str, Any]") -> Option:
 
 
 class Option:
-	classes: "dict[str, type]" = {}
+	classes: dict[str, type] = {}
 
 	@classmethod
 	def register(cls: type[Option], optClass: type) -> type:
@@ -162,7 +162,7 @@ class BoolOption(Option):
 	@classmethod
 	def evaluate(
 		cls,
-		raw: "str | bool",
+		raw: str | bool,
 	) -> tuple[bool | None, bool]:
 		if raw is None:
 			return None, True
@@ -219,7 +219,7 @@ class IntOption(Option):
 		)
 
 	@classmethod
-	def evaluate(cls, raw: "str | int") -> tuple[int | None, bool]:
+	def evaluate(cls, raw: str | int) -> tuple[int | None, bool]:
 		"""Return (value, isValid)."""
 		try:
 			value = int(raw)
@@ -271,7 +271,7 @@ class FileSizeOption(IntOption):
 		return ""
 
 	@classmethod
-	def evaluate(cls, raw: "str | int") -> tuple[int | None, bool]:
+	def evaluate(cls, raw: str | int) -> tuple[int | None, bool]:
 		if not raw:
 			return 0, True
 		factor = 1
@@ -307,7 +307,7 @@ class FloatOption(Option):
 	@classmethod
 	def evaluate(
 		cls,
-		raw: "str | float | int",
+		raw: str | float,
 	) -> tuple[float | None, bool]:
 		"""Return (value, isValid)."""
 		try:
@@ -340,7 +340,7 @@ class DictOption(Option):
 	@classmethod
 	def evaluate(
 		cls,
-		raw: "str | dict",
+		raw: str | dict,
 	) -> tuple[dict | None, bool]:
 		import ast
 
@@ -396,8 +396,8 @@ class EncodingOption(Option):
 	def __init__(
 		self,
 		customValue: bool = True,
-		values: "list[str] | None" = None,
-		comment: "str | None" = None,
+		values: list[str] | None = None,
+		comment: str | None = None,
 		**kwargs,  # noqa: ANN003
 	) -> None:
 		if values is None:
@@ -448,7 +448,7 @@ class EncodingOption(Option):
 	def groupValues(self) -> dict[str, Any] | None:
 		from collections import OrderedDict
 
-		groups: "dict[str, list[str]]" = OrderedDict()
+		groups: dict[str, list[str]] = OrderedDict()
 		others: list[str] = []
 		for value in self.values or []:
 			cats = self.re_category.findall(value)
@@ -472,8 +472,8 @@ class NewlineOption(Option):
 	def __init__(
 		self,
 		customValue: bool = True,
-		values: "list[str] | None" = None,
-		comment: "str | None" = None,
+		values: list[str] | None = None,
+		comment: str | None = None,
 		**kwargs,  # noqa: ANN003
 	) -> None:
 		if values is None:
@@ -499,7 +499,7 @@ class NewlineOption(Option):
 class UnicodeErrorsOption(Option):
 	def __init__(
 		self,
-		comment: "str | None" = None,
+		comment: str | None = None,
 	) -> None:
 		if comment is None:
 			comment = "Unicode Errors, values: `strict`, `ignore`, `replace`"

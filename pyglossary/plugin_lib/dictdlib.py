@@ -124,7 +124,7 @@ class DictDB:
 		"""
 		self.mode = mode
 		self.quiet = quiet
-		self.indexEntries: "dict[str, list[tuple[int, int]]]" = {}
+		self.indexEntries: dict[str, list[tuple[int, int]]] = {}
 		# indexEntries[word] is a list of (start: int, size: int)
 		self.count = 0
 		self.basename = basename
@@ -139,8 +139,8 @@ class DictDB:
 			self.basename + ".dict" + (".dz" if self.useCompression else "")
 		)
 
-		self.dictFile: "io.IOBase"
-		self.indexFile: "io.IOBase"
+		self.dictFile: io.IOBase
+		self.indexFile: io.IOBase
 		self._open(mode)
 
 		# self.writeentry(url_headword + "\n     " + url, [url_headword])
@@ -215,8 +215,8 @@ class DictDB:
 	def deleteIndexEntry(
 		self,
 		word: str,
-		start: "int | None" = None,
-		size: "int | None" = None,
+		start: int | None = None,
+		size: int | None = None,
 	) -> int:
 		"""
 		Removes an entry from the index; word is the word to search for.
@@ -332,7 +332,7 @@ class DictDB:
 
 			self.update(" mapping")
 
-			sortmap: "dict[str, list[str]]" = {}
+			sortmap: dict[str, list[str]] = {}
 			for entry in indexList:
 				norm = sortNormalize(entry)
 				if norm in sortmap:

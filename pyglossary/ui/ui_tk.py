@@ -869,7 +869,7 @@ class FormatOptionsDialog(tix.Toplevel):
 class FormatOptionsButton(tk.Button):
 	def __init__(
 		self,
-		kind: "Literal['Read', 'Write']",
+		kind: Literal["Read", "Write"],
 		values: dict,
 		formatInput: FormatButton,
 		master=None,
@@ -1031,8 +1031,8 @@ class UI(tix.Frame, UIBase):
 			padx=0,
 		)
 		##
-		self.readOptions: "dict[str, Any]" = {}
-		self.writeOptions: "dict[str, Any]" = {}
+		self.readOptions: dict[str, Any] = {}
+		self.writeOptions: dict[str, Any] = {}
 		##
 		self.readOptionsButton = FormatOptionsButton(
 			"Read",
@@ -1519,11 +1519,11 @@ class UI(tix.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "dict | None" = None,
-		readOptions: "dict | None" = None,
-		writeOptions: "dict | None" = None,
-		convertOptions: "dict | None" = None,
-		glossarySetAttrs: "dict | None" = None,
+		config: dict | None = None,
+		readOptions: dict | None = None,
+		writeOptions: dict | None = None,
+		convertOptions: dict | None = None,
+		glossarySetAttrs: dict | None = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}

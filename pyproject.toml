@@ -101,6 +101,7 @@ select = [
 	"RUF",  # Ruff-specific rules
 ]
 ignore = [
+	"PYI042",  # Type alias `...` should be CamelCase FIXME
 	"RUF039",  # First argument to `re.compile()` is not raw string
 	"FURB189",
 	# FURB189 Subclassing `dict` can be error prone, use `collections.UserDict` instead

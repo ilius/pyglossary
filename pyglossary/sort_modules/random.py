@@ -20,7 +20,7 @@ def normal(**_options) -> SortKeyType:
 
 
 def locale(
-	_collator: "T_Collator",  # noqa: F821
+	_collator: T_Collator,  # noqa: F821
 ) -> SortKeyType:
 	from random import random
 
@@ -40,7 +40,7 @@ def sqlite(**_options) -> SQLiteSortKeyType:
 
 
 def sqlite_locale(
-	_collator: "T_Collator",  # noqa: F821
+	_collator: T_Collator,  # noqa: F821
 	**_options,
 ) -> Callable[..., SQLiteSortKeyType]:
 	from random import random

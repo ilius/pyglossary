@@ -39,7 +39,7 @@ website = (
 	"https://play.google.com/store/apps/details?id=com.almaany.arar",
 	"Almaany.com Arabic Dictionary - Google Play",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:
@@ -49,8 +49,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
@@ -71,7 +71,7 @@ class Reader:
 			raise ValueError("cur is None")
 		from pyglossary.langs.writing_system import getWritingSystemFromText
 
-		alternateDict: "dict[str, list[str]]" = {}
+		alternateDict: dict[str, list[str]] = {}
 		self._cur.execute("select wordkey, searchwordkey from Keys")
 		for row in self._cur.fetchall():
 			if row[0] in alternateDict:

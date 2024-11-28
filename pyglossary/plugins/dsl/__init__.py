@@ -78,7 +78,7 @@ website = (
 	"https://www.lingvo.ru/",
 	"www.lingvo.ru",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(
 		comment="Enable audio objects",
@@ -114,7 +114,7 @@ htmlEntityPattern = re.compile(r"&#?\w+;")
 
 
 def unescape(text: str) -> str:
-	def fixup(m: "re.Match") -> str:
+	def fixup(m: re.Match) -> str:
 		text = m.group(0)
 		if text[:2] == "&#":
 			# character reference
@@ -162,7 +162,7 @@ class Reader:
 		self._glos = glos
 		self._filename = ""
 		self._dirPath = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._fileSize = 0
 		self._bufferLine = ""
 		self._resFileSet: set[str] = set()
@@ -319,7 +319,7 @@ class Reader:
 			yield line
 
 	@staticmethod
-	def sub_title_line(m: "re.Match") -> str:
+	def sub_title_line(m: re.Match) -> str:
 		line = m.group(0)[1:-1]
 		line = line.replace("[']", "")  # FIXME
 		line = line.replace("[/']", "")

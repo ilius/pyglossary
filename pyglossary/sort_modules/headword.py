@@ -21,7 +21,7 @@ def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
 
 
 def locale(
-	collator: "T_Collator",  # noqa: F821
+	collator: T_Collator,  # noqa: F821
 ) -> SortKeyType:
 	cSortKey = collator.getSortKey
 
@@ -45,7 +45,7 @@ def sqlite(sortEncoding: str = "utf-8", **_options) -> SQLiteSortKeyType:
 
 
 def sqlite_locale(
-	collator: "T_Collator",  # noqa: F821
+	collator: T_Collator,  # noqa: F821
 ) -> Callable[..., SQLiteSortKeyType]:
 	cSortKey = collator.getSortKey
 

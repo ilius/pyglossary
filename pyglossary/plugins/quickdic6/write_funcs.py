@@ -83,7 +83,7 @@ T = TypeVar("T")
 
 def write_list(
 	fp: IO[bytes],
-	fun: "Callable[[IO[bytes], T], Any]",
+	fun: Callable[[IO[bytes], T], Any],
 	entries: list[T],
 ) -> int:
 	write_start_offset = fp.tell()

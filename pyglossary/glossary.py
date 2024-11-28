@@ -102,7 +102,7 @@ class Glossary(GlossaryCommon):
 		self,
 		sortKeyName: str = "headword_lower",
 		sortEncoding: str = "utf-8",
-		writeOptions: "dict[str, Any] | None" = None,
+		writeOptions: dict[str, Any] | None = None,
 	) -> None:
 		"""sortKeyName: see doc/sort-key.md."""
 		if self._readers:
@@ -157,17 +157,17 @@ class Glossary(GlossaryCommon):
 		self,
 		inputFilename: str,
 		inputFormat: str = "",
-		direct: "bool | None" = None,
+		direct: bool | None = None,
 		progressbar: bool = True,
 		outputFilename: str = "",
 		outputFormat: str = "",
-		sort: "bool | None" = None,
-		sortKeyName: "str | None" = None,
-		sortEncoding: "str | None" = None,
-		readOptions: "dict[str, Any] | None" = None,
-		writeOptions: "dict[str, Any] | None" = None,
-		sqlite: "bool | None" = None,
-		infoOverride: "dict[str, str] | None" = None,
+		sort: bool | None = None,
+		sortKeyName: str | None = None,
+		sortEncoding: str | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		sqlite: bool | None = None,
+		infoOverride: dict[str, str] | None = None,
 	) -> str | None:
 		self.progressbar = progressbar
 		try:

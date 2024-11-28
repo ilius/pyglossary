@@ -50,12 +50,12 @@ class DetectedFormat(NamedTuple):
 
 
 class PluginManager:
-	plugins: "dict[str, PluginProp]" = {}
-	pluginByExt: "dict[str, PluginProp]" = {}
+	plugins: dict[str, PluginProp] = {}
+	pluginByExt: dict[str, PluginProp] = {}
 	loadedModules: set[str] = set()
 
-	formatsReadOptions: "dict[str, dict[str, Any]]" = {}
-	formatsWriteOptions: "dict[str, dict[str, Any]]" = {}
+	formatsReadOptions: dict[str, dict[str, Any]] = {}
+	formatsWriteOptions: dict[str, dict[str, Any]] = {}
 	# for example formatsReadOptions[format][optName] gives you the default value
 
 	readFormats: list[str] = []
@@ -108,7 +108,7 @@ class PluginManager:
 	@classmethod
 	def _loadPluginByDict(
 		cls: type[PluginManager],
-		attrs: "dict[str, Any]",
+		attrs: dict[str, Any],
 		modulePath: str,
 	) -> None:
 		format = attrs["name"]

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def registerConfigOption(
-	parser: "argparse.ArgumentParser",
+	parser: argparse.ArgumentParser,
 	key: str,
 	option: Option,
 ) -> None:
@@ -133,7 +133,7 @@ def evaluateWriteOptions(
 
 
 def parseReadWriteOptions(
-	args: "argparse.Namespace",
+	args: argparse.Namespace,
 ) -> tuple[tuple[dict[str, Any], dict[str, Any]] | None, str | None]:
 	from pyglossary.ui.ui_cmd import parseFormatOptionsStr
 

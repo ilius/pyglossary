@@ -42,7 +42,7 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/SQL"
 website = None
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"info_keys": ListOption(comment="List of dbinfo table columns"),
 	"add_extra_info": BoolOption(comment="Create dbinfo_extra table"),
@@ -53,7 +53,7 @@ optionsProp: "dict[str, Option]" = {
 
 class Writer:
 	_encoding: str = "utf-8"
-	_info_keys: "list | None" = None
+	_info_keys: list | None = None
 	_add_extra_info: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False
@@ -61,7 +61,7 @@ class Writer:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase | None" = None
+		self._file: io.IOBase | None = None
 
 	def finish(self) -> None:
 		self._filename = ""

@@ -18,7 +18,7 @@ import typing
 
 __all__ = ["KeyData", "RawKeyData"]
 
-RawKeyData: "typing.TypeAlias" = "tuple[int, int, typing.Sequence[str]]"
+RawKeyData: typing.TypeAlias = "tuple[int, int, typing.Sequence[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
 
 

@@ -53,7 +53,7 @@ u_pat_newline = re.compile("[\r\n]+")
 unknownHtmlEntries = set()
 
 
-def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
+def replaceHtmlEntryNoEscapeCB(u_match: re.Match) -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	Replace character entity with the corresponding character.
@@ -100,7 +100,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: "re.Match") -> str:
 	raise ValueError(f"{u_text[0] =}")
 
 
-def replaceHtmlEntryCB(u_match: "re.Match") -> str:
+def replaceHtmlEntryCB(u_match: re.Match) -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	Same as replaceHtmlEntryNoEscapeCB, but escapes result string.
@@ -121,7 +121,7 @@ def replaceHtmlEntryCB(u_match: "re.Match") -> str:
 # 	return chr(code)
 
 
-def escapeNewlinesCallback(u_match: "re.Match") -> str:
+def escapeNewlinesCallback(u_match: re.Match) -> str:
 	"""u_match: instance of _sre.SRE_Match."""
 	ch = u_match.group(0)
 	if ch == "\n":

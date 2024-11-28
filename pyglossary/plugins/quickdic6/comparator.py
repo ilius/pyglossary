@@ -28,8 +28,8 @@ class Comparator:
 
 	def compare(
 		self,
-		tup1: "tuple[str, str]",
-		tup2: "tuple[str, str]",
+		tup1: tuple[str, str],
+		tup2: tuple[str, str],
 	) -> Literal[0, 1, -1]:
 		# assert isinstance(tup1, tuple)
 		# assert isinstance(tup2, tuple)

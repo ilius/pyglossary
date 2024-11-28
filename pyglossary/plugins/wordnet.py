@@ -60,7 +60,7 @@ website = (
 )
 
 # key is option/argument name, value is instance of Option
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 # original expression from
 # http://stackoverflow.com/questions/694344/regular-expression-that-matches-between-quotes-containing-escaped-quotes
@@ -215,7 +215,7 @@ class WordNet:
 
 	def __init__(self, wordnetdir: str) -> None:
 		self.wordnetdir = wordnetdir
-		self.collector: "dict[str, list[str]]" = defaultdict(list)
+		self.collector: dict[str, list[str]] = defaultdict(list)
 
 	@staticmethod
 	def iterlines(dict_dir: str) -> Iterator[str]:
@@ -340,7 +340,7 @@ class Reader:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0
-		self.wordnet: "WordNet | None" = None
+		self.wordnet: WordNet | None = None
 
 	def __len__(self) -> int:
 		return self._wordCount

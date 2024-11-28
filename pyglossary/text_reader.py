@@ -24,7 +24,7 @@ __all__ = ["TextFilePosWrapper", "TextGlossaryReader", "nextBlockResultType"]
 
 log = logging.getLogger("pyglossary")
 
-nextBlockResultType: "typing.TypeAlias" = (
+nextBlockResultType: typing.TypeAlias = (
 	"tuple[str | list[str], str, list[tuple[str, str]] | None] | None"
 )
 # (
@@ -35,7 +35,7 @@ nextBlockResultType: "typing.TypeAlias" = (
 
 
 class TextFilePosWrapper(io.TextIOBase):
-	def __init__(self, fileobj: "io.TextIOBase", encoding: str) -> None:
+	def __init__(self, fileobj: io.TextIOBase, encoding: str) -> None:
 		self.fileobj = fileobj
 		self._encoding = encoding
 		self.pos = 0
@@ -63,7 +63,7 @@ class TextGlossaryReader:
 	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._hasInfo = hasInfo
 		self._pendingEntries: list[EntryType] = []
 		self._wordCount = 0
@@ -171,7 +171,7 @@ class TextGlossaryReader:
 		self._file = nullTextIO
 
 	def newEntry(self, word: MultiStr, defi: str) -> EntryType:
-		byteProgress: "tuple[int, int] | None" = None
+		byteProgress: tuple[int, int] | None = None
 		if self._progress:
 			byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(
@@ -279,7 +279,7 @@ class TextGlossaryReader:
 	def isInfoWord(cls, word: str) -> bool:
 		raise NotImplementedError
 
-	def isInfoWords(self, arg: "str | list[str]") -> bool:
+	def isInfoWords(self, arg: str | list[str]) -> bool:
 		if isinstance(arg, str):
 			return self.isInfoWord(arg)
 		if isinstance(arg, list):

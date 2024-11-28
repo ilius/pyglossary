@@ -26,8 +26,8 @@ class Writer:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None"
-		self._cur: "sqlite3.Cursor | None"
+		self._con: sqlite3.Connection | None
+		self._cur: sqlite3.Cursor | None
 
 	def open(self, filename: str) -> None:
 		import sqlite3
@@ -103,8 +103,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None"
-		self._cur: "sqlite3.Cursor | None"
+		self._con: sqlite3.Connection | None
+		self._cur: sqlite3.Cursor | None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect

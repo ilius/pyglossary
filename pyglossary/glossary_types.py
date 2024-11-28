@@ -80,9 +80,9 @@ class EntryType(typing.Protocol):  # noqa: PLR0904
 
 	def addAlt(self, alt: str) -> None: ...
 
-	def editFuncWord(self, func: "Callable[[str], str]") -> None: ...
+	def editFuncWord(self, func: Callable[[str], str]) -> None: ...
 
-	def editFuncDefi(self, func: "Callable[[str], str]") -> None: ...
+	def editFuncDefi(self, func: Callable[[str], str]) -> None: ...
 
 	def strip(self) -> None: ...
 
@@ -102,8 +102,8 @@ class EntryType(typing.Protocol):  # noqa: PLR0904
 class EntryListType(typing.Protocol):
 	def __init__(
 		self,
-		entryToRaw: "Callable[[EntryType], RawEntryType]",
-		entryFromRaw: "Callable[[RawEntryType], EntryType]",
+		entryToRaw: Callable[[EntryType], RawEntryType],
+		entryFromRaw: Callable[[RawEntryType], EntryType],
 	) -> None: ...
 
 	@property
@@ -123,8 +123,8 @@ class EntryListType(typing.Protocol):
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,
-		sortEncoding: "str | None",
-		writeOptions: "dict[str, Any]",
+		sortEncoding: str | None,
+		writeOptions: dict[str, Any],
 	) -> None: ...
 
 	def sort(self) -> None: ...
@@ -202,7 +202,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 		_class: str = "",
 	) -> str: ...
 
-	def getConfig(self, name: str, default: "str | None") -> str | None: ...
+	def getConfig(self, name: str, default: str | None) -> str | None: ...
 
 	def addEntry(self, entry: EntryType) -> None: ...
 
@@ -211,7 +211,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "",
-		byteProgress: "tuple[int, int] | None" = None,
+		byteProgress: tuple[int, int] | None = None,
 	) -> EntryType: ...
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType: ...
@@ -221,7 +221,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def stripFullHtml(
 		self,
-		errorHandler: "Callable[[EntryType, str], None] | None" = None,
+		errorHandler: Callable[[EntryType, str], None] | None = None,
 	) -> None: ...
 
 	def preventDuplicateWords(self) -> None: ...

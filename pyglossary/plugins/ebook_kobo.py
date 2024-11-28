@@ -71,7 +71,7 @@ website = (
 # https://help.kobo.com/hc/en-us/articles/360017640093-Add-new-dictionaries-to-your-Kobo-eReader
 
 
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 # Penelope option: marisa_index_size=1000000
@@ -191,7 +191,7 @@ class Writer:
 				continue
 			l_word = entry.l_word
 			allWords += l_word
-			wordsByPrefix: "dict[str, list[str]]" = OrderedDict()
+			wordsByPrefix: dict[str, list[str]] = OrderedDict()
 			for word in l_word:
 				prefix = self.get_prefix(word)
 				if prefix in wordsByPrefix:

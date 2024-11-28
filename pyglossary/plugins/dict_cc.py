@@ -44,7 +44,7 @@ website = (
 	"https://play.google.com/store/apps/details?id=cc.dict.dictcc",
 	"dict.cc dictionary - Google Play",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:
@@ -54,8 +54,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect
@@ -75,7 +75,7 @@ class Reader:
 
 	@staticmethod
 	def makeList(
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		input_elements: list[Element],
 		processor: Callable,
 		single_prefix: str = "",
@@ -97,9 +97,9 @@ class Reader:
 
 	@staticmethod
 	def makeGroupsList(
-		hf: "T_htmlfile",
-		groups: "list[tuple[str, str]]",
-		processor: "Callable[[T_htmlfile, tuple[str, str]], None]",
+		hf: T_htmlfile,
+		groups: list[tuple[str, str]],
+		processor: Callable[[T_htmlfile, tuple[str, str]], None],
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:
@@ -119,8 +119,8 @@ class Reader:
 
 	def writeSense(  # noqa: PLR6301
 		self,
-		hf: "T_htmlfile",
-		row: "tuple[str, str]",
+		hf: T_htmlfile,
+		row: tuple[str, str],
 	) -> None:
 		from lxml import etree as ET
 
@@ -205,7 +205,7 @@ class Reader:
 			key=itemgetter(0),
 		):
 			headword = html.unescape(headwordEscaped)
-			groups: "list[tuple[str, str]]" = [
+			groups: list[tuple[str, str]] = [
 				(term2, entry_type) for _, term2, entry_type in groupsOrig
 			]
 			f = BytesIO()

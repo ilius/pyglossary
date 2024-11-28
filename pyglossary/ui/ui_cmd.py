@@ -200,7 +200,7 @@ class UI(UIBase):
 			return msg
 		return "\r" + wc_ljust(msg, term_width)
 
-	def fixLogHandler(self, h: "logging.Handler") -> None:
+	def fixLogHandler(self, h: logging.Handler) -> None:
 		def reset() -> None:
 			h.formatter.fill = None
 
@@ -270,11 +270,11 @@ class UI(UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "dict | None" = None,
-		readOptions: "dict | None" = None,
-		writeOptions: "dict | None" = None,
-		convertOptions: "dict | None" = None,
-		glossarySetAttrs: "dict | None" = None,
+		config: dict | None = None,
+		readOptions: dict | None = None,
+		writeOptions: dict | None = None,
+		convertOptions: dict | None = None,
+		glossarySetAttrs: dict | None = None,
 	) -> bool:
 		if config is None:
 			config = {}

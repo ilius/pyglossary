@@ -37,7 +37,7 @@ class indir:
 		create: bool = False,
 		clear: bool = False,
 	) -> None:
-		self.old_pwd: "str | None" = None
+		self.old_pwd: str | None = None
 		self.dir = directory
 		self.create = create
 		self.clear = clear
@@ -63,7 +63,7 @@ class indir:
 		self.old_pwd = None
 
 
-def _idzip(filename: "str | Path") -> bool:
+def _idzip(filename: str | Path) -> bool:
 	try:
 		import idzip
 	except ModuleNotFoundError:
@@ -126,7 +126,7 @@ def runDictzip(filename: str | Path, method: str = "") -> None:
 def _rmtreeError(
 	_func: Callable,
 	_direc: str,
-	exc_info: "tuple[type, Exception, types.TracebackType] | None",
+	exc_info: tuple[type, Exception, types.TracebackType] | None,
 ) -> None:
 	if exc_info is None:
 		return

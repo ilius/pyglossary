@@ -57,8 +57,8 @@ def getEntryHighlighter() -> Callable[[EntryType], None] | None:
 
 def viewGlossary(
 	filename: str,
-	format: "str | None" = None,
-	glos: "GlossaryType | None" = None,
+	format: str | None = None,
+	glos: GlossaryType | None = None,
 ) -> None:
 	highlightEntry = getEntryHighlighter()
 

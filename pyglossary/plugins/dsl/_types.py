@@ -19,10 +19,10 @@ class TransformerType(typing.Protocol):
 	input: str
 	output: str
 	currentKey: str
-	attrs: "dict[str, str | None]"
+	attrs: dict[str, str | None]
 	attrName: str
 	audio: bool
-	resFileSet: "set[str]"
+	resFileSet: set[str]
 	exampleColor: str
 
 	def __init__(self) -> None:

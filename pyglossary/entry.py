@@ -49,8 +49,8 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 		self,
 		fname: str,
 		data: bytes = b"",
-		tmpPath: "str | None" = None,
-		byteProgress: "tuple[int, int] | None" = None,
+		tmpPath: str | None = None,
+		byteProgress: tuple[int, int] | None = None,
 	) -> None:
 		if data and tmpPath:
 			os.makedirs(dirname(tmpPath), mode=0o755, exist_ok=True)
@@ -127,10 +127,10 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def addAlt(self, alt: str) -> None:
 		pass
 
-	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+	def editFuncWord(self, func: Callable[[str], str]) -> None:
 		pass
 
-	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self, func: Callable[[str], str]) -> None:
 		pass
 
 	def strip(self) -> None:
@@ -195,7 +195,7 @@ class Entry(BaseEntry):
 
 	@staticmethod
 	def getRawEntrySortKey(
-		key: "Callable[[bytes], Any]",
+		key: Callable[[bytes], Any],
 		rawEntryCompress: bool,
 	) -> Callable[[RawEntryType], Any]:
 		# FIXME: this type for `key` is only for rawEntryCompress=False
@@ -214,7 +214,7 @@ class Entry(BaseEntry):
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "m",
-		byteProgress: "tuple[int, int] | None" = None,
+		byteProgress: tuple[int, int] | None = None,
 	) -> None:
 		"""
 		Create a new Entry.
@@ -315,7 +315,7 @@ class Entry(BaseEntry):
 		l_word.append(alt)
 		self._word = l_word
 
-	def editFuncWord(self, func: "Callable[[str], str]") -> None:
+	def editFuncWord(self, func: Callable[[str], str]) -> None:
 		"""
 		Run function `func` on all the words.
 
@@ -328,7 +328,7 @@ class Entry(BaseEntry):
 
 		self._word = [func(st) for st in self._word]
 
-	def editFuncDefi(self, func: "Callable[[str], str]") -> None:
+	def editFuncDefi(self, func: Callable[[str], str]) -> None:
 		"""
 		Run function `func` on all the definitions.
 

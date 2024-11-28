@@ -103,7 +103,7 @@ class AboutWidget(gtk.Box):
 	def newTabWidgetTextView(
 		text: str,
 		wrap: bool = False,
-		justification: "gtk.Justification | None" = None,
+		justification: gtk.Justification | None = None,
 	):
 		tv = gtk.TextView()
 		if wrap:

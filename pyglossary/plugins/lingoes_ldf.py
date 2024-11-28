@@ -52,7 +52,7 @@ website = (
 	"http://www.lingoes.net/en/dictionary/dict_format.php",
 	"Lingoes.net",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(comment="Enable resources / data files"),
 	"encoding": EncodingOption(),

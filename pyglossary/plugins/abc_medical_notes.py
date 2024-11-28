@@ -40,7 +40,7 @@ website = (
 	_url,
 	"ABC Medical Notes 2021 - Google Play",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:
@@ -50,8 +50,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect

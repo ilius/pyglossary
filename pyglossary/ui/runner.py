@@ -34,7 +34,7 @@ def canRunGUI() -> bool:
 	return True
 
 
-def shouldUseCMD(args: "argparse.Namespace") -> bool:
+def shouldUseCMD(args: argparse.Namespace) -> bool:
 	if not canRunGUI():
 		return True
 	if args.interactive:
@@ -48,11 +48,11 @@ def base_ui_run(  # noqa: PLR0913
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	config: "dict | None" = None,
-	readOptions: "dict | None" = None,
-	writeOptions: "dict | None" = None,
-	convertOptions: "dict | None" = None,
-	glossarySetAttrs: "dict | None" = None,
+	config: dict | None = None,
+	readOptions: dict | None = None,
+	writeOptions: dict | None = None,
+	convertOptions: dict | None = None,
+	glossarySetAttrs: dict | None = None,
 ) -> bool:
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
@@ -87,7 +87,7 @@ def base_ui_run(  # noqa: PLR0913
 
 
 def getRunner(
-	args: "argparse.Namespace",
+	args: argparse.Namespace,
 	ui_type: str,
 	logArg: logging.Logger,
 ) -> Callable | None:

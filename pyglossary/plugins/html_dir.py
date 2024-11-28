@@ -56,7 +56,7 @@ singleFile = False
 kind = "directory"
 wiki = ""
 website = None
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"resources": BoolOption(
 		comment="Enable resources / data files",
@@ -119,7 +119,7 @@ class Writer:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._fileObj: "io.IOBase | None" = None
+		self._fileObj: io.IOBase | None = None
 		self._encoding = "utf-8"
 		self._filename_format = "{n:05d}.html"
 		self._tail = "</body></html>"
@@ -167,7 +167,7 @@ class Writer:
 		)
 		return self._fileObj
 
-	def fixLinks(self, linkTargetSet: "set[str]") -> None:  # noqa: PLR0912
+	def fixLinks(self, linkTargetSet: set[str]) -> None:  # noqa: PLR0912
 		import gc
 
 		gc.collect()
@@ -175,7 +175,7 @@ class Writer:
 
 		filenameList = self._filenameList
 
-		fileByWord: "dict[str, list[tuple[str, int]]]" = {}
+		fileByWord: dict[str, list[tuple[str, int]]] = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")  # noqa: PLW2901
 			if not line:
@@ -320,7 +320,7 @@ class Writer:
 			_file.write("</table></body></html>")
 
 	@staticmethod
-	def _subResSrc(m: "re.Match") -> str:
+	def _subResSrc(m: re.Match) -> str:
 		url = m.group(1)
 		if "://" in url:
 			return m.group(0)

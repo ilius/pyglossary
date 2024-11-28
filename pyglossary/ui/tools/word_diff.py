@@ -47,7 +47,7 @@ def xmlDiff(text1: str, text2: str) -> Iterator[str]:
 	return difflib.ndiff(words1, words2, linejunk=None, charjunk=None)
 
 
-def formatDiff(diff: "Iterator[str]") -> str:
+def formatDiff(diff: Iterator[str]) -> str:
 	res = ""
 	for part in diff:
 		if part[0] == " ":

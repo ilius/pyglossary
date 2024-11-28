@@ -52,7 +52,7 @@ website = (
 	"https://www.edrdg.org/wiki/index.php/Main_Page",
 	"EDRDG Wiki",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:
@@ -79,7 +79,7 @@ class Reader:
 
 	@staticmethod
 	def makeList(
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		input_objects: list[Element],
 		processor: Callable,
 		single_prefix: str = "",
@@ -101,7 +101,7 @@ class Reader:
 
 	def writeTrans(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		trans: Element,
 	) -> None:
 		from lxml import etree as ET
@@ -157,7 +157,7 @@ class Reader:
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
 			kebList: list[str] = []
-			rebList: "list[tuple[str, list[str]]]" = []
+			rebList: list[tuple[str, list[str]]] = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")
@@ -266,7 +266,7 @@ class Reader:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 

@@ -50,7 +50,7 @@ class InfoItem:
 	def __init__(
 		self,
 		name: str,
-		decode: "Callable[[bytes], Any] | None" = None,
+		decode: Callable[[bytes], Any] | None = None,
 		attr: bool = False,
 	) -> None:
 		self.name = name

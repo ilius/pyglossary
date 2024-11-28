@@ -19,9 +19,9 @@ def extractInlineHtmlImages(
 	outDir: str,
 	fnamePrefix: str = "",
 ) -> tuple[str, list[tuple[str, str]]]:
-	imageDataDict: "dict[str, bytes]" = {}
+	imageDataDict: dict[str, bytes] = {}
 
-	def subFunc(m: "re.Match[str]") -> str:
+	def subFunc(m: re.Match[str]) -> str:
 		src = m.group(1)[len("data:image/") :]
 		i = src.find(";")
 		if i < 0:

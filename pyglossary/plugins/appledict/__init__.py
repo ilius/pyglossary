@@ -81,7 +81,7 @@ website = (
 	"Dictionary User Guide for Mac",
 )
 # FIXME: rename indexes arg/option to indexes_lang?
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"clean_html": BoolOption(comment="use BeautifulSoup parser"),
 	"css": StrOption(
 		comment="custom .css file path",
@@ -136,15 +136,15 @@ def loadBeautifulSoup() -> None:
 		)
 
 
-def abspath_or_None(path: "str | None") -> str | None:
+def abspath_or_None(path: str | None) -> str | None:
 	if not path:
 		return None
 	return os.path.abspath(os.path.expanduser(path))
 
 
 def write_header(
-	toFile: "io.TextIOBase",
-	front_back_matter: "str | None",
+	toFile: io.TextIOBase,
+	front_back_matter: str | None,
 ) -> None:
 	# write header
 	toFile.write(
@@ -161,7 +161,7 @@ def write_header(
 			toFile.write(_file.read())
 
 
-def format_default_prefs(default_prefs: "dict[str, Any] | None") -> str:
+def format_default_prefs(default_prefs: dict[str, Any] | None) -> str:
 	"""
 	:type default_prefs: dict or None
 
@@ -243,7 +243,7 @@ class Writer:
 	_clean_html: bool = True
 	_css: str = ""
 	_xsl: str = ""
-	_default_prefs: "dict | None" = None
+	_default_prefs: dict | None = None
 	_prefs_html: str = ""
 	_front_back_matter: str = ""
 	_jing: bool = False
@@ -267,11 +267,11 @@ class Writer:
 
 		glos = self._glos
 		clean_html = self._clean_html
-		css: "str | None" = self._css
-		xsl: "str | None" = self._xsl
+		css: str | None = self._css
+		xsl: str | None = self._xsl
 		default_prefs = self._default_prefs
-		prefs_html: "str | None" = self._prefs_html
-		front_back_matter: "str | None" = self._front_back_matter
+		prefs_html: str | None = self._prefs_html
+		front_back_matter: str | None = self._front_back_matter
 		jing = self._jing
 		indexes = self._indexes
 
@@ -328,7 +328,7 @@ class Writer:
 				_id = next(generate_id)
 				quoted_title = quote_string(long_title, BeautifulSoup)
 
-				content_title: "str | None" = long_title
+				content_title: str | None = long_title
 				if entry.defiFormat == "x":
 					defi = xdxf_to_html.transformByInnerString(defi)
 					content_title = None

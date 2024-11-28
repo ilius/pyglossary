@@ -42,7 +42,7 @@ log = logging.getLogger("pyglossary")
 
 
 def optionsPropFromDict(
-	optionsPropDict: "dict[str, Any]",
+	optionsPropDict: dict[str, Any],
 ) -> dict[str, Option]:
 	props = {}
 	for name, propDict in optionsPropDict.items():
@@ -55,7 +55,7 @@ def optionsPropFromDict(
 	return props
 
 
-def sortOnWriteFromStr(sortOnWriteStr: "str | None") -> StrWithDesc:
+def sortOnWriteFromStr(sortOnWriteStr: str | None) -> StrWithDesc:
 	if sortOnWriteStr is None:
 		return DEFAULT_NO
 	return flagsByName[sortOnWriteStr]
@@ -109,21 +109,21 @@ class PluginProp:  # noqa: PLR0904
 		self._extensions: list[str]
 		self._extensionCreate: str
 		self._singleFile: bool
-		self._optionsProp: "dict[str, Option]"
+		self._optionsProp: dict[str, Option]
 		self._sortOnWrite: YesNoAlwaysNever
-		self._sortKeyName: "str | None"
+		self._sortKeyName: str | None
 		self._canRead: bool
 		self._canWrite: bool
-		self._readOptions: "dict[str, Any]"
-		self._writeOptions: "dict[str, Any]"
+		self._readOptions: dict[str, Any]
+		self._writeOptions: dict[str, Any]
 		self._readCompressions: list[str]
-		self._readDepends: "dict[str, str]"
-		self._writeDepends: "dict[str, str]"
+		self._readDepends: dict[str, str]
+		self._writeDepends: dict[str, str]
 
 	@classmethod
 	def fromDict(
 		cls: type,
-		attrs: "dict[str, Any]",
+		attrs: dict[str, Any],
 		modulePath: str,
 	) -> None:
 		self = cls()

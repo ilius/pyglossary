@@ -179,7 +179,7 @@ class EbookWriter:
 		self,
 		relative_path: str,
 		contents: bytes,
-		mode: "int | None" = None,
+		mode: int | None = None,
 	) -> None:
 		if mode is None:
 			mode = zipfile.ZIP_DEFLATED

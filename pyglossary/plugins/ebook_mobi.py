@@ -69,7 +69,7 @@ kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
 website = None
 
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"group_by_prefix_length": IntOption(
 		comment="Prefix length for grouping",
 	),
@@ -252,7 +252,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		self,
 		word: str,
 		defi: str,
-		variants: "list[str] | None" = None,
+		variants: list[str] | None = None,
 	) -> str:
 		hide_word_index = self._hide_word_index
 		infl = ""
@@ -288,7 +288,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		)
 
 	@staticmethod
-	def getLangCode(lang: "Lang | None") -> str:
+	def getLangCode(lang: Lang | None) -> str:
 		return lang.code if isinstance(lang, Lang) else ""
 
 	def get_opf_contents(

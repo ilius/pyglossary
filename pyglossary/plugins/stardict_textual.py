@@ -60,7 +60,7 @@ website = (
 	"/blob/master/dict/doc/TextualDictionaryFileFormat",
 	"TextualDictionaryFileFormat",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"xdxf_to_html": BoolOption(
 		comment="Convert XDXF entries to HTML",
@@ -80,9 +80,9 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._fileSize = 0
-		self._xdxfTr: "XdxfTransformer | None" = None
+		self._xdxfTr: XdxfTransformer | None = None
 
 	def xdxf_setup(self) -> XdxfTransformer:
 		from pyglossary.xdxf.transform import XdxfTransformer
@@ -169,7 +169,7 @@ class Reader:
 
 	def renderDefiList(
 		self,
-		defisWithFormat: "list[tuple[str, str]]",
+		defisWithFormat: list[tuple[str, str]],
 	) -> tuple[str, str]:
 		if not defisWithFormat:
 			return "", ""
@@ -290,7 +290,7 @@ class Writer:
 
 	def writeInfo(
 		self,
-		maker: "builder.ElementMaker",
+		maker: builder.ElementMaker,
 		pretty: bool,
 	) -> None:
 		from lxml import etree as ET
@@ -330,7 +330,7 @@ class Writer:
 
 	def writeDataEntry(
 		self,
-		maker: "builder.ElementMaker",  # noqa: ARG002
+		maker: builder.ElementMaker,  # noqa: ARG002
 		entry: EntryType,
 	) -> None:
 		entry.save(self._resDir)

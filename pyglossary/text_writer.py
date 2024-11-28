@@ -26,9 +26,9 @@ file_size_check_every = 100
 class TextGlossaryWriter:
 	_encoding: str = "utf-8"
 	_newline: str = "\n"
-	_wordListEncodeFunc: "Callable[[list[str]], str] | None" = None
-	_wordEscapeFunc: "Callable[[str], str] | None" = None
-	_defiEscapeFunc: "Callable[[str], str] | None" = None
+	_wordListEncodeFunc: Callable[[list[str]], str] | None = None
+	_wordEscapeFunc: Callable[[str], str] | None = None
+	_defiEscapeFunc: Callable[[str], str] | None = None
 	_ext: str = ".txt"
 	_head: str = ""
 	_tail: str = ""
@@ -41,11 +41,11 @@ class TextGlossaryWriter:
 		glos: GlossaryType,
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
-		outInfoKeysAliasDict: "dict[str, str] | None" = None,
+		outInfoKeysAliasDict: dict[str, str] | None = None,
 	) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		self._resDir = ""
 
 		if not entryFmt:
@@ -62,17 +62,17 @@ class TextGlossaryWriter:
 	# TODO: use @property setters
 	def setAttrs(  # noqa: PLR0913
 		self,
-		encoding: "str | None" = None,
-		newline: "str | None" = None,
-		wordListEncodeFunc: "Callable | None" = None,
-		wordEscapeFunc: "Callable | None" = None,
-		defiEscapeFunc: "Callable | None" = None,
-		ext: "str | None" = None,
-		head: "str | None" = None,
-		tail: "str | None" = None,
-		resources: "bool | None" = None,
-		word_title: "bool | None" = None,
-		file_size_approx: "int | None" = None,
+		encoding: str | None = None,
+		newline: str | None = None,
+		wordListEncodeFunc: Callable | None = None,
+		wordEscapeFunc: Callable | None = None,
+		defiEscapeFunc: Callable | None = None,
+		ext: str | None = None,
+		head: str | None = None,
+		tail: str | None = None,
+		resources: bool | None = None,
+		word_title: bool | None = None,
+		file_size_approx: int | None = None,
 	) -> None:
 		if encoding is not None:
 			self._encoding = encoding
@@ -106,7 +106,7 @@ class TextGlossaryWriter:
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-	def _doWriteInfo(self, _file: "io.TextIOBase") -> None:
+	def _doWriteInfo(self, _file: io.TextIOBase) -> None:
 		entryFmt = self._entryFmt
 		outInfoKeysAliasDict = self._outInfoKeysAliasDict
 		wordEscapeFunc = self._wordEscapeFunc
@@ -218,12 +218,12 @@ def writeTxt(  # noqa: PLR0913
 	entryFmt: str = "",  # contain {word} and {defi}
 	filename: str = "",
 	writeInfo: bool = True,
-	wordEscapeFunc: "Callable | None" = None,
-	defiEscapeFunc: "Callable | None" = None,
+	wordEscapeFunc: Callable | None = None,
+	defiEscapeFunc: Callable | None = None,
 	ext: str = ".txt",
 	head: str = "",
 	tail: str = "",
-	outInfoKeysAliasDict: "dict[str, str] | None" = None,
+	outInfoKeysAliasDict: dict[str, str] | None = None,
 	encoding: str = "utf-8",
 	newline: str = "\n",
 	resources: bool = True,

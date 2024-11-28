@@ -69,10 +69,10 @@ def quote_string(value: str, BeautifulSoup: Any) -> str:
 
 def indexes_generator(
 	indexes_lang: str,
-) -> """Callable[
+) -> Callable[
 	[str, list[str], str, Any],
 	str,
-]""":
+]:
 	"""Generate indexes according to glossary language."""
 	indexer = None
 	"""Callable[[Sequence[str], str], Sequence[str]]"""

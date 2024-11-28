@@ -53,7 +53,7 @@ re_margin = re.compile(r"margin-left:(\d)em")
 
 
 def prepare_content(
-	title: "str | None",
+	title: str | None,
 	body: str,
 	BeautifulSoup: Any,
 ) -> str:
@@ -79,7 +79,7 @@ def prepare_content(
 
 
 def prepare_content_without_soup(
-	title: "str | None",
+	title: str | None,
 	body: str,
 ) -> str:
 	# somewhat analogue to what BeautifulSoup suppose to do
@@ -167,7 +167,7 @@ def _prepare_onclick(soup) -> None:
 
 # TODO: PLR0912 Too many branches (18 > 12)
 def prepare_content_with_soup(  # noqa: PLR0912
-	title: "str | None",
+	title: str | None,
 	body: str,
 	BeautifulSoup: Any,
 ) -> str:
@@ -234,7 +234,7 @@ def cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
-def href_sub(x: "re.Match") -> str:
+def href_sub(x: re.Match) -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
@@ -262,7 +262,7 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def fix_sound_link(href: str, tag: "dict[str, Any]") -> None:
+def fix_sound_link(href: str, tag: dict[str, Any]) -> None:
 	tag["href"] = f'javascript:new Audio("{href[len("sound://"):]}").play();'
 
 

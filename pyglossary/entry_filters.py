@@ -216,7 +216,7 @@ class StripFullHtml(EntryFilter):
 	def __init__(
 		self,
 		glos: GlossaryType,  # noqa: ARG002
-		errorHandler: "Callable[[EntryType, str], None] | None",
+		errorHandler: Callable[[EntryType, str], None] | None,
 	) -> None:
 		self._errorHandler = errorHandler
 
@@ -267,7 +267,7 @@ class NormalizeHtml(EntryFilter):
 		)
 
 	@staticmethod
-	def _subLower(m: "re.Match") -> str:
+	def _subLower(m: re.Match) -> str:
 		return m.group(0).lower()
 
 	def _fixDefi(self, st: str) -> str:
@@ -294,7 +294,7 @@ class LanguageCleanup(EntryFilter):
 
 	def __init__(self, glos: GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
-		self._run_func: "Callable[[EntryType], EntryType | None] | None" = None
+		self._run_func: Callable[[EntryType], EntryType | None] | None = None
 
 	def prepare(self) -> None:
 		langCodes = {
@@ -435,7 +435,7 @@ class UnescapeWordLinks(EntryFilter):
 		)
 		self._unescape = unescape_unicode
 
-	def _sub(self, m: "re.Match") -> str:
+	def _sub(self, m: re.Match) -> str:
 		return self._unescape(m.group(0))
 
 	def run(self, entry: EntryType) -> EntryType | None:

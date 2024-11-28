@@ -118,7 +118,7 @@ _sortKeyByName = {item.name: item for item in namedSortKeyList}
 
 
 def lookupSortKey(sortKeyId: str) -> NamedSortKey | None:
-	localeName: "str | None" = None
+	localeName: str | None = None
 
 	parts = sortKeyId.split(":")
 	if len(parts) == 1:
@@ -145,9 +145,9 @@ def lookupSortKey(sortKeyId: str) -> NamedSortKey | None:
 
 	from icu import Collator, Locale  # type: ignore
 
-	localeObj: "T_Locale" = Locale(localeName)
+	localeObj: T_Locale = Locale(localeName)
 	localeNameFull = localeObj.getName()
-	collator: "T_Collator" = Collator.createInstance(localeObj)
+	collator: T_Collator = Collator.createInstance(localeObj)
 
 	return NamedSortKey(
 		name=f"{localeSK.name}:{localeNameFull}",

@@ -40,7 +40,7 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def tell(self) -> int:
 		raise NotImplementedError
 
-	def truncate(self, pos: "int | None" = None) -> int:
+	def truncate(self, pos: int | None = None) -> int:
 		raise NotImplementedError
 
 	def writable(self) -> bool:
@@ -49,10 +49,10 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def detach(self) -> io.RawIOBase:
 		raise NotImplementedError
 
-	def read(self, n: "int | None" = None) -> bytes:
+	def read(self, n: int | None = None) -> bytes:
 		raise NotImplementedError
 
-	def read1(self, n: "int | None" = None) -> bytes:
+	def read1(self, n: int | None = None) -> bytes:
 		raise NotImplementedError
 
 	def readinto(self, buffer) -> int:
@@ -71,7 +71,7 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def __next__(self) -> bytes:
 		raise NotImplementedError
 
-	def readline(self, size: "int | None" = -1) -> bytes:
+	def readline(self, size: int | None = -1) -> bytes:
 		raise NotImplementedError
 
 	def readlines(self, hint: int = -1) -> list[bytes]:
@@ -112,7 +112,7 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def tell(self) -> int:
 		raise NotImplementedError
 
-	def truncate(self, pos: "int | None" = None) -> int:
+	def truncate(self, pos: int | None = None) -> int:
 		raise NotImplementedError
 
 	def writable(self) -> bool:
@@ -121,10 +121,10 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def detach(self) -> io.IOBase:  # type: ignore
 		raise NotImplementedError
 
-	def read(self, n: "int | None" = None) -> str:
+	def read(self, n: int | None = None) -> str:
 		raise NotImplementedError
 
-	def read1(self, n: "int | None" = None) -> str:
+	def read1(self, n: int | None = None) -> str:
 		raise NotImplementedError
 
 	def readinto(self, buffer) -> io.BufferedIOBase:
@@ -143,7 +143,7 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def __next__(self) -> str:  # type: ignore
 		raise NotImplementedError
 
-	def readline(self, size: "int | None" = -1) -> str:  # type: ignore
+	def readline(self, size: int | None = -1) -> str:  # type: ignore
 		raise NotImplementedError
 
 	def readlines(self, hint: int = -1) -> list[str]:  # type: ignore

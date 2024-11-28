@@ -55,7 +55,7 @@ website = (
 	"https://github.com/tatuylonen/wiktextract",
 	"@tatuylonen/wiktextract",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",
 	),
@@ -166,7 +166,7 @@ class Reader:
 	def warning(self, msg):
 		self._warnings[msg] += 1
 
-	def makeEntry(self, data: "dict[str, Any]") -> EntryType:
+	def makeEntry(self, data: dict[str, Any]) -> EntryType:
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -210,7 +210,7 @@ class Reader:
 
 				self.writeSoundList(_hf, data.get("sounds"))
 
-				pos: "str | None" = data.get("pos")
+				pos: str | None = data.get("pos")
 				if pos:
 					with hf.element("div", attrib={"class": "pos"}):
 						with hf.element("font", color=self._gram_color):
@@ -243,8 +243,8 @@ class Reader:
 
 	def writeSoundPron(
 		self,
-		hf: "T_htmlfile",
-		sound: "dict[str, Any]",
+		hf: T_htmlfile,
+		sound: dict[str, Any],
 	) -> None:
 		# "homophone" key found in Dutch and Arabic dictionaries
 		# (similar-sounding words for Arabic)
@@ -258,8 +258,8 @@ class Reader:
 
 	def writeSoundAudio(
 		self,
-		hf: "T_htmlfile",
-		sound: "dict[str, Any]",
+		hf: T_htmlfile,
+		sound: dict[str, Any],
 	) -> None:
 		# TODO: add a read-option for audio
 		# keys for audio:
@@ -285,14 +285,14 @@ class Reader:
 
 	def writeSoundList(
 		self,
-		hf: "T_htmlfile",
-		soundList: "list[dict[str, Any]] | None",
+		hf: T_htmlfile,
+		soundList: list[dict[str, Any]] | None,
 	) -> None:
 		if not soundList:
 			return
 
-		pronList: "list[dict[str, Any]]" = []
-		audioList: "list[dict[str, Any]]" = []
+		pronList: list[dict[str, Any]] = []
+		audioList: list[dict[str, Any]] = []
 
 		for sound in soundList:
 			if "audio" in sound:
@@ -315,8 +315,8 @@ class Reader:
 
 	def writeSenseList(
 		self,
-		hf: "T_htmlfile",
-		senseList: "list[dict[str, Any]]",
+		hf: T_htmlfile,
+		senseList: list[dict[str, Any]],
 	) -> None:
 		if not senseList:
 			return
@@ -329,15 +329,15 @@ class Reader:
 
 	def writeSenseGloss(  # noqa: PLR6301
 		self,
-		hf: "T_htmlfile",
-		text: "str | None",
+		hf: T_htmlfile,
+		text: str | None,
 	) -> None:
 		hf.write(text or "")
 
 	def writeSenseCategory(  # noqa: PLR6301
 		self,
-		hf: "T_htmlfile",
-		category: "dict[str, Any]",
+		hf: T_htmlfile,
+		category: dict[str, Any],
 	) -> None:
 		# keys: name: str, kind: str, parents: list, source: str
 		# values for "source" (that I found): "w", "w+disamb"
@@ -353,8 +353,8 @@ class Reader:
 
 	def writeSenseCategories(
 		self,
-		hf: "T_htmlfile",
-		categories: "list[dict[str, Any]] | None",
+		hf: T_htmlfile,
+		categories: list[dict[str, Any]] | None,
 	) -> None:
 		if not categories:
 			return
@@ -365,8 +365,8 @@ class Reader:
 
 	def writeSenseExample(  # noqa: PLR6301, PLR0912
 		self,
-		hf: "T_htmlfile",
-		example: "dict[str, str]",
+		hf: T_htmlfile,
+		example: dict[str, str],
 	) -> None:
 		# example keys: text, "english", "ref", "type"
 		textList: list[tuple[str, str]] = []
@@ -416,8 +416,8 @@ class Reader:
 
 	def writeSenseExamples(
 		self,
-		hf: "T_htmlfile",
-		examples: "list[dict[str, str]] | None",
+		hf: T_htmlfile,
+		examples: list[dict[str, str]] | None,
 	) -> None:
 		from lxml import etree as ET
 
@@ -439,8 +439,8 @@ class Reader:
 
 	def writeSenseFormOf(  # noqa: PLR6301
 		self,
-		hf: "T_htmlfile",
-		form_of: "dict[str, str]",
+		hf: T_htmlfile,
+		form_of: dict[str, str],
 	) -> None:
 		from lxml import etree as ET
 
@@ -456,8 +456,8 @@ class Reader:
 
 	def writeSenseFormOfList(
 		self,
-		hf: "T_htmlfile",
-		form_of_list: "list[dict[str, str]] | None",
+		hf: T_htmlfile,
+		form_of_list: list[dict[str, str]] | None,
 	) -> None:
 		if not form_of_list:
 			return
@@ -467,9 +467,9 @@ class Reader:
 
 	def writeTags(
 		self,
-		hf: "T_htmlfile",
-		tags: "list[str] | None",
-		toRemove: "list[str] | None",
+		hf: T_htmlfile,
+		tags: list[str] | None,
+		toRemove: list[str] | None,
 	) -> None:
 		if not tags:
 			return
@@ -490,8 +490,8 @@ class Reader:
 
 	def writeTopics(
 		self,
-		hf: "T_htmlfile",
-		topics: "list[str] | None",
+		hf: T_htmlfile,
+		topics: list[str] | None,
 	) -> None:
 		if not topics:
 			return
@@ -505,7 +505,7 @@ class Reader:
 
 	def addWordLink(  # noqa: PLR6301
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		word: str,
 		wordClass: str = "",
 	) -> None:
@@ -525,8 +525,8 @@ class Reader:
 
 	def writeSynonyms(
 		self,
-		hf: "T_htmlfile",
-		synonyms: "list[dict[str, Any]] | None",
+		hf: T_htmlfile,
+		synonyms: list[dict[str, Any]] | None,
 	) -> None:
 		if not synonyms:
 			return
@@ -550,8 +550,8 @@ class Reader:
 
 	def writeAntonyms(
 		self,
-		hf: "T_htmlfile",
-		antonyms: "list[dict[str, str]] | None",
+		hf: T_htmlfile,
+		antonyms: list[dict[str, str]] | None,
 	) -> None:
 		if not antonyms:
 			return
@@ -568,8 +568,8 @@ class Reader:
 
 	def writeRelated(
 		self,
-		hf: "T_htmlfile",
-		relatedList: "list[dict[str, str]] | None",
+		hf: T_htmlfile,
+		relatedList: list[dict[str, str]] | None,
 	) -> None:
 		if not relatedList:
 			return
@@ -586,8 +586,8 @@ class Reader:
 
 	def writeSenseLinks(
 		self,
-		hf: "T_htmlfile",
-		linkList: "list[list[str]] | None",
+		hf: T_htmlfile,
+		linkList: list[list[str]] | None,
 	) -> None:
 		if not linkList:
 			return
@@ -609,8 +609,8 @@ class Reader:
 
 	def writeSense(
 		self,
-		hf: "T_htmlfile",
-		sense: "dict[str, Any]",
+		hf: T_htmlfile,
+		sense: dict[str, Any],
 	) -> None:
 		from lxml import etree as ET
 
@@ -637,7 +637,7 @@ class Reader:
 		#   "english": "short",
 		#   "glosses": ["story, fable, play"],
 
-		glosses: "list[str] | None" = sense.get("raw_glosses")
+		glosses: list[str] | None = sense.get("raw_glosses")
 		if not glosses:
 			glosses = sense.get("glosses")
 		if glosses:
@@ -673,7 +673,7 @@ class Reader:
 
 	@staticmethod
 	def makeList(  # noqa: PLR0913
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		input_objects: list[Any],
 		processor: Callable,
 		single_prefix: str = "",
@@ -691,7 +691,7 @@ class Reader:
 			processor(hf, input_objects[0])
 			return
 
-		attrib: "dict[str, str]" = {}
+		attrib: dict[str, str] = {}
 		if list_type:
 			attrib["type"] = list_type
 

@@ -42,7 +42,7 @@ website = (
 	"github.com/rdoeffinger/Dictionary",
 )
 # https://github.com/rdoeffinger/Dictionary/blob/master/dictionary-format-v6.txt
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"normalizer_rules": StrOption(
 		comment="ICU normalizer rules to use for index sorting",
 	),

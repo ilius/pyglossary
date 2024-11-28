@@ -311,7 +311,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		app,
 		formatName: str,
 		options: list[str],
-		optionsValues: "dict[str, Any]",
+		optionsValues: dict[str, Any],
 		**kwargs,
 	) -> None:
 		self.app = app
@@ -458,7 +458,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			return self.valueCellClicked(path)
 		return False
 
-	def valueItemActivate(self, item: "gio.MenuItem", itr: gtk.TreeIter):
+	def valueItemActivate(self, item: gio.MenuItem, itr: gtk.TreeIter):
 		# value is column 3
 		value = item.get_label()
 		model = self.treev.get_model()
@@ -508,7 +508,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 	def valueItemCustomActivate(
 		self,
-		_item: "gtk.MenuItem",
+		_item: gtk.MenuItem,
 		itr: gtk.TreeIter,
 	):
 		model = self.treev.get_model()
@@ -646,7 +646,7 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
-	def setOptionsValues(self, optionsValues: "dict[str, Any]"):
+	def setOptionsValues(self, optionsValues: dict[str, Any]):
 		self.optionsValues = optionsValues
 
 	def kind(self):
@@ -1461,11 +1461,11 @@ check {
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "dict | None" = None,
-		readOptions: "dict | None" = None,
-		writeOptions: "dict | None" = None,
-		convertOptions: "dict | None" = None,
-		glossarySetAttrs: "dict | None" = None,
+		config: dict | None = None,
+		readOptions: dict | None = None,
+		writeOptions: dict | None = None,
+		convertOptions: dict | None = None,
+		glossarySetAttrs: dict | None = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}
@@ -1506,10 +1506,10 @@ check {
 
 	def onKeyPress(
 		self,
-		_ckey: "gtk.EventControllerKey",
+		_ckey: gtk.EventControllerKey,
 		keyval: int,
 		_keycode: int,
-		_state: "gdk.ModifierType",
+		_state: gdk.ModifierType,
 	):
 		if keyval == gdk.KEY_Escape:
 			self.exitApp()

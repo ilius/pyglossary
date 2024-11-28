@@ -339,7 +339,7 @@ class UI(ui_cmd.UI):
 	@staticmethod
 	def get_ls_l(
 		arg: str,
-		st: "os.stat_result | None" = None,
+		st: os.stat_result | None = None,
 		parentDir: str = "",
 		sizeWidth: int = 0,
 	) -> str:
@@ -1121,11 +1121,11 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "dict | None" = None,
-		readOptions: "dict | None" = None,
-		writeOptions: "dict | None" = None,
-		convertOptions: "dict | None" = None,
-		glossarySetAttrs: "dict | None" = None,
+		config: dict | None = None,
+		readOptions: dict | None = None,
+		writeOptions: dict | None = None,
+		convertOptions: dict | None = None,
+		glossarySetAttrs: dict | None = None,
 	):
 		if reverse:
 			raise NotImplementedError("Reverse is not implemented in this UI")

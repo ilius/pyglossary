@@ -81,7 +81,7 @@ debugReadOptions = {
 	"unpacked_gzip_path",  # str, file path
 }
 
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"default_encoding_overwrite": EncodingOption(
 		comment="Default encoding (overwrite)",
 	),
@@ -171,7 +171,7 @@ class BGLGzipFile(GzipFile):
 
 	def __init__(
 		self,
-		fileobj: "io.IOBase | None" = None,
+		fileobj: io.IOBase | None = None,
 		closeFileobj: bool = False,
 		**kwargs,
 	) -> None:
@@ -376,7 +376,7 @@ class BglReader:
 		self.gzipOffset = None
 		# must be a in RRGGBB format
 		self.iconDataList = []
-		self.aboutBytes: "bytes | None" = None
+		self.aboutBytes: bytes | None = None
 		self.aboutExt = ""
 
 	def __len__(self) -> int:

@@ -316,7 +316,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		self,
 		formatName: str,
 		options: list[str],
-		optionsValues: "dict[str, Any]",
+		optionsValues: dict[str, Any],
 		parent=None,
 	) -> None:
 		gtk.Dialog.__init__(self, parent=parent)
@@ -603,7 +603,7 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
-	def setOptionsValues(self, optionsValues: "dict[str, Any]"):
+	def setOptionsValues(self, optionsValues: dict[str, Any]):
 		self.optionsValues = optionsValues
 
 	def kind(self):
@@ -1385,11 +1385,11 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: "dict | None" = None,
-		readOptions: "dict | None" = None,
-		writeOptions: "dict | None" = None,
-		convertOptions: "dict | None" = None,
-		glossarySetAttrs: "dict | None" = None,
+		config: dict | None = None,
+		readOptions: dict | None = None,
+		writeOptions: dict | None = None,
+		convertOptions: dict | None = None,
+		glossarySetAttrs: dict | None = None,
 	):
 		if glossarySetAttrs is None:
 			glossarySetAttrs = {}

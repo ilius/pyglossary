@@ -69,7 +69,7 @@ website = (
 )
 # https://github.com/pgaskin/dictutil
 
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"extract_inline_images": BoolOption(comment="Extract inline images"),
 }
@@ -130,7 +130,7 @@ class Reader(TextGlossaryReader):
 			pass
 		else:
 			defi = mistune.html(defi)
-		images: "list[tuple[str, str]] | None" = None
+		images: list[tuple[str, str]] | None = None
 		if self._extract_inline_images:
 			defi, images = extractInlineHtmlImages(
 				defi,
@@ -187,7 +187,7 @@ class Writer:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._file: "io.TextIOBase" = nullTextIO
+		self._file: io.TextIOBase = nullTextIO
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
 	def finish(self) -> None:

@@ -45,7 +45,7 @@ website = (
 	"https://github.com/mhagiwara/cc-kedict",
 	"@mhagiwara/cc-kedict",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class YamlReader(TextGlossaryReader):
@@ -98,10 +98,10 @@ class YamlReader(TextGlossaryReader):
 
 	@staticmethod
 	def _makeList(
-		hf: "lxml.etree.htmlfile",
+		hf: lxml.etree.htmlfile,
 		input_objects: list[Any],
 		processor: Callable,
-		single_prefix: "str | None" = None,
+		single_prefix: str | None = None,
 		skip_single: bool = True,
 	) -> None:
 		"""Wrap elements into <ol> if more than one element."""
@@ -123,7 +123,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processExample(  # noqa: PLR6301
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: lxml.etree.htmlfile,
 		exampleDict: dict,
 		_count: int,
 	) -> None:
@@ -149,7 +149,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processDef(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: lxml.etree.htmlfile,
 		defDict: dict,
 		count: int,
 	) -> None:
@@ -176,7 +176,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processNote(  # noqa: PLR6301
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: lxml.etree.htmlfile,
 		note: str,
 		_count: int,
 	) -> None:
@@ -184,7 +184,7 @@ class YamlReader(TextGlossaryReader):
 
 	def _processEntry(
 		self,
-		hf: "lxml.etree.htmlfile",
+		hf: lxml.etree.htmlfile,
 		edict: dict,
 	) -> None:
 		from lxml import etree as ET

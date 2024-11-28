@@ -37,7 +37,7 @@ class Reader:
 	}
 
 	_discover: bool = False
-	_auto_rtl: "bool | None" = None
+	_auto_rtl: bool | None = None
 	_auto_comma: bool = True
 	_comma: str = ", "
 	_word_title: bool = False
@@ -112,7 +112,7 @@ class Reader:
 
 	@staticmethod
 	def makeList(  # noqa: PLR0913
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		input_objects: list[Any],
 		processor: Callable,
 		single_prefix: str = "",
@@ -130,7 +130,7 @@ class Reader:
 			processor(hf, input_objects[0])
 			return
 
-		attrib: "dict[str, str]" = {}
+		attrib: dict[str, str] = {}
 		if list_type:
 			attrib["type"] = list_type
 
@@ -148,11 +148,11 @@ class Reader:
 
 	def writeRef(  # noqa: PLR6301
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		ref: Element,
 	) -> None:
 		target = ref.get("target")
-		attrib: "dict[str, str]" = {}
+		attrib: dict[str, str] = {}
 		if target:
 			if "://" in target:
 				attrib["class"] = "external"
@@ -163,14 +163,14 @@ class Reader:
 
 	def writeQuote(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
 		self.writeWithDirection(hf, elem, "div")
 
 	def writeTransCit(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
 		from lxml import etree as ET
@@ -216,7 +216,7 @@ class Reader:
 
 	def writeDef(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
 		# sep = None
@@ -224,7 +224,7 @@ class Reader:
 		# 	sep = ET.Element("br")
 		count = 0
 
-		def writeChild(item: "str | Element", depth: int) -> None:
+		def writeChild(item: str | Element, depth: int) -> None:
 			nonlocal count
 			if isinstance(item, str):
 				item = item.strip()
@@ -252,7 +252,7 @@ class Reader:
 
 	def writeWithDirection(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		child: Element,
 		tag: str,
 	) -> None:
@@ -282,7 +282,7 @@ class Reader:
 
 	def writeRichText(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		el: Element,
 	) -> None:
 		from lxml import etree as ET
@@ -328,7 +328,7 @@ class Reader:
 
 	def writeLangTag(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
 		langDesc = self.getLangDesc(elem)
@@ -342,7 +342,7 @@ class Reader:
 
 	def writeNote(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		note: Element,
 	) -> None:
 		self.writeRichText(hf, note)
@@ -351,7 +351,7 @@ class Reader:
 	# PLR0912 Too many branches (25 > 12)
 	def writeSenseSense(  # noqa: PLR0912
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		sense: Element,
 	) -> int:
 		# this <sense> element can be 1st-level (directly under <entry>)
@@ -493,7 +493,7 @@ class Reader:
 
 	def writeGramGroups(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		gramGrpList: list[Element],
 	) -> None:
 		from lxml import etree as ET
@@ -524,14 +524,14 @@ class Reader:
 
 	def writeSenseGrams(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		sense: Element,
 	) -> None:
 		self.writeGramGroups(hf, sense.findall("gramGrp", NAMESPACE))
 
 	def writeSense(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		sense: Element,
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
@@ -559,7 +559,7 @@ class Reader:
 
 	def writeSenseList(
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		senseList: list[Element],
 	) -> None:
 		# these <sense> elements are 1st-level (directly under <entry>)
@@ -831,7 +831,7 @@ class Reader:
 		self._fileSize = 0
 		self._progress = True
 		self._wordCount = 0
-		self._discoveredTags: "dict[str, Element]" = {}
+		self._discoveredTags: dict[str, Element] = {}
 
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",

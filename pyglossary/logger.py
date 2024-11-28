@@ -168,7 +168,7 @@ class StdLogHandler(logging.Handler):
 		logging.Handler.__init__(self)
 		self.set_name("std")
 		self.noColor = noColor
-		self.config: "dict[str, Any]" = {}
+		self.config: dict[str, Any] = {}
 
 	@property
 	def endFormat(self) -> str:
@@ -222,7 +222,7 @@ def setupLogging() -> Logger:
 		def _windows_show_exception(
 			_type: type[BaseException],
 			exc: BaseException,
-			tback: "TracebackType | None",
+			tback: TracebackType | None,
 		) -> None:
 			if not (_type and exc and tback):
 				return
@@ -243,7 +243,7 @@ def setupLogging() -> Logger:
 		def _unix_show_exception(
 			_type: type[BaseException],
 			exc: BaseException,
-			tback: "TracebackType | None",
+			tback: TracebackType | None,
 		) -> None:
 			if not (_type and exc and tback):
 				return

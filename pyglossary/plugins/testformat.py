@@ -37,7 +37,7 @@ wiki = ""
 website = None
 
 # key is option/argument name, value is instance of Option
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:

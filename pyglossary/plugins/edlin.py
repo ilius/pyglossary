@@ -68,7 +68,7 @@ singleFile = False
 kind = "directory"
 wiki = ""
 website = None
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"prev_link": BoolOption(comment="Enable link to previous entry"),
 }
@@ -244,8 +244,8 @@ class Writer:
 		self,
 		thisEntry: EntryType,
 		thisHash: str,
-		prevHash: "str | None",
-		nextHash: "str | None",
+		prevHash: str | None,
+		nextHash: str | None,
 	) -> None:
 		dpath = join(self._filename, thisHash[:2])
 		makeDir(dpath)

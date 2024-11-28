@@ -44,7 +44,7 @@ website = (
 	"https://wiki.openzim.org/wiki/OpenZIM",
 	"OpenZIM",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"text_unicode_errors": UnicodeErrorsOption(
 		comment="Unicode Errors for plaintext, values: `strict`, `ignore`, `replace`",
 	),
@@ -91,7 +91,7 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._zimfile: "Archive | None" = None
+		self._zimfile: Archive | None = None
 
 	def open(self, filename: str) -> None:
 		try:

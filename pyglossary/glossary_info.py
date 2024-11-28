@@ -45,7 +45,7 @@ log = logging.getLogger("pyglossary")
 
 class GlossaryInfo:
 	def __init__(self) -> None:
-		self._info: "dict[str, str]" = odict()
+		self._info: dict[str, str] = odict()
 
 	def infoKeys(self) -> list[str]:
 		return list(self._info)
@@ -63,7 +63,7 @@ class GlossaryInfo:
 			"",
 		)
 
-	def setInfo(self, key: str, value: "str | None") -> None:
+	def setInfo(self, key: str, value: str | None) -> None:
 		if value is None:
 			try:
 				del self._info[key]

@@ -264,7 +264,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]):
 		registerConfigOption(parser, key, option)
 
 
-def validateFlags(args: "argparse.Namespace", log: logging.Logger) -> bool:
+def validateFlags(args: argparse.Namespace, log: logging.Logger) -> bool:
 	from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 
 	for param1, param2 in UIBase.conflictingParams:

@@ -35,7 +35,7 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Tab-separated_values"
 website = None
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(
 		comment="Enable glossary info / metedata",
@@ -71,7 +71,7 @@ class Reader(TextGlossaryReader):
 		if not line:
 			return None
 		###
-		word: "str | list[str]"
+		word: str | list[str]
 		word, tab, defi = line.partition("\t")
 		if not tab:
 			log.warning(

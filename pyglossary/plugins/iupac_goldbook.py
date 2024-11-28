@@ -46,7 +46,7 @@ singleFile = True
 kind = "text"
 wiki = ""
 website = "https://goldbook.iupac.org/"
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:

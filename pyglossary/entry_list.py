@@ -39,13 +39,13 @@ log = logging.getLogger("pyglossary")
 class EntryList:
 	def __init__(
 		self,
-		entryToRaw: "Callable[[EntryType], RawEntryType]",
-		entryFromRaw: "Callable[[RawEntryType], EntryType]",
+		entryToRaw: Callable[[EntryType], RawEntryType],
+		entryFromRaw: Callable[[RawEntryType], EntryType],
 	) -> None:
 		self._l: list[RawEntryType] = []
 		self._entryToRaw = entryToRaw
 		self._entryFromRaw = entryFromRaw
-		self._sortKey: "Callable[[RawEntryType], Any] | None" = None
+		self._sortKey: Callable[[RawEntryType], Any] | None = None
 		self._rawEntryCompress = False
 
 	@property
@@ -73,8 +73,8 @@ class EntryList:
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,
-		sortEncoding: "str | None",
-		writeOptions: "dict[str, Any]",
+		sortEncoding: str | None,
+		writeOptions: dict[str, Any],
 	) -> None:
 		if namedSortKey.normal is None:
 			raise NotImplementedError(

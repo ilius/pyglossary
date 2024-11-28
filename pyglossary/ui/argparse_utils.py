@@ -8,7 +8,7 @@ class StoreConstAction(argparse.Action):
 		self,
 		option_strings: list[str],
 		same_dest: str = "",
-		const_value: "bool | None" = None,
+		const_value: bool | None = None,
 		nargs: int = 0,
 		**kwargs,
 	) -> None:
@@ -25,8 +25,8 @@ class StoreConstAction(argparse.Action):
 
 	def __call__(  # noqa: PLR0913
 		self,
-		parser: "argparse.ArgumentParser | None" = None,
-		namespace: "argparse.Namespace | None" = None,
+		parser: argparse.ArgumentParser | None = None,
+		namespace: argparse.Namespace | None = None,
 		values: list | None = None,  # noqa: ARG002
 		option_strings: list[str] | None = None,  # noqa: ARG002
 		required: bool = False,  # noqa: ARG002

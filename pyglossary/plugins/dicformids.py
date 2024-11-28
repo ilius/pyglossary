@@ -51,7 +51,7 @@ website = (
 	"DictionaryForMIDs - SourceForge",
 )
 
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file
@@ -218,7 +218,7 @@ class Writer:
 		dicMaxSize = 0
 		indexData = []
 
-		def writeBucket(dicIndex: int, entryList: "list[EntryType]") -> None:
+		def writeBucket(dicIndex: int, entryList: list[EntryType]) -> None:
 			nonlocal dicMaxSize
 			log.debug(
 				f"{dicIndex=}, {len(entryList)=}, {dicMaxSize=}",

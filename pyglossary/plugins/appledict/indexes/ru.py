@@ -53,7 +53,7 @@ def ru(titles: Sequence[str], _: str) -> set[str]:
 	return indexes
 
 
-def _ru(title: str, a: set[str], a_norm: "set[str]") -> None:
+def _ru(title: str, a: set[str], a_norm: set[str]) -> None:
 	# uppercase abbreviature
 	if title.isupper():
 		return

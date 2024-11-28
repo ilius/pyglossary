@@ -41,7 +41,7 @@ website = (
 	"https://play.google.com/store/apps/details?id=cc.dict.dictcc",
 	"dict.cc dictionary - Google Play",
 )
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 
 class Reader:
@@ -51,8 +51,8 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._con: "sqlite3.Connection | None" = None
-		self._cur: "sqlite3.Cursor | None" = None
+		self._con: sqlite3.Connection | None = None
+		self._cur: sqlite3.Cursor | None = None
 
 	def open(self, filename: str) -> None:
 		from sqlite3 import connect

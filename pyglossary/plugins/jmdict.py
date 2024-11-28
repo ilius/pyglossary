@@ -58,7 +58,7 @@ website = (
 	"https://www.edrdg.org/jmdict/j_jmdict.html",
 	"The JMDict Project",
 )
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"example_color": StrOption(
 		comment="Examples color",
 	),
@@ -100,7 +100,7 @@ class Reader:
 
 	@staticmethod
 	def makeList(
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		input_objects: list[Element],
 		processor: Callable,
 		single_prefix: str = "",
@@ -124,7 +124,7 @@ class Reader:
 	# PLR0912 Too many branches (23 > 12)
 	def writeSense(  # noqa: PLR0912
 		self,
-		hf: "T_htmlfile",
+		hf: T_htmlfile,
 		sense: Element,
 	) -> None:
 		from lxml import etree as ET
@@ -268,7 +268,7 @@ class Reader:
 			kebList: list[str] = []
 			rebList: list[str] = []
 			kebDisplayList: list[str] = []
-			rebDisplayList: "list[tuple[str, list[str]]]" = []
+			rebDisplayList: list[tuple[str, list[str]]] = []
 			with hf.element("div"):
 				for k_ele in entry.findall("k_ele"):
 					keb = k_ele.find("keb")
@@ -400,7 +400,7 @@ class Reader:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""
-		self._file: "io.IOBase" = nullBinaryIO
+		self._file: io.IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 

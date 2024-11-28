@@ -108,16 +108,16 @@ __all__ = [
 class ConvertArgs:
 	inputFilename: str
 	inputFormat: str = ""
-	direct: "bool | None" = None
+	direct: bool | None = None
 	outputFilename: str = ""
 	outputFormat: str = ""
-	sort: "bool | None" = None
-	sortKeyName: "str | None" = None
-	sortEncoding: "str | None" = None
-	readOptions: "dict[str, Any] | None" = None
-	writeOptions: "dict[str, Any] | None" = None
-	sqlite: "bool | None" = None
-	infoOverride: "dict[str, str] | None" = None
+	sort: bool | None = None
+	sortKeyName: str | None = None
+	sortEncoding: str | None = None
+	readOptions: dict[str, Any] | None = None
+	writeOptions: dict[str, Any] | None = None
+	sqlite: bool | None = None
+	infoOverride: dict[str, str] | None = None
 
 
 class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PLR0904
@@ -176,8 +176,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def __init__(
 		self,
-		info: "dict[str, str] | None" = None,
-		ui: "UIType | None" = None,  # noqa: F821
+		info: dict[str, str] | None = None,
+		ui: UIType | None = None,  # noqa: F821
 	) -> None:
 		"""
 		info:	OrderedDict or dict instance, or None
@@ -186,7 +186,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		"""
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
-		self._config: "dict[str, Any]" = {}
+		self._config: dict[str, Any] = {}
 		self._data: EntryListType = EntryList(
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
@@ -251,7 +251,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if entry.isData():
 			return self._dataEntryToRaw(cast("DataEntry", entry))
 
-		tpl: "tuple[list[str], bytes, str] | tuple[list[str], bytes]"
+		tpl: tuple[list[str], bytes, str] | tuple[list[str], bytes]
 		defiFormat = entry.defiFormat
 		if defiFormat and defiFormat != self._defaultDefiFormat:
 			tpl = (entry.l_word, entry.b_defi, defiFormat)
@@ -331,7 +331,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		for entryFilter in self._entryFilters:
 			entryFilter.prepare()
 
-	def _addExtraEntryFilter(self, cls: "type[EntryFilterType]") -> None:
+	def _addExtraEntryFilter(self, cls: type[EntryFilterType]) -> None:
 		if cls.name in self._entryFiltersName:
 			return
 		self._entryFilters.append(cls(cast(GlossaryType, self)))
@@ -349,7 +349,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def stripFullHtml(
 		self,
-		errorHandler: "Callable[[EntryType, str], None] | None" = None,
+		errorHandler: Callable[[EntryType, str], None] | None = None,
 	) -> None:
 		"""
 		Add entry filter "strip_full_html"
@@ -445,7 +445,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		gen: Iterator[EntryType],
 	) -> Iterator[EntryType]:
-		entry: "EntryType | None"
+		entry: EntryType | None
 		for entry in gen:
 			if entry is None:
 				continue
@@ -496,7 +496,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			log.error("collectDefiFormat: not supported in direct mode")
 			return None
 
-		counter: "dict[str, int]" = Counter()
+		counter: dict[str, int] = Counter()
 		count = 0
 		for entry in self:
 			if entry.isData():
@@ -526,7 +526,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		raise NotImplementedError
 
 	@config.setter
-	def config(self, config: "dict[str, Any]") -> None:
+	def config(self, config: dict[str, Any]) -> None:
 		if self._config:
 			log.error("glos.config is set more than once")
 			return
@@ -582,7 +582,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			return f'<{tag} class="{_class}">{word}</{tag}><br>'
 		return f"<{tag}>{word}</{tag}><br>"
 
-	def getConfig(self, name: str, default: "str | None") -> str | None:
+	def getConfig(self, name: str, default: str | None) -> str | None:
 		return self._config.get(name, default)
 
 	def addEntry(self, entry: EntryType) -> None:
@@ -593,7 +593,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		word: MultiStr,
 		defi: str,
 		defiFormat: str = "",
-		byteProgress: "tuple[int, int] | None" = None,
+		byteProgress: tuple[int, int] | None = None,
 	) -> Entry:
 		"""
 		Create and return a new entry object.
@@ -643,7 +643,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _createReader(
 		self,
 		format: str,
-		options: "dict[str, Any]",
+		options: dict[str, Any],
 	) -> Any:
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
@@ -675,7 +675,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _validateReadoptions(
 		self,
 		format: str,
-		options: "dict[str, Any]",
+		options: dict[str, Any],
 	) -> None:
 		validOptionKeys = set(self.formatsReadOptions[format])
 		for key in list(options):
@@ -794,7 +794,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _createWriter(
 		self,
 		format: str,
-		options: "dict[str, Any]",
+		options: dict[str, Any],
 	) -> Any:
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
@@ -988,7 +988,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	@staticmethod
 	def _checkSortFlag(
 		plugin: PluginProp,
-		sort: "bool | None",
+		sort: bool | None,
 	) -> bool:
 		sortOnWrite = plugin.sortOnWrite
 		if sortOnWrite == ALWAYS:
@@ -1069,8 +1069,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	@staticmethod
 	def _checkSortKey(
 		plugin: PluginProp,
-		sortKeyName: "str | None",
-		sortEncoding: "str | None",
+		sortKeyName: str | None,
+		sortEncoding: str | None,
 	) -> tuple[NamedSortKey, str]:
 		"""
 		Check sortKeyName, sortEncoding and (output) plugin's params

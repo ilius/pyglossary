@@ -40,7 +40,7 @@ description = "DICT.org file format (.index)"
 extensions = (".index",)
 extensionCreate = ""
 singleFile = False
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"dictzip": BoolOption(comment="Compress .dict file to .dict.dz"),
 	"install": BoolOption(comment="Install dictionary to /usr/share/dictd/"),
 }
@@ -94,7 +94,7 @@ class Reader:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._dictdb: "DictDB | None" = None
+		self._dictdb: DictDB | None = None
 
 		# regular expression patterns used to prettify definition text
 		self._re_newline_in_braces = re.compile(
@@ -157,7 +157,7 @@ class Writer:
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._dictdb: "DictDB | None" = None
+		self._dictdb: DictDB | None = None
 
 	def finish(self) -> None:
 		from pyglossary.os_utils import runDictzip
