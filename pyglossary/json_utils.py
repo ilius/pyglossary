@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 __all__ = ["dataToPrettyJson", "jsonToData", "jsonToOrderedData"]
 
-JsonEncodable: TypeAlias = "dict | list"
+JsonEncodable: TypeAlias = dict | list
 # OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True
 
 

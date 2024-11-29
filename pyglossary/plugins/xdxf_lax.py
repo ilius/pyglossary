@@ -204,7 +204,7 @@ class Reader:
 				if len(words) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
-				b_defi = cast(bytes, tostring(article, encoding=self._encoding))
+				b_defi = cast("bytes", tostring(article, encoding=self._encoding))
 				defi = b_defi[4:-5].decode(self._encoding).strip()
 				defiFormat = "x"
 

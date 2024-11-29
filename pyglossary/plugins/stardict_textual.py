@@ -318,7 +318,7 @@ class Writer:
 		_file = self._file
 		_file.write(
 			cast(
-				bytes,
+				"bytes",
 				ET.tostring(
 					info,
 					encoding=self._encoding,
@@ -385,7 +385,7 @@ class Writer:
 			)
 			ET.indent(article, space="")
 			articleStr = cast(
-				bytes,
+				"bytes",
 				ET.tostring(
 					article,
 					pretty_print=pretty,

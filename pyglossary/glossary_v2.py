@@ -64,13 +64,6 @@ from .flags import (
 )
 from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
-from .glossary_types import (
-	EntryListType,
-	EntryType,
-	GlossaryExtendedType,
-	GlossaryType,
-	RawEntryType,
-)
 from .glossary_utils import Error, ReadError, WriteError, splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
@@ -84,6 +77,13 @@ if TYPE_CHECKING:
 	)
 
 	from .entry_base import MultiStr
+	from .glossary_types import (
+		EntryListType,
+		EntryType,
+		GlossaryExtendedType,
+		GlossaryType,
+		RawEntryType,
+	)
 	from .plugin_prop import PluginProp
 	from .sort_keys import NamedSortKey
 	from .ui_type import UIType
@@ -294,7 +294,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		entryFilters = []
 		config = self._config
 
-		glosArg = cast(GlossaryExtendedType, self)
+		glosArg = cast("GlossaryExtendedType", self)
 
 		for configParam, default, filterClass in entryFiltersRules:
 			args = []
@@ -334,8 +334,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _addExtraEntryFilter(self, cls: type[EntryFilterType]) -> None:
 		if cls.name in self._entryFiltersName:
 			return
-		self._entryFilters.append(cls(cast(GlossaryType, self)))
-		self._entryFiltersExtra.append(cls(cast(GlossaryType, self)))
+		self._entryFilters.append(cls(cast("GlossaryType", self)))
+		self._entryFiltersExtra.append(cls(cast("GlossaryType", self)))
 		self._entryFiltersName.add(cls.name)
 
 	def removeHtmlTagsAll(self) -> None:
@@ -360,7 +360,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			return
 		self._entryFilters.append(
 			StripFullHtml(
-				cast(GlossaryType, self),
+				cast("GlossaryType", self),
 				errorHandler=errorHandler,
 			),
 		)
@@ -418,7 +418,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		filters = self._entryFiltersExtra
 		if self.progressbar:
-			filters.append(ShowProgressBar(cast(GlossaryExtendedType, self)))
+			filters.append(ShowProgressBar(cast("GlossaryExtendedType", self)))
 
 		self.progressInit("Writing")
 		for _entry in self._data:
@@ -868,7 +868,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if self._config.get("save_info_json", False):
 			from pyglossary.info_writer import InfoWriter
 
-			infoWriter = InfoWriter(cast(GlossaryType, self))
+			infoWriter = InfoWriter(cast("GlossaryType", self))
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
 			genList.append(infoWriter.write())
@@ -953,7 +953,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		from .compression import compress
 
 		return compress(
-			cast(GlossaryType, self),
+			cast("GlossaryType", self),
 			filename,
 			compression,
 		)

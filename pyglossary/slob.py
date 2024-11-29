@@ -30,7 +30,6 @@ import warnings
 from abc import abstractmethod
 from bisect import bisect_left
 from builtins import open as fopen
-from collections.abc import Callable, Iterator, Mapping, Sequence
 from datetime import datetime, timezone
 from functools import cache, lru_cache
 from io import BufferedIOBase, IOBase
@@ -52,6 +51,8 @@ import icu  # type: ignore
 from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 if TYPE_CHECKING:
+	from collections.abc import Callable, Iterator, Mapping, Sequence
+
 	from .icu_types import T_Collator
 
 __all__ = [
@@ -159,7 +160,7 @@ def init_compressions() -> dict[str, Compression]:
 	for name in ("bz2", "zlib"):
 		m: CompressionModule
 		try:
-			m = cast(CompressionModule, __import__(name))
+			m = cast("CompressionModule", __import__(name))
 		except ImportError:
 			warnings.showwarning(
 				message=f"{name} is not available",
@@ -756,7 +757,7 @@ class Slob:
 		maxlength: int | None = None,
 	) -> KeydItemDict:
 		return KeydItemDict(
-			cast(Sequence, self),
+			cast("Sequence", self),
 			strength=strength,
 			maxlength=maxlength,
 		)
@@ -878,7 +879,7 @@ class RefList(ItemList[Ref]):
 	) -> Ref:
 		if i >= len(self) or i < 0:
 			raise IndexError("index out of range")
-		return cast(Ref, self.read(self.pos(i)))
+		return cast("Ref", self.read(self.pos(i)))
 
 	def _read_item(self) -> Ref:
 		key = self.reader.read_text()
@@ -899,7 +900,7 @@ class RefList(ItemList[Ref]):
 		maxlength: int | None = None,
 	) -> KeydItemDict:
 		return KeydItemDict(
-			cast(Sequence, self),
+			cast("Sequence", self),
 			strength=strength,
 			maxlength=maxlength,
 		)
@@ -952,7 +953,7 @@ class Store(ItemList[StoreItem]):
 	) -> StoreItem:
 		if i >= len(self) or i < 0:
 			raise IndexError("index out of range")
-		return cast(StoreItem, self.read(self.pos(i)))
+		return cast("StoreItem", self.read(self.pos(i)))
 
 	def _read_item(self) -> StoreItem:
 		bin_item_count = self.reader.read_int()
@@ -1290,7 +1291,7 @@ class Writer:
 						self._fire_event("too_many_redirects", from_key)
 					target_ref: Ref
 					try:
-						target_ref = cast(Ref, next(ref_dict[to_key]))
+						target_ref = cast("Ref", next(ref_dict[to_key]))
 					except StopIteration:
 						self._fire_event("alias_target_not_found", to_key)
 					else:

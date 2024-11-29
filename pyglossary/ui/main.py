@@ -146,7 +146,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 		print(f"PyGlossary {getVersion()}")
 		return True, None
 
-	log = cast(logger.Logger, logging.getLogger("pyglossary"))
+	log = cast("logger.Logger", logging.getLogger("pyglossary"))
 
 	if args.ui_type == "none":
 		args.noColor = True

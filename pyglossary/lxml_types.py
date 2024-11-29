@@ -26,7 +26,7 @@ from lxml.etree import QName, _Element  # noqa: PLC2701
 
 __all__ = ["Element", "T_htmlfile"]
 
-_TextArg: TypeAlias = "str | bytes | QName"
+_TextArg: TypeAlias = str | bytes | QName
 _TagName: TypeAlias = _TextArg
 
 

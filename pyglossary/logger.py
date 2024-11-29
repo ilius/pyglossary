@@ -215,7 +215,7 @@ class StdLogHandler(logging.Handler):
 
 def setupLogging() -> Logger:
 	logging.setLoggerClass(Logger)
-	log = cast(Logger, logging.getLogger("pyglossary"))
+	log = cast("Logger", logging.getLogger("pyglossary"))
 
 	if os.sep == "\\":
 

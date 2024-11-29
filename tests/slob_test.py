@@ -439,7 +439,7 @@ class TestPrefixFind(BaseTest):
 			for i, k in enumerate(self.data):
 				d = r.as_dict(slob.IDENTICAL, len(k))
 				self.assertEqual(
-					[cast(slob.Blob, v).content.decode("ascii") for v in d[k]],
+					[cast("slob.Blob", v).content.decode("ascii") for v in d[k]],
 					self.data[i:],
 				)
 
@@ -510,23 +510,23 @@ class TestAlias(BaseTest):
 
 			self.assertEqual(len(list(d["n or p"])), 2)
 
-			item_a1 = cast(slob.Blob, next(d["a1"]))
+			item_a1 = cast("slob.Blob", next(d["a1"]))
 			self.assertEqual(item_a1.content, b"LATIN SMALL LETTER A")
 			self.assertEqual(item_a1.fragment, "a-frag1")
 
-			item_a2 = cast(slob.Blob, next(d["a2"]))
+			item_a2 = cast("slob.Blob", next(d["a2"]))
 			self.assertEqual(item_a2.content, b"LATIN SMALL LETTER A")
 			self.assertEqual(item_a2.fragment, "a-frag1")
 
-			item_a3 = cast(slob.Blob, next(d["a3"]))
+			item_a3 = cast("slob.Blob", next(d["a3"]))
 			self.assertEqual(item_a3.content, b"LATIN SMALL LETTER A")
 			self.assertEqual(item_a3.fragment, "a-frag1")
 
-			item_g1 = cast(slob.Blob, next(d["g1"]))
+			item_g1 = cast("slob.Blob", next(d["g1"]))
 			self.assertEqual(item_g1.content, b"LATIN SMALL LETTER G")
 			self.assertEqual(item_g1.fragment, "")
 
-			item_g2 = cast(slob.Blob, next(d["g2"]))
+			item_g2 = cast("slob.Blob", next(d["g2"]))
 			self.assertEqual(item_g2.content, b"LATIN SMALL LETTER G")
 			self.assertEqual(item_g2.fragment, "g-frag1")
 
