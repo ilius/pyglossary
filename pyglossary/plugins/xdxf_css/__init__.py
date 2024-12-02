@@ -193,7 +193,8 @@ class Reader:
 						break
 				continue
 			if not elem.text:
-				log.warning(f"empty tag <{elem.tag}>")
+				if elem.tag != "br":
+					log.warning(f"empty tag <{elem.tag}>")
 				continue
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
