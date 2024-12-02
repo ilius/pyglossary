@@ -23,6 +23,7 @@ class XdxfTransformer:
 		self._encoding = encoding
 		self._childTagWriteMapping = {
 			"br": self._write_br,
+			"u": self._write_basic_format,
 			"i": self._write_basic_format,
 			"b": self._write_basic_format,
 			"sub": self._write_basic_format,
