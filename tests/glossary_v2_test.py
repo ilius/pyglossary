@@ -855,13 +855,6 @@ class TestGlossary(TestGlossaryBase):
 
 		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
 
-	def test_rawEntryCompress(self):
-		glos = self.glos = Glossary()
-		glos.setRawEntryCompress(True)
-		self.assertTrue(glos.rawEntryCompress)
-		glos.setRawEntryCompress(False)
-		self.assertFalse(glos.rawEntryCompress)
-
 	def addWordsList(self, glos, words, newDefiFunc=str, defiFormat=""):
 		wordsList = []
 		for index, line in enumerate(words):

@@ -112,13 +112,6 @@ class UIBase:
 				),
 			),
 			(
-				"optimize_memory",
-				BoolOption(
-					hasFlag=True,
-					comment=("Optimize memory usage (over speed) in --indirect mode"),
-				),
-			),
-			(
 				"enable_alts",
 				BoolOption(
 					hasFlag=True,

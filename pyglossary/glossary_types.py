@@ -30,11 +30,10 @@ __all__ = [
 
 MultiStr: TypeAlias = "str | list[str]"
 
-# 3 different types in order:
-# - compressed
-# - uncompressed, without defiFormat
-# - uncompressed, with defiFormat
-RawEntryType: TypeAlias = "bytes |tuple[list[str], bytes] |tuple[list[str], bytes, str]"
+# different types in order:
+# - without defiFormat
+# - with defiFormat
+RawEntryType: TypeAlias = tuple[list[str], bytes] | tuple[list[str], bytes, str]
 
 
 class EntryType(typing.Protocol):  # noqa: PLR0904
@@ -105,12 +104,6 @@ class EntryListType(typing.Protocol):
 		entryToRaw: Callable[[EntryType], RawEntryType],
 		entryFromRaw: Callable[[RawEntryType], EntryType],
 	) -> None: ...
-
-	@property
-	def rawEntryCompress(self) -> bool: ...
-
-	@rawEntryCompress.setter
-	def rawEntryCompress(self, enable: bool) -> None: ...
 
 	def append(self, entry: EntryType) -> None: ...
 
@@ -215,9 +208,6 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 	) -> EntryType: ...
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType: ...
-
-	@property
-	def rawEntryCompress(self) -> bool: ...
 
 	def stripFullHtml(
 		self,

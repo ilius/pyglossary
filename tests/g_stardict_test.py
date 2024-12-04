@@ -20,7 +20,6 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		syn=True,
 		dictzip=False,
 		config=None,
-		rawEntryCompress=None,
 		writeOptions=None,
 		info=None,
 		**convertArgs,
@@ -40,9 +39,6 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 
 		if config is not None:
 			glos.config = config
-
-		if rawEntryCompress is not None:
-			glos.setRawEntryCompress(rawEntryCompress)
 
 		if writeOptions is None:
 			writeOptions = {}
@@ -73,7 +69,6 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		sha1sumDict,
 		dictzip=False,
 		config=None,
-		rawEntryCompress=None,
 		**convertArgs,
 	):
 		inputFilename = self.downloadFile(f"{fname}.txt")
@@ -83,9 +78,6 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 
 		if config is not None:
 			glos.config = config
-
-		if rawEntryCompress is not None:
-			glos.setRawEntryCompress(rawEntryCompress)
 
 		result = glos.convert(
 			inputFilename=inputFilename,
@@ -197,12 +189,10 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 
 	def test_convert_txt_stardict_1(self):
 		for sqlite in (None, False, True):
-			for rawEntryCompress in (None, True, False):
-				self.convert_txt_stardict(
-					"100-en-fa",
-					rawEntryCompress=rawEntryCompress,
-					sqlite=sqlite,
-				)
+			self.convert_txt_stardict(
+				"100-en-fa",
+				sqlite=sqlite,
+			)
 
 	def test_convert_txt_stardict_1_merge_syns(self):
 		self.convert_txt_stardict(
@@ -228,12 +218,10 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 
 	def test_convert_txt_stardict_2(self):
 		for sqlite in (None, False, True):
-			for rawEntryCompress in (None, True, False):
-				self.convert_txt_stardict(
-					"004-bar",
-					rawEntryCompress=rawEntryCompress,
-					sqlite=sqlite,
-				)
+			self.convert_txt_stardict(
+				"004-bar",
+				sqlite=sqlite,
+			)
 
 	def test_convert_txt_stardict_3(self):
 		for sqlite in (None, False, True):

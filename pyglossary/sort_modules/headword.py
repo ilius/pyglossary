@@ -31,7 +31,7 @@ def locale(
 	def sortKey(words: list[str]) -> bytes:
 		return cSortKey(words[0])
 
-	def warpper(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
+	def warpper(_sortEncoding: str = "utf-8", **_options) -> SortKeyType:
 		return sortKey
 
 	return warpper

@@ -18,6 +18,7 @@ desc = "Lowercase Headword"
 
 def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
 	def sortKey(words: list[str]) -> bytes:
+		# assert isinstance(words, list)  # OK
 		return words[0].lower().encode(sortEncoding, errors="replace")
 
 	return sortKey
@@ -29,9 +30,10 @@ def locale(
 	cSortKey = collator.getSortKey
 
 	def sortKey(words: list[str]) -> bytes:
+		# assert isinstance(words, list)  # OK
 		return cSortKey(words[0].lower())
 
-	def warpper(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
+	def warpper(_sortEncoding: str = "utf-8", **_options) -> SortKeyType:
 		return sortKey
 
 	return warpper

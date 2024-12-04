@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import os
 import os.path
+import warnings
 from collections import OrderedDict as odict
 from contextlib import suppress
 from dataclasses import dataclass
@@ -30,16 +31,12 @@ from os.path import (
 	join,
 	relpath,
 )
-from pickle import dumps as pickle_dumps
-from pickle import loads as pickle_loads
 from time import perf_counter as now
 from typing import (
 	TYPE_CHECKING,
 	cast,
 )
 from uuid import uuid1
-from zlib import compress as zlib_compress
-from zlib import decompress as zlib_decompress
 
 from . import core
 from .core import (
@@ -192,7 +189,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			entryFromRaw=self._entryFromRaw,
 		)
 		self._sqlite = False
-		self._rawEntryCompress = False
 		self._cleanupPathList: set[str] = set()
 		self._readOptions: dict[str, Any] | None = None
 
@@ -237,14 +233,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		b_fpath = b""
 		if self.tmpDataDir:
 			b_fpath = entry.save(self.tmpDataDir).encode("utf-8")
-		tpl = (
+		return (
 			[entry.getFileName()],
 			b_fpath,
 			"b",
 		)
-		if self._rawEntryCompress:
-			return zlib_compress(pickle_dumps(tpl), level=9)
-		return tpl
 
 	def _entryToRaw(self, entry: EntryType) -> RawEntryType:
 		"""
@@ -254,23 +247,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if entry.isData():
 			return self._dataEntryToRaw(cast("DataEntry", entry))
 
-		tpl: tuple[list[str], bytes, str] | tuple[list[str], bytes]
 		defiFormat = entry.defiFormat
 		if defiFormat and defiFormat != self._defaultDefiFormat:
-			tpl = (entry.l_word, entry.b_defi, defiFormat)
-		else:
-			tpl = (entry.l_word, entry.b_defi)
+			return (entry.l_word, entry.b_defi, defiFormat)
+		return (entry.l_word, entry.b_defi)
 
-		if self.rawEntryCompress:
-			return zlib_compress(pickle_dumps(tpl), level=9)
-
-		return tpl
-
-	def _entryFromRaw(self, rawEntryArg: RawEntryType) -> EntryType:
-		if isinstance(rawEntryArg, bytes):
-			rawEntry = pickle_loads(zlib_decompress(rawEntryArg))
-		else:
-			rawEntry = rawEntryArg
+	def _entryFromRaw(self, rawEntry: RawEntryType) -> EntryType:
 		word = rawEntry[0]
 		defi = rawEntry[1].decode("utf-8")
 		if len(rawEntry) > 2:  # noqa: PLR2004
@@ -287,11 +269,17 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	@property
 	def rawEntryCompress(self) -> bool:
-		return self._rawEntryCompress
+		warnings.warn(
+			"rawEntryCompress is not supported anymore, this propery returns False",
+			stacklevel=2,
+		)
+		return False
 
-	def setRawEntryCompress(self, enable: bool) -> None:
-		self._rawEntryCompress = enable
-		self._data.rawEntryCompress = enable
+	def setRawEntryCompress(self, _enable: bool) -> None:  # noqa: PLR6301
+		warnings.warn(
+			"rawEntryCompress is not supported anymore, this method does nothing",
+			stacklevel=2,
+		)
 
 	def updateEntryFilters(self) -> None:
 		entryFilters = []
@@ -536,8 +524,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			log.error("glos.config is set more than once")
 			return
 		self._config = config
-		if "optimize_memory" in config:
-			self.setRawEntryCompress(config["optimize_memory"])
 
 	@property
 	def alts(self) -> bool:

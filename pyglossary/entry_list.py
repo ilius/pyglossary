@@ -46,15 +46,6 @@ class EntryList:
 		self._entryToRaw = entryToRaw
 		self._entryFromRaw = entryFromRaw
 		self._sortKey: Callable[[RawEntryType], Any] | None = None
-		self._rawEntryCompress = False
-
-	@property
-	def rawEntryCompress(self) -> bool:
-		return self._rawEntryCompress
-
-	@rawEntryCompress.setter
-	def rawEntryCompress(self, enable: bool) -> None:
-		self._rawEntryCompress = enable
 
 	def append(self, entry: EntryType) -> None:
 		self._l.append(self._entryToRaw(entry))
@@ -86,7 +77,6 @@ class EntryList:
 		sortKey = namedSortKey.normal(**kwargs)
 		self._sortKey = Entry.getRawEntrySortKey(
 			key=sortKey,
-			rawEntryCompress=self._rawEntryCompress,
 		)
 
 	def sort(self) -> None:

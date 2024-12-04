@@ -88,15 +88,6 @@ class SqEntryList:
 		self._sqliteSortKey = None
 		self._columnNames = ""
 
-	@property
-	def rawEntryCompress(self) -> bool:
-		return False
-
-	@rawEntryCompress.setter
-	def rawEntryCompress(self, enable: bool) -> None:
-		# just to comply with EntryListType
-		pass
-
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,

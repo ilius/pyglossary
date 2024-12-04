@@ -3,7 +3,6 @@
 	"cleanup": true,
 
 	"auto_sqlite": true,
-	"optimize_memory": false,
 
 	"lower": false,
 	"utf8_check": false,
@@ -30,7 +29,6 @@
 	"cmdi.prompt.indent.color": 2,
 	"cmdi.prompt.msg.color": -1,
 	"cmdi.msg.color": -1,
-
 
 	"ui_autoSetFormat": true,
 

@@ -10,9 +10,7 @@ from os.path import (
 	getsize,
 	join,
 )
-from pickle import loads as pickle_loads
 from typing import TYPE_CHECKING
-from zlib import decompress as zlib_decompress
 
 from .entry_base import BaseEntry, MultiStr
 from .iter_utils import unique_everseen
@@ -24,7 +22,7 @@ if TYPE_CHECKING:
 		Any,
 	)
 
-	from .glossary_types import RawEntryType
+	from .glossary_types import RawEntryType, RawEntryType2
 
 
 __all__ = ["DataEntry", "Entry"]
@@ -196,18 +194,12 @@ class Entry(BaseEntry):
 	@staticmethod
 	def getRawEntrySortKey(
 		key: Callable[[bytes], Any],
-		rawEntryCompress: bool,
-	) -> Callable[[RawEntryType], Any]:
-		# FIXME: this type for `key` is only for rawEntryCompress=False
-		# for rawEntryCompress=True, it is Callable[[bytes], Any]
-		# here `x` is raw entity, meaning a tuple of form (word, defi) or
-		# (word, defi, defiFormat)
-		# so x[0] is word(s) in bytes, that can be a str (one word),
-		# or a list or tuple (one word with or more alternatives)
-		if rawEntryCompress:
-			return lambda x: key(pickle_loads(zlib_decompress(x))[0])  # type: ignore
-		# x is rawEntry, so x[0] is list of words (entry.l_word)
-		return lambda x: key(x[0])  # type: ignore
+	) -> Callable[[RawEntryType2], Any]:
+		def newKey(x: RawEntryType) -> Any:
+			# x is rawEntry, so x[0] is list[str]: list of words (entry.l_word)
+			return key(x[0])  # type: ignore
+
+		return newKey
 
 	def __init__(
 		self,

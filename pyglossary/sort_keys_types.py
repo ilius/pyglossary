@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, Protocol, TypeAlias
+from typing import TYPE_CHECKING, Any, Protocol, TypeAlias
 
-from pyglossary.icu_types import T_Collator
+if TYPE_CHECKING:
+	from pyglossary.icu_types import T_Collator
 
 SortKeyType: TypeAlias = Callable[
 	[list[str]],
@@ -35,7 +36,6 @@ class SQLiteSortKeyMakerType(Protocol):
 	) -> SQLiteSortKeyType: ...
 
 
-
 class LocaleSortKeyMakerType(Protocol):
 	def __call__(
 		self,
@@ -48,7 +48,6 @@ class SQLiteLocaleSortKeyMakerType(Protocol):
 		self,
 		collator: T_Collator,  # noqa: F821
 	) -> SQLiteSortKeyType: ...
-
 
 
 __all__ = [
