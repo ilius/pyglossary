@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from pyglossary.sort_keys_types import SortKeyType, SQLiteSortKeyType
@@ -17,8 +17,8 @@ def normal(
 ) -> SortKeyType:
 	length = options.get("group_by_prefix_length", 2)
 
-	# FIXME: return bytes
-	def sortKey(words: list[str]) -> tuple[str, str]:
+	# FIXME: return bytes?
+	def sortKey(words: list[str]) -> Any:
 		word = words[0]
 		if not word:
 			return "", ""
@@ -42,7 +42,7 @@ def sqlite(sortEncoding: str = "utf-8", **options) -> SQLiteSortKeyType:
 			return "SPECIAL"
 		return prefix
 
-	def headword(words: list[str]) -> bytes:
+	def headword(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace")
 
 	_type = "TEXT" if sortEncoding == "utf-8" else "BLOB"

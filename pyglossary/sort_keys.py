@@ -22,12 +22,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
-
 	from .icu_types import T_Collator, T_Locale
 	from .sort_keys_types import (
 		LocaleSortKeyMakerType,
 		SortKeyMakerType,
-		SQLiteLocaleSortKeyMakerType,
 		SQLiteSortKeyMakerType,
 	)
 
@@ -45,8 +43,8 @@ defaultSortKeyName = "headword_lower"
 class NamedSortKey(NamedTuple):
 	name: str
 	desc: str
-	normal: SortKeyMakerType
-	sqlite: SQLiteSortKeyMakerType
+	normal: SortKeyMakerType | None
+	sqlite: SQLiteSortKeyMakerType | None
 
 
 @dataclass(slots=True)  # not frozen because of mod
@@ -66,6 +64,7 @@ class LocaleNamedSortKey:
 		self.mod = mod
 		return mod
 
+	# mypy seems to have problems with @property
 	@property
 	def normal(self) -> SortKeyMakerType:
 		return self.module.normal
@@ -79,7 +78,7 @@ class LocaleNamedSortKey:
 		return getattr(self.module, "locale", None)
 
 	@property
-	def sqlite_locale(self) -> SQLiteLocaleSortKeyMakerType | None:
+	def sqlite_locale(self) -> SQLiteSortKeyMakerType | None:
 		return getattr(self.module, "sqlite_locale", None)
 
 

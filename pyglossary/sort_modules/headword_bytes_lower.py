@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from pyglossary.sort_keys_types import SortKeyType, SQLiteSortKeyType
@@ -13,7 +13,7 @@ def normal(
 	sortEncoding: str = "utf-8",
 	**_options,
 ) -> SortKeyType:
-	def sortKey(words: list[str]) -> bytes:
+	def sortKey(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
 	return sortKey
@@ -26,7 +26,7 @@ def normal(
 
 
 def sqlite(sortEncoding: str = "utf-8", **_options) -> SQLiteSortKeyType:
-	def sortKey(words: list[str]) -> bytes:
+	def sortKey(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 
 	return [
