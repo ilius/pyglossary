@@ -200,6 +200,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 					"Glossary: `info` has invalid type"
 					", dict or OrderedDict expected",
 				)
+			warnings.warn(
+				"info= argument is deprecated. Use glos.setInfo(key, value)",
+				stacklevel=2,
+			)
 			for key, value in info.items():
 				self.setInfo(key, value)
 
