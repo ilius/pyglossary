@@ -19,6 +19,8 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 from __future__ import annotations
 
+import warnings
+from collections import OrderedDict as odict
 from os.path import relpath
 from time import perf_counter as now
 from typing import TYPE_CHECKING
@@ -32,12 +34,38 @@ if TYPE_CHECKING:
 
 	from .glossary_types import EntryType
 	from .plugin_manager import DetectedFormat
+	from .ui_type import UIType
+
 
 __all__ = ["Glossary"]
 
 
 class Glossary(GlossaryCommon):
 	GLOSSARY_API_VERSION = "1.0"
+
+	def __init__(
+		self,
+		info: dict[str, str] | None = None,
+		ui: UIType | None = None,  # noqa: F821
+	) -> None:
+		"""
+		info:	OrderedDict or dict instance, or None
+		no need to copy OrderedDict instance before passing here
+		we will not reference to it.
+		"""
+		warnings.warn(
+			"This class is deprecated. Use glossary_v2.Glossary",
+			stacklevel=2,
+		)
+		GlossaryCommon.__init__(self, ui=ui)
+		if info:
+			if not isinstance(info, dict | odict):
+				raise TypeError(
+					"Glossary: `info` has invalid type"
+					", dict or OrderedDict expected",
+				)
+			for key, value in info.items():
+				self.setInfo(key, value)
 
 	def titleElement(  # noqa: ANN201
 		self,
