@@ -11,27 +11,21 @@ SortKeyType: TypeAlias = Callable[
 	Any,
 ]
 
-
-RawSortKeyType: TypeAlias = Callable[
-	[bytes],
-	Any,
-]
-
 SQLiteSortKeyType: TypeAlias = list[tuple[str, str, SortKeyType]]
 
 
 class SortKeyMakerType(Protocol):
 	def __call__(
 		self,
-		sortEncoding: str,
+		sortEncoding: str = "utf-8",
 		**kwargs
-	) -> RawSortKeyType: ...
+	) -> SortKeyType: ...
 
 
 class SQLiteSortKeyMakerType(Protocol):
 	def __call__(
 		self,
-		sortEncoding: str,
+		sortEncoding: str = "utf-8",
 		**kwargs
 	) -> SQLiteSortKeyType: ...
 
