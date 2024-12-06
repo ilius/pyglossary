@@ -37,6 +37,7 @@ from typing import (
 	cast,
 )
 from uuid import uuid1
+from zlib import compress, decompress
 
 from . import core
 from .core import (
@@ -241,7 +242,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		b_fpath = b""
 		if self.tmpDataDir:
 			b_fpath = entry.save(self.tmpDataDir).encode("utf-8")
-		return (b"b", b_fpath, entry.getFileName().encode("utf-8"))
+		return (
+			b"b",
+			compress(b_fpath),
+			entry.getFileName().encode("utf-8"),
+		)
 
 	def _entryToRaw(self, entry: EntryType) -> RawEntryType:
 		"""
@@ -255,11 +260,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if defiFormat is None or defiFormat == self._defaultDefiFormat:
 			defiFormat = ""
 
-		return [defiFormat.encode("ascii"), entry.b_defi] + entry.lb_word
+		return [
+			defiFormat.encode("ascii"),
+			compress(entry.b_defi),
+		] + entry.lb_word
 
 	def _entryFromRaw(self, rawEntry: RawEntryType) -> EntryType:
 		defiFormat = rawEntry[0].decode("ascii") or self._defaultDefiFormat
-		defi = rawEntry[1].decode("utf-8")
+		defi = decompress(rawEntry[1]).decode("utf-8")
 
 		if defiFormat == "b":
 			fname = rawEntry[2].decode("utf-8")
