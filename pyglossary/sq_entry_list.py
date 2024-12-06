@@ -129,12 +129,18 @@ class SqEntryList:
 	def __len__(self) -> int:
 		return self._len
 
+	def _encode(self, entry: EntryType) -> bytes:
+		return dumps(self._entryToRaw(entry))
+
+	def _decode(self, data: bytes) -> EntryType:
+		return self._entryFromRaw(loads(data))
+
 	def append(self, entry: EntryType) -> None:
 		self._cur.execute(
 			f"insert into data({self._columnNames}, pickle)"
 			f" values (?{', ?' * len(self._sqliteSortKey)})",
 			[col[2](entry.l_word) for col in self._sqliteSortKey]
-			+ [dumps(self._entryToRaw(entry), protocol=PICKLE_PROTOCOL)],
+			+ [self._encode(entry)],
 		)
 		self._len += 1
 
@@ -215,6 +221,5 @@ class SqEntryList:
 			raise Error("SQLite cursor is closed")
 		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
 		self._cur.execute(query)
-		entryFromRaw = self._entryFromRaw
 		for row in self._cur:
-			yield entryFromRaw(loads(row[0]))
+			yield self._decode(row[0])
