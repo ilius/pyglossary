@@ -53,7 +53,6 @@ from .entry_filters import (
 	StripFullHtml,
 	entryFiltersRules,
 )
-from .entry_list import EntryList
 from .flags import (
 	ALWAYS,
 	DEFAULT_YES,
@@ -174,6 +173,15 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self.initVars()
 		self._data.clear()
 
+	def _newInMemorySqEntryList(self) -> SqEntryList:
+		return SqEntryList(
+			entryToRaw=self._entryToRaw,
+			entryFromRaw=self._entryFromRaw,
+			filename="file::memory:",  # or "file::memory:?cache=shared"
+			create=True,
+			persist=True,
+		)
+
 	def __init__(
 		self,
 		info: dict[str, str] | None = None,
@@ -187,10 +195,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
 		self._config: dict[str, Any] = {}
-		self._data: EntryListType = EntryList(
-			entryToRaw=self._entryToRaw,
-			entryFromRaw=self._entryFromRaw,
-		)
+		self._data: EntryListType = self._newInMemorySqEntryList()
+		# self._data.setSortKey(lookupSortKey("headword_lower"), None, {})
 		self._sqlite = False
 		self._cleanupPathList: set[str] = set()
 		self._readOptions: dict[str, Any] | None = None
@@ -455,9 +461,15 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			else:
 				yield entry
 
+	def _checkHasSortKey(self):
+		if not self._data.hasSortKey():
+			self._data.setSortKey(lookupSortKey("headword_lower"), None, {})
+
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._iter is not None:
 			return self._iter
+
+		self._checkHasSortKey()
 
 		if not self._readers:
 			return self._loadedEntryGen()
@@ -758,6 +770,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._readOptions = options
 
 		self.prepareEntryFilters()
+
+		self._checkHasSortKey()
 
 		if not direct:
 			self.loadReader(reader)

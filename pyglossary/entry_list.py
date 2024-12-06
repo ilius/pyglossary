@@ -61,6 +61,9 @@ class EntryList:
 		for rawEntry in self._l:
 			yield entryFromRaw(rawEntry)
 
+	def hasSortKey(self) -> bool:
+		return bool(self._sortKey)
+
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,
