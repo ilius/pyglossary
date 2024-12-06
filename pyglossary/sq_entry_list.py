@@ -33,9 +33,6 @@ if TYPE_CHECKING:
 	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
 
-# from typing import Self
-# typing.Self is new in Python 3.11.
-
 
 __all__ = ["SqEntryList"]
 
@@ -208,7 +205,6 @@ class SqEntryList:
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
 			raise Error("SQLite cursor is closed")
-		query = f"SELECT pickle FROM data ORDER BY {self._orderBy}"
-		self._cur.execute(query)
+		self._cur.execute(f"SELECT pickle FROM data ORDER BY {self._orderBy}")
 		for row in self._cur:
 			yield self._decode(row[0])
