@@ -196,8 +196,8 @@ class Entry(BaseEntry):
 		key: Callable[[bytes], Any],
 	) -> Callable[[RawEntryType], Any]:
 		def newKey(x: RawEntryType) -> Any:
-			# x is rawEntry, so x[0] is list[str]: list of words (entry.l_word)
-			return key(x[0])  # type: ignore
+			# x is rawEntry, so x[2:] is list[bytes]: list of words in bytes
+			return key([b.decode("utf-8") for b in x[2:]])  # type: ignore
 
 		return newKey
 
@@ -261,6 +261,13 @@ class Entry(BaseEntry):
 		if isinstance(self._word, str):
 			return [self._word]
 		return self._word
+
+	@property
+	def lb_word(self) -> list[bytes]:
+		"""Returns list of the word and all the alternate words."""
+		if isinstance(self._word, str):
+			return [self._word.encode("utf-8")]
+		return [word.encode("utf-8") for word in self._word]
 
 	@property
 	def defi(self) -> str:

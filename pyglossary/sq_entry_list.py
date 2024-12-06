@@ -21,7 +21,6 @@ from __future__ import annotations
 import logging
 import os
 from os.path import isfile
-from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 from .glossary_utils import Error
@@ -116,10 +115,10 @@ class SqEntryList:
 		return self._len
 
 	def _encode(self, entry: EntryType) -> bytes:
-		return dumps(self._entryToRaw(entry))
+		return b"\x00".join(self._entryToRaw(entry))
 
 	def _decode(self, data: bytes) -> EntryType:
-		return self._entryFromRaw(loads(data))
+		return self._entryFromRaw(data.split(b"\x00"))
 
 	def append(self, entry: EntryType) -> None:
 		self._cur.execute(
