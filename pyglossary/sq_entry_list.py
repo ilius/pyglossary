@@ -100,7 +100,11 @@ class SqEntryList:
 			return
 
 		colDefs = ",".join(
-			[f"{col[0]} {col[1]}" for col in sqliteSortKey] + ["data BLOB"],
+			[f"{col[0]} {col[1]}" for col in sqliteSortKey] + [
+				"words TEXT",
+				"defiformat CHAR(1)",
+				"defi TEXT",
+			],
 		)
 		self._con.execute(
 			f"CREATE TABLE data ({colDefs})",
@@ -109,27 +113,29 @@ class SqEntryList:
 	def __len__(self) -> int:
 		return self._len
 
-	def _encode(self, entry: EntryType) -> bytes:
-		return b"\x00".join(self._entryToRaw(entry))
-
-	def _decode(self, data: bytes) -> EntryType:
-		return self._entryFromRaw(data.split(b"\x00"))
+	# "words BLOB"
+	# "defiFormat CHAR(1)",
+	# "defi TEXT",
 
 	def append(self, entry: EntryType) -> None:
 		self._cur.execute(
-			f"insert into data({self._columnNames}, data)"
-			f" values (?{', ?' * len(self._sqliteSortKey)})",
+			f"insert into data({self._columnNames}, words, defiformat, defi)"
+			f" values (?{', ?' * len(self._sqliteSortKey)}, ?, ?)",
 			[col[2](entry.l_word) for col in self._sqliteSortKey]
-			+ [self._encode(entry)],
+			+ [
+				"\x00".join(entry.l_word),
+				entry.defiFormat,
+				entry.defi,
+			],
 		)
 		self._len += 1
 
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
 			raise Error("SQLite cursor is closed")
-		self._cur.execute(f"SELECT data FROM data ORDER BY {self._orderBy}")
+		self._cur.execute(f"SELECT words, defiformat, defi FROM data ORDER BY {self._orderBy}")
 		for row in self._cur:
-			yield self._decode(row[0])
+			yield self._entryFromRaw([row[1], row[2]] + row[0].split("\x00"))
 
 	def __iadd__(self, other: Iterable):  # -> Self
 		for item in other:

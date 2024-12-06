@@ -34,7 +34,7 @@ MultiStr: TypeAlias = "str | list[str]"
 # str(rawEntry[0]): defiFormat or ""
 # rawEntry[1]: b_defi
 # rawEntry[2:]: b_word_list
-RawEntryType: TypeAlias = Sequence[bytes]
+RawEntryType: TypeAlias = Sequence[str]
 
 
 class EntryType(typing.Protocol):  # noqa: PLR0904

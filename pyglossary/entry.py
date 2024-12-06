@@ -197,7 +197,7 @@ class Entry(BaseEntry):
 	) -> Callable[[RawEntryType], Any]:
 		def newKey(x: RawEntryType) -> Any:
 			# x is rawEntry, so x[2:] is list[bytes]: list of words in bytes
-			return key([b.decode("utf-8") for b in x[2:]])  # type: ignore
+			return key(x[2:])  # type: ignore
 
 		return newKey
 

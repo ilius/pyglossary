@@ -246,10 +246,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._cleanupPathList = set()
 
 	def _dataEntryToRaw(self, entry: DataEntry) -> RawEntryType:
-		b_fpath = b""
+		fpath = ""
 		if self.tmpDataDir:
-			b_fpath = entry.save(self.tmpDataDir).encode("utf-8")
-		return (b"b", b_fpath, entry.getFileName().encode("utf-8"))
+			fpath = entry.save(self.tmpDataDir)
+		return ("b", fpath, entry.getFileName())
 
 	def _entryToRaw(self, entry: EntryType) -> RawEntryType:
 		"""
@@ -263,20 +263,20 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if defiFormat is None or defiFormat == self._defaultDefiFormat:
 			defiFormat = ""
 
-		return [defiFormat.encode("ascii"), entry.b_defi] + entry.lb_word
+		return [defiFormat, entry.defi] + entry.l_word
 
 	def _entryFromRaw(self, rawEntry: RawEntryType) -> EntryType:
-		defiFormat = rawEntry[0].decode("ascii") or self._defaultDefiFormat
-		defi = rawEntry[1].decode("utf-8")
+		defiFormat = rawEntry[0] or self._defaultDefiFormat
+		defi = rawEntry[1]
 
 		if defiFormat == "b":
-			fname = rawEntry[2].decode("utf-8")
+			fname = rawEntry[2]
 			if isinstance(fname, list):
 				fname = fname[0]  # NESTED 4
 			return DataEntry(fname, tmpPath=defi)  # pyright: ignore[reportReturnType]
 
 		return Entry(
-			[b.decode("utf-8") for b in rawEntry[2:]],
+			list(rawEntry[2:]),
 			defi,
 			defiFormat=defiFormat,
 		)  # pyright: ignore[reportReturnType]
