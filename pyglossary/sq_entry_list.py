@@ -105,7 +105,7 @@ class SqEntryList:
 			return
 
 		colDefs = ",".join(
-			[f"{col[0]} {col[1]}" for col in sqliteSortKey] + ["pickle BLOB"],
+			[f"{col[0]} {col[1]}" for col in sqliteSortKey] + ["data BLOB"],
 		)
 		self._con.execute(
 			f"CREATE TABLE data ({colDefs})",
@@ -122,7 +122,7 @@ class SqEntryList:
 
 	def append(self, entry: EntryType) -> None:
 		self._cur.execute(
-			f"insert into data({self._columnNames}, pickle)"
+			f"insert into data({self._columnNames}, data)"
 			f" values (?{', ?' * len(self._sqliteSortKey)})",
 			[col[2](entry.l_word) for col in self._sqliteSortKey]
 			+ [self._encode(entry)],
@@ -204,6 +204,6 @@ class SqEntryList:
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._cur is None:
 			raise Error("SQLite cursor is closed")
-		self._cur.execute(f"SELECT pickle FROM data ORDER BY {self._orderBy}")
+		self._cur.execute(f"SELECT data FROM data ORDER BY {self._orderBy}")
 		for row in self._cur:
 			yield self._decode(row[0])
