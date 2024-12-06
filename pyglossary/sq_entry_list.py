@@ -41,17 +41,6 @@ __all__ = ["SqEntryList"]
 
 log = logging.getLogger("pyglossary")
 
-PICKLE_PROTOCOL = 4
-
-# Pickle protocol 4 performed better than protocol 5 on Python 3.9.2
-# Slightly lower running time, lower memory usage, and same .db file size
-
-# Pickle protocol 5		added in Python 3.8		PEP 574
-# Pickle protocol 4		added in Python 3.4		PEP 3154
-# Pickle Protocol 3		added in Python 3.0
-
-# https://docs.python.org/3/library/pickle.html
-
 
 class SqEntryList:
 	def __init__(  # noqa: PLR0913
