@@ -146,11 +146,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			except Exception:  # noqa: PERF203
 				log.exception("")
 
-	def clear(self) -> None:
+	def initVars(self) -> None:
 		GlossaryProgress.clear(self)
 		self._info = odict()
-
-		self._data.clear()
 
 		readers = getattr(self, "_readers", [])
 		for reader in readers:
@@ -171,6 +169,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._defaultDefiFormat = "m"
 		self._tmpDataDir = ""
 		self._entryFiltersAreSet = False
+
+	def clear(self) -> None:
+		self.initVars()
+		self._data.clear()
 
 	def __init__(
 		self,
@@ -193,7 +195,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._cleanupPathList: set[str] = set()
 		self._readOptions: dict[str, Any] | None = None
 
-		self.clear()
+		self.initVars()
 
 		if info:
 			if not isinstance(info, dict | odict):
