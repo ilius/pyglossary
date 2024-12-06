@@ -129,6 +129,13 @@ class SqEntryList:
 		)
 		self._len += 1
 
+	def __iter__(self) -> Iterator[EntryType]:
+		if self._cur is None:
+			raise Error("SQLite cursor is closed")
+		self._cur.execute(f"SELECT data FROM data ORDER BY {self._orderBy}")
+		for row in self._cur:
+			yield self._decode(row[0])
+
 	def __iadd__(self, other: Iterable):  # -> Self
 		for item in other:
 			self.append(item)
@@ -200,10 +207,3 @@ class SqEntryList:
 				os.remove(self._filename)
 		except AttributeError as e:
 			log.error(str(e))
-
-	def __iter__(self) -> Iterator[EntryType]:
-		if self._cur is None:
-			raise Error("SQLite cursor is closed")
-		self._cur.execute(f"SELECT data FROM data ORDER BY {self._orderBy}")
-		for row in self._cur:
-			yield self._decode(row[0])
