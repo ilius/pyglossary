@@ -260,15 +260,18 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _entryFromRaw(self, rawEntry: RawEntryType) -> EntryType:
 		defiFormat = rawEntry[0].decode("ascii") or self._defaultDefiFormat
 		defi = rawEntry[1].decode("utf-8")
-		word = [b.decode("utf-8") for b in rawEntry[2:]]
 
 		if defiFormat == "b":
-			fname = word
+			fname = rawEntry[2].decode("utf-8")
 			if isinstance(fname, list):
 				fname = fname[0]  # NESTED 4
 			return DataEntry(fname, tmpPath=defi)  # pyright: ignore[reportReturnType]
 
-		return Entry(word, defi, defiFormat=defiFormat)  # pyright: ignore[reportReturnType]
+		return Entry(
+			[b.decode("utf-8") for b in rawEntry[2:]],
+			defi,
+			defiFormat=defiFormat,
+		)  # pyright: ignore[reportReturnType]
 
 	@property
 	def rawEntryCompress(self) -> bool:
