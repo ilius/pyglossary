@@ -1,7 +1,10 @@
 import unittest
 
+import lxml
 from glossary_v2_test import TestGlossaryBase
 
+if not lxml.__version__.startswith("5.3."):
+	raise OSError(f"Found lxml=={lxml.__version__}, must use lxml==5.3")
 
 class TestGlossaryJMdict(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
