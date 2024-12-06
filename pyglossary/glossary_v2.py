@@ -66,6 +66,7 @@ from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
 from .plugin_manager import PluginManager
 from .sort_keys import defaultSortKeyName, lookupSortKey
+from .sq_entry_list import SqEntryList
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
@@ -957,8 +958,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		inputFilename: str,
 	) -> None:
-		from .sq_entry_list import SqEntryList
-
 		sq_fpath = join(cacheDir, f"{os.path.basename(inputFilename)}.db")
 		if isfile(sq_fpath):
 			log.info(f"Removing and re-creating {sq_fpath!r}")
