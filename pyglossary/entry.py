@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 		Any,
 	)
 
-	from .glossary_types import RawEntryType, RawEntryType2
+	from .glossary_types import RawEntryType
 
 
 __all__ = ["DataEntry", "Entry"]
@@ -194,7 +194,7 @@ class Entry(BaseEntry):
 	@staticmethod
 	def getRawEntrySortKey(
 		key: Callable[[bytes], Any],
-	) -> Callable[[RawEntryType2], Any]:
+	) -> Callable[[RawEntryType], Any]:
 		def newKey(x: RawEntryType) -> Any:
 			# x is rawEntry, so x[0] is list[str]: list of words (entry.l_word)
 			return key(x[0])  # type: ignore
