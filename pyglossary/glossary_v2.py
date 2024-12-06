@@ -205,6 +205,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				)
 			warnings.warn(
 				"info= argument is deprecated. Use glos.setInfo(key, value)",
+				category=DeprecationWarning,
 				stacklevel=2,
 			)
 			for key, value in info.items():

@@ -55,6 +55,7 @@ class Glossary(GlossaryCommon):
 		"""
 		warnings.warn(
 			"This class is deprecated. Use glossary_v2.Glossary",
+			category=DeprecationWarning,
 			stacklevel=2,
 		)
 		GlossaryCommon.__init__(self, ui=ui)
