@@ -286,12 +286,8 @@ class Writer:
 				continue
 			entryIndex += 1
 
-			entry.detectDefiFormat()  # call no more than once
-			defiFormat = entry.defiFormat
+			defiFormat = entry.detectDefiFormat("m")  # call no more than once
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in {"h", "m", "x"}:
-				log.error(f"invalid {defiFormat=}, using 'm'")
-				defiFormat = "m"
 
 			words = entry.l_word  # list of strs
 
@@ -443,12 +439,8 @@ class Writer:
 				continue
 			entryIndex += 1
 
-			entry.detectDefiFormat()  # call no more than once
-			defiFormat = entry.defiFormat
+			defiFormat = entry.detectDefiFormat("m")  # call no more than once
 			defiFormatCounter[defiFormat] += 1
-			if defiFormat not in {"h", "m", "x"}:
-				log.error(f"invalid {defiFormat=}, using 'm'")
-				defiFormat = "m"
 
 			b_defi = self.fixDefi(entry.defi, defiFormat)
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
