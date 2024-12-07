@@ -31,8 +31,6 @@ class BaseSqList:
 			log.warning(f"Renaming {database} to {database}.bak")
 			os.rename(database, database + "bak")
 
-		self._filename = database
-
 		self._con: sqlite3.Connection | None = connect(database)
 		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
@@ -76,8 +74,6 @@ class BaseSqList:
 			f"insert into data({self._columnNames}) values (?{', ?' * extraN})",
 			[item[0].lower()] + list(item),
 		)
-		if self._len % 1000 == 0:
-			self._con.commit()
 
 	def sort(self) -> None:
 		pass
