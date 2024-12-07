@@ -3,8 +3,6 @@ from __future__ import annotations
 
 import os
 import re
-import typing
-from collections import Counter
 from os.path import (
 	dirname,
 	getsize,
@@ -14,7 +12,6 @@ from os.path import (
 	split,
 	splitext,
 )
-from pprint import pformat
 from time import perf_counter as now
 from typing import (
 	TYPE_CHECKING,
@@ -272,8 +269,6 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		defiFormatCounter: typing.Counter[str] = Counter()
-
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		dictMark, entryIndex = 0, -1
@@ -287,7 +282,6 @@ class Writer:
 			entryIndex += 1
 
 			defiFormat = entry.detectDefiFormat("m")  # call no more than once
-			defiFormatCounter[defiFormat] += 1
 
 			words = entry.l_word  # list of strs
 
@@ -316,7 +310,6 @@ class Writer:
 		dictFile.close()
 		idxFile.close()
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
-		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
@@ -425,7 +418,6 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		defiFormatCounter: typing.Counter[str] = Counter()
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
@@ -440,7 +432,6 @@ class Writer:
 			entryIndex += 1
 
 			defiFormat = entry.detectDefiFormat("m")  # call no more than once
-			defiFormatCounter[defiFormat] += 1
 
 			b_defi = self.fixDefi(entry.defi, defiFormat)
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
@@ -461,7 +452,6 @@ class Writer:
 
 		dictFile.close()
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
-		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
 		self.writeIfoFile(
 			wordCount,
