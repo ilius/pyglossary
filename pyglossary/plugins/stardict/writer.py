@@ -18,12 +18,11 @@ from pprint import pformat
 from time import perf_counter as now
 from typing import (
 	TYPE_CHECKING,
-	Any,
 	Literal,
 )
 
 if TYPE_CHECKING:
-	from collections.abc import Callable, Generator, Iterator
+	from collections.abc import Callable, Generator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.langs import Lang
@@ -32,6 +31,7 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 from pyglossary.glossary_utils import Error
+from pyglossary.plugins.stardict.memlist import MemSdList
 from pyglossary.plugins.stardict.sqlist import IdxSqList, SynSqList
 from pyglossary.text_utils import uint32ToBytes, uint64ToBytes
 
@@ -57,29 +57,6 @@ def newlinesToSpace(text: str) -> str:
 
 def newlinesToBr(text: str) -> str:
 	return re_newline.sub("<br>", text)
-
-
-class MemSdList:
-	def __init__(self) -> None:
-		self._l: list[Any] = []
-
-	def append(self, x: Any) -> None:
-		self._l.append(x)
-
-	def __len__(self) -> int:
-		return len(self._l)
-
-	def __iter__(self) -> Iterator[Any]:
-		return iter(self._l)
-
-	def sortKey(self, item: tuple[bytes, Any]) -> tuple[bytes, bytes]:  # noqa: PLR6301
-		return (
-			item[0].lower(),
-			item[0],
-		)
-
-	def sort(self) -> None:
-		self._l.sort(key=self.sortKey)
 
 
 class Writer:
