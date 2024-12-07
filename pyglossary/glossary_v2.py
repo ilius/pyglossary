@@ -180,7 +180,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			entryFromRaw=self._entryFromRaw,
 			filename="file::memory:",  # or "file::memory:?cache=shared"
 			create=True,
-			persist=True,
 		)
 
 	def __init__(
@@ -978,7 +977,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			entryFromRaw=self._entryFromRaw,
 			filename=sq_fpath,
 			create=True,
-			persist=True,
 		)
 		self._cleanupPathList.add(sq_fpath)
 

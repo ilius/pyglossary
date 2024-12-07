@@ -19,8 +19,6 @@
 from __future__ import annotations
 
 import logging
-import os
-from os.path import isfile
 from typing import TYPE_CHECKING
 
 from .glossary_utils import Error
@@ -45,12 +43,9 @@ class SqEntryList:
 		entryFromRaw: Callable[[RawEntryType], EntryType],
 		filename: str,
 		create: bool = True,
-		persist: bool = False,
 	) -> None:
 		"""
 		sqliteSortKey[i] == (name, type, valueFunc).
-
-		persist: do not delete the file when variable is deleted
 		"""
 		import sqlite3
 
@@ -58,7 +53,6 @@ class SqEntryList:
 		self._entryFromRaw = entryFromRaw
 		self._filename = filename
 
-		self._persist = persist
 		self._con: sqlite3.Connection | None = sqlite3.connect(filename)
 		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
@@ -204,9 +198,4 @@ class SqEntryList:
 		self._cur = None
 
 	def __del__(self) -> None:
-		try:
-			self.close()
-			if not self._persist and isfile(self._filename):
-				os.remove(self._filename)
-		except AttributeError as e:
-			log.error(str(e))
+		self.close()
