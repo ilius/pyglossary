@@ -44,9 +44,7 @@ class SqEntryList:
 		filename: str,
 		create: bool = True,
 	) -> None:
-		"""
-		sqliteSortKey[i] == (name, type, valueFunc).
-		"""
+		"""sqliteSortKey[i] == (name, type, valueFunc)."""
 		import sqlite3
 
 		self._entryToRaw = entryToRaw
