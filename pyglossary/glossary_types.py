@@ -117,6 +117,8 @@ class EntryListType(typing.Protocol):
 
 	def __iter__(self) -> Iterator[EntryType]: ...
 
+	def hasSortKey(self) -> bool: ...
+
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,

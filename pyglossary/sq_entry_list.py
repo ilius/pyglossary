@@ -73,6 +73,9 @@ class SqEntryList:
 		self._sqliteSortKey = None
 		self._columnNames = ""
 
+	def hasSortKey(self) -> bool:
+		return bool(self._sqliteSortKey)
+
 	def setSortKey(
 		self,
 		namedSortKey: NamedSortKey,
