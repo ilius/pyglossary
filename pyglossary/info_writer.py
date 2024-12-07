@@ -79,8 +79,7 @@ class InfoWriter:
 				tag = m.group(1)
 				styleByTagCounter[tag] += 1
 
-			entry.detectDefiFormat()
-			defiFormat = entry.defiFormat
+			defiFormat = entry.detectDefiFormat("")
 			defiFormatCounter[defiFormat] += 1
 			if defiFormat == "m":
 				if re_possible_html.match(defi):
