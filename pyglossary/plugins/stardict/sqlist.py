@@ -23,21 +23,21 @@ __all__ = [
 class BaseSqList:
 	def __init__(
 		self,
-		filename: str,
+		database: str,
 	) -> None:
 		from sqlite3 import connect
 
-		if isfile(filename):
-			log.warning(f"Renaming {filename} to {filename}.bak")
-			os.rename(filename, filename + "bak")
+		if isfile(database):
+			log.warning(f"Renaming {database} to {database}.bak")
+			os.rename(database, database + "bak")
 
-		self._filename = filename
+		self._filename = database
 
-		self._con: sqlite3.Connection | None = connect(filename)
+		self._con: sqlite3.Connection | None = connect(database)
 		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
-		if not filename:
-			raise ValueError(f"invalid {filename=}")
+		if not database:
+			raise ValueError(f"invalid {database=}")
 
 		self._orderBy = "word_lower, word"
 		self._sorted = False
