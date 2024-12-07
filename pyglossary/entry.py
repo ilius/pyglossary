@@ -119,8 +119,8 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def defiFormat(self, defiFormat: str) -> None:
 		pass
 
-	def detectDefiFormat(self) -> None:
-		pass
+	def detectDefiFormat(self, default: str = "") -> str:  # noqa: ARG002
+		return "b"
 
 	def addAlt(self, alt: str) -> None:
 		pass
