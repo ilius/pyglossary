@@ -151,7 +151,7 @@ class Writer:
 			if not self._merge_syns and os.path.exists(syn_file):
 				runDictzip(syn_file)
 
-	def fixDefi(self, defi: str, defiFormat: str) -> str:
+	def fixDefi(self, defi: str, defiFormat: str) -> bytes:
 		# for StarDict 3.0:
 		if self._stardict_client and defiFormat == "h":
 			defi = self._p_pattern.sub("\\2<br>", defi)
@@ -173,7 +173,7 @@ class Writer:
 
 		# FIXME:
 		# defi = defi.replace(' src="./', ' src="./res/')
-		return defi
+		return defi.encode("utf-8")
 
 	def newIdxList(self) -> T_SdList[tuple[bytes, bytes]]:
 		if not self._sqlite:
@@ -226,7 +226,7 @@ class Writer:
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
-			b_dictBlock = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
+			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
 			b_idxBlock = (
@@ -299,7 +299,7 @@ class Writer:
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
-			b_defi = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
+			b_defi = self.fixDefi(entry.defi, defiFormat)
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
 
@@ -397,7 +397,7 @@ class Writer:
 
 			words = entry.l_word  # list of strs
 
-			b_dictBlock = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
+			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
 			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
@@ -462,7 +462,7 @@ class Writer:
 
 			words = entry.l_word  # list of strs
 
-			b_defi = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
+			b_defi = self.fixDefi(entry.defi, defiFormat)
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
 
