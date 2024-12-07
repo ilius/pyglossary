@@ -133,13 +133,13 @@ class Writer:
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-		if self._sametypesequence:
-			if self._merge_syns:
+		if self._merge_syns:
+			if self._sametypesequence:
 				yield from self.writeCompactMergeSyns(self._sametypesequence)
 			else:
-				yield from self.writeCompact(self._sametypesequence)
-		elif self._merge_syns:
-			yield from self.writeGeneralMergeSyns()
+				yield from self.writeGeneralMergeSyns()
+		elif self._sametypesequence:
+			yield from self.writeCompact(self._sametypesequence)
 		else:
 			yield from self.writeGeneral()
 
@@ -383,8 +383,8 @@ class Writer:
 			dictFile.write(b_dictBlock)
 
 			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for word in entry.l_word:
-				idxBlockList.append((word.encode("utf-8"), blockData))
+			for b_word in entry.lb_word:
+				idxBlockList.append((b_word, blockData))
 
 			dictMark += len(b_dictBlock)
 
@@ -438,8 +438,8 @@ class Writer:
 			dictFile.write(b_dictBlock)
 
 			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for word in entry.l_word:
-				idxBlockList.append((word.encode("utf-8"), blockData))
+			for b_word in entry.lb_word:
+				idxBlockList.append((b_word, blockData))
 
 			dictMark += len(b_dictBlock)
 
