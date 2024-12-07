@@ -178,7 +178,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		return SqEntryList(
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
-			filename="file::memory:",  # or "file::memory:?cache=shared"
+			database="file::memory:",  # or "file::memory:?cache=shared"
 			create=True,
 		)
 
@@ -975,7 +975,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._data = SqEntryList(  # pyright: ignore[reportAttributeAccessIssue]
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
-			filename=sq_fpath,
+			database=sq_fpath,
 			create=True,
 		)
 		self._cleanupPathList.add(sq_fpath)

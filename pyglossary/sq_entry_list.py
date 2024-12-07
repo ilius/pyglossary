@@ -41,7 +41,7 @@ class SqEntryList:
 		self,
 		entryToRaw: Callable[[EntryType], RawEntryType],
 		entryFromRaw: Callable[[RawEntryType], EntryType],
-		filename: str,
+		database: str,
 		create: bool = True,
 	) -> None:
 		"""sqliteSortKey[i] == (name, type, valueFunc)."""
@@ -49,13 +49,13 @@ class SqEntryList:
 
 		self._entryToRaw = entryToRaw
 		self._entryFromRaw = entryFromRaw
-		self._filename = filename
+		self._database = database
 
-		self._con: sqlite3.Connection | None = sqlite3.connect(filename)
+		self._con: sqlite3.Connection | None = sqlite3.connect(database)
 		self._cur: sqlite3.Cursor | None = self._con.cursor()
 
-		if not filename:
-			raise ValueError(f"invalid {filename=}")
+		if not database:
+			raise ValueError(f"invalid {database=}")
 
 		self._orderBy = "rowid"
 		self._sorted = False
