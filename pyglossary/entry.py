@@ -299,15 +299,21 @@ class Entry(BaseEntry):
 		"""
 		self._defiFormat = defiFormat
 
-	def detectDefiFormat(self) -> None:
-		if self._defiFormat != "m":
-			return
-		if Entry.xdxfPattern.match(self.defi):
-			self._defiFormat = "x"
-			return
-		if Entry.htmlPattern.match(self.defi):
-			self._defiFormat = "h"
-			return
+	def detectDefiFormat(self, default: str = "") -> str:
+		if self._defiFormat == "h":
+			return "h"
+		if self._defiFormat == "x":
+			return "x"
+		if self._defiFormat == "m":
+			if Entry.xdxfPattern.match(self.defi):
+				self._defiFormat = "x"
+				return "x"
+			if Entry.htmlPattern.match(self.defi):
+				self._defiFormat = "h"
+				return "h"
+			return "m"
+		log.error(f"invalid defiFormat={self._defiFormat}, using {default!r}")
+		return default
 
 	def byteProgress(self) -> tuple[int, int] | None:
 		return self._byteProgress
