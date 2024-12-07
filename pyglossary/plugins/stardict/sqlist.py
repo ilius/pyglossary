@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
@@ -14,6 +13,11 @@ if TYPE_CHECKING:
 
 
 from pyglossary.core import log
+
+__all__ = [
+	"IdxSqList",
+	"SynSqList",
+]
 
 
 class BaseSqList:

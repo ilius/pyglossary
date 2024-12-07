@@ -20,8 +20,6 @@ from typing import (
 	TYPE_CHECKING,
 	Any,
 	Literal,
-	Protocol,
-	TypeVar,
 )
 
 if TYPE_CHECKING:
@@ -29,11 +27,12 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.langs import Lang
+	from pyglossary.plugins.stardict.types import T_SdList
 
 
 from pyglossary.core import log
 from pyglossary.glossary_utils import Error
-from pyglossary.plugins.stardict.writer_sqlist import IdxSqList, SynSqList
+from pyglossary.plugins.stardict.sqlist import IdxSqList, SynSqList
 from pyglossary.text_utils import uint32ToBytes, uint64ToBytes
 
 __all__ = ["Writer"]
@@ -60,19 +59,6 @@ def newlinesToBr(text: str) -> str:
 	return re_newline.sub("<br>", text)
 
 
-T_SDListItem_contra = TypeVar("T_SDListItem_contra", contravariant=True)
-
-
-class T_SdList(Protocol[T_SDListItem_contra]):
-	def append(self, x: T_SDListItem_contra) -> None: ...
-
-	def __len__(self) -> int: ...
-
-	def __iter__(self) -> Iterator[Any]: ...
-
-	def sort(self) -> None: ...
-
-
 class MemSdList:
 	def __init__(self) -> None:
 		self._l: list[Any] = []
@@ -94,6 +80,7 @@ class MemSdList:
 
 	def sort(self) -> None:
 		self._l.sort(key=self.sortKey)
+
 
 class Writer:
 	_large_file: bool = False
