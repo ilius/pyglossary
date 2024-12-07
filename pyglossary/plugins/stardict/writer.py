@@ -133,6 +133,9 @@ class Writer:
 	def write(self) -> Generator[None, EntryType, None]:
 		from pyglossary.os_utils import runDictzip
 
+		if not isdir(self._resDir):
+			os.mkdir(self._resDir)
+
 		if self._sametypesequence:
 			if self._merge_syns:
 				yield from self.writeCompactMergeSyns(self._sametypesequence)
@@ -207,8 +210,6 @@ class Writer:
 
 		t0 = now()
 		wordCount = 0
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
 
 		entryIndex = -1
 		while True:
@@ -221,26 +222,22 @@ class Writer:
 			entryIndex += 1
 
 			words = entry.l_word  # list of strs
-			word = words[0]  # str
-			defi = self.fixDefi(entry.defi, defiFormat)
-			# defi is str
 
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
-			b_dictBlock = defi.encode("utf-8")
+			b_dictBlock = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
 			dictFile.write(b_dictBlock)
-			blockLen = len(b_dictBlock)
 
 			b_idxBlock = (
-				word.encode("utf-8")
+				words[0].encode("utf-8")
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
-				+ uint32ToBytes(blockLen)
+				+ uint32ToBytes(len(b_dictBlock))
 			)
 			idxFile.write(b_idxBlock)
 
-			dictMark += blockLen
+			dictMark += len(b_dictBlock)
 			wordCount += 1
 
 			if dictMark > dictMarkMax:
@@ -277,8 +274,6 @@ class Writer:
 		t0 = now()
 		wordCount = 0
 		defiFormatCounter: typing.Counter[str] = Counter()
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
@@ -300,26 +295,23 @@ class Writer:
 				defiFormat = "m"
 
 			words = entry.l_word  # list of strs
-			word = words[0]  # str
-			defi = self.fixDefi(entry.defi, defiFormat)
-			# defi is str
 
 			for alt in words[1:]:
 				altIndexList.append((alt.encode("utf-8"), entryIndex))
 
-			b_dictBlock = (defiFormat + defi).encode("utf-8") + b"\x00"
+			b_defi = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
+			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
-			blockLen = len(b_dictBlock)
 
 			b_idxBlock = (
-				word.encode("utf-8")
+				words[0].encode("utf-8")
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
-				+ uint32ToBytes(blockLen)
+				+ uint32ToBytes(len(b_dictBlock))
 			)
 			idxFile.write(b_idxBlock)
 
-			dictMark += blockLen
+			dictMark += len(b_dictBlock)
 			wordCount += 1
 
 			if dictMark > dictMarkMax:
@@ -382,7 +374,6 @@ class Writer:
 		defiFormat - format of article definition: h - html, m - plain text
 		"""
 		log.debug(f"writeCompactMergeSyns: {defiFormat=}")
-		dictMark = 0
 
 		idxBlockList = self.newIdxList()
 		altIndexList = self.newSynList()
@@ -390,12 +381,11 @@ class Writer:
 		dictFile = open(self._filename + ".dict", "wb")
 
 		t0 = now()
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		entryIndex = -1
+		dictMark = 0
 		while True:
 			entry = yield
 			if entry is None:
@@ -406,19 +396,15 @@ class Writer:
 			entryIndex += 1
 
 			words = entry.l_word  # list of strs
-			word = words[0]  # str
-			defi = self.fixDefi(entry.defi, defiFormat)
-			# defi is str
 
-			b_dictBlock = defi.encode("utf-8")
+			b_dictBlock = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
 			dictFile.write(b_dictBlock)
-			blockLen = len(b_dictBlock)
 
-			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(blockLen)
+			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
 			for word in words:
 				idxBlockList.append((word.encode("utf-8"), blockData))
 
-			dictMark += blockLen
+			dictMark += len(b_dictBlock)
 
 			if dictMark > dictMarkMax:
 				raise Error(
@@ -445,7 +431,6 @@ class Writer:
 		sametypesequence option is not used.
 		"""
 		log.debug("writeGeneralMergeSyns")
-		dictMark = 0
 		idxBlockList = self.newIdxList()
 		altIndexList = self.newSynList()
 
@@ -454,12 +439,11 @@ class Writer:
 		t0 = now()
 		wordCount = 0
 		defiFormatCounter: typing.Counter[str] = Counter()
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		entryIndex = -1
+		dictMark = 0
 		while True:
 			entry = yield
 			if entry is None:
@@ -477,19 +461,16 @@ class Writer:
 				defiFormat = "m"
 
 			words = entry.l_word  # list of strs
-			word = words[0]  # str
-			defi = self.fixDefi(entry.defi, defiFormat)
-			# defi is str
 
-			b_dictBlock = (defiFormat + defi).encode("utf-8") + b"\x00"
+			b_defi = self.fixDefi(entry.defi, defiFormat).encode("utf-8")
+			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
-			blockLen = len(b_dictBlock)
 
-			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(blockLen)
+			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
 			for word in words:
 				idxBlockList.append((word.encode("utf-8"), blockData))
 
-			dictMark += blockLen
+			dictMark += len(b_dictBlock)
 
 			if dictMark > dictMarkMax:
 				raise Error(
@@ -564,9 +545,9 @@ class Writer:
 			ifo.append(("synwordcount", str(synWordCount)))
 
 		desc = glos.getInfo("description")
-		_copyright = glos.getInfo("copyright")
-		if _copyright:
-			desc = f"{_copyright}\n{desc}"
+		copyright_ = glos.getInfo("copyright")
+		if copyright_:
+			desc = f"{copyright_}\n{desc}"
 		publisher = glos.getInfo("publisher")
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"
