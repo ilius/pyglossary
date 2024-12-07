@@ -232,13 +232,12 @@ class Writer:
 			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
-			b_idxBlock = (
+			idxFile.write(
 				words[0].encode("utf-8")
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
 				+ uint32ToBytes(len(b_dictBlock))
 			)
-			idxFile.write(b_idxBlock)
 
 			dictMark += len(b_dictBlock)
 			wordCount += 1
@@ -303,13 +302,12 @@ class Writer:
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
 
-			b_idxBlock = (
+			idxFile.write(
 				words[0].encode("utf-8")
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
 				+ uint32ToBytes(len(b_dictBlock))
 			)
-			idxFile.write(b_idxBlock)
 
 			dictMark += len(b_dictBlock)
 			wordCount += 1
@@ -392,13 +390,11 @@ class Writer:
 				continue
 			entryIndex += 1
 
-			words = entry.l_word  # list of strs
-
 			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
 			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for word in words:
+			for word in entry.l_word:
 				idxBlockList.append((word.encode("utf-8"), blockData))
 
 			dictMark += len(b_dictBlock)
@@ -454,14 +450,12 @@ class Writer:
 				log.error(f"invalid {defiFormat=}, using 'm'")
 				defiFormat = "m"
 
-			words = entry.l_word  # list of strs
-
 			b_defi = self.fixDefi(entry.defi, defiFormat)
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
 
 			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for word in words:
+			for word in entry.l_word:
 				idxBlockList.append((word.encode("utf-8"), blockData))
 
 			dictMark += len(b_dictBlock)
