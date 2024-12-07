@@ -174,6 +174,15 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self.initVars()
 		self._data.clear()
 
+	def _newInMemorySqEntryList(self) -> SqEntryList:
+		return SqEntryList(
+			entryToRaw=self._entryToRaw,
+			entryFromRaw=self._entryFromRaw,
+			filename="file::memory:",  # or "file::memory:?cache=shared"
+			create=True,
+			persist=True,
+		)
+
 	def __init__(
 		self,
 		info: dict[str, str] | None = None,
@@ -1052,6 +1061,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			self._switchToSQLite(
 				inputFilename=args.inputFilename,
 			)
+		else:
+			self._data = self._newInMemorySqEntryList()
 
 		self._data.setSortKey(
 			namedSortKey=namedSortKey,
