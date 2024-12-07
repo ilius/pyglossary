@@ -145,6 +145,10 @@ class Writer:
 			yield from self.writeGeneralMergeSyns()
 		else:
 			yield from self.writeGeneral()
+
+		if not os.listdir(self._resDir):
+			os.rmdir(self._resDir)
+
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 			syn_file = f"{self._filename}.syn"
@@ -200,7 +204,6 @@ class Writer:
 		defiFormat: format of article definition: h - html, m - plain text
 		"""
 		log.debug(f"writeCompact: {defiFormat=}")
-		dictMark = 0
 		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
@@ -211,7 +214,7 @@ class Writer:
 		t0 = now()
 		wordCount = 0
 
-		entryIndex = -1
+		dictMark, entryIndex = 0, -1
 		while True:
 			entry = yield
 			if entry is None:
@@ -247,8 +250,6 @@ class Writer:
 
 		dictFile.close()
 		idxFile.close()
-		if not os.listdir(self._resDir):
-			os.rmdir(self._resDir)
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 
 		self.writeSynFile(altIndexList)
@@ -265,7 +266,6 @@ class Writer:
 		sametypesequence option is not used.
 		"""
 		log.debug("writeGeneral")
-		dictMark = 0
 		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
@@ -277,7 +277,7 @@ class Writer:
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
-		entryIndex = -1
+		dictMark, entryIndex = 0, -1
 		while True:
 			entry = yield
 			if entry is None:
@@ -321,8 +321,6 @@ class Writer:
 
 		dictFile.close()
 		idxFile.close()
-		if not os.listdir(self._resDir):
-			os.rmdir(self._resDir)
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
@@ -384,8 +382,7 @@ class Writer:
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
-		entryIndex = -1
-		dictMark = 0
+		dictMark, entryIndex = 0, -1
 		while True:
 			entry = yield
 			if entry is None:
@@ -414,8 +411,6 @@ class Writer:
 		wordCount = self.writeIdxFile(idxBlockList)
 
 		dictFile.close()
-		if not os.listdir(self._resDir):
-			os.rmdir(self._resDir)
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 
 		self.writeIfoFile(
@@ -442,8 +437,7 @@ class Writer:
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
-		entryIndex = -1
-		dictMark = 0
+		dictMark, entryIndex = 0, -1
 		while True:
 			entry = yield
 			if entry is None:
@@ -480,8 +474,6 @@ class Writer:
 		wordCount = self.writeIdxFile(idxBlockList)
 
 		dictFile.close()
-		if not os.listdir(self._resDir):
-			os.rmdir(self._resDir)
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 		log.debug("defiFormatsCount = " + pformat(defiFormatCounter.most_common()))
 
