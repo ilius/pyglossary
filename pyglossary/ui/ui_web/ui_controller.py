@@ -10,7 +10,7 @@ from pyglossary.ui.ui_web.server_ws_http import (
 log = logging.getLogger("pyglossary")
 
 
-class UI(UIBase):
+class WebUI(UIBase):
 	def __init__(self, progressbar: bool = True) -> None:
 		UIBase.__init__(self)
 		self._toPause = False
@@ -20,7 +20,7 @@ class UI(UIBase):
 
 	def progressInit(self, title: str) -> None:
 		self.server.send_message_to_all(
-			json.dumps({"type": "progress", "text": "", "ratio": 0})
+			json.dumps({"type": "progress", "text": title or "", "ratio": 0})
 		)
 
 	def progress(self, ratio: float, text=None) -> None:
@@ -33,11 +33,11 @@ class UI(UIBase):
 
 	def run(  # noqa: PLR0912, PLR0913
 		self,
-		inputFilename: str,
-		outputFilename: str,
-		inputFormat: str,
-		outputFormat: str,
-		reverse: bool = False,
+		inputFilename: str,  # noqa: ARG002
+		outputFilename: str,  # noqa: ARG002
+		inputFormat: str,  # noqa: ARG002
+		outputFormat: str,  # noqa: ARG002
+		reverse: bool = False,  # noqa: ARG002
 		config: "dict | None" = None,
 		readOptions: "dict | None" = None,
 		writeOptions: "dict | None" = None,
