@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import re
+from collections import OrderedDict
 from os.path import (
 	dirname,
 	getsize,
@@ -143,8 +144,10 @@ class Writer:
 		else:
 			yield from self.writeGeneral()
 
-		if not os.listdir(self._resDir):
+		try:
 			os.rmdir(self._resDir)
+		except OSError:
+			pass  # "Directory not empty" or "Permission denied"
 
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
@@ -322,9 +325,6 @@ class Writer:
 		t0 = now()
 
 		altIndexList.sort()
-		# 28 seconds with old sort key (converted from custom cmp)
-		# 0.63 seconds with my new sort key
-		# 0.20 seconds without key function (default sort)
 
 		log.info(
 			f"Sorting {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
@@ -373,9 +373,9 @@ class Writer:
 			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
-			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
+			b_idxBlock = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
 			for b_word in entry.lb_word:
-				idxBlockList.append((b_word, blockData))
+				idxBlockList.append((b_word, b_idxBlock))
 
 			dictMark += len(b_dictBlock)
 
@@ -427,9 +427,9 @@ class Writer:
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
 
-			blockData = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
+			b_idxBlock = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
 			for b_word in entry.lb_word:
-				idxBlockList.append((b_word, blockData))
+				idxBlockList.append((b_word, b_idxBlock))
 
 			dictMark += len(b_dictBlock)
 
@@ -449,20 +449,19 @@ class Writer:
 		)
 
 	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]):
-		filename = self._filename + ".idx"
 		if not indexList:
 			return
 
 		log.info(f"Sorting idx with {len(indexList)} entries...")
 		t0 = now()
-
 		indexList.sort()
 		log.info(
 			f"Sorting idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
+
 		log.info(f"Writing idx with {len(indexList)} entries...")
 		t0 = now()
-		with open(filename, mode="wb") as indexFile:
+		with open(self._filename + ".idx", mode="wb") as indexFile:
 			for key, value in indexList:
 				indexFile.write(key + b"\x00" + value)
 		log.info(
@@ -501,18 +500,21 @@ class Writer:
 		glos = self._glos
 		indexFileSize = getsize(self._filename + ".idx")
 
-		ifo: list[tuple[str, str]] = [
-			("version", "3.0.0"),
-			("bookname", self.getBookname()),
-			("wordcount", str(wordCount)),
-			("idxfilesize", str(indexFileSize)),
-		]
+		ifoDict: dict[str, str] = OrderedDict(
+			{
+				"version": "3.0.0",
+				"bookname": self.getBookname(),
+				"wordcount": str(wordCount),
+				"idxfilesize": str(indexFileSize),
+			}
+		)
+
 		if self._large_file:
-			ifo.append(("idxoffsetbits", "64"))
+			ifoDict["idxoffsetbits"] = "64"
 		if defiFormat:
-			ifo.append(("sametypesequence", defiFormat))
+			ifoDict["sametypesequence"] = defiFormat
 		if synWordCount > 0:
-			ifo.append(("synwordcount", str(synWordCount)))
+			ifoDict["synwordcount"] = str(synWordCount)
 
 		for key in infoKeys:
 			if key in {
@@ -524,9 +526,9 @@ class Writer:
 			if not value:
 				continue
 			value = newlinesToSpace(value)
-			ifo.append((key, value))
+			ifoDict[key] = value
 
-		ifo.append(("description", self.getDescription()))
+		ifoDict["description"] = self.getDescription()
 
 		with open(
 			self._filename + ".ifo",
@@ -535,5 +537,5 @@ class Writer:
 			newline="\n",
 		) as ifoFile:
 			ifoFile.write("StarDict's dict ifo file\n")
-			for key, value in ifo:
+			for key, value in ifoDict.items():
 				ifoFile.write(f"{key}={value}\n")
