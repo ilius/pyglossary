@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>PyGlossary Web</title>
+    <meta name="description" content="PyGlossary Web UI" />
+
+    <!-- Pico.css -->
+    <link rel="stylesheet" href="pico.green.min.css" />
+    <style>
+        :root {
+            --pico-font-family-sans-serif: Inter, system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, Helvetica, Arial, "Helvetica Neue", sans-serif, var(--pico-font-family-emoji);
+            --pico-font-size: 87.5%;
+            /* Original: 100% */
+            --pico-line-height: 1.25;
+            /* Original: 1.5 */
+            --pico-form-element-spacing-vertical: 0.5rem;
+            /* Original: 1rem */
+            --pico-form-element-spacing-horizontal: 1.0rem;
+            /* Original: 1.25rem */
+            --pico-border-radius: 0.375rem;
+            /* Original: 0.25rem */
+        }
+
+        @media (min-width: 576px) {
+            :root {
+                --pico-font-size: 87.5%;
+                /* Original: 106.25% */
+            }
+        }
+
+        @media (min-width: 768px) {
+            :root {
+                --pico-font-size: 87.5%;
+                /* Original: 112.5% */
+            }
+        }
+
+        @media (min-width: 1024px) {
+            :root {
+                --pico-font-size: 87.5%;
+                /* Original: 118.75% */
+            }
+        }
+
+        @media (min-width: 1280px) {
+            :root {
+                --pico-font-size: 87.5%;
+                /* Original: 125% */
+            }
+        }
+
+        @media (min-width: 1536px) {
+            :root {
+                --pico-font-size: 87.5%;
+                /* Original: 131.25% */
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            --pico-font-weight: 532;
+            /* Original: 700 */
+        }
+
+        article {
+            border: 1px solid var(--pico-muted-border-color);
+            /* Original doesn't have a border */
+            border-radius: calc(var(--pico-border-radius) * 2);
+            /* Original: var(--pico-border-radius) */
+        }
+
+        article>footer {
+            border-radius: calc(var(--pico-border-radius) * 2);
+            /* Original: var(--pico-border-radius) */
+        }
+
+        .container {
+            max-width: 704px;
+        }
+
+        #outputFormat,
+        #inputFormat {
+            max-width: 8em;
+        }
+
+        section textarea {
+            font-size: xx-small;
+            color: rgb(109, 109, 109);
+            padding: 3px;
+            height: auto;
+            font-family: 'Fira Mono', 'Jetbrains Mono', monospace;
+        }
+        #btnConvert {
+            font-size: 1.75em;
+            height: 2em;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="container">
+        <!-- <hgroup>
+
+        </hgroup> -->
+        <nav>
+            <ul>
+                <li>
+                    <h1>
+                        <a style="text-decoration: none;" data-theme-switcher="auto" href="#" id="theme-switcher"
+                            class="theme-switcher">
+                            <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z" />
+                            </svg>
+                        </a> Pyglossary Converter
+                    </h1>
+                </li>
+            </ul>
+            <ul dir="rtl">
+                <li>
+                    <details id="dropdown" class="dropdown">
+                        <summary role="button" class="outline"><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/></svg></summary>
+                        <ul>
+                            <li class="primary"><a id="clearDisplay" href="#">&#10006; Clear log</a></li>
+                            <li class="primary"><a target="_blank"
+                                    href="https://github.com/ilius/pyglossary/blob/master/README.md">&#128279; Docs</a>
+                            </li>
+                            <li class="primary"><a target="_blank"
+                                    href="https://github.com/ilius/pyglossary/blob/master/README.md#supported-formats">&#128279;
+                                    Formats</a></li>
+                            <li class="primary"><a target="_blank"
+                                    href="https://github.com/ilius/pyglossary/blob/master/doc/p/__index__.md">&#128279;
+                                    Plugins</a></li>
+                            <li class="primary"><a target="_blank" href="https://github.com/ilius/pyglossary">&#128279;
+                                    Source</a></li>
+                            <li class="primary"><a id="stopServer" target="_blank" href="#"> &#10060; Exit</a></li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <!-- ./ Header -->
+
+    <!-- Main -->
+    <main class="container">
+        <form>
+            <!-- Input -->
+            <section id="input">
+                <h5>Input file</h5>
+                <div class="grid">
+                    <fieldset role="group">
+                        <input type="text" id="inputFilename" name="inputFilename" placeholder="<input file path>"
+                            autocomplete="on" data-tooltip="Tooltip" required>
+                        <!-- Select -->
+                        <select id="inputFormat" name="inputFormat" required>
+                            <option></option>
+                        </select>
+                    </fieldset>
+                </div>
+            </section>
+            <section id="output">
+                <h5>Output file</h5>
+                <div class="grid">
+                    <fieldset role="group">
+                        <input type="text" id="outputFilename" name="outputFilename" placeholder="<output file path>"
+                            autocomplete="on" required />
+                        <!-- Select -->
+                        <select id="outputFormat" name="outputFormat" required>
+                            <option></option>
+                        </select>
+                    </fieldset>
+                </div>
+            </section>
+            <!-- ./ Preview -->
+
+            <!-- Convert -->
+            <section>
+                <fieldset role="group">
+                    <button id="btnOptions" name="options" class="outline">Options</button>
+                    <input id="btnConvert" type="submit" value="Convert" />
+                </fieldset>
+            </section>
+            <!-- ./ Convert -->
+
+            <section>
+                <textarea rows="15" id="info-area" name="info-area" readonly></textarea>
+            </section>
+
+            <!-- Progress -->
+            <section>
+                <h5 id="progress-text"></h5>
+                <progress id="progress" value="0" max="100"></progress>
+            </section>
+            <!-- ./ Progress -->
+
+            <!-- Accordions -->
+            <section id="help">
+                <h5></h5>
+                <details>
+                    <summary>&#9432; How to convert a dictionary?</summary>
+                    <p>
+                        <!-- <ul>
+                        <li> -->
+                    <ol>
+                        <li>Paste the full path to a dictionary file on your local file system in the <b>Input file</b>
+                            field.</li>
+                        <li>Select input file format if not detected automatically.</li>
+                        <li>Paste the full path to the converted file in the <b>Output file</b> field.</li>
+                        <li>Select a <a target="_blank"
+                                href="https://github.com/ilius/pyglossary?tab=readme-ov-file#supported-formats">target
+                                format</a> to convert to</li>
+                        <li>Click the <b>Convert</b> button and wait for the conversion to complete. For large files the
+                            operation can take several minutes.</li>
+                    </ol>
+
+                    <!-- </li>
+                    </ul> -->
+                    </p>
+                </details>
+            </section>
+            <!-- ./ Accordions -->
+        </form>
+    </main>
+    <!-- ./ Main -->
+
+    <hr>
+
+    <!-- Footer -->
+    <footer class="container">
+        <small><a target="_blank" href="https://github.com/ilius/pyglossary">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 16 16" width="20" aria-hidden="true"
+                    class="d-block">
+                    <path fill="currentColor"
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                </svg>
+            </a>
+        </small>
+    </footer>
+    <!-- ./ Footer -->
+    <script>
+        document.getElementById('theme-switcher').addEventListener('click', function () {
+            if (this.dataset.themeSwitcher !== 'dark') {
+                this.dataset.themeSwitcher = 'dark';
+            } else {
+                this.dataset.themeSwitcher = 'light';
+            }
+        });
+    </script>
+
+    <!-- Minimal theme switcher -->
+    <script src="minimal-theme-switcher.js"></script>
+
+    <script>
+        // unix-style permissions
+        const CAN = {
+            READ: 1,  // 0b01
+            WRITE: 2, // 0b10
+        };
+        const infobox = document.getElementById('info-area');
+        const progressBar = document.getElementById('progress');
+        const progressText = document.getElementById('progress-text');
+
+        function initWsConnection() {
+            const socket = new WebSocket('/ws');
+            window.ws = socket;
+
+            socket.addEventListener('open', () => {
+                console.log('WebSocket connection established');
+                socket.send('ping');
+            });
+
+            socket.addEventListener('message', (event) => {
+                // console.log(event.data)
+                const message = JSON.parse(event.data);
+
+                if (message.type == 'progress') {
+                    progressBar.value = message.ratio * 100;
+                    progressText.innerText = message.text;
+
+                } else if (message.type == 'info') {
+                    infobox.value += `${message.text}\n`;
+                }
+
+                infobox.scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
+            });
+
+            socket.addEventListener('error', (error) => {
+                msg = `WebSocket error: ${error}\n`;
+                infobox.value += msg;
+                console.log(msg);
+            });
+
+            socket.addEventListener('close', () => {
+                console.log('WebSocket connection closed');
+            });
+        }
+
+        function loadConfig() {
+            fetch("/config")
+                .then(response => {
+                    if (!response.ok) {
+                        infobox.value += `Failed to fetch configuration: ${response.status} ${response.text()}\n`;
+                        return Promise.reject(`Failed to fetch configuration: ${response.statusText}`);
+                    } else {
+                        infobox.value += `config load ✔️\n`;
+                    }
+                    return response.json();
+                })
+                .then(formats => {
+                    const readDropdown = document.getElementById("inputFormat");
+                    const writeDropdown = document.getElementById("outputFormat");
+
+                    const readFragment = document.createDocumentFragment();
+                    const writeFragment = document.createDocumentFragment();
+                    window.formats = formats;
+
+                    Object.keys(formats)
+                        .sort((a, b) => formats[a].desc.localeCompare(formats[b].desc))
+                        .forEach(key => {
+                            const plug = formats[key];
+                            if (plug.can & CAN.READ) {
+                                readFragment.appendChild(new Option(plug.desc, key));
+                            }
+                            if (plug.can & CAN.WRITE) {
+                                writeFragment.appendChild(new Option(plug.desc, key));
+                            }
+                        });
+
+                    readDropdown.appendChild(readFragment);
+                    writeDropdown.appendChild(writeFragment);
+                }).then(() => {
+                    restoreFormState();
+                })
+                .catch(error => {
+                    console.error("Error populating dropdowns:", error);
+                    infobox.value += `Error populating dropdowns: ${error}\n`;
+                });
+        }
+
+        function toggleConvertButton() {
+            const btnConv = document.getElementById('btnConvert');
+            btnConv.classList.toggle('outline');
+            btnConv.disabled = !btnConv.disabled;
+        }
+        function attachListeners() {
+            document.querySelector('input[type="submit"]').addEventListener('click', async (event) => {
+
+                progressBar.value = 0;
+                infobox.value = 'Starting new conversion job. Please wait... ⏳'
+                const form = event.target.form;
+
+                if (form.checkValidity()) {
+                    event.preventDefault();
+                    infobox.value += '\nConversion started, please wait...\n';
+
+                    const inputFilename = form.inputFilename.value;
+                    const inputFormat = form.inputFormat.value;
+                    const outputFilename = form.outputFilename.value;
+                    const outputFormat = form.outputFormat.value;
+
+                    try {
+                        toggleConvertButton()
+                        const response = await fetch('/convert', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                inputFilename,
+                                inputFormat,
+                                outputFilename,
+                                outputFormat
+                            }),
+                        });
+
+                        if (!response.ok) {
+                            const msg = `Failed to start conversion: ${response.statusText} ${response.json()}\n`
+                            infobox.value += msg;
+                            throw new Error(msg);
+
+                        }
+                        toggleConvertButton();
+
+                    } catch (error) {
+                        console.error('Error during conversion:', error);
+                        infobox.value += error;
+                        toggleConvertButton();
+                    }
+                }
+            });
+
+            document.getElementById('clearDisplay').addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopImmediatePropagation();
+                infobox.value = '';
+            });
+            document.getElementById('stopServer').addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopImmediatePropagation();
+                if (window.ws) {
+                    ws.send('exit');
+                }
+                document.getElementById('dropdown').removeAttribute('open')
+                infobox.value = 'Server stopped! Window can now be closed.\n\n';
+            });
+            
+            document.getElementById("inputFilename").addEventListener('change', () => {
+                autoDetectFormatFromFilePath("inputFilename", 'inputFormat');
+            });
+
+            document.getElementById("outputFilename").addEventListener('change', () => {
+                autoDetectFormatFromFilePath("outputFilename", 'outputFormat');
+            });
+
+            document.getElementById('btnOptions').addEventListener('click', (evt) => {
+                evt.preventDefault();
+                evt.stopImmediatePropagation();
+                infobox.value += 'TODO: Not implemented!';
+            });
+
+        }
+
+        const findFormatByExtension = (formats, ext) => {
+            for (const key in formats) {
+                if (formats[key].ext === ext) return key;
+            }
+        };
+
+        function autoDetectFormatFromFilePath(sourceFieldId, targetFieldId) {
+            if (window.formats) {
+                const extension = document.getElementById(sourceFieldId).value.split('.').pop().toLowerCase();
+                const dictFormat = findFormatByExtension(window.formats, `.${extension}`);
+                if (dictFormat) {
+                    document.getElementById(targetFieldId).value = dictFormat;
+                }
+            }
+        }
+
+        function getInputValue(el) {
+            return el.tagName === 'SELECT' ? el.selectedIndex : el.value;
+        }
+
+        function setInputValue(el, val) {
+            el.tagName === 'SELECT' ? el.selectedIndex = val : el.value = val;
+        }
+
+        function restoreFormState() {
+            ['inputFilename', 'inputFormat', 'outputFilename', 'outputFormat'].forEach(eid => {
+
+                const el = document.getElementById(eid);
+                const savedValue = localStorage.getItem(`pg_${eid}`);
+                console.log(eid, savedValue, el);
+
+                if (savedValue) {
+                    setInputValue(el, savedValue);
+                }
+
+                el.addEventListener('change', () => {
+                    localStorage.setItem(`pg_${eid}`, getInputValue(el));
+                });
+            });
+        }
+
+        window.onload = function () {
+            loadConfig();
+            attachListeners();
+            initWsConnection();
+        };
+    </script>
+</body>
+
+</html>

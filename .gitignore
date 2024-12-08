@@ -17,3 +17,7 @@ vulture.*
 imports_from_set.json
 imports_set.json
 module-attrs.json
+dist.*/
+build.*/
+.idea/
+**/.DS_Store
