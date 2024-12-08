@@ -470,7 +470,8 @@ class Writer:
 		log.info(f"Writing idx with {len(indexList)} entries...")
 		t0 = now()
 		with open(filename, mode="wb") as indexFile:
-			indexFile.write(b"".join(key + b"\x00" + value for key, value in indexList))
+			for key, value in indexList:
+				indexFile.write(key + b"\x00" + value)
 		log.info(
 			f"Writing idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
