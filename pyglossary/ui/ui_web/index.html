@@ -290,17 +290,15 @@
 
                 } else if (message.type == 'info') {
                     infobox.value += `${message.text}\n`;
-
-                    if (message.scope == 'config') {
-                        console.log(message);
-                    }
                 }
 
                 infobox.scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
             });
 
             socket.addEventListener('error', (error) => {
-                console.error('WebSocket error:', error);
+                msg = `WebSocket error: ${error}\n`;
+                infobox.value += msg;
+                console.log(msg);
             });
 
             socket.addEventListener('close', () => {
