@@ -337,12 +337,8 @@ class Writer:
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
 		with open(self._filename + ".syn", "wb") as synFile:
-			synFile.write(
-				b"".join(
-					b_alt + b"\x00" + uint32ToBytes(entryIndex)
-					for b_alt, entryIndex in altIndexList
-				),
-			)
+			for b_alt, entryIndex in altIndexList:
+				synFile.write(b_alt + b"\x00" + uint32ToBytes(entryIndex))
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
 		)
