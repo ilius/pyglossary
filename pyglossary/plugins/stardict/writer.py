@@ -460,19 +460,19 @@ class Writer:
 		if not indexList:
 			return 0
 
-		log.info(f"Sorting {len(indexList)} items...")
+		log.info(f"Sorting idx with {len(indexList)} entries...")
 		t0 = now()
 
 		indexList.sort()
 		log.info(
-			f"Sorting {len(indexList)} {filename} took {now() - t0:.2f} seconds",
+			f"Sorting idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
-		log.info(f"Writing {len(indexList)} index entries...")
+		log.info(f"Writing idx with {len(indexList)} entries...")
 		t0 = now()
 		with open(filename, mode="wb") as indexFile:
 			indexFile.write(b"".join(key + b"\x00" + value for key, value in indexList))
 		log.info(
-			f"Writing {len(indexList)} {filename} took {now() - t0:.2f} seconds",
+			f"Writing idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
 		return len(indexList)
 
