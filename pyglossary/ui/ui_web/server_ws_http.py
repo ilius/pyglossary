@@ -160,7 +160,6 @@ class API:
 
 
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
-
 	"""
 		A websocket server waiting for clients to connect.
 
@@ -191,7 +190,6 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 		self, host="127.0.0.1", port=0, user_logger=None, loglevel=logging.DEBUG
 	):
 		# server's own logger
-		serverlog.setLevel(loglevel)
 		HTTPServer.__init__(self, (host, port), HTTPWebSocketHandler)
 		self.host = host
 		self.port = self.socket.getsockname()[1]
@@ -206,8 +204,9 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 		# the logger that is echoed to the web client
 		self.user_logger = user_logger
 		self.user_logger.addHandler(WebLogHandler(self))
-		# log.addHandler(console_handler)
-		self.user_logger.setLevel(logging.DEBUG)
+		self.level = loglevel
+		serverlog.setLevel(loglevel)
+		self.user_logger.setLevel(loglevel)
 
 	def open_browser(self):
 		serverlog.info(f"http://{self.host}:{self.port}/")
@@ -274,7 +273,10 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 
 	def _multicast(self, msg):
 		for client in self.clients:
-			self._unicast(client, msg)
+			try:
+				self._unicast(client, msg)
+			except Exception as e:
+				print(str(e))
 
 	def handler_to_client(self, handler):
 		for client in self.clients:
@@ -387,9 +389,12 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 	def handle(self):
 		self.close_connection = True
 
-		self.handle_one_request()
-		while not self.close_connection:
+		try:
 			self.handle_one_request()
+			while not self.close_connection:
+				self.handle_one_request()
+		except Exception as e:
+			self.log_error(str(e))
 
 	def handle_ws(self):
 		while self.keep_alive:
@@ -589,7 +594,10 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		header.append(FIN | OPCODE_CLOSE_CONN)
 		header.append(payload_length)
 		with self._send_lock:
-			self.request.send(header + payload)
+			try:
+				self.request.send(header + payload)
+			except Exception as e:
+				self.log_error(f"ws: CLOSE not sent - client disconnected! {e!s}")
 
 	def send_text(self, message, opcode=OPCODE_TEXT):
 		"""
@@ -706,8 +714,9 @@ def new_client(client, server):
 
 # Called on client disconnecting
 def client_left(client, server):
-	print(f'Client({(client and client.get("id")) or -1}) disconnected')
-	server.send_message_to_all({"type": "info", "text": "ws: pong ✔️"})
+	serverlog.info(
+		f'{server}: Client({(client and client.get("id")) or -1}) disconnected'
+	)
 
 
 # Callback invoked when client sends a message
@@ -716,10 +725,13 @@ def message_received(client, server, message):
 		print(f"Client({client.get('id')}) said: {message}")
 		server.send_message_to_all({"type": "info", "text": "ws: pong ✔️"})
 	elif message == "exit":
-		server.shutdown()
-		server.send_message_to_all(
-			{"type": "info", "text": "ws: server shudown complete ✔️"}
-		)
+		try:
+			server.send_message_to_all(
+				{"type": "info", "text": "ws: shutdown request received ✔️"}
+			)
+			server.shutdown()
+		except Exception as e:
+			serverlog.warning(str(e))
 
 
 def create_server(host="127.0.0.1", port=9001, user_logger=None):
