@@ -160,6 +160,7 @@ class API:
 
 
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
+
 	"""
 		A websocket server waiting for clients to connect.
 
@@ -187,22 +188,13 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 	daemon_threads = True  # comment to keep threads alive until finished
 
 	def __init__(
-		self,
-		host="127.0.0.1",
-		port=0,
-		user_logger=None,
-		loglevel=logging.DEBUG,
-		key=None,
-		cert=None,
+		self, host="127.0.0.1", port=0, user_logger=None, loglevel=logging.DEBUG
 	):
 		# server's own logger
 		serverlog.setLevel(loglevel)
 		HTTPServer.__init__(self, (host, port), HTTPWebSocketHandler)
 		self.host = host
 		self.port = self.socket.getsockname()[1]
-
-		self.key = key
-		self.cert = cert
 
 		self.clients = []
 		self.id_counter = 0
@@ -346,17 +338,6 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		self.server: HttpWebsocketServer = server
 		assert not hasattr(self, "_send_lock"), "_send_lock already exists"
 		self._send_lock = threading.Lock()
-
-		# if server.key and server.cert:
-		# try:
-		# socket = ssl.wrap_socket(
-		# socket, server_side=True, certfile=server.cert, keyfile=server.key
-		# )
-		# except:  # Not sure which exception it throws if the key/cert isn't found
-		# logger.warning(
-		# "SSL unavailable (are the paths {server.key} and {server.cert}"
-		# "correct for the key and cert?)"
-		# )
 
 		super().__init__(
 			socket, addr, server, *args, **kwargs, directory="pyglossary/ui/ui_web"
@@ -538,7 +519,6 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		except ValueError:
 			b1, b2 = 0, 0
 
-		fin = b1 & FIN
 		opcode = b1 & OPCODE
 		masked = b2 & MASKED
 		payload_length = b2 & PAYLOAD_LEN
@@ -576,7 +556,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		masks = self.read_bytes(4)
 		message_bytes = bytearray()
 		for message_byte in self.read_bytes(payload_length):
-			message_byte ^= masks[len(message_bytes) % 4]
+			message_byte ^= masks[len(message_bytes) % 4]  # noqa: PLW2901
 			message_bytes.append(message_byte)
 		opcode_handler(self, message_bytes.decode("utf8"))
 
@@ -626,7 +606,8 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 				return False
 		elif not isinstance(message, str):
 			serverlog.warning(
-				f"Can't send message, message has to be a string or bytes. Got {type(message)}"
+				"Can't send message, message has to be a string or bytes. "
+				f"Got {type(message)}"
 			)
 			return False
 
@@ -726,6 +707,7 @@ def new_client(client, server):
 # Called on client disconnecting
 def client_left(client, server):
 	print(f'Client({(client and client.get("id")) or -1}) disconnected')
+	server.send_message_to_all({"type": "info", "text": "ws: pong ✔️"})
 
 
 # Callback invoked when client sends a message
