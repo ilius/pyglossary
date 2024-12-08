@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Hybrid server implementing HTTP and WebSocket on the same port.
 Based on HTTPServer, SimpleHTTPRequestHandler.
@@ -58,7 +56,6 @@ import struct
 import sys
 import threading
 import traceback
-import webbrowser
 from base64 import b64encode
 from hashlib import sha1
 from http import HTTPStatus
@@ -212,7 +209,11 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 	daemon_threads = True  # comment to keep threads alive until finished
 
 	def __init__(
-		self, host="127.0.0.1", port=0, user_logger=None, loglevel=logging.DEBUG
+		self,
+		host="127.0.0.1",
+		port=0,
+		user_logger=None,
+		loglevel=logging.DEBUG,
 	):
 		# server's own logger
 		HTTPServer.__init__(self, (host, port), HTTPWebSocketHandler)
@@ -233,9 +234,9 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 		serverlog.setLevel(loglevel)
 		self.user_logger.setLevel(loglevel)
 
-	def open_browser(self):
-		serverlog.info(f"http://{self.host}:{self.port}/")
-		webbrowser.open(f"http://localhost:{self.port}/")
+	@property
+	def url(self) -> str:
+		return f"http://{self.host}:{self.port}/"
 
 	def _run_forever(self, threaded):
 		cls_name = self.__class__.__name__

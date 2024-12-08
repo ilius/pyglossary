@@ -99,7 +99,7 @@
             font-family: 'Fira Mono', 'Jetbrains Mono', monospace;
         }
         #btnConvert {
-            font-size: 1.75em;
+            font-size: 2em;
             height: 2em;
         }
     </style>
@@ -187,13 +187,13 @@
             <section>
                 <fieldset role="group">
                     <button id="btnOptions" name="options" class="outline">Options</button>
-                    <input id="btnConvert" type="submit" value="Convert" />
+                    <input id="btnConvert" type="submit" value="Convert" class="outline" />
                 </fieldset>
             </section>
             <!-- ./ Convert -->
 
             <section>
-                <textarea rows="15" id="info-area" name="info-area" readonly></textarea>
+                <textarea rows="15" id="console" name="console-area" readonly></textarea>
             </section>
 
             <!-- Progress -->
@@ -267,7 +267,7 @@
             READ: 1,  // 0b01
             WRITE: 2, // 0b10
         };
-        const infobox = document.getElementById('info-area');
+        const consoleArea = document.getElementById('console-area');
         const progressBar = document.getElementById('progress');
         const progressText = document.getElementById('progress-text');
 
@@ -287,17 +287,16 @@
                 if (message.type == 'progress') {
                     progressBar.value = message.ratio * 100;
                     progressText.innerText = message.text;
-
                 } else if (message.type == 'info') {
-                    infobox.value += `${message.text}\n`;
+                    consoleArea.value += `${message.text}\n`;
                 }
 
-                infobox.scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
+                consoleArea.scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
             });
 
             socket.addEventListener('error', (error) => {
                 msg = `WebSocket error: ${error}\n`;
-                infobox.value += msg;
+                consoleArea.value += msg;
                 console.log(msg);
             });
 
@@ -310,10 +309,10 @@
             fetch("/config")
                 .then(response => {
                     if (!response.ok) {
-                        infobox.value += `Failed to fetch configuration: ${response.status} ${response.text()}\n`;
+                        consoleArea.value += `Failed to fetch configuration: ${response.status} ${response.text()}\n`;
                         return Promise.reject(`Failed to fetch configuration: ${response.statusText}`);
                     } else {
-                        infobox.value += `config load ✔️\n`;
+                        consoleArea.value += `config load ✔️\n`;
                     }
                     return response.json();
                 })
@@ -344,7 +343,7 @@
                 })
                 .catch(error => {
                     console.error("Error populating dropdowns:", error);
-                    infobox.value += `Error populating dropdowns: ${error}\n`;
+                    consoleArea.value += `Error populating dropdowns: ${error}\n`;
                 });
         }
 
@@ -357,12 +356,12 @@
             document.querySelector('input[type="submit"]').addEventListener('click', async (event) => {
 
                 progressBar.value = 0;
-                infobox.value = 'Starting new conversion job. Please wait... ⏳'
+                consoleArea.value = 'Starting new conversion job. Please wait... ⏳'
                 const form = event.target.form;
 
                 if (form.checkValidity()) {
                     event.preventDefault();
-                    infobox.value += '\nConversion started, please wait...\n';
+                    consoleArea.value += '\nConversion started, please wait...\n';
 
                     const inputFilename = form.inputFilename.value;
                     const inputFormat = form.inputFormat.value;
@@ -386,7 +385,7 @@
 
                         if (!response.ok) {
                             const msg = `Failed to start conversion: ${response.statusText} ${response.json()}\n`
-                            infobox.value += msg;
+                            consoleArea.value += msg;
                             throw new Error(msg);
 
                         }
@@ -394,7 +393,7 @@
 
                     } catch (error) {
                         console.error('Error during conversion:', error);
-                        infobox.value += error;
+                        consoleArea.value += error;
                         toggleConvertButton();
                     }
                 }
@@ -403,7 +402,7 @@
             document.getElementById('clearDisplay').addEventListener('click', (evt) => {
                 evt.preventDefault();
                 evt.stopImmediatePropagation();
-                infobox.value = '';
+                consoleArea.value = '';
             });
             document.getElementById('stopServer').addEventListener('click', (evt) => {
                 evt.preventDefault();
@@ -412,9 +411,9 @@
                     ws.send('exit');
                 }
                 document.getElementById('dropdown').removeAttribute('open')
-                infobox.value = 'Server stopped! Window can now be closed.\n\n';
+                consoleArea.value = 'Server stopped! Window can now be closed.\n\n';
             });
-            
+
             document.getElementById("inputFilename").addEventListener('change', () => {
                 autoDetectFormatFromFilePath("inputFilename", 'inputFormat');
             });
@@ -426,7 +425,7 @@
             document.getElementById('btnOptions').addEventListener('click', (evt) => {
                 evt.preventDefault();
                 evt.stopImmediatePropagation();
-                infobox.value += 'TODO: Not implemented!';
+                consoleArea.value += 'TODO: Not implemented!';
             });
 
         }

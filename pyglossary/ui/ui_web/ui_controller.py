@@ -1,13 +1,10 @@
 import json
 import logging
-import sys
 import webbrowser
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
-from pyglossary.ui.ui_web.server_ws_http import (
-	create_server,
-)
+from pyglossary.ui.ui_web.server_ws_http import create_server
 
 log = logging.getLogger("pyglossary")
 HOST = "127.0.0.1"
@@ -57,12 +54,18 @@ class WebUI(UIBase):
 		try:
 			self.server = create_server(host=HOST, port=PORT, user_logger=log)
 			self.server.ui_controller = self
-			self.server.open_browser()
+			url = self.server.url
+			log.info(url)
+			webbrowser.open(url)
 			self.server.run_forever()
-		except Exception as e:
-			print(f"Server already running:\n{e!s}\n Use Menu -> Exit to stop")
-			webbrowser.open(f"http://{HOST}:{PORT}/")
-			sys.exit(1)
+		except OSError as e:
+			if "Address already in use" in str(e):
+				print(f"Server already running:\n{e!s}\n Use Menu -> Exit to stop")
+				webbrowser.open(f"http://{HOST}:{PORT}/")
+				return False
+			raise e from None
+
+		return True
 
 	def start_convert_job(
 		self,
