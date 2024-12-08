@@ -209,7 +209,6 @@ class Writer:
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		t0 = now()
-		wordCount = 0
 
 		dictMark, entryIndex = 0, -1
 		while True:
@@ -237,7 +236,6 @@ class Writer:
 			)
 
 			dictMark += len(b_dictBlock)
-			wordCount += 1
 
 			if dictMark > dictMarkMax:
 				raise Error(
@@ -250,7 +248,7 @@ class Writer:
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
-			wordCount,
+			entryIndex + 1,
 			len(altIndexList),
 			defiFormat=defiFormat,
 		)
@@ -268,7 +266,6 @@ class Writer:
 		idxFile = open(self._filename + ".idx", "wb")
 
 		t0 = now()
-		wordCount = 0
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		dictMark, entryIndex = 0, -1
@@ -300,7 +297,6 @@ class Writer:
 			)
 
 			dictMark += len(b_dictBlock)
-			wordCount += 1
 
 			if dictMark > dictMarkMax:
 				raise Error(
@@ -313,9 +309,8 @@ class Writer:
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
-			wordCount,
+			entryIndex + 1,
 			len(altIndexList),
-			defiFormat="",
 		)
 
 	def writeSynFile(self, altIndexList: T_SdList[tuple[bytes, int]]) -> None:
@@ -392,10 +387,10 @@ class Writer:
 		dictFile.close()
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 
-		wordCount = self.writeIdxFile(idxBlockList)
+		self.writeIdxFile(idxBlockList)
 
 		self.writeIfoFile(
-			wordCount,
+			len(idxBlockList),
 			len(altIndexList),
 			defiFormat=defiFormat,
 		)
@@ -413,7 +408,6 @@ class Writer:
 		dictFile = open(self._filename + ".dict", "wb")
 
 		t0 = now()
-		wordCount = 0
 
 		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
@@ -447,18 +441,17 @@ class Writer:
 		dictFile.close()
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
 
-		wordCount = self.writeIdxFile(idxBlockList)
+		self.writeIdxFile(idxBlockList)
 
 		self.writeIfoFile(
-			wordCount,
+			len(idxBlockList),
 			len(altIndexList),
-			defiFormat="",
 		)
 
-	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]) -> int:
+	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]):
 		filename = self._filename + ".idx"
 		if not indexList:
-			return 0
+			return
 
 		log.info(f"Sorting idx with {len(indexList)} entries...")
 		t0 = now()
@@ -475,7 +468,6 @@ class Writer:
 		log.info(
 			f"Writing idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
-		return len(indexList)
 
 	def writeIfoFile(
 		self,
