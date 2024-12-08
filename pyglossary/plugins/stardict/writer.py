@@ -186,7 +186,7 @@ class Writer:
 			return MemSdList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def dictMarkToBytesFunc(self) -> tuple[Callable, int]:
+	def dictMarkToBytesFunc(self) -> tuple[Callable[[int], bytes], int]:
 		if self._large_file:
 			return uint64ToBytes, 0xFFFFFFFFFFFFFFFF
 
@@ -469,6 +469,28 @@ class Writer:
 			f"Writing idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
 
+	def getBookname(self) -> str:
+		bookname = newlinesToSpace(self._glos.getInfo("name"))
+		sourceLang = self._sourceLang
+		targetLang = self._targetLang
+		if sourceLang and targetLang:
+			langs = f"{sourceLang.code}-{targetLang.code}"
+			if langs not in bookname.lower():
+				bookname = f"{bookname} ({langs})"
+			log.info(f"bookname: {bookname}")
+		return bookname
+
+	def getDescription(self) -> str:
+		glos = self._glos
+		desc = glos.getInfo("description")
+		copyright_ = glos.getInfo("copyright")
+		if copyright_:
+			desc = f"{copyright_}\n{desc}"
+		publisher = glos.getInfo("publisher")
+		if publisher:
+			desc = f"Publisher: {publisher}\n{desc}"
+		return newlinesToBr(desc)
+
 	def writeIfoFile(
 		self,
 		wordCount: int,
@@ -477,20 +499,11 @@ class Writer:
 	) -> None:
 		"""Build .ifo file."""
 		glos = self._glos
-		bookname = newlinesToSpace(glos.getInfo("name"))
 		indexFileSize = getsize(self._filename + ".idx")
-
-		sourceLang = self._sourceLang
-		targetLang = self._targetLang
-		if sourceLang and targetLang:
-			langs = f"{sourceLang.code}-{targetLang.code}"
-			if langs not in bookname.lower():
-				bookname = f"{bookname} ({langs})"
-			log.info(f"bookname: {bookname}")
 
 		ifo: list[tuple[str, str]] = [
 			("version", "3.0.0"),
-			("bookname", bookname),
+			("bookname", self.getBookname()),
 			("wordcount", str(wordCount)),
 			("idxfilesize", str(indexFileSize)),
 		]
@@ -500,14 +513,6 @@ class Writer:
 			ifo.append(("sametypesequence", defiFormat))
 		if synWordCount > 0:
 			ifo.append(("synwordcount", str(synWordCount)))
-
-		desc = glos.getInfo("description")
-		copyright_ = glos.getInfo("copyright")
-		if copyright_:
-			desc = f"{copyright_}\n{desc}"
-		publisher = glos.getInfo("publisher")
-		if publisher:
-			desc = f"Publisher: {publisher}\n{desc}"
 
 		for key in infoKeys:
 			if key in {
@@ -521,15 +526,14 @@ class Writer:
 			value = newlinesToSpace(value)
 			ifo.append((key, value))
 
-		ifo.append(("description", newlinesToBr(desc)))
+		ifo.append(("description", self.getDescription()))
 
-		ifoStr = "StarDict's dict ifo file\n"
-		for key, value in ifo:
-			ifoStr += f"{key}={value}\n"
 		with open(
 			self._filename + ".ifo",
 			mode="w",
 			encoding="utf-8",
 			newline="\n",
 		) as ifoFile:
-			ifoFile.write(ifoStr)
+			ifoFile.write("StarDict's dict ifo file\n")
+			for key, value in ifo:
+				ifoFile.write(f"{key}={value}\n")
