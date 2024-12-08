@@ -752,7 +752,7 @@ def message_received(client, server, message):
 	elif message == "exit":
 		try:
 			server.send_message_to_all(
-				{"type": "info", "text": "ws: shutdown request received ✔️"}
+				{"type": "info", "text": "\n\nws: shutdown request received ✔️"}
 			)
 			server.shutdown()
 		except Exception as e:
