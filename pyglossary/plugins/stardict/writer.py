@@ -221,16 +221,16 @@ class Writer:
 				continue
 			entryIndex += 1
 
-			words = entry.l_word  # list of strs
+			b_words = entry.lb_word
 
-			for alt in words[1:]:
-				altIndexList.append((alt.encode("utf-8"), entryIndex))
+			for b_alt in b_words[1:]:
+				altIndexList.append((b_alt, entryIndex))
 
 			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
 			idxFile.write(
-				words[0].encode("utf-8")
+				b_words[0]
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
 				+ uint32ToBytes(len(b_dictBlock))
@@ -246,7 +246,7 @@ class Writer:
 
 		dictFile.close()
 		idxFile.close()
-		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
+		log.info(f"Writing dict + idx file took {now() - t0:.2f} seconds")
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
@@ -283,17 +283,17 @@ class Writer:
 
 			defiFormat = entry.detectDefiFormat("m")  # call no more than once
 
-			words = entry.l_word  # list of strs
+			b_words = entry.lb_word
 
-			for alt in words[1:]:
-				altIndexList.append((alt.encode("utf-8"), entryIndex))
+			for b_alt in b_words[1:]:
+				altIndexList.append((b_alt, entryIndex))
 
 			b_defi = self.fixDefi(entry.defi, defiFormat)
 			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
 			dictFile.write(b_dictBlock)
 
 			idxFile.write(
-				words[0].encode("utf-8")
+				b_words[0]
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
 				+ uint32ToBytes(len(b_dictBlock))
@@ -309,7 +309,7 @@ class Writer:
 
 		dictFile.close()
 		idxFile.close()
-		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
+		log.info(f"Writing dict + idx file took {now() - t0:.2f} seconds")
 
 		self.writeSynFile(altIndexList)
 		self.writeIfoFile(
@@ -393,10 +393,10 @@ class Writer:
 					f"StarDict: {dictMark = } is too big, set option large_file=true",
 				)
 
-		wordCount = self.writeIdxFile(idxBlockList)
-
 		dictFile.close()
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
+
+		wordCount = self.writeIdxFile(idxBlockList)
 
 		self.writeIfoFile(
 			wordCount,
@@ -448,10 +448,10 @@ class Writer:
 					f"StarDict: {dictMark = } is too big, set option large_file=true",
 				)
 
-		wordCount = self.writeIdxFile(idxBlockList)
-
 		dictFile.close()
 		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
+
+		wordCount = self.writeIdxFile(idxBlockList)
 
 		self.writeIfoFile(
 			wordCount,
