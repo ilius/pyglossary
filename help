@@ -11,6 +11,12 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         Or
             <b>${CMD} --ui=tk</b>
         Usually good for Windows and Mac OS X
+    <b>Web</b> Interface:
+        To open PyGlossary window:
+            <b>${CMD} --web</b>
+        Or
+            <b>${CMD} --ui=web</b>
+        For OS's with a modern web browser
     <b>Command-line</b> interface:
         To show this help:
             ${CMD} --help

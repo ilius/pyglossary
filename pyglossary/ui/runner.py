@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 
-ui_list = ["gtk", "tk"]
+ui_list = ["gtk", "tk", "web"]
 if os.sep == "\\":
-	ui_list = ["tk", "gtk"]
+	ui_list = ["tk", "gtk", "web"]
 
 log = None
 
