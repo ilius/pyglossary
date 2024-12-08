@@ -8,9 +8,35 @@ Customized version of `python-websocket-server`:
 - Original repository: https://github.com/Pithikos/python-websocket-server
 - Author: Johan Hanssen Seferidis
 - License: MIT
+The MIT License (MIT)
 
-Custom endpoints:
-- ws://localhost:9001/ws : 2-way client-server communication
+Copyright (c) 2018 Johan Hanssen Seferidis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+MODIFICATIONS
+=============
+
+Add custom endpoints:
+- ws://localhost:1984/ws : 2-way client-server communication
 - GET /config            : Returns plugins metadata as JSON
 - POST /convert          : Starts a conversion job; takes JSON with paths + formats
 
@@ -23,8 +49,6 @@ Entry point:
 Author of this customized version:
 - GitHub: @glowinthedark
 - Website: https://legbehindneck.com
-
-License: MIT
 """
 
 import errno
@@ -160,6 +184,7 @@ class API:
 
 
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
+
 	"""
 		A websocket server waiting for clients to connect.
 
