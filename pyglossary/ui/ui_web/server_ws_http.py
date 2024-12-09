@@ -181,7 +181,6 @@ class API:
 
 
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
-
 	"""
 		A websocket server waiting for clients to connect.
 
@@ -467,12 +466,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 				self.wfile.write(json.dumps(error_message).encode())
 				return
 
-			self.server.ui_controller.start_convert_job(
-				inputFilename=payload["inputFilename"],
-				inputFormat=payload["inputFormat"],
-				outputFilename=payload["outputFilename"],
-				outputFormat=payload["outputFormat"],
-			)
+			self.server.ui_controller.start_convert_job(payload)
 
 			self.send_response(HTTPStatus.OK)
 			self.send_header("Content-type", "text/html")
