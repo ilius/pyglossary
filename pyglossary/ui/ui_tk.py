@@ -146,14 +146,6 @@ def newReadOnlyText(
 	# widget.bind("<Key>", lambda e: break)
 	widget.configure(state="disabled")
 
-	# if tkinter is 8.5 or above you'll want the selection background
-	# to appear like it does when the widget is activated
-	# comment this out for older versions of Tkinter
-	# widget.configure(
-	# 	inactiveselectbackground=widget.cget("selectbackground"),
-	# 	bg=parent.cget("bg"),
-	# 	relief="flat",
-	# )
 	return widget
 
 
@@ -1176,21 +1168,7 @@ class UI(tk.Frame, UIBase):
 		label.pack(fill="both", expand=True)
 		##
 		versionFrame.pack(side="top", fill="x")
-		##
-		# style = ttk.Style(self)
-		# style.configure("TNotebook", tabposition="wn")
-		# # ws => to the left (west) and to the bottom (south)
-		# # wn => to the left (west) and at top
-		# aboutNotebook = ttk.Notebook(aboutFrame, style="TNotebook")
-		# # aboutNotebook = tk.Notebook(aboutFrame)
 
-		# aboutFrame3 = tk.Frame(notebook)
-		# authorsFrame = tk.Frame(notebook)
-		# licenseFrame = tk.Frame(notebook)
-
-		# tabImg = tk.PhotoImage(file=join(dataDir, "res", "dialog-information-22.png"))
-		# tabImg = tk.PhotoImage(file=join(dataDir, "res", "author-22.png"))
-		#
 		aboutFrame = ttk.Frame(notebook)
 		authorsFrame = ttk.Frame(notebook)
 		licenseFrame = ttk.Frame(notebook)
