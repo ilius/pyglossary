@@ -181,6 +181,7 @@ class API:
 
 
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
+
 	"""
 		A websocket server waiting for clients to connect.
 
