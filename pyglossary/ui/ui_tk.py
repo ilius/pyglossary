@@ -39,6 +39,7 @@ from .base import (
 	licenseText,
 	logo,
 )
+from .version import getVersion
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -1166,16 +1167,15 @@ class UI(tk.Frame, UIBase):
 		####
 		self.console = console
 		##################
-		# aboutFrame2 = ttk.Frame(aboutFrame)
+		versionFrame = ttk.Frame(notebook)
+		label = newLabelWithImage(versionFrame, file=logo)
+		label.pack(side="left")
 		##
-		# label = newLabelWithImage(aboutFrame2, file=logo)
-		# label.pack(side="left")
-		# ##
-		# ##
-		# label = tk.Label(aboutFrame2, text=f"PyGlossary\nVersion {getVersion()}")
-		# label.pack(side="left")
-		# ##
-		# aboutFrame2.pack(side="top", fill="x")
+		##
+		label = tk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}")
+		label.pack(side="left")
+		##
+		versionFrame.pack(side="top", fill="x")
 		##
 		# style = ttk.Style(self)
 		# style.configure("TNotebook", tabposition="wn")
@@ -1199,6 +1199,7 @@ class UI(tk.Frame, UIBase):
 		notebook.add(authorsFrame, text="Authors", underline=0)
 		notebook.add(licenseFrame, text="License", underline=0)
 		notebook.add(aboutFrame, text="About", underline=0)
+		notebook.add(versionFrame, text="Version", underline=0)
 
 		label = newReadOnlyText(
 			aboutFrame,
