@@ -207,6 +207,7 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 
 
 class ProgressBar(ttk.Frame):
+
 	"""
 	Comes from John Grayson's book "Python and Tkinter programming"
 	Edited by Saeed Rasooli.
