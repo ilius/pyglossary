@@ -207,7 +207,6 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 
 
 class ProgressBar(ttk.Frame):
-
 	"""
 	Comes from John Grayson's book "Python and Tkinter programming"
 	Edited by Saeed Rasooli.
@@ -1169,11 +1168,11 @@ class UI(tk.Frame, UIBase):
 		##################
 		versionFrame = ttk.Frame(notebook)
 		label = newLabelWithImage(versionFrame, file=logo)
-		label.pack(side="left")
+		label.pack(fill="both", expand=True)
 		##
 		##
 		label = tk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}")
-		label.pack(side="left")
+		label.pack(fill="both", expand=True)
 		##
 		versionFrame.pack(side="top", fill="x")
 		##
