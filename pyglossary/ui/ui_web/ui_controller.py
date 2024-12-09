@@ -67,14 +67,16 @@ class WebUI(UIBase):
 
 		return True
 
-	def start_convert_job(
-		self,
-		inputFilename: str,
-		outputFilename: str,
-		inputFormat: str,
-		outputFormat: str,
-	) -> bool:
+	def start_convert_job(self, payload) -> bool:
 		glos = Glossary(ui=self)
+
+		self.inputFilename = payload.get("inputFilename")
+		self.inputFormat = payload.get("inputFormat")
+		self.outputFilename = payload.get("outputFilename")
+		self.outputFormat = payload.get("outputFormat")
+		self.readOptions = payload.get("readOptions") or self.readOptions
+		self.writeOptions = payload.get("writeOptions") or self.writeOptions
+		self.convertOptions = payload.get("convertOptions") or self.convertOptions
 
 		try:
 			log.debug(f"readOptions: {self.readOptions}")
@@ -89,13 +91,13 @@ class WebUI(UIBase):
 
 			finalOutputFile = glos.convert(
 				ConvertArgs(
-					inputFilename=inputFilename,
-					outputFilename=outputFilename,
-					inputFormat=inputFormat,
-					outputFormat=outputFormat,
+					inputFilename=self.inputFilename,
+					inputFormat=self.inputFormat,
+					outputFilename=self.outputFilename,
+					outputFormat=self.outputFormat,
 					readOptions=self.readOptions,
 					writeOptions=self.writeOptions,
-					# **self.convertOptions,
+					**self.convertOptions,
 				),
 			)
 			if finalOutputFile:
