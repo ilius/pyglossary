@@ -99,17 +99,6 @@ def centerWindow(win):
 
 
 def newButton(*args, **kwargs):
-	button = tk.Button(*args, **kwargs)
-
-	def onEnter(_event):
-		button.invoke()
-
-	button.bind("<Return>", onEnter)
-	button.bind("<KP_Enter>", onEnter)
-	return button
-
-
-def newTTKButton(*args, **kwargs):
 	button = ttk.Button(*args, **kwargs)
 
 	def onEnter(_event):
@@ -122,7 +111,7 @@ def newTTKButton(*args, **kwargs):
 
 def newLabelWithImage(parent, file=""):
 	image = tk.PhotoImage(file=file)
-	label = tk.Label(parent, image=image)
+	label = ttk.Label(parent, image=image)
 	label.image = image  # keep a reference!
 	return label
 
@@ -340,17 +329,17 @@ class FormatDialog(tk.Toplevel):
 			),
 		)
 
-		entryBox = tk.Frame(master=self)
-		label = tk.Label(master=entryBox, text="Search: ")
+		entryBox = ttk.Frame(master=self)
+		label = ttk.Label(master=entryBox, text="Search: ")
 		label.pack(side="left")
-		entry = self.entry = tk.Entry(master=entryBox)
+		entry = self.entry = ttk.Entry(master=entryBox)
 		entry.pack(fill="x", expand=True, side="left")
 		entryBox.pack(fill="x", padx=5, pady=5)
 
 		entry.bind("<KeyRelease>", self.onEntryKeyRelease)
 		entry.focus()
 
-		treevBox = tk.Frame(master=self)
+		treevBox = ttk.Frame(master=self)
 
 		treev = self.treev = ttk.Treeview(
 			master=treevBox,
@@ -364,7 +353,7 @@ class FormatDialog(tk.Toplevel):
 			expand=True,
 		)
 
-		vsb = tk.Scrollbar(
+		vsb = ttk.Scrollbar(
 			master=treevBox,
 			orient="vertical",
 			command=treev.yview,
@@ -382,7 +371,7 @@ class FormatDialog(tk.Toplevel):
 
 		self.updateTree()
 
-		buttonBox = tk.Frame(master=self)
+		buttonBox = ttk.Frame(master=self)
 
 		cancelButton = newButton(
 			buttonBox,
@@ -494,7 +483,7 @@ class FormatDialog(tk.Toplevel):
 		self.destroy()
 
 
-class FormatButton(tk.Button):
+class FormatButton(ttk.Button):
 	noneLabel = "[Select Format]"
 
 	def __init__(
@@ -506,7 +495,7 @@ class FormatButton(tk.Button):
 	) -> None:
 		self.var = tk.StringVar()
 		self.var.set(self.noneLabel)
-		tk.Button.__init__(
+		ttk.Button.__init__(
 			self,
 			master=master,
 			textvariable=self.var,
@@ -577,7 +566,7 @@ class FormatOptionsDialog(tk.Toplevel):
 
 		self.createOptionsList()
 
-		buttonBox = tk.Frame(self)
+		buttonBox = ttk.Frame(self)
 		okButton = newButton(
 			buttonBox,
 			text="  OK  ",
@@ -676,10 +665,10 @@ class FormatOptionsDialog(tk.Toplevel):
 
 		frame = ttk.Frame(master=dialog)
 
-		label = tk.Label(master=frame, text="Value for " + optName)
+		label = ttk.Label(master=frame, text="Value for " + optName)
 		label.pack()
 
-		entry = tk.Entry(master=frame)
+		entry = ttk.Entry(master=frame)
 		entry.insert(0, value)
 		entry.pack(fill="x")
 
@@ -699,7 +688,7 @@ class FormatOptionsDialog(tk.Toplevel):
 
 		entry.bind("<Return>", customOkClicked)
 
-		label = tk.Label(master=frame)
+		label = ttk.Label(master=frame)
 		label.pack(fill="x")
 
 		customOkbutton = newButton(
@@ -857,7 +846,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		self.destroy()
 
 
-class FormatOptionsButton(tk.Button):
+class FormatOptionsButton(ttk.Button):
 	def __init__(
 		self,
 		kind: Literal["Read", "Write"],
@@ -865,14 +854,13 @@ class FormatOptionsButton(tk.Button):
 		formatInput: FormatButton,
 		master=None,
 	) -> None:
-		tk.Button.__init__(
+		ttk.Button.__init__(
 			self,
 			master=master,
 			text="Options",
 			command=self.buttonClicked,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
-			borderwidth=3,
 		)
 		self.kind = kind
 		self.values = values
@@ -928,7 +916,8 @@ class UI(tk.Frame, UIBase):
 		# Linux: ('clam', 'alt', 'default', 'classic')
 		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista',
 		#           'xpnative')
-		# style = ttk.Style()
+		style = ttk.Style()
+		style.configure("TButton", borderwidth=3)
 		# style.theme_use("default")
 		# there is no tk.Style()
 		########
@@ -958,10 +947,10 @@ class UI(tk.Frame, UIBase):
 		self.fcd_dir = fcd_dir
 		######################
 		notebook = ttk.Notebook(self)
-		convertFrame = tk.Frame(notebook, height=200)
+		convertFrame = ttk.Frame(notebook, height=200)
 		###################
 		row = 0
-		label = tk.Label(convertFrame, text="Input File: ")
+		label = ttk.Label(convertFrame, text="Input File: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -986,7 +975,6 @@ class UI(tk.Frame, UIBase):
 			command=self.browseInputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
-			borderwidth=3,
 		)
 		button.grid(
 			row=row,
@@ -996,7 +984,7 @@ class UI(tk.Frame, UIBase):
 		)
 		######################
 		row += 1
-		label = tk.Label(convertFrame, text="Input Format: ")
+		label = ttk.Label(convertFrame, text="Input Format: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -1030,7 +1018,7 @@ class UI(tk.Frame, UIBase):
 		self.inputFormatRow = row
 		######################
 		row += 1
-		label = tk.Label(convertFrame)
+		label = ttk.Label(convertFrame)
 		label.grid(
 			row=row,
 			column=0,
@@ -1038,7 +1026,7 @@ class UI(tk.Frame, UIBase):
 		)
 		######################
 		row += 1
-		label = tk.Label(convertFrame, text="Output Format: ")
+		label = ttk.Label(convertFrame, text="Output Format: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -1069,7 +1057,7 @@ class UI(tk.Frame, UIBase):
 		self.outputFormatRow = row
 		###################
 		row += 1
-		label = tk.Label(convertFrame, text="Output File: ")
+		label = ttk.Label(convertFrame, text="Output File: ")
 		label.grid(
 			row=row,
 			column=0,
@@ -1094,7 +1082,6 @@ class UI(tk.Frame, UIBase):
 			command=self.browseOutputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
-			borderwidth=3,
 		)
 		button.grid(
 			row=row,
@@ -1110,10 +1097,10 @@ class UI(tk.Frame, UIBase):
 			command=self.convert,
 			# background="#00e000",
 			# activebackground="#22f022",
-			borderwidth=7,
-			font=self.biggerFont,
-			padx=5,
-			pady=5,
+			# borderwidth=7,
+			# font=self.biggerFont,
+			# padx=5,
+			# pady=5,
 		)
 		button.grid(
 			row=row,
@@ -1164,7 +1151,7 @@ class UI(tk.Frame, UIBase):
 		label.pack(fill="both", expand=True)
 		##
 		##
-		label = tk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}")
+		label = ttk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}")
 		label.pack(fill="both", expand=True)
 		##
 		versionFrame.pack(side="top", fill="x")
@@ -1221,25 +1208,26 @@ class UI(tk.Frame, UIBase):
 
 		# _________________________________________________________________ #
 
-		statusBarframe = tk.Frame(self, borderwidth=3)
+		statusBarframe = ttk.Frame(self)
 		clearB = newButton(
 			statusBarframe,
 			text="Clear",
 			command=self.console_clear,
+			# how to set borderwidth using style?
 			# bg="black",
 			# fg="#ffff00",
 			# activebackground="#333333",
 			# activeforeground="#ffff00",
-			borderwidth=3,
-			height=2,
+			# borderwidth=3,
+			# height=2,
 		)
 		clearB.pack(side="left")
 		####
-		label = tk.Label(statusBarframe, text="Verbosity")
+		label = ttk.Label(statusBarframe, text="Verbosity")
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
-		combo = tk.OptionMenu(
+		combo = ttk.OptionMenu(
 			statusBarframe,
 			comboVar,
 			log.getVerbosity(),  # default
