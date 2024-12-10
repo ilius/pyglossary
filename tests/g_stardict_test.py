@@ -146,9 +146,6 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"100-en-fa-sd.txt": "85f9d3fc",
 				# FIXME: remove empty description line from 100-en-fa.ifo
 				# stardict-mixed-types-1.ifo, "stardict-mixed-types-2.ifo
-				"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.dict": "223a0d1d",
-				"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.idx": "13f1c7af",
-				"100-en-fa-merge-syns.sd/100-en-fa-merge-syns.ifo": "07338eed",
 				"100-ja-en.sd/100-ja-en.dict": "39715f01",
 				"100-ja-en.sd/100-ja-en.idx": "adf0e552",
 				"100-ja-en.sd/100-ja-en.ifo": "b01e368c",
@@ -171,12 +168,6 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"004-plain-html-alts.sd/004-plain-html-alts.idx": "edbe368d",
 				"004-plain-html-alts.sd/004-plain-html-alts.ifo": "b9b92fa3",
 				"004-plain-html-alts.sd/004-plain-html-alts.syn": "c07f7111",
-				"004-plain-html-alts-merge-syns.sd/"
-				"004-plain-html-alts-merge-syns.dict": "889f11f8",
-				"004-plain-html-alts-merge-syns.sd/"
-				"004-plain-html-alts-merge-syns.idx": "092ba555",
-				"004-plain-html-alts-merge-syns.sd/"
-				"004-plain-html-alts-merge-syns.ifo": "628abe99",
 			},
 		)
 
@@ -193,14 +184,6 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"100-en-fa",
 				sqlite=sqlite,
 			)
-
-	def test_convert_txt_stardict_1_merge_syns(self):
-		self.convert_txt_stardict(
-			"100-en-fa",
-			fname2="100-en-fa-merge-syns",
-			syn=False,
-			writeOptions={"merge_syns": True},
-		)
 
 	def test_convert_txt_stardict_1_zip(self):
 		sha1sumDict = {
@@ -230,13 +213,6 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				syn=False,
 				sqlite=sqlite,
 			)
-
-	def test_convert_txt_stardict_3_merge_syns(self):
-		self.convert_txt_stardict(
-			"100-en-de-v4",
-			syn=False,
-			writeOptions={"merge_syns": True},
-		)
 
 	def test_convert_txt_stardict_4(self):
 		for sqlite in (None, False, True):
@@ -294,26 +270,12 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			syn=False,
 		)
 
-	def test_convert_txt_stardict_general_1_merge_syns(self):
-		self.convert_txt_stardict(
-			"002-plain-html",
-			syn=False,
-			writeOptions={"merge_syns": True},
-		)
-
 	def test_convert_txt_stardict_general_2(self):
 		self.convert_txt_stardict(
 			"004-plain-html-alts",
 			syn=True,
 		)
 
-	def test_convert_txt_stardict_general_2_merge_syns(self):
-		self.convert_txt_stardict(
-			"004-plain-html-alts",
-			fname2="004-plain-html-alts-merge-syns",
-			syn=False,
-			writeOptions={"merge_syns": True},
-		)
 
 
 class TestGlossaryErrorsStarDict(TestGlossaryErrorsBase):

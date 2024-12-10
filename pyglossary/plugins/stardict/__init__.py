@@ -62,9 +62,6 @@ optionsProp: dict[str, Option] = {
 		values=["", "h", "m", "x", None],
 		comment="Definition format: h=html, m=plaintext, x=xdxf",
 	),
-	"merge_syns": BoolOption(
-		comment="Write alternates to .idx instead of .syn",
-	),
 	"xdxf_to_html": BoolOption(
 		comment="Convert XDXF entries to HTML",
 	),
