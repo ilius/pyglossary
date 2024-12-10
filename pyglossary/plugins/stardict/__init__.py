@@ -51,8 +51,8 @@ website = (
 extraDocs = [
 	(
 		"For sdcv and KOReader users",
-		"Use [StarDict (Merge Syns)](./stardict_merge_syns.md) plugin (instead of this one) to"
-		" create glossaries for using in"
+		"Use [StarDict (Merge Syns)](./stardict_merge_syns.md) plugin"
+		" (instead of this one) to create glossaries for using in"
 		" [sdcv](https://dushistov.github.io/sdcv/)"
 		" or [KOReader](http://koreader.rocks/)",
 	),
