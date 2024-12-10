@@ -385,8 +385,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		WRITE = 2  # 10
 		conversion_config = {
 			name: {
-				"desc": f"{plug.description}{(plug.ext not in plug.description
-					and " (" + plug.ext + ")") or ""}",
+				"desc": plug.description,
 				"can": (READ * plug.canRead) | (WRITE * plug.canWrite),
 				"ext": plug.ext,
 			}
