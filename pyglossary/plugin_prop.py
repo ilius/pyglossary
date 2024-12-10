@@ -331,8 +331,6 @@ class PluginProp:  # noqa: PLR0904
 			name = attrName[1:]
 			default = getattr(rwclass, attrName)
 			if name not in optionsProp:
-				if not callable(default):
-					log.warning(f"format={self.name}, {attrName=}, {type(default)=}")
 				continue
 			prop = optionsProp[name]
 			if prop.disabled:
