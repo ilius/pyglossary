@@ -1523,11 +1523,6 @@
 				],
 				"comment": "Definition format: h=html, m=plaintext, x=xdxf"
 			},
-			"merge_syns": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Write alternates to .idx instead of .syn"
-			},
 			"xdxf_to_html": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -1580,8 +1575,83 @@
 			"dictzip": true,
 			"sametypesequence": "",
 			"stardict_client": false,
-			"merge_syns": false,
 			"audio_goldendict": false,
+			"audio_icon": true,
+			"sqlite": false
+		}
+	},
+	{
+		"module": "stardict_merge_syns",
+		"lname": "stardict_merge_syns",
+		"name": "StardictMergeSyns",
+		"description": "StarDict (Merge Syns)",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {
+			"large_file": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use idxoffsetbits=64 bits, for large files only"
+			},
+			"dictzip": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Compress .dict file to .dict.dz"
+			},
+			"sametypesequence": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"",
+					"h",
+					"m",
+					"x",
+					null
+				],
+				"comment": "Definition format: h=html, m=plaintext, x=xdxf"
+			},
+			"xdxf_to_html": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Convert XDXF entries to HTML"
+			},
+			"xsl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use XSL transformation"
+			},
+			"unicode_errors": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"strict",
+					"ignore",
+					"replace",
+					"backslashreplace"
+				],
+				"comment": "What to do with Unicode decoding errors"
+			},
+			"audio_icon": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add glossary's audio icon"
+			},
+			"sqlite": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Use SQLite to limit memory usage"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"sortOnWrite": "always",
+		"sortKeyName": "stardict",
+		"writeOptions": {
+			"large_file": false,
+			"dictzip": true,
+			"sametypesequence": "",
 			"audio_icon": true,
 			"sqlite": false
 		}

@@ -33,10 +33,13 @@
 | dictzip          | `True`  | bool | Compress .dict file to .dict.dz                 |
 | sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf  |
 | stardict_client  | `False` | bool | Modify html entries for StarDict 3.0            |
-| merge_syns       | `False` | bool | Write alternates to .idx instead of .syn        |
 | audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)    |
 | audio_icon       | `True`  | bool | Add glossary's audio icon                       |
 | sqlite           | `False` | bool | Use SQLite to limit memory usage                |
+
+### For sdcv and KOReader users
+
+Use [StarDict (Merge Syns)](./stardict_merge_syns.md) plugin (instead of this one) to create glossaries for using in [sdcv](https://dushistov.github.io/sdcv/) or [KOReader](http://koreader.rocks/)
 
 ### Dictionary Applications/Tools
 

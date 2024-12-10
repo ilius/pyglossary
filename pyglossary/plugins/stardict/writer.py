@@ -62,10 +62,11 @@ class Writer:
 	_dictzip: bool = True
 	_sametypesequence: Literal["", "h", "m", "x"] | None = ""
 	_stardict_client: bool = False
-	_merge_syns: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
 	_sqlite: bool = False
+
+	dictzipSynFile = True
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
@@ -134,12 +135,7 @@ class Writer:
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-		if self._merge_syns:
-			if self._sametypesequence:
-				yield from self.writeCompactMergeSyns(self._sametypesequence)
-			else:
-				yield from self.writeGeneralMergeSyns()
-		elif self._sametypesequence:
+		if self._sametypesequence:
 			yield from self.writeCompact(self._sametypesequence)
 		else:
 			yield from self.writeGeneral()
@@ -152,7 +148,7 @@ class Writer:
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 			syn_file = f"{self._filename}.syn"
-			if not self._merge_syns and os.path.exists(syn_file):
+			if os.path.exists(syn_file) and self.dictzipSynFile:
 				runDictzip(syn_file)
 
 	def fixDefi(self, defi: str, defiFormat: str) -> bytes:
@@ -336,116 +332,6 @@ class Writer:
 				synFile.write(b_alt + b"\x00" + uint32ToBytes(entryIndex))
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
-		)
-
-	def writeCompactMergeSyns(
-		self,
-		defiFormat: str,
-	) -> Generator[None, EntryType, None]:
-		"""
-		Build StarDict dictionary with sametypesequence option specified.
-		Every item definition consists of a single article.
-		All articles have the same format, specified in defiFormat parameter.
-
-		defiFormat - format of article definition: h - html, m - plain text
-		"""
-		log.debug(f"writeCompactMergeSyns: {defiFormat=}")
-
-		idxBlockList = self.newIdxList()
-		altIndexList = self.newSynList()
-
-		dictFile = open(self._filename + ".dict", "wb")
-
-		t0 = now()
-
-		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
-
-		dictMark, entryIndex = 0, -1
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				entry.save(self._resDir)
-				continue
-			entryIndex += 1
-
-			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
-			dictFile.write(b_dictBlock)
-
-			b_idxBlock = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for b_word in entry.lb_word:
-				idxBlockList.append((b_word, b_idxBlock))
-
-			dictMark += len(b_dictBlock)
-
-			if dictMark > dictMarkMax:
-				raise Error(
-					f"StarDict: {dictMark = } is too big, set option large_file=true",
-				)
-
-		dictFile.close()
-		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
-
-		self.writeIdxFile(idxBlockList)
-
-		self.writeIfoFile(
-			len(idxBlockList),
-			len(altIndexList),
-			defiFormat=defiFormat,
-		)
-
-	def writeGeneralMergeSyns(self) -> Generator[None, EntryType, None]:
-		"""
-		Build StarDict dictionary in general case.
-		Every item definition may consist of an arbitrary number of articles.
-		sametypesequence option is not used.
-		"""
-		log.debug("writeGeneralMergeSyns")
-		idxBlockList = self.newIdxList()
-		altIndexList = self.newSynList()
-
-		dictFile = open(self._filename + ".dict", "wb")
-
-		t0 = now()
-
-		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
-
-		dictMark, entryIndex = 0, -1
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				entry.save(self._resDir)
-				continue
-			entryIndex += 1
-
-			defiFormat = entry.detectDefiFormat("m")  # call no more than once
-
-			b_defi = self.fixDefi(entry.defi, defiFormat)
-			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
-			dictFile.write(b_dictBlock)
-
-			b_idxBlock = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for b_word in entry.lb_word:
-				idxBlockList.append((b_word, b_idxBlock))
-
-			dictMark += len(b_dictBlock)
-
-			if dictMark > dictMarkMax:
-				raise Error(
-					f"StarDict: {dictMark = } is too big, set option large_file=true",
-				)
-
-		dictFile.close()
-		log.info(f"Writing dict file took {now() - t0:.2f} seconds")
-
-		self.writeIdxFile(idxBlockList)
-
-		self.writeIfoFile(
-			len(idxBlockList),
-			len(altIndexList),
 		)
 
 	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]):

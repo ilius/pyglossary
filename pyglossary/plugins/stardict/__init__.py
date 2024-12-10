@@ -47,6 +47,17 @@ website = (
 	"http://huzheng.org/stardict/",
 	"huzheng.org/stardict",
 )
+
+extraDocs = [
+	(
+		"For sdcv and KOReader users",
+		"Use [StarDict (Merge Syns)](./stardict_merge_syns.md) plugin (instead of this one) to"
+		" create glossaries for using in"
+		" [sdcv](https://dushistov.github.io/sdcv/)"
+		" or [KOReader](http://koreader.rocks/)",
+	),
+]
+
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
 optionsProp: dict[str, Option] = {
 	"large_file": BoolOption(
@@ -61,9 +72,6 @@ optionsProp: dict[str, Option] = {
 	"sametypesequence": StrOption(
 		values=["", "h", "m", "x", None],
 		comment="Definition format: h=html, m=plaintext, x=xdxf",
-	),
-	"merge_syns": BoolOption(
-		comment="Write alternates to .idx instead of .syn",
 	),
 	"xdxf_to_html": BoolOption(
 		comment="Convert XDXF entries to HTML",
