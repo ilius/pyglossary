@@ -23,7 +23,7 @@ import os
 import tkinter as tk
 import traceback
 from os.path import abspath, isfile, join, splitext
-from tkinter import filedialog, tix, ttk
+from tkinter import filedialog, ttk
 from tkinter import font as tkFont
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -146,14 +146,6 @@ def newReadOnlyText(
 	# widget.bind("<Key>", lambda e: break)
 	widget.configure(state="disabled")
 
-	# if tkinter is 8.5 or above you'll want the selection background
-	# to appear like it does when the widget is activated
-	# comment this out for older versions of Tkinter
-	widget.configure(
-		inactiveselectbackground=widget.cget("selectbackground"),
-		bg=parent.cget("bg"),
-		relief="flat",
-	)
 	return widget
 
 
@@ -206,7 +198,7 @@ def CallWrapper__call__(self, *args):
 tk.CallWrapper.__call__ = CallWrapper__call__
 
 
-class ProgressBar(tix.Frame):
+class ProgressBar(ttk.Frame):
 
 	"""
 	Comes from John Grayson's book "Python and Tkinter programming"
@@ -228,7 +220,6 @@ class ProgressBar(tix.Frame):
 		labelFont="Verdana",
 		labelFormat="%d%%",
 		value=0,
-		bd=2,
 	) -> None:
 		# preserve various values
 		self.rootWin = rootWin
@@ -243,8 +234,8 @@ class ProgressBar(tix.Frame):
 		self.background = background
 		self.labelFormat = labelFormat
 		self.value = value
-		tix.Frame.__init__(self, rootWin, relief=appearance, bd=bd)
-		self.canvas = tix.Canvas(
+		ttk.Frame.__init__(self, rootWin, relief=appearance)
+		self.canvas = tk.Canvas(
 			self,
 			height=height,
 			width=width,
@@ -315,7 +306,7 @@ class ProgressBar(tix.Frame):
 		self.canvas.update_idletasks()
 
 
-class FormatDialog(tix.Toplevel):
+class FormatDialog(tk.Toplevel):
 	def __init__(  # noqa: PLR0913
 		self,
 		descList: list[str],
@@ -324,7 +315,7 @@ class FormatDialog(tix.Toplevel):
 		button: FormatButton,
 		activeDesc: str = "",
 	) -> None:
-		tix.Toplevel.__init__(self)
+		tk.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.descList = descList
 		self.items = self.descList
@@ -391,7 +382,7 @@ class FormatDialog(tix.Toplevel):
 
 		self.updateTree()
 
-		buttonBox = tix.Frame(master=self)
+		buttonBox = tk.Frame(master=self)
 
 		cancelButton = newButton(
 			buttonBox,
@@ -556,7 +547,7 @@ class FormatButton(tk.Button):
 		dialog.focus()
 
 
-class FormatOptionsDialog(tix.Toplevel):
+class FormatOptionsDialog(tk.Toplevel):
 	commentLen = 60
 	kindFormatsOptions = {
 		"Read": Glossary.formatsReadOptions,
@@ -570,7 +561,7 @@ class FormatOptionsDialog(tix.Toplevel):
 		values,
 		master=None,  # noqa: ARG002
 	) -> None:
-		tix.Toplevel.__init__(self)
+		tk.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.resizable(width=True, height=True)
 		self.title(kind + " Options")
@@ -586,7 +577,7 @@ class FormatOptionsDialog(tix.Toplevel):
 
 		self.createOptionsList()
 
-		buttonBox = tix.Frame(self)
+		buttonBox = tk.Frame(self)
 		okButton = newButton(
 			buttonBox,
 			text="  OK  ",
@@ -665,7 +656,7 @@ class FormatOptionsDialog(tix.Toplevel):
 
 		value = treev.set(optName, self.valueCol)
 
-		dialog = tix.Toplevel(master=treev)  # bg="#0f0" does not work
+		dialog = tk.Toplevel(master=treev)  # bg="#0f0" does not work
 		dialog.resizable(width=True, height=True)
 		dialog.title(optName)
 		set_window_icon(dialog)
@@ -683,7 +674,7 @@ class FormatOptionsDialog(tix.Toplevel):
 			),
 		)
 
-		frame = tix.Frame(master=dialog)
+		frame = ttk.Frame(master=dialog)
 
 		label = tk.Label(master=frame, text="Value for " + optName)
 		label.pack()
@@ -912,20 +903,20 @@ class FormatOptionsButton(tk.Button):
 		dialog.focus()
 
 
-class UI(tix.Frame, UIBase):
+class UI(tk.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
 	def __init__(
 		self,
 		progressbar: bool = True,
 	) -> None:
-		rootWin = self.rootWin = tix.Tk()
+		rootWin = self.rootWin = tk.Tk()
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows
 			rootWin.attributes("-alpha", 0.0)
 		else:  # Linux
 			rootWin.withdraw()
-		tix.Frame.__init__(self, rootWin)
+		tk.Frame.__init__(self, rootWin)
 		UIBase.__init__(self)
 		rootWin.title("PyGlossary (Tkinter)")
 		rootWin.resizable(True, False)
@@ -966,12 +957,8 @@ class UI(tix.Frame, UIBase):
 				log.exception("")
 		self.fcd_dir = fcd_dir
 		######################
-		notebook = tix.NoteBook(self)
-		notebook.add("tabConvert", label="Convert", underline=0)
-		# notebook.add("tabReverse", label="Reverse", underline=0)
-		notebook.add("tabAbout", label="About", underline=0)
-		convertFrame = tix.Frame(notebook.tabConvert)
-		aboutFrame = tix.Frame(notebook.tabAbout)
+		notebook = ttk.Notebook(self)
+		convertFrame = tk.Frame(notebook, height=200)
 		###################
 		row = 0
 		label = tk.Label(convertFrame, text="Input File: ")
@@ -982,7 +969,7 @@ class UI(tix.Frame, UIBase):
 			padx=5,
 		)
 		##
-		entry = tix.Entry(convertFrame)
+		entry = ttk.Entry(convertFrame)
 		entry.grid(
 			row=row,
 			column=1,
@@ -1090,7 +1077,7 @@ class UI(tix.Frame, UIBase):
 			padx=5,
 		)
 		##
-		entry = tix.Entry(convertFrame)
+		entry = ttk.Entry(convertFrame)
 		entry.grid(
 			row=row,
 			column=1,
@@ -1142,7 +1129,7 @@ class UI(tix.Frame, UIBase):
 		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 		#################
 		row += 1
-		console = tix.Text(
+		console = tk.Text(
 			convertFrame,
 			height=15,
 			background="#000",
@@ -1172,49 +1159,28 @@ class UI(tix.Frame, UIBase):
 		####
 		self.console = console
 		##################
-		aboutFrame2 = tix.Frame(aboutFrame)
+		versionFrame = ttk.Frame(notebook)
+		label = newLabelWithImage(versionFrame, file=logo)
+		label.pack(fill="both", expand=True)
 		##
-		label = newLabelWithImage(aboutFrame2, file=logo)
-		label.pack(side="left")
 		##
+		label = tk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}")
+		label.pack(fill="both", expand=True)
 		##
-		label = tk.Label(aboutFrame2, text=f"PyGlossary\nVersion {getVersion()}")
-		label.pack(side="left")
-		##
-		aboutFrame2.pack(side="top", fill="x")
-		##
-		style = ttk.Style(self)
-		style.configure("TNotebook", tabposition="wn")
-		# ws => to the left (west) and to the bottom (south)
-		# wn => to the left (west) and at top
-		aboutNotebook = ttk.Notebook(aboutFrame, style="TNotebook")
-		# aboutNotebook = tix.Notebook(aboutFrame)
+		versionFrame.pack(side="top", fill="x")
 
-		aboutFrame3 = tk.Frame(aboutNotebook)
-		authorsFrame = tk.Frame(aboutNotebook)
-		licenseFrame = tk.Frame(aboutNotebook)
+		aboutFrame = ttk.Frame(notebook)
+		authorsFrame = ttk.Frame(notebook)
+		licenseFrame = ttk.Frame(notebook)
 
-		# tabImg = tk.PhotoImage(file=join(dataDir, "res", "dialog-information-22.png"))
-		# tabImg = tk.PhotoImage(file=join(dataDir, "res", "author-22.png"))
-
-		aboutNotebook.add(
-			aboutFrame3,
-			text="\n About  \n",
-			# image=tabImg, # not working
-			# compound=tk.TOP,
-			# padding=50, # not working
-		)
-		aboutNotebook.add(
-			authorsFrame,
-			text="\nAuthors\n",
-		)
-		aboutNotebook.add(
-			licenseFrame,
-			text="\nLicense\n",
-		)
+		notebook.add(convertFrame, text="Convert", underline=0)
+		notebook.add(authorsFrame, text="Authors", underline=0)
+		notebook.add(licenseFrame, text="License", underline=0)
+		notebook.add(aboutFrame, text="About", underline=0)
+		notebook.add(versionFrame, text="Version", underline=0)
 
 		label = newReadOnlyText(
-			aboutFrame3,
+			aboutFrame,
 			text=f"{aboutText}\nHome page: {core.homePage}",
 			font=("DejaVu Sans", 11, ""),
 		)
@@ -1235,10 +1201,6 @@ class UI(tix.Frame, UIBase):
 			font=("DejaVu Sans", 11, ""),
 		)
 		label.pack(fill="x")
-
-		aboutNotebook.pack(fill="x")
-
-		aboutFrame.pack(fill="x")
 
 		######################
 		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
@@ -1288,7 +1250,7 @@ class UI(tix.Frame, UIBase):
 			4,
 			5,
 		)
-		comboVar.trace("w", self.verbosityChanged)
+		comboVar.trace_add("write", self.verbosityChanged)
 		combo.pack(side="left")
 		self.verbosityCombo = comboVar
 		comboVar.set(log.getVerbosity())
