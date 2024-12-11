@@ -480,6 +480,15 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertLogCritical("invalid sortKeyName = 'blah'")
 
+	# def test_collectDefiFormat_direct(self):
+	# 	from pyglossary.glossary import Glossary as GlossaryLegacy
+	# 	fname = "100-en-fa.txt"
+	# 	glos = self.glos = GlossaryLegacy()
+	# 	glos.read(self.downloadFile(fname), direct=True)
+	# 	res = glos.collectDefiFormat(10)
+	# 	self.assertIsNone(res)
+	# 	self.assertLogError("collectDefiFormat: not supported in direct mode")
+
 
 if __name__ == "__main__":
 	unittest.main()

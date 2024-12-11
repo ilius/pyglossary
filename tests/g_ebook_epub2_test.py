@@ -8,7 +8,7 @@ sys.path.insert(0, rootDir)
 
 from glossary_v2_test import TestGlossaryBase
 
-from pyglossary.glossary import Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 skip_module = False
 
@@ -65,9 +65,11 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		expectedFilename = self.downloadFile(f"{outputFname}.epub")
 		glos = self.glos = Glossary()
 		res = glos.convert(
-			inputFilename=inputFilename,
-			outputFilename=outputFilename,
-			**convertArgs,
+			ConvertArgs(
+				inputFilename=inputFilename,
+				outputFilename=outputFilename,
+				**convertArgs,
+			)
 		)
 		self.assertEqual(outputFilename, res)
 

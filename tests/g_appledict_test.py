@@ -8,7 +8,7 @@ sys.path.insert(0, rootDir)
 
 from glossary_v2_test import TestGlossaryBase
 
-from pyglossary.glossary import Glossary
+from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 
 class TestGlossaryAppleDict(TestGlossaryBase):
@@ -49,10 +49,12 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 		}
 
 		result = self.glos.convert(
-			inputFilename=inputFilepath,
-			outputFilename=outputDirPath,
-			inputFormat="Tabfile",
-			outputFormat="AppleDict",
+			ConvertArgs(
+				inputFilename=inputFilepath,
+				outputFilename=outputDirPath,
+				inputFormat="Tabfile",
+				outputFormat="AppleDict",
+			)
 		)
 		self.assertIsNotNone(result)
 		self.assertEqual(result, outputDirPath)
