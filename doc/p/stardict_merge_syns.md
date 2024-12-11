@@ -25,4 +25,4 @@
 | dictzip          | `True`  | bool | Compress .dict file to .dict.dz                 |
 | sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf  |
 | audio_icon       | `True`  | bool | Add glossary's audio icon                       |
-| sqlite           | `False` | bool | Use SQLite to limit memory usage                |
+| sqlite           | `True`  | bool | Use SQLite to limit memory usage                |

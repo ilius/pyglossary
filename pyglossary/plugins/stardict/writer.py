@@ -64,7 +64,7 @@ class Writer:
 	_stardict_client: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
-	_sqlite: bool = False
+	_sqlite: bool = True
 
 	dictzipSynFile = True
 
