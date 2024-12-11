@@ -157,7 +157,6 @@ class Writer(StdWriter):
 		self.writeIfoFile(
 			len(idxBlockList),
 			len(altIndexList),
-			defiFormat=defiFormat,
 		)
 
 	def writeGeneral(self) -> Generator[None, EntryType, None]:

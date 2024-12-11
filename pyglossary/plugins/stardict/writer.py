@@ -249,7 +249,6 @@ class Writer:
 		self.writeIfoFile(
 			entryIndex + 1,
 			len(altIndexList),
-			defiFormat=defiFormat,
 		)
 
 	def writeGeneral(self) -> Generator[None, EntryType, None]:
@@ -380,10 +379,10 @@ class Writer:
 		self,
 		wordCount: int,
 		synWordCount: int,
-		defiFormat: str = "",
 	) -> None:
 		"""Build .ifo file."""
 		glos = self._glos
+		defiFormat = self._sametypesequence
 		indexFileSize = getsize(self._filename + ".idx")
 
 		ifoDict: dict[str, str] = OrderedDict(
