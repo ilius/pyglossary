@@ -5,7 +5,7 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from glossary_errors_test import TestGlossaryErrorsBase
+from glossary_v2_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 

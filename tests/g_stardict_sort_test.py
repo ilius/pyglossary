@@ -1,7 +1,7 @@
 import unittest
 
 from g_stardict_test import TestGlossaryStarDictBase
-from glossary_errors_test import TestGlossaryErrorsBase
+from glossary_v2_errors_test import TestGlossaryErrorsBase
 
 
 class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
