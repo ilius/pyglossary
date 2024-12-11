@@ -450,24 +450,6 @@ class TestGlossary(TestGlossaryBase):
 		entryCount = sum(1 for _ in glos)
 		self.assertEqual(entryCount, 100)
 
-	def test_init_infoDict(self):
-		glos = self.glos = Glossary(info={"a": "b"})
-		self.assertEqual(list(glos.iterInfo()), [("a", "b")])
-
-	def test_init_infoOrderedDict(self):
-		from collections import OrderedDict
-
-		glos = self.glos = Glossary(
-			info=OrderedDict(
-				[
-					("y", "z"),
-					("a", "b"),
-					("1", "2"),
-				],
-			),
-		)
-		self.assertEqual(list(glos.iterInfo()), [("y", "z"), ("a", "b"), ("1", "2")])
-
 	def test_lang_1(self):
 		glos = self.glos = Glossary()
 		self.assertEqual(glos.sourceLangName, "")

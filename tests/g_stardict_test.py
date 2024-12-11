@@ -35,7 +35,10 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		outputFilename = self.newTempFilePath(f"{fname}.ifo")
 		otherFiles = {ext: self.newTempFilePath(f"{fname}.{ext}") for ext in binExtList}
 
-		glos = self.glos = Glossary(info=info)
+		glos = self.glos = Glossary()
+		if info:
+			for key, value in info.items():
+				glos.setInfo(key, value)
 
 		if config is not None:
 			glos.config = config

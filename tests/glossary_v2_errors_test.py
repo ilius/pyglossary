@@ -230,18 +230,6 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertEqual(res, ("test", "Tabfile", ""))
 		self.assertLogError("inputFilename is empty")
 
-	def test_init_infoBadType(self):
-		try:
-			Glossary(info=["a"])
-		except Exception as e:
-			self.assertEqual(str(type(e)), "<class 'TypeError'>")
-			self.assertEqual(
-				str(e),
-				"Glossary: `info` has invalid type, dict or OrderedDict expected",
-			)
-		else:
-			self.fail("did not raise an exception")
-
 	def test_cleanup_removed(self):
 		glos = Glossary()
 		tmpFname = "test_cleanup_removed"
