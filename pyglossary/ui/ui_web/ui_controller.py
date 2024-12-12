@@ -78,17 +78,17 @@ class WebUI(UIBase):
 		self.writeOptions = payload.get("writeOptions") or self.writeOptions
 		self.convertOptions = payload.get("convertOptions") or self.convertOptions
 
+		log.debug(f"readOptions: {self.readOptions}")
+		log.debug(f"writeOptions: {self.writeOptions}")
+		log.debug(f"convertOptions: {self.convertOptions}")
+		log.debug(f"config: {self.config}")
+
+		glos.config = self.config
+
+		for attr, value in self.glossarySetAttrs.items():
+			setattr(glos, attr, value)
+
 		try:
-			log.debug(f"readOptions: {self.readOptions}")
-			log.debug(f"writeOptions: {self.writeOptions}")
-			log.debug(f"convertOptions: {self.convertOptions}")
-			log.debug(f"config: {self.config}")
-
-			glos.config = self.config
-
-			for attr, value in self.glossarySetAttrs.items():
-				setattr(glos, attr, value)
-
 			finalOutputFile = glos.convert(
 				ConvertArgs(
 					inputFilename=self.inputFilename,
@@ -100,12 +100,10 @@ class WebUI(UIBase):
 					**self.convertOptions,
 				),
 			)
-			if finalOutputFile:
-				log.info("Convert finished")
-
-			return bool(finalOutputFile)
-
 		except Exception as e:
 			log.critical(str(e))
 			glos.cleanup()
 			return False
+
+		log.info("Convert finished")
+		return bool(finalOutputFile)
