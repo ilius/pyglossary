@@ -117,6 +117,10 @@ def getRunner(
 		return UI(**uiArgs).run
 
 	if ui_type == "auto":
+		if not args.no_interactive and sys.stdin.isatty():
+			ui_list.insert(2, "cmd_interactive")
+		log.debug(f"{ui_list = }")
+
 		for ui_type2 in ui_list:
 			try:
 				ui_module = __import__(
