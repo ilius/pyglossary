@@ -35,7 +35,7 @@ Android Termux - interactive command-line interface
 
 ______________________________________________________________________
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/50-web-wiktextract-ifo-ar.gif" width="50%" height="50%"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/50-web-wiktextract-ifo-ar.png" width="50%" height="50%"/>
 
 Web interface
 
