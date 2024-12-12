@@ -1445,17 +1445,22 @@ class UI(tk.Frame, UIBase):
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(self.glos, attr, value)
 
-		finalOutputFile = self.glos.convert(
-			ConvertArgs(
-				inPath,
-				inputFormat=inFormat,
-				outputFilename=outPath,
-				outputFormat=outFormat,
-				readOptions=self.readOptions,
-				writeOptions=self.writeOptions,
-				**self._convertOptions,
-			),
-		)
+		try:
+			finalOutputFile = self.glos.convert(
+				ConvertArgs(
+					inPath,
+					inputFormat=inFormat,
+					outputFilename=outPath,
+					outputFormat=outFormat,
+					readOptions=self.readOptions,
+					writeOptions=self.writeOptions,
+					**self._convertOptions,
+				),
+			)
+		except Error as e:
+			log.critical(str(e))
+			self.glos.cleanup()
+			return False
 		# if finalOutputFile:
 		# 	self.status("Convert finished")
 		# else:
