@@ -64,8 +64,8 @@ optionsProp: dict[str, Option] = {
 
 
 class Reader:
-	_text_unicode_errors = "strict"
-	_html_unicode_errors = "strict"
+	_text_unicode_errors = "replace"
+	_html_unicode_errors = "replace"
 	depends = {
 		"libzim": "libzim>=1.0",
 	}

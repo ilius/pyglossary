@@ -19,10 +19,10 @@
 
 ### Read options
 
-| Name                | Default  | Type | Comment                                                             |
-| ------------------- | -------- | ---- | ------------------------------------------------------------------- |
-| text_unicode_errors | `strict` | str  | Unicode Errors for plaintext, values: `strict`, `ignore`, `replace` |
-| html_unicode_errors | `strict` | str  | Unicode Errors for HTML, values: `strict`, `ignore`, `replace`      |
+| Name                | Default   | Type | Comment                                                             |
+| ------------------- | --------- | ---- | ------------------------------------------------------------------- |
+| text_unicode_errors | `replace` | str  | Unicode Errors for plaintext, values: `strict`, `ignore`, `replace` |
+| html_unicode_errors | `replace` | str  | Unicode Errors for HTML, values: `strict`, `ignore`, `replace`      |
 
 ### Dependencies for reading
 

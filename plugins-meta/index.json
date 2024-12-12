@@ -2102,8 +2102,8 @@
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"text_unicode_errors": "strict",
-			"html_unicode_errors": "strict"
+			"text_unicode_errors": "replace",
+			"html_unicode_errors": "replace"
 		},
 		"readDepends": {
 			"libzim": "libzim>=1.0"
