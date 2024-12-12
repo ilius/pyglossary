@@ -218,8 +218,8 @@ class Reader:
 
 		log.info(f"ZIM Entry Count: {entryCount}")
 
-		if not fileNameTooLong:
-			log.error(f"Files with name too long: {len(fileNameTooLong)}")
+		if fileNameTooLong:
+			log.warning(f"Files with name too long: {len(fileNameTooLong)}")
 
 		if emptyContentCount > 0:
 			log.info(f"Empty Content Count: {emptyContentCount}")
