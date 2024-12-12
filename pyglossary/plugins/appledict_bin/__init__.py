@@ -156,8 +156,8 @@ class Reader:
 			# https://github.com/ilius/pyglossary/issues/343
 			id_i = len("x-dictionary:r:")
 			id_j = href.find(":", id_i)
-			_id = href[id_i:id_j]
-			title = self._titleById.get(_id)
+			id_ = href[id_i:id_j]
+			title = self._titleById.get(id_)
 			if title:
 				a.attrib["href"] = href = f"bword://{title}"
 			else:
@@ -294,9 +294,9 @@ class Reader:
 		if identifier and identifier != name:
 			self._glos.setInfo("CFBundleIdentifier", identifier)
 
-		_copyright = metadata.get("DCSDictionaryCopyright")
-		if _copyright:
-			self._glos.setInfo("copyright", _copyright)
+		copyright_ = metadata.get("DCSDictionaryCopyright")
+		if copyright_:
+			self._glos.setInfo("copyright", copyright_)
 
 		author = metadata.get("DCSDictionaryManufacturerName")
 		if author:
@@ -470,7 +470,7 @@ class Reader:
 			if id_j < 0:
 				log.error(f"id closing not found: {entryBytes.decode(self._encoding)}")
 				continue
-			_id = entryBytes[id_i + 4 : id_j].decode(self._encoding)
+			id_ = entryBytes[id_i + 4 : id_j].decode(self._encoding)
 			title_i = entryBytes.find(b'd:title="')
 			if title_i < 0:
 				log.error(f"title not found: {entryBytes.decode(self._encoding)}")
@@ -481,7 +481,7 @@ class Reader:
 					f"title closing not found: {entryBytes.decode(self._encoding)}",
 				)
 				continue
-			titleById[_id] = entryBytes[title_i + 9 : title_j].decode(self._encoding)
+			titleById[id_] = entryBytes[title_i + 9 : title_j].decode(self._encoding)
 
 		self._titleById = titleById
 		self._wordCount = len(titleById)

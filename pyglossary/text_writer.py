@@ -106,7 +106,7 @@ class TextGlossaryWriter:
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-	def _doWriteInfo(self, _file: io.TextIOBase) -> None:
+	def _doWriteInfo(self, file: io.TextIOBase) -> None:
 		entryFmt = self._entryFmt
 		outInfoKeysAliasDict = self._outInfoKeysAliasDict
 		wordEscapeFunc = self._wordEscapeFunc
@@ -128,7 +128,7 @@ class TextGlossaryWriter:
 				value = defiEscapeFunc(value)  # noqa: PLW2901
 				if not value:
 					continue
-			_file.write(
+			file.write(
 				entryFmt.format(
 					word=word,
 					defi=value,
@@ -139,7 +139,7 @@ class TextGlossaryWriter:
 		if not filename:
 			filename = self._glos.filename + self._ext
 
-		_file = self._file = cast(
+		file = self._file = cast(
 			"io.TextIOBase",
 			c_open(
 				filename,
@@ -148,17 +148,17 @@ class TextGlossaryWriter:
 				newline=self._newline,
 			),
 		)
-		_file.write(self._head)
+		file.write(self._head)
 
 		if self._writeInfo:
-			self._doWriteInfo(_file)
+			self._doWriteInfo(file)
 
-		_file.flush()
-		return _file
+		file.flush()
+		return file
 
 	def write(self) -> Generator[None, EntryType, None]:
 		glos = self._glos
-		_file = self._file
+		file = self._file
 		entryFmt = self._entryFmt
 		wordListEncodeFunc = self._wordListEncodeFunc
 		wordEscapeFunc = self._wordEscapeFunc
@@ -194,16 +194,16 @@ class TextGlossaryWriter:
 
 			if defiEscapeFunc is not None:
 				defi = defiEscapeFunc(defi)
-			_file.write(entryFmt.format(word=word, defi=defi))
+			file.write(entryFmt.format(word=word, defi=defi))
 
 			if file_size_approx > 0:
 				entryCount += 1
 				if (
 					entryCount % file_size_check_every == 0
-					and _file.tell() >= file_size_approx
+					and file.tell() >= file_size_approx
 				):
 					fileIndex += 1
-					_file = self._open(f"{self._filename}.{fileIndex}")
+					file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self) -> None:
 		if self._tail:

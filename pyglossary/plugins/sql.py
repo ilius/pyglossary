@@ -153,7 +153,7 @@ class Writer:
 		def fixStr(word: str) -> str:
 			return word.replace("'", "''").replace("\r", "").replace("\n", newline)
 
-		_id = 1
+		id_ = 1
 		while True:
 			entry = yield
 			if entry is None:
@@ -165,13 +165,13 @@ class Writer:
 			word = fixStr(words[0])
 			defi = fixStr(entry.defi)
 			fileObj.write(
-				f"INSERT INTO word VALUES({_id}, '{word}', '{defi}');\n",
+				f"INSERT INTO word VALUES({id_}, '{word}', '{defi}');\n",
 			)
 			for alt in words[1:]:
 				fileObj.write(
-					f"INSERT INTO alt VALUES({_id}, '{fixStr(alt)}');\n",
+					f"INSERT INTO alt VALUES({id_}, '{fixStr(alt)}');\n",
 				)
-			_id += 1
+			id_ += 1
 
 		if self._transaction:
 			fileObj.write("END TRANSACTION;\n")

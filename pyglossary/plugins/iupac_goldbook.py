@@ -81,12 +81,12 @@ class Reader:
 			raise
 
 		self._filename = filename
-		_file = compressionOpen(filename, mode="rb")
-		_file.seek(0, 2)
-		self._fileSize = _file.tell()
-		_file.seek(0)
+		file = compressionOpen(filename, mode="rb")
+		file.seek(0, 2)
+		self._fileSize = file.tell()
+		file.seek(0)
 
-		chunk = _file.read(800)
+		chunk = file.read(800)
 		chunk_end = chunk.find(b"<entries>")
 		chunk = chunk[:chunk_end]
 		chunk += b"</vocabulary>"
@@ -94,9 +94,9 @@ class Reader:
 		infoRoot = ET.fromstring(chunk)
 		self.setMetadata(infoRoot)
 
-		_file.seek(0)
+		file.seek(0)
 		context = ET.iterparse(
-			_file,
+			file,
 			events=("end",),
 			tag="entry",
 		)
@@ -112,7 +112,7 @@ class Reader:
 			termByCode[codeE.text] = term
 		self._termByCode = termByCode
 
-		_file.close()
+		file.close()
 
 	def setGlosInfo(self, key: str, value: str) -> None:
 		if value is None:
@@ -197,7 +197,7 @@ class Reader:
 		fileSize = self._fileSize
 		termByCode = self._termByCode
 
-		self._file = _file = compressionOpen(self._filename, mode="rb")
+		self._file = file = compressionOpen(self._filename, mode="rb")
 		context = ET.iterparse(
 			self._file,
 			events=("end",),
@@ -209,10 +209,10 @@ class Reader:
 				continue
 			code = codeE.text
 
-			_id = elem.attrib.get("id")
+			id_ = elem.attrib.get("id")
 			termE = elem.find("./term")
 			if termE is None:
-				log.warning(f"no term, {code=}, {_id=}")
+				log.warning(f"no term, {code=}, {id_=}")
 				continue
 
 			term = self.getTerm(termE)
@@ -303,7 +303,7 @@ class Reader:
 				words,
 				defi,
 				defiFormat="h",
-				byteProgress=(_file.tell(), fileSize),
+				byteProgress=(file.tell(), fileSize),
 			)
 
 			# clean up preceding siblings to save memory

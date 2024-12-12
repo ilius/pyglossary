@@ -102,13 +102,13 @@ class Reader:
 			exc_note(e, f"Run `{pip} install polib` to install")
 			raise
 
-		_file = self._file
+		file = self._file
 
 		word = ""
 		defi = ""
 		msgstr = False
 		wordCount = 0
-		for line in _file:
+		for line in file:
 			line = line.strip()  # noqa: PLW2901
 			if not line:
 				continue
@@ -155,10 +155,10 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		self._file = _file = open(filename, mode="w", encoding="utf-8")
-		_file.write('#\nmsgid ""\nmsgstr ""\n')
+		self._file = file = open(filename, mode="w", encoding="utf-8")
+		file.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in self._glos.iterInfo():
-			_file.write(f'"{key}: {value}\\n"\n')
+			file.write(f'"{key}: {value}\\n"\n')
 
 	def finish(self) -> None:
 		self._filename = ""
@@ -172,7 +172,7 @@ class Writer:
 			exc_note(e, f"Run `{pip} install polib` to install")
 			raise
 
-		_file = self._file
+		file = self._file
 
 		resources = self._resources
 		filename = self._filename
@@ -184,7 +184,7 @@ class Writer:
 				if resources:
 					entry.save(filename + "_res")
 				continue
-			_file.write(
+			file.write(
 				f"msgid {po_escape(entry.s_word)}\n"
 				f"msgstr {po_escape(entry.defi)}\n\n",
 			)

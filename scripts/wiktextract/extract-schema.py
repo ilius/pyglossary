@@ -76,14 +76,14 @@ def getSchemaNode(path: list[str]):
 	return node
 
 
-def updateSchema(_type: str, path: list[str]):
+def updateSchema(type_: str, path: list[str]):
 	node = getSchemaNode(path)
 	prevType = node.Type
-	if prevType and prevType != _type:
+	if prevType and prevType != type_:
 		print(
-			f"mismatch types for path={'.'.join(path)}, {prevType} and {_type}",
+			f"mismatch types for path={'.'.join(path)}, {prevType} and {type_}",
 		)
-	node.Type = _type
+	node.Type = type_
 
 
 def parseList(data: list[Any], path: list[str], node: Node):

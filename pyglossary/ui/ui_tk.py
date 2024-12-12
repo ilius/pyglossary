@@ -157,9 +157,9 @@ class TkTextLogHandler(logging.Handler):
 			msg = self.format(record)
 		###
 		if record.exc_info:
-			_type, value, tback = record.exc_info
+			type_, value, tback = record.exc_info
 			tback_text = "".join(
-				traceback.format_exception(_type, value, tback),
+				traceback.format_exception(type_, value, tback),
 			)
 			if msg:
 				msg += "\n"
@@ -251,9 +251,9 @@ class ProgressBar(ttk.Frame):
 		self.bind("<Configure>", self.update)
 		self.canvas.pack(side="top", fill="x", expand="no")
 
-	def updateProgress(self, value, _max=None, text=""):
-		if _max:
-			self.max = _max
+	def updateProgress(self, value, max_=None, text=""):
+		if max_:
+			self.max = max_
 		self.value = value
 		self.update(None, text)
 

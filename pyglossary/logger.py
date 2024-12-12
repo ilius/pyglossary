@@ -135,8 +135,8 @@ def format_exception(
 ) -> str:
 	if exc_info is None:
 		exc_info = sys.exc_info()
-	_type, value, tback = exc_info
-	text = "".join(traceback.format_exception(_type, value, tback))
+	type_, value, tback = exc_info
+	text = "".join(traceback.format_exception(type_, value, tback))
 
 	if tback is None:
 		return text
@@ -182,10 +182,10 @@ class StdLogHandler(logging.Handler):
 			msg = self.format(record)
 		###
 		if record.exc_info:
-			_type, value, tback = record.exc_info
-			if _type and tback and value:  # to fix mypy error
+			type_, value, tback = record.exc_info
+			if type_ and tback and value:  # to fix mypy error
 				tback_text = format_exception(
-					exc_info=(_type, value, tback),
+					exc_info=(type_, value, tback),
 					add_locals=(self.level <= logging.DEBUG),
 					add_globals=False,
 				)
@@ -220,16 +220,16 @@ def setupLogging() -> Logger:
 	if os.sep == "\\":
 
 		def _windows_show_exception(
-			_type: type[BaseException],
+			type_: type[BaseException],
 			exc: BaseException,
 			tback: TracebackType | None,
 		) -> None:
-			if not (_type and exc and tback):
+			if not (type_ and exc and tback):
 				return
 			import ctypes
 
 			msg = format_exception(
-				exc_info=(_type, exc, tback),
+				exc_info=(type_, exc, tback),
 				add_locals=(log.level <= logging.DEBUG),
 				add_globals=False,
 			)
@@ -241,15 +241,15 @@ def setupLogging() -> Logger:
 	else:
 
 		def _unix_show_exception(
-			_type: type[BaseException],
+			type_: type[BaseException],
 			exc: BaseException,
 			tback: TracebackType | None,
 		) -> None:
-			if not (_type and exc and tback):
+			if not (type_ and exc and tback):
 				return
 			log.critical(
 				format_exception(
-					exc_info=(_type, exc, tback),
+					exc_info=(type_, exc, tback),
 					add_locals=(log.level <= logging.DEBUG),
 					add_globals=False,
 				),

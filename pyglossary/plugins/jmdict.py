@@ -355,16 +355,16 @@ class Reader:
 									hf.write(prop)
 					hf.write(br())
 
-				_hf = cast("T_htmlfile", hf)
+				hf_ = cast("T_htmlfile", hf)
 				self.makeList(
-					_hf,
+					hf_,
 					entry.findall("sense"),
 					self.writeSense,
 				)
 
 		defi = f.getvalue().decode("utf-8")
-		_file = self._file
-		byteProgress = (_file.tell(), self._fileSize)
+		file = self._file
+		byteProgress = (file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			keywords,
 			defi,

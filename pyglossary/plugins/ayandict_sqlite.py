@@ -189,7 +189,7 @@ class Writer:
 		cur = self._cur
 		if cur is None:
 			raise ValueError("cur is None")
-		_hash = hashlib.md5()
+		hash_ = hashlib.md5()
 		while True:
 			entry = yield
 			if entry is None:
@@ -209,24 +209,24 @@ class Writer:
 				"INSERT INTO entry(term, article) VALUES (?, ?);",
 				(entry.l_word[0], defi),
 			)
-			_id = cur.lastrowid
-			if _id is None:
+			id_ = cur.lastrowid
+			if id_ is None:
 				raise ValueError("lastrowid is None")
 			for alt in entry.l_word[1:]:
 				cur.execute(
 					"INSERT INTO alt(id, term) VALUES (?, ?);",
-					(_id, alt),
+					(id_, alt),
 				)
-			_hash.update(entry.s_word.encode("utf-8"))
+			hash_.update(entry.s_word.encode("utf-8"))
 			if self._fuzzy:
-				self.addFuzzy(_id, entry.l_word)
+				self.addFuzzy(id_, entry.l_word)
 
 		cur.execute(
 			"INSERT INTO meta (key, value) VALUES (?, ?);",
-			("hash", _hash.hexdigest()),
+			("hash", hash_.hexdigest()),
 		)
 
-	def addFuzzy(self, _id: int, terms: list[str]) -> None:
+	def addFuzzy(self, id_: int, terms: list[str]) -> None:
 		cur = self._cur
 		if cur is None:
 			raise ValueError("cur is None")
@@ -238,5 +238,5 @@ class Writer:
 			for sub in subs:
 				cur.execute(
 					"INSERT INTO fuzzy3(sub, term, id) VALUES (?, ?, ?);",
-					(sub, term, _id),
+					(sub, term, id_),
 				)

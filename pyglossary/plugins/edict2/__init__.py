@@ -109,7 +109,7 @@ class Reader:
 		return 0
 
 	def __iter__(self) -> Iterator[EntryType]:
-		_file = self.file
+		file = self.file
 		fileSize = self._fileSize
 		glos = self._glos
 
@@ -123,7 +123,7 @@ class Reader:
 		)
 
 		while True:
-			line = _file.readline()
+			line = file.readline()
 			if not line:
 				break
 			line = line.rstrip("\n")
@@ -143,6 +143,6 @@ class Reader:
 				names,
 				article_text,
 				defiFormat="h",
-				byteProgress=(_file.tell(), fileSize) if fileSize else None,
+				byteProgress=(file.tell(), fileSize) if fileSize else None,
 			)
 			yield entry

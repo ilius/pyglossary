@@ -53,14 +53,14 @@ class MetaData:
 
 
 class MetaDataBlock:
-	def __init__(self, data: bytes, _type: str) -> None:
+	def __init__(self, data: bytes, type_: str) -> None:
 		self.data = data
-		self.type = _type
+		self.type = type_
 
 
 class MetaDataRange:
-	def __init__(self, _type: str, count: int) -> None:
-		self.type = _type
+	def __init__(self, type_: str, count: int) -> None:
+		self.type = type_
 		self.count = count
 
 

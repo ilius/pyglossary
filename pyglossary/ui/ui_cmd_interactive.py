@@ -391,10 +391,11 @@ class UI(ui_cmd.UI):
 				print(f"> List of directory {arg!r}:")
 
 			if not opts.long:
-				for _path in os.listdir(arg):
-					if isdir(_path):
-						_path += "/"
-					print(f"{_path}")
+				for path in os.listdir(arg):
+					if isdir(path):
+						print(f"{path}/")
+					else:
+						print(f"{path}")
 				continue
 
 			contents = os.listdir(arg)
@@ -432,18 +433,18 @@ class UI(ui_cmd.UI):
 		print(f"Changed current directory to: {newDir}")
 
 	def formatPromptMsg(self, level, msg, colon=":"):
-		_indent = self.promptIndentStr * level
+		indent_ = self.promptIndentStr * level
 
 		if core.noColor:
-			return f"{_indent} {msg}{colon} ", False
+			return f"{indent_} {msg}{colon} ", False
 
 		if self.promptIndentColor >= 0:
-			_indent = f"\x1b[38;5;{self.promptIndentColor}m{_indent}{endFormat}"
+			indent_ = f"\x1b[38;5;{self.promptIndentColor}m{indent_}{endFormat}"
 
 		if self.promptMsgColor >= 0:
 			msg = f"\x1b[38;5;{self.promptMsgColor}m{msg}{endFormat}"
 
-		return f"{_indent} {msg}{colon} ", True
+		return f"{indent_} {msg}{colon} ", True
 
 	def prompt(self, level, msg, colon=":", **kwargs):
 		msg, colored = self.formatPromptMsg(level, msg, colon)

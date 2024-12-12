@@ -223,7 +223,7 @@ class EbookWriter:
 	def add_file_manifest(
 		self,
 		relative_path: str,
-		_id: str,
+		id_: str,
 		contents: bytes,
 		mimetype: str,
 	) -> None:
@@ -231,7 +231,7 @@ class EbookWriter:
 		self.manifest_files.append(
 			{
 				"path": relative_path,
-				"id": _id,
+				"id": id_,
 				"mimetype": mimetype,
 			},
 		)

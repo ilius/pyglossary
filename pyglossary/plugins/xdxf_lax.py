@@ -116,17 +116,17 @@ class Reader:
 		)
 
 	def readUntil(self, untilByte: bytes) -> tuple[int, bytes]:
-		_file = self._file
+		file = self._file
 		buf = b""
 		while True:
-			tmp = _file.read(100)
+			tmp = file.read(100)
 			if not tmp:
 				break
 			buf += tmp
 			index = buf.find(untilByte)
 			if index < 0:
 				continue
-			_file.seek(_file.tell() - len(buf) + index)
+			file.seek(file.tell() - len(buf) + index)
 			return index, buf[:index]
 		return -1, buf
 
@@ -150,10 +150,10 @@ class Reader:
 			self._glos.setInfo(infoKey, elem.text)
 
 	def readMetadata(self) -> None:
-		_file = self._file
-		pos = _file.tell()
+		file = self._file
+		pos = file.tell()
 		self._readOneMetadata("full_name", "title")
-		_file.seek(pos)
+		file.seek(pos)
 		self._readOneMetadata("description", "description")
 
 	def open(self, filename: str) -> None:

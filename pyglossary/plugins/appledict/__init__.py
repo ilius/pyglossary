@@ -127,11 +127,11 @@ def loadBeautifulSoup() -> None:
 			import BeautifulSoup  # type: ignore
 		except ImportError:
 			return
-	_version: str = BeautifulSoup.__version__  # type: ignore
-	if int(_version.split(".")[0]) < 4:
+	version: str = BeautifulSoup.__version__  # type: ignore
+	if int(version.split(".")[0]) < 4:
 		raise ImportError(
 			"BeautifulSoup is too old, required at least version 4, "
-			f"{_version!r} found.\n"
+			f"{version!r} found.\n"
 			f"Please run `{pip} install lxml beautifulsoup4 html5lib`",
 		)
 
@@ -325,7 +325,7 @@ class Writer:
 				if not long_title:
 					continue
 
-				_id = next(generate_id)
+				id_ = next(generate_id)
 				quoted_title = quote_string(long_title, BeautifulSoup)
 
 				content_title: str | None = long_title
@@ -335,7 +335,7 @@ class Writer:
 				content = prepare_content(content_title, defi, BeautifulSoup)
 
 				toFile.write(
-					f'<d:entry id="{_id}" d:title={quoted_title}>\n'
+					f'<d:entry id="{id_}" d:title={quoted_title}>\n'
 					+ generate_indexes(long_title, alts, content, BeautifulSoup)
 					+ content
 					+ "\n</d:entry>\n",
@@ -361,12 +361,12 @@ class Writer:
 				).format(dict_name=fileNameBase),
 			)
 
-		_copyright = glos.getInfo("copyright")
+		copyright_ = glos.getInfo("copyright")
 		if BeautifulSoup:
 			# strip html tags
-			_copyright = str(
+			copyright_ = str(
 				BeautifulSoup.BeautifulSoup(
-					_copyright,
+					copyright_,
 					features="lxml",
 				).text,
 			)
@@ -394,7 +394,7 @@ class Writer:
 					CFBundleIdentifier=bundle_id,
 					CFBundleDisplayName=glos.getInfo("name"),
 					CFBundleName=fileNameBase,
-					DCSDictionaryCopyright=_copyright,
+					DCSDictionaryCopyright=copyright_,
 					DCSDictionaryManufacturerName=glos.author,
 					DCSDictionaryXSL=basename(xsl) if xsl else "",
 					DCSDictionaryDefaultPrefs=format_default_prefs(default_prefs),

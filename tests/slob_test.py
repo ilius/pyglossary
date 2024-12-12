@@ -25,12 +25,12 @@ log.addHandler(mockLog)
 class StructReaderWriter(slob.StructWriter):
 	def __init__(
 		self,
-		_file: "io.BufferedWriter",
+		file: "io.BufferedWriter",
 		reader: "slob.StructReader",
 		encoding: "str | None" = None,
 	) -> None:
 		super().__init__(
-			_file=_file,
+			file=file,
 			encoding=encoding,
 		)
 		self._reader = reader
@@ -53,14 +53,14 @@ class TagNotFound(Exception):
 
 
 def set_tag_value(filename: str, name: str, value: str) -> None:
-	with slob.fopen(filename, "rb+") as _file:
-		_file.seek(len(slob.MAGIC) + 16)
-		encoding = slob.read_byte_string(_file, slob.U_CHAR).decode(slob.UTF8)
+	with slob.fopen(filename, "rb+") as file:
+		file.seek(len(slob.MAGIC) + 16)
+		encoding = slob.read_byte_string(file, slob.U_CHAR).decode(slob.UTF8)
 		if slob.encodings.search_function(encoding) is None:
 			raise slob.UnknownEncoding(encoding)
 		reader = StructReaderWriter(
-			_file=_file,
-			reader=slob.StructReader(_file, encoding=encoding),
+			file=file,
+			reader=slob.StructReader(file, encoding=encoding),
 			encoding=encoding,
 		)
 		reader.read_tiny_text()

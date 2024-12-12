@@ -228,13 +228,13 @@ class Writer:
 		"""
 		from hashlib import sha1
 
-		_hash = sha1(entry.s_word.encode("utf-8")).hexdigest()[:8]  # noqa: S324
-		if _hash not in self._hashSet:
-			self._hashSet.add(_hash)
-			return _hash
+		hash_ = sha1(entry.s_word.encode("utf-8")).hexdigest()[:8]  # noqa: S324
+		if hash_ not in self._hashSet:
+			self._hashSet.add(hash_)
+			return hash_
 		index = 0
 		while True:
-			tmp_hash = _hash + f"{index:x}"
+			tmp_hash = hash_ + f"{index:x}"
 			if tmp_hash not in self._hashSet:
 				self._hashSet.add(tmp_hash)
 				return tmp_hash

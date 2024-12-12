@@ -271,12 +271,12 @@ class Reader:
 					else:
 						attrib["dir"] = "ltr"
 		try:
-			_type = attrib.pop("type")
+			type_ = attrib.pop("type")
 		except KeyError:
 			pass
 		else:
-			if _type != "trans":
-				attrib["class"] = _type
+			if type_ != "trans":
+				attrib["class"] = type_
 		with hf.element(tag, attrib=attrib):
 			self.writeRichText(hf, child)
 
@@ -379,15 +379,15 @@ class Reader:
 				continue
 
 			if child.tag == f"{TEI}note":
-				_type = child.attrib.get("type")
-				if not _type:
+				type_ = child.attrib.get("type")
+				if not type_:
 					noteList.append(child)
-				elif _type in {"pos", "gram"}:
+				elif type_ in {"pos", "gram"}:
 					gramList.append(child)
-				elif _type in self.noteTypes:
+				elif type_ in self.noteTypes:
 					noteList.append(child)
 				else:
-					log.warning(f"unknown note type {_type}")
+					log.warning(f"unknown note type {type_}")
 					noteList.append(child)
 				continue
 
@@ -599,17 +599,17 @@ class Reader:
 		if tag == f"{TEI}subc":
 			return self.subcMapping.get(text.lower(), text)
 		if tag == f"{TEI}gram":
-			_type = elem.get("type")
-			if _type:
-				if _type == "pos":
+			type_ = elem.get("type")
+			if type_:
+				if type_ == "pos":
 					return self.posMapping.get(text.lower(), text)
-				if _type == "gen":
+				if type_ == "gen":
 					return self.genderMapping.get(text.lower(), text)
-				if _type in {"num", "number"}:
+				if type_ in {"num", "number"}:
 					return self.numberMapping.get(text.lower(), text)
-				if _type == "subc":
+				if type_ == "subc":
 					return self.subcMapping.get(text.lower(), text)
-				log.warning(f"unrecognize type={_type!r}: {self.tostring(elem)}")
+				log.warning(f"unrecognize type={type_!r}: {self.tostring(elem)}")
 				return text
 
 			log.warning(f"<gram> with no type: {self.tostring(elem)}")
@@ -690,18 +690,18 @@ class Reader:
 					hf.write(br())
 					hf.write("\n")
 
-				_hf = cast("T_htmlfile", hf)
-				self.writeGramGroups(_hf, entry.findall("gramGrp", NAMESPACE))
-				self.writeSenseList(_hf, senseList)
+				hf_ = cast("T_htmlfile", hf)
+				self.writeGramGroups(hf_, entry.findall("gramGrp", NAMESPACE))
+				self.writeSenseList(hf_, senseList)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
-		_file = self._file
+		file = self._file
 		return self._glos.newEntry(
 			keywords,
 			defi,
 			defiFormat="h",
-			byteProgress=(_file.tell(), self._fileSize) if self._progress else None,
+			byteProgress=(file.tell(), self._fileSize) if self._progress else None,
 		)
 
 	def setWordCount(self, header: Element) -> None:
@@ -760,10 +760,10 @@ class Reader:
 		if not elems:
 			log.warning("did not find copyright")
 			return
-		_copyright = self.stripParagList(elems)
-		_copyright = self.replaceRefLink(_copyright)
-		self.setGlosInfo("copyright", _copyright)
-		log.debug(f"Copyright: {_copyright!r}")
+		copyright_ = self.stripParagList(elems)
+		copyright_ = self.replaceRefLink(copyright_)
+		self.setGlosInfo("copyright", copyright_)
+		log.debug(f"Copyright: {copyright_!r}")
 
 	def setPublisher(self, header: Element) -> None:
 		elem = header.find(".//publisher", NAMESPACE)

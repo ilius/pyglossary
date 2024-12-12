@@ -434,10 +434,10 @@ def read_byte_string(f: IOBase, len_spec: str) -> bytes:
 class StructReader:
 	def __init__(
 		self,
-		_file: IOBase,
+		file: IOBase,
 		encoding: str | None = None,
 	) -> None:
-		self._file = _file
+		self._file = file
 		self.encoding = encoding
 
 	def read_int(self) -> int:
@@ -494,10 +494,10 @@ class StructReader:
 class StructWriter:
 	def __init__(
 		self,
-		_file: io.BufferedWriter,
+		file: io.BufferedWriter,
 		encoding: str | None = None,
 	) -> None:
-		self._file = _file
+		self._file = file
 		self.encoding = encoding
 
 	def write_int(self, value: int) -> None:
@@ -577,19 +577,19 @@ class StructWriter:
 		return self._file.write(data)
 
 
-def read_header(_file: MultiFileReader) -> Header:
-	_file.seek(0)
+def read_header(file: MultiFileReader) -> Header:
+	file.seek(0)
 
-	magic = _file.read(len(MAGIC))
+	magic = file.read(len(MAGIC))
 	if magic != MAGIC:
 		raise UnknownFileFormat(f"magic {magic!r} != {MAGIC!r}")
 
-	uuid = UUID(bytes=_file.read(16))
-	encoding = read_byte_string(_file, U_CHAR).decode(UTF8)
+	uuid = UUID(bytes=file.read(16))
+	encoding = read_byte_string(file, U_CHAR).decode(UTF8)
 	if encodings.search_function(encoding) is None:
 		raise UnknownEncoding(encoding)
 
-	reader = StructReader(_file, encoding)
+	reader = StructReader(file, encoding)
 	compression = reader.read_tiny_text()
 	if compression not in COMPRESSIONS:
 		raise UnknownCompression(compression)
@@ -932,13 +932,13 @@ class StoreItem(NamedTuple):
 class Store(ItemList[StoreItem]):
 	def __init__(
 		self,
-		_file: IOBase,
+		file: IOBase,
 		offset: int,
 		decompress: Callable[[bytes], bytes],
 		content_types: Sequence[str],
 	) -> None:
 		super().__init__(
-			reader=StructReader(_file),
+			reader=StructReader(file),
 			offset=offset,
 			count_or_spec=U_INT,
 			pos_spec=U_LONG_LONG,

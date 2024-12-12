@@ -209,11 +209,11 @@ class Reader:
 		# are not all consecutive. so we have to keep a set of blob IDs
 
 		for blob in slobObj:
-			_id = blob.identity
-			if _id in blobSet:
+			id_ = blob.identity
+			if id_ in blobSet:
 				yield None  # update progressbar
 				continue
-			blobSet.add(_id)
+			blobSet.add(id_)
 
 			# blob.key is str, blob.content is bytes
 			word = blob.key
@@ -378,7 +378,7 @@ class Writer:
 	def addEntry(self, entry: EntryType) -> None:
 		words = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
-		_ctype = self._content_type
+		ctype = self._content_type
 		writer = self._slobWriter
 		if writer is None:
 			raise ValueError("slobWriter is None")
@@ -412,19 +412,19 @@ class Writer:
 				b_defi = b_defi.replace(b"""<img src="file:///""", b'''<img src="''')
 				b_defi = b_defi.replace(b"""<img src='file:///""", b"""<img src='""")
 
-		if not _ctype:
+		if not ctype:
 			if defiFormat == "h":
-				_ctype = "text/html; charset=utf-8"
+				ctype = "text/html; charset=utf-8"
 			elif defiFormat == "m":
-				_ctype = "text/plain; charset=utf-8"
+				ctype = "text/plain; charset=utf-8"
 			else:
-				_ctype = "text/plain; charset=utf-8"
+				ctype = "text/plain; charset=utf-8"
 
 		if not self._separate_alternates:
 			writer.add(
 				b_defi,
 				*tuple(words),
-				content_type=_ctype,
+				content_type=ctype,
 			)
 			return
 
@@ -432,13 +432,13 @@ class Writer:
 		writer.add(
 			b_defi,
 			headword,
-			content_type=_ctype,
+			content_type=ctype,
 		)
 		for alt in alts:
 			writer.add(
 				b_defi,
 				f"{alt}, {headword}",
-				content_type=_ctype,
+				content_type=ctype,
 			)
 
 	def write(self) -> Generator[None, EntryType, None]:

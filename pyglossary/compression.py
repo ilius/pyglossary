@@ -69,9 +69,9 @@ def compressionOpen(
 		openFunc = compressionOpenFunc(ext)
 		if not openFunc:
 			raise RuntimeError(f"no compression found for {ext=}")
-		_file = openFunc(filename, **kwargs)
-		_file.compression = ext
-		return _file
+		file = openFunc(filename, **kwargs)
+		file.compression = ext
+		return file
 	return open(filename, **kwargs)  # noqa: SIM115
 
 

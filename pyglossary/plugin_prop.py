@@ -205,7 +205,7 @@ class PluginProp:  # noqa: PLR0904
 		moduleName = self._moduleName
 		log.debug(f"importing {moduleName} in DictPluginProp")
 		try:
-			_mod = __import__(
+			mod = __import__(
 				f"pyglossary.plugins.{moduleName}",
 				fromlist=moduleName,
 			)
@@ -221,9 +221,9 @@ class PluginProp:  # noqa: PLR0904
 
 		# self._mod = _mod
 		if core.isDebug():
-			self.checkModule(_mod)
+			self.checkModule(mod)
 
-		return _mod
+		return mod
 
 	@property
 	def lname(self) -> str:
@@ -438,8 +438,8 @@ class PluginProp:  # noqa: PLR0904
 		name = self.name
 		if not hasattr(module, "__all__"):
 			raise PluginCheckError(f"Please add __all__ to plugin {name!r}")
-		_all = module.__all__
-		for attr in _all:
+		all_ = module.__all__
+		for attr in all_:
 			if not hasattr(module, attr):
 				raise PluginCheckError(
 					f"Undefined name {attr!r} in __all__ in plugin {name!r}"

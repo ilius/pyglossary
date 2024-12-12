@@ -99,12 +99,12 @@ class TestGlossaryBase(unittest.TestCase):
 
 	def downloadFile(self, filename):
 		unixFilename = filename.replace("\\", "/")
-		_crc32 = self.dataFileCRC32[unixFilename]
+		crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(testCacheDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
 			with open(fpath, mode="rb") as _file:
 				data = _file.read()
-			if crc32hex(data) != _crc32:
+			if crc32hex(data) != crc32:
 				raise RuntimeError(f"CRC32 check failed for existing file: {fpath}")
 			return fpath
 		try:
@@ -114,7 +114,7 @@ class TestGlossaryBase(unittest.TestCase):
 			print(f"{filename=}")
 			raise e from None
 		actual_crc32 = crc32hex(data)
-		if actual_crc32 != _crc32:
+		if actual_crc32 != crc32:
 			raise RuntimeError(
 				"CRC32 check failed for downloaded file: "
 				f"{filename}: {actual_crc32}",

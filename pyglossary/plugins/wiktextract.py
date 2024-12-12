@@ -206,9 +206,9 @@ class Reader:
 							hf.write(keyword)
 						hf.write(br())
 
-				_hf = cast("T_htmlfile", hf)
+				hf_ = cast("T_htmlfile", hf)
 
-				self.writeSoundList(_hf, data.get("sounds"))
+				self.writeSoundList(hf_, data.get("sounds"))
 
 				pos: str | None = data.get("pos")
 				if pos:
@@ -216,11 +216,11 @@ class Reader:
 						with hf.element("font", color=self._gram_color):
 							hf.write(pos)
 
-				self.writeSenseList(_hf, data.get("senses"))  # type: ignore
+				self.writeSenseList(hf_, data.get("senses"))  # type: ignore
 
-				self.writeSynonyms(_hf, data.get("synonyms"))  # type: ignore
+				self.writeSynonyms(hf_, data.get("synonyms"))  # type: ignore
 
-				self.writeAntonyms(_hf, data.get("antonyms"))  # type: ignore
+				self.writeAntonyms(hf_, data.get("antonyms"))  # type: ignore
 
 				# TODO: data.get("translations")
 				# list[dict[str, str]]
@@ -233,12 +233,12 @@ class Reader:
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
-		_file = self._file
+		file = self._file
 		return self._glos.newEntry(
 			keywords,
 			defi,
 			defiFormat="h",
-			byteProgress=(_file.tell(), self._fileSize),
+			byteProgress=(file.tell(), self._fileSize),
 		)
 
 	def writeSoundPron(
@@ -370,9 +370,9 @@ class Reader:
 	) -> None:
 		# example keys: text, "english", "ref", "type"
 		textList: list[tuple[str, str]] = []
-		_text = example.pop("example", "")
-		if _text:
-			textList.append((None, _text))
+		text_ = example.pop("example", "")
+		if text_:
+			textList.append((None, text_))
 
 		example.pop("ref", "")
 		example.pop("type", "")

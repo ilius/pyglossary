@@ -137,10 +137,10 @@ def defaultOptionValue(name, _opt, images):
 	valueMD = jsonCodeValue(value)
 
 	if name.startswith("color.cmd."):
-		_hex = termColors[str(value)].lstrip("#")
+		hex_ = termColors[str(value)].lstrip("#")
 		imageI = f"image{len(images)}"
 		images.append(
-			f".. |{imageI}| image:: https://via.placeholder.com/20/{_hex}/000000?text=+",
+			f".. |{imageI}| image:: https://via.placeholder.com/20/{hex_}/000000?text=+",
 		)
 		valueMD += f"\n|{imageI}|"
 

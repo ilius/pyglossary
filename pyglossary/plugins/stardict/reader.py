@@ -213,7 +213,7 @@ class Reader:
 		i_type: int,
 		unicode_errors: str,
 	) -> tuple[str, str]:
-		_type = chr(i_type)
+		type_ = chr(i_type)
 
 		"""
 		_type: 'r'
@@ -233,27 +233,27 @@ class Reader:
 		Use '/' character as directory separator.
 		"""
 
-		_format = {
+		format_ = {
 			"m": "m",
 			"t": "m",
 			"y": "m",
 			"g": "h",
 			"h": "h",
 			"x": "x",
-		}.get(_type, "")
+		}.get(type_, "")
 
-		if not _format:
-			log.warning(f"Definition type {_type!r} is not supported")
+		if not format_:
+			log.warning(f"Definition type {type_!r} is not supported")
 
-		_defi = b_defiPart.decode("utf-8", errors=unicode_errors)
+		defi = b_defiPart.decode("utf-8", errors=unicode_errors)
 
 		# log.info(f"{_type}->{_format}: {_defi}".replace("\n", "")[:120])
 
-		if _format == "x" and self._xdxf_to_html:
-			_defi = self.xdxf_transform(_defi)
-			_format = "h"
+		if format_ == "x" and self._xdxf_to_html:
+			defi = self.xdxf_transform(defi)
+			format_ = "h"
 
-		return _format, _defi
+		return format_, defi
 
 	def renderRawDefiList(
 		self,
@@ -262,30 +262,30 @@ class Reader:
 	) -> tuple[str, str]:
 		if len(rawDefiList) == 1:
 			b_defiPart, i_type = rawDefiList[0]
-			_format, _defi = self.decodeRawDefiPart(
+			format_, defi = self.decodeRawDefiPart(
 				b_defiPart=b_defiPart,
 				i_type=i_type,
 				unicode_errors=unicode_errors,
 			)
-			return _defi, _format
+			return defi, format_
 
 		defiFormatSet = set()
 		defisWithFormat = []
 		for b_defiPart, i_type in rawDefiList:
-			_format, _defi = self.decodeRawDefiPart(
+			format_, defi = self.decodeRawDefiPart(
 				b_defiPart=b_defiPart,
 				i_type=i_type,
 				unicode_errors=unicode_errors,
 			)
-			defisWithFormat.append((_defi, _format))
-			defiFormatSet.add(_format)
+			defisWithFormat.append((defi, format_))
+			defiFormatSet.add(format_)
 
 		if len(defiFormatSet) == 1:
 			defis = [_defi for _defi, _ in defisWithFormat]
-			_format = defiFormatSet.pop()
-			if _format == "h":
-				return "\n<hr>".join(defis), _format
-			return "\n".join(defis), _format
+			format_ = defiFormatSet.pop()
+			if format_ == "h":
+				return "\n<hr>".join(defis), format_
+			return "\n".join(defis), format_
 
 		if not defiFormatSet:
 			log.error(f"empty defiFormatSet, {rawDefiList=}")
@@ -293,13 +293,14 @@ class Reader:
 
 		# convert plaintext or xdxf to html
 		defis = []
-		for _defi, _format in defisWithFormat:
-			if _format == "m":
-				_defi = _defi.replace("\n", "<br/>")
-				_defi = f"<pre>{_defi}</pre>"
-			elif _format == "x":
-				_defi = self.xdxf_transform(_defi)
-			defis.append(_defi)
+		for defi_, format_ in defisWithFormat:
+			defi = defi_
+			if format_ == "m":
+				defi = defi.replace("\n", "<br/>")
+				defi = f"<pre>{defi}</pre>"
+			elif format_ == "x":
+				defi = self.xdxf_transform(defi)
+			defis.append(defi)
 		return "\n<hr>\n".join(defis), "h"
 
 	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912

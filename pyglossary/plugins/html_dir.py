@@ -216,11 +216,11 @@ class Writer:
 				if targetFilename == filename:
 					continue
 				targetNew = f"{targetFilename}#entry{targetEntryIndex}"
-			_file = getLinksByFile(int(fileIndexStr))
-			_file.write(
+			file = getLinksByFile(int(fileIndexStr))
+			file.write(
 				f"{x_start}\t{x_size}\t{targetNew}\n",
 			)
-			_file.flush()
+			file.flush()
 
 		linkTargetSet.clear()
 		del fileByWord, linkTargetSet
@@ -273,14 +273,14 @@ class Writer:
 							)
 							continue
 
-						_st = curLink.decode("utf-8")
-						i = _st.find('href="#')
-						j = _st.find('"', i + 7)
-						word = _st[i + 7 : j]
+						st = curLink.decode("utf-8")
+						i = st.find('href="#')
+						j = st.find('"', i + 7)
+						word = st[i + 7 : j]
 						url = entry_url_fmt.format(word=word)
 						outFile.write(
 							(
-								_st[:i] + f'class="broken" href="{url}"' + _st[j + 1 :]
+								st[:i] + f'class="broken" href="{url}"' + st[j + 1 :]
 							).encode("utf-8"),
 						)
 
@@ -452,7 +452,7 @@ class Writer:
 
 		self.writeInfo(filename, header)
 
-		_word_title = self._word_title
+		word_title = self._word_title
 
 		resDir = self._resDir
 		entryIndex = -1
@@ -487,7 +487,7 @@ class Writer:
 
 			entryId = f"entry{entryIndex}"
 
-			if _word_title:
+			if word_title:
 				words = [html.escape(word) for word in entry.l_word]
 				title = glos.wordTitleStr(
 					wordSep.join(words),

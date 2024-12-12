@@ -181,20 +181,21 @@ class Reader:
 
 		if len(defiFormatSet) == 1:
 			defis = [_defi for _defi, _ in defisWithFormat]
-			_format = defiFormatSet.pop()
-			if _format == "h":
-				return "\n<hr>".join(defis), _format
-			return "\n".join(defis), _format
+			format_ = defiFormatSet.pop()
+			if format_ == "h":
+				return "\n<hr>".join(defis), format_
+			return "\n".join(defis), format_
 
 		# convert plaintext or xdxf to html
 		defis = []
-		for _defi, _format in defisWithFormat:
-			if _format == "m":
-				_defi = _defi.replace("\n", "<br/>")
-				_defi = f"<pre>{_defi}</pre>"
-			elif _format == "x":
-				_defi = self.xdxf_transform(_defi)
-			defis.append(_defi)
+		for defi_, format_ in defisWithFormat:
+			defi = defi_
+			if format_ == "m":
+				defi = defi.replace("\n", "<br/>")
+				defi = f"<pre>{defi}</pre>"
+			elif format_ == "x":
+				defi = self.xdxf_transform(defi)
+			defis.append(defi)
 		return "\n<hr>\n".join(defis), "h"
 
 	def __iter__(self) -> Iterator[EntryType]:
@@ -202,7 +203,7 @@ class Reader:
 
 		glos = self._glos
 		fileSize = self._fileSize
-		self._file = _file = compressionOpen(self._filename, mode="rb")
+		self._file = file = compressionOpen(self._filename, mode="rb")
 		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			self._file,
 			events=("end",),
@@ -218,8 +219,8 @@ class Reader:
 				if child.tag in {"key", "synonym"}:
 					words.append(child.text)
 				elif child.tag == "definition":
-					_type = child.attrib.get("type", "")
-					if _type:
+					type_ = child.attrib.get("type", "")
+					if type_:
 						new_type = {
 							"m": "m",
 							"t": "m",
@@ -227,17 +228,17 @@ class Reader:
 							"g": "h",
 							"h": "h",
 							"x": "x",
-						}.get(_type, "")
+						}.get(type_, "")
 						if not new_type:
-							log.warning(f"unsupported definition type {_type}")
-						_type = new_type
-					if not _type:
-						_type = "m"
-					_defi = child.text.strip()
-					if _type == "x" and self._xdxf_to_html:
-						_defi = self.xdxf_transform(_defi)
-						_type = "h"
-					defisWithFormat.append((_defi, _type))
+							log.warning(f"unsupported definition type {type_}")
+						type_ = new_type
+					if not type_:
+						type_ = "m"
+					defi_ = child.text.strip()
+					if type_ == "x" and self._xdxf_to_html:
+						defi_ = self.xdxf_transform(defi_)
+						type_ = "h"
+					defisWithFormat.append((defi_, type_))
 				# TODO: child.tag == "definition-r"
 				else:
 					log.warning(f"unknown tag {child.tag}")
@@ -248,7 +249,7 @@ class Reader:
 				words,
 				defi,
 				defiFormat=defiFormat,
-				byteProgress=(_file.tell(), fileSize),
+				byteProgress=(file.tell(), fileSize),
 			)
 
 			# clean up preceding siblings to save memory
@@ -298,9 +299,9 @@ class Writer:
 		glos = self._glos
 
 		desc = glos.getInfo("description")
-		_copyright = glos.getInfo("copyright")
-		if _copyright:
-			desc = f"{_copyright}\n{desc}"
+		copyright_ = glos.getInfo("copyright")
+		if copyright_:
+			desc = f"{copyright_}\n{desc}"
 		publisher = glos.getInfo("publisher")
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"
@@ -315,8 +316,8 @@ class Writer:
 			maker.date(glos.getInfo("creationTime")),
 			maker.dicttype(""),
 		)
-		_file = self._file
-		_file.write(
+		file = self._file
+		file.write(
 			cast(
 				"bytes",
 				ET.tostring(
@@ -348,11 +349,11 @@ class Writer:
 		from lxml import builder
 		from lxml import etree as ET
 
-		_file = self._file
+		file = self._file
 		encoding = self._encoding
 		maker = builder.ElementMaker()
 
-		_file.write(
+		file.write(
 			"""<?xml version="1.0" encoding="UTF-8" ?>
 <stardict xmlns:xi="http://www.w3.org/2003/XInclude">
 """,
@@ -397,7 +398,7 @@ class Writer:
 			# https://en.wiktionary.org/wiki/%CB%88#Translingual
 			self._file.write(articleStr + "\n")
 
-		_file.write("</stardict>")
+		file.write("</stardict>")
 
 		if not os.listdir(self._resDir):
 			os.rmdir(self._resDir)

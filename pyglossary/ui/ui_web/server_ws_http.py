@@ -114,9 +114,9 @@ class WebLogHandler(logging.Handler):
 		msg = msg.replace("\x00", "")
 
 		if record.exc_info:
-			_type, value, tback = record.exc_info
+			type_, value, tback = record.exc_info
 			tback_text = "".join(
-				traceback.format_exception(_type, value, tback),
+				traceback.format_exception(type_, value, tback),
 			)
 			if msg:
 				msg += "\n"

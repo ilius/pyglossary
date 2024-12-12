@@ -207,14 +207,14 @@ class FormatDialog(gtk.Dialog):
 
 	def setCursor(self, desc: str):
 		model = self.treev.get_model()
-		_iter = model.iter_children(None)
-		while _iter is not None:
-			if model.get_value(_iter, 0) == desc:
-				path = model.get_path(_iter)
+		iter_ = model.iter_children(None)
+		while iter_ is not None:
+			if model.get_value(iter_, 0) == desc:
+				path = model.get_path(iter_)
 				self.treev.set_cursor(path, self.descCol, False)
 				self.treev.scroll_to_cell(path)
 				return
-			_iter = model.iter_next(_iter)
+			iter_ = model.iter_next(iter_)
 
 	def updateTree(self):
 		model = self.treev.get_model()
@@ -226,11 +226,11 @@ class FormatDialog(gtk.Dialog):
 			self.setCursor(self.activeDesc)
 
 	def getActive(self) -> PluginProp | None:
-		_iter = self.treev.get_selection().get_selected()[1]
-		if _iter is None:
+		iter_ = self.treev.get_selection().get_selected()[1]
+		if iter_ is None:
 			return None
 		model = self.treev.get_model()
-		desc = model.get_value(_iter, 0)
+		desc = model.get_value(iter_, 0)
 		return pluginByDesc[desc]
 
 	def setActive(self, plugin):
@@ -243,8 +243,8 @@ class FormatDialog(gtk.Dialog):
 
 	def rowActivated(self, treev, path, _col):
 		model = treev.get_model()
-		_iter = model.get_iter(path)
-		desc = model.get_value(_iter, 0)
+		iter_ = model.get_iter(path)
+		desc = model.get_value(iter_, 0)
 		self.activeDesc = desc
 		self.response(gtk.ResponseType.OK)
 
@@ -296,8 +296,8 @@ class FormatButton(gtk.Button):
 			return ""
 		return self.activePlugin.name
 
-	def setActive(self, _format):
-		plugin = Glossary.plugins[_format]
+	def setActive(self, format_):
+		plugin = Glossary.plugins[format_]
 		self.activePlugin = plugin
 		self.set_label(plugin.description)
 		self.onChanged()
@@ -776,9 +776,9 @@ class GtkTextviewLogHandler(logging.Handler):
 		# msg = msg.replace("\x00", "")
 
 		if record.exc_info:
-			_type, value, tback = record.exc_info
+			type_, value, tback = record.exc_info
 			tback_text = "".join(
-				traceback.format_exception(_type, value, tback),
+				traceback.format_exception(type_, value, tback),
 			)
 			if msg:
 				msg += "\n"
@@ -1091,8 +1091,8 @@ check {
 		# except KeyError:
 		# 	_id = self.statusMsgDict[msg] = self.statusNewId
 		# 	self.statusNewId += 1
-		_id = self.statusBar.get_context_id(msg)
-		self.statusBar.push(_id, msg)
+		id_ = self.statusBar.get_context_id(msg)
+		self.statusBar.push(id_, msg)
 
 	def __init__(
 		self,

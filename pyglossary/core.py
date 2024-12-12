@@ -111,31 +111,31 @@ def getDataDir() -> str:
 	if os.sep == "/":
 		return join(parent3, "share", "pyglossary")
 
-	_dir = join(
+	dir_ = join(
 		parent3,
 		f"Python{sys.version_info.major}{sys.version_info.minor}",
 		"share",
 		"pyglossary",
 	)
-	if isdir(_dir):
-		return _dir
+	if isdir(dir_):
+		return dir_
 
-	_dir = join(parent3, "Python3", "share", "pyglossary")
-	if isdir(_dir):
-		return _dir
+	dir_ = join(parent3, "Python3", "share", "pyglossary")
+	if isdir(dir_):
+		return dir_
 
-	_dir = join(parent3, "Python", "share", "pyglossary")
-	if isdir(_dir):
-		return _dir
+	dir_ = join(parent3, "Python", "share", "pyglossary")
+	if isdir(dir_):
+		return dir_
 
-	_dir = join(sys.prefix, "share", "pyglossary")
-	if isdir(_dir):
-		return _dir
+	dir_ = join(sys.prefix, "share", "pyglossary")
+	if isdir(dir_):
+		return dir_
 
 	if CONDA_PREFIX := os.getenv("CONDA_PREFIX"):
-		_dir = join(CONDA_PREFIX, "share", "pyglossary")
-		if isdir(_dir):
-			return _dir
+		dir_ = join(CONDA_PREFIX, "share", "pyglossary")
+		if isdir(dir_):
+			return dir_
 
 	raise OSError("failed to detect dataDir")
 
