@@ -201,7 +201,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 		self,
 		word: str,
 		sample: str = "",
-		_class: str = "",
+		class_: str = "",
 	) -> str: ...
 
 	def getConfig(self, name: str, default: str | None) -> str | None: ...

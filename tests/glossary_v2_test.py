@@ -950,7 +950,7 @@ Japonica"""
 	def test_wordTitleStr_b2(self):
 		glos = self.glos = Glossary()
 		self.assertEqual(
-			glos.wordTitleStr("test1", _class="headword"),
+			glos.wordTitleStr("test1", class_="headword"),
 			'<b class="headword">test1</b><br>',
 		)
 

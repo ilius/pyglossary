@@ -492,7 +492,7 @@ class Writer:
 				title = glos.wordTitleStr(
 					wordSep.join(words),
 					sample=entry.l_word[0],
-					_class="headword",
+					class_="headword",
 				)
 
 			if not title:

@@ -565,7 +565,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		word: str,
 		sample: str = "",
-		_class: str = "",
+		class_: str = "",
 	) -> str:
 		"""
 		Return title tag for words.
@@ -587,8 +587,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if not sample:
 			sample = word
 		tag = self.titleTag(sample)
-		if _class:
-			return f'<{tag} class="{_class}">{word}</{tag}><br>'
+		if class_:
+			return f'<{tag} class="{class_}">{word}</{tag}><br>'
 		return f"<{tag}>{word}</{tag}><br>"
 
 	def getConfig(self, name: str, default: str | None) -> str | None:
