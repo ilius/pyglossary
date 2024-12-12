@@ -175,6 +175,9 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 	def readOptions(self) -> dict | None: ...
 
 	@property
+	def sqlite(self) -> bool: ...
+
+	@property
 	def sourceLang(self) -> Lang | None: ...
 
 	@property

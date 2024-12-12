@@ -557,6 +557,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def readOptions(self) -> dict | None:
 		return self._readOptions
 
+	@property
+	def sqlite(self) -> bool:
+		return self._sqlite
+
 	def wordTitleStr(
 		self,
 		word: str,
