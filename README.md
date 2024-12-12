@@ -33,6 +33,13 @@ ______________________________________________________________________
 
 Android Termux - interactive command-line interface
 
+______________________________________________________________________
+
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/50-web-wiktextract-ifo-ar.gif" width="50%" height="50%"/>
+
+Web interface
+
+
 ## Supported formats
 
 | Format                                                  |     |    Extension    | Read | Write |
@@ -153,6 +160,7 @@ But you can explicitly select user interface type using `--ui`
 
 - `./main.py --ui=gtk`
 - `./main.py --ui=tk`
+- `./main.py --ui=web`
 - `./main.py --ui=cmd`
 
 ## Installation on Windows
