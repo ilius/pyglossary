@@ -39,7 +39,6 @@ ______________________________________________________________________
 
 Web interface
 
-
 ## Supported formats
 
 | Format                                                  |     |    Extension    | Read | Write |
