@@ -60,6 +60,7 @@ from base64 import b64encode
 from hashlib import sha1
 from http import HTTPStatus
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from pathlib import Path
 from socketserver import ThreadingMixIn
 
 from pyglossary.glossary_v2 import Glossary
@@ -368,7 +369,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		self._send_lock = threading.Lock()
 
 		super().__init__(
-			socket, addr, server, *args, **kwargs, directory="pyglossary/ui/ui_web"
+			socket, addr, server, *args, **kwargs, directory=Path(__file__).parent
 		)
 
 	def do_GET(self):
