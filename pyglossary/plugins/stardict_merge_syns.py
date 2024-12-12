@@ -102,7 +102,7 @@ if os.getenv("PYGLOSSARY_STARDICT_NO_FORCE_SORT") == "1":
 class Writer(StdWriter):
 	dictzipSynFile = False
 
-	def fixDefi(self, defi: str, defiFormat: str) -> bytes:  # noqa: ARG002
+	def fixDefi(self, defi: str, defiFormat: str) -> bytes:  # noqa: ARG002, PLR6301
 		return defi.encode("utf-8")
 
 	def writeCompact(
