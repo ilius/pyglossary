@@ -64,7 +64,7 @@ class Writer:
 	_stardict_client: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
-	_sqlite: bool = True
+	_sqlite: bool | None = None
 
 	dictzipSynFile = True
 
@@ -93,7 +93,9 @@ class Writer:
 		self._targetLang = None
 
 	def open(self, filename: str) -> None:
-		log.debug(f"open: {filename = }")
+		if self._sqlite is None:
+			self._sqlite = self._glos.sqlite
+		log.debug(f"open: {filename = }, {self._sqlite = }")
 		fileBasePath = filename
 		##
 		if splitext(filename)[1].lower() == ".ifo":

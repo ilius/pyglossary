@@ -1558,7 +1558,7 @@
 			"sqlite": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Use SQLite to limit memory usage"
+				"comment": "Use SQLite to limit memory usage. Default depends on global SQLite mode."
 			}
 		},
 		"canRead": true,
@@ -1577,7 +1577,7 @@
 			"stardict_client": false,
 			"audio_goldendict": false,
 			"audio_icon": true,
-			"sqlite": true
+			"sqlite": null
 		}
 	},
 	{
@@ -1641,7 +1641,7 @@
 			"sqlite": {
 				"class": "BoolOption",
 				"type": "bool",
-				"comment": "Use SQLite to limit memory usage"
+				"comment": "Use SQLite to limit memory usage. Default depends on global SQLite mode."
 			}
 		},
 		"canRead": false,
@@ -1653,7 +1653,7 @@
 			"dictzip": true,
 			"sametypesequence": "",
 			"audio_icon": true,
-			"sqlite": true
+			"sqlite": null
 		}
 	},
 	{

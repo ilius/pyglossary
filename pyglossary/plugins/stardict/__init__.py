@@ -95,7 +95,9 @@ optionsProp: dict[str, Option] = {
 		comment="Add glossary's audio icon",
 	),
 	"sqlite": BoolOption(
-		comment="Use SQLite to limit memory usage",
+		comment="Use SQLite to limit memory usage."
+		" Default depends on global SQLite mode.",
+		allowNone=True,
 	),
 }
 
