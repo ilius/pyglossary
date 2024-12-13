@@ -244,12 +244,6 @@ class EbookWriter:
 			return "#groupPage"
 		return f"g{index:06d}.xhtml"
 
-	def get_prefix(self, word: str) -> str:
-		raise NotImplementedError
-
-	def sortKey(self, words: list[str]) -> Any:
-		raise NotImplementedError
-
 	def _add_group(
 		self,
 		group_labels: list[str],
