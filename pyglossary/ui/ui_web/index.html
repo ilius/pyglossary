@@ -324,6 +324,11 @@
         const progressBar = document.getElementById('progress');
         const progressText = document.getElementById('progress-text');
 
+        function log(msg) {
+            consoleArea.value += `${msg}\n`;
+            consoleArea.scrollTop = consoleArea.scrollHeight;
+        }
+
         function initWsConnection() {
             const socket = new WebSocket('/ws');
             window.ws = socket;
@@ -341,20 +346,17 @@
                     progressBar.value = message.ratio * 100;
                     progressText.innerText = message.text;
                 } else if (message.type == 'info') {
-                    consoleArea.value += `${message.text}\n`;
+                    log(message.text);
                 }
-
-                consoleArea.scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
             });
 
             socket.addEventListener('error', (error) => {
                 msg = `WebSocket error: ${error}\n`;
-                consoleArea.value += `${msg}\n`;
-                console.log(msg);
+                log(msg);
             });
 
             socket.addEventListener('close', () => {
-                console.log('WebSocket connection closed');
+                log('WebSocket connection closed');
             });
         }
 
@@ -362,10 +364,10 @@
             fetch("/config")
                 .then(response => {
                     if (!response.ok) {
-                        consoleArea.value += `Failed to fetch configuration: ${response.status} ${response.text()}\n`;
+                        log(`Failed to fetch configuration: ${response.status} ${response.text()}`);
                         return Promise.reject(`Failed to fetch configuration: ${response.statusText}`);
                     } else {
-                        consoleArea.value += `config load ✔️\n`;
+                        log('config load ✔️');
                     }
                     return response.json();
                 })
@@ -397,8 +399,7 @@
                     attachListenersPostInit();
                 })
                 .catch(error => {
-                    console.error("Error populating dropdowns:", error);
-                    consoleArea.value += `Error populating dropdowns: ${error}\n`;
+                    log(`Error populating dropdowns: ${error}`);
                 });
         }
 
@@ -418,12 +419,12 @@
             document.querySelector('input[type="submit"]').addEventListener('click', async (event) => {
 
                 progressBar.value = 0;
-                consoleArea.value = 'Starting new conversion job. Please wait... ⏳\n';
+                log('Starting new conversion job. Please wait... ⏳');
                 const form = event.target.form;
 
                 if (form.checkValidity()) {
                     event.preventDefault();
-                    consoleArea.value += '\nConversion started, please wait...\n';
+                    log('Conversion started, please wait...');
 
                     const inputFilename = form.inputFilename.value;
                     const inputFormat = form.inputFormat.value;
@@ -452,15 +453,14 @@
 
                         if (!response.ok) {
                             const msg = `Failed to start conversion: ${response.statusText} ${response.json()}\n`
-                            consoleArea.value += `${msg}\n`;
+                            log(msg);
                             throw new Error(msg);
 
                         }
                         toggleConvertButton();
 
                     } catch (error) {
-                        console.error('Error during conversion:', error);
-                        consoleArea.value += `${error}\n`;
+                        log(`Error during conversion: ${error}`);
                         toggleConvertButton();
                     }
                 }
@@ -478,7 +478,7 @@
                     ws.send('exit');
                 }
                 document.getElementById('dropdown').removeAttribute('open')
-                consoleArea.value = 'Server stopped! Window can now be closed.\n\n';
+                log('Server stopped! Window can now be closed.');
             });
 
             document.getElementById('btnOptions').addEventListener('click', (evt) => {
@@ -503,10 +503,10 @@
                 try {
                     const allOptionsObj = JSON.parse(allOptions);
                     localStorage.setItem(KEY_PG_OPTIONS, JSON.stringify(allOptionsObj))
-                    consoleArea.value += `options saved ✔️\n${allOptions}\n`;
+                    log(`options saved ✔️\n${allOptions}`);
                 } catch (error) {
                     console.error('Invalid JSON string:', error.message);
-                    consoleArea.value += `invalid options ${error.message} JSON\n`;
+                    log(`invalid options ${error.message} JSON\n`);
                 }
 
                 toggleAttr(optionsDialog, 'open');
@@ -518,7 +518,7 @@
                 evt.stopImmediatePropagation();
                 const optionsDialog = document.querySelector('dialog');
                 toggleAttr(optionsDialog, 'open');
-                consoleArea.value += 'options dialog cancelled without saving\n';
+                log('options dialog cancelled without saving');
             });
 
             FIELD_IDS_PERSISTABLE.forEach(fieldId => {
