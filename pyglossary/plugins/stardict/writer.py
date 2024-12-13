@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.langs import Lang
-	from pyglossary.plugins.stardict.types import T_SdList
+	from pyglossary.plugins.stardict.sd_types import T_SdList
 
 
 from pyglossary.core import log
