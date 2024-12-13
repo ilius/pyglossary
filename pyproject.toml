@@ -49,12 +49,9 @@ select = [
 	"B",   # flake8-bugbear
 	"UP",  # pyupgrade
 	"YTT", # flake8-2020
-	# "ASYNC", # flake8-async
 	"ASYNC1", # flake8-trio
-	# "S", # flake8-bandit
 	"BLE", # flake8-blind-except
-	# "FBT", # flake8-boolean-trap
-	# "B", flake8-bugbear
+	"B", # flake8-bugbear
 	# "A", # flake8-builtins
 	"COM", # flake8-commas
 	# "CPY", # flake8-copyright   --preview
