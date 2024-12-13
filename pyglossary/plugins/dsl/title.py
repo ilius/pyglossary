@@ -107,9 +107,9 @@ class TitleResult(NamedTuple):
 class TitleTransformer:
 	def __init__(
 		self,
-		input: str,
+		inputTitle: str,
 	) -> None:
-		self.input = input
+		self.input = inputTitle
 		# self.start = 0
 		self.pos = 0
 		self.output = ""
