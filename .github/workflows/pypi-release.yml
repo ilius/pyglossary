@@ -2,10 +2,7 @@ name: pypi-publish
 
 on:
     push:
-        branches: ["pypi-release-action"]
-    pull_request:
-    schedule:
-        - cron: "33 1 * * 3"
+        branches: ["master"]
 
 jobs:
     pypi-publish:
