@@ -163,7 +163,7 @@ class Reader:
 				msg = f"[{count} times] {msg}"
 			log.warning(msg)
 
-	def warning(self, msg):
+	def warning(self, msg: str) -> None:
 		self._warnings[msg] += 1
 
 	def makeEntry(self, data: dict[str, Any]) -> EntryType:
@@ -397,7 +397,7 @@ class Reader:
 		if not textList:
 			return
 
-		def writePair(prefix: str, text: str):
+		def writePair(prefix: str, text: str) -> None:
 			if prefix:
 				with hf.element("b"):
 					hf.write(prefix)

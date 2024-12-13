@@ -47,7 +47,7 @@ def getPipSafeVersion() -> str:
 
 
 class my_install(install):
-	def run(self):
+	def run(self) -> None:
 		install.run(self)
 		if os.sep == "/":
 			binPath = join(self.install_scripts, "pyglossary")

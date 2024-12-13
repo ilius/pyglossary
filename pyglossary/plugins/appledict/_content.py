@@ -25,8 +25,12 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from xml.sax.saxutils import quoteattr, unescape
+
+if TYPE_CHECKING:
+	import bs4 as BeautifulSoup
+	import bs4.element
 
 from pyglossary.text_utils import toStr
 
@@ -117,7 +121,7 @@ def prepare_content_without_soup(
 	return content  # noqa: RET504
 
 
-def _prepare_href(tag) -> None:
+def _prepare_href(tag: bs4.element.Tag) -> None:
 	href = tag["href"]
 	href = cleanup_link_target(href)
 
@@ -136,7 +140,7 @@ def _prepare_href(tag) -> None:
 		tag["href"] = f"x-dictionary:d:{href}"
 
 
-def _prepare_onclick(soup) -> None:
+def _prepare_onclick(soup: BeautifulSoup.BeautifulSoup) -> None:
 	for thumb in soup.find_all("div", "pic_thumb"):
 		thumb["onclick"] = (
 			'this.setAttribute("style", "display:none"); '
@@ -169,7 +173,7 @@ def _prepare_onclick(soup) -> None:
 def prepare_content_with_soup(  # noqa: PLR0912
 	title: str | None,
 	body: str,
-	BeautifulSoup: Any,
+	BeautifulSoup: BeautifulSoup,
 ) -> str:
 	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
 	# difference between "lxml" and "html.parser"

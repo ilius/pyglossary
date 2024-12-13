@@ -646,7 +646,7 @@ class Reader:
 			data = substituteAppleCSS(data)
 		return self._glos.newDataEntry(fname, data)
 
-	def fixResFilename(self, fname: str, relPath: str):
+	def fixResFilename(self, fname: str, relPath: str) -> str:
 		if fname == self._cssName:
 			fname = "style.css"
 		if relPath:

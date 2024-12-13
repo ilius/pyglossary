@@ -233,7 +233,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
 		self,
-		*args,
+		*args,  # noqa: ANN002
 	) -> None: ...
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None: ...

@@ -62,7 +62,7 @@ def sqlite_locale(
 	def sortKey(words: list[str]) -> Any:
 		return cSortKey(words[0].lower())
 
-	def wrapper(sortEncoding="", **_options):  # noqa: ARG001
+	def wrapper(sortEncoding: str = "", **_options) -> SQLiteSortKeyType:  # noqa: ARG001
 		return [("sortkey", "BLOB", sortKey)]
 
 	return wrapper

@@ -15,11 +15,19 @@ SQLiteSortKeyType: TypeAlias = list[tuple[str, str, SortKeyType]]
 
 
 class SortKeyMakerType(Protocol):
-	def __call__(self, sortEncoding: str = "utf-8", **kwargs) -> SortKeyType: ...
+	def __call__(
+		self,
+		sortEncoding: str = "utf-8",
+		**kwargs,  # noqa: ANN003
+	) -> SortKeyType: ...
 
 
 class SQLiteSortKeyMakerType(Protocol):
-	def __call__(self, sortEncoding: str = "utf-8", **kwargs) -> SQLiteSortKeyType: ...
+	def __call__(
+		self,
+		sortEncoding: str = "utf-8",
+		**kwargs,  # noqa: ANN003
+	) -> SQLiteSortKeyType: ...
 
 
 class LocaleSortKeyMakerType(Protocol):

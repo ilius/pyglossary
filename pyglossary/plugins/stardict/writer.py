@@ -335,7 +335,7 @@ class Writer:
 			f"Writing {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
 		)
 
-	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]):
+	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]) -> None:
 		if not indexList:
 			return
 

@@ -249,7 +249,7 @@ class Reader:
 		if self._abbrev:
 			self.loadAbbrevFile()
 
-	def loadAbbrevFile(self):
+	def loadAbbrevFile(self) -> None:
 		baseName, _ = splitext(self._filename)
 		abbrevName = baseName + "_abrv.dsl"
 		if not isfile(abbrevName):
@@ -389,7 +389,7 @@ class Reader:
 		subglos_list: list[tuple[str, str]] = []
 		subglos_key, subglos_text = "", ""
 
-		def add_subglos():
+		def add_subglos() -> None:
 			nonlocal main_text, subglos_key, subglos_text
 			subglos_list.append((subglos_key, subglos_text))
 			main_text += f"\t[m2][ref]{subglos_key}[/ref]\n"

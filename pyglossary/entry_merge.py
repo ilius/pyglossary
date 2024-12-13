@@ -24,7 +24,7 @@ def xdxf_transform(text: str) -> str:
 	return _xdxfTr.transformByInnerString(text)  # type: ignore
 
 
-def getHtmlDefi(entry: EntryType):
+def getHtmlDefi(entry: EntryType) -> str:
 	if entry.defiFormat == "m":
 		return f"<pre>{entry.defi}</pre>"
 	if entry.defiFormat == "x":

@@ -31,7 +31,7 @@ logging.addLevelName(TRACE, "TRACE")
 
 
 class _Formatter(logging.Formatter):
-	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN101
+	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
 		logging.Formatter.__init__(self, *args, **kwargs)
 		self.fill: Callable[[str], str] | None = None
 
@@ -65,7 +65,7 @@ class Logger(logging.Logger):
 		"All",  # "Not-Set",
 	)
 
-	def __init__(self, *args) -> None:  # noqa: ANN101
+	def __init__(self, *args) -> None:  # noqa: ANN101, ANN002
 		logging.Logger.__init__(self, *args)
 		self._verbosity = 3
 		self._timeEnable = False
@@ -80,7 +80,7 @@ class Logger(logging.Logger):
 	def trace(self, msg: str) -> None:
 		self.log(TRACE, msg)
 
-	def pretty(self, data: Any, header: str = "") -> None:
+	def pretty(self, data: Any, header: str = "") -> None:  # noqa: ANN401
 		from pprint import pformat
 
 		self.debug(header + pformat(data))

@@ -131,7 +131,7 @@ class SqEntryList:
 		for row in self._cur:
 			yield self._decode(row[0])
 
-	def __iadd__(self, other: Iterable):  # -> Self
+	def __iadd__(self, other: Iterable) -> SqEntryList:
 		for item in other:
 			self.append(item)
 		return self

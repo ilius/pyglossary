@@ -109,7 +109,7 @@ class Option:
 			return None, True
 		return raw, True
 
-	def validate(self, value: Any) -> bool:
+	def validate(self, value: Any) -> bool:  # noqa: ANN401
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -191,7 +191,7 @@ class StrOption(Option):
 			**kwargs,
 		)
 
-	def validate(self, value: Any) -> bool:
+	def validate(self, value: Any) -> bool:  # noqa: ANN401
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -359,7 +359,7 @@ class DictOption(Option):
 
 @Option.register
 class ListOption(Option):
-	def __init__(self, **kwargs) -> None:
+	def __init__(self, **kwargs) -> None:  # noqa: ANN003
 		Option.__init__(
 			self,
 			typ="list",
@@ -527,7 +527,7 @@ class HtmlColorOption(Option):
 		del data["customValue"]
 		return data
 
-	def __init__(self, **kwargs) -> None:
+	def __init__(self, **kwargs) -> None:  # noqa: ANN003
 		Option.__init__(
 			self,
 			typ="str",

@@ -156,7 +156,7 @@ class PluginProp:  # noqa: PLR0904
 		return self
 
 	@classmethod
-	def fromModule(cls: type, mod: Any) -> PluginProp:
+	def fromModule(cls: type, mod: Any) -> PluginProp:  # noqa: ANN401
 		self = cls()
 		self._mod = mod
 		self._Reader = None
@@ -199,7 +199,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._enable
 
 	@property
-	def module(self) -> Any:
+	def module(self) -> Any:  # noqa: ANN401
 		if self._mod is not None:
 			return self._mod
 		moduleName = self._moduleName
@@ -376,7 +376,7 @@ class PluginProp:  # noqa: PLR0904
 			self._writeDepends = getattr(self.writerClass, "depends", {})
 		return self._writeDepends
 
-	def checkModule(self, module) -> None:
+	def checkModule(self, module: Any) -> None:  # noqa: ANN401
 		name = self.name
 
 		if hasattr(module, "write"):
@@ -434,7 +434,7 @@ class PluginProp:  # noqa: PLR0904
 	]
 
 	# only run this on CI to do extra validation
-	def checkModuleMore(self, module) -> None:
+	def checkModuleMore(self, module: Any) -> None:
 		name = self.name
 		if not hasattr(module, "__all__"):
 			raise PluginCheckError(f"Please add __all__ to plugin {name!r}")

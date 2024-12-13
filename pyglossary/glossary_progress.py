@@ -31,7 +31,7 @@ class GlossaryProgress:
 
 	def progressInit(
 		self,
-		*args,  # noqa: ANN003
+		*args,  # noqa: ANN002
 	) -> None:
 		if self._ui and self._progressbar:
 			self._ui.progressInit(*args)

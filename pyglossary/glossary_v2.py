@@ -396,7 +396,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	# 	self._iter = mergeHtmlEntriesWithSameHeadword(self._iter)
 
-	def mergeEntriesWithSameHeadwordPlaintext(self):
+	def mergeEntriesWithSameHeadwordPlaintext(self) -> None:
 		"""
 		Merge consequtive entries that have the same word list.
 
@@ -649,11 +649,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	# 		return os.access(dirPath, os.W_OK)
 	# 	return os.access(os.path.dirname(dirPath), os.W_OK)
 
+	# TODO: add ReaderType with Protocol
 	def _createReader(
 		self,
 		format: str,
 		options: dict[str, Any],
-	) -> Any:
+	) -> Any:  # noqa: ANN401
 		readerClass = self.plugins[format].readerClass
 		if readerClass is None:
 			raise ReadError("_createReader: readerClass is None")
@@ -694,7 +695,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				)
 				del options[key]
 
-	def _openReader(self, reader: Any, filename: str):
+	def _openReader(self, reader: Any, filename: str) -> None:  # noqa: ANN401
 		# reader.open returns "Iterator[tuple[int, int]] | None"
 		progressbar: bool = self.progressbar
 		try:
@@ -721,7 +722,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		filename: str,
 		format: str = "",
-		**options,
+		**options,  # noqa: ANN003
 	) -> bool:
 		self._setTmpDataDir(filename)
 		return self._read(
@@ -736,7 +737,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		filename: str,
 		format: str = "",
 		direct: bool = False,
-		**options,
+		**options,  # noqa: ANN003
 	) -> bool:
 		filename = os.path.abspath(filename)
 		###
@@ -781,7 +782,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		return True
 
-	def loadReader(self, reader: Any) -> None:
+	def loadReader(self, reader: Any) -> None:  # noqa: ANN401
 		"""
 		Iterate over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function.
@@ -800,11 +801,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		core.trace(log, f"Loaded {len(self._data)} entries")
 		showMemoryUsage()
 
+	# TODO: add WriterType with Protocol
 	def _createWriter(
 		self,
 		format: str,
 		options: dict[str, Any],
-	) -> Any:
+	) -> Any:  # noqa: ANN401
 		validOptions = self.formatsWriteOptions.get(format)
 		if validOptions is None:
 			raise WriteError(f"No write support for {format!r} format")
@@ -828,7 +830,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		filename: str,
 		format: str,
-		**kwargs,
+		**kwargs,  # noqa: ANN003
 	) -> str:
 		"""
 		Write to a given glossary file, with given format (optional).
@@ -895,9 +897,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	@staticmethod
 	def _openWriter(
-		writer: Any,
+		writer: Any,  # noqa: ANN401
 		filename: str,
-	):
+	) -> None:
 		try:
 			writer.open(filename)
 		except (FileNotFoundError, LookupError) as e:
@@ -908,7 +910,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		filename: str,
 		format: str,
 		sort: bool = False,
-		**options,
+		**options,  # noqa: ANN003
 	) -> str:
 		filename = os.path.abspath(filename)
 

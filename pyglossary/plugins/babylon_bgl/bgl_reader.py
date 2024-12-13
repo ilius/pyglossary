@@ -173,7 +173,7 @@ class BGLGzipFile(GzipFile):
 		self,
 		fileobj: io.IOBase | None = None,
 		closeFileobj: bool = False,
-		**kwargs,
+		**kwargs,  # noqa: ANN003
 	) -> None:
 		GzipFile.__init__(self, fileobj=fileobj, **kwargs)
 		self.closeFileobj = closeFileobj
@@ -1060,7 +1060,7 @@ class BglReader:
 		pass
 
 	@staticmethod
-	def decodeCharsetTagsBabylonReference(b_text: bytes, b_text2: bytes):
+	def decodeCharsetTagsBabylonReference(b_text: bytes, b_text2: bytes) -> str:
 		b_refs = b_text2.split(b";")
 		add_text = ""
 		for i_ref, b_ref in enumerate(b_refs):
