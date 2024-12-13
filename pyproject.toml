@@ -12,13 +12,9 @@ target-version = "py310"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
-	"setup.py",
 	"whitelist.py", # for vulture
-	# "pyglossary/ui/gtk4_utils/*",
-	# "pyglossary/ui/gtk3_utils/*",
 	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
 	"pyglossary/plugins/testformat.py",
-	# "pyglossary/plugin_lib/*",
 	"pyglossary/ui/gtk*_utils/__init__.py",
 	"pyglossary/ui/ui_qt.py",
 	"pyglossary/ui/progressbar/",
@@ -48,12 +44,11 @@ select = [
 	"W",   # pycodestyle Warning
 	"C90", # mccabe: C901: {name} is too complex ({complexity})
 	"I",   # isort: unsorted-imports, missing-required-import
-	# "N", # pep8-naming
 	"D",   # pydocstyle
 	"B",   # flake8-bugbear
 	"UP",  # pyupgrade
 	"YTT", # flake8-2020
-	# "ANN", # flake8-annotationsq, still gives errors for `self`
+	# "ANN", # flake8-annotationsq
 	# "ASYNC", # flake8-async
 	"ASYNC1", # flake8-trio
 	# "S", # flake8-bandit
