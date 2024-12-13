@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+sourceDir=$(dirname $(dirname "$0"))
+
+while read -r line; do
+	if [[ $line = VERSION* ]]; then
+		echo "$line" | sed 's/VERSION\s*=\s*//' | sed 's/"//g'
+		exit 0
+	fi
+done <"$sourceDir/pyglossary/core.py"
