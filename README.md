@@ -268,6 +268,10 @@ you can place it in this directory:
 - Mac: `~/Library/Preferences/PyGlossary/plugins/`
 - Windows: `C:\Users\USERNAME\AppData\Roaming\PyGlossary\plugins\`
 
+## Linux Packaging status
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/pyglossary.svg?columns=3&header=PyGlossary)](https://repology.org/project/pyglossary/versions)
+
 ## Using PyGlossary as a Python library
 
 There are a few examples in [doc/lib-examples](./doc/lib-examples) directory.
