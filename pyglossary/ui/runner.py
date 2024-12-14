@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 
-ui_list = ["gtk", "tk", "web"]
+ui_list = ["gtk", "gtk4", "tk", "web"]
 if os.sep == "\\":
-	ui_list = ["tk", "gtk", "web"]
+	ui_list = ["tk", "gtk", "gtk4", "web"]
 
 log = None
 
@@ -118,7 +118,7 @@ def getRunner(
 
 	if ui_type == "auto":
 		if not args.no_interactive and sys.stdin.isatty():
-			ui_list.insert(2, "cmd_interactive")
+			ui_list.insert(3, "cmd_interactive")
 		log.debug(f"{ui_list = }")
 
 		for ui_type2 in ui_list:
