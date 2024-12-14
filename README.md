@@ -149,11 +149,13 @@ ways to use the program).
 
 ## UI (User Interface) selection
 
-When you run PyGlossary without any command-line arguments or options/flags,
-PyGlossary tries to find PyGI and open Gtk3-based interface. If it fails,
-it tries to find Tkinter and open Tkinter-based interface. If that fails,
-it tries to find `prompt_toolkit` and run interactive command-line interface.
-And if none of these libraries are found, it exits with an error.
+When you run PyGlossary without any command-line arguments or options/flags, PyGlossary will try to run the first available interface in this order:
+
+- It tries to find PyGI+Gtk3 and open **Gtk3-based** interface.
+- It tries to find PyGI+Gtk4 and open **Gtk4-based** interface.
+- It tries to find Tkinter and open **Tkinter-based** interface.
+- If it's run in command line (with stdin connected to a terminal) it tries to find `prompt_toolkit` and run **interactive command-line** interface.
+- It runs a HTTP server and opens the **web interface** in your browser.
 
 But you can explicitly select user interface type using `--ui`
 
