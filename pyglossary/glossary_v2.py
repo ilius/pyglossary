@@ -652,10 +652,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	# TODO: add ReaderType with Protocol
 	def _createReader(
 		self,
-		format: str,
+		formatName: str,
 		options: dict[str, Any],
 	) -> Any:  # noqa: ANN401
-		readerClass = self.plugins[format].readerClass
+		readerClass = self.plugins[formatName].readerClass
 		if readerClass is None:
 			raise ReadError("_createReader: readerClass is None")
 		reader = readerClass(self)
@@ -684,14 +684,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def _validateReadoptions(
 		self,
-		format: str,
+		formatName: str,
 		options: dict[str, Any],
 	) -> None:
-		validOptionKeys = set(self.formatsReadOptions[format])
+		validOptionKeys = set(self.formatsReadOptions[formatName])
 		for key in list(options):
 			if key not in validOptionKeys:
 				log.error(
-					f"Invalid read option {key!r} given for {format} format",
+					f"Invalid read option {key!r} given for {formatName} format",
 				)
 				del options[key]
 
@@ -721,41 +721,53 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def directRead(
 		self,
 		filename: str,
-		format: str = "",
 		**options,  # noqa: ANN003
 	) -> bool:
 		self._setTmpDataDir(filename)
 		return self._read(
 			filename=filename,
-			format=format,
 			direct=True,
 			**options,
 		)
 
+	# these keyword arguments are also used by `directRead`
+	# so renaming them would be a breaking change
 	def _read(
 		self,
 		filename: str,
-		format: str = "",
+		format: str = "",  # to be removed in 6.0.0
+		formatName: str = "",
 		direct: bool = False,
 		**options,  # noqa: ANN003
 	) -> bool:
+		if format is not None:
+			warnings.warn(
+				"format= argument is deprecated and will be removed in 6.0.0"
+				f". Use formatName={format}",
+				category=DeprecationWarning,
+				stacklevel=2,
+			)
+
+		formatName = formatName or format
+		del format
+
 		filename = os.path.abspath(filename)
 		###
-		inputArgs = self.detectInputFormat(filename, format=format)
+		inputArgs = self.detectInputFormat(filename, format=formatName)
 		if inputArgs is None:
 			return False
 		origFilename = filename
-		filename, format, compression = inputArgs
+		filename, formatName, compression = inputArgs
 
 		if compression:
 			from .compression import uncompress
 
 			uncompress(origFilename, filename, compression)
 
-		self._validateReadoptions(format, options)
+		self._validateReadoptions(formatName, options)
 
 		filenameNoExt, ext = os.path.splitext(filename)
-		if ext.lower() not in self.plugins[format].extensions:
+		if ext.lower() not in self.plugins[formatName].extensions:
 			filenameNoExt = filename
 
 		self._filename = filenameNoExt
@@ -765,7 +777,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if not self._entryFiltersAreSet:
 			self.updateEntryFilters()
 
-		reader = self._createReader(format, options)
+		reader = self._createReader(formatName, options)
 		self._openReader(reader, filename)
 
 		self._readOptions = options
@@ -804,21 +816,21 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	# TODO: add WriterType with Protocol
 	def _createWriter(
 		self,
-		format: str,
+		formatName: str,
 		options: dict[str, Any],
 	) -> Any:  # noqa: ANN401
-		validOptions = self.formatsWriteOptions.get(format)
+		validOptions = self.formatsWriteOptions.get(formatName)
 		if validOptions is None:
-			raise WriteError(f"No write support for {format!r} format")
+			raise WriteError(f"No write support for {formatName!r} format")
 		validOptionKeys = list(validOptions)
 		for key in list(options):
 			if key not in validOptionKeys:
 				log.error(
-					f"Invalid write option {key!r} given for {format} format",
+					f"Invalid write option {key!r} given for {formatName} format",
 				)
 				del options[key]
 
-		writerClass = self.plugins[format].writerClass
+		writerClass = self.plugins[formatName].writerClass
 		if writerClass is None:
 			raise WriteError("_createWriter: writerClass is None")
 		writer = writerClass(self)
@@ -829,7 +841,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def write(
 		self,
 		filename: str,
-		format: str,
+		format: str = "",  # to be removed in 6.0.0
+		formatName: str = "",
 		**kwargs,  # noqa: ANN003
 	) -> str:
 		"""
@@ -854,12 +867,23 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
-		if format is not None and type(format) is not str:
-			raise TypeError("format must be str")
+
+		if format is not None:
+			warnings.warn(
+				"format= argument is deprecated and will be removed in 6.0.0"
+				f". Use formatName={format}",
+				category=DeprecationWarning,
+				stacklevel=2,
+			)
+
+		formatName = formatName or format
+		del format
+		if formatName is not None and type(formatName) is not str:
+			raise TypeError("formatName must be str")
 
 		return self._write(
 			filename=filename,
-			format=format,
+			formatName=formatName,
 			**kwargs,
 		)
 
@@ -908,14 +932,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _write(
 		self,
 		filename: str,
-		format: str,
+		formatName: str,
 		sort: bool = False,
 		**options,  # noqa: ANN003
 	) -> str:
 		filename = os.path.abspath(filename)
 
-		if format not in self.plugins or not self.plugins[format].canWrite:
-			raise WriteError(f"No Writer class found for plugin {format}")
+		if formatName not in self.plugins or not self.plugins[formatName].canWrite:
+			raise WriteError(f"No Writer class found for plugin {formatName}")
 
 		if self._readers and sort:
 			log.warning(
@@ -925,9 +949,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				self.loadReader(reader)
 			self._readers = []
 
-		log.info(f"Writing to {format} file {filename!r}")
+		log.info(f"Writing to {formatName} file {filename!r}")
 
-		writer = self._createWriter(format, options)
+		writer = self._createWriter(formatName, options)
 
 		self._sort = sort
 

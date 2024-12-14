@@ -375,7 +375,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 				format=MyStr(""),
 			)
 		except TypeError as e:
-			self.assertEqual(str(e), "format must be str")
+			self.assertEqual(str(e), "formatName must be str")
 		else:
 			self.fail("must raise TypeError")
 
