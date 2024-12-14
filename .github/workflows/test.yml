@@ -46,6 +46,7 @@ jobs:
                   set +e
                   export NO_CLEANUP=1
                   set -o pipefail
+                  cat ./scripts/test.sh
                   bash ./scripts/test.sh 2>&1 | tee test.out
                   STATUS=$?
                   set +o pipefail
