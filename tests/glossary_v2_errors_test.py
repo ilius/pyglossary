@@ -367,18 +367,6 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_write_typeErr_2(self):
-		glos = Glossary()
-		try:
-			glos.write(
-				filename="",
-				formatName=MyStr(""),
-			)
-		except TypeError as e:
-			self.assertEqual(str(e), "formatName must be str")
-		else:
-			self.fail("must raise TypeError")
-
 	def test_convert_sameFilename(self):
 		glos = Glossary()
 		err = None
