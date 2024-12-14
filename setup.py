@@ -106,11 +106,12 @@ package_data = {
 		"ui/wcwidth/*.py",
 		"xdxf/xdxf.xsl",
 		"xdxf/*.py",
-	] + [
+	]
+	+ [
 		# safest way found so far to include every resource of plugins
 		# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
 		re.sub(
-			fr"^.*?pyglossary{sep}(?=plugins)",
+			rf"^.*?pyglossary{sep}(?=plugins)",
 			"",
 			join(dirpath, fname),
 		)
