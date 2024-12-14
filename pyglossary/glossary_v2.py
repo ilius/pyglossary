@@ -735,7 +735,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _read(
 		self,
 		filename: str,
-		format: str = "",  # to be removed in 6.0.0
+		format: str = "",  # to be removed in 6.0.0 # noqa: A002
 		formatName: str = "",
 		direct: bool = False,
 		**options,  # noqa: ANN003
@@ -841,7 +841,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def write(
 		self,
 		filename: str,
-		format: str = "",  # to be removed in 6.0.0
+		format: str = "",  # to be removed in 6.0.0 # noqa: A002
 		formatName: str = "",
 		**kwargs,  # noqa: ANN003
 	) -> str:
