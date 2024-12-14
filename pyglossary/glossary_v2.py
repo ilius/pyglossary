@@ -740,12 +740,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		direct: bool = False,
 		**options,  # noqa: ANN003
 	) -> bool:
-		if format is not None:
+		if format:
 			warnings.warn(
 				"format= argument is deprecated and will be removed in 6.0.0"
 				f". Use formatName={format}",
 				category=DeprecationWarning,
-				stacklevel=2,
+				stacklevel=3,
 			)
 
 		formatName = formatName or format
@@ -1234,7 +1234,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		finalOutputFile = self._write(
 			outputFilename,
-			outputFormat,
+			formatName=outputFormat,
 			sort=sort,
 			**writeOptions,
 		)
