@@ -205,6 +205,9 @@ class PluginManager:
 			return plugin
 		return None
 
+	# TODO: breaking changes:
+	#   - remove `quiet` arg
+	#   - rename `format` arg to `formatName`
 	@classmethod
 	def detectInputFormat(
 		cls: type[PluginManager],
@@ -239,19 +242,20 @@ class PluginManager:
 	@classmethod
 	def _outputPluginByFormat(
 		cls: type[PluginManager],
-		format: str,
+		formatName: str,
 	) -> tuple[PluginProp | None, str]:
-		if not format:
+		if not formatName:
 			return None, ""
-		plugin = cls.plugins.get(format, None)
+		plugin = cls.plugins.get(formatName, None)
 		if not plugin:
-			return None, f"Invalid format {format}"
+			return None, f"Invalid format {formatName}"
 		if not plugin.canWrite:
 			return None, f"plugin {plugin.name} does not support writing"
 		return plugin, ""
 
-	# TODO: breaking change:
-	# remove `kwargs` and the check for `quiet`
+	# TODO: breaking changes:
+	#   - remove `quiet` arg (remove `kwargs` and the check for `quiet`)
+	#   - rename `format` arg to `formatName`
 	# also:
 	# C901		`detectOutputFormat` is too complex (16 > 13)
 	# PLR0912	Too many branches (14 > 12)
