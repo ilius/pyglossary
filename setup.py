@@ -104,6 +104,10 @@ package_data = {
 		"ui/gtk4_utils/*.py",
 		"ui/tools/*.py",
 		"ui/wcwidth/*.py",
+		"ui/ui_web/*.py",
+		"ui/ui_web/*.html",
+		"ui/ui_web/*.css",
+		"ui/ui_web/*.js",
 		"xdxf/xdxf.xsl",
 		"xdxf/*.py",
 	]
