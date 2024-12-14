@@ -111,7 +111,7 @@ class PluginManager:
 		attrs: dict[str, Any],
 		modulePath: str,
 	) -> None:
-		format = attrs["name"]
+		name = attrs["name"]
 
 		extensions = attrs["extensions"]
 		prop = PluginProp.fromDict(
@@ -121,7 +121,7 @@ class PluginManager:
 		if prop is None:
 			return
 
-		cls.plugins[format] = prop
+		cls.plugins[name] = prop
 		cls.loadedModules.add(attrs["module"])
 
 		if not prop.enable:
@@ -134,12 +134,12 @@ class PluginManager:
 			cls.pluginByExt[ext] = prop
 
 		if attrs["canRead"]:
-			cls.formatsReadOptions[format] = attrs["readOptions"]
-			cls.readFormats.append(format)
+			cls.formatsReadOptions[name] = attrs["readOptions"]
+			cls.readFormats.append(name)
 
 		if attrs["canWrite"]:
-			cls.formatsWriteOptions[format] = attrs["writeOptions"]
-			cls.writeFormats.append(format)
+			cls.formatsWriteOptions[name] = attrs["writeOptions"]
+			cls.writeFormats.append(name)
 
 		if log.level <= core.TRACE:
 			prop.module  # noqa: B018, to make sure importing works
@@ -165,9 +165,9 @@ class PluginManager:
 			# log.debug(f"Plugin disabled or not a module: {moduleName}")
 			return
 
-		name = module.format
-
 		prop = PluginProp.fromModule(module)
+
+		name = prop.name
 
 		cls.plugins[name] = prop
 		cls.loadedModules.add(moduleName)
