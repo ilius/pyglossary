@@ -1178,7 +1178,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		self._read(
 			args.inputFilename,
-			format=args.inputFormat,
+			formatName=args.inputFormat,
 			direct=direct,
 			**readOptions,
 		)
