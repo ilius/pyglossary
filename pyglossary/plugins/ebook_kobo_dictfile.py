@@ -45,9 +45,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -56,7 +56,7 @@ __all__ = [
 
 enable = True
 lname = "kobo_dictfile"
-format = "Dictfile"
+name = "Dictfile"
 description = "Kobo E-Reader Dictfile (.df)"
 extensions = (".df",)
 extensionCreate = ".df"

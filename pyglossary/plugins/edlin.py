@@ -48,9 +48,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -59,7 +59,7 @@ __all__ = [
 
 enable = True
 lname = "edlin"
-format = "Edlin"
+name = "Edlin"
 # Editable Linked List of Entries
 description = "EDLIN"
 extensions = (".edlin",)

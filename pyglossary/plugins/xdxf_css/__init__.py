@@ -55,9 +55,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -66,7 +66,7 @@ __all__ = [
 
 enable = True
 lname = "xdxf_css"
-format = "XdxfCss"
+name = "XdxfCss"
 description = "XDXF with CSS and JS"
 extensions = ()
 extensionCreate = ".xdxf"

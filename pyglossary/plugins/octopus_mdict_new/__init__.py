@@ -45,9 +45,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -56,7 +56,7 @@ __all__ = [
 
 enable = True
 lname = "octopus_mdict"
-format = "OctopusMdict"
+name = "OctopusMdict"
 description = "Octopus MDict (.mdx)"
 extensions = (".mdx",)
 extensionCreate = ""

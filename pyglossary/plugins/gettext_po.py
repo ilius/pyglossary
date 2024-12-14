@@ -26,9 +26,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -37,7 +37,7 @@ __all__ = [
 
 enable = True
 lname = "gettext_po"
-format = "GettextPo"
+name = "GettextPo"
 description = "Gettext Source (.po)"
 extensions = (".po",)
 extensionCreate = ".po"

@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import logging
+import warnings
 from collections import OrderedDict as odict
 from typing import TYPE_CHECKING
 
@@ -173,7 +174,15 @@ class PluginProp:  # noqa: PLR0904
 
 		self._enable = getattr(mod, "enable", True)
 		self._lname = mod.lname
-		self._name = mod.format
+		if hasattr(mod, "name"):
+			self._name = mod.name
+		else:
+			self._name = mod.format
+			warnings.warn(
+				"`format` variable in plugin is deprecated, rename it to `name`",
+				category=DeprecationWarning,
+				stacklevel=2,
+			)
 		self._description = mod.description
 		self._extensions = list(mod.extensions)
 		self._extensionCreate = getattr(mod, "extensionCreate", "")
@@ -420,7 +429,7 @@ class PluginProp:  # noqa: PLR0904
 	valid__all__ = [
 		"enable",
 		"lname",
-		"format",
+		"name",
 		"description",
 		"extensions",
 		"extensionCreate",

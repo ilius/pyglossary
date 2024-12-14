@@ -54,9 +54,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -65,7 +65,7 @@ __all__ = [
 
 enable = True
 lname = "xdxf"
-format = "Xdxf"
+name = "Xdxf"
 description = "XDXF (.xdxf)"
 extensions = (".xdxf",)
 extensionCreate = ".xdxf"

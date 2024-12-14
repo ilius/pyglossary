@@ -10,9 +10,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -21,7 +21,7 @@ __all__ = [
 
 enable = True
 lname = "dictunformat"
-format = "Dictunformat"
+name = "Dictunformat"
 description = "dictunformat output file"
 extensions = (".dictunformat",)
 extensionCreate = ".dictunformat"

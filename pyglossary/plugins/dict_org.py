@@ -24,9 +24,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -35,7 +35,7 @@ __all__ = [
 
 enable = True
 lname = "dict_org"
-format = "DictOrg"
+name = "DictOrg"
 description = "DICT.org file format (.index)"
 extensions = (".index",)
 extensionCreate = ""

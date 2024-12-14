@@ -1,33 +1,32 @@
 
 
 from __future__ import annotations
-import typing
-# -*- coding: utf-8 -*-
 
-from typing import Generator, Iterator
+# -*- coding: utf-8 -*-
+from collections.abc import Generator, Iterator
 
 from pyglossary.glossary_types import EntryType, GlossaryType
 from pyglossary.option import Option
 
 __all__ = [
-	"enable",
-	"lname",
-	"format",
-	"description",
-	"extensions",
-	"extensionCreate",
-	"singleFile",
-	"kind",
-	"wiki",
-	"website",
-	"optionsProp",
 	"Reader",
 	"Writer",
+	"description",
+	"enable",
+	"extensionCreate",
+	"extensions",
+	"kind",
+	"lname",
+	"name",
+	"optionsProp",
+	"singleFile",
+	"website",
+	"wiki",
 ]
 
 enable = False
 lname = "testformat"
-format = "Test"
+name = "Test"
 description = "Test Format File(.test)"
 extensions = (".test", ".tst")
 extensionCreate = ".test"

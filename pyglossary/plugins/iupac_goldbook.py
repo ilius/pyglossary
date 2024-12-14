@@ -27,9 +27,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -38,7 +38,7 @@ __all__ = [
 
 enable = True
 lname = "iupac_goldbook"
-format = "IUPACGoldbook"
+name = "IUPACGoldbook"
 description = "IUPAC goldbook (.xml)"
 extensions = ()
 extensionCreate = ".xml"

@@ -56,9 +56,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -69,7 +69,7 @@ sys.setrecursionlimit(10000)
 
 enable = True
 lname = "appledict"
-format = "AppleDict"
+name = "AppleDict"
 description = "AppleDict Source"
 extensions = (".apple",)
 extensionCreate = ".apple/"

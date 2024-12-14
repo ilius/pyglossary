@@ -36,9 +36,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -47,7 +47,7 @@ __all__ = [
 
 enable = True
 lname = "wordnet"
-format = "Wordnet"
+name = "Wordnet"
 description = "WordNet"
 extensions = ()
 extensionCreate = ""

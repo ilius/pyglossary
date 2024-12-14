@@ -19,9 +19,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -30,7 +30,7 @@ __all__ = [
 
 enable = True
 lname = "dict_cc_split"
-format = "Dictcc_split"
+name = "Dictcc_split"
 description = "Dict.cc (SQLite3) - Split"
 extensions = ()
 extensionCreate = ".db"

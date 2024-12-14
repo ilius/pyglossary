@@ -31,9 +31,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -42,7 +42,7 @@ __all__ = [
 
 enable = True
 lname = "crawler_dir"
-format = "CrawlerDir"
+name = "CrawlerDir"
 description = "Crawler Directory"
 extensions = (".crawler",)
 extensionCreate = ".crawler/"

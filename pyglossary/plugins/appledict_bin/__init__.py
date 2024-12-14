@@ -70,9 +70,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -81,7 +81,7 @@ __all__ = [
 
 enable = True
 lname = "appledict_bin"
-format = "AppleDictBin"
+name = "AppleDictBin"
 description = "AppleDict Binary"
 extensions = (".dictionary", ".data")
 extensionCreate = ""

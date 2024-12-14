@@ -37,9 +37,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -48,7 +48,7 @@ __all__ = [
 
 enable = True
 lname = "html_dir"
-format = "HtmlDir"
+name = "HtmlDir"
 description = "HTML Directory"
 extensions = (".hdir",)
 extensionCreate = ".hdir/"

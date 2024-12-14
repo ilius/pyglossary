@@ -17,9 +17,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -28,7 +28,7 @@ __all__ = [
 
 enable = True
 lname = "digitalnk"
-format = "DigitalNK"
+name = "DigitalNK"
 description = "DigitalNK (SQLite3, N-Korean)"
 extensions = ()
 extensionCreate = ".db"

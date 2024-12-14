@@ -47,9 +47,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -58,7 +58,7 @@ __all__ = [
 
 enable = True
 lname = "mobi"
-format = "Mobi"
+name = "Mobi"
 description = "Mobipocket (.mobi) E-Book"
 extensions = (".mobi",)
 extensionCreate = ".mobi"

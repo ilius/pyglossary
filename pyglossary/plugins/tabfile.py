@@ -27,7 +27,7 @@ __all__ = ["Reader"]
 
 enable = True
 lname = "tabfile"
-format = "Tabfile"
+name = "Tabfile"
 description = "Tabfile (.txt, .dic)"
 extensions = (".txt", ".tab", ".tsv")
 extensionCreate = ".txt"

@@ -12,9 +12,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -23,7 +23,7 @@ __all__ = [
 
 enable = False
 lname = "babylon_bdc"
-format = "BabylonBdc"
+name = "BabylonBdc"
 description = "Babylon (bdc)"
 extensions = (".bdc",)
 extensionCreate = ""

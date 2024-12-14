@@ -17,9 +17,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -28,7 +28,7 @@ __all__ = [
 
 enable = True
 lname = "abc_medical_notes"
-format = "ABCMedicalNotes"
+name = "ABCMedicalNotes"
 description = "ABC Medical Notes (SQLite3)"
 extensions = ()
 extensionCreate = ".db"

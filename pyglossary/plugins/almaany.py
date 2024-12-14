@@ -17,9 +17,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -28,7 +28,7 @@ __all__ = [
 
 enable = True
 lname = "almaany"
-format = "Almaany"
+name = "Almaany"
 description = "Almaany.com (SQLite3)"
 extensions = ()
 extensionCreate = ".db"

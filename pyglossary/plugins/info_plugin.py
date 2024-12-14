@@ -22,9 +22,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -33,7 +33,7 @@ __all__ = [
 
 enable = True
 lname = "info"
-format = "Info"
+name = "Info"
 description = "Glossary Info (.info)"
 extensions = (".info",)
 extensionCreate = ".info"

@@ -52,7 +52,7 @@ log = logging.getLogger("pyglossary")
 
 enable = False
 lname = ""
-format = "Unknown"
+name = "Unknown"
 description = "Unknown"
 extensions: "tuple[str, ...]" = ()
 extensionCreate = ""
@@ -92,7 +92,6 @@ __all__ = [
 	"exists",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"indir",
 	"isdir",
 	"isfile",
@@ -101,6 +100,7 @@ __all__ = [
 	"lname",
 	"log",
 	"logging",
+	"name",
 	"optionsProp",
 	"os",
 	"pformat",

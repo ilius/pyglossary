@@ -25,9 +25,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -36,7 +36,7 @@ __all__ = [
 
 enable = True
 lname = "edict2"
-format = "EDICT2"
+name = "EDICT2"
 description = "EDICT2 (CEDICT) (.u8)"
 extensions = (".u8",)
 extensionCreate = ""

@@ -22,9 +22,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -33,7 +33,7 @@ __all__ = [
 
 enable = True
 lname = "ayandict_sqlite"
-format = "AyanDictSQLite"
+name = "AyanDictSQLite"
 description = "AyanDict SQLite"
 extensions = ()
 extensionCreate = ".db"

@@ -23,9 +23,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -34,7 +34,7 @@ __all__ = [
 
 enable = True
 lname = "cc_kedict"
-format = "cc-kedict"
+name = "cc-kedict"
 description = "cc-kedict"
 extensions = ()
 extensionCreate = ""

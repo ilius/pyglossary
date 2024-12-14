@@ -28,9 +28,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -39,7 +39,7 @@ __all__ = [
 
 enable = True
 lname = "json"
-format = "Json"
+name = "Json"
 description = "JSON (.json)"
 extensions = (".json",)
 extensionCreate = ".json"

@@ -36,9 +36,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -47,7 +47,7 @@ __all__ = [
 
 enable = True
 lname = "stardict_textual"
-format = "StardictTextual"
+name = "StardictTextual"
 description = "StarDict Textual File (.xml)"
 extensions = ()
 extensionCreate = ".xml"

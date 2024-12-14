@@ -17,9 +17,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -28,7 +28,7 @@ __all__ = [
 
 enable = True
 lname = "quickdic6"
-format = "QuickDic6"
+name = "QuickDic6"
 description = "QuickDic version 6 (.quickdic)"
 extensions = (".quickdic", ".quickdic.v006.zip")
 extensionCreate = ".quickdic"

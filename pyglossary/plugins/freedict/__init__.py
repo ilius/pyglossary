@@ -9,9 +9,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -20,7 +20,7 @@ __all__ = [
 
 enable = True
 lname = "freedict"
-format = "FreeDict"
+name = "FreeDict"
 description = "FreeDict (.tei)"
 extensions = (".tei",)
 extensionCreate = ".tei"

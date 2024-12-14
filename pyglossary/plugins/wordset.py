@@ -24,9 +24,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -35,7 +35,7 @@ __all__ = [
 
 enable = True
 lname = "wordset"
-format = "Wordset"
+name = "Wordset"
 description = "Wordset.org JSON directory"
 extensions = ()
 extensionCreate = "-wordset/"

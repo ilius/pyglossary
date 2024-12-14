@@ -31,9 +31,9 @@ __all__ = [
 	"enable",
 	"extensionCreate",
 	"extensions",
-	"format",
 	"kind",
 	"lname",
+	"name",
 	"optionsProp",
 	"singleFile",
 	"website",
@@ -43,7 +43,7 @@ __all__ = [
 
 enable = True
 lname = "stardict_merge_syns"
-format = "StardictMergeSyns"
+name = "StardictMergeSyns"
 description = "StarDict (Merge Syns)"
 extensions = ()
 extensionCreate = "-stardict/"
