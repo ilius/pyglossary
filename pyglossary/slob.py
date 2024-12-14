@@ -767,7 +767,7 @@ class Slob:
 		self._g.close()
 
 
-def open(*filenames: str) -> Slob:
+def open(*filenames: str) -> Slob:  # noqa: A001
 	return Slob(*filenames)
 
 

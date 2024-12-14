@@ -52,7 +52,7 @@ select = [
 	"ASYNC1", # flake8-trio
 	"BLE", # flake8-blind-except
 	"B", # flake8-bugbear
-	# "A", # flake8-builtins
+	"A", # flake8-builtins
 	"COM", # flake8-commas
 	# "CPY", # flake8-copyright   --preview
 	"C4",   # flake8-comprehensions
