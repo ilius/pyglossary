@@ -360,7 +360,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.write(
 				filename=MyStr(""),
-				format="",
+				formatName="",
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "filename must be str")
@@ -372,7 +372,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.write(
 				filename="",
-				format=MyStr(""),
+				formatName=MyStr(""),
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "formatName must be str")
