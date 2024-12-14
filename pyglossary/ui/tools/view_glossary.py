@@ -57,7 +57,7 @@ def getEntryHighlighter() -> Callable[[EntryType], None] | None:
 
 def viewGlossary(
 	filename: str,
-	format: str | None = None,
+	formatName: str | None = None,
 	glos: GlossaryType | None = None,
 ) -> None:
 	highlightEntry = getEntryHighlighter()
@@ -65,7 +65,7 @@ def viewGlossary(
 	if glos is None:
 		glos = Glossary(ui=None)
 
-	if not glos.directRead(filename, formatName=format):
+	if not glos.directRead(filename, formatName=formatName):
 		return
 
 	pagerCmd = ["less", "-R"]
@@ -111,11 +111,11 @@ def viewGlossary(
 
 def main() -> None:
 	filename = sys.argv[1]
-	format = None
+	formatName = None
 	if len(sys.argv) > 2:
-		format = sys.argv[2]
+		formatName = sys.argv[2]
 	filename = os.path.expanduser(filename)
-	viewGlossary(filename, formatName=format)
+	viewGlossary(filename, formatName=formatName)
 
 
 if __name__ == "__main__":

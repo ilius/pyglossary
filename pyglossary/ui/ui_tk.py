@@ -545,7 +545,7 @@ class FormatOptionsDialog(tk.Toplevel):
 
 	def __init__(
 		self,
-		format,
+		formatName,
 		kind,
 		values,
 		master=None,  # noqa: ARG002
@@ -558,11 +558,11 @@ class FormatOptionsDialog(tk.Toplevel):
 		self.bind("<Escape>", lambda _e: self.destroy())
 
 		self.menu = None
-		self.format = format
+		self.format = formatName
 		self.kind = kind
 		self.values = values
-		self.options = list(self.kindFormatsOptions[kind][format])
-		self.optionsProp = Glossary.plugins[format].optionsProp
+		self.options = list(self.kindFormatsOptions[kind][formatName])
+		self.optionsProp = Glossary.plugins[formatName].optionsProp
 
 		self.createOptionsList()
 
@@ -635,7 +635,7 @@ class FormatOptionsDialog(tk.Toplevel):
 	def valueMenuItemCustomSelected(
 		self,
 		treev,
-		format: str,
+		formatName: str,
 		optName: str,
 		menu=None,
 	):
@@ -672,7 +672,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		entry.insert(0, value)
 		entry.pack(fill="x")
 
-		prop = Glossary.plugins[format].optionsProp[optName]
+		prop = Glossary.plugins[formatName].optionsProp[optName]
 
 		def customOkClicked(_event=None):
 			rawValue = entry.get()
@@ -873,9 +873,13 @@ class FormatOptionsButton(ttk.Button):
 		formatD = self.formatInput.get()
 		if not formatD:
 			return
-		format = pluginByDesc[formatD].name
 
-		dialog = FormatOptionsDialog(format, self.kind, self.values, master=self)
+		dialog = FormatOptionsDialog(
+			pluginByDesc[formatD].name,
+			self.kind,
+			self.values,
+			master=self,
+		)
 
 		# x, y, w, h = decodeGeometry(dialog.geometry())
 		w, h = 380, 250
@@ -1296,8 +1300,7 @@ class UI(tk.Frame, UIBase):
 		if not formatDesc:
 			return
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
-		format = pluginByDesc[formatDesc].name
-		if Glossary.formatsReadOptions[format]:
+		if Glossary.formatsReadOptions[pluginByDesc[formatDesc].name]:
 			self.readOptionsButton.grid(
 				row=self.inputFormatRow,
 				column=3,
@@ -1313,14 +1316,14 @@ class UI(tk.Frame, UIBase):
 		if not formatDesc:
 			return
 
-		format = pluginByDesc[formatDesc].name
-		plugin = Glossary.plugins.get(format)
+		formatName = pluginByDesc[formatDesc].name
+		plugin = Glossary.plugins.get(formatName)
 		if not plugin:
-			log.error(f"plugin {format} not found")
+			log.error(f"plugin {formatName} not found")
 			return
 
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
-		if Glossary.formatsWriteOptions[format]:
+		if Glossary.formatsWriteOptions[formatName]:
 			self.writeOptionsButton.grid(
 				row=self.outputFormatRow,
 				column=3,
