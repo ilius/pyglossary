@@ -78,7 +78,6 @@ class Glossary(GlossaryCommon):
 	def read(
 		self,
 		filename: str,
-		format: str = "",
 		direct: bool = False,
 		progressbar: bool = True,
 		**kwargs,  # noqa: ANN003
@@ -89,7 +88,7 @@ class Glossary(GlossaryCommon):
 		Parameters
 		----------
 		filename (str):	name/path of input file
-		format (str):	name of input format,
+		formatName or format (str):	name of input format,
 						or "" to detect from file extension
 		direct (bool):	enable direct mode
 		progressbar (bool): enable progressbar.
@@ -99,8 +98,6 @@ class Glossary(GlossaryCommon):
 		"""
 		if type(filename) is not str:
 			raise TypeError("filename must be str")
-		if format is not None and type(format) is not str:
-			raise TypeError("format must be str")
 
 		# don't allow direct=False when there are readers
 		# (read is called before with direct=True)
@@ -116,7 +113,6 @@ class Glossary(GlossaryCommon):
 
 		return self._read(
 			filename=filename,
-			format=format,
 			direct=direct,
 			**kwargs,
 		)
