@@ -160,6 +160,7 @@ When you run PyGlossary without any command-line arguments or options/flags, PyG
 But you can explicitly select user interface type using `--ui`
 
 - `./main.py --ui=gtk`
+- `./main.py --ui=gtk4`
 - `./main.py --ui=tk`
 - `./main.py --ui=web`
 - `./main.py --ui=cmd`
