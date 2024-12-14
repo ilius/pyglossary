@@ -753,7 +753,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		filename = os.path.abspath(filename)
 		###
-		inputArgs = self.detectInputFormat(filename, format=formatName)
+		inputArgs = self.detectInputFormat(filename, formatName=formatName)
 		if inputArgs is None:
 			return False
 		origFilename = filename
@@ -1210,7 +1210,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		outputArgs = self.detectOutputFormat(
 			filename=args.outputFilename,
-			format=args.outputFormat,
+			formatName=args.outputFormat,
 			inputFilename=args.inputFilename,
 		)
 		if not outputArgs:

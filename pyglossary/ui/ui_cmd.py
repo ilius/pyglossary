@@ -329,7 +329,7 @@ class UI(UIBase):
 			readOptions["direct"] = True
 			if not glos.read(
 				inputFilename,
-				format=inputFormat,
+				formatName=inputFormat,
 				**readOptions,
 			):
 				log.error("reading input file was failed!")

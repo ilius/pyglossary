@@ -21,7 +21,6 @@ from __future__ import annotations
 import logging
 import os
 import sys
-import warnings
 from os.path import isdir, join
 from typing import Any, NamedTuple
 
@@ -205,24 +204,20 @@ class PluginManager:
 			return plugin
 		return None
 
-	# TODO: breaking changes:
-	#   - remove `quiet` arg
-	#   - rename `format` arg to `formatName`
 	@classmethod
 	def detectInputFormat(
 		cls: type[PluginManager],
 		filename: str,
-		format: str = "",
-		quiet: bool = False,  # noqa: ARG003
+		formatName: str = "",
 	) -> DetectedFormat:
 		filenameOrig = filename
 		_, filename, ext, compression = splitFilenameExt(filename)
 
 		plugin = None
-		if format:
-			plugin = cls.plugins.get(format)
+		if formatName:
+			plugin = cls.plugins.get(formatName)
 			if plugin is None:
-				raise Error(f"Invalid format {format!r}")
+				raise Error(f"Invalid format {formatName!r}")
 		else:
 			plugin = cls.pluginByExt.get(ext)
 			if not plugin:
@@ -253,34 +248,19 @@ class PluginManager:
 			return None, f"plugin {plugin.name} does not support writing"
 		return plugin, ""
 
-	# TODO: breaking changes:
-	#   - remove `quiet` arg (remove `kwargs` and the check for `quiet`)
-	#   - rename `format` arg to `formatName`
-	# also:
 	# C901		`detectOutputFormat` is too complex (16 > 13)
 	# PLR0912	Too many branches (14 > 12)
 	@classmethod
 	def detectOutputFormat(  # noqa: PLR0912, PLR0913, C901
 		cls: type[PluginManager],
 		filename: str = "",
-		format: str = "",
+		formatName: str = "",
 		inputFilename: str = "",
 		addExt: bool = False,
-		**kwargs,  # noqa: ANN003
 	) -> DetectedFormat:
 		from os.path import splitext
 
-		if "quiet" in kwargs:
-			warnings.warn(
-				"quiet= argument is no longer used and will be removed, "
-				"because we raise exception `Error` on error",
-				stacklevel=2,
-			)
-			del kwargs["quiet"]
-		if kwargs:
-			raise TypeError(f"invalid arguments: {kwargs}")
-
-		plugin, err = cls._outputPluginByFormat(format)
+		plugin, err = cls._outputPluginByFormat(formatName)
 		if err:
 			raise Error(err)
 

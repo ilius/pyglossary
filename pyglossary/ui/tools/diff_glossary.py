@@ -67,12 +67,12 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 	pager: bool = True,
 ) -> None:
 	glos1 = Glossary(ui=None)
-	if not glos1.directRead(filename1, format=format1):
+	if not glos1.directRead(filename1, formatName=format1):
 		return
 
 	glos2 = Glossary(ui=None)
 
-	if not glos2.directRead(filename2, format=format2):
+	if not glos2.directRead(filename2, formatName=format2):
 		return
 
 	if pager:

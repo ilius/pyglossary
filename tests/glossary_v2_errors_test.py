@@ -94,7 +94,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectInputFormat(
 				filename="",
-				format="",
+				formatName="",
 			)
 		except Error as e:
 			err = str(e)
@@ -106,7 +106,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectInputFormat(
 				filename="test.abcd",
-				format="",
+				formatName="",
 			)
 		except Error as e:
 			err = str(e)
@@ -118,7 +118,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectInputFormat(
 				filename="test.sql",
-				format="",
+				formatName="",
 			)
 		except Error as e:
 			err = str(e)
@@ -129,7 +129,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectInputFormat(
 				filename="test",
-				format="FooBar",
+				formatName="FooBar",
 			)
 		except Error as e:
 			err = str(e)
@@ -138,14 +138,14 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectInputFormat_ok1(self):
 		res = Glossary.detectInputFormat(
 			filename="test1.txt.gz",
-			format="",
+			formatName="",
 		)
 		self.assertEqual(res, ("test1.txt.gz", "Tabfile", ""))
 
 	def test_detectInputFormat_ok2(self):
 		res = Glossary.detectInputFormat(
 			filename="test2.txt.zip",
-			format="",
+			formatName="",
 		)
 		self.assertEqual(res, ("test2.txt", "Tabfile", "zip"))
 
@@ -154,7 +154,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="",
-				format="",
+				formatName="",
 				inputFilename="",
 			)
 		except Error as e:
@@ -165,7 +165,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="test",
-				format="FooBar",
+				formatName="FooBar",
 				inputFilename="",
 			)
 		except Error as e:
@@ -177,7 +177,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="",
-				format="",
+				formatName="",
 				inputFilename="test",
 			)
 		except Error as e:
@@ -189,7 +189,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="",
-				format="BabylonBgl",
+				formatName="BabylonBgl",
 				inputFilename="test3.txt",
 			)
 		except Error as e:
@@ -201,7 +201,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="test.bgl",
-				format="",
+				formatName="",
 				inputFilename="",
 			)
 		except Error as e:
@@ -213,7 +213,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="test",
-				format="",
+				formatName="",
 				inputFilename="",
 			)
 		except Error as e:
@@ -223,7 +223,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err6(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
-			format="Tabfile",
+			formatName="Tabfile",
 			inputFilename="",
 			addExt=True,
 		)

@@ -78,7 +78,7 @@ def evaluateReadOptions(
 
 	inputArgs = Glossary.detectInputFormat(
 		inputFilename,
-		format=inputFormat,
+		formatName=inputFormat,
 	)
 	if not inputArgs:
 		return None, f"Could not detect format for input file {inputFilename}"
@@ -109,7 +109,7 @@ def evaluateWriteOptions(
 
 	outputArgs = Glossary.detectOutputFormat(
 		filename=outputFilename,
-		format=outputFormat,
+		formatName=outputFormat,
 		inputFilename=inputFilename,
 	)
 	if outputArgs is None:

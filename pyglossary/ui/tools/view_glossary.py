@@ -65,7 +65,7 @@ def viewGlossary(
 	if glos is None:
 		glos = Glossary(ui=None)
 
-	if not glos.directRead(filename, format=format):
+	if not glos.directRead(filename, formatName=format):
 		return
 
 	pagerCmd = ["less", "-R"]
@@ -115,7 +115,7 @@ def main() -> None:
 	if len(sys.argv) > 2:
 		format = sys.argv[2]
 	filename = os.path.expanduser(filename)
-	viewGlossary(filename, format=format)
+	viewGlossary(filename, formatName=format)
 
 
 if __name__ == "__main__":
