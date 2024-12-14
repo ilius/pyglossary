@@ -92,7 +92,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectInputFormat_err1(self):
 		res = Glossary.detectInputFormat(
 			filename="",
-			format="",
+			formatName="",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect input format!")
@@ -100,7 +100,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectInputFormat_err2(self):
 		res = Glossary.detectInputFormat(
 			filename="test.abcd",
-			format="",
+			formatName="",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect input format!")
@@ -108,7 +108,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectInputFormat_err3(self):
 		res = Glossary.detectInputFormat(
 			filename="test.sql",
-			format="",
+			formatName="",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("plugin Sql does not support reading")
@@ -116,7 +116,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectInputFormat_err4(self):
 		res = Glossary.detectInputFormat(
 			filename="test",
-			format="FooBar",
+			formatName="FooBar",
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Invalid format 'FooBar'")
@@ -124,21 +124,21 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectInputFormat_ok1(self):
 		res = Glossary.detectInputFormat(
 			filename="test1.txt.gz",
-			format="",
+			formatName="",
 		)
 		self.assertEqual(res, ("test1.txt.gz", "Tabfile", ""))
 
 	def test_detectInputFormat_ok2(self):
 		res = Glossary.detectInputFormat(
 			filename="test2.txt.zip",
-			format="",
+			formatName="",
 		)
 		self.assertEqual(res, ("test2.txt", "Tabfile", "zip"))
 
 	def test_detectOutputFormat_err1(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
-			format="",
+			formatName="",
 			inputFilename="",
 		)
 		self.assertIsNone(res)
@@ -147,7 +147,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err2(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
-			format="FooBar",
+			formatName="FooBar",
 			inputFilename="",
 		)
 		self.assertIsNone(res)
@@ -156,7 +156,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err3(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
-			format="",
+			formatName="",
 			inputFilename="test",
 		)
 		self.assertIsNone(res)
@@ -165,7 +165,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err4_1(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
-			format="BabylonBgl",
+			formatName="BabylonBgl",
 			inputFilename="test3.txt",
 		)
 		self.assertIsNone(res)
@@ -174,7 +174,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err4_2(self):
 		res = Glossary.detectOutputFormat(
 			filename="test.bgl",
-			format="",
+			formatName="",
 			inputFilename="",
 		)
 		self.assertIsNone(res)
@@ -183,7 +183,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err5(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
-			format="",
+			formatName="",
 			inputFilename="",
 		)
 		self.assertIsNone(res)
@@ -192,7 +192,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err6(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",
-			format="Tabfile",
+			formatName="Tabfile",
 			inputFilename="",
 			addExt=True,
 		)
@@ -339,18 +339,6 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
-	def test_read_typeErr_2(self):
-		glos = Glossary()
-		try:
-			glos.read(
-				filename="",
-				format=MyStr(""),
-			)
-		except TypeError as e:
-			self.assertEqual(str(e), "format must be str")
-		else:
-			self.fail("must raise TypeError")
-
 	def test_write_typeErr_1(self):
 		glos = Glossary()
 		try:
@@ -371,7 +359,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 				format=MyStr(""),
 			)
 		except TypeError as e:
-			self.assertEqual(str(e), "format must be str")
+			self.assertEqual(str(e), "formatName must be str")
 		else:
 			self.fail("must raise TypeError")
 
