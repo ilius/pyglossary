@@ -91,7 +91,7 @@ class Reader(TextGlossaryReader):
 	def nextBlock(self) -> nextBlockResultType:
 		if not self._file:
 			raise StopIteration
-		entryLines = []
+		entryLines: list[str] = []
 		while True:
 			line = self.readline()
 			if not line:

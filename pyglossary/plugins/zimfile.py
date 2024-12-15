@@ -135,7 +135,7 @@ class Reader:
 			# CreateFileW supports names up to about 32760 characters (64kB).
 			f_namemax = 200
 
-		fileNameTooLong = []
+		fileNameTooLong: list[str] = []
 
 		text_unicode_errors = self._text_unicode_errors
 		html_unicode_errors = self._html_unicode_errors

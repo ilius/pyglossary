@@ -179,8 +179,9 @@ class Writer:
 				gzipFile.write(htmlContents.encode("utf-8"))
 			htmlContents = htmlHeader
 
-		allWords = []
-		data = []
+		allWords: list[str] = []
+		# TODO: switch to SQLite, like StarDict writer
+		data: list[tuple[str, bytes]] = []
 
 		while True:
 			entry = yield

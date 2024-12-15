@@ -152,7 +152,7 @@ class Reader(ReaderUtils):
 	) -> None:
 		from lxml import etree as ET
 
-		quotes = []
+		quotes: list[Element] = []
 		sense = ET.Element(f"{TEI}sense")
 		for child in elem.xpath("child::node()"):
 			if isinstance(child, str):
@@ -482,7 +482,7 @@ class Reader(ReaderUtils):
 			attrib["color"] = color
 
 		for gramGrp in gramGrpList:
-			parts = []
+			parts: list[str] = []
 			for child in gramGrp.iterchildren():
 				part = self.normalizeGramGrpChild(child)
 				if part:
@@ -596,7 +596,7 @@ class Reader(ReaderUtils):
 		from lxml import etree as ET
 
 		glos = self._glos
-		keywords = []
+		keywords: list[str] = []
 		buff = BytesIO()
 		pron_color = self._pron_color
 
@@ -608,7 +608,7 @@ class Reader(ReaderUtils):
 		def br() -> Element:
 			return ET.Element("br")
 
-		inflectedKeywords = []
+		inflectedKeywords: list[str] = []
 
 		for form in entry.findall("form", NAMESPACE):
 			inflected = form.get("type") == "infl"
@@ -692,7 +692,7 @@ class Reader(ReaderUtils):
 		self,
 		elems: list[Element],
 	) -> str:
-		lines = []
+		lines: list[str] = []
 		for elem in elems:
 			for line in self.stripParag(elem).split("\n"):
 				line = line.strip()  # noqa: PLW2901
@@ -731,14 +731,14 @@ class Reader(ReaderUtils):
 		return self._ref_pattern.sub('<a href="\\1">\\2</a>', text)
 
 	def setDescription(self, header: Element) -> None:
-		elems = []
+		elems: list[Element] = []
 		for tag in ("sourceDesc", "projectDesc"):
 			elems += header.findall(f".//{tag}//p", NAMESPACE)
 		desc = self.stripParagList(elems)
 		if not desc:
 			return
 
-		website_list = []
+		website_list: list[str] = []
 		for match in self._website_pattern.findall(desc):
 			if not match[1]:
 				continue

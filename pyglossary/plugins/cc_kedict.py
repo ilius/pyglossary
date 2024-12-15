@@ -275,7 +275,7 @@ class YamlReader(TextGlossaryReader):
 	def nextBlock(self) -> EntryType:
 		if not self._file:
 			raise StopIteration
-		lines = []
+		lines: list[str] = []
 		while True:
 			line = self.readline()
 			if not line:

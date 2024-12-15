@@ -389,7 +389,7 @@ class Writer:
 			)
 
 		def navBar() -> str:
-			links = []
+			links: list[str] = []
 			if len(self._filenameList) > 1:
 				links.append(f'<a href="./{self._filenameList[-2]}">&#9664;</a>')
 			links.extend(

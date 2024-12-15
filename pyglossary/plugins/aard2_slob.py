@@ -158,7 +158,7 @@ class Reader:
 		if t_created_by in tags:
 			self._glos.setInfo("author", tags[t_created_by])
 
-		copyrightLines = []
+		copyrightLines: list[str] = []
 		for key in (t_copyright, t_license_name, t_license_url):
 			try:
 				value = tags.pop(key)

@@ -124,7 +124,7 @@ class Reader:
 			hf.write(desc)
 			hf.write(br())
 
-		relatedWords = []
+		relatedWords: list[str] = []
 		for elem in trans.findall("xref"):
 			if not elem.text:
 				continue
@@ -149,7 +149,7 @@ class Reader:
 		from lxml import etree as ET
 
 		glos = self._glos
-		keywords = []
+		keywords: list[str] = []
 		f = BytesIO()
 
 		def br() -> Element:
@@ -176,7 +176,7 @@ class Reader:
 						continue
 					if not reb.text:
 						continue
-					props = []
+					props: list[str] = []
 					if r_ele.find("re_nokanji") is not None:
 						props.append("no kanji")
 					inf = r_ele.find("re_inf")

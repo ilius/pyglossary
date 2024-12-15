@@ -511,7 +511,7 @@ class DebugBglReader(BglReader):
 			f"\nmarked = {res}\norig = {b_data}\n",
 		)
 
-	def findCharSamples(self, b_data):
+	def findCharSamples(self, b_data: bytes) -> list[int]:
 		"""
 		Find samples of chars in b_data.
 
@@ -520,7 +520,7 @@ class DebugBglReader(BglReader):
 		Returns a list of offsets in b_data
 		May return an empty list.
 		"""
-		res = []
+		res: list[int] = []
 		if not isinstance(b_data, bytes):
 			log.error("findCharSamples: b_data is not a bytes instance")
 			return res

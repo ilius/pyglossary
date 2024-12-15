@@ -187,7 +187,7 @@ class Reader:
 			return "\n".join(defis), format_
 
 		# convert plaintext or xdxf to html
-		defis = []
+		defis: list[str] = []
 		for defi_, format_ in defisWithFormat:
 			defi = defi_
 			if format_ == "m":
@@ -211,8 +211,8 @@ class Reader:
 		)
 		for _, _elem in context:
 			elem = cast("Element", _elem)
-			words = []
-			defisWithFormat = []
+			words: list[str] = []
+			defisWithFormat: list[tuple[str, str]] = []
 			for child in elem.getchildren():
 				if not child.text:
 					continue

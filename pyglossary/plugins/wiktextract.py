@@ -175,8 +175,8 @@ class Reader:
 		def br() -> Element:
 			return ET.Element("br")
 
-		keywords = []
-		inflectedKeywords = []
+		keywords: list[str] = []
+		inflectedKeywords: list[str] = []
 
 		word = data.get("word")
 		if word:

@@ -41,7 +41,7 @@ def base36(x: int) -> str:
 	Simplified version of int2base
 	http://stackoverflow.com/questions/2267362/convert-integer-to-a-string-in-a-given-numeric-base-in-python#2267446.
 	"""
-	digits = []
+	digits: list[str] = []
 	while x:
 		digits.append(digs[x % 36])
 		x //= 36

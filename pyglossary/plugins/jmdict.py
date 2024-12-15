@@ -150,7 +150,7 @@ class Reader:
 				hf.write(gloss)
 			hf.write(br())
 
-		relatedWords = []
+		relatedWords: list[str] = []
 		for elem in sense.findall("xref"):
 			if not elem.text:
 				continue
@@ -168,7 +168,7 @@ class Reader:
 					hf.write(word)
 			hf.write(br())
 
-		antonymWords = []
+		antonymWords: list[str] = []
 		for elem in sense.findall("ant"):
 			if not elem.text:
 				continue
@@ -257,7 +257,7 @@ class Reader:
 		from lxml import etree as ET
 
 		glos = self._glos
-		keywords = []
+		keywords: list[str] = []
 		f = BytesIO()
 		translit = self._translitation
 
@@ -300,7 +300,7 @@ class Reader:
 						continue
 					if not reb.text:
 						continue
-					props = []
+					props: list[str] = []
 					if r_ele.find("re_nokanji") is not None:
 						props.append("no kanji")
 					inf = r_ele.find("re_inf")

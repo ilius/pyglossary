@@ -365,8 +365,8 @@ class Reader:
 		term_lines: list[str],
 		text_lines: list[str],
 	) -> Iterator[EntryType]:
-		terms = []
-		defiTitles = []
+		terms: list[str] = []
+		defiTitles: list[str] = []
 		for line in term_lines:
 			tr = TitleTransformer(line)
 			res, err = tr.transform()

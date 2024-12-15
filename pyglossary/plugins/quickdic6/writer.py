@@ -66,7 +66,7 @@ class Writer:
 
 	def write(self) -> typing.Generator[None, EntryType, None]:
 		synonyms: dict[str, list[str]] = {}
-		htmls = []
+		htmls: list[tuple[int, str, str]] = []
 		log.info("Converting individual entries ...")
 		while True:
 			entry = yield
@@ -111,8 +111,6 @@ class Writer:
 		log.info(f"QuickDic: {langs = }, {name = }")
 
 		sources = [("", len(htmls))]
-		pairs = []
-		texts = []
 
 		created = None
 		createdStr = os.getenv("QUICKDIC_CREATION_TIME")
@@ -123,8 +121,8 @@ class Writer:
 		self._dic = QuickDic(
 			name=name,
 			sources=sources,
-			pairs=pairs,
-			texts=texts,
+			pairs=[],
+			texts=[],
 			htmls=htmls,
 			created=created,
 			# version: int = 6,

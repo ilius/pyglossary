@@ -13,7 +13,7 @@ from pyglossary.flags import ALWAYS
 from pyglossary.plugins.tabfile import Reader as TabfileReader
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
+	from collections.abc import Generator, Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.option import Option
@@ -92,12 +92,12 @@ class Reader:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
-		self._tabFileNames = []
+		self._tabFileNames: list[str] = []
 		self._tabFileReader = None
 
 	def open(self, dirname: str) -> None:
 		self._dirname = dirname
-		orderFileNames = []
+		orderFileNames: list[tuple[int, str]] = []
 		for fname in os.listdir(dirname):
 			if not fname.startswith("directory"):
 				continue
@@ -212,11 +212,11 @@ class Writer:
 		if not os.path.isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> None:
+	def write(self) -> Generator[None, EntryType, None]:
 		self.nextIndex()
 
 		dicMaxSize = 0
-		indexData = []
+		indexData: list[tuple[str, int, int]] = []
 
 		def writeBucket(dicIndex: int, entryList: list[EntryType]) -> None:
 			nonlocal dicMaxSize
@@ -247,7 +247,7 @@ class Writer:
 		bucketSize = self.linesPerDirectoryFile
 		wordCount = 0
 		dicIndex = 0
-		entryList = []  # aka bucket
+		entryList: list[EntryType] = []  # aka bucket
 		while True:
 			entry = yield
 			if entry is None:
@@ -264,7 +264,7 @@ class Writer:
 
 		if entryList:
 			writeBucket(dicIndex, entryList)
-			entryList = None
+			entryList = []
 
 		self.dicMaxSize = dicMaxSize
 		self.wordCount = wordCount

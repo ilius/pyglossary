@@ -81,7 +81,7 @@ class Writer:
 		newline = self._newline
 		info_keys = self._getInfoKeys()
 		infoDefLine = "CREATE TABLE dbinfo ("
-		infoValues = []
+		infoValues: list[str] = []
 		glos = self._glos
 
 		for key in info_keys:

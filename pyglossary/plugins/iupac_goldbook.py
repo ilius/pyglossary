@@ -217,7 +217,7 @@ class Reader:
 
 			term = self.getTerm(termE)
 
-			words = []
+			words: list[str] = []
 			if term:
 				words.append(term)
 			if code:
@@ -234,7 +234,7 @@ class Reader:
 			if identifierSynonym is not None and identifierSynonym.text:
 				words.append(identifierSynonym.text)
 
-			defiParts = []
+			defiParts: list[str] = []
 
 			definition = elem.find("./definition")
 			if definition is None or not definition.text:
@@ -269,7 +269,7 @@ class Reader:
 
 			relatedList = elem.findall("./related/entry")
 			if relatedList:
-				relatedLinkList = []
+				relatedLinkList: list[str] = []
 				for related in relatedList:
 					relatedURL = related.text
 					relatedCode = relatedURL.split("/")[-1]

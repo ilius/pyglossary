@@ -114,7 +114,7 @@ class Reader:
 		block_rows = rows[start_index : start_index + count + 1]
 		assert block_rows[0][0] in {1, 3}
 		assert block_rows[0][1] == i_entry
-		e_rows = []
+		e_rows: list[tuple[int, int]] = []
 		for entry_type, entry_idx in block_rows[1:]:
 			if entry_type in {1, 3}:
 				# avoid an endless recursion

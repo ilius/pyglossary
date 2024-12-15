@@ -81,7 +81,7 @@ def read_list(
 ) -> list[T]:
 	size = read_int(fp)
 	toc = struct.unpack(f">{size + 1}q", fp.read(8 * (size + 1)))
-	entries = []
+	entries: list[T] = []
 	for offset in toc[:-1]:
 		fp.seek(offset)
 		entries.append(fun(fp))

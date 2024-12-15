@@ -177,7 +177,7 @@ class Reader:
 			with open(self._filename + ".idx", "rb") as _file:
 				idxBytes = _file.read()
 
-		indexData = []
+		indexData: list[tuple[bytes, int, int]] = []
 		pos = 0
 
 		if self._large_file:
@@ -269,8 +269,8 @@ class Reader:
 			)
 			return defi, format_
 
-		defiFormatSet = set()
-		defisWithFormat = []
+		defiFormatSet: set[str] = set()
+		defisWithFormat: list[tuple[str, str]] = []
 		for b_defiPart, i_type in rawDefiList:
 			format_, defi = self.decodeRawDefiPart(
 				b_defiPart=b_defiPart,
@@ -292,7 +292,7 @@ class Reader:
 			return "", ""
 
 		# convert plaintext or xdxf to html
-		defis = []
+		defis: list[str] = []
 		for defi_, format_ in defisWithFormat:
 			defi = defi_
 			if format_ == "m":
@@ -435,7 +435,7 @@ class Reader:
 		b_sametypesequence = sametypesequence.encode("utf-8")
 		if not b_sametypesequence:
 			raise ValueError(f"{b_sametypesequence = }")
-		res = []
+		res: list[tuple[bytes, int]] = []
 		i = 0
 		for t in b_sametypesequence[:-1]:
 			if i >= len(b_block):
@@ -482,7 +482,7 @@ class Reader:
 			where b_defi is a bytes instance
 			and defiFormatCode is int, so: defiFormat = chr(defiFormatCode)
 		"""
-		res = []
+		res: list[tuple[bytes, int]] = []
 		i = 0
 		while i < len(b_block):
 			t = b_block[i]

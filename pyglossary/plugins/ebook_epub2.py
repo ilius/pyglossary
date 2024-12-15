@@ -257,7 +257,7 @@ p.groupDefinition {
 		write_ncx
 		only for epub.
 		"""
-		ncx_items = []
+		ncx_items: list[str] = []
 		index = 1
 		if self._include_index_page:
 			ncx_items.append(

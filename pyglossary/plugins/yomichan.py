@@ -205,9 +205,9 @@ def _isKanji(char: str) -> bool:
 	)
 
 
-def _uniqueList(lst: Sequence) -> list[Any]:
-	seen = set()
-	result = []
+def _uniqueList(lst: Sequence[str]) -> list[str]:
+	seen: set[str] = set()
+	result: list[str] = []
 	for elem in lst:
 		if elem not in seen:
 			seen.add(elem)

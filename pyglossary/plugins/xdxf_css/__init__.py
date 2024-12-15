@@ -167,7 +167,7 @@ class Reader:
 			cfile,
 			events=("end",),
 		)
-		abbr_defs = []
+		abbr_defs: list[Element] = []
 		for _, _elem in context:
 			elem = cast("Element", _elem)
 			if elem.tag in {"meta_info", "ar", "k", "abr", "dtrn"}:

@@ -1127,7 +1127,7 @@ class BglReader:
 		"""
 		b_parts = re_charset_decode.split(b_text)
 		u_text = ""
-		encodings = []  # stack of encodings
+		encodings: list[str] = []  # stack of encodings
 		defaultEncodingOnly = True
 		for i, b_part in enumerate(b_parts):
 			if i % 3 == 0:  # text block
