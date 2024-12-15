@@ -33,14 +33,14 @@ NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
 @dataclass
 class ParsedSense:
 	transCits: list[Element]
-	defList: list[Element]
-	gramList: list[Element]
-	noteList: list[Element]
-	refList: list[Element]
-	usgList: list[Element]
+	defs: list[Element]
+	grams: list[Element]
+	notes: list[Element]
+	refs: list[Element]
+	usages: list[Element]
 	xrList: list[Element]
 	exampleCits: list[Element]
-	langList: list[Element]
+	langs: list[Element]
 
 
 class Reader(ReaderUtils):
@@ -307,15 +307,15 @@ class Reader(ReaderUtils):
 	) -> ParsedSense:
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
-		transCits = []
-		defList = []
-		gramList = []
-		noteList = []
-		refList = []
-		usgList = []
-		xrList = []
-		exampleCits = []
-		langList = []
+		transCits: list[Element] = []
+		defs: list[Element] = []
+		grams: list[Element] = []
+		notes: list[Element] = []
+		refs: list[Element] = []
+		usages: list[Element] = []
+		xrList: list[Element] = []
+		exampleCits: list[Element] = []
+		langs: list[Element] = []
 		for child in sense.iterchildren():
 			if child.tag == f"{TEI}cit":
 				if child.attrib.get("type", "trans") == "trans":
@@ -327,35 +327,35 @@ class Reader(ReaderUtils):
 				continue
 
 			if child.tag == f"{TEI}def":
-				defList.append(child)
+				defs.append(child)
 				continue
 
 			if child.tag == f"{TEI}note":
 				type_ = child.attrib.get("type")
 				if not type_:
-					noteList.append(child)
+					notes.append(child)
 				elif type_ in {"pos", "gram"}:
-					gramList.append(child)
+					grams.append(child)
 				elif type_ in self.noteTypes:
-					noteList.append(child)
+					notes.append(child)
 				else:
 					log.warning(f"unknown note type {type_}")
-					noteList.append(child)
+					notes.append(child)
 				continue
 
 			if child.tag == f"{TEI}ref":
-				refList.append(child)
+				refs.append(child)
 				continue
 
 			if child.tag == f"{TEI}usg":
 				if not child.text:
 					log.warning(f"empty usg: {self.tostring(child)}")
 					continue
-				usgList.append(child)
+				usages.append(child)
 				continue
 
 			if child.tag == f"{TEI}lang":
-				langList.append(child)
+				langs.append(child)
 				continue
 
 			if child.tag in {f"{TEI}sense", f"{TEI}gramGrp"}:
@@ -369,18 +369,18 @@ class Reader(ReaderUtils):
 
 		return ParsedSense(
 			transCits=transCits,
-			defList=defList,
-			gramList=gramList,
-			noteList=noteList,
-			refList=refList,
-			usgList=usgList,
+			defs=defs,
+			grams=grams,
+			notes=notes,
+			refs=refs,
+			usages=usages,
 			xrList=xrList,
 			exampleCits=exampleCits,
-			langList=langList,
+			langs=langs,
 		)
 
 	# TODO: break it down
-	# PLR0912 Too many branches (25 > 12)
+	# PLR0912 Too many branches (16 > 12)
 	def writeSenseSense(  # noqa: PLR0912
 		self,
 		hf: T_htmlfile,
@@ -390,16 +390,16 @@ class Reader(ReaderUtils):
 		# or 2nd-level
 		ps = self.parseSenseSense(sense)
 
-		for child in ps.langList:
+		for child in ps.langs:
 			self.writeLangTag(hf, child)
 
 		self.makeList(
 			hf,
-			ps.defList,
+			ps.defs,
 			self.writeDef,
 			single_prefix="",
 		)
-		if ps.gramList:
+		if ps.grams:
 			color = self._gram_color
 			attrib = {
 				"class": self.gramClass,
@@ -407,7 +407,7 @@ class Reader(ReaderUtils):
 			if color:
 				attrib["color"] = color
 			with hf.element("div"):
-				for i, gram in enumerate(ps.gramList):
+				for i, gram in enumerate(ps.grams):
 					text = gram.text or ""
 					if i > 0:
 						hf.write(self.getCommaSep(text))
@@ -415,7 +415,7 @@ class Reader(ReaderUtils):
 						hf.write(text)
 		self.makeList(
 			hf,
-			ps.noteList,
+			ps.notes,
 			self.writeNote,
 			single_prefix="",
 		)
@@ -425,20 +425,20 @@ class Reader(ReaderUtils):
 			self.writeTransCit,
 			single_prefix="",
 		)
-		if ps.refList:
+		if ps.refs:
 			with hf.element("div"):
 				hf.write("Related: ")
-				for i, ref in enumerate(ps.refList):
+				for i, ref in enumerate(ps.refs):
 					if i > 0:
 						hf.write(" | ")
 					self.writeRef(hf, ref)
 		for xr in ps.xrList:
 			with hf.element("div"):
 				self.writeRichText(hf, xr)
-		if ps.usgList:
+		if ps.usages:
 			with hf.element("div"):
 				hf.write("Usage: ")
-				for i, usg in enumerate(ps.usgList):
+				for i, usg in enumerate(ps.usages):
 					text = usg.text or ""
 					if i > 0:
 						hf.write(self.getCommaSep(text))
