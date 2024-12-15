@@ -213,26 +213,32 @@ class Reader(ReaderUtils):
 		for child in elem.xpath("child::node()"):
 			writeChild(child, 0)
 
+	def setAttribLangDir(
+		self,
+		attrib: dict[str, str],
+	):
+		try:
+			lang = attrib.pop(XMLLANG)
+		except KeyError:
+			return
+
+		attrib["lang"] = lang
+
+		if self._auto_rtl:
+			langObj = langDict[lang]
+			if langObj:
+				attrib["dir"] = "rtl" if langObj.rtl else "ltr"
+
 	def writeWithDirection(
 		self,
 		hf: T_htmlfile,
 		child: Element,
 		tag: str,
 	) -> None:
-		attrib = dict(child.attrib)
-		try:
-			lang = attrib.pop(XMLLANG)
-		except KeyError:
-			pass
-		else:
-			attrib["lang"] = lang
-			if self._auto_rtl:
-				langObj = langDict[lang]
-				if langObj:
-					if langObj.rtl:
-						attrib["dir"] = "rtl"
-					else:
-						attrib["dir"] = "ltr"
+		attrib: dict[str, str] = dict(child.attrib)
+
+		self.setAttribLangDir(attrib)
+
 		try:
 			type_ = attrib.pop("type")
 		except KeyError:
@@ -240,6 +246,7 @@ class Reader(ReaderUtils):
 		else:
 			if type_ != "trans":
 				attrib["class"] = type_
+
 		with hf.element(tag, attrib=attrib):
 			self.writeRichText(hf, child)
 
