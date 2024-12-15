@@ -310,12 +310,13 @@ class Reader:
 
 			self.writeRichText(hf, child)
 
-	def getLangDesc(self, elem: Element) -> str | None:
+	@classmethod
+	def getLangDesc(cls, elem: Element) -> str | None:
 		lang = elem.attrib.get(XMLLANG)
 		if lang:
 			langObj = langDict[lang]
 			if not langObj:
-				log.warning(f"unknown lang {lang!r} in {self.tostring(elem)}")
+				log.warning(f"unknown lang {lang!r} in {cls.tostring(elem)}")
 				return None
 			return langObj.name
 
@@ -323,15 +324,16 @@ class Reader:
 		if orig:
 			return orig
 
-		log.warning(f"unknown lang name in {self.tostring(elem)}")
+		log.warning(f"unknown lang name in {cls.tostring(elem)}")
 		return None
 
+	@classmethod
 	def writeLangTag(
-		self,
+		cls,
 		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
-		langDesc = self.getLangDesc(elem)
+		langDesc = cls.getLangDesc(elem)
 		if not langDesc:
 			return
 		# TODO: make it Italic or change font color?
