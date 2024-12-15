@@ -229,6 +229,9 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def addCleanupPath(self, path: str) -> None: ...
 
+	@property
+	def progressbar(self) -> bool: ...
+
 
 class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
