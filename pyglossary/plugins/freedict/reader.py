@@ -432,10 +432,9 @@ class Reader(ReaderUtils):
 					if i > 0:
 						hf.write(" | ")
 					self.writeRef(hf, ref)
-		if ps.xrList:
-			for xr in ps.xrList:
-				with hf.element("div"):
-					self.writeRichText(hf, xr)
+		for xr in ps.xrList:
+			with hf.element("div"):
+				self.writeRichText(hf, xr)
 		if ps.usgList:
 			with hf.element("div"):
 				hf.write("Usage: ")
@@ -444,21 +443,20 @@ class Reader(ReaderUtils):
 					if i > 0:
 						hf.write(self.getCommaSep(text))
 					hf.write(text)
-		if ps.exampleCits:
-			for cit in ps.exampleCits:
-				with hf.element(
-					"div",
-					attrib={
-						"class": "example",
-						"style": f"padding: {self._example_padding}px 0px;",
-					},
-				):
-					for quote in cit.findall("quote", NAMESPACE):
+		for cit in ps.exampleCits:
+			with hf.element(
+				"div",
+				attrib={
+					"class": "example",
+					"style": f"padding: {self._example_padding}px 0px;",
+				},
+			):
+				for quote in cit.findall("quote", NAMESPACE):
+					self.writeWithDirection(hf, quote, "div")
+				for cit2 in cit.findall("cit", NAMESPACE):
+					for quote in cit2.findall("quote", NAMESPACE):
+						quote.attrib.update(cit2.attrib)
 						self.writeWithDirection(hf, quote, "div")
-					for cit2 in cit.findall("cit", NAMESPACE):
-						for quote in cit2.findall("quote", NAMESPACE):
-							quote.attrib.update(cit2.attrib)
-							self.writeWithDirection(hf, quote, "div")
 
 		return len(ps.transCits) + len(ps.exampleCits)
 
