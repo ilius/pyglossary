@@ -7,8 +7,7 @@ from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-	from collections.abc import Callable, Iterator
-	from typing import Any
+	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
@@ -22,15 +21,15 @@ from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
 
 from .options import optionsProp
+from .utils import XMLLANG, ReaderUtils
 
 TEI = "{http://www.tei-c.org/ns/1.0}"
 ENTRY = f"{TEI}entry"
 INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
-XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 
-class Reader:
+class Reader(ReaderUtils):
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
@@ -109,42 +108,6 @@ class Reader:
 		"obj",
 		"lbl",
 	}
-
-	@staticmethod
-	def makeList(  # noqa: PLR0913
-		hf: T_htmlfile,
-		input_objects: list[Any],
-		processor: Callable,
-		single_prefix: str = "",
-		skip_single: bool = True,
-		ordered: bool = True,
-		list_type: str = "",
-	) -> None:
-		"""Wrap elements into <ol> if more than one element."""
-		if not input_objects:
-			return
-
-		if skip_single and len(input_objects) == 1:
-			if single_prefix:
-				hf.write(single_prefix)
-			processor(hf, input_objects[0])
-			return
-
-		attrib: dict[str, str] = {}
-		if list_type:
-			attrib["type"] = list_type
-
-		with hf.element("ol" if ordered else "ul", attrib=attrib):
-			for el in input_objects:
-				with hf.element("li"):
-					processor(hf, el)
-
-	@staticmethod
-	def getTitleTag(sample: str) -> str:
-		ws = getWritingSystemFromText(sample)
-		if ws:
-			return ws.titleTag
-		return "b"
 
 	def writeRef(  # noqa: PLR6301
 		self,
@@ -309,38 +272,6 @@ class Reader:
 				continue
 
 			self.writeRichText(hf, child)
-
-	@classmethod
-	def getLangDesc(cls, elem: Element) -> str | None:
-		lang = elem.attrib.get(XMLLANG)
-		if lang:
-			langObj = langDict[lang]
-			if not langObj:
-				log.warning(f"unknown lang {lang!r} in {cls.tostring(elem)}")
-				return None
-			return langObj.name
-
-		orig = elem.attrib.get("orig")
-		if orig:
-			return orig
-
-		log.warning(f"unknown lang name in {cls.tostring(elem)}")
-		return None
-
-	@classmethod
-	def writeLangTag(
-		cls,
-		hf: T_htmlfile,
-		elem: Element,
-	) -> None:
-		langDesc = cls.getLangDesc(elem)
-		if not langDesc:
-			return
-		# TODO: make it Italic or change font color?
-		if elem.text:
-			hf.write(f"{langDesc}: {elem.text}")
-		else:
-			hf.write(f"{langDesc}")  # noqa: FURB183
 
 	def writeNote(
 		self,
@@ -546,19 +477,6 @@ class Reader:
 		)
 		self.writeSenseSense(hf, sense)
 
-	@staticmethod
-	def getDirection(elem: Element) -> str:
-		lang = elem.get(XMLLANG)
-		if lang is None:
-			return ""
-		langObj = langDict[lang]
-		if langObj is None:
-			log.warning(f"unknown language {lang}")
-			return ""
-		if langObj.rtl:
-			return "rtl"
-		return ""
-
 	def writeSenseList(
 		self,
 		hf: T_htmlfile,
@@ -721,20 +639,6 @@ class Reader:
 			self._wordCount = int(extent.split(" ")[0].replace(",", ""))
 		except Exception:
 			log.exception(f"unexpected {extent=}")
-
-	@staticmethod
-	def tostring(elem: Element) -> str:
-		from lxml import etree as ET
-
-		return (
-			ET.tostring(
-				elem,
-				method="html",
-				pretty_print=True,
-			)
-			.decode("utf-8")
-			.strip()
-		)
 
 	def stripParag(self, elem: Element) -> str:
 		text = self.tostring(elem)
