@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from io import BytesIO, IOBase
 from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
@@ -27,6 +28,19 @@ TEI = "{http://www.tei-c.org/ns/1.0}"
 ENTRY = f"{TEI}entry"
 INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
+
+
+@dataclass
+class ParsedSense:
+	transCits: list[Element]
+	defList: list[Element]
+	gramList: list[Element]
+	noteList: list[Element]
+	refList: list[Element]
+	usgList: list[Element]
+	xrList: list[Element]
+	exampleCits: list[Element]
+	langList: list[Element]
 
 
 class Reader(ReaderUtils):
@@ -216,7 +230,7 @@ class Reader(ReaderUtils):
 	def setAttribLangDir(
 		self,
 		attrib: dict[str, str],
-	):
+	) -> None:
 		try:
 			lang = attrib.pop(XMLLANG)
 		except KeyError:
@@ -287,13 +301,10 @@ class Reader(ReaderUtils):
 	) -> None:
 		self.writeRichText(hf, note)
 
-	# TODO: break it down
-	# PLR0912 Too many branches (25 > 12)
-	def writeSenseSense(  # noqa: PLR0912
+	def parseSenseSense(  # noqa: PLR0912
 		self,
-		hf: T_htmlfile,
 		sense: Element,
-	) -> int:
+	) -> ParsedSense:
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
 		transCits = []
@@ -304,6 +315,7 @@ class Reader(ReaderUtils):
 		usgList = []
 		xrList = []
 		exampleCits = []
+		langList = []
 		for child in sense.iterchildren():
 			if child.tag == f"{TEI}cit":
 				if child.attrib.get("type", "trans") == "trans":
@@ -343,7 +355,7 @@ class Reader(ReaderUtils):
 				continue
 
 			if child.tag == f"{TEI}lang":
-				self.writeLangTag(hf, child)
+				langList.append(child)
 				continue
 
 			if child.tag in {f"{TEI}sense", f"{TEI}gramGrp"}:
@@ -355,13 +367,39 @@ class Reader(ReaderUtils):
 
 			log.warning(f"unknown tag {child.tag} in <sense>")
 
+		return ParsedSense(
+			transCits=transCits,
+			defList=defList,
+			gramList=gramList,
+			noteList=noteList,
+			refList=refList,
+			usgList=usgList,
+			xrList=xrList,
+			exampleCits=exampleCits,
+			langList=langList,
+		)
+
+	# TODO: break it down
+	# PLR0912 Too many branches (25 > 12)
+	def writeSenseSense(  # noqa: PLR0912
+		self,
+		hf: T_htmlfile,
+		sense: Element,
+	) -> int:
+		# this <sense> element can be 1st-level (directly under <entry>)
+		# or 2nd-level
+		ps = self.parseSenseSense(sense)
+
+		for child in ps.langList:
+			self.writeLangTag(hf, child)
+
 		self.makeList(
 			hf,
-			defList,
+			ps.defList,
 			self.writeDef,
 			single_prefix="",
 		)
-		if gramList:
+		if ps.gramList:
 			color = self._gram_color
 			attrib = {
 				"class": self.gramClass,
@@ -369,7 +407,7 @@ class Reader(ReaderUtils):
 			if color:
 				attrib["color"] = color
 			with hf.element("div"):
-				for i, gram in enumerate(gramList):
+				for i, gram in enumerate(ps.gramList):
 					text = gram.text or ""
 					if i > 0:
 						hf.write(self.getCommaSep(text))
@@ -377,37 +415,37 @@ class Reader(ReaderUtils):
 						hf.write(text)
 		self.makeList(
 			hf,
-			noteList,
+			ps.noteList,
 			self.writeNote,
 			single_prefix="",
 		)
 		self.makeList(
 			hf,
-			transCits,
+			ps.transCits,
 			self.writeTransCit,
 			single_prefix="",
 		)
-		if refList:
+		if ps.refList:
 			with hf.element("div"):
 				hf.write("Related: ")
-				for i, ref in enumerate(refList):
+				for i, ref in enumerate(ps.refList):
 					if i > 0:
 						hf.write(" | ")
 					self.writeRef(hf, ref)
-		if xrList:
-			for xr in xrList:
+		if ps.xrList:
+			for xr in ps.xrList:
 				with hf.element("div"):
 					self.writeRichText(hf, xr)
-		if usgList:
+		if ps.usgList:
 			with hf.element("div"):
 				hf.write("Usage: ")
-				for i, usg in enumerate(usgList):
+				for i, usg in enumerate(ps.usgList):
 					text = usg.text or ""
 					if i > 0:
 						hf.write(self.getCommaSep(text))
 					hf.write(text)
-		if exampleCits:
-			for cit in exampleCits:
+		if ps.exampleCits:
+			for cit in ps.exampleCits:
 				with hf.element(
 					"div",
 					attrib={
@@ -422,7 +460,7 @@ class Reader(ReaderUtils):
 							quote.attrib.update(cit2.attrib)
 							self.writeWithDirection(hf, quote, "div")
 
-		return len(transCits) + len(exampleCits)
+		return len(ps.transCits) + len(ps.exampleCits)
 
 	def getCommaSep(self, sample: str) -> str:
 		if sample and self._auto_comma:
