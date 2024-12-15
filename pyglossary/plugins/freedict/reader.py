@@ -498,12 +498,12 @@ class Reader(ReaderUtils):
 
 			hf.write(ET.Element("br"))
 
-	def writeSenseGrams(
+	def writeGramGroupChildren(
 		self,
 		hf: T_htmlfile,
-		sense: Element,
+		elem: Element,
 	) -> None:
-		self.writeGramGroups(hf, sense.findall("gramGrp", NAMESPACE))
+		self.writeGramGroups(hf, elem.findall("gramGrp", NAMESPACE))
 
 	def writeSense(
 		self,
@@ -511,7 +511,7 @@ class Reader(ReaderUtils):
 		sense: Element,
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
-		self.writeSenseGrams(hf, sense)
+		self.writeGramGroupChildren(hf, sense)
 		self.makeList(
 			hf,
 			sense.findall("sense", NAMESPACE),
@@ -597,7 +597,7 @@ class Reader(ReaderUtils):
 
 		glos = self._glos
 		keywords = []
-		f = BytesIO()
+		buff = BytesIO()
 		pron_color = self._pron_color
 
 		if self._discover:
@@ -629,7 +629,7 @@ class Reader(ReaderUtils):
 		]
 		senseList = entry.findall("sense", NAMESPACE)
 
-		with ET.htmlfile(f, encoding="utf-8") as hf:
+		with ET.htmlfile(buff, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._word_title:
 					for keyword in keywords:
@@ -654,10 +654,10 @@ class Reader(ReaderUtils):
 					hf.write("\n")
 
 				hf_ = cast("T_htmlfile", hf)
-				self.writeGramGroups(hf_, entry.findall("gramGrp", NAMESPACE))
+				self.writeGramGroupChildren(hf_, entry)
 				self.writeSenseList(hf_, senseList)
 
-		defi = f.getvalue().decode("utf-8")
+		defi = buff.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
 		file = self._file
 		return self._glos.newEntry(
