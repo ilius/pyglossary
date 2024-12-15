@@ -69,17 +69,15 @@ class ReaderUtils:
 		return "b"
 
 	@staticmethod
-	def getDirection(elem: Element) -> str:
+	def isRTL(elem: Element) -> bool:
 		lang = elem.get(XMLLANG)
 		if lang is None:
-			return ""
+			return False
 		langObj = langDict[lang]
 		if langObj is None:
 			log.warning(f"unknown language {lang}")
-			return ""
-		if langObj.rtl:
-			return "rtl"
-		return ""
+			return False
+		return bool(langObj.rtl)
 
 	@classmethod
 	def getLangDesc(cls, elem: Element) -> str | None:

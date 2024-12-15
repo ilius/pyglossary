@@ -486,7 +486,7 @@ class Reader(ReaderUtils):
 		if not senseList:
 			return
 
-		if self._auto_rtl and self.getDirection(senseList[0]) == "rtl":
+		if self._auto_rtl and self.isRTL(senseList[0]):
 			with hf.element("div", dir="rtl"):
 				self.makeList(
 					hf,
