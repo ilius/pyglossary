@@ -52,16 +52,20 @@ Author of this customized version:
 import errno
 import json
 import logging
+import os
+import posixpath
 import struct
 import sys
 import threading
 import traceback
 from base64 import b64encode
+from collections import OrderedDict
 from hashlib import sha1
 from http import HTTPStatus
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from socketserver import ThreadingMixIn
+from urllib.parse import parse_qs, unquote, urlparse
 
 from pyglossary.glossary_v2 import Glossary
 
@@ -100,7 +104,7 @@ OPCODE_PONG = 0xA
 
 CLOSE_STATUS_NORMAL = 1000
 DEFAULT_CLOSE_REASON = bytes("", encoding="utf-8")
-
+DEFAULT_MAX_BROWSE_ENTRIES = 42
 
 class WebLogHandler(logging.Handler):
 	def __init__(self, server) -> None:
@@ -242,7 +246,7 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 	def _run_forever(self, threaded):
 		cls_name = self.__class__.__name__
 		try:
-			serverlog.info(f"Listening on http://{self.host}/{self.port}/")
+			serverlog.info(f"Listening on http://{self.host}:{self.port}/")
 			if threaded:
 				self.daemon = True
 				self.thread = threading.Thread(
@@ -363,20 +367,137 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 
 
 class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
+	browse_roots = OrderedDict()
+
+	@classmethod
+	def add_browse_root(cls, path):
+		"""Additional browse roots for css/js/etc resource."""
+		cls.browse_roots[path] = None
+
 	def __init__(self, socket, addr, server: HttpWebsocketServer, *args, **kwargs):
 		self.server: HttpWebsocketServer = server
 		assert not hasattr(self, "_send_lock"), "_send_lock already exists"
 		self._send_lock = threading.Lock()
+		webroot = str(Path(__file__).parent)
+
+		HTTPWebSocketHandler.add_browse_root(webroot)
 
 		super().__init__(
-			socket, addr, server, *args, **kwargs, directory=Path(__file__).parent
+			socket, addr, server, *args, **kwargs, directory=webroot
 		)
+
+	def translate_path(self, path):
+		"""
+		overlay of https://github.com/python/cpython/blob/47c5a0f307cff3ed477528536e8de095c0752efa/Lib/http/server.py#L841
+		patched to support multiple browse roots
+		Translate a /-separated PATH to the local filename syntax.
+
+		Components that mean special things to the local file system
+		(e.g. drive or directory names) are ignored.  (XXX They should
+		probably be diagnosed.)
+
+		"""
+		# abandon query parameters
+		if self.command in ("GET"):
+			path = path.split("?", 1)[0]
+			path = path.split("#", 1)[0]
+			# Handle explicit trailing slash when normalizing
+			trailing_slash = path.rstrip().endswith("/")
+			try:
+				path = unquote(path, errors="surrogatepass")
+			except UnicodeDecodeError:
+				path = unquote(path)
+			path = posixpath.normpath(path)
+			words = path.split("/")
+			words = list(filter(None, words))
+
+			# Iterate through each browsing root to find a matching path
+			for root in self.browse_roots:
+				root_path = os.path.join(root, *words)
+
+				# Normalize path and check if the file exists
+				if os.path.exists(root_path):
+					if trailing_slash and os.path.isdir(root_path):
+						root_path += "/"
+					return root_path
+
+			# If no valid path found in any root, send 404
+			self.send_error(HTTPStatus.NOT_FOUND, "Not found")
+			return ""
+		# fallback to super for other methods
+		return super().translate_path(path)
 
 	def do_GET(self):
 		if self.path == "/config":
 			self.send_config()
+		elif self.path.startswith("/browse"):
+			self.browse_glossary(self.path)
 		else:
 			super().do_GET()
+
+	def browse_glossary(self, path):
+		query = urlparse(path).query
+		params = parse_qs(query)
+		word = params.get("word", [None])[0]
+		glossary_path = params.get("path", [None])[0]
+		glossary_format = params.get("format", [None])[0]
+		max_results = int(params.get("max", [DEFAULT_MAX_BROWSE_ENTRIES])[0])
+
+		if not glossary_path or not os.path.exists(glossary_path):
+			serverlog.error(f"BAD preview PATH: '{glossary_path}'")
+			self.send_page(
+				"browse.html",
+				"##page_content##",
+				f"invalid path:<pre>{glossary_path}</pre>",
+			)
+			return
+
+		glos_path = Path(glossary_path).expanduser().resolve()
+
+		# add parent folder as a browse root to allow resolution of
+		# .css/.js/.jpg resources for .mdx files
+		HTTPWebSocketHandler.add_browse_root(str(glos_path.parent))
+
+		glos = Glossary(ui=None)
+
+		if not glos.directRead(glossary_path, formatName=glossary_format):
+			self.send_error(
+				HTTPStatus.BAD_REQUEST,
+				message=f"Error reading {glossary_path} with format {glossary_format}",
+			)
+
+		response = ["<dl>"]
+		try:
+			num_results = 0
+			for entry in glos:
+				if entry.defiFormat in ("h", "m", "x"):
+					if not word or entry.s_word.lower().startswith(word.lower()):
+						response.append(
+							f"""<dt>{entry.s_word}</dt><dd>{entry.defi}</dd>"""
+						)
+						num_results += 1
+				else:
+					response.append(f"&#128206;<pre>{entry.s_word}</pre>")
+				if num_results >= max_results:
+					break
+		except Exception as e:
+			self.send_error(HTTPStatus.BAD_REQUEST, message=f"Error {e!s}")
+		finally:
+			response.append("</dl>")
+			content = "<br>".join(response)
+
+			self.send_page("browse.html", "##page_content##", content)
+
+	def send_page(self, template_path, placeholder, content):
+		self.send_response(HTTPStatus.OK)
+		self.send_header("Content-Type", "text/html")
+		self.end_headers()
+		page = (
+			Path(Path(__file__).parent / template_path)
+			.read_text(encoding="utf-8")
+			.replace(placeholder, content)
+		)
+		self.wfile.write(page.encode())
 
 	def send_config(self):
 		self.send_response(HTTPStatus.OK)
@@ -472,7 +593,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			self.send_response(HTTPStatus.OK)
 			self.send_header("Content-type", "text/html")
 			self.end_headers()
-			self.wfile.write(b"POST request received and JSON data stored.")
+			self.wfile.write(b"POST successful")
 
 		except Exception as e:
 			# Step 8: Handle any unexpected errors
@@ -486,12 +607,9 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 	def handle_one_request(self):
 		"""
-		Handle a single HTTP request.
-
-		You normally don't need to override this method; see the class
-		__doc__ string for information on how to handle specific HTTP
-		commands such as GET and POST.
-
+		Handle a single HTTP/WS request.
+		Override ootb method to delegate to WebSockets handler based
+		on /ws path and presence of custom header: "upgrade: websocket".
 		"""
 		try:
 			self.raw_requestline = self.rfile.readline(65537)
@@ -711,7 +829,6 @@ def encode_to_UTF8(data):
 	except Exception as e:
 		raise (e)
 		return False
-
 
 def try_decode_UTF8(data):
 	try:

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyGlossary Browser</title>
+  <link rel="stylesheet" href="pico.green.min.css" />
+
+  <style type="text/css">
+    :root {
+      --pico-font-family-sans-serif: Inter, system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, Helvetica, Arial, "Helvetica Neue", sans-serif, var(--pico-font-family-emoji);
+      --pico-font-size: 87.5%;
+      /* Original: 100% */
+      --pico-line-height: 1.25;
+      /* Original: 1.5 */
+      --pico-form-element-spacing-vertical: 0.5rem;
+      /* Original: 1rem */
+      --pico-form-element-spacing-horizontal: 1.0rem;
+      /* Original: 1.25rem */
+      --pico-border-radius: 0.375rem;
+      /* Original: 0.25rem */
+    }
+
+    body {
+      margin-top: 5em;
+      padding: 1em 4em;
+      text-align: center;
+    }
+
+    dl,
+    dd,
+    dt {
+      text-align: left;
+    }
+
+    label {
+      font-size: smaller;
+      color: #999;
+    }
+
+    * {
+      font-family: ".AppleSystemUIFont", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .ipa {
+      font-family: Symbol;
+      font-size: 13pt;
+    }
+
+    select {
+      border: none;
+    }
+
+    .container {
+      margin: 0 auto;
+      width: 83%;
+      max-width: 650px;
+      text-align: left;
+      padding: 0 10px 20px;
+    }
+
+    dt {
+      font-size: 150%;
+      font-weight: bold;
+      color: #767676;
+    }
+
+    hr {
+      border: 1px dotted lightgray;
+    }
+
+    .part {
+      display: block;
+      border-left: 7px solid rgb(233, 233, 233);
+      margin: 1em 0;
+      padding: .5em 1.5em;
+      background-color: #f7f5f5;
+    }
+
+    a,
+    a:link,
+    a:visited {
+      cursor: pointer;
+      color: rgb(158, 176, 187);
+      text-decoration: none !important;
+      -webkit-transition: color 1s ease, background-color 1s ease;
+      -moz-transition: color 1s ease, background-color 1s ease;
+      -o-transition: color 1s ease, background-color 1s ease;
+      transition: color 1s ease, background-color 1s ease;
+    }
+
+    a:hover {
+      color: #86b692;
+      background-color: #daffcf;
+    }
+
+    .example {
+      list-style-type: "\1F4A1";
+      padding-left: .7em;
+    }
+
+    .syn li {
+      list-style-type: "\223C";
+      padding-left: .7em;
+    }
+
+    .ant li {
+      list-style-type: "\2260";
+      padding-left: .7em;
+    }
+
+    @media screen and (max-width:600px) {
+      body {
+        padding: 0;
+        margin: 0
+      }
+
+      .container {
+        margin: 0;
+        width: auto;
+        text-align: left;
+        padding: .7em;
+      }
+    }
+
+    .hl {
+      background-color: greenyellow;
+      border: 1px dashed darkgreen;
+    }
+
+    input {
+      background-color: #e9f8ec;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div style="text-align: center">
+      <form name="searchform" action="/browse" method="get">
+        <fieldset role="group">
+          <input type="search" title="type search word" name="word" autofocus autocomplete="url" aria-autocomplete="both" placeholder="type word to search.."/>
+          <input type="submit" title="click to search" name="btnsubmit" value="&#128270;" />
+        </fieldset>
+        <fieldset role="group">
+          <input type="search" title="dictionary path" name="path" autocomplete="url" aria-autocomplete="both" placeholder="e.g. /path/to/dictionary.bgl" />
+          <input type="text" title="max results" name="max" placeholder="max results" style="width:70px">
+        </fieldset>
+        <fieldset role="group">
+          <input type="text" title="glossary format, leave empty to detect" name="format" placeholder="glossary format or leave empty to autodetect">
+          <button type="button" formtarget="_blank" formaction="/config" style="width:77px;padding:3px;"><a target="_blank" href="/config">json</a></button>
+        </fieldset>
+      </form>
+      ##page_content##
+    </div>
+  </div>
+  <script>
+    window.onload = function () {
+      const form = window.document.forms.searchform;
+      const params = new URLSearchParams(window.location.search);
+
+      form.word.value = params.get('word');
+      form.path.value = form.path.value || params.get('path');
+      form.max.value = params.get('max');
+      form.format.value = params.get('format');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!form.word.value){
+          form.word.value = params.get('word');
+        }
+
+        if (!form.path.value) {
+          form.path.value = params.get('path');
+        }
+
+        if (!form.max.value) {
+          form.max.value = params.get('max');
+        }
+        form.submit()
+      })
+    };
+  </script>
+</body>
+
+</html>
