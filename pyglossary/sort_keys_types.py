@@ -37,6 +37,13 @@ class LocaleSortKeyMakerType(Protocol):
 	) -> SortKeyMakerType: ...
 
 
+class LocaleSQLiteSortKeyMakerType(Protocol):
+	def __call__(
+		self,
+		collator: T_Collator,  # noqa: F821
+	) -> SQLiteSortKeyMakerType: ...
+
+
 __all__ = [
 	"LocaleSortKeyMakerType",
 	"SQLiteSortKeyType",
