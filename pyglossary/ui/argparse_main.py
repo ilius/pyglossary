@@ -308,7 +308,7 @@ def configFromArgs(
 	args: argparse.Namespace,
 	log: logging.Logger,
 ) -> dict[str, Any]:
-	config = {}
+	config: dict[str, Any] = {}
 	for key, option in UIBase.configDefDict.items():
 		if not option.hasFlag:
 			continue

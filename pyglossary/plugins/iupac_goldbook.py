@@ -60,7 +60,7 @@ class Reader:
 		self._filename = ""
 		self._file = None
 		self._fileSize = 0
-		self._termByCode = None
+		self._termByCode: dict[str, str] = {}
 
 	def __len__(self) -> int:
 		return 0
@@ -71,7 +71,7 @@ class Reader:
 			self._file = None
 		self._filename = ""
 		self._fileSize = 0
-		self._termByCode = None
+		self._termByCode = {}
 
 	def open(self, filename: str) -> None:
 		try:
@@ -100,7 +100,7 @@ class Reader:
 			events=("end",),
 			tag="entry",
 		)
-		termByCode = {}
+		termByCode: dict[str, str] = {}
 		for _, elem in context:
 			termE = elem.find("./term")
 			if termE is None:

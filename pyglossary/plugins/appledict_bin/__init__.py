@@ -454,7 +454,7 @@ class Reader:
 		return entryRoot
 
 	def readEntryIds(self) -> None:
-		titleById = {}
+		titleById: dict[str, str] = {}
 		for entryBytesTmp, _ in self.yieldEntryBytes(
 			self._file,
 			self._properties,

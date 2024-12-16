@@ -240,7 +240,7 @@ class Reader:
 								continue
 							sentList.append(sentElem.text)
 						with hf.element("li"):
-							style = {}
+							style: dict[str, str] = {}
 							if self._example_color:
 								style["color"] = self._example_color
 							with hf.element("font", attrib=style):

@@ -53,10 +53,7 @@ class TextGlossaryWriter:
 
 		self._entryFmt = entryFmt
 		self._writeInfo = writeInfo
-
-		if not outInfoKeysAliasDict:
-			outInfoKeysAliasDict = {}
-		self._outInfoKeysAliasDict = outInfoKeysAliasDict
+		self._outInfoKeysAliasDict = outInfoKeysAliasDict or {}
 		# TODO: replace outInfoKeysAliasDict arg with a func?
 
 	# TODO: use @property setters

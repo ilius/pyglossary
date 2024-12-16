@@ -56,7 +56,7 @@ from os.path import (
 	join,
 	relpath,
 )
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from collections.abc import Iterable
@@ -274,7 +274,7 @@ class UI(ui_cmd.UI):
 		self._outputFilename = ""
 		self._inputFormat = ""
 		self._outputFormat = ""
-		self.config = {}
+		self.config: dict[str, Any] = {}
 		self._readOptions = {}
 		self._writeOptions = {}
 		self._convertOptions = {}
@@ -1122,40 +1122,30 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict | None = None,
-		readOptions: dict | None = None,
-		writeOptions: dict | None = None,
-		convertOptions: dict | None = None,
-		glossarySetAttrs: dict | None = None,
-	):
+		config: dict[str, Any] | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		convertOptions: dict[str, Any] | None = None,
+		glossarySetAttrs: dict[str, Any] | None = None,
+	) -> bool:
 		if reverse:
 			raise NotImplementedError("Reverse is not implemented in this UI")
-		if config is None:
-			config = {}
-		if readOptions is None:
-			readOptions = {}
-		if writeOptions is None:
-			writeOptions = {}
-		if convertOptions is None:
-			convertOptions = {}
-		if glossarySetAttrs is None:
-			glossarySetAttrs = {}
 
 		self._inputFilename = inputFilename
 		self._outputFilename = outputFilename
 		self._inputFormat = inputFormat
 		self._outputFormat = outputFormat
-		self._readOptions = readOptions
-		self._writeOptions = writeOptions
-		self._convertOptions = convertOptions
-		self._glossarySetAttrs = glossarySetAttrs
+		self._readOptions = readOptions or {}
+		self._writeOptions = writeOptions or {}
+		self._convertOptions = convertOptions or {}
+		self._glossarySetAttrs = glossarySetAttrs or {}
 
 		if not self._progressbar:
 			self._glossarySetAttrs["progressbar"] = False
 
 		self.loadConfig()
 		self.savedConfig = self.config.copy()
-		self.config = config
+		self.config = config or {}
 
 		del inputFilename, outputFilename, inputFormat, outputFormat
 		del config, readOptions, writeOptions, convertOptions
@@ -1179,3 +1169,5 @@ class UI(ui_cmd.UI):
 
 		if self.config != self.savedConfig and confirm("Save Config?"):
 			self.saveConfig()
+
+		return True

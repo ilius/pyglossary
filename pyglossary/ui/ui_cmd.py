@@ -118,13 +118,14 @@ def printHelp() -> None:
 	print(text)
 
 
-def parseFormatOptionsStr(st: str) -> dict[str, Any] | None:
+# TODO: raise exception instead of returning None
+def parseFormatOptionsStr(st: str) -> dict[str, str] | None:
 	"""Prints error and returns None if failed to parse one option."""
 	st = st.strip()
 	if not st:
 		return {}
 
-	opt = {}
+	opt: dict[str, str] = {}
 	parts = st.split(";")
 	for part in parts:
 		if not part:
@@ -234,7 +235,7 @@ class UI(UIBase):
 	) -> None:
 		from pyglossary.reverse import reverseGlossary
 
-		reverseKwArgs = {}
+		reverseKwArgs: dict[str, Any] = {}
 		for key in (
 			"words",
 			"matchWord",
@@ -270,11 +271,11 @@ class UI(UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict | None = None,
-		readOptions: dict | None = None,
-		writeOptions: dict | None = None,
-		convertOptions: dict | None = None,
-		glossarySetAttrs: dict | None = None,
+		config: dict[str, Any] | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		convertOptions: dict[str, Any] | None = None,
+		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> bool:
 		if config is None:
 			config = {}

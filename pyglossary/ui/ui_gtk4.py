@@ -612,7 +612,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 	def getOptionsValues(self):
 		model = self.treev.get_model()
-		optionsValues = {}
+		optionsValues: dict[str, Any] = {}
 		for row in model:
 			if not row[0]:  # not enable
 				continue
@@ -1461,15 +1461,12 @@ check {
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict | None = None,
-		readOptions: dict | None = None,
-		writeOptions: dict | None = None,
-		convertOptions: dict | None = None,
-		glossarySetAttrs: dict | None = None,
+		config: dict[str, Any] | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		convertOptions: dict[str, Any] | None = None,
+		glossarySetAttrs: dict[str, Any] | None = None,
 	):
-		if glossarySetAttrs is None:
-			glossarySetAttrs = {}
-
 		self.config = config
 
 		if inputFilename:
@@ -1494,7 +1491,7 @@ check {
 		if convertOptions:
 			log.debug(f"Using {convertOptions=}")
 
-		self._glossarySetAttrs = glossarySetAttrs
+		self._glossarySetAttrs = glossarySetAttrs or {}
 		self.present()
 
 	def exitApp(self):

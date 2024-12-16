@@ -207,13 +207,13 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 	config.update(configFromArgs(args, log))
 	logHandler.config = config
 
-	convertOptions = {}
+	convertOptions: dict[str, Any] = {}
 	for key in convertOptionsKeys:
 		value = getattr(args, key, None)
 		if value is not None:
 			convertOptions[key] = value
 
-	infoOverride = {}
+	infoOverride: dict[str, str] = {}
 	for key, validate in infoOverrideSpec:
 		value = getattr(args, key, None)
 		if value is None:

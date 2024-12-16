@@ -45,7 +45,7 @@ log = logging.getLogger("pyglossary")
 def optionsPropFromDict(
 	optionsPropDict: dict[str, Any],
 ) -> dict[str, Option]:
-	props = {}
+	props: dict[str, Option] = {}
 	for name, propDict in optionsPropDict.items():
 		try:
 			prop = optionFromDict(propDict)

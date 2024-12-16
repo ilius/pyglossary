@@ -1477,15 +1477,12 @@ class UI(tk.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict | None = None,
-		readOptions: dict | None = None,
-		writeOptions: dict | None = None,
-		convertOptions: dict | None = None,
-		glossarySetAttrs: dict | None = None,
+		config: dict[str, Any] | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		convertOptions: dict[str, Any] | None = None,
+		glossarySetAttrs: dict[str, Any] | None = None,
 	):
-		if glossarySetAttrs is None:
-			glossarySetAttrs = {}
-
 		self.config = config
 
 		if inputFilename:
@@ -1524,7 +1521,7 @@ class UI(tk.Frame, UIBase):
 		if convertOptions:
 			log.info(f"Using {convertOptions=}")
 
-		self._glossarySetAttrs = glossarySetAttrs
+		self._glossarySetAttrs = glossarySetAttrs or {}
 
 		# inputFilename and readOptions are for DB Editor
 		# which is not implemented
