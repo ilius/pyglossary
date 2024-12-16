@@ -142,16 +142,20 @@
     <div style="text-align: center">
       <form name="searchform" action="/browse" method="get">
         <fieldset role="group">
-          <input type="search" title="type search word" name="word" autofocus autocomplete="url" aria-autocomplete="both" placeholder="type word to search.."/>
+          <input type="search" title="type search word" name="word" autofocus autocomplete="url"
+            aria-autocomplete="both" placeholder="type word to search.." />
           <input type="submit" title="click to search" name="btnsubmit" value="&#128270;" />
         </fieldset>
         <fieldset role="group">
-          <input type="search" title="dictionary path" name="path" autocomplete="url" aria-autocomplete="both" placeholder="e.g. /path/to/dictionary.bgl" />
+          <input type="search" title="dictionary path" name="path" autocomplete="url" aria-autocomplete="both"
+            placeholder="e.g. /path/to/dictionary.bgl" />
           <input type="text" title="max results" name="max" placeholder="max results" style="width:70px">
         </fieldset>
         <fieldset role="group">
-          <input type="text" title="glossary format, leave empty to detect" name="format" placeholder="glossary format or leave empty to autodetect">
-          <button type="button" formtarget="_blank" formaction="/config" style="width:77px;padding:3px;"><a target="_blank" href="/config">json</a></button>
+          <input type="text" title="glossary format, leave empty to detect" name="format"
+            placeholder="glossary format or leave empty to autodetect">
+          <button type="button" formtarget="_blank" formaction="/config" style="width:77px;padding:3px;"><a
+              target="_blank" href="/config">json</a></button>
         </fieldset>
       </form>
       ##page_content##
@@ -169,7 +173,7 @@
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        if (!form.word.value){
+        if (!form.word.value) {
           form.word.value = params.get('word');
         }
 
@@ -182,6 +186,21 @@
         }
         form.submit()
       })
+
+      form.word.oninput = (e) => {
+        const params = new URLSearchParams(window.location.search);
+        const value = form.word.value;
+
+        if (value) {
+            params.set("word", value);
+        } else {
+            params.delete("word");
+        }
+
+        const q = params.toString();
+        const newURL = q ? `?${q}` : window.location.pathname;
+        window.history.replaceState({}, "", newURL);
+      };
     };
   </script>
 </body>
