@@ -37,7 +37,8 @@ jobs:
                     python-idzip \
                     lxml==5.3 \
                     marisa-trie \
-                    mistune
+                    mistune \
+                    polib
             - name: Remove test cache
               run: rm -rf /home/runner/.cache/pyglossary/test || true
             - name: Run tests
