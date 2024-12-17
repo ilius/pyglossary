@@ -281,11 +281,10 @@ class Reader:
 			defiFormatSet.add(format_)
 
 		if len(defiFormatSet) == 1:
-			defis = [_defi for _defi, _ in defisWithFormat]
 			format_ = defiFormatSet.pop()
 			if format_ == "h":
-				return "\n<hr>".join(defis), format_
-			return "\n".join(defis), format_
+				return "\n<hr>".join([defi for defi, _ in defisWithFormat]), format_
+			return "\n".join([defi for defi, _ in defisWithFormat]), format_
 
 		if not defiFormatSet:
 			log.error(f"empty defiFormatSet, {rawDefiList=}")

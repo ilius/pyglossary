@@ -28,34 +28,36 @@ class TransformerType(typing.Protocol):
 	def __init__(self) -> None:
 		pass
 
-	def end(self) -> bool:
-		pass
+	def end(self) -> bool: ...
 
-	def move(self, chars: int) -> None:
-		pass
+	def move(self, chars: int) -> None: ...
 
-	def next(self) -> str:
-		pass
+	def next(self) -> str: ...
 
-	def follows(self, st: str) -> bool:
-		pass
+	def follows(self, st: str) -> bool: ...
 
-	def skipAny(self, chars: str) -> None:
-		pass
+	def skipAny(self, chars: str) -> None: ...
 
-	def addText(self, st: str) -> None:
-		pass
+	def addText(self, st: str) -> None: ...
 
-	def resetBuf(self) -> str:
-		pass
+	def resetBuf(self) -> None: ...
+
+	def addHtml(self, st: str) -> None: ...
+
+	def closeTag(self, tag: str) -> None: ...
+
+	@property
+	def labelOpen(self) -> bool: ...
+
+	@labelOpen.setter
+	def labelOpen(self) -> bool: ...
 
 
 class TitleTransformerType(TransformerType, typing.Protocol):
 	title: str
 	outputAlt: str
 
-	def addText2(self, st: str) -> None:
-		pass
+	def addText2(self, st: str) -> None: ...
 
 
 if TYPE_CHECKING:

@@ -12,13 +12,14 @@ if TYPE_CHECKING:
 	import argparse
 	import logging
 	from collections.abc import Callable
+	from typing import Any
 
 
 ui_list = ["gtk", "gtk4", "tk", "web"]
 if os.sep == "\\":
 	ui_list = ["tk", "gtk", "gtk4", "web"]
 
-log = None
+log: logging.Logger | None = None
 
 
 def canRunGUI() -> bool:
@@ -48,14 +49,15 @@ def base_ui_run(  # noqa: PLR0913
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	config: dict | None = None,
-	readOptions: dict | None = None,
-	writeOptions: dict | None = None,
-	convertOptions: dict | None = None,
-	glossarySetAttrs: dict | None = None,
+	config: dict[str, Any] | None = None,
+	readOptions: dict[str, Any] | None = None,
+	writeOptions: dict[str, Any] | None = None,
+	convertOptions: dict[str, Any] | None = None,
+	glossarySetAttrs: dict[str, Any] | None = None,
 ) -> bool:
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
+	assert log
 	if reverse:
 		log.error("--reverse does not work with --ui=none")
 		return False
