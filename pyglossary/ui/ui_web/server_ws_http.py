@@ -49,7 +49,6 @@ Author of this customized version:
 - Website: https://legbehindneck.com
 """
 import base64
-
 import errno
 import json
 import logging
@@ -480,10 +479,16 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 						num_results += 1
 				else:
 					response.append(f"&#128206;<pre>{entry.s_word}</pre>")
-					if entry.isData() and entry.size() < MAX_IMAGE_SIZE and entry.s_word.lower().endswith(('.jpg', 'jpeg','.png')):
+					if (
+						entry.isData()
+						and entry.size() < MAX_IMAGE_SIZE
+						and entry.s_word.lower().endswith((".jpg", "jpeg", ".png"))
+					):
 						extension = Path(entry.s_word).suffix[1:]
 						response.append(f"""
-						<img class="data" src="data:image/{extension};base64,{base64.b64encode(entry.data).decode('utf-8')}" alt="{entry.s_word}"/>
+						<img class="data"
+						src="data:image/{extension};base64,{base64.b64encode(entry.data).decode('utf-8')}"
+						alt="{entry.s_word}"/>
 						""")
 				if num_results >= max_results:
 					break
