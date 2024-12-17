@@ -48,6 +48,7 @@ Author of this customized version:
 - GitHub: @glowinthedark
 - Website: https://legbehindneck.com
 """
+import base64
 
 import errno
 import json
@@ -105,6 +106,7 @@ OPCODE_PONG = 0xA
 CLOSE_STATUS_NORMAL = 1000
 DEFAULT_CLOSE_REASON = bytes("", encoding="utf-8")
 DEFAULT_MAX_BROWSE_ENTRIES = 42
+MAX_IMAGE_SIZE = 512000
 
 class WebLogHandler(logging.Handler):
 	def __init__(self, server) -> None:
@@ -478,6 +480,11 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 						num_results += 1
 				else:
 					response.append(f"&#128206;<pre>{entry.s_word}</pre>")
+					if entry.isData() and entry.size() < MAX_IMAGE_SIZE and entry.s_word.lower().endswith(('.jpg', 'jpeg','.png')):
+						extension = Path(entry.s_word).suffix[1:]
+						response.append(f"""
+						<img class="data" src="data:image/{extension};base64,{base64.b64encode(entry.data).decode('utf-8')}" alt="{entry.s_word}"/>
+						""")
 				if num_results >= max_results:
 					break
 		except Exception as e:
