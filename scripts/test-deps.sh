@@ -5,4 +5,5 @@ python -m pip install \
 	python-idzip \
 	lxml==5.3 \
 	marisa-trie \
-	mistune
+	mistune \
+	polib

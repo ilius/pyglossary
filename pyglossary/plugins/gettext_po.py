@@ -12,6 +12,7 @@ from pyglossary.option import (
 	BoolOption,
 	Option,
 )
+from pyglossary.text_utils import splitByBar
 
 if TYPE_CHECKING:
 	import io
@@ -60,6 +61,7 @@ class Reader:
 
 	def __init__(self, glos: GlossaryType) -> None:
 		self._glos = glos
+		self._alts = glos.alts
 		self.clear()
 
 	def clear(self) -> None:
@@ -95,6 +97,11 @@ class Reader:
 			)
 		return self._wordCount
 
+	def makeEntry(self, word: str, defi: str) -> EntryType:
+		if self._alts:
+			return self._glos.newEntry(splitByBar(word), defi)
+		return self._glos.newEntry(word, defi)
+
 	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
 		try:
 			from polib import unescape as po_unescape
@@ -108,15 +115,15 @@ class Reader:
 		defi = ""
 		msgstr = False
 		wordCount = 0
-		for line in file:
-			line = line.strip()  # noqa: PLW2901
+		for line_ in file:
+			line = line_.strip()  # noqa: PLW2901
 			if not line:
 				continue
 			if line.startswith("#"):
 				continue
 			if line.startswith("msgid "):
 				if word:
-					yield self._glos.newEntry(word, defi)
+					yield self.makeEntry(word, defi)
 					wordCount += 1
 					word = ""
 					defi = ""
@@ -125,18 +132,35 @@ class Reader:
 					# TODO: parse defi and set glos info?
 					# but this should be done in self.open
 				word = po_unescape(line[6:])
+				if word.startswith('"'):
+					if len(word) < 2 or word[-1] != '"':
+						raise ValueError("invalid po line: line")
+					word = word[1:-1]
 				msgstr = False
-			elif line.startswith("msgstr "):
+				continue
+			if line.startswith("msgstr "):
 				if msgstr:
 					log.error("msgid omitted!")
 				defi = po_unescape(line[7:])
+				if defi.startswith('"'):
+					if len(defi) < 2 or defi[-1] != '"':
+						raise ValueError("invalid po line: line")
+					defi = defi[1:-1]
 				msgstr = True
-			elif msgstr:
-				defi += po_unescape(line)
+				continue
+
+			line = po_unescape(line)
+			if line.startswith('"'):
+				if len(line) < 2 or line[-1] != '"':
+					raise ValueError("invalid po line: line")
+				line = line[1:-1]
+
+			if msgstr:
+				defi += line
 			else:
-				word += po_unescape(line)
+				word += line
 		if word:
-			yield self._glos.newEntry(word, defi)
+			yield self.makeEntry(word, defi)
 			wordCount += 1
 		self._wordCount = wordCount
 
@@ -152,13 +176,20 @@ class Writer:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.TextIOBase = nullTextIO
+		glos.preventDuplicateWords()
 
 	def open(self, filename: str) -> None:
+		try:
+			from polib import escape as po_escape
+		except ModuleNotFoundError as e:
+			exc_note(e, f"Run `{pip} install polib` to install")
+			raise
+
 		self._filename = filename
 		self._file = file = open(filename, mode="w", encoding="utf-8")
 		file.write('#\nmsgid ""\nmsgstr ""\n')
 		for key, value in self._glos.iterInfo():
-			file.write(f'"{key}: {value}\\n"\n')
+			file.write(f'"{po_escape(key)}: {po_escape(value)}\\n"\n')
 
 	def finish(self) -> None:
 		self._filename = ""
@@ -166,11 +197,7 @@ class Writer:
 		self._file = nullTextIO
 
 	def write(self) -> Generator[None, EntryType, None]:
-		try:
-			from polib import escape as po_escape
-		except ModuleNotFoundError as e:
-			exc_note(e, f"Run `{pip} install polib` to install")
-			raise
+		from polib import escape as po_escape
 
 		file = self._file
 
@@ -185,6 +212,6 @@ class Writer:
 					entry.save(filename + "_res")
 				continue
 			file.write(
-				f"msgid {po_escape(entry.s_word)}\n"
-				f"msgstr {po_escape(entry.defi)}\n\n",
+				f'msgid "{po_escape(entry.s_word)}"\n'
+				f'msgstr "{po_escape(entry.defi)}"\n\n',
 			)
