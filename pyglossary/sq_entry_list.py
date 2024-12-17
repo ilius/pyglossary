@@ -140,8 +140,8 @@ class SqEntryList:
 	def sort(self, reverse: bool = False) -> None:
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
-		if self._sqliteSortKey:
-			raise RuntimeError("self._sqliteSortKey is None")
+		if not self._sqliteSortKey:
+			raise RuntimeError("self._sqliteSortKey is empty")
 
 		self._reverse = reverse
 		self._sorted = True
