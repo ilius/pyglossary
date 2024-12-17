@@ -225,7 +225,7 @@ def prepare_content_with_soup(  # noqa: PLR0912
 		tag.name = "del"
 
 	if title and "<h" not in body:
-		h1 = BeautifulSoup.Tag(name="h1")
+		h1 = BeautifulSoup.Tag(name="h1")  # type: ignore
 		h1.string = title
 		soup.insert(0, h1)
 

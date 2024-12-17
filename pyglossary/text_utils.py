@@ -57,7 +57,7 @@ def toStr(s: AnyStr) -> str:
 
 def fixUtf8(st: AnyStr) -> str:
 	if isinstance(st, str):
-		st = bytes(st, "utf-8")
+		return st.encode("utf-8").replace(b"\x00", b"").decode("utf-8", "replace")
 	return st.replace(b"\x00", b"").decode("utf-8", "replace")
 
 

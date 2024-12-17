@@ -55,12 +55,10 @@ def from_metadata(metadata: dict[str, Any]) -> AppleDictProperties:
 	dictionaryIndexes: list[dict[str, Any]] | None = metadata.get(
 		"IDXDictionaryIndexes",
 	)
-	if dictionaryIndexes:
-		key_text_metadata: dict[str, Any] = dictionaryIndexes[0]
-		body_metadata: dict[str, Any] = dictionaryIndexes[2]
-	else:
-		key_text_metadata: dict[str, Any] = {}
-		body_metadata: dict[str, Any] = {}
+	key_text_metadata: dict[str, Any] = (
+		dictionaryIndexes[0] if dictionaryIndexes else {}
+	)
+	body_metadata: dict[str, Any] = dictionaryIndexes[2] if dictionaryIndexes else {}
 
 	key_text_data_fields = key_text_metadata.get("IDXIndexDataFields", {})
 	key_text_variable_fields = [

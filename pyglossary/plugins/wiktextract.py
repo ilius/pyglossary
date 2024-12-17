@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import collections
+from collections import Counter
 from io import BytesIO, IOBase
 from json import loads as json_loads
 from typing import TYPE_CHECKING, cast
@@ -140,7 +141,7 @@ class Reader:
 			self._glos.setInfo("definition_has_headwords", "True")
 
 		self._file = cfile
-		self._warnings = collections.Counter()
+		self._warnings: Counter[str] = collections.Counter()
 
 	def close(self) -> None:
 		self._file.close()
@@ -366,12 +367,13 @@ class Reader:
 	def writeSenseExample(  # noqa: PLR6301, PLR0912
 		self,
 		hf: T_htmlfile,
-		example: dict[str, str],
+		example: dict[str, str | list],
 	) -> None:
 		# example keys: text, "english", "ref", "type"
-		textList: list[tuple[str, str]] = []
-		text_ = example.pop("example", "")
+		textList: list[tuple[str | None, str]] = []
+		text_: str | list = example.pop("example", "")
 		if text_:
+			assert isinstance(text_, str)
 			textList.append((None, text_))
 
 		example.pop("ref", "")
@@ -380,7 +382,7 @@ class Reader:
 		for key, value in example.items():
 			if not value:
 				continue
-			prefix = key
+			prefix: str | None = key
 			if prefix in ("text",):  # noqa: PLR6201, FURB171
 				prefix = None
 			if isinstance(value, str):
@@ -388,7 +390,7 @@ class Reader:
 			elif isinstance(value, list):
 				for item in value:
 					if isinstance(item, str):
-						textList.append((prefix, value))
+						textList.append((prefix, item))
 					elif isinstance(item, list):
 						textList += [(prefix, item2) for item2 in item]
 			else:
@@ -397,7 +399,7 @@ class Reader:
 		if not textList:
 			return
 
-		def writePair(prefix: str, text: str) -> None:
+		def writePair(prefix: str | None, text: str) -> None:
 			if prefix:
 				with hf.element("b"):
 					hf.write(prefix)
@@ -417,7 +419,7 @@ class Reader:
 	def writeSenseExamples(
 		self,
 		hf: T_htmlfile,
-		examples: list[dict[str, str]] | None,
+		examples: list[dict[str, str | list]] | None,
 	) -> None:
 		from lxml import etree as ET
 

@@ -273,13 +273,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			fname = rawEntry[2].decode("utf-8")
 			if isinstance(fname, list):
 				fname = fname[0]  # NESTED 4
-			return DataEntry(fname, tmpPath=defi)  # pyright: ignore[reportReturnType]
+			return DataEntry(fname, tmpPath=defi)
 
 		return Entry(
 			[b.decode("utf-8") for b in rawEntry[2:]],
 			defi,
 			defiFormat=defiFormat,
-		)  # pyright: ignore[reportReturnType]
+		)
 
 	@property
 	def rawEntryCompress(self) -> bool:
@@ -430,7 +430,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		for _entry in self._data:
 			entry = _entry
 			for f in filters:
-				entry = f.run(entry)  # pyright: ignore[reportArgumentType]
+				entry = f.run(entry)  # type: ignore # pyright: ignore[reportArgumentType]
 				# assert entry  # TODO: measure running time in non-optimized mode
 			yield entry  # pyright: ignore[reportReturnType]
 		self.progressEnd()

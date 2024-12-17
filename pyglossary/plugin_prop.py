@@ -331,10 +331,11 @@ class PluginProp:  # noqa: PLR0904
 		return nameList
 
 	def _getOptionsFromClass(self, rwclass: type | None) -> dict[str, Any]:
-		optionsProp = self.optionsProp
-		options = odict()
 		if rwclass is None:
-			return options
+			return {}
+
+		optionsProp = self.optionsProp
+		options: dict[str, Any] = odict()
 
 		for attrName in self._getOptionAttrNamesFromClass(rwclass):
 			name = attrName[1:]

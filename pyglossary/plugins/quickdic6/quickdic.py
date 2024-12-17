@@ -94,6 +94,7 @@ class QuickDic:
 		index_entries: list[IndexEntryType] = []
 		for token, token_norm, ttype, tidx in tokens:
 			prev_token = index_entries[-1][0] if index_entries else ""
+			html_indices: list[int]
 			if prev_token == token:
 				(
 					token,  # noqa: PLW2901
@@ -107,7 +108,7 @@ class QuickDic:
 				index_start = len(rows)
 				count = 0
 				token_norm = "" if token == token_norm else token_norm  # noqa: PLW2901
-				html_indices: list[int] = []
+				html_indices = []
 				rows.append((1, i_entry))
 			if ttype == 4:
 				if tidx not in html_indices:

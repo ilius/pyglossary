@@ -105,6 +105,10 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 		return [self._fname]
 
 	@property
+	def lb_word(self) -> list[bytes]:
+		return [self._fname.encode("trf-8")]
+
+	@property
 	def defi(self) -> str:
 		return f"File: {self._fname}"
 
@@ -194,7 +198,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	@staticmethod
 	def getRawEntrySortKey(
-		key: Callable[[bytes], Any],
+		key: Callable[[list[str]], Any],
 	) -> Callable[[RawEntryType], Any]:
 		def newKey(x: RawEntryType) -> Any:  # noqa: ANN401
 			# x is rawEntry, so x[2:] is list[bytes]: list of words in bytes

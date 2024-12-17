@@ -164,7 +164,11 @@ class Glossary(GlossaryCommon):
 		self._iter = self._loadedEntryGen()
 
 	@classmethod
-	def detectInputFormat(cls, *args, **kwargs) -> DetectedFormat | None:  # pyright: ignore[reportIncompatibleMethodOverride]
+	def detectInputFormat(  # type: ignore # pyright: ignore[reportIncompatibleMethodOverride]
+		cls,
+		*args,
+		**kwargs,
+	) -> DetectedFormat | None:
 		try:
 			return GlossaryCommon.detectInputFormat(*args, **kwargs)
 		except Error as e:
@@ -172,7 +176,11 @@ class Glossary(GlossaryCommon):
 			return None
 
 	@classmethod
-	def detectOutputFormat(cls, *args, **kwargs) -> DetectedFormat | None:  # pyright: ignore[reportIncompatibleMethodOverride]
+	def detectOutputFormat(  # type: ignore # pyright: ignore[reportIncompatibleMethodOverride]
+		cls,
+		*args,
+		**kwargs,
+	) -> DetectedFormat | None:
 		try:
 			return GlossaryCommon.detectOutputFormat(*args, **kwargs)
 		except Error as e:
