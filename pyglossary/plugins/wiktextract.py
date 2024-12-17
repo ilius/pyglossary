@@ -217,7 +217,9 @@ class Reader:
 						with hf.element("font", color=self._gram_color):
 							hf.write(pos)
 
-				self.writeSenseList(hf_, data.get("senses"))  # type: ignore
+				senses = data.get("senses") or []
+
+				self.writeSenseList(hf_, senses)  # type: ignore
 
 				self.writeSynonyms(hf_, data.get("synonyms"))  # type: ignore
 
@@ -231,6 +233,13 @@ class Reader:
 				if etymology:
 					with hf.element("div"):
 						hf.write(f"Etymology: {etymology}")
+
+				categories = []
+				for sense in senses:
+					senseCats = sense.get("categories")
+					if senseCats:
+						categories += senseCats
+				self.writeSenseCategories(hf_, categories)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
@@ -644,8 +653,6 @@ class Reader:
 			glosses = sense.get("glosses")
 		if glosses:
 			self.makeList(hf, glosses, self.writeSenseGloss)
-
-		self.writeSenseCategories(hf, sense.get("categories"))
 
 		self.writeTopics(hf, sense.get("topics"))
 
