@@ -236,6 +236,7 @@ class Reader:
 
 				etymology: str = data.get("etymology_text", "")
 				if etymology:
+					hf.write(br())
 					with hf.element("div"):
 						hf.write(f"Etymology: {etymology}")
 
