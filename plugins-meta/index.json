@@ -1820,6 +1820,11 @@
 				"class": "ListOption",
 				"type": "list",
 				"comment": "List of audio formats to use"
+			},
+			"categories": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable categories"
 			}
 		},
 		"canRead": true,
@@ -1833,7 +1838,8 @@
 			"audio_formats": [
 				"ogg",
 				"mp3"
-			]
+			],
+			"categories": false
 		},
 		"readDepends": {
 			"lxml": "lxml"

@@ -78,6 +78,9 @@ optionsProp: dict[str, Option] = {
 	"audio_formats": ListOption(
 		comment="List of audio formats to use",
 	),
+	"categories": BoolOption(
+		comment="Enable categories",
+	),
 }
 
 
@@ -97,6 +100,8 @@ class Reader:
 	_audio: bool = True
 
 	_audio_formats: list[str] = ["ogg", "mp3"]
+
+	_categories: bool = False
 
 	topicStyle = (
 		"color:white;"
@@ -167,7 +172,7 @@ class Reader:
 	def warning(self, msg: str) -> None:
 		self._warnings[msg] += 1
 
-	def makeEntry(self, data: dict[str, Any]) -> EntryType:
+	def makeEntry(self, data: dict[str, Any]) -> EntryType:  # noqa: PLR0912
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -234,12 +239,13 @@ class Reader:
 					with hf.element("div"):
 						hf.write(f"Etymology: {etymology}")
 
-				categories = []
-				for sense in senses:
-					senseCats = sense.get("categories")
-					if senseCats:
-						categories += senseCats
-				self.writeSenseCategories(hf_, categories)
+				if self._categories:
+					categories = []
+					for sense in senses:
+						senseCats = sense.get("categories")
+						if senseCats:
+							categories += senseCats
+					self.writeSenseCategories(hf_, categories)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?

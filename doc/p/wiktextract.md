@@ -27,6 +27,7 @@
 | example_padding | `10px 20px`      | str  | Padding for examples (css value)               |
 | audio           | `True`           | bool | Enable audio                                   |
 | audio_formats   | `['ogg', 'mp3']` | list | List of audio formats to use                   |
+| categories      | `False`          | bool | Enable categories                              |
 
 ### Dependencies for reading
 
