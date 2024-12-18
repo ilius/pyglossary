@@ -9,10 +9,11 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
 		self.dataFileCRC32.update(
 			{
-				"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
-				"100-en-fa.sd/100-en-fa.idx": "6df43378",
-				"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
-				"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
+				"100-en-fa-sd-v2/100-en-fa.dict": "223a0d1d",
+				"100-en-fa-sd-v2/100-en-fa.idx": "6df43378",
+				"100-en-fa-sd-v2/100-en-fa.ifo": "bb916827",
+				"100-en-fa-sd-v2/100-en-fa.syn": "1160fa0b",
+				"100-en-fa-sd-v2.txt": "0b8b2ac0",
 				"100-en-fa-sd.txt": "85f9d3fc",
 			},
 		)
@@ -24,6 +25,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 	):
 		self.convert_txt_stardict(
 			fname,
+			fname + "-sd-v2",
 			config={"enable_alts": True},
 			info={
 				"sourceLang": "English",
