@@ -143,7 +143,6 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"004-bar.sd/004-bar.idx": "cf9440cf",
 				"004-bar.sd/004-bar.ifo": "ada870e4",
 				"004-bar.sd/004-bar.syn": "286b17bf",
-
 				"100-en-de-v4-sd-v2/100-en-de-v4.dict": "5a97476f",
 				"100-en-de-v4-sd-v2/100-en-de-v4.idx": "a99f29d2",
 				"100-en-de-v4-sd-v2/100-en-de-v4.ifo": "2120708c",
@@ -152,7 +151,6 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"100-en-fa-sd-v2/100-en-fa.ifo": "bb916827",
 				"100-en-fa-sd-v2/100-en-fa.syn": "1160fa0b",
 				"100-en-fa-sd-v2.txt": "0b8b2ac0",
-
 				# FIXME: remove empty description line from 100-en-fa.ifo
 				# stardict-mixed-types-1.ifo, "stardict-mixed-types-2.ifo
 				"100-ja-en.sd/100-ja-en.dict": "39715f01",
