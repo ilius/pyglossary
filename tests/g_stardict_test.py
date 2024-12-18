@@ -147,12 +147,12 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"004-bar.sd/004-bar.syn": "286b17bf",
 				"100-en-de-v4.sd/100-en-de-v4.dict": "5a97476f",
 				"100-en-de-v4.sd/100-en-de-v4.idx": "a99f29d2",
-				"100-en-de-v4.sd/100-en-de-v4.ifo": "6529871f",
+				"100-en-de-v4.sd/100-en-de-v4.ifo": "2120708c",
 				"100-en-fa.sd/100-en-fa.dict": "223a0d1d",
 				"100-en-fa.sd/100-en-fa.idx": "6df43378",
-				"100-en-fa.sd/100-en-fa.ifo": "3f2086cd",
+				"100-en-fa.sd/100-en-fa.ifo": "bb916827",
 				"100-en-fa.sd/100-en-fa.syn": "1160fa0b",
-				"100-en-fa-sd.txt": "85f9d3fc",
+				"100-en-fa-sd.txt": "0b8b2ac0",
 				# FIXME: remove empty description line from 100-en-fa.ifo
 				# stardict-mixed-types-1.ifo, "stardict-mixed-types-2.ifo
 				"100-ja-en.sd/100-ja-en.dict": "39715f01",
@@ -198,7 +198,7 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 		sha1sumDict = {
 			"100-en-fa.dict": "1e462e829f9e2bf854ceac2ef8bc55911460c79e",
 			"100-en-fa.idx": "943005945b35abf3a3e7b80375c76daa87e810f0",
-			"100-en-fa.ifo": "3e982a76f83eef66a8d4915e7a0018746f4180bc",
+			"100-en-fa.ifo": "bf12a932385f54dfcf5ab023d89a8dbd7091e60f",
 			"100-en-fa.syn": "fcefc76628fed18b84b9aa83cd7139721b488545",
 		}
 		for sqlite in (None, False, True):
