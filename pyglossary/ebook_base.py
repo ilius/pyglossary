@@ -34,6 +34,7 @@ from os.path import join
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.os_utils import indir, rmtree
+from pyglossary.repro_zipfile.repro_zipfile import ReproducibleZipFile
 
 if TYPE_CHECKING:
 	import io
@@ -430,7 +431,7 @@ class EbookWriter:
 		self._filename = filename
 
 	def _doZip(self) -> None:
-		with zipfile.ZipFile(
+		with ReproducibleZipFile(
 			self._filename,
 			mode="w",
 			compression=zipfile.ZIP_DEFLATED,
