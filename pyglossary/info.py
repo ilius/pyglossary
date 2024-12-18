@@ -31,6 +31,6 @@ infoKeysAliasDict = {
 	##
 	# do not map "publisher" to "author"
 	##
-	# are there alternatives to "creationTime"
-	# and "lastUpdated"?
+	"date": "creationTime",
+	# are there alternatives to "lastUpdated"?
 }
