@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import logging
 import warnings
-from collections import OrderedDict as odict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -335,7 +334,7 @@ class PluginProp:  # noqa: PLR0904
 			return {}
 
 		optionsProp = self.optionsProp
-		options: dict[str, Any] = odict()
+		options: dict[str, Any] = {}
 
 		for attrName in self._getOptionAttrNamesFromClass(rwclass):
 			name = attrName[1:]

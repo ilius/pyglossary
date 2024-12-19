@@ -47,7 +47,6 @@ import json
 import logging
 import os
 import shlex
-from collections import OrderedDict
 from os.path import (
 	abspath,
 	dirname,
@@ -304,31 +303,27 @@ class UI(ui_cmd.UI):
 			"    -l, --long  use a long listing format\n"
 		)
 
-		self._fsActions = OrderedDict(
-			[
-				("!pwd", (self.fs_pwd, "")),
-				("!ls", (self.fs_ls, self.ls_usage)),
-				("!..", (self.fs_cd_parent, "")),
-				("!cd", (self.fs_cd, "")),
-			],
-		)
-		self._finalActions = OrderedDict(
-			[
-				("formats", self.askFormats),
-				("read-options", self.askReadOptions),
-				("write-options", self.askWriteOptions),
-				("reset-read-options", self.resetReadOptions),
-				("reset-write-options", self.resetWriteOptions),
-				("config", self.askConfig),
-				("indirect", self.setIndirect),
-				("sqlite", self.setSQLite),
-				("no-progressbar", self.setNoProgressbar),
-				("sort", self.setSort),
-				("sort-key", self.setSortKey),
-				("show-options", self.showOptions),
-				("back", None),
-			],
-		)
+		self._fsActions = {
+			"!pwd": (self.fs_pwd, ""),
+			"!ls": (self.fs_ls, self.ls_usage),
+			"!..": (self.fs_cd_parent, ""),
+			"!cd": (self.fs_cd, ""),
+		}
+		self._finalActions = {
+			"formats": self.askFormats,
+			"read-options": self.askReadOptions,
+			"write-options": self.askWriteOptions,
+			"reset-read-options": self.resetReadOptions,
+			"reset-write-options": self.resetWriteOptions,
+			"config": self.askConfig,
+			"indirect": self.setIndirect,
+			"sqlite": self.setSQLite,
+			"no-progressbar": self.setNoProgressbar,
+			"sort": self.setSort,
+			"sort-key": self.setSortKey,
+			"show-options": self.showOptions,
+			"back": None,
+		}
 
 	@staticmethod
 	def fs_pwd(args: list[str]):

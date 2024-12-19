@@ -54,10 +54,10 @@ class Reader:
 		pass
 
 	def open(self, filename: str) -> None:
-		from pyglossary.json_utils import jsonToOrderedData
+		from pyglossary.json_utils import jsonToData
 
 		with open(filename, encoding="utf-8") as infoFp:
-			info = jsonToOrderedData(infoFp.read())
+			info = jsonToData(infoFp.read())
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 

@@ -446,9 +446,7 @@ class EncodingOption(Option):
 		return data
 
 	def groupValues(self) -> dict[str, Any] | None:
-		from collections import OrderedDict
-
-		groups: dict[str, list[str]] = OrderedDict()
+		groups: dict[str, list[str]] = {}
 		others: list[str] = []
 		for value in self.values or []:
 			cats = self.re_category.findall(value)

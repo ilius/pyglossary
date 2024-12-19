@@ -22,7 +22,6 @@ from __future__ import annotations
 import logging
 import sys
 import traceback
-from collections import OrderedDict
 from os.path import abspath, isfile
 from typing import TYPE_CHECKING, Any
 
@@ -981,17 +980,15 @@ class GeneralOptionsDialog(gtk.Dialog):
 		pack(hbox, self.sqliteCheck)
 		pack(self.vbox, hbox)
 		##
-		self.configParams = OrderedDict(
-			[
-				("save_info_json", False),
-				("lower", False),
-				("skip_resources", False),
-				("rtl", False),
-				("enable_alts", True),
-				("cleanup", True),
-				("remove_html_all", True),
-			],
-		)
+		self.configParams = {
+			"save_info_json": False,
+			"lower": False,
+			"skip_resources": False,
+			"rtl": False,
+			"enable_alts": True,
+			"cleanup": True,
+			"remove_html_all": True,
+		}
 		self.configCheckButtons = {}
 		configDefDict = UIBase.configDefDict
 		for param in self.configParams:

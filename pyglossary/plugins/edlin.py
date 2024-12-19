@@ -98,7 +98,7 @@ class Reader:
 		self._resFileNames: list[str] = []
 
 	def open(self, filename: str) -> None:
-		from pyglossary.json_utils import jsonToOrderedData
+		from pyglossary.json_utils import jsonToData
 
 		if isdir(filename):
 			infoFname = join(filename, "info.json")
@@ -112,7 +112,7 @@ class Reader:
 		self._filename = filename
 
 		with open(infoFname, encoding=self._encoding) as infoFp:
-			info = jsonToOrderedData(infoFp.read())
+			info = jsonToData(infoFp.read())
 		self._wordCount = info.pop("wordCount")
 		self._prev_link = info.pop("prev_link")
 		self._rootPath = info.pop("root")
@@ -271,8 +271,6 @@ class Writer:
 			)
 
 	def write(self) -> Generator[None, EntryType, None]:
-		from collections import OrderedDict as odict
-
 		from pyglossary.json_utils import dataToPrettyJson
 
 		thisEntry = yield
@@ -302,21 +300,13 @@ class Writer:
 			"w",
 			encoding=self._encoding,
 		) as toFile:
-			info = odict()
+			info = {}
 			info["name"] = self._glos.getInfo("name")
 			info["root"] = self.hashToPath(rootHash)
 			info["prev_link"] = self._prev_link
 			info["wordCount"] = count
 			# info["modified"] =
 
-			for key, value in self._glos.getExtraInfos(
-				(
-					"name",
-					"root",
-					"prev_link",
-					"wordCount",
-				),
-			).items():
-				info[key] = value
+			info |= self._glos.getExtraInfos(["name", "root", "prev_link", "wordCount"])
 
 			toFile.write(dataToPrettyJson(info))

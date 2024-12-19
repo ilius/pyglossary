@@ -1,7 +1,6 @@
 import json
 import sys
 from collections import Counter
-from collections import OrderedDict as odict
 from dataclasses import dataclass
 from typing import Any
 
@@ -30,7 +29,7 @@ class Node:
 			else:
 				keys.insert(0, "word")
 			return {
-				"__dict__": odict((key, self.Dict[key].__dict__) for key in keys),
+				"__dict__": {key: self.Dict[key].__dict__ for key in keys},
 				# "__key_score__": self.keyScoreList(),
 			}
 

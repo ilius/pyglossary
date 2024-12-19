@@ -157,7 +157,6 @@ class Writer:
 
 	def write_groups(self) -> Generator[None, EntryType, None]:
 		import gzip
-		from collections import OrderedDict
 
 		dataEntryCount = 0
 
@@ -192,7 +191,7 @@ class Writer:
 				continue
 			l_word = entry.l_word
 			allWords += l_word
-			wordsByPrefix: dict[str, list[str]] = OrderedDict()
+			wordsByPrefix: dict[str, list[str]] = {}
 			for word in l_word:
 				prefix = self.get_prefix(word)
 				if prefix in wordsByPrefix:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from os.path import splitext
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import log
 from pyglossary.io_utils import nullTextIO
@@ -33,7 +33,7 @@ class InfoWriter:
 
 	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, C901
 		import re
-		from collections import Counter, OrderedDict
+		from collections import Counter
 
 		from pyglossary.json_utils import dataToPrettyJson
 		from pyglossary.langs.writing_system import getWritingSystemFromText
@@ -105,9 +105,7 @@ class InfoWriter:
 
 		data_entry_count = defiFormatCounter["b"]
 		del defiFormatCounter["b"]
-		info = OrderedDict()
-		for key, value in glos.iterInfo():
-			info[key] = value
+		info: dict[str, Any] = dict(glos.iterInfo())
 		info["word_count"] = wordCount
 		info["bword_count"] = bwordCount
 		info["non_lowercase_word_count"] = nonLowercaseWordCount

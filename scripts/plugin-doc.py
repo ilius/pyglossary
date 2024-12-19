@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import sys
-from collections import OrderedDict
 from os.path import abspath, dirname, join
 from pathlib import Path
 
@@ -236,7 +235,7 @@ for p in plugins:
 	toolsFile = join(toolsDir, f"{p.lname}.toml")
 	try:
 		with open(toolsFile, encoding="utf-8") as _file:
-			tools_toml = toml.load(_file, _dict=OrderedDict)
+			tools_toml = toml.load(_file)
 	except FileNotFoundError:
 		tools = []
 	except Exception as e:

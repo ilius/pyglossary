@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import sys
-from collections import OrderedDict
 from os.path import abspath, dirname, join
 from pathlib import Path
 
@@ -28,7 +27,7 @@ for p in plugins:
 	module = p.module
 	optionsProp = p.optionsProp
 
-	tools = OrderedDict()
+	tools = {}
 	for tool in getattr(p.module, "tools", []):
 		tools[tool.pop("name")] = tool
 

@@ -14,7 +14,6 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-	from collections import OrderedDict
 	from typing import TypeAlias
 
 	from .langs import Lang
@@ -157,7 +156,7 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def setInfo(self, key: str, value: str) -> None: ...
 
-	def getExtraInfos(self, excludeKeys: list[str]) -> OrderedDict: ...
+	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]: ...
 
 	@property
 	def author(self) -> str: ...

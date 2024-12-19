@@ -19,7 +19,6 @@
 from __future__ import annotations
 
 import logging
-from collections import OrderedDict as odict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -45,7 +44,7 @@ log = logging.getLogger("pyglossary")
 
 class GlossaryInfo:
 	def __init__(self) -> None:
-		self._info: dict[str, str] = odict()
+		self._info: dict[str, str] = {}
 
 	def infoKeys(self) -> list[str]:
 		return list(self._info)
@@ -80,10 +79,10 @@ class GlossaryInfo:
 		key = infoKeysAliasDict.get(key.lower(), key)
 		self._info[key] = value
 
-	def getExtraInfos(self, excludeKeys: list[str]) -> odict:
+	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]:
 		"""
 		excludeKeys: a list of (basic) info keys to be excluded
-		returns an OrderedDict including the rest of info keys,
+		returns a dict including the rest of info keys,
 				with associated values.
 		"""
 		excludeKeySet = set()
@@ -93,7 +92,7 @@ class GlossaryInfo:
 			if key2:
 				excludeKeySet.add(key2)
 
-		extra = odict()
+		extra = {}
 		for key, value in self._info.items():
 			if key in excludeKeySet:
 				continue

@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import os
 import re
-from collections import OrderedDict
 from os.path import (
 	dirname,
 	getsize,
@@ -387,14 +386,12 @@ class Writer:
 		defiFormat = self._sametypesequence
 		indexFileSize = getsize(self._filename + ".idx")
 
-		ifoDict: dict[str, str] = OrderedDict(
-			{
-				"version": "3.0.0",
-				"bookname": self.getBookname(),
-				"wordcount": str(wordCount),
-				"idxfilesize": str(indexFileSize),
-			}
-		)
+		ifoDict: dict[str, str] = {
+			"version": "3.0.0",
+			"bookname": self.getBookname(),
+			"wordcount": str(wordCount),
+			"idxfilesize": str(indexFileSize),
+		}
 
 		if self._large_file:
 			ifoDict["idxoffsetbits"] = "64"

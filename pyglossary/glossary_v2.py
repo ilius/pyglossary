@@ -22,7 +22,6 @@ from __future__ import annotations
 import os
 import os.path
 import warnings
-from collections import OrderedDict as odict
 from contextlib import suppress
 from dataclasses import dataclass
 from os.path import (
@@ -148,7 +147,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def initVars(self) -> None:
 		GlossaryProgress.clear(self)
-		self._info = odict()
+		self._info = {}
 
 		readers = getattr(self, "_readers", [])
 		for reader in readers:
@@ -188,8 +187,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		ui: UIType | None = None,  # noqa: F821
 	) -> None:
 		"""
-		info:	OrderedDict or dict instance, or None
-		no need to copy OrderedDict instance before passing here
+		info: dict instance, or None
+		no need to copy dict instance before passing here
 		we will not reference to it.
 		"""
 		GlossaryInfo.__init__(self)
@@ -206,7 +205,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self.initVars()
 
 		if info:
-			if not isinstance(info, dict | odict):
+			if not isinstance(info, dict):
 				raise TypeError(
 					"Glossary: `info` has invalid type"
 					", dict or OrderedDict expected",

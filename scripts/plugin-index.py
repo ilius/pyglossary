@@ -2,9 +2,9 @@
 
 import json
 import sys
-from collections import OrderedDict as odict
 from os.path import abspath, dirname, join
 from pathlib import Path
+from typing import Any
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -27,22 +27,17 @@ data = []
 for p in plugins:
 	canRead = p.canRead
 	canWrite = p.canWrite
-	item = odict(
-		[
-			("module", p.module.__name__),
-			("lname", p.lname),
-			("name", p.name),
-			("description", p.description),
-			("extensions", p.extensions),
-			("singleFile", p.singleFile),
-			(
-				"optionsProp",
-				{name: opt.toDict() for name, opt in p.optionsProp.items()},
-			),
-			("canRead", canRead),
-			("canWrite", canWrite),
-		],
-	)
+	item: dict[str, Any] = {
+		"module": p.module.__name__,
+		"lname": p.lname,
+		"name": p.name,
+		"description": p.description,
+		"extensions": p.extensions,
+		"singleFile": p.singleFile,
+		"optionsProp": {name: opt.toDict() for name, opt in p.optionsProp.items()},
+		"canRead": canRead,
+		"canWrite": canWrite,
+	}
 	if p.sortOnWrite != DEFAULT_NO:
 		item["sortOnWrite"] = p.sortOnWrite
 	if p.sortKeyName:
