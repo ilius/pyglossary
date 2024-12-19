@@ -692,24 +692,24 @@ class Reader:
 		hf: T_htmlfile,
 		input_objects: list[Any],
 		processor: Callable,
-		single_prefix: str = "",
-		skip_single: bool = True,
 		ordered: bool = True,
-		list_type: str = "",
+		skip_single: bool = True,
+		# single_prefix: str = "",
+		# list_type: str = "",
 	) -> None:
 		"""Wrap elements into <ol> if more than one element."""
 		if not input_objects:
 			return
 
 		if skip_single and len(input_objects) == 1:
-			if single_prefix:
-				hf.write(single_prefix)
+			# if single_prefix:
+			# 	hf.write(single_prefix)
 			processor(hf, input_objects[0])
 			return
 
 		attrib: dict[str, str] = {}
-		if list_type:
-			attrib["type"] = list_type
+		# if list_type:
+		# 	attrib["type"] = list_type
 
 		with hf.element("ol" if ordered else "ul", attrib=attrib):
 			for el in input_objects:

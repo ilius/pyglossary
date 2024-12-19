@@ -19,6 +19,7 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 				"wiktextract/10-kaikki-fa-PlacesInIran-category.txt": "d12fa9c0",
 				"wiktextract/10-kaikki-fa-pos-adv.jsonl": "2ddcbbbd",
 				"wiktextract/10-kaikki-fa-pos-adv.txt": "fbaa9972",
+				"wiktextract/10-kaikki-fa-pos-adv-word_title.txt": "4933de91",
 			},
 		)
 
@@ -55,6 +56,20 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 			"10-kaikki-fa-pos-adv",
 		)
 
+	def test_convert_jsonl_txt_2_word_title(self):
+		self.convert_jsonl_txt(
+			"10-kaikki-fa-pos-adv",
+			"10-kaikki-fa-pos-adv-word_title",
+			readOptions={
+				"word_title": True,
+			},
+		)
+
+
+# TODO: test these
+# "form_of" in sense
+# "topics" in sense
+# "antonyms" in sense
 
 
 if __name__ == "__main__":
