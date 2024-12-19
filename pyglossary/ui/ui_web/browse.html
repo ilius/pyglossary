@@ -136,21 +136,28 @@
     input {
       background-color: #e9f8ec;
     }
+
+    #status {
+      font-size:7pt;
+      color: #999;
+      font-family: monospace;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
+    <div id="status"></div>
 
     <div style="text-align: center">
-      <form name="searchform" action="/browse" method="get">
+      <form name="searchform" action="/browse.html" method="get">
         <fieldset role="group">
-          <input type="search" title="type search word" name="word" autofocus autocomplete="url"
+          <input type="search" title="type search word" name="word" id="word" autofocus autocomplete="url"
             aria-autocomplete="both" placeholder="type word to search.." />
           <input type="submit" title="click to search" name="btnsubmit" value="&#128270;" />
         </fieldset>
         <fieldset role="group">
-          <input type="search" title="dictionary path" name="path" autocomplete="url" aria-autocomplete="both"
+          <input type="search" title="dictionary path" name="path" id="path" autocomplete="url" aria-autocomplete="both"
             placeholder="e.g. /path/to/dictionary.bgl" />
           <select id="inputFormat" name="inputFormat">
             <option value=""></option>
@@ -197,19 +204,38 @@
           <input type="text" title="max results" name="max" placeholder="max results" style="width:70px">
         </fieldset>
       </form>
-      ##page_content##
+      <dl id="entries">
+      </dl>
     </div>
   </div>
   <script>
+
+    const status = document.getElementById('status');
+
+    function log(msg, title) {
+      console.log(msg);
+      status.innerHTML = msg;
+      if (title) {
+        status.title = title;
+      }
+    }
+
     window.onload = function () {
-      const form = window.document.forms.searchform;
-      const params = new URLSearchParams(window.location.search);
+      window.form = window.document.forms.searchform;
+      window.params = new URLSearchParams(window.location.search);
+      window.entries = document.getElementById('entries');
 
       form.word.value = params.get('word');
       form.path.value = form.path.value || params.get('path');
       form.max.value = params.get('max');
       form.inputFormat.value = params.get('format');
 
+      attachEventListeners(form);
+      initWsConnection();
+      
+    };
+
+    function attachEventListeners() {
       form.addEventListener('submit', (event) => {
         event.preventDefault();
         if (!form.word.value) {
@@ -223,24 +249,76 @@
         if (!form.max.value) {
           form.max.value = params.get('max');
         }
-        form.submit()
-      })
+        entries.innerHTML = "";
+        fetchEntries();
+      });
 
-      form.word.oninput = (e) => {
-        const params = new URLSearchParams(window.location.search);
-        const value = form.word.value;
+      ['word', 'path'].forEach(fieldName => {
+        const input = form[fieldName];
+        input.oninput = (e) => {
+          const params = new URLSearchParams(window.location.search);
+          const value = input.value;
 
-        if (value) {
-          params.set("word", value);
-        } else {
-          params.delete("word");
+          if (value) {
+            params.set(fieldName, value);
+          } else {
+            params.delete(fieldName);
+          }
+
+          const q = params.toString();
+          const newURL = q ? `?${q}` : window.location.pathname;
+          window.history.replaceState({}, "", newURL);
+        };
+      });
+    }
+
+    function initWsConnection() {
+      window.socket = new WebSocket('/ws');
+      const form = window.document.forms.searchform;
+
+      socket.addEventListener('open', () => {
+        log('&#x1F517;', 'WebSockets connection open Ok');
+        fetchEntries();
+      });
+
+      socket.addEventListener('message', (event) => {
+        // console.log(event.data)
+        const message = JSON.parse(event.data);
+
+        if (message.type == 'browse') {
+          if (message.error) {
+            log(message.error)
+          }
+
+          if (message.data) {
+            entries.insertAdjacentHTML('beforeend', message.data);
+            log(`&#x1F517; loaded ${message.num} of max ${message.max} entries`);
+          }
+        } 
+      });
+
+      socket.addEventListener('error', (error) => {
+        log(`&#128268; ${error}`, 'WebSockets error');
+      });
+
+      socket.addEventListener('close', () => {
+        log('&#128268;', 'WebSockets connection closed');
+      });
+    }
+
+    function fetchEntries() {
+      if (form.path.value) {
+          log('Loading...');
+          socket.send(JSON.stringify({
+            'action': 'browse',
+            'word': form.word.value,
+            'path': form.path.value,
+            'max': form.max.value,
+            'format': form.inputFormat.value
+          })
+          );
         }
-
-        const q = params.toString();
-        const newURL = q ? `?${q}` : window.location.pathname;
-        window.history.replaceState({}, "", newURL);
-      };
-    };
+    }
   </script>
 </body>
 
