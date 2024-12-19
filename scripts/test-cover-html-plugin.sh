@@ -10,11 +10,22 @@ fi
 rootDir=$(dirname $(realpath $(dirname "$0")))
 echo $rootDir
 
-cd "$rootDir/tests"
-coverage run -m unittest "g_${pluginLname}_test.py"
-coverage html \
-	--include="$rootDir/pyglossary/plugins/${pluginLname}.py" \
-	--include="$rootDir/pyglossary/plugins/${pluginLname}/*.py" ||
-	echo "'coverage html' failed with $?"
+dataFile="$rootDir/pyglossary/plugins/${pluginLname}.coverage"
 
-echo "file://$rootDir/tests/htmlcov/index.html"
+outDir="$rootDir/pyglossary/plugins/${pluginLname}.htmlcov"
+mkdir -p $outDir
+# echo "file://$outDir/index.html"
+
+cd "$rootDir/tests"
+
+set -x
+coverage run --data-file="$dataFile" -m unittest "g_${pluginLname}_test.py"
+coverage html --data-file="$dataFile" \
+	--include="$rootDir/pyglossary/plugins/${pluginLname}*" \
+	--directory=$outDir ||
+	echo "'coverage html' failed with $?"
+set +x
+
+if [ -f "$outDir/index.html" ]; then
+	echo "file://$outDir/index.html"
+fi
