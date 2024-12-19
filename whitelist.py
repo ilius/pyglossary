@@ -94,7 +94,6 @@ _.gzipEndOffset  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_d
 _.gzipEndOffset  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:42)
 _.gzipStartOffset  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:363)
 _.gzipStartOffset  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:41)
-_.innerXML  # unused method (pyglossary/plugins/iupac_goldbook.py:160)
 _.isatty  # unused method (pyglossary/io_utils.py:26)
 _.isatty  # unused method (pyglossary/io_utils.py:98)
 _.isatty  # unused method (pyglossary/slob.py:294)

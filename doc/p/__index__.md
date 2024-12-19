@@ -29,7 +29,6 @@
 | Gettext Source (.po)           | GettextPo         | [gettext_po.md](./gettext_po.md)                   |
 | HTML Directory                 | HtmlDir           | [html_dir.md](./html_dir.md)                       |
 | Glossary Info (.info)          | Info              | [info.md](./info.md)                               |
-| IUPAC goldbook (.xml)          | IUPACGoldbook     | [iupac_goldbook.md](./iupac_goldbook.md)           |
 | JMDict (xml)                   | JMDict            | [jmdict.md](./jmdict.md)                           |
 | JMnedict                       | JMnedict          | [jmnedict.md](./jmnedict.md)                       |
 | JSON (.json)                   | Json              | [json.md](./json.md)                               |
