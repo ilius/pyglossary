@@ -10,7 +10,7 @@ import-analyzer/
 /.mypy_cache/
 /plugins
 /ui
-*.coverage
+*.cover*
 *,cover
 htmlcov
 *.htmlcov
