@@ -434,17 +434,6 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		else:
 			super().do_GET()
 
-	def send_page(self, template_path, placeholder, content):
-		self.send_response(HTTPStatus.OK)
-		self.send_header("Content-Type", "text/html")
-		self.end_headers()
-		page = (
-			Path(Path(__file__).parent / template_path)
-			.read_text(encoding="utf-8")
-			.replace(placeholder, content)
-		)
-		self.wfile.write(page.encode())
-
 	def send_config(self):
 		self.send_response(HTTPStatus.OK)
 		self.send_header("Content-Type", "application/json")
