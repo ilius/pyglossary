@@ -20,6 +20,8 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 				"wiktextract/10-kaikki-fa-pos-adv.jsonl": "2ddcbbbd",
 				"wiktextract/10-kaikki-fa-pos-adv.txt": "fbaa9972",
 				"wiktextract/10-kaikki-fa-pos-adv-word_title.txt": "4933de91",
+				"wiktextract/03-kaikki-fa-selection.jsonl": "31223225",
+				"wiktextract/03-kaikki-fa-selection.txt": "f54d1a97",
 			},
 		)
 
@@ -65,11 +67,15 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 			},
 		)
 
-
-# TODO: test these
-# "form_of" in sense
-# "topics" in sense
-# "antonyms" in sense
+	def test_convert_jsonl_txt_3(self):
+		self.convert_jsonl_txt(
+			"03-kaikki-fa-selection",
+			"03-kaikki-fa-selection",
+		)
+		# testing these features
+		# "antonyms" in sense
+		# "topics" in sense
+		# "form_of" in sense
 
 
 if __name__ == "__main__":
