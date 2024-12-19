@@ -374,7 +374,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 	@classmethod
 	def add_browse_root(cls, path):
-		"""Additional browse roots for css/js/etc resource."""
+		"""Additional browse roots for css/js/etc resources."""
 		cls.browse_roots[path] = None
 
 	def __init__(self, socket, addr, server: HttpWebsocketServer, *args, **kwargs):
