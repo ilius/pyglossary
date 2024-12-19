@@ -16,6 +16,9 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 			{
 				"wiktextract/10-kaikki-fa-PlacesInIran.jsonl": "f7f4a92f",
 				"wiktextract/10-kaikki-fa-PlacesInIran.txt": "29b20845",
+				"wiktextract/10-kaikki-fa-PlacesInIran-category.txt": "d12fa9c0",
+				"wiktextract/10-kaikki-fa-pos-adv.jsonl": "2ddcbbbd",
+				"wiktextract/10-kaikki-fa-pos-adv.txt": "fbaa9972",
 			},
 		)
 
@@ -36,6 +39,22 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 			"10-kaikki-fa-PlacesInIran",
 			"10-kaikki-fa-PlacesInIran",
 		)
+
+	def test_convert_jsonl_txt_1_cats(self):
+		self.convert_jsonl_txt(
+			"10-kaikki-fa-PlacesInIran",
+			"10-kaikki-fa-PlacesInIran-category",
+			readOptions={
+				"categories": True,
+			},
+		)
+
+	def test_convert_jsonl_txt_2(self):
+		self.convert_jsonl_txt(
+			"10-kaikki-fa-pos-adv",
+			"10-kaikki-fa-pos-adv",
+		)
+
 
 
 if __name__ == "__main__":
