@@ -2,13 +2,14 @@ import locale
 import random
 import unittest
 from functools import cmp_to_key
+from typing import Any
 
 
-def toBytes(s):
+def toBytes(s: str | bytes) -> bytes:
 	return bytes(s, "utf-8") if isinstance(s, str) else bytes(s)
 
 
-def sortKeyBytes(ba: bytes):
+def sortKeyBytes(ba: bytes) -> Any:
 	assert isinstance(ba, bytes)
 	# ba.lower() + ba is wrong
 	return (
@@ -17,9 +18,9 @@ def sortKeyBytes(ba: bytes):
 	)
 
 
-def stardictStrCmp(s1, s2):
+def stardictStrCmp(s1: str, s2: str) -> int:
 	"""
-	use this function to sort index items in StarDict dictionary
+	Use this function to sort index items in StarDict dictionary
 	s1 and s2 must be utf-8 encoded strings.
 	"""
 	s1 = toBytes(s1)
@@ -34,7 +35,7 @@ def stardictStrCmp(s1, s2):
 sortKeyOld = cmp_to_key(stardictStrCmp)  # TOO SLOW
 
 
-def asciiStrCaseCmp(ba1, ba2):
+def asciiStrCaseCmp(ba1: bytes, ba2: bytes) -> int:
 	"""
 	ba1 and ba2 are instances of bytes
 	imitate g_ascii_strcasecmp function of glib library gstrfuncs.c file.
@@ -48,7 +49,7 @@ def asciiStrCaseCmp(ba1, ba2):
 	return len(ba1) - len(ba2)
 
 
-def strCmp(ba1, ba2):
+def strCmp(ba1: bytes, ba2: bytes) -> int:
 	"""
 	ba1 and ba2 are instances of bytes
 	imitate strcmp of standard C library.
@@ -70,27 +71,22 @@ def strCmp(ba1, ba2):
 	return len(ba1) - len(ba2)
 
 
-def isAsciiAlpha(c):
-	"""C is int."""
+def isAsciiAlpha(c: int) -> bool:
 	return ord("A") <= c <= ord("Z") or ord("a") <= c <= ord("z")
 
 
-def isAsciiLower(c):
+def isAsciiLower(c: int) -> bool:
 	return ord("a") <= c <= ord("z")
 
 
-def isAsciiUpper(c):
-	"""
-	c is int
-	imitate ISUPPER macro of glib library gstrfuncs.c file.
-	"""
+def isAsciiUpper(c: int) -> bool:
+	"""Imitate ISUPPER macro of glib library gstrfuncs.c file."""
 	return ord("A") <= c <= ord("Z")
 
 
-def asciiLower(c):
+def asciiLower(c: int) -> int:
 	"""
-	c is int
-	returns int (ascii character code).
+	Returns int (ascii character code).
 
 	imitate TOLOWER macro of glib library gstrfuncs.c file
 
@@ -111,7 +107,7 @@ def asciiLower(c):
 	return c - ord("A") + ord("a") if isAsciiUpper(c) else c
 
 
-def getRandomBytes(avgLen, sigma):
+def getRandomBytes(avgLen: float, sigma: float) -> bytes:
 	length = round(random.gauss(avgLen, sigma))
 	return bytes([random.choice(range(256)) for _ in range(length)])
 
