@@ -22,9 +22,10 @@ if TYPE_CHECKING:
 
 def exc_note(e: Exception, note: str) -> Exception:
 	try:
-		e.add_note(note)  # # pyright: ignore[reportAttributeAccessIssue]
+		e.add_note(note)  # pyright: ignore[reportAttributeAccessIssue]
 	except AttributeError:
-		e.msg += "\n" + note  # # pyright: ignore[reportAttributeAccessIssue]
+		if hasattr(e, "msg"):
+			e.msg += "\n" + note  # pyright: ignore[reportAttributeAccessIssue]
 	return e
 
 
@@ -55,7 +56,7 @@ __all__ = [
 ]
 
 
-VERSION = "5.0.0"
+VERSION = "5.0.1"
 
 homePage = "https://github.com/ilius/pyglossary"
 

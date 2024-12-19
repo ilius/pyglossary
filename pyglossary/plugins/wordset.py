@@ -11,10 +11,10 @@ from pyglossary.option import (
 	EncodingOption,
 	Option,
 )
-from pyglossary.sort_keys import lookupSortKey
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
+	from typing import Any
 
 	from pyglossary.glossary_types import EntryType, GlossaryType
 
@@ -98,6 +98,10 @@ class Reader:
 			return "\x80"
 		return fname
 
+	@staticmethod
+	def sortKey(word: str) -> Any:
+		return word.lower().encode("utf-8", errors="replace")
+
 	def __iter__(self) -> Iterator[EntryType]:
 		if not self._filename:
 			raise RuntimeError("iterating over a reader while it's not open")
@@ -105,19 +109,14 @@ class Reader:
 		direc = self._filename
 		encoding = self._encoding
 		glos = self._glos
+
 		for fname in sorted(listdir(direc), key=self.fileNameSortKey):
 			fpath = join(direc, fname)
 			if not (fname.endswith(".json") and isfile(fpath)):
 				continue
 			with open(fpath, encoding=encoding) as fileObj:
-				data = load(fileObj)
-				words = list(data)
-				namedSortKey = lookupSortKey("headword_lower")
-				if namedSortKey is None:
-					raise RuntimeError("namedSortKey is None")
-				sortKey = namedSortKey.normal("utf-8")
-				words.sort(key=sortKey)
-				for word in words:
+				data: dict[str, dict[str, Any]] = load(fileObj)
+				for word in sorted(data, key=self.sortKey):
 					entryDict = data[word]
 					defi = "".join(
 						self.defiTemplate.format(

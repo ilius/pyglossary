@@ -90,8 +90,6 @@ class Writer:
 		)
 
 	def write(self) -> None:
-		from collections import OrderedDict as odict
-
 		from pyglossary.json_utils import dataToPrettyJson
 
 		filename = self._filename
@@ -127,16 +125,11 @@ class Writer:
 			mode="w",
 			encoding="utf-8",
 		) as infoFile:
-			info = odict()
+			info = {}
 			info["name"] = self._glos.getInfo("name")
 			info["wordCount"] = wordCount
-			for key, value in self._glos.getExtraInfos(
-				(
-					"name",
-					"wordCount",
-				),
-			).items():
-				info[key] = value
+			info |= self._glos.getExtraInfos(["name", "wordCount"])
+
 			infoFile.write(dataToPrettyJson(info))
 
 
@@ -147,12 +140,12 @@ class Reader:
 		self._wordCount = 0
 
 	def open(self, filename: str) -> None:
-		from pyglossary.json_utils import jsonToOrderedData
+		from pyglossary.json_utils import jsonToData
 
 		self._filename = filename
 
 		with open(join(filename, "info.json"), encoding="utf-8") as infoFp:
-			info = jsonToOrderedData(infoFp.read())
+			info = jsonToData(infoFp.read())
 		self._wordCount = info.pop("wordCount")
 		for key, value in info.items():
 			self._glos.setInfo(key, value)

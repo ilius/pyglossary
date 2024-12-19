@@ -123,7 +123,7 @@ class TextGlossaryReader:
 		else:
 			log.warning("TextGlossaryReader: file is not seekable")
 
-		self._progress = self._glos.progressbar and self._fileSize
+		self._progress = self._glos.progressbar and self._fileSize > 0
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)
 		if self._hasInfo:

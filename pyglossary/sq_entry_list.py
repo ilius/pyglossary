@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 
 	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
+	from .sort_keys_types import SQLiteSortKeyType
 
 
 __all__ = ["SqEntryList"]
@@ -62,7 +63,7 @@ class SqEntryList:
 		self._reverse = False
 		self._len = 0
 		self._create = create
-		self._sqliteSortKey = None
+		self._sqliteSortKey: SQLiteSortKeyType = []
 		self._columnNames = ""
 
 	def hasSortKey(self) -> bool:
@@ -78,7 +79,7 @@ class SqEntryList:
 		if self._con is None:
 			raise RuntimeError("self._con is None")
 
-		if self._sqliteSortKey is not None:
+		if self._sqliteSortKey:
 			raise RuntimeError("Called setSortKey twice")
 
 		if namedSortKey.sqlite is None:
@@ -116,7 +117,7 @@ class SqEntryList:
 		return self._entryFromRaw(data.split(b"\x00"))
 
 	def append(self, entry: EntryType) -> None:
-		self._cur.execute(
+		self._cur.execute(  # type: ignore
 			f"insert into data({self._columnNames}, data)"
 			f" values (?{', ?' * len(self._sqliteSortKey)})",
 			[col[2](entry.l_word) for col in self._sqliteSortKey]
@@ -139,8 +140,8 @@ class SqEntryList:
 	def sort(self, reverse: bool = False) -> None:
 		if self._sorted:
 			raise NotImplementedError("can not sort more than once")
-		if self._sqliteSortKey is None:
-			raise RuntimeError("self._sqliteSortKey is None")
+		if not self._sqliteSortKey:
+			raise RuntimeError("self._sqliteSortKey is empty")
 
 		self._reverse = reverse
 		self._sorted = True
@@ -148,6 +149,7 @@ class SqEntryList:
 		self._orderBy = sortColumnNames
 		if reverse:
 			self._orderBy = ",".join(f"{col[0]} DESC" for col in self._sqliteSortKey)
+		assert self._con
 		self._con.commit()
 		self._con.execute(
 			f"CREATE INDEX sortkey ON data({sortColumnNames});",

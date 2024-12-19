@@ -282,9 +282,31 @@ class TestGlossaryBase(unittest.TestCase):
 			self.assertEqual(md5sum, actualMd5, msg)
 			return
 
-	def convert_sqlite_both(self, *args, **kwargs):
+	def convert_txt_txt(
+		self,
+		fname,  # input txt file without extension
+		fname2,  # expected output txt file without extension
+		fnamePrefix="",
+		testId="tmp",
+		config=None,
+		**convertArgs,
+	):
+		self.convert(
+			f"{fnamePrefix}{fname}.txt",
+			f"{fname2}-{testId}.txt",
+			compareText=f"{fnamePrefix}{fname2}.txt",
+			testId=testId,
+			config=config,
+			**convertArgs,
+		)
+
+	def convert_txt_txt_sort(self, *args, **convertArgs):
 		for sqlite in (None, True, False):
-			self.convert(*args, sqlite=sqlite, **kwargs)
+			self.convert_txt_txt(*args, sort=True, sqlite=sqlite, **convertArgs)
+
+		os.environ["NO_SQLITE"] = "1"
+		self.convert_txt_txt(*args, sort=True, sqlite=False, **convertArgs)
+		del os.environ["NO_SQLITE"]
 
 
 class TestGlossary(TestGlossaryBase):
@@ -295,6 +317,7 @@ class TestGlossary(TestGlossaryBase):
 			{
 				"100-en-fa-sort.txt": "d7a82dc8",
 				"100-en-fa-sort-headword.txt": "4067a29f",
+				"100-en-fa-sort-headword-fa.txt": "d01fcee1",
 				"100-en-fa-sort-ebook.txt": "aa620d07",
 				"100-en-fa-sort-ebook3.txt": "5a20f140",
 				"100-en-fa-lower.txt": "62178940",
@@ -544,23 +567,6 @@ class TestGlossary(TestGlossaryBase):
 			("English", "German"),
 		)
 
-	def convert_txt_txt(
-		self,
-		fname,  # input txt file without extension
-		fname2,  # expected output txt file without extension
-		testId="tmp",
-		config=None,
-		**convertArgs,
-	):
-		self.convert(
-			f"{fname}.txt",
-			f"{fname2}-{testId}.txt",
-			compareText=f"{fname2}.txt",
-			testId=testId,
-			config=config,
-			**convertArgs,
-		)
-
 	def convert_to_txtZip(
 		self,
 		fname,  # input file with extension
@@ -604,75 +610,67 @@ class TestGlossary(TestGlossaryBase):
 		)
 
 	def test_sort_1(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"100-en-fa",
 			"100-en-fa-sort",
 			testId="sort_1",
-			sort=True,
 		)
 
 	def test_sort_2(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"100-en-fa",
 			"100-en-fa-sort",
 			testId="sort_2",
-			sort=True,
 			sortKeyName="headword_lower",
 		)
 
 	def test_sort_3(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"100-en-fa",
 			"100-en-fa-sort-headword",
 			testId="sort_3",
-			sort=True,
 			sortKeyName="headword",
 		)
 
 	def test_sort_4(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"300-rand-en-fa",
 			"300-rand-en-fa-sort-headword",
 			testId="sort_4",
-			sort=True,
 			sortKeyName="headword",
 		)
 
 	def test_sort_5(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"300-rand-en-fa",
 			"300-rand-en-fa-sort-headword-w1256",
 			testId="sort_5",
-			sort=True,
 			sortKeyName="headword",
 			sortEncoding="windows-1256",
 		)
 
 	def test_sort_6(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"300-rand-en-fa",
 			"300-rand-en-fa-sort-w1256",
 			testId="sort_6",
-			sort=True,
 			sortKeyName="headword_lower",
 			sortEncoding="windows-1256",
 		)
 
 	def test_sort_7(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"100-en-fa",
 			"100-en-fa-sort-ebook",
 			testId="sort_7",
-			sort=True,
 			sortKeyName="ebook",
 		)
 
 	def test_sort_8(self):
-		self.convert_txt_txt(
+		self.convert_txt_txt_sort(
 			"100-en-fa",
 			"100-en-fa-sort-ebook3",
 			testId="sort_8",
-			sort=True,
 			sortKeyName="ebook_length3",
 		)
 
@@ -757,14 +755,11 @@ class TestGlossary(TestGlossaryBase):
 			)
 
 	def test_txt_txt_bar_sort(self):
-		for sqlite in (None, False, True):
-			self.convert_txt_txt(
-				"004-bar",
-				"004-bar-sort",
-				testId="bar_sort",
-				sort=True,
-				sqlite=sqlite,
-			)
+		self.convert_txt_txt_sort(
+			"004-bar",
+			"004-bar-sort",
+			testId="bar_sort",
+		)
 
 	def test_txt_txt_empty_filtered(self):
 		for direct in (None, False, True):
@@ -969,47 +964,47 @@ Japonica"""
 		)
 
 	def test_convert_sortLocale_default_1(self):
-		name = "092-en-fa-alphabet-sample"
-		self.convert_sqlite_both(
-			f"sort-locale/{name}.txt",
-			f"{name}-sorted-default.txt",
-			compareText=f"sort-locale/{name}-sorted-default.txt",
+		self.convert_txt_txt_sort(
+			"092-en-fa-alphabet-sample",
+			"092-en-fa-alphabet-sample-sorted-default",
+			fnamePrefix="sort-locale/",
 			testId="sorted-default",
-			sort=True,
 			sortKeyName="headword_lower",
 		)
 
 	def test_convert_sortLocale_en_1(self):
-		name = "092-en-fa-alphabet-sample"
-		self.convert_sqlite_both(
-			f"sort-locale/{name}.txt",
-			f"{name}-sorted-en.txt",
-			compareText=f"sort-locale/{name}-sorted-en.txt",
-			testId="sorted-en",
-			sort=True,
+		self.convert_txt_txt_sort(
+			"092-en-fa-alphabet-sample",
+			"092-en-fa-alphabet-sample-sorted-en",
+			fnamePrefix="sort-locale/",
+			testId="sorted-en-headword_lower",
 			sortKeyName="headword_lower:en_US.UTF-8",
 		)
 
 	def test_convert_sortLocale_fa_1(self):
-		name = "092-en-fa-alphabet-sample"
-		self.convert_sqlite_both(
-			f"sort-locale/{name}.txt",
-			f"{name}-sorted-fa.txt",
-			compareText=f"sort-locale/{name}-sorted-fa.txt",
-			testId="sorted-fa",
-			sort=True,
+		self.convert_txt_txt_sort(
+			"092-en-fa-alphabet-sample",
+			"092-en-fa-alphabet-sample-sorted-fa",
+			fnamePrefix="sort-locale/",
+			testId="sorted-fa-headword_lower",
 			sortKeyName="headword_lower:fa_IR.UTF-8",
 		)
 
 	def test_convert_sortLocale_fa_2(self):
-		name = "092-en-fa-alphabet-sample"
-		self.convert_sqlite_both(
-			f"sort-locale/{name}.txt",
-			f"{name}-sorted-latin-fa.txt",
-			compareText=f"sort-locale/{name}-sorted-latin-fa.txt",
+		self.convert_txt_txt_sort(
+			"092-en-fa-alphabet-sample",
+			"092-en-fa-alphabet-sample-sorted-latin-fa",
+			fnamePrefix="sort-locale/",
 			testId="sorted-latin-fa",
-			sort=True,
 			sortKeyName="headword_lower:fa-u-kr-latn-arab",
+		)
+
+	def test_convert_sortLocale_fa_3(self):
+		self.convert_txt_txt_sort(
+			"100-en-fa",
+			"100-en-fa-sort-headword-fa",
+			testId="sorted-fa-headword",
+			sortKeyName="headword:fa",
 		)
 
 

@@ -289,6 +289,9 @@ class EbookWriter:
 				"text/css",
 			)
 
+	def get_prefix(self, word: str) -> str:
+		raise NotImplementedError
+
 	def write_groups(self) -> Generator[None, EntryType, None]:
 		# TODO: rtl=False option
 		# TODO: handle alternates better (now shows word1|word2... in title)

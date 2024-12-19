@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import collections
+from collections import Counter
 from io import BytesIO, IOBase
 from json import loads as json_loads
 from typing import TYPE_CHECKING, cast
@@ -77,6 +78,9 @@ optionsProp: dict[str, Option] = {
 	"audio_formats": ListOption(
 		comment="List of audio formats to use",
 	),
+	"categories": BoolOption(
+		comment="Enable categories",
+	),
 }
 
 
@@ -96,6 +100,8 @@ class Reader:
 	_audio: bool = True
 
 	_audio_formats: list[str] = ["ogg", "mp3"]
+
+	_categories: bool = False
 
 	topicStyle = (
 		"color:white;"
@@ -140,7 +146,7 @@ class Reader:
 			self._glos.setInfo("definition_has_headwords", "True")
 
 		self._file = cfile
-		self._warnings = collections.Counter()
+		self._warnings: Counter[str] = collections.Counter()
 
 	def close(self) -> None:
 		self._file.close()
@@ -166,7 +172,7 @@ class Reader:
 	def warning(self, msg: str) -> None:
 		self._warnings[msg] += 1
 
-	def makeEntry(self, data: dict[str, Any]) -> EntryType:
+	def makeEntry(self, data: dict[str, Any]) -> EntryType:  # noqa: PLR0912
 		from lxml import etree as ET
 
 		glos = self._glos
@@ -216,7 +222,9 @@ class Reader:
 						with hf.element("font", color=self._gram_color):
 							hf.write(pos)
 
-				self.writeSenseList(hf_, data.get("senses"))  # type: ignore
+				senses = data.get("senses") or []
+
+				self.writeSenseList(hf_, senses)  # type: ignore
 
 				self.writeSynonyms(hf_, data.get("synonyms"))  # type: ignore
 
@@ -228,8 +236,17 @@ class Reader:
 
 				etymology: str = data.get("etymology_text", "")
 				if etymology:
+					hf.write(br())
 					with hf.element("div"):
 						hf.write(f"Etymology: {etymology}")
+
+				if self._categories:
+					categories = []
+					for sense in senses:
+						senseCats = sense.get("categories")
+						if senseCats:
+							categories += senseCats
+					self.writeSenseCategories(hf_, categories)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
@@ -366,12 +383,13 @@ class Reader:
 	def writeSenseExample(  # noqa: PLR6301, PLR0912
 		self,
 		hf: T_htmlfile,
-		example: dict[str, str],
+		example: dict[str, str | list],
 	) -> None:
 		# example keys: text, "english", "ref", "type"
-		textList: list[tuple[str, str]] = []
-		text_ = example.pop("example", "")
+		textList: list[tuple[str | None, str]] = []
+		text_: str | list = example.pop("example", "")
 		if text_:
+			assert isinstance(text_, str)
 			textList.append((None, text_))
 
 		example.pop("ref", "")
@@ -380,7 +398,7 @@ class Reader:
 		for key, value in example.items():
 			if not value:
 				continue
-			prefix = key
+			prefix: str | None = key
 			if prefix in ("text",):  # noqa: PLR6201, FURB171
 				prefix = None
 			if isinstance(value, str):
@@ -388,7 +406,7 @@ class Reader:
 			elif isinstance(value, list):
 				for item in value:
 					if isinstance(item, str):
-						textList.append((prefix, value))
+						textList.append((prefix, item))
 					elif isinstance(item, list):
 						textList += [(prefix, item2) for item2 in item]
 			else:
@@ -397,7 +415,7 @@ class Reader:
 		if not textList:
 			return
 
-		def writePair(prefix: str, text: str) -> None:
+		def writePair(prefix: str | None, text: str) -> None:
 			if prefix:
 				with hf.element("b"):
 					hf.write(prefix)
@@ -417,7 +435,7 @@ class Reader:
 	def writeSenseExamples(
 		self,
 		hf: T_htmlfile,
-		examples: list[dict[str, str]] | None,
+		examples: list[dict[str, str | list]] | None,
 	) -> None:
 		from lxml import etree as ET
 
@@ -643,8 +661,6 @@ class Reader:
 		if glosses:
 			self.makeList(hf, glosses, self.writeSenseGloss)
 
-		self.writeSenseCategories(hf, sense.get("categories"))
-
 		self.writeTopics(hf, sense.get("topics"))
 
 		self.writeSenseFormOfList(hf, sense.get("form_of"))
@@ -676,24 +692,24 @@ class Reader:
 		hf: T_htmlfile,
 		input_objects: list[Any],
 		processor: Callable,
-		single_prefix: str = "",
-		skip_single: bool = True,
 		ordered: bool = True,
-		list_type: str = "",
+		skip_single: bool = True,
+		# single_prefix: str = "",
+		# list_type: str = "",
 	) -> None:
 		"""Wrap elements into <ol> if more than one element."""
 		if not input_objects:
 			return
 
 		if skip_single and len(input_objects) == 1:
-			if single_prefix:
-				hf.write(single_prefix)
+			# if single_prefix:
+			# 	hf.write(single_prefix)
 			processor(hf, input_objects[0])
 			return
 
 		attrib: dict[str, str] = {}
-		if list_type:
-			attrib["type"] = list_type
+		# if list_type:
+		# 	attrib["type"] = list_type
 
 		with hf.element("ol" if ordered else "ul", attrib=attrib):
 			for el in input_objects:

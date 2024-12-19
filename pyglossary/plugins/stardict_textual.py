@@ -180,22 +180,20 @@ class Reader:
 		defiFormatSet.update(_type for _, _type in defisWithFormat)
 
 		if len(defiFormatSet) == 1:
-			defis = [_defi for _defi, _ in defisWithFormat]
 			format_ = defiFormatSet.pop()
 			if format_ == "h":
-				return "\n<hr>".join(defis), format_
-			return "\n".join(defis), format_
+				return "\n<hr>".join([defi for defi, _ in defisWithFormat]), format_
+			return "\n".join([defi for defi, _ in defisWithFormat]), format_
 
 		# convert plaintext or xdxf to html
 		defis: list[str] = []
 		for defi_, format_ in defisWithFormat:
-			defi = defi_
 			if format_ == "m":
-				defi = defi.replace("\n", "<br/>")
-				defi = f"<pre>{defi}</pre>"
+				defis.append("<pre>" + defi_.replace("\n", "<br/>") + "</pre>")
 			elif format_ == "x":
-				defi = self.xdxf_transform(defi)
-			defis.append(defi)
+				defis.append(self.xdxf_transform(defi_))
+			else:
+				defis.append(defi_)
 		return "\n<hr>\n".join(defis), "h"
 
 	def __iter__(self) -> Iterator[EntryType]:
@@ -213,7 +211,7 @@ class Reader:
 			elem = cast("Element", _elem)
 			words: list[str] = []
 			defisWithFormat: list[tuple[str, str]] = []
-			for child in elem.getchildren():
+			for child in elem.iterchildren():
 				if not child.text:
 					continue
 				if child.tag in {"key", "synonym"}:

@@ -1192,26 +1192,6 @@
 		"writeOptions": {}
 	},
 	{
-		"module": "iupac_goldbook",
-		"lname": "iupac_goldbook",
-		"name": "IUPACGoldbook",
-		"description": "IUPAC goldbook (.xml)",
-		"extensions": [],
-		"singleFile": true,
-		"optionsProp": {},
-		"canRead": true,
-		"canWrite": false,
-		"readOptions": {},
-		"readDepends": {
-			"lxml": "lxml"
-		},
-		"readCompressions": [
-			"gz",
-			"bz2",
-			"lzma"
-		]
-	},
-	{
 		"module": "jmdict",
 		"lname": "jmdict",
 		"name": "JMDict",
@@ -1820,6 +1800,11 @@
 				"class": "ListOption",
 				"type": "list",
 				"comment": "List of audio formats to use"
+			},
+			"categories": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable categories"
 			}
 		},
 		"canRead": true,
@@ -1833,7 +1818,8 @@
 			"audio_formats": [
 				"ogg",
 				"mp3"
-			]
+			],
+			"categories": false
 		},
 		"readDepends": {
 			"lxml": "lxml"

@@ -143,6 +143,12 @@ class XdxfTransformer:
 			addSep()
 
 	def _write_example(self, hf: T_htmlfile, elem: Element) -> None:
+		children = elem.xpath("child::node()")
+		if not children:
+			return
+		if not isinstance(children, list):
+			log.warning(f"unexpected {children=}")
+			return
 		prev = None
 		stringSep = " "
 		with hf.element(
@@ -152,11 +158,17 @@ class XdxfTransformer:
 				"style": f"padding: {self._example_padding}px 0px;",
 			},
 		):
-			for child in elem.xpath("child::node()"):
+			for child in children:
 				if isinstance(child, str):
 					# if not child.strip():
 					# 	continue
 					self.writeString(hf, child, elem, prev, stringSep=stringSep)
+					continue
+				if isinstance(child, bytes | tuple):
+					# TODO
+					log.warning(f"unexpected {child=}")
+					continue
+				if not child:
 					continue
 				if child.tag == "iref":
 					with hf.element("div"):
@@ -404,10 +416,19 @@ class XdxfTransformer:
 		sep: str | None = None,
 		stringSep: str | None = None,
 	) -> None:
+		children = elem.xpath("child::node()")
+		if not children:
+			return
+		if not isinstance(children, list):
+			log.warning(f"unexpceted {children=}")
+			return
 		prev = None
-		for child in elem.xpath("child::node()"):
+		for child in children:
 			if sep and prev is not None and self.shouldAddSep(child, prev):
 				hf.write(sep)
+			if isinstance(child, bytes | tuple):
+				log.warning(f"unexpected {child=}")
+				continue
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 

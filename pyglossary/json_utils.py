@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 import json
-from collections import OrderedDict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from typing import AnyStr, TypeAlias
 
-__all__ = ["dataToPrettyJson", "jsonToData", "jsonToOrderedData"]
+__all__ = ["dataToPrettyJson", "jsonToData"]
 
 JsonEncodable: TypeAlias = dict | list
-# OrderedDict is also subclass of Dict, issubclass(OrderedDict, Dict) is True
 
 
 def dataToPrettyJson(
@@ -28,9 +26,3 @@ def dataToPrettyJson(
 
 def jsonToData(st: AnyStr) -> JsonEncodable:
 	return json.loads(st)
-
-
-def jsonToOrderedData(text: str) -> OrderedDict:
-	return json.JSONDecoder(
-		object_pairs_hook=OrderedDict,
-	).decode(text)

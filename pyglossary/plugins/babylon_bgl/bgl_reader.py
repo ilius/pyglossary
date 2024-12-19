@@ -25,7 +25,6 @@ from __future__ import annotations
 import io
 import os
 import re
-from collections import OrderedDict as odict
 from typing import TYPE_CHECKING, NamedTuple
 
 from pyglossary.core import log
@@ -346,7 +345,7 @@ class BglReader:
 	def __init__(self, glos: GlossaryType) -> None:  # no more arguments
 		self._glos = glos
 		self._filename = ""
-		self.info = odict()
+		self.info = {}
 		self.numEntries = None
 		####
 		self.sourceLang = ""

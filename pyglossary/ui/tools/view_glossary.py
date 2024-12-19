@@ -2,6 +2,7 @@
 # mypy: ignore-errors
 from __future__ import annotations
 
+import argparse
 import os.path
 import shlex
 import sys
@@ -59,6 +60,7 @@ def viewGlossary(
 	filename: str,
 	formatName: str | None = None,
 	glos: GlossaryType | None = None,
+	noRes: bool = False,
 ) -> None:
 	highlightEntry = getEntryHighlighter()
 
@@ -81,6 +83,8 @@ def viewGlossary(
 
 	def handleEntry(entry: EntryType) -> None:
 		nonlocal index
+		if noRes and entry.isData():
+			return
 		if highlightEntry:
 			highlightEntry(entry)
 		entryStr = (
@@ -110,12 +114,37 @@ def viewGlossary(
 
 
 def main() -> None:
-	filename = sys.argv[1]
-	formatName = None
-	if len(sys.argv) > 2:
-		formatName = sys.argv[2]
-	filename = os.path.expanduser(filename)
-	viewGlossary(filename, formatName=formatName)
+	parser = argparse.ArgumentParser(
+		prog=sys.argv[0],
+		add_help=True,
+		# allow_abbrev=False,
+	)
+	parser.add_argument(
+		"--format",
+		dest="formatName",
+		default=None,
+		help="format name",
+	)
+	parser.add_argument(
+		"--no-res",
+		dest="noRes",
+		action="store_true",
+		default=False,
+		help="do not automatically show resources / files",
+	)
+	parser.add_argument(
+		"filename",
+		action="store",
+		default="",
+		nargs=1,
+	)
+	args = parser.parse_args()
+
+	viewGlossary(
+		os.path.expanduser(args.filename[0]),
+		formatName=args.formatName,
+		noRes=args.noRes,
+	)
 
 
 if __name__ == "__main__":

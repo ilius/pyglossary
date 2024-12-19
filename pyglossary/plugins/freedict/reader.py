@@ -30,7 +30,7 @@ INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
 
 
-@dataclass
+@dataclass(slots=True)
 class ParsedSense:
 	transCits: list[Element]
 	defs: list[Element]
@@ -152,9 +152,14 @@ class Reader(ReaderUtils):
 	) -> None:
 		from lxml import etree as ET
 
+		children = elem.xpath("child::node()")
+		if not children:
+			return
+		assert isinstance(children, list)
+
 		quotes: list[Element] = []
 		sense = ET.Element(f"{TEI}sense")
-		for child in elem.xpath("child::node()"):
+		for child in children:
 			if isinstance(child, str):
 				child = child.strip()  # noqa: PLW2901
 				if child:
@@ -214,9 +219,12 @@ class Reader(ReaderUtils):
 				return
 
 			if item.tag == f"{TEI}ref":
-				if count > 0:
-					hf.write(self.getCommaSep(item.text))
-				self.writeRef(hf, item)
+				if item.text:
+					if count > 0:
+						hf.write(self.getCommaSep(item.text))
+					self.writeRef(hf, item)
+				else:
+					log.warning(f"ref without text: {self.tostring(item)}")
 				return
 
 			for child in item.xpath("child::node()"):

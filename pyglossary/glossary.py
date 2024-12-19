@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import warnings
-from collections import OrderedDict as odict
 from os.path import relpath
 from time import perf_counter as now
 from typing import TYPE_CHECKING
@@ -49,8 +48,8 @@ class Glossary(GlossaryCommon):
 		ui: UIType | None = None,  # noqa: F821
 	) -> None:
 		"""
-		info:	OrderedDict or dict instance, or None
-		no need to copy OrderedDict instance before passing here
+		info: dict instance, or None
+		no need to copy dict instance before passing here
 		we will not reference to it.
 		"""
 		warnings.warn(
@@ -60,7 +59,7 @@ class Glossary(GlossaryCommon):
 		)
 		GlossaryCommon.__init__(self, ui=ui)
 		if info:
-			if not isinstance(info, dict | odict):
+			if not isinstance(info, dict):
 				raise TypeError(
 					"Glossary: `info` has invalid type"
 					", dict or OrderedDict expected",
@@ -164,7 +163,11 @@ class Glossary(GlossaryCommon):
 		self._iter = self._loadedEntryGen()
 
 	@classmethod
-	def detectInputFormat(cls, *args, **kwargs) -> DetectedFormat | None:  # pyright: ignore[reportIncompatibleMethodOverride]
+	def detectInputFormat(  # type: ignore # pyright: ignore[reportIncompatibleMethodOverride]
+		cls,
+		*args,
+		**kwargs,
+	) -> DetectedFormat | None:
 		try:
 			return GlossaryCommon.detectInputFormat(*args, **kwargs)
 		except Error as e:
@@ -172,7 +175,11 @@ class Glossary(GlossaryCommon):
 			return None
 
 	@classmethod
-	def detectOutputFormat(cls, *args, **kwargs) -> DetectedFormat | None:  # pyright: ignore[reportIncompatibleMethodOverride]
+	def detectOutputFormat(  # type: ignore # pyright: ignore[reportIncompatibleMethodOverride]
+		cls,
+		*args,
+		**kwargs,
+	) -> DetectedFormat | None:
 		try:
 			return GlossaryCommon.detectOutputFormat(*args, **kwargs)
 		except Error as e:

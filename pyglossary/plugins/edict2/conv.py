@@ -88,7 +88,7 @@ def render_syllables_color(
 
 # @lru_cache(maxsize=128)
 def convert_pinyin(pinyin: str) -> tuple[Sequence[str], Sequence[str]]:
-	return tuple(zip(*map(convert, pinyin.split()), strict=False))
+	return tuple(zip(*map(convert, pinyin.split()), strict=False))  # type: ignore
 
 
 def render_article(

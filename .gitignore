@@ -10,9 +10,10 @@ import-analyzer/
 /.mypy_cache/
 /plugins
 /ui
-.coverage
+*.cover*
 *,cover
 htmlcov
+*.htmlcov
 vulture.*
 imports_from_set.json
 imports_set.json
