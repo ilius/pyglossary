@@ -304,6 +304,10 @@ class TestGlossaryBase(unittest.TestCase):
 		for sqlite in (None, True, False):
 			self.convert_txt_txt(*args, sort=True, sqlite=sqlite, **convertArgs)
 
+		os.environ["NO_SQLITE"] = "1"
+		self.convert_txt_txt(*args, sort=True, sqlite=False, **convertArgs)
+		del os.environ["NO_SQLITE"]
+
 
 class TestGlossary(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):

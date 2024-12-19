@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from g_stardict_test import TestGlossaryStarDictBase
@@ -81,6 +82,11 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 			f"Ignoring user-defined sort order {sortKeyName!r}"
 			", and using sortKey function from Stardict plugin",
 		)
+
+	def test_convert_txt_stardict_enfa_5(self):
+		os.environ["NO_SQLITE"] = "1"
+		self.convert_txt_stardict_enfa("100-en-fa", sqlite=False)
+		del os.environ["NO_SQLITE"]
 
 
 if __name__ == "__main__":

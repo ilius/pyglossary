@@ -1089,7 +1089,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			self._switchToSQLite(
 				inputFilename=args.inputFilename,
 			)
-		else:
+		elif not os.getenv("NO_SQLITE"):
 			self._data = self._newInMemorySqEntryList()
 
 		self._data.setSortKey(
