@@ -106,6 +106,7 @@ package_data = {
 		"ui/wcwidth/*.py",
 		"ui/ui_web/*.py",
 		"ui/ui_web/*.html",
+		"ui/ui_web/*.ico",
 		"ui/ui_web/*.css",
 		"ui/ui_web/*.js",
 		"xdxf/xdxf.xsl",
