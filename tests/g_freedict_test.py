@@ -11,6 +11,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			{
 				"100-en-de.tei": "542c210e",
 				"100-en-de-v4.txt": "d420a669",
+				"freedict-sample-2024-12-19.tei": "c33b89d5",
+				"freedict-sample-2024-12-19.txt": "2a0a2235",
 			},
 		)
 
@@ -32,6 +34,12 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"100-en-de",
 			"100-en-de-v4",
 			readOptions={"auto_comma": True},
+		)
+
+	def test_convert_tei_txt_2(self):
+		self.convert_tei_txt(
+			"freedict-sample-2024-12-19",
+			"freedict-sample-2024-12-19",
 		)
 
 
