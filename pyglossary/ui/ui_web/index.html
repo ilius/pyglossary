@@ -113,15 +113,21 @@
             font-family: 'Fira Mono', 'Jetbrains Mono', Consolas, Monaco, Lucida Console, monospace;
             font-size: smaller;
         }
+
+        #preview1,
+        #preview2 {
+            padding: 3px;
+        }
+        .hidden {
+            display: none;
+            visibility: hidden;
+        }
     </style>
 </head>
 
 <body>
     <!-- Header -->
     <header class="container">
-        <!-- <hgroup>
-
-        </hgroup> -->
         <nav>
             <ul>
                 <li>
@@ -143,6 +149,7 @@
                         <!--noformat-->
                         <ul>
                             <li class="primary"><a id="clearDisplay" href="#">&#10006; Clear log</a></li>
+                            <li class="primary"><a target="_blank" href="/browse.html">&#x1F50E; Browse...</a></li>
                             <li class="primary"><a target="_blank"
                                     href="https://github.com/ilius/pyglossary/blob/master/README.md">&#128279; Docs</a>
                             </li>
@@ -154,29 +161,28 @@
                                     Plugins</a></li>
                             <li class="primary"><a target="_blank" href="https://github.com/ilius/pyglossary">&#128279;
                                     Source</a></li>
-                            <li class="primary"><a id="stopServer" target="_blank" href="#"> &#10060; Exit</a></li>
+                            <li class="primary"><a id="stopServer" target="_blank" href="#">&#x23FB; Stop</a></li>
                         </ul>
                     </details>
                 </li>
             </ul>
         </nav>
     </header>
-    <!-- ./ Header -->
 
-    <!-- Main -->
     <main class="container">
-        <form>
-            <!-- Input -->
+        <form name="frm">
             <section id="input">
                 <h5>Input file</h5>
                 <div class="grid">
                     <fieldset role="group">
-                        <input type="text" id="inputFilename" name="inputFilename" placeholder="<input file path>"
+                        <input type="search" id="inputFilename" autocomplete="url" aria-autocomplete="both" name="inputFilename" placeholder="<input file path>"
                             autocomplete="on" data-tooltip="Tooltip" required>
-                        <!-- Select -->
                         <select id="inputFormat" name="inputFormat" required>
                             <option></option>
                         </select>
+                        <a target="_blank" class="button outline secondary browse hidden" href="/browse.html">
+                            <input type="button" class="outline secondary" id="preview1" value="&#x1F50E;">
+                        </a>
                     </fieldset>
                 </div>
             </section>
@@ -184,12 +190,14 @@
                 <h5>Output file</h5>
                 <div class="grid">
                     <fieldset role="group">
-                        <input type="text" id="outputFilename" name="outputFilename" placeholder="<output file path>"
+                        <input type="search" autocomplete="url" aria-autocomplete="both" id="outputFilename" name="outputFilename" placeholder="<output file path>"
                             autocomplete="on" required />
-                        <!-- Select -->
-                        <select id="outputFormat" name="outputFormat" required>
+                        <select id="outputFormat" tabindex="-1" name="outputFormat" required>
                             <option></option>
                         </select>
+                        <a target="_blank" class="button outline secondary browse hidden" href="/browse.html">
+                            <input type="button" tabindex="-1" class="outline secondary" id="preview2" value="&#x1F50E;">
+                        </a>
                     </fieldset>
                 </div>
             </section>
@@ -198,8 +206,8 @@
             <!-- Convert -->
             <section>
                 <fieldset role="group">
-                    <button id="btnOptions" name="options" class="outline">Options</button>
-                    <input id="btnConvert" type="submit" value="Convert" class="outline" />
+                    <button id="btnOptions" name="btnOptions" class="outline">Options</button>
+                    <input id="btnConvert" name="btnConvert" type="submit" value="Convert" class="outline" />
                 </fieldset>
             </section>
             <!-- ./ Convert -->
@@ -242,7 +250,6 @@
 
     <hr>
 
-    <!-- Footer -->
     <footer class="container">
         <small><a target="_blank" href="https://github.com/ilius/pyglossary">
                 <!--noformat-->
@@ -251,7 +258,6 @@
             </a>
         </small>
     </footer>
-    <!-- ./ Footer -->
     <!-- ConfigDialog -->
     <dialog>
         <article>
@@ -314,10 +320,13 @@
         };
         const FIELD_IDS_PERSISTABLE = ['inputFilename', 'inputFormat', 'outputFilename', 'outputFormat'];
         const KEY_PG_OPTIONS = 'pg_ALL_OPTIONS';
+        const MAX_PREVIEW_ENTRIES = 42;
 
         const consoleArea = document.getElementById('console-area');
         const progressBar = document.getElementById('progress');
         const progressText = document.getElementById('progress-text');
+
+        const form = window.document.forms.frm;
 
         function log(msg) {
             consoleArea.value += `${msg}\n`;
@@ -367,9 +376,6 @@
                     return response.json();
                 })
                 .then(formats => {
-                    const readDropdown = document.getElementById("inputFormat");
-                    const writeDropdown = document.getElementById("outputFormat");
-
                     const readFragment = document.createDocumentFragment();
                     const writeFragment = document.createDocumentFragment();
                     window.formats = formats;
@@ -386,12 +392,15 @@
                             }
                         });
 
-                    readDropdown.appendChild(readFragment);
-                    writeDropdown.appendChild(writeFragment);
+                    form.inputFormat.appendChild(readFragment);
+                    form.outputFormat.appendChild(writeFragment);
                 }).then(() => {
                     restoreFormState();
                 }).then(() => {
                     attachListenersPostInit();
+                    form && form.inputFilename && updatePreviewLink(form.inputFilename);
+                    form && form.outputFilename && updatePreviewLink(form.outputFilename);
+
                 })
                 .catch(error => {
                     log(`Error populating dropdowns: ${error}`);
@@ -399,7 +408,7 @@
         }
 
         function toggleConvertButton() {
-            const btnConv = document.getElementById('btnConvert');
+            const btnConv = form.btnConvert;
             btnConv.classList.toggle('outline');
             btnConv.disabled = !btnConv.disabled;
         }
@@ -410,12 +419,31 @@
                 : elem.setAttribute(attr, '');
         }
 
+        function updatePreviewLink(inputEl) {
+            console.log(inputEl);
+            if (inputEl) {
+                const previewLink = inputEl.parentElement.querySelector('a.browse');
+                const previewUrl = new URL(previewLink.href);
+                const formatSelect = inputEl.parentElement.querySelector('select');
+                previewUrl.searchParams.set('path', inputEl.value);
+                previewUrl.searchParams.set('max', MAX_PREVIEW_ENTRIES);
+                
+                if (inputEl.value && formatSelect.value) {
+                    previewUrl.searchParams.set('format', formatSelect.value);
+                    previewLink.classList.remove('hidden');
+                } else {
+                    previewLink.classList.add('hidden');
+                }
+
+                previewLink.href = previewUrl.toString();
+            }
+        }
+
         function attachListeners() {
             document.querySelector('input[type="submit"]').addEventListener('click', async (event) => {
 
                 progressBar.value = 0;
                 log('Starting new conversion job. Please wait... ⏳');
-                const form = event.target.form;
 
                 if (form.checkValidity()) {
                     event.preventDefault();
@@ -473,7 +501,7 @@
                 log('Server stopped! Window can now be closed.');
             });
 
-            document.getElementById('btnOptions').addEventListener('click', (evt) => {
+            form.btnOptions.addEventListener('click', (evt) => {
                 evt.preventDefault();
                 evt.stopImmediatePropagation();
                 const optionsDialog = document.querySelector('dialog');
@@ -523,12 +551,14 @@
         }
 
         function attachListenersPostInit() {
-            document.getElementById("inputFilename").oninput = () => {
+            form.inputFilename.oninput = (e) => {
                 getFormatFromPath("inputFilename", 'inputFormat');
+                updatePreviewLink(e.target);
             };
 
-            document.getElementById("outputFilename").oninput = () => {
+            form.outputFilename.oninput = (e) => {
                 getFormatFromPath("outputFilename", 'outputFormat');
+                updatePreviewLink(e.target);
             };
         }
 
@@ -557,6 +587,9 @@
 
                 if (savedValue) {
                     el.value = savedValue;
+                    if (el.type == 'search') {
+                        updatePreviewLink(el);
+                    }
                 }
             });
         }

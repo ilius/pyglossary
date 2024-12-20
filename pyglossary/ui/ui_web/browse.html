@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyGlossary Browser</title>
+  <link rel="stylesheet" href="pico.green.min.css" />
+
+  <style type="text/css">
+    :root {
+      --pico-font-family-sans-serif: Inter, system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, Helvetica, Arial, "Helvetica Neue", sans-serif, var(--pico-font-family-emoji);
+      --pico-font-size: 87.5%;
+      /* Original: 100% */
+      --pico-line-height: 1.25;
+      /* Original: 1.5 */
+      --pico-form-element-spacing-vertical: 0.5rem;
+      /* Original: 1rem */
+      --pico-form-element-spacing-horizontal: 1.0rem;
+      /* Original: 1.25rem */
+      --pico-border-radius: 0.375rem;
+      /* Original: 0.25rem */
+    }
+
+    body {
+      margin-top: 5em;
+      padding: 1em 4em;
+      text-align: center;
+    }
+
+    dl,
+    dd,
+    dt {
+      text-align: left;
+    }
+
+    label {
+      font-size: smaller;
+      color: #999;
+    }
+
+    * {
+      font-family: ".AppleSystemUIFont", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .ipa {
+      font-family: Symbol;
+      font-size: 13pt;
+    }
+
+    select#inputFormat {
+      padding: 0;
+      margin: 0;
+      width: 10em;
+      background-color: #e9f8ec;
+    }
+
+    .container {
+      margin: 0 auto;
+      width: 83%;
+      max-width: 650px;
+      text-align: left;
+      padding: 0 10px 20px;
+    }
+
+    dt {
+      font-size: 150%;
+      font-weight: bold;
+      color: #767676;
+    }
+
+    hr {
+      border: 1px dotted lightgray;
+    }
+
+    .part {
+      display: block;
+      border-left: 7px solid rgb(233, 233, 233);
+      margin: 1em 0;
+      padding: .5em 1.5em;
+      background-color: #f7f5f5;
+    }
+
+    a,
+    a:link,
+    a:visited {
+      cursor: pointer;
+      color: rgb(158, 176, 187);
+      text-decoration: none !important;
+      -webkit-transition: color 1s ease, background-color 1s ease;
+      -moz-transition: color 1s ease, background-color 1s ease;
+      -o-transition: color 1s ease, background-color 1s ease;
+      transition: color 1s ease, background-color 1s ease;
+    }
+
+    a:hover {
+      color: #86b692;
+      background-color: #daffcf;
+    }
+
+    .example {
+      list-style-type: "\1F4A1";
+      padding-left: .7em;
+    }
+
+    .syn li {
+      list-style-type: "\223C";
+      padding-left: .7em;
+    }
+
+    .ant li {
+      list-style-type: "\2260";
+      padding-left: .7em;
+    }
+
+    @media screen and (max-width:600px) {
+      body {
+        padding: 0;
+        margin: 0
+      }
+
+      .container {
+        margin: 0;
+        width: auto;
+        text-align: left;
+        padding: .7em;
+      }
+    }
+
+    .hl {
+      background-color: greenyellow;
+      border: 1px dashed darkgreen;
+    }
+
+    input {
+      background-color: #e9f8ec;
+    }
+
+    #status {
+      font-size:7pt;
+      color: #999;
+      font-family: monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div id="status"></div>
+
+    <div style="text-align: center">
+      <form name="searchform" action="/browse.html" method="get">
+        <fieldset role="group">
+          <input type="search" title="type search word" name="word" id="word" autofocus autocomplete="url"
+            aria-autocomplete="both" placeholder="type word to search.." />
+          <input type="submit" title="click to search" name="btnsubmit" value="&#128270;" />
+        </fieldset>
+        <fieldset role="group">
+          <input type="search" title="dictionary path" name="path" id="path" autocomplete="url" aria-autocomplete="both"
+            placeholder="e.g. /path/to/dictionary.bgl" />
+          <select id="inputFormat" name="inputFormat">
+            <option value=""></option>
+            <option value="Aard2Slob">Aard 2 (.slob)</option>
+            <option value="ABBYYLingvoDSL">ABBYY Lingvo DSL (.dsl)</option>
+            <option value="ABCMedicalNotes">ABC Medical Notes (SQLite3)</option>
+            <option value="Almaany">Almaany.com (SQLite3)</option>
+            <option value="AppleDictBin">AppleDict Binary</option>
+            <option value="AyanDictSQLite">AyanDict SQLite</option>
+            <option value="BabylonBgl">Babylon (.BGL)</option>
+            <option value="cc-kedict">cc-kedict</option>
+            <option value="CrawlerDir">Crawler Directory</option>
+            <option value="Csv">CSV (.csv)</option>
+            <option value="Dictcc">Dict.cc (SQLite3)</option>
+            <option value="Dictcc_split">Dict.cc (SQLite3) - Split</option>
+            <option value="DictOrg">DICT.org file format (.index)</option>
+            <option value="Dicformids">DictionaryForMIDs</option>
+            <option value="Dictunformat">dictunformat output file</option>
+            <option value="DigitalNK">DigitalNK (SQLite3, N-Korean)</option>
+            <option value="EDICT2">EDICT2 (CEDICT) (.u8)</option>
+            <option value="Edlin">EDLIN</option>
+            <option value="FreeDict">FreeDict (.tei)</option>
+            <option value="GettextPo">Gettext Source (.po)</option>
+            <option value="Info">Glossary Info (.info)</option>
+            <option value="IUPACGoldbook">IUPAC goldbook (.xml)</option>
+            <option value="JMDict">JMDict (xml)</option>
+            <option value="JMnedict">JMnedict</option>
+            <option value="Dictfile">Kobo E-Reader Dictfile (.df)</option>
+            <option value="LingoesLDF">Lingoes Source (.ldf)</option>
+            <option value="OctopusMdict">Octopus MDict (.mdx)</option>
+            <option value="QuickDic6">QuickDic version 6 (.quickdic)</option>
+            <option value="Stardict">StarDict (.ifo)</option>
+            <option value="StardictTextual">StarDict Textual File (.xml)</option>
+            <option value="Tabfile">Tabfile (.txt, .dic)</option>
+            <option value="Test">Test Format File(.test)</option>
+            <option value="Wiktextract">Wiktextract (.jsonl)</option>
+            <option value="Wordnet">WordNet</option>
+            <option value="Wordset">Wordset.org JSON directory</option>
+            <option value="Xdxf">XDXF (.xdxf)</option>
+            <option value="XdxfLax">XDXF Lax (.xdxf)</option>
+            <option value="XdxfCss">XDXF with CSS and JS</option>
+            <option value="Zim">Zim (.zim, for Kiwix)</option>
+          </select>
+          <input type="text" title="max results" name="max" placeholder="max results" style="width:70px">
+        </fieldset>
+      </form>
+      <dl id="entries">
+      </dl>
+    </div>
+  </div>
+  <script>
+
+    const status = document.getElementById('status');
+
+    function log(msg, title) {
+      console.log(msg);
+      status.innerHTML = msg;
+      if (title) {
+        status.title = title;
+      }
+    }
+
+    window.onload = function () {
+      window.form = window.document.forms.searchform;
+      window.params = new URLSearchParams(window.location.search);
+      window.entries = document.getElementById('entries');
+
+      form.word.value = params.get('word');
+      form.path.value = form.path.value || params.get('path');
+      form.max.value = params.get('max');
+      form.inputFormat.value = params.get('format');
+
+      attachEventListeners(form);
+      initWsConnection();
+      
+    };
+
+    function attachEventListeners() {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!form.word.value) {
+          form.word.value = params.get('word');
+        }
+
+        if (!form.path.value) {
+          form.path.value = params.get('path');
+        }
+
+        if (!form.max.value) {
+          form.max.value = params.get('max');
+        }
+        entries.innerHTML = "";
+        fetchEntries();
+      });
+
+      ['word', 'path'].forEach(fieldName => {
+        const input = form[fieldName];
+        input.oninput = (e) => {
+          const params = new URLSearchParams(window.location.search);
+          const value = input.value;
+
+          if (value) {
+            params.set(fieldName, value);
+          } else {
+            params.delete(fieldName);
+          }
+
+          const q = params.toString();
+          const newURL = q ? `?${q}` : window.location.pathname;
+          window.history.replaceState({}, "", newURL);
+        };
+      });
+    }
+
+    function initWsConnection() {
+      window.socket = new WebSocket('/ws');
+      const form = window.document.forms.searchform;
+
+      socket.addEventListener('open', () => {
+        log('&#x1F517;', 'WebSockets connection open Ok');
+        fetchEntries();
+      });
+
+      socket.addEventListener('message', (event) => {
+        // console.log(event.data)
+        const message = JSON.parse(event.data);
+
+        if (message.type == 'browse') {
+          if (message.error) {
+            log(message.error)
+          }
+
+          if (message.data) {
+            entries.insertAdjacentHTML('beforeend', message.data);
+            log(`&#x1F517; loaded ${message.num} of max ${message.max} entries`);
+          }
+        } 
+      });
+
+      socket.addEventListener('error', (error) => {
+        log(`&#128268; ${error}`, 'WebSockets error');
+      });
+
+      socket.addEventListener('close', () => {
+        log('&#128268;', 'WebSockets connection closed');
+      });
+    }
+
+    function fetchEntries() {
+      if (form.path.value) {
+          log('Loading...');
+          socket.send(JSON.stringify({
+            'action': 'browse',
+            'word': form.word.value,
+            'path': form.path.value,
+            'max': form.max.value,
+            'format': form.inputFormat.value
+          })
+          );
+        }
+    }
+  </script>
+</body>
+
+</html>

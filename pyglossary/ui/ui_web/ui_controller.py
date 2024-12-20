@@ -1,6 +1,7 @@
 import json
 import logging
 import webbrowser
+from pathlib import Path
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
@@ -91,9 +92,10 @@ class WebUI(UIBase):
 		try:
 			finalOutputFile = glos.convert(
 				ConvertArgs(
-					inputFilename=self.inputFilename,
+					# allow ~ in paths
+					inputFilename=str(Path(self.inputFilename).expanduser().resolve()),
 					inputFormat=self.inputFormat,
-					outputFilename=self.outputFilename,
+					outputFilename=str(Path(self.outputFilename).expanduser().resolve()),
 					outputFormat=self.outputFormat,
 					readOptions=self.readOptions,
 					writeOptions=self.writeOptions,
