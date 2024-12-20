@@ -8,9 +8,9 @@ from typing import Any
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
-from pyglossary.ui.ui_web.server_ws_http import create_server
+from pyglossary.ui.ui_web.websocket_main import create_server
 
-log = logging.getLogger("pyglossary")
+log = logging.getLogger("pyglossary.web")
 HOST = "127.0.0.1"
 PORT = 1984
 
@@ -62,7 +62,7 @@ class WebUI(UIBase):
 		self.glossarySetAttrs = glossarySetAttrs or {}
 
 		try:
-			self.server = create_server(host=HOST, port=PORT, user_logger=log)
+			self.server = create_server(host=HOST, port=PORT)
 			self.server.ui_controller = self
 			url = self.server.url
 			log.info(url)
