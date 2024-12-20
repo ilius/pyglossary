@@ -66,6 +66,7 @@ from http import HTTPStatus
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from socketserver import ThreadingMixIn
+from typing import Any
 from urllib.parse import unquote
 
 from pyglossary.glossary_v2 import Glossary
@@ -104,7 +105,7 @@ OPCODE_PING = 0x9
 OPCODE_PONG = 0xA
 
 CLOSE_STATUS_NORMAL = 1000
-DEFAULT_CLOSE_REASON = bytes("", encoding="utf-8")
+DEFAULT_CLOSE_REASON = b""
 DEFAULT_MAX_BROWSE_ENTRIES = 42
 MAX_IMAGE_SIZE = 512000
 
@@ -164,7 +165,9 @@ class API:
 			self._multicast(json.dumps(msg))
 
 	def deny_new_connections(
-		self, status=CLOSE_STATUS_NORMAL, reason=DEFAULT_CLOSE_REASON
+		self,
+		status=CLOSE_STATUS_NORMAL,
+		reason=DEFAULT_CLOSE_REASON,
 	):
 		self._deny_new_connections(status, reason)
 
@@ -172,7 +175,9 @@ class API:
 		self._allow_new_connections()
 
 	def shutdown_gracefully(
-		self, status=CLOSE_STATUS_NORMAL, reason=DEFAULT_CLOSE_REASON
+		self,
+		status=CLOSE_STATUS_NORMAL,
+		reason=DEFAULT_CLOSE_REASON,
 	):
 		self._shutdown_gracefully(status, reason)
 
@@ -180,7 +185,9 @@ class API:
 		self._shutdown_abruptly()
 
 	def disconnect_clients_gracefully(
-		self, status=CLOSE_STATUS_NORMAL, reason=DEFAULT_CLOSE_REASON
+		self,
+		status=CLOSE_STATUS_NORMAL,
+		reason=DEFAULT_CLOSE_REASON,
 	):
 		self._disconnect_clients_gracefully(status, reason)
 
@@ -191,7 +198,7 @@ class API:
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 
 	"""
-		A websocket server waiting for clients to connect.
+	A websocket server waiting for clients to connect.
 
 	Args:
 		port(int): Port to bind to
@@ -206,9 +213,9 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API, logging.Handler):
 		clients(list): A list of connected clients. A client is a dictionary
 			like below.
 				{
-				'id'	  : id,
-				'handler' : handler,
-				'address' : (addr, port)
+					'id'	  : id,
+					'handler' : handler,
+					'address' : (addr, port)
 				}
 
 	"""
@@ -389,7 +396,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 	def translate_path(self, path):
 		"""
-		overlay of https://github.com/python/cpython/blob/47c5a0f307cff3ed477528536e8de095c0752efa/Lib/http/server.py#L841
+		Overlay of https://github.com/python/cpython/blob/47c5a0f307cff3ed477528536e8de095c0752efa/Lib/http/server.py#L841
 		patched to support multiple browse roots
 		Translate a /-separated PATH to the local filename syntax.
 
@@ -399,7 +406,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 		"""
 		# abandon query parameters
-		if self.command in ("GET"):
+		if self.command == "GET":
 			path = path.split("?", 1)[0]
 			path = path.split("#", 1)[0]
 			# Handle explicit trailing slash when normalizing
@@ -409,18 +416,18 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			except UnicodeDecodeError:
 				path = unquote(path)
 			path = posixpath.normpath(path)
-			words = path.split("/")
-			words = list(filter(None, words))
+			# normpath already replaces // (or /// etc) with /
+			pathParts = path.split("/")
 
 			# Iterate through each browsing root to find a matching path
 			for root in self.browse_roots:
-				root_path = os.path.join(root, *words)
+				rootPath = os.path.join(root, *pathParts)
 
 				# Normalize path and check if the file exists
-				if os.path.exists(root_path):
-					if trailing_slash and os.path.isdir(root_path):
-						root_path += "/"
-					return root_path
+				if os.path.exists(rootPath):
+					if trailing_slash and os.path.isdir(rootPath):
+						rootPath += "/"
+					return rootPath
 
 			# If no valid path found in any root, send 404
 			self.send_error(HTTPStatus.NOT_FOUND, "Not found")
@@ -454,13 +461,18 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		# custom ajax action for /convert POST
 		if self.path == "/convert":
 			self.handle_convert_job()
-		else:
-			self.send_response(HTTPStatus.BAD_REQUEST)
-			self.send_header("Content-Type", "application/json")
-			self.end_headers()
-			self.wfile.write(
-				json.dumps({"value": f"{self.path}: POST unsupported"}).encode()
-			)
+			return
+
+		print("---- do_POST")
+		self.send_response(HTTPStatus.BAD_REQUEST)
+		self.send_header("Content-Type", "application/json")
+		self.end_headers()
+		json.dump(
+			{
+				"value": f"{self.path}: POST unsupported",
+			},
+			self.wfile,
+		)
 
 	def setup(self):
 		SimpleHTTPRequestHandler.setup(self)
@@ -487,58 +499,78 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 	def handle_convert_job(self):
 		try:
-			content_length = int(self.headers.get("Content-Length", 0))
-
-			post_data = self.rfile.read(content_length)
-
-			try:
-				payload = json.loads(post_data)
-				serverlog.debug(f"Handle convert request from {self.client_address[0]}")
-				serverlog.debug(f"POST PAYLOAD {payload}")
-			except json.JSONDecodeError:
-				self.send_response(HTTPStatus.BAD_REQUEST)
-				self.send_header("Content-type", "application/json")
-				self.end_headers()
-				self.wfile.write(b"Invalid JSON data.")
-				return
-
-			required_fields = [
-				"inputFilename",
-				"inputFormat",
-				"outputFilename",
-				"outputFormat",
-			]
-			missing_fields = [
-				field for field in required_fields if not payload.get(field)
-			]
-
-			if missing_fields:
-				self.send_response(HTTPStatus.BAD_REQUEST)
-				self.send_header("Content-type", "application/json")
-				self.end_headers()
-				error_message = {
-					"error": "Missing or empty fields",
-					"missing_fields": missing_fields,
-				}
-				self.wfile.write(json.dumps(error_message).encode())
-				return
-
-			self.server.ui_controller.start_convert_job(payload)
-
-			self.send_response(HTTPStatus.OK)
-			self.send_header("Content-type", "text/html")
-			self.end_headers()
-			self.wfile.write(b"POST successful")
-
+			payload: dict[str, Any] = json.loads(
+				self.rfile.read(int(self.headers.get("Content-Length", 0)))
+			)
+		except json.JSONDecodeError:
+			self.json_decode_error()
+			return
 		except Exception as e:
-			# Step 8: Handle any unexpected errors
-			serverlog.error(e)
-			self.send_response(
-				HTTPStatus.INTERNAL_SERVER_ERROR
-			)  # Internal Server Error
-			self.send_header("Content-type", "text/html")
-			self.end_headers()
-			self.wfile.write(f"Error: {e!s}".encode())
+			self.internal_exception(e)
+			return
+
+		serverlog.debug(f"Handle convert request from {self.client_address[0]}")
+		serverlog.debug(f"POST PAYLOAD {payload}")
+
+		try:
+			self.server.ui_controller.start_convert_job(payload)
+		except ValueError as e:
+			self.validation_exception(e)
+			return
+
+		self.send_response(HTTPStatus.OK)
+		self.send_header("Content-type", "text/html")
+		self.end_headers()
+		self.wfile.write(b"POST successful")
+
+	def validation_exception(self, e: Exception) -> None:
+		self.send_response(HTTPStatus.BAD_REQUEST)
+		self.send_header("Content-type", "application/json")
+		self.end_headers()
+		json.dump({"error": str(e)}, self.wfile)
+
+	def json_decode_error(self):
+		self.send_response(HTTPStatus.BAD_REQUEST)
+		self.send_header("Content-type", "application/json")
+		self.end_headers()
+		self.wfile.write(b"Invalid JSON data.")
+
+	def internal_exception(self, e: Exception) -> None:
+		serverlog.error(e)
+		self.send_response(HTTPStatus.INTERNAL_SERVER_ERROR)  # Internal Server Error
+		self.send_header("Content-type", "text/html")
+		self.end_headers()
+		self.wfile.write(f"Error: {e!s}".encode())
+
+	def _handle_one_request(self):
+		self.raw_requestline = self.rfile.readline(65537)
+
+		if len(self.raw_requestline) > 65536:
+			self.requestline = ""
+			self.request_version = ""
+			self.command = ""
+			self.send_error(HTTPStatus.REQUEST_URI_TOO_LONG)
+			return
+		if not self.raw_requestline:
+			self.close_connection = True
+			return
+		if not self.parse_request():
+			# An error code has been sent, just exit
+			return
+		if self.path.startswith("/ws") and self.headers.get("upgrade") == "websocket":
+			self.handle_ws()
+			return
+
+		mname = "do_" + self.command
+		if not hasattr(self, mname):
+			self.send_error(
+				HTTPStatus.NOT_IMPLEMENTED,
+				f"Unsupported method ({self.command})",
+			)
+			return
+		method = getattr(self, mname)
+		method()
+		self.wfile.flush()  # actually send the response if not already done.
 
 	def handle_one_request(self):
 		"""
@@ -547,41 +579,11 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		on /ws path and presence of custom header: "upgrade: websocket".
 		"""
 		try:
-			self.raw_requestline = self.rfile.readline(65537)
-
-			if len(self.raw_requestline) > 65536:
-				self.requestline = ""
-				self.request_version = ""
-				self.command = ""
-				self.send_error(HTTPStatus.REQUEST_URI_TOO_LONG)
-				return
-			if not self.raw_requestline:
-				self.close_connection = True
-				return
-			if not self.parse_request():
-				# An error code has been sent, just exit
-				return
-			if (
-				self.path.startswith("/ws")
-				and self.headers.get("upgrade") == "websocket"
-			):
-				self.handle_ws()
-			else:
-				mname = "do_" + self.command
-				if not hasattr(self, mname):
-					self.send_error(
-						HTTPStatus.NOT_IMPLEMENTED,
-						f"Unsupported method ({self.command})",
-					)
-					return
-				method = getattr(self, mname)
-				method()
-				self.wfile.flush()  # actually send the response if not already done.
+			self._handle_one_request()
 		except TimeoutError as e:
 			# a read or a write timed out.  Discard this connection
 			self.log_error("Request timed out: %r", e)
 			self.close_connection = True
-			return
 
 	def read_bytes(self, num):
 		return self.rfile.read(num)
@@ -765,6 +767,7 @@ def encode_to_UTF8(data):
 		raise (e)
 		return False
 
+
 def try_decode_UTF8(data):
 	try:
 		return data.decode("utf-8")
@@ -851,7 +854,7 @@ def handle_browse_request(client, server, message):
 			single_entry = None
 			# get first max entries if no word or filter until max results
 			if not word or entry.s_word.lower().startswith(word.lower()):
-				if entry.defiFormat in ("h", "m", "x"):
+				if entry.defiFormat in {"h", "m", "x"}:
 					single_entry = f"""<dt>{entry.s_word}</dt><dd>{entry.defi}</dd>"""
 					num_results += 1
 				else:
@@ -875,15 +878,13 @@ def handle_browse_request(client, server, message):
 						"type": "browse",
 						"data": single_entry,
 						"num": num_results,
-						"max": max_results
+						"max": max_results,
 					}
 				)
 			if num_results >= max_results:
 				break
 	except Exception as e:
-		server.send_message_to_all(
-			{"type": "browse", "error": f"exception: '{e!s}'"}
-		)
+		server.send_message_to_all({"type": "browse", "error": f"exception: '{e!s}'"})
 	finally:
 		server.send_message_to_all(
 			{
@@ -893,6 +894,7 @@ def handle_browse_request(client, server, message):
 				"max": max_results,
 			}
 		)
+
 
 def create_server(host="127.0.0.1", port=9001, user_logger=None):
 	server = HttpWebsocketServer(

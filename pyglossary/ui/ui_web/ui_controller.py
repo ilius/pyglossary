@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import json
 import logging
 import webbrowser
 from pathlib import Path
+from typing import Any
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
@@ -35,17 +38,23 @@ class WebUI(UIBase):
 
 	def run(  # noqa: PLR0912, PLR0913
 		self,
-		inputFilename: str,  # noqa: ARG002
-		outputFilename: str,  # noqa: ARG002
-		inputFormat: str,  # noqa: ARG002
-		outputFormat: str,  # noqa: ARG002
-		reverse: bool = False,  # noqa: ARG002
-		config: "dict | None" = None,
-		readOptions: "dict | None" = None,
-		writeOptions: "dict | None" = None,
-		convertOptions: "dict | None" = None,
-		glossarySetAttrs: "dict | None" = None,
+		inputFilename: str,
+		outputFilename: str,
+		inputFormat: str,
+		outputFormat: str,
+		reverse: bool = False,
+		config: dict[str, Any] | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		convertOptions: dict[str, Any] | None = None,
+		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> bool:
+		if reverse:
+			raise ValueError("reverse is not supported")
+		self.inputFilename = inputFilename
+		self.outputFilename = outputFilename
+		self.inputFormat = inputFormat
+		self.outputFormat = outputFormat
 		self.config = config or {}
 		self.readOptions = readOptions or {}
 		self.writeOptions = writeOptions or {}
@@ -68,16 +77,46 @@ class WebUI(UIBase):
 
 		return True
 
-	def start_convert_job(self, payload) -> bool:
+	def getPayloadStr(self, payload: dict[str, Any], name: str) -> str:
+		value = payload.get(name)
+		if value is None:
+			return ""
+		if not isinstance(value, str):
+			raise ValueError(f"{name} must be string")
+		return value
+
+	def getPayloadDict(self, payload: dict[str, Any], name: str) -> dict:
+		value = payload.get(name)
+		if value is None:
+			return {}
+		if not isinstance(value, dict):
+			raise ValueError(f"{name} must be a dict")
+		return {}
+
+	def start_convert_job(self, payload: dict[str, Any]) -> bool:
 		glos = Glossary(ui=self)
 
-		self.inputFilename = payload.get("inputFilename")
-		self.inputFormat = payload.get("inputFormat")
-		self.outputFilename = payload.get("outputFilename")
-		self.outputFormat = payload.get("outputFormat")
-		self.readOptions = payload.get("readOptions") or self.readOptions
-		self.writeOptions = payload.get("writeOptions") or self.writeOptions
-		self.convertOptions = payload.get("convertOptions") or self.convertOptions
+		inputFilename = (
+			self.getPayloadStr(payload, "inputFilename") or self.inputFilename
+		)
+		if not inputFilename:
+			raise ValueError("inputFilename is missing")
+		inputFormat = self.getPayloadStr(payload, "inputFormat") or self.inputFormat
+		if not inputFormat:
+			raise ValueError("inputFormat is missing")
+		outputFilename = (
+			self.getPayloadStr(payload, "outputFilename") or self.outputFilename
+		)
+		if not outputFilename:
+			raise ValueError("outputFilename is missing")
+		outputFormat = self.getPayloadStr(payload, "outputFormat") or self.outputFormat
+		if not outputFormat:
+			raise ValueError("outputFormat is missing")
+		readOptions = self.getPayloadDict(payload, "readOptions") or self.readOptions
+		writeOptions = self.getPayloadDict(payload, "writeOptions") or self.writeOptions
+		convertOptions = (
+			self.getPayloadDict(payload, "convertOptions") or self.convertOptions
+		)
 
 		log.debug(f"readOptions: {self.readOptions}")
 		log.debug(f"writeOptions: {self.writeOptions}")
@@ -93,13 +132,13 @@ class WebUI(UIBase):
 			finalOutputFile = glos.convert(
 				ConvertArgs(
 					# allow ~ in paths
-					inputFilename=str(Path(self.inputFilename).expanduser().resolve()),
-					inputFormat=self.inputFormat,
-					outputFilename=str(Path(self.outputFilename).expanduser().resolve()),
-					outputFormat=self.outputFormat,
-					readOptions=self.readOptions,
-					writeOptions=self.writeOptions,
-					**self.convertOptions,
+					inputFilename=str(Path(inputFilename).expanduser().resolve()),
+					inputFormat=inputFormat,
+					outputFilename=str(Path(outputFilename).expanduser().resolve()),
+					outputFormat=outputFormat,
+					readOptions=readOptions,
+					writeOptions=writeOptions,
+					**convertOptions,
 				),
 			)
 		except Exception as e:
