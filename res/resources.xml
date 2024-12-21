@@ -1,20 +1,42 @@
+<?xml version="1.0"?>
 <resources>
+	<resource path="pyglossary.svg">
+		<author>Saeed Rasooli</author>
+		<license>GNU GPLv2</license>
+		<source></source>
+		<comment>
+			Created based on QStarDict logo and Python logo.
+			Python logo is a trademark of Python Software Foundation: https://www.python.org/psf/trademarks/
+		</comment>
+	</resource>
+	<resource path="pyglossary.png">
+		<author>Saeed Rasooli</author>
+		<license>GNU GPLv2</license>
+		<source>pyglossary.svg</source>
+	</resource>
+	<resource path="pyglossary.ico">
+		<author>Saeed Rasooli</author>
+		<license>GNU GPLv2</license>
+		<source>pyglossary.svg</source>
+	</resource>
 	<resource path="dialog-information.png">
-		<author>>Oxygen Icon Theme</author>
-		<license>LGPLv3+</license>
+		<author>Oxygen Icons</author>
+		<license>GNU LGPL v3</license>
 		<source>scalable/status/dialog-information.svg</source>
-		<comment></comment>
+	</resource>
+	<resource path="resize.png">
+		<author>Oxygen Icons</author>
+		<license>GNU LGPL v3</license>
+		<source>https://github.com/kamalx/oxygen-icons-svg/blob/master/icons/actions/transform-scale.svg</source>
 	</resource>
 	<resource path="author-22.png">
 		<author>www.svgrepo.com</author>
 		<license>Public Domain</license>
 		<source>https://www.svgrepo.com/svg/24604/user</source>
-		<comment></comment>
 	</resource>
 	<resource path="license-22.png">
 		<author>www.svgrepo.com</author>
 		<license>Public Domain</license>
 		<source>https://www.svgrepo.com/svg/112407/license</source>
-		<comment></comment>
 	</resource>
 </resources>
