@@ -74,7 +74,6 @@ root_data_file_names = [
 	"LICENSE",
 	"_license-dialog",
 	"Dockerfile",
-	"pyglossary.pyw",
 	"pyproject.toml",
 	"help",
 	"AUTHORS",
