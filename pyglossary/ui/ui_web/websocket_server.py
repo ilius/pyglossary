@@ -286,7 +286,7 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 	def _disconnect_clients_gracefully(
 		self,
 		status=CLOSE_STATUS_NORMAL,
-		reason=DEFAULT_CLOSE_REASON
+		reason=DEFAULT_CLOSE_REASON,
 	):
 		"""Terminate clients gracefully without shutting down the server."""
 		for client in self.clients:

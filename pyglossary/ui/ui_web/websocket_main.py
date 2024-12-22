@@ -61,9 +61,7 @@ def new_client(client, server):
 
 # Called on client disconnecting
 def client_left(client, server):
-	log.info(
-		f'{server}: Client({(client and client.get("id")) or -1}) disconnected'
-	)
+	log.info(f'{server}: Client({(client and client.get("id")) or -1}) disconnected')
 
 
 # Callback invoked when client sends a message
