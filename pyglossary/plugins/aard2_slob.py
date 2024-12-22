@@ -94,7 +94,6 @@ extraDocs = [
 ]
 
 t_created_at = "created.at"
-t_converted_at = "converted.at"
 t_label = "label"
 t_created_by = "created.by"
 t_copyright = "copyright"
@@ -102,7 +101,6 @@ t_license_name = "license.name"
 t_license_url = "license.url"
 t_uri = "uri"
 t_edition = "edition"
-t_python = "version.python"
 
 supported_tags = {
 	t_label,
@@ -320,12 +318,6 @@ class Writer:
 		# setting the tag allows bookmark & history migration, if dict file is updated
 		# we use source filename as "uri", since it is stable (most likely)
 		slobWriter.tag(t_uri, dic_uri)
-
-		# import sys
-		# slobWriter.tag(t_python, sys.version)
-
-		# from datetime import datetime, timezone
-		# slobWriter.tag(t_converted_at, datetime.now(timezone.utc).isoformat())
 
 		return slobWriter
 
