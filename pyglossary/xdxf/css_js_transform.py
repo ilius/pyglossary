@@ -18,7 +18,6 @@ __all__ = [
 class XdxfTransformer:
 	def __init__(self, encoding: str = "utf-8") -> None:
 		self._encoding = encoding
-		self.logging_enabled = False
 		self._childTagWriteMapping = {
 			"br": self._write_br,
 			"u": self._write_basic_format,
@@ -222,8 +221,6 @@ class XdxfTransformer:
 		hf.write(ET.Element("br"))
 
 	def _write_k(self, hf: T_htmlfile, child: Element) -> None:
-		self.logging_enabled = child.text == "iść"
-
 		index = child.getparent().index(child)
 		if index == 0:
 			with hf.element("div", attrib={"class": child.tag}):
