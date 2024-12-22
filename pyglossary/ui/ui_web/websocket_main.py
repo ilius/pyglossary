@@ -30,6 +30,7 @@ from pathlib import Path
 
 from pyglossary.glossary_types import EntryType
 from pyglossary.glossary_v2 import Glossary
+from pyglossary.ui.ui_web.weblog import WebLogHandler
 from pyglossary.ui.ui_web.websocket_handler import HTTPWebSocketHandler
 from pyglossary.ui.ui_web.websocket_server import HttpWebsocketServer
 
@@ -180,6 +181,7 @@ def create_server(host: str, port: int):
 		host=host,
 		port=port,
 	)
+	log.addHandler(WebLogHandler(server))
 	server.set_fn_new_client(new_client)
 	server.set_fn_client_left(client_left)
 	server.set_fn_message_received(message_received)

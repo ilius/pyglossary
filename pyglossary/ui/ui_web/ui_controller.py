@@ -11,6 +11,7 @@ from pyglossary.ui.base import UIBase
 from pyglossary.ui.ui_web.websocket_main import create_server
 
 log = logging.getLogger("pyglossary.web")
+
 HOST = "127.0.0.1"
 PORT = 1984
 
