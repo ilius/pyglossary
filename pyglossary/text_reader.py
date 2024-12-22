@@ -135,10 +135,9 @@ class TextGlossaryReader:
 		for _ in self._openGen(filename):
 			pass
 
-	def open(self, filename: str) -> Iterator[tuple[int, int]] | None:
+	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._open(filename)
-		return None
 
 	def openGen(self, filename: str) -> Iterator[tuple[int, int]]:
 		"""
