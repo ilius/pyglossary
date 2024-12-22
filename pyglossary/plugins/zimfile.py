@@ -174,6 +174,7 @@ class Reader:
 				mimetype = zItem.mimetype
 			except RuntimeError:
 				invalidMimeTypeCount += 1
+				mimetype = ""
 				yield glos.newDataEntry(word, b_content)
 
 			if mimetype == "undefined":
