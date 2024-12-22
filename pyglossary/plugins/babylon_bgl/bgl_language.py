@@ -133,7 +133,6 @@ class BabylonLanguage:
 	name: str
 	encoding: str
 	code: int
-	code2: str = ""
 	name2: str = ""
 
 
@@ -142,354 +141,296 @@ languages = (
 		name="English",
 		encoding="cp1252",
 		code=0x00,
-		code2="en",
 	),
 	BabylonLanguage(
 		name="French",
 		encoding="cp1252",
 		code=0x01,
-		code2="fr",
 	),
 	BabylonLanguage(
 		name="Italian",
 		encoding="cp1252",
 		code=0x02,
-		code2="it",
 	),
 	BabylonLanguage(
 		name="Spanish",
 		encoding="cp1252",
 		code=0x03,
-		code2="es",
 	),
 	BabylonLanguage(
 		name="Dutch",
 		encoding="cp1252",
 		code=0x04,
-		code2="nl",
 	),
 	BabylonLanguage(
 		name="Portuguese",
 		encoding="cp1252",
 		code=0x05,
-		code2="pt",
 	),
 	BabylonLanguage(
 		name="German",
 		encoding="cp1252",
 		code=0x06,
-		code2="de",
 	),
 	BabylonLanguage(
 		name="Russian",
 		encoding="cp1251",
 		code=0x07,
-		code2="ru",
 	),
 	BabylonLanguage(
 		name="Japanese",
 		encoding="cp932",
 		code=0x08,
-		code2="ja",
 	),
 	BabylonLanguage(
 		name="Chinese",
 		name2="Traditional Chinese",
 		encoding="cp950",
 		code=0x09,
-		code2="zh",
 	),
 	BabylonLanguage(
 		name="Chinese",
 		name2="Simplified Chinese",
 		encoding="cp936",
 		code=0x0A,
-		code2="zh",
 	),
 	BabylonLanguage(
 		name="Greek",
 		encoding="cp1253",
 		code=0x0B,
-		code2="el",
 	),
 	BabylonLanguage(
 		name="Korean",
 		encoding="cp949",
 		code=0x0C,
-		code2="ko",
 	),
 	BabylonLanguage(
 		name="Turkish",
 		encoding="cp1254",
 		code=0x0D,
-		code2="tr",
 	),
 	BabylonLanguage(
 		name="Hebrew",
 		encoding="cp1255",
 		code=0x0E,
-		code2="he",
 	),
 	BabylonLanguage(
 		name="Arabic",
 		encoding="cp1256",
 		code=0x0F,
-		code2="ar",
 	),
 	BabylonLanguage(
 		name="Thai",
 		encoding="cp874",
 		code=0x10,
-		code2="th",
 	),
 	BabylonLanguage(
 		name="Other",
 		encoding="cp1252",
 		code=0x11,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Chinese",
 		name2="Other Simplified Chinese dialects",
 		encoding="cp936",
 		code=0x12,
-		code2="zh",  # duplicate
 	),
 	BabylonLanguage(
 		name="Chinese",
 		name2="Other Traditional Chinese dialects",
 		encoding="cp950",
 		code=0x13,
-		code2="zh",  # duplicate
 	),
 	BabylonLanguage(
 		name="Other Eastern-European languages",
 		encoding="cp1250",
 		code=0x14,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Western-European languages",
 		encoding="cp1252",
 		code=0x15,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Russian languages",
 		encoding="cp1251",
 		code=0x16,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Japanese languages",
 		encoding="cp932",
 		code=0x17,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Baltic languages",
 		encoding="cp1257",
 		code=0x18,
-		code2="bat",  # no 2-letter code
 	),
 	BabylonLanguage(
 		name="Other Greek languages",
 		encoding="cp1253",
 		code=0x19,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Korean dialects",
 		encoding="cp949",
 		code=0x1A,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Turkish dialects",
 		encoding="cp1254",
 		code=0x1B,
-		code2="",  # none
 	),
 	BabylonLanguage(
 		name="Other Thai dialects",
 		encoding="cp874",
 		code=0x1C,
-		code2="tai",  # no 2-letter code, and "tha" / "th" is for "Thai"
 	),
 	BabylonLanguage(
 		name="Polish",
 		encoding="cp1250",
 		code=0x1D,
-		code2="pl",
 	),
 	BabylonLanguage(
 		name="Hungarian",
 		encoding="cp1250",
 		code=0x1E,
-		code2="hu",
 	),
 	BabylonLanguage(
 		name="Czech",
 		encoding="cp1250",
 		code=0x1F,
-		code2="cs",
 	),
 	BabylonLanguage(
 		name="Lithuanian",
 		encoding="cp1257",
 		code=0x20,
-		code2="lt",
 	),
 	BabylonLanguage(
 		name="Latvian",
 		encoding="cp1257",
 		code=0x21,
-		code2="lv",
 	),
 	BabylonLanguage(
 		name="Catalan",
 		encoding="cp1252",
 		code=0x22,
-		code2="ca",
 	),
 	BabylonLanguage(
 		name="Croatian",
 		encoding="cp1250",
 		code=0x23,
-		code2="hr",
 	),
 	BabylonLanguage(
 		name="Serbian",
 		encoding="cp1250",
 		code=0x24,
-		code2="sr",
 	),
 	BabylonLanguage(
 		name="Slovak",
 		encoding="cp1250",
 		code=0x25,
-		code2="sk",
 	),
 	BabylonLanguage(
 		name="Albanian",
 		encoding="cp1252",
 		code=0x26,
-		code2="sq",
 	),
 	BabylonLanguage(
 		name="Urdu",
 		encoding="cp1256",
 		code=0x27,
-		code2="ur",
 	),
 	BabylonLanguage(
 		name="Slovenian",
 		encoding="cp1250",
 		code=0x28,
-		code2="sl",
 	),
 	BabylonLanguage(
 		name="Estonian",
 		encoding="cp1252",
 		code=0x29,
-		code2="et",
 	),
 	BabylonLanguage(
 		name="Bulgarian",
 		encoding="cp1250",
 		code=0x2A,
-		code2="bg",
 	),
 	BabylonLanguage(
 		name="Danish",
 		encoding="cp1252",
 		code=0x2B,
-		code2="da",
 	),
 	BabylonLanguage(
 		name="Finnish",
 		encoding="cp1252",
 		code=0x2C,
-		code2="fi",
 	),
 	BabylonLanguage(
 		name="Icelandic",
 		encoding="cp1252",
 		code=0x2D,
-		code2="is",
 	),
 	BabylonLanguage(
 		name="Norwegian",
 		encoding="cp1252",
 		code=0x2E,
-		code2="no",
 	),
 	BabylonLanguage(
 		name="Romanian",
 		encoding="cp1252",
 		code=0x2F,
-		code2="ro",
 	),
 	BabylonLanguage(
 		name="Swedish",
 		encoding="cp1252",
 		code=0x30,
-		code2="sv",
 	),
 	BabylonLanguage(
 		name="Ukrainian",
 		encoding="cp1251",
 		code=0x31,
-		code2="uk",
 	),
 	BabylonLanguage(
 		name="Belarusian",
 		encoding="cp1251",
 		code=0x32,
-		code2="be",
 	),
 	BabylonLanguage(
 		name="Persian",  # aka "Farsi"
 		encoding="cp1256",
 		code=0x33,
-		code2="fa",
 	),
 	BabylonLanguage(
 		name="Basque",
 		encoding="cp1252",
 		code=0x34,
-		code2="eu",
 	),
 	BabylonLanguage(
 		name="Macedonian",
 		encoding="cp1250",
 		code=0x35,
-		code2="mk",
 	),
 	BabylonLanguage(
 		name="Afrikaans",
 		encoding="cp1252",
 		code=0x36,
-		code2="af",
 	),
 	BabylonLanguage(
 		# Babylon Glossary Builder spells this language "Faeroese"
 		name="Faroese",
 		encoding="cp1252",
 		code=0x37,
-		code2="fo",
 	),
 	BabylonLanguage(
 		name="Latin",
 		encoding="cp1252",
 		code=0x38,
-		code2="la",
 	),
 	BabylonLanguage(
 		name="Esperanto",
 		encoding="cp1254",
 		code=0x39,
-		code2="eo",
 	),
 	BabylonLanguage(
 		name="Tamazight",
@@ -497,25 +438,21 @@ languages = (
 		# or "Standard Moroccan Amazigh"
 		encoding="cp1252",
 		code=0x3A,
-		code2="zgh",  # no 2-letter code (ISO 639-1)
 	),
 	BabylonLanguage(
 		name="Armenian",
 		encoding="cp1252",
 		code=0x3B,
-		code2="hy",
 	),
 	BabylonLanguage(
 		name="Hindi",
 		encoding="cp1252",
 		code=0x3C,
-		code2="hi",
 	),
 	BabylonLanguage(
 		name="Somali",
 		encoding="cp1252",
 		code=0x3D,
-		code2="so",
 	),
 )
 languageByCode = {lang.code: lang for lang in languages}
