@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+from os.path import join
 from typing import TYPE_CHECKING, Any
 
-from pyglossary import os_utils
 from pyglossary.flags import ALWAYS
 from pyglossary.option import (
 	BoolOption,
@@ -216,6 +217,12 @@ def _uniqueList(lst: Sequence[str]) -> list[str]:
 	return result
 
 
+def _compilePat(pattern: str) -> re.Pattern | None:
+	if not pattern:
+		return None
+	return re.compile(pattern)
+
+
 class Writer:
 	depends = {
 		"bs4": "beautifulsoup4",
@@ -241,6 +248,21 @@ class Writer:
 		# HTML, but it doesn't seem widely used. So here we also strip HTML
 		# formatting for simplicity.
 		glos.removeHtmlTagsAll()
+		self.delete_word_pattern = _compilePat(self._delete_word_pattern)
+		self.ignore_word_with_pattern = _compilePat(self._ignore_word_with_pattern)
+		self.alternates_from_word_pattern = _compilePat(
+			self._alternates_from_word_pattern
+		)
+		self.alternates_from_defi_pattern = _compilePat(
+			self._alternates_from_defi_pattern
+		)
+		self.rules = [
+			(_compilePat(self._rule_v1_defi_pattern), "v1"),
+			(_compilePat(self._rule_v5_defi_pattern), "v5"),
+			(_compilePat(self._rule_vs_defi_pattern), "vs"),
+			(_compilePat(self._rule_vk_defi_pattern), "vk"),
+			(_compilePat(self._rule_adji_defi_pattern), "adj-i"),
+		]
 
 	def _getInfo(self, key: str) -> str:
 		info = self._glos.getInfo(key)
@@ -262,52 +284,36 @@ class Writer:
 			"description": self._getInfo("description"),
 		}
 
-	def _compileRegex(self) -> None:
-		for field_name in (
-			"_delete_word_pattern",
-			"_ignore_word_with_pattern",
-			"_alternates_from_word_pattern",
-			"_alternates_from_defi_pattern",
-			"_rule_v1_defi_pattern",
-			"_rule_v5_defi_pattern",
-			"_rule_vs_defi_pattern",
-			"_rule_vk_defi_pattern",
-			"_rule_adji_defi_pattern",
-		):
-			value = getattr(self, field_name)
-			if value and isinstance(value, str):
-				setattr(self, field_name, re.compile(value))
-
 	def _getExpressionsAndReadingFromEntry(
 		self,
 		entry: EntryType,
 	) -> tuple[list[str], str]:
-		term_expressions = list(entry.l_word)
-		if self._alternates_from_word_pattern:
-			for word in entry.l_word:
-				term_expressions += re.findall(
-					self._alternates_from_word_pattern,
-					word,
-				)
+		term_expressions = entry.l_word
 
-		if self._alternates_from_defi_pattern:
-			term_expressions += re.findall(
-				self._alternates_from_defi_pattern,
+		alternates_from_word_pattern = self.alternates_from_word_pattern
+		if alternates_from_word_pattern:
+			for word in entry.l_word:
+				term_expressions += alternates_from_word_pattern.findall(word)
+
+		if self.alternates_from_defi_pattern:
+			term_expressions += self.alternates_from_defi_pattern.findall(
 				entry.defi,
 				re.MULTILINE,
 			)
 
-		if self._delete_word_pattern:
+		delete_word_pattern = self.delete_word_pattern
+		if delete_word_pattern:
 			term_expressions = [
-				re.sub(self._delete_word_pattern, "", expression)
+				delete_word_pattern.sub("", expression)
 				for expression in term_expressions
 			]
 
-		if self._ignore_word_with_pattern:
+		ignore_word_with_pattern = self.ignore_word_with_pattern
+		if ignore_word_with_pattern:
 			term_expressions = [
 				expression
 				for expression in term_expressions
-				if not re.search(self._ignore_word_with_pattern, expression)
+				if not ignore_word_with_pattern.search(expression)
 			]
 
 		term_expressions = _uniqueList(term_expressions)
@@ -333,15 +339,9 @@ class Writer:
 
 	def _getRuleIdentifiersFromEntry(self, entry: EntryType) -> list[str]:
 		return [
-			r
-			for p, r in (
-				(self._rule_v1_defi_pattern, "v1"),
-				(self._rule_v5_defi_pattern, "v5"),
-				(self._rule_vs_defi_pattern, "vs"),
-				(self._rule_vk_defi_pattern, "vk"),
-				(self._rule_adji_defi_pattern, "adj-i"),
-			)
-			if p and re.search(p, entry.defi, re.MULTILINE)
+			rule
+			for pattern, rule in self.rules
+			if pattern and pattern.search(entry.defi, re.MULTILINE)
 		]
 
 	def _getTermsFromEntry(
@@ -377,41 +377,42 @@ class Writer:
 		self._filename = ""
 
 	def write(self) -> Generator[None, EntryType, None]:
-		with os_utils.indir(self._filename, create=True):
-			with open("index.json", "w", encoding="utf-8") as f:
-				json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)
+		direc = self._filename
 
-			entryCount = 0
-			termBankIndex = 0
-			terms: list[list[Any]] = []
+		os.makedirs(direc, exist_ok=True)
 
-			def flushTerms() -> None:
-				nonlocal termBankIndex
-				if not terms:
-					return
+		with open(join(direc, "index.json"), "w", encoding="utf-8") as f:
+			json.dump(self._getDictionaryIndex(), f, ensure_ascii=False)
 
-				with open(
-					f"term_bank_{termBankIndex + 1}.json",
-					mode="w",
-					encoding="utf-8",
-				) as _file:
-					json.dump(terms, _file, ensure_ascii=False)
+		entryCount = 0
+		termBankIndex = 0
+		terms: list[list[Any]] = []
 
-				terms.clear()
-				termBankIndex += 1
+		def flushTerms() -> None:
+			nonlocal termBankIndex
+			if not terms:
+				return
+			with open(
+				join(direc, f"term_bank_{termBankIndex + 1}.json"),
+				mode="w",
+				encoding="utf-8",
+			) as _file:
+				json.dump(terms, _file, ensure_ascii=False)
+			terms.clear()
+			termBankIndex += 1
 
-			while True:
-				entry: EntryType
-				entry = yield
-				if entry is None:
-					break
+		while True:
+			entry: EntryType
+			entry = yield
+			if entry is None:
+				break
 
-				if entry.isData():
-					continue
+			if entry.isData():
+				continue
 
-				terms.extend(self._getTermsFromEntry(entry, entryCount))
-				entryCount += 1
-				if len(terms) >= self._term_bank_size:
-					flushTerms()
+			terms.extend(self._getTermsFromEntry(entry, entryCount))
+			entryCount += 1
+			if len(terms) >= self._term_bank_size:
+				flushTerms()
 
-			flushTerms()
+		flushTerms()
