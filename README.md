@@ -1,5 +1,9 @@
 # PyGlossary
 
+<p align="center">
+	<img src="res/pyglossary.svg" width="30%" height="30%"></img>
+</p>
+
 A tool for converting dictionary files aka glossaries.
 
 The primary purpose is to be able to use our offline glossaries in any Open
