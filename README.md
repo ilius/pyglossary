@@ -1,7 +1,7 @@
 # PyGlossary
 
 <p align="center">
-	<img src="res/pyglossary.svg" width="30%" height="30%"></img>
+	<img src="res/pyglossary-256x256.png"></img>
 </p>
 
 A tool for converting dictionary files aka glossaries.
