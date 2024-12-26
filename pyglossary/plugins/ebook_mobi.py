@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import os
 from datetime import datetime
-from os.path import join
+from os.path import join, split
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
@@ -375,11 +375,18 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			return
 
 		# name = self._glos.getInfo("name")
-
 		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
-		opf_path_abs = join(filename, "OEBPS", "content.opf")
+		direc, filename = split(filename)
+		cmd = [
+			kindlegen_path,
+			join(filename, "OEBPS", "content.opf"),
+			"-gen_ff_mobi7",
+			"-o",
+			"content.mobi",
+		]
 		proc = subprocess.Popen(
-			[kindlegen_path, opf_path_abs, "-gen_ff_mobi7", "-o", "content.mobi"],
+			cmd,
+			cwd=direc,
 			stdout=subprocess.PIPE,
 			stdin=subprocess.PIPE,
 			stderr=subprocess.PIPE,
