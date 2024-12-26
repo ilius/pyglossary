@@ -27,6 +27,8 @@ from .read_funcs import (
 	read_string,
 )
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	depends = {

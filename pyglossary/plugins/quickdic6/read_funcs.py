@@ -21,6 +21,18 @@ from .commons import (
 	LINKED_HASH_SET_INIT,
 )
 
+__all__ = [
+	"read_entry_html",
+	"read_entry_index",
+	"read_entry_pairs",
+	"read_entry_source",
+	"read_entry_text",
+	"read_int",
+	"read_list",
+	"read_long",
+	"read_string",
+]
+
 
 def read_byte(fp: IO[bytes]) -> int:
 	return struct.unpack(">b", fp.read(1))[0]

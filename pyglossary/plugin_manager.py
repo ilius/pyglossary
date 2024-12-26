@@ -37,7 +37,7 @@ from .glossary_utils import (
 )
 from .plugin_prop import PluginProp
 
-__all__ = ["PluginManager"]
+__all__ = ["DetectedFormat", "PluginManager"]
 
 log = logging.getLogger("pyglossary")
 

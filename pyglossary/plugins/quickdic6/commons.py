@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+__all__ = [
+	"HASH_SET_CAPACITY_FACTOR",
+	"HASH_SET_INIT",
+	"HASH_SET_INIT2",
+	"LINKED_HASH_SET_INIT",
+	"EntryIndexTuple",
+	"IndexEntryType",
+]
+
+
 HASH_SET_INIT = (
 	b"\xac\xed"  # magic
 	b"\x00\x05"  # version

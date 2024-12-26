@@ -24,6 +24,9 @@ from pyglossary.langs.writing_system import getWritingSystemFromText
 from .options import optionsProp
 from .utils import XMLLANG, ReaderUtils
 
+__all__ = ["Reader"]
+
+
 TEI = "{http://www.tei-c.org/ns/1.0}"
 ENTRY = f"{TEI}entry"
 INCLUDE = "{http://www.w3.org/2001/XInclude}include"

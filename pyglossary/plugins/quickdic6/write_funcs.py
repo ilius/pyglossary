@@ -22,6 +22,18 @@ from .commons import (
 	LINKED_HASH_SET_INIT,
 )
 
+__all__ = [
+	"write_entry_html",
+	"write_entry_index",
+	"write_entry_pairs",
+	"write_entry_source",
+	"write_entry_text",
+	"write_int",
+	"write_list",
+	"write_long",
+	"write_string",
+]
+
 
 def write_int(fp: IO[bytes], val: int) -> int:
 	return fp.write(struct.pack(">i", val))

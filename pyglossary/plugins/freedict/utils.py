@@ -14,6 +14,9 @@ from pyglossary.core import log
 from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
 
+__all__ = ["XMLLANG", "ReaderUtils"]
+
+
 XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 

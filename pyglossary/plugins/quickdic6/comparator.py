@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import Literal
 
+__all__ = ["Comparator"]
+
 
 class Comparator:
 	def __init__(self, locale_str: str, normalizer_rules: str, version: int) -> None:

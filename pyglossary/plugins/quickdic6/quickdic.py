@@ -12,6 +12,8 @@ from .comparator import Comparator
 if TYPE_CHECKING:
 	from .commons import EntryIndexTuple, IndexEntryType
 
+__all__ = ["QuickDic"]
+
 
 class QuickDic:
 	def __init__(  # noqa: PLR0913

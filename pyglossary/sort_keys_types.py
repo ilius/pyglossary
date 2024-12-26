@@ -45,7 +45,9 @@ class LocaleSQLiteSortKeyMakerType(Protocol):
 
 
 __all__ = [
+	"LocaleSQLiteSortKeyMakerType",
 	"LocaleSortKeyMakerType",
+	"SQLiteSortKeyMakerType",
 	"SQLiteSortKeyType",
 	"SortKeyMakerType",
 	"SortKeyType",

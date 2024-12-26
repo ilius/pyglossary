@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 
 __all__ = [
+	"TRACE",
 	"StdLogHandler",
 	"format_exception",
 ]

@@ -7,6 +7,9 @@ from pyglossary.option import (
 	StrOption,
 )
 
+__all__ = ["optionsProp"]
+
+
 optionsProp: "dict[str, Option]" = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",

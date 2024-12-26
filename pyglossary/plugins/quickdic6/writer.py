@@ -24,6 +24,9 @@ from .write_funcs import (
 	write_string,
 )
 
+__all__ = ["Writer"]
+
+
 default_de_normalizer_rules = (
 	":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
 )
