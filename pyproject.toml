@@ -427,6 +427,6 @@ dependencies = []
 all = ["PyICU", "lxml", "beautifulsoup4"]
 
 [project.urls]
-"Source code" = "https://github.com/ilius/pyglossary"
+Homepage = "https://github.com/ilius/pyglossary"
+Issues = "https://github.com/ilius/pyglossary/issues"
 Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
-"Issue tracker" = "https://github.com/ilius/pyglossary/issues"
