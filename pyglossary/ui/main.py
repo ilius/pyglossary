@@ -32,7 +32,7 @@ from pyglossary.langs import langDict
 from pyglossary.ui.argparse_main import configFromArgs, defineFlags, validateFlags
 from pyglossary.ui.base import UIBase
 
-__all__ = ["main"]
+__all__ = ["main", "mainNoExit"]
 
 # TODO: move to docs:
 # examples for read and write options:
@@ -266,21 +266,22 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 	)
 
 
-def main() -> None:  # noqa: PLR0912
+def mainNoExit() -> bool:  # noqa: PLR0912
 	ok, res = mainPrepare()
-	if res is None:
-		sys.exit(0 if ok else 1)
-	# import pprint;pprint.pprint(res)
+	if not ok:
+		return False
+	if res is None:  # --version or --help
+		return True
 
 	from pyglossary.ui.runner import getRunner
 
 	assert log
 	run = getRunner(res.args, res.uiType, log)
 	if run is None:
-		sys.exit(1)
+		return False
 
 	try:
-		ok = run(
+		return run(
 			inputFilename=res.inputFilename,
 			outputFilename=res.outputFilename,
 			inputFormat=res.inputFormat,
@@ -294,5 +295,8 @@ def main() -> None:  # noqa: PLR0912
 		)
 	except KeyboardInterrupt:
 		log.error("Cancelled")
-		ok = False
-	sys.exit(0 if ok else 1)
+		return False
+
+
+def main() -> None:
+	sys.exit(int(not mainNoExit()))
