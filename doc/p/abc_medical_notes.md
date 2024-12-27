@@ -2,20 +2,20 @@
 
 ### General Information
 
-| Attribute       | Value                                                                                                                  |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Name            | ABCMedicalNotes                                                                                                        |
-| snake_case_name | abc_medical_notes                                                                                                      |
-| Description     | ABC Medical Notes (SQLite3)                                                                                            |
-| Extensions      |                                                                                                                        |
-| Read support    | Yes                                                                                                                    |
-| Write support   | No                                                                                                                     |
-| Single-file     | Yes                                                                                                                    |
-| Kind            | 🔢 binary                                                                                                               |
-| Sort-on-write   | default_no                                                                                                             |
-| Sort key        | (`headword_lower`)                                                                                                     |
-| Wiki            | ―                                                                                                                      |
-| Website         | [ABC Medical Notes 2021 - Google Play](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) |
+| Attribute       | Value                                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Name            | ABCMedicalNotes                                                                                                           |
+| snake_case_name | abc_medical_notes                                                                                                         |
+| Description     | ABC Medical Notes (SQLite3)                                                                                               |
+| Extensions      |                                                                                                                           |
+| Read support    | Yes                                                                                                                       |
+| Write support   | No                                                                                                                        |
+| Single-file     | Yes                                                                                                                       |
+| Kind            | 🔢 binary                                                                                                                  |
+| Sort-on-write   | default_no                                                                                                                |
+| Sort key        | (`headword_lower`)                                                                                                        |
+| Wiki            | ―                                                                                                                         |
+| Website         | [Makindo Medical Reference - Google Play](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) |
 
 ### Dictionary Applications/Tools
 

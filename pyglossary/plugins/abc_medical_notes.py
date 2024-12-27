@@ -38,7 +38,7 @@ wiki = ""
 _url = "https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp"
 website = (
 	_url,
-	"ABC Medical Notes 2021 - Google Play",
+	"Makindo Medical Reference - Google Play",
 )
 optionsProp: dict[str, Option] = {}
 
