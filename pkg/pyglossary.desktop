@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=PyGlossary
+GenericName=Glossary Converter
+Comment=Working on glossaries
+Exec=pyglossary
+Terminal=false
+Type=Application
+StartupNotify=true
+Icon=pyglossary
+Categories=Education;
+X-GNOME-FullName=Glossary Converter
