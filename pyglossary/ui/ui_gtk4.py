@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 import traceback
 from os.path import abspath, isfile
 from typing import TYPE_CHECKING, Any
@@ -1493,7 +1492,7 @@ check {
 
 	def exitApp(self):
 		self.destroy()
-		sys.exit(0)
+		# unlike Gtk3, no need for sys.exit or gtk.main_quit (which does not exist)
 
 	def onCloseRequest(self, _widget):
 		self.exitApp()

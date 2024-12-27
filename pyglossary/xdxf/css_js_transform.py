@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
@@ -177,7 +176,7 @@ class XdxfTransformer:
 
 	def _write_ex_orig(self, hf: T_htmlfile, child: Element) -> None:
 		# TODO NOT REACHABLE
-		sys.exit("NOT REACHABLE")
+		log.warning("---- _write_ex_orig")
 		with hf.element("i"):
 			self.writeChildrenOf(hf, child)
 

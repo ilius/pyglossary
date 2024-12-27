@@ -79,7 +79,7 @@ def run(filename: str) -> None:
 	log.info("Jing check successfully passed!")
 
 
-def main() -> None:
+def main() -> int:
 	"""
 	Run Jing test on given dictionary XML file with Apple Dictionary Schema.
 	It's a command-line utility.
@@ -87,9 +87,10 @@ def main() -> None:
 	if len(sys.argv) < 2:
 		prog_name = path.basename(sys.argv[0])
 		log.info(f"usage:\n  {prog_name} filename")
-		sys.exit(1)
+		return 1
 	try:
 		run(sys.argv[1])
+		return 0
 	except JingTestError as e:
 		log.fatal(str(e))
-		sys.exit(e.returncode)
+		return e.returncode

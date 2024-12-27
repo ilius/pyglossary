@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 import traceback
 from os.path import abspath, isfile
 from typing import TYPE_CHECKING, Any
@@ -1424,7 +1423,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# if called while converting, main_quit does not exit program,
 		# it keeps printing warnings,
 		# and makes you close the terminal or force kill the process
-		sys.exit(0)
+		gtk.main_quit()
 
 	def consoleClearButtonClicked(self, _widget=None):
 		self.convertConsoleTextview.get_buffer().set_text("")

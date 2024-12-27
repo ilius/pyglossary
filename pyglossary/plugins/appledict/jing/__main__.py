@@ -18,4 +18,4 @@ console_output_handler.setFormatter(
 log.addHandler(console_output_handler)
 log.setLevel(logging.INFO)
 
-main.main()
+sys.exit(main.main())
