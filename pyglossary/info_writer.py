@@ -21,6 +21,10 @@ class InfoWriter:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.TextIOBase = nullTextIO
+		self._writeOptions: dict[str, Any] | None = None
+
+	def setWriteOptions(self, options: dict[str, Any]) -> None:
+		self._writeOptions = options
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -133,5 +137,7 @@ class InfoWriter:
 			f"{defiFormat}={count}"
 			for defiFormat, count in sourceScriptCounter.most_common()
 		)
+		if self._writeOptions is not None:
+			info["write_options"] = self._writeOptions
 		info["read_options"] = glos.readOptions
 		self._file.write(dataToPrettyJson(info) + "\n")

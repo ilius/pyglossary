@@ -890,6 +890,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self,
 		writerList: list[Any],
 		filename: str,
+		options: dict[str, Any],
 	) -> None:
 		writer = writerList[0]
 		genList = []
@@ -903,6 +904,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			from pyglossary.info_writer import InfoWriter
 
 			infoWriter = InfoWriter(cast("GlossaryType", self))
+			infoWriter.setWriteOptions(options)
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
 			genList.append(infoWriter.write())
@@ -969,7 +971,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		writerList = [writer]
 		try:
-			self._writeEntries(writerList, filename)
+			self._writeEntries(writerList, filename, options)
 		except (FileNotFoundError, LookupError) as e:
 			raise WriteError(str(e)) from e
 		finally:
