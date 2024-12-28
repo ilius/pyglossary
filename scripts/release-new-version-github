@@ -1,0 +1,61 @@
+#!/bin/bash
+set -e
+
+function yes_or_no {
+	while true; do
+		read -p "$* [y/n]: " yn
+		case $yn in
+		[Yy]*) return 0 ;;
+		[Nn]*)
+			echo "Aborted"
+			return 1
+			;;
+		esac
+	done
+}
+
+# function pip-has-version() {
+# 	pip $PIP_OPTS index versions pyglossary --pre --ignore-requires-python | grep "$1,"
+# }
+
+CUR_VERSION=$($(dirname $0)/version-core)
+
+VERSION=$1
+if [ -z $VERSION ]; then
+	echo "Usage: $0 VERSION"
+	echo "Current version: $CUR_VERSION"
+	exit 1
+fi
+
+set -x
+
+$(dirname $0)/version-set.py $VERSION
+
+git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
+git commit -m "version $VERSION" || echo "------ Already committed"
+git -p show || true
+git -p log || true
+
+echo "Pushing to origin..."
+git push
+
+echo "Waiting for pypi release..."
+while ! pip $PIP_OPTS install pyglossary==$VERSION; do
+	sleep 5
+done
+
+echo "-------------- Check version in GUI: --------------"
+
+~/.local/bin/pyglossary
+
+yes_or_no "Continue creating the release?" || exit 1
+
+echo "Creating tag $VERSION"
+git tag -a -m "version $VERSION" $VERSION
+
+echo "Pushing tag to origin..."
+git push origin $VERSION
+
+MD_PATH=$(realpath $(dirname $0)/../doc/releases/$VERSION.md)
+git log --pretty='%h %s' --reverse $CUR_VERSION..$VERSION >$MD_PATH
+echo "Created $MD_PATH"
