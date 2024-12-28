@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 function yes_or_no {
 	while true; do
@@ -15,11 +14,16 @@ function yes_or_no {
 	done
 }
 
+CUR_VERSION=$($(dirname $0)/version-core)
+
 VERSION=$1
 if [ -z $VERSION ]; then
 	echo "Usage: $0 VERSION"
+	echo "Current version: $CUR_VERSION"
 	exit 1
 fi
+
+set -x
 
 $(dirname $0)/version-set.py $VERSION
 
@@ -35,7 +39,7 @@ echo "-------------- Check version in GUI: --------------"
 
 yes_or_no "Continue creating the release?" || exit 1
 
-git add setup.py pyglossary/core.py pyproject.toml
+git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
 git commit -m "version $VERSION" || echo "------ Already committed"
 git -p show || true
 git -p log || true
