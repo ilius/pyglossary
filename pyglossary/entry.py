@@ -12,6 +12,8 @@ from os.path import (
 )
 from typing import TYPE_CHECKING
 
+from msgpack import loads
+
 from .entry_base import BaseEntry, MultiStr
 from .iter_utils import unique_everseen
 from .text_utils import joinByBar
@@ -202,7 +204,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 	) -> Callable[[RawEntryType], Any]:
 		def newKey(x: RawEntryType) -> Any:  # noqa: ANN401
 			# x is rawEntry, so x[2:] is list[bytes]: list of words in bytes
-			return key([b.decode("utf-8") for b in x[2:]])  # type: ignore
+			return key([b.decode("utf-8") for b in loads(x)[2:]])  # type: ignore
 
 		return newKey
 

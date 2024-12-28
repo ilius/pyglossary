@@ -111,10 +111,10 @@ class SqEntryList:
 		return self._len
 
 	def _encode(self, entry: EntryType) -> bytes:
-		return b"\x00".join(self._entryToRaw(entry))
+		return self._entryToRaw(entry)
 
 	def _decode(self, data: bytes) -> EntryType:
-		return self._entryFromRaw(data.split(b"\x00"))
+		return self._entryFromRaw(data)
 
 	def append(self, entry: EntryType) -> None:
 		self._cur.execute(  # type: ignore

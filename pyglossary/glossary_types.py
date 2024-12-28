@@ -4,7 +4,6 @@ import typing
 from collections.abc import (
 	Callable,
 	Iterator,
-	Sequence,
 )
 
 # -*- coding: utf-8 -*-
@@ -33,7 +32,7 @@ MultiStr: TypeAlias = "str | list[str]"
 # str(rawEntry[0]): defiFormat or ""
 # rawEntry[1]: b_defi
 # rawEntry[2:]: b_word_list
-RawEntryType: TypeAlias = Sequence[bytes]
+RawEntryType: TypeAlias = bytes
 
 
 class EntryType(typing.Protocol):  # noqa: PLR0904

@@ -34,6 +34,8 @@ from time import perf_counter as now
 from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 
+from msgpack import dumps, loads
+
 from . import core
 from .core import (
 	cacheDir,
@@ -243,7 +245,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		b_fpath = b""
 		if self.tmpDataDir:
 			b_fpath = entry.save(self.tmpDataDir).encode("utf-8")
-		return (b"b", b_fpath, entry.getFileName().encode("utf-8"))
+		return dumps([b"b", b_fpath, entry.getFileName().encode("utf-8")])
 
 	def _entryToRaw(self, entry: EntryType) -> RawEntryType:
 		"""
@@ -257,9 +259,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		if defiFormat is None or defiFormat == self._defaultDefiFormat:
 			defiFormat = ""
 
-		return [defiFormat.encode("ascii"), entry.b_defi] + entry.lb_word
+		return dumps([defiFormat.encode("ascii"), entry.b_defi] + entry.lb_word)
 
-	def _entryFromRaw(self, rawEntry: RawEntryType) -> EntryType:
+	def _entryFromRaw(self, rawEntrBytes: RawEntryType) -> EntryType:
+		rawEntry = loads(rawEntrBytes)
 		defiFormat = rawEntry[0].decode("ascii") or self._defaultDefiFormat
 		defi = rawEntry[1].decode("utf-8")
 
