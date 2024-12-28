@@ -28,7 +28,7 @@ jobs:
                   python -m pip install mdformat==0.7.18
             - name: Format .md files
               run: |
-                  find . -name '*.md' | xargs mdformat
+                  find . -name '*.md' | grep -v '/__' | xargs mdformat
             - name: Check for changes
               run: |
                   CHANGES=$(git diff --name-only HEAD --)

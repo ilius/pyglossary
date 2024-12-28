@@ -156,6 +156,14 @@ def renderTable(rows):
 	return "\n".join(["| " + " | ".join(row) + " |" for row in rows])
 
 
+def renderTableNoPadding(rows):
+	"""rows[0] must be headers."""
+	rows = [[renderCell(cell) for cell in row] for row in rows]
+	width = [len(x) for x in rows[0]]
+	rows.insert(1, ["-" * colWidth for colWidth in width])
+	return "\n".join(["| " + " | ".join(row) + " |" for row in rows])
+
+
 def renderRWOptions(options):
 	return renderTable(
 		[("Name", "Default", "Type", "Comment")]
@@ -336,7 +344,7 @@ for p in plugins:
 	) as _file:
 		_file.write(text)
 
-indexText = renderTable(
+indexText = renderTableNoPadding(
 	[("Description", "Name", "Doc Link")]
 	+ [
 		(
