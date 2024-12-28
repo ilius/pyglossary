@@ -1,7 +1,6 @@
 | Description | Name | Doc Link |
 | ----------- | ---- | -------- |
 | Aard 2 (.slob) | Aard2Slob | [aard2_slob.md](./aard2_slob.md) |
-| ABC Medical Notes (SQLite3) | ABCMedicalNotes | [abc_medical_notes.md](./abc_medical_notes.md) |
 | Almaany.com (SQLite3) | Almaany | [almaany.md](./almaany.md) |
 | AppleDict Source | AppleDict | [appledict.md](./appledict.md) |
 | AppleDict Binary | AppleDictBin | [appledict_bin.md](./appledict_bin.md) |
@@ -33,6 +32,7 @@
 | JMnedict | JMnedict | [jmnedict.md](./jmnedict.md) |
 | JSON (.json) | Json | [json.md](./json.md) |
 | Lingoes Source (.ldf) | LingoesLDF | [lingoes_ldf.md](./lingoes_ldf.md) |
+| Makindo Medical Reference (SQLite3) | MakindoMedical | [makindo_medical.md](./makindo_medical.md) |
 | Octopus MDict (.mdx) | OctopusMdict | [octopus_mdict.md](./octopus_mdict.md) |
 | QuickDic version 6 (.quickdic) | QuickDic6 | [quickdic6.md](./quickdic6.md) |
 | SQL (.sql) | Sql | [sql.md](./sql.md) |

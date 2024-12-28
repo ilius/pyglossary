@@ -1,12 +1,12 @@
-## ABC Medical Notes (SQLite3)
+## Makindo Medical Reference (SQLite3)
 
 ### General Information
 
 | Attribute       | Value                                                                                           |
 | --------------- | ----------------------------------------------------------------------------------------------- |
-| Name            | ABCMedicalNotes                                                                                 |
-| snake_case_name | abc_medical_notes                                                                               |
-| Description     | ABC Medical Notes (SQLite3)                                                                     |
+| Name            | MakindoMedical                                                                                  |
+| snake_case_name | makindo_medical                                                                                 |
+| Description     | Makindo Medical Reference (SQLite3)                                                             |
 | Extensions      |                                                                                                 |
 | Read support    | Yes                                                                                             |
 | Write support   | No                                                                                              |

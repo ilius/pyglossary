@@ -27,9 +27,9 @@ __all__ = [
 ]
 
 enable = True
-lname = "abc_medical_notes"
-name = "ABCMedicalNotes"
-description = "ABC Medical Notes (SQLite3)"
+lname = "makindo_medical"
+name = "MakindoMedical"
+description = "Makindo Medical Reference (SQLite3)"
 extensions = ()
 extensionCreate = ".db"
 singleFile = True
