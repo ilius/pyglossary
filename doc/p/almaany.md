@@ -12,7 +12,7 @@
 | Write support   | No                                                                                                            |
 | Single-file     | Yes                                                                                                           |
 | Kind            | 🔢 binary                                                                                                      |
-| Sort-on-write   | default_no                                                                                                    |
+| Sort-on-write   | No (by default)                                                                                               |
 | Sort key        | (`headword_lower`)                                                                                            |
 | Wiki            | ―                                                                                                             |
 | Website         | [Almaany.com Arabic Dictionary - Google Play](https://play.google.com/store/apps/details?id=com.almaany.arar) |

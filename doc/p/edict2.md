@@ -12,7 +12,7 @@
 | Write support   | No                                             |
 | Single-file     | Yes                                            |
 | Kind            | 📝 text                                         |
-| Sort-on-write   | default_no                                     |
+| Sort-on-write   | No (by default)                                |
 | Sort key        | (`headword_lower`)                             |
 | Wiki            | [CEDICT](https://en.wikipedia.org/wiki/CEDICT) |
 | Website         | ―                                              |

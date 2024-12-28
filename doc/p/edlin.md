@@ -12,7 +12,7 @@
 | Write support   | Yes                |
 | Single-file     | No                 |
 | Kind            | 📁 directory        |
-| Sort-on-write   | default_no         |
+| Sort-on-write   | No (by default)    |
 | Sort key        | (`headword_lower`) |
 | Wiki            | ―                  |
 | Website         | ―                  |

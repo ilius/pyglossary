@@ -12,7 +12,7 @@
 | Write support   | No                                                               |
 | Single-file     | Yes                                                              |
 | Kind            | 📝 text                                                           |
-| Sort-on-write   | default_no                                                       |
+| Sort-on-write   | No (by default)                                                  |
 | Sort key        | (`headword_lower`)                                               |
 | Wiki            | [JMdict](https://en.wikipedia.org/wiki/JMdict)                   |
 | Website         | [The JMDict Project](https://www.edrdg.org/jmdict/j_jmdict.html) |

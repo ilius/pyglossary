@@ -12,7 +12,7 @@
 | Write support   | Yes                                        |
 | Single-file     | Yes                                        |
 | Kind            | 📦 package                                  |
-| Sort-on-write   | always                                     |
+| Sort-on-write   | Always                                     |
 | Sort key        | `ebook`                                    |
 | Wiki            | [EPUB](https://en.wikipedia.org/wiki/EPUB) |
 | Website         | ―                                          |

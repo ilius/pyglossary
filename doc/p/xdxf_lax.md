@@ -12,7 +12,7 @@
 | Write support   | No                                                                                                             |
 | Single-file     | Yes                                                                                                            |
 | Kind            | 📝 text                                                                                                         |
-| Sort-on-write   | default_no                                                                                                     |
+| Sort-on-write   | No (by default)                                                                                                |
 | Sort key        | (`headword_lower`)                                                                                             |
 | Wiki            | [XDXF](https://en.wikipedia.org/wiki/XDXF)                                                                     |
 | Website         | [XDXF standard - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/tree/master/format_standard) |

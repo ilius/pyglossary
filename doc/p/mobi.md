@@ -12,7 +12,7 @@
 | Write support   | Yes                                                    |
 | Single-file     | No                                                     |
 | Kind            | 📦 package                                              |
-| Sort-on-write   | default_yes                                            |
+| Sort-on-write   | Yes (by default)                                       |
 | Sort key        | `ebook`                                                |
 | Wiki            | [Mobipocket](https://en.wikipedia.org/wiki/Mobipocket) |
 | Website         | ―                                                      |

@@ -12,7 +12,7 @@
 | Write support   | Yes                                                                          |
 | Single-file     | No                                                                           |
 | Kind            | 📁 directory                                                                  |
-| Sort-on-write   | default_no                                                                   |
+| Sort-on-write   | No (by default)                                                              |
 | Sort key        | (`headword_lower`)                                                           |
 | Wiki            | [DICT#DICT file format](https://en.wikipedia.org/wiki/DICT#DICT_file_format) |
 | Website         | [The DICT Development Group](http://dict.org/bin/Dict)                       |

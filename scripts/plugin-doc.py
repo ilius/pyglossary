@@ -265,7 +265,7 @@ for p in plugins:
 			("Write support", yesNo(p.canWrite)),
 			("Single-file", yesNo(p.singleFile)),
 			("Kind", f"{kindEmoji(module.kind)} {module.kind}"),
-			("Sort-on-write", p.sortOnWrite),
+			("Sort-on-write", p.sortOnWrite.desc),
 			("Sort key", sortKeyName(p)),
 			("Wiki", wiki_md),
 			("Website", website_md),

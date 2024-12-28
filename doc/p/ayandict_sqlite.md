@@ -12,7 +12,7 @@
 | Write support   | Yes                                                 |
 | Single-file     | Yes                                                 |
 | Kind            | 🔢 binary                                            |
-| Sort-on-write   | default_no                                          |
+| Sort-on-write   | No (by default)                                     |
 | Sort key        | (`headword_lower`)                                  |
 | Wiki            | ―                                                   |
 | Website         | [ilius/ayandict](https://github.com/ilius/ayandict) |

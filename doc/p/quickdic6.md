@@ -12,7 +12,7 @@
 | Write support   | Yes                                                                            |
 | Single-file     | Yes                                                                            |
 | Kind            | 🔢 binary                                                                       |
-| Sort-on-write   | never                                                                          |
+| Sort-on-write   | Never                                                                          |
 | Sort key        | (`headword_lower`)                                                             |
 | Wiki            | ―                                                                              |
 | Website         | [github.com/rdoeffinger/Dictionary](https://github.com/rdoeffinger/Dictionary) |

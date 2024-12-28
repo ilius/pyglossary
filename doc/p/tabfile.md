@@ -12,7 +12,7 @@
 | Write support   | Yes                                                                        |
 | Single-file     | Yes                                                                        |
 | Kind            | 📝 text                                                                     |
-| Sort-on-write   | default_no                                                                 |
+| Sort-on-write   | No (by default)                                                            |
 | Sort key        | (`headword_lower`)                                                         |
 | Wiki            | [Tab-separated values](https://en.wikipedia.org/wiki/Tab-separated_values) |
 | Website         | ―                                                                          |
