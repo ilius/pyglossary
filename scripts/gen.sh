@@ -4,7 +4,7 @@ set -e
 myDir1=$(dirname "$0")
 
 # to handle rename of a plugin:
-rm $myDir1/../doc/p/*.md
+rm $myDir1/../doc/p/*.md || true
 
 set -x
 

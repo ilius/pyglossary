@@ -12,8 +12,6 @@
 | Write support   | No                                                                                              |
 | Single-file     | Yes                                                                                             |
 | Kind            | 🔢 binary                                                                                        |
-| Sort-on-write   | No (by default)                                                                                 |
-| Sort key        | (`headword_lower`)                                                                              |
 | Wiki            | ―                                                                                               |
 | Website         | [Makindo.co.uk Comprehensive Medical Encyclopedia](https://www.makindo.co.uk/topics/_index.php) |
 

@@ -2,20 +2,18 @@
 
 ### General Information
 
-| Attribute       | Value              |
-| --------------- | ------------------ |
-| Name            | BabylonBgl         |
-| snake_case_name | babylon_bgl        |
-| Description     | Babylon (.BGL)     |
-| Extensions      | `.bgl`             |
-| Read support    | Yes                |
-| Write support   | No                 |
-| Single-file     | Yes                |
-| Kind            | 🔢 binary           |
-| Sort-on-write   | No (by default)    |
-| Sort key        | (`headword_lower`) |
-| Wiki            | ―                  |
-| Website         | ―                  |
+| Attribute       | Value          |
+| --------------- | -------------- |
+| Name            | BabylonBgl     |
+| snake_case_name | babylon_bgl    |
+| Description     | Babylon (.BGL) |
+| Extensions      | `.bgl`         |
+| Read support    | Yes            |
+| Write support   | No             |
+| Single-file     | Yes            |
+| Kind            | 🔢 binary       |
+| Wiki            | ―              |
+| Website         | ―              |
 
 ### Read options
 

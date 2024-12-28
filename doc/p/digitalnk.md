@@ -12,8 +12,6 @@
 | Write support   | No                                                       |
 | Single-file     | Yes                                                      |
 | Kind            | 🔢 binary                                                 |
-| Sort-on-write   | No (by default)                                          |
-| Sort key        | (`headword_lower`)                                       |
 | Wiki            | ―                                                        |
 | Website         | [@digitalprk/dicrs](https://github.com/digitalprk/dicrs) |
 
