@@ -35,10 +35,9 @@ extensionCreate = ".db"
 singleFile = True
 kind = "binary"
 wiki = ""
-_url = "https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp"
 website = (
-	_url,
-	"Makindo Medical Reference - Google Play",
+	"https://www.makindo.co.uk/topics/_index.php",
+	"Makindo.co.uk Comprehensive Medical Encyclopedia",
 )
 optionsProp: dict[str, Option] = {}
 
