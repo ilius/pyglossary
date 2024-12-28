@@ -40,4 +40,5 @@ def replaceVar(fname: str, name: str, value: str) -> None:
 		_file.writelines(lines)
 
 
-main()
+if __name__ == "__main__":
+	main()
