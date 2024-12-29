@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from pyglossary import core
 from pyglossary.core import confDir, homeDir
-from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Error, Glossary, GlossaryConvertor
 from pyglossary.text_utils import urlToPath
 
 from .base import (
@@ -935,7 +935,7 @@ class UI(tk.Frame, UIBase):
 		self.biggerFont = defaultFont.copy()
 		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
 		######################
-		self.glos = Glossary(ui=self)
+		self.glos = GlossaryConvertor(ui=self)
 		self.glos.config = self.config
 		self.glos.progressbar = progressbar
 		self._convertOptions = {}

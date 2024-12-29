@@ -26,7 +26,7 @@ from os.path import join
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import dataDir, log
-from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Error, Glossary, GlossaryConvertor
 
 from .base import UIBase, fread
 from .wcwidth import wcswidth
@@ -316,7 +316,7 @@ class UI(UIBase):
 				log.error(f"try: {COMMAND} --help")
 				return False
 
-		glos = self.glos = Glossary(ui=self)
+		glos = self.glos = GlossaryConvertor(ui=self)
 		glos.config = self.config
 		glos.progressbar = self._progressbar
 

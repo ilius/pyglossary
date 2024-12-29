@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, Any
 import gi
 
 from pyglossary import core
-from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Error, Glossary, GlossaryConvertor
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
@@ -1454,7 +1454,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		readOptions = self.convertInputFormatCombo.optionsValues
 		writeOptions = self.convertOutputFormatCombo.optionsValues
 
-		glos = Glossary(ui=self)
+		glos = GlossaryConvertor(ui=self)
 		glos.config = self.config
 		glos.progressbar = self.progressbarEnable
 

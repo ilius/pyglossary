@@ -83,7 +83,7 @@ from prompt_toolkit.shortcuts import PromptSession, confirm
 
 from pyglossary import core
 from pyglossary.core import confDir
-from pyglossary.glossary_v2 import Error, Glossary
+from pyglossary.glossary_v3 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 
@@ -155,8 +155,7 @@ histDir = join(cmdiConfDir, "history")
 for direc in (cmdiConfDir, histDir):
 	os.makedirs(direc, mode=0o700, exist_ok=True)
 
-if __name__ == "__main__":
-	Glossary.init()
+Glossary.init()
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readFormatDescList = [

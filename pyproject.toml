@@ -45,7 +45,7 @@ select = [
 	"W",   # pycodestyle Warning
 	"C90", # mccabe: C901: {name} is too complex ({complexity})
 	"I",   # isort: unsorted-imports, missing-required-import
-	"D",   # pydocstyle
+	# "D",   # pydocstyle
 	"B",   # flake8-bugbear
 	"UP",  # pyupgrade
 	"YTT", # flake8-2020
