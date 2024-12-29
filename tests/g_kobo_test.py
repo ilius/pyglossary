@@ -1,11 +1,19 @@
 import gzip
+import os
 import unittest
 
-import marisa_trie  # noqa: F401, to ensure it's installed
 from glossary_v2_test import TestGlossaryBase
 
 
 class TestGlossaryKobo(TestGlossaryBase):
+	def setUp(self):
+		if os.getenv("SKIP_MISSING"):
+			try:
+				import marisa_trie  # noqa: F401
+			except ImportError:
+				self.skipTest("skipping module due to missing dependency: marisa_trie")
+		TestGlossaryBase.setUp(self)
+
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 		# self.dataFileCRC32.update({})

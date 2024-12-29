@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from os.path import abspath, dirname, join
@@ -11,6 +12,14 @@ from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 
 class TestGlossaryAppleDictBin(TestGlossaryBase):
+	def setUp(self):
+		if os.getenv("SKIP_MISSING"):
+			try:
+				import biplist  # noqa: F401
+			except ImportError:
+				self.skipTest("skipping module due to missing dependency: biplist")
+		TestGlossaryBase.setUp(self)
+
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 

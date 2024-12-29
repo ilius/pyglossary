@@ -3,8 +3,6 @@ import unittest
 
 from glossary_v2_test import TestGlossaryBase
 
-skip_module = False
-
 
 class TestGlossarySlob(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
@@ -20,8 +18,6 @@ class TestGlossarySlob(TestGlossaryBase):
 		)
 
 	def setUp(self):
-		if skip_module:
-			self.skipTest("module is skipped")
 		TestGlossaryBase.setUp(self)
 
 	def test_convert_txt_slob_1(self):

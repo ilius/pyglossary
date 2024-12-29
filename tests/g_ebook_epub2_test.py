@@ -10,8 +10,6 @@ from glossary_v2_test import TestGlossaryBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
-skip_module = False
-
 
 class TestGlossaryEPUB2(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
@@ -27,8 +25,6 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		)
 
 	def setUp(self):
-		if skip_module:
-			self.skipTest("module is skipped")
 		TestGlossaryBase.setUp(self)
 
 	def remove_toc_uid(self, data):

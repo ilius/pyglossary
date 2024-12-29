@@ -76,9 +76,6 @@ def set_tag_value(filename: str, name: str, value: str) -> None:
 
 class BaseTest(unittest.TestCase):
 	def setUp(self):
-		# if skip_module:
-		# 	self.skipTest("module is skipped")
-
 		self.tmpdir = tempfile.TemporaryDirectory(prefix="test")
 		self._writers = []
 
