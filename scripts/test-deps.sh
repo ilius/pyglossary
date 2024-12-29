@@ -1,9 +1,10 @@
 python -m pip install \
 	PyICU \
-	beautifulsoup4 \
-	biplist html5lib \
-	python-idzip \
 	lxml==5.3 \
-	marisa-trie \
+	beautifulsoup4 \
+	python-idzip \
+	polib \
+	html5lib \
 	mistune \
-	polib
+	marisa-trie \
+	biplist
