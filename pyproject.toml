@@ -14,7 +14,7 @@ target-version = "py310"
 exclude = [
 	"whitelist.py", # for vulture
 	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
-	"pyglossary/plugins/testformat.py",
+	"pyglossary/plugins/testformat",
 	"pyglossary/ui/gtk*_utils/__init__.py",
 	"pyglossary/ui/ui_qt.py",
 	"pyglossary/ui/progressbar/",
@@ -193,7 +193,7 @@ mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
 "pyglossary/html_utils.py" = ["RUF003"]
 "persian_utils.py" = ["RUF001"]
 "ru.py" = ["RUF001", "RUF003"]
-"pyglossary/plugins/dikt_json.py" = ["RUF003"]
+"pyglossary/plugins/dikt_json/*.py" = ["RUF003"]
 "pyglossary/plugin_lib/*.py" = [
 	"ANN",
 	"PT018",   # Assertion should be broken down into multiple parts
