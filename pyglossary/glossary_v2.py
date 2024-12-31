@@ -722,7 +722,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		filename: str,
 		**options,  # noqa: ANN003
 	) -> bool:
-		self._setTmpDataDir(filename)
 		self._read(
 			filename=filename,
 			direct=True,
@@ -750,6 +749,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		formatName = formatName or format
 		del format
+
+		self._setTmpDataDir(filename)
 
 		filename = os.path.abspath(filename)
 		###
@@ -1168,8 +1169,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		)
 
 		showMemoryUsage()
-
-		self._setTmpDataDir(args.inputFilename)
 
 		readOptions = args.readOptions or {}
 
