@@ -24,7 +24,6 @@ __all__ = [
 	"EntryListType",
 	"EntryType",
 	"GlossaryExtendedType",
-	"GlossaryType",
 	"RawEntryType",
 	"ReaderGlossaryType",
 	"WriterGlossaryType",
@@ -132,13 +131,7 @@ class EntryListType(typing.Protocol):
 	def close(self) -> None: ...
 
 
-class GlossaryType(typing.Protocol):  # noqa: PLR0904
-
-	"""
-	an abstract type class for Glossary class in plugins. it only
-	contains methods and properties that might be used in plugins.
-	"""
-
+class GlossaryExtendedType(typing.Protocol):  # noqa: PLR0904
 	def __iter__(self) -> Iterator[EntryType]: ...
 
 	def __len__(self) -> int: ...
@@ -232,11 +225,6 @@ class GlossaryType(typing.Protocol):  # noqa: PLR0904
 
 	def addCleanupPath(self, path: str) -> None: ...
 
-	@property
-	def progressbar(self) -> bool: ...
-
-
-class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	def progressInit(
 		self,
 		*args,  # noqa: ANN002
