@@ -754,7 +754,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		filename = os.path.abspath(filename)
 		###
-		inputArgs = self.detectInputFormat(filename, formatName=formatName)
+		inputArgs = PluginManager.detectInputFormat(filename, formatName=formatName)
 		origFilename = filename
 		filename, formatName, compression = inputArgs
 
@@ -1203,7 +1203,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		tm0 = now()
 
-		outputFilename, outputFormat, compression = self.detectOutputFormat(
+		outputFilename, outputFormat, compression = PluginManager.detectOutputFormat(
 			filename=args.outputFilename,
 			formatName=args.outputFormat,
 			inputFilename=args.inputFilename,
