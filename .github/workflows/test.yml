@@ -2,7 +2,7 @@ name: "Test"
 
 on:
     push:
-        branches: ["master", "github-action"]
+        branches: ["master", "dev", "github-action"]
     pull_request:
     schedule:
         - cron: "33 1 * * 3"
