@@ -77,8 +77,6 @@ if TYPE_CHECKING:
 	from .glossary_types import (
 		EntryListType,
 		EntryType,
-		GlossaryExtendedType,
-		GlossaryType,
 		RawEntryType,
 	)
 	from .plugin_prop import PluginProp
@@ -298,7 +296,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		entryFilters = []
 		config = self._config
 
-		glosArg = cast("GlossaryExtendedType", self)
+		glosArg = self
 
 		for configParam, default, filterClass in entryFiltersRules:
 			args = []
@@ -338,8 +336,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _addExtraEntryFilter(self, cls: type[EntryFilterType]) -> None:
 		if cls.name in self._entryFiltersName:
 			return
-		self._entryFilters.append(cls(cast("GlossaryType", self)))
-		self._entryFiltersExtra.append(cls(cast("GlossaryType", self)))
+		self._entryFilters.append(cls(self))
+		self._entryFiltersExtra.append(cls(self))
 		self._entryFiltersName.add(cls.name)
 
 	def removeHtmlTagsAll(self) -> None:
@@ -364,7 +362,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			return
 		self._entryFilters.append(
 			StripFullHtml(  # pyright: ignore[reportArgumentType]
-				cast("GlossaryType", self),
+				self,
 				errorHandler=errorHandler,
 			),
 		)
@@ -423,7 +421,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		filters = self._entryFiltersExtra
 		if self.progressbar:
-			filters.append(ShowProgressBar(cast("GlossaryExtendedType", self)))  # pyright: ignore[reportArgumentType]
+			filters.append(ShowProgressBar(self))  # pyright: ignore[reportArgumentType]
 
 		self.progressInit("Writing")
 		for _entry in self._data:
@@ -894,7 +892,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if self._config.get("save_info_json", False):
 			from pyglossary.info_writer import InfoWriter
 
-			infoWriter = InfoWriter(cast("GlossaryType", self))
+			infoWriter = InfoWriter(self)
 			infoWriter.setWriteOptions(options)
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
