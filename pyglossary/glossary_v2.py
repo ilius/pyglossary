@@ -112,7 +112,7 @@ class ConvertArgs:
 	infoOverride: dict[str, str] | None = None
 
 
-class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PLR0904
+class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	"""
 	The signature of 'convert' method is different in glossary_v2.py
@@ -1230,7 +1230,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 # ________________________________________________________________________#
 
 
-class Glossary(GlossaryCommon):
+class Glossary(GlossaryCommon, PluginManager):
 
 	"""
 	init method is inherited from PluginManager
