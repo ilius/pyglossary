@@ -23,7 +23,6 @@ __all__ = [
 	"Callable",
 	"EntryListType",
 	"EntryType",
-	"GlossaryExtendedType",
 	"RawEntryType",
 	"ReaderGlossaryType",
 	"WriterGlossaryType",
@@ -131,122 +130,6 @@ class EntryListType(typing.Protocol):
 	def close(self) -> None: ...
 
 
-class GlossaryExtendedType(typing.Protocol):  # noqa: PLR0904
-	def __iter__(self) -> Iterator[EntryType]: ...
-
-	def __len__(self) -> int: ...
-
-	def setDefaultDefiFormat(self, defiFormat: str) -> None: ...
-
-	def getDefaultDefiFormat(self) -> str: ...
-
-	def collectDefiFormat(
-		self,
-		maxCount: int,
-	) -> dict[str, float] | None: ...
-
-	def iterInfo(self) -> Iterator[tuple[str, str]]: ...
-
-	def getInfo(self, key: str) -> str: ...
-
-	def setInfo(self, key: str, value: str) -> None: ...
-
-	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]: ...
-
-	@property
-	def author(self) -> str: ...
-
-	@property
-	def alts(self) -> bool: ...
-
-	@property
-	def filename(self) -> str: ...
-
-	@property
-	def tmpDataDir(self) -> str: ...
-
-	@property
-	def readOptions(self) -> dict | None: ...
-
-	@property
-	def sqlite(self) -> bool: ...
-
-	@property
-	def sourceLang(self) -> Lang | None: ...
-
-	@property
-	def targetLang(self) -> Lang | None: ...
-
-	@property
-	def sourceLangName(self) -> str: ...
-
-	@sourceLangName.setter
-	def sourceLangName(self, langName: str) -> None: ...
-
-	@property
-	def targetLangName(self) -> str: ...
-
-	@targetLangName.setter
-	def targetLangName(self, langName: str) -> None: ...
-
-	def titleTag(self, sample: str) -> str: ...
-
-	def wordTitleStr(
-		self,
-		word: str,
-		sample: str = "",
-		class_: str = "",
-	) -> str: ...
-
-	def getConfig(self, name: str, default: str | None) -> str | None: ...
-
-	def addEntry(self, entry: EntryType) -> None: ...
-
-	def newEntry(
-		self,
-		word: MultiStr,
-		defi: str,
-		defiFormat: str = "",
-		byteProgress: tuple[int, int] | None = None,
-	) -> EntryType: ...
-
-	def newDataEntry(self, fname: str, data: bytes) -> EntryType: ...
-
-	def stripFullHtml(
-		self,
-		errorHandler: Callable[[EntryType, str], None] | None = None,
-	) -> None: ...
-
-	def preventDuplicateWords(self) -> None: ...
-
-	def mergeEntriesWithSameHeadwordPlaintext(self) -> None: ...
-
-	def removeHtmlTagsAll(self) -> None: ...
-
-	def addCleanupPath(self, path: str) -> None: ...
-
-	def progressInit(
-		self,
-		*args,  # noqa: ANN002
-	) -> None: ...
-
-	def progress(self, pos: int, total: int, unit: str = "entries") -> None: ...
-
-	def progressEnd(self) -> None: ...
-
-	@property
-	def progressbar(self) -> bool: ...
-
-	@progressbar.setter
-	def progressbar(self, enabled: bool) -> None: ...
-
-	def directRead(
-		self,
-		filename: str,
-		**options,
-	) -> bool: ...
-
-
 class GlossaryInfoCommonType(typing.Protocol):
 	def getInfo(self, key: str) -> str: ...
 
@@ -292,8 +175,18 @@ class ReaderGlossaryType(GlossaryInfoCommonType):
 
 	def titleTag(self, sample: str) -> str: ...
 
+	@property
+	def alts(self) -> bool: ...
+
 
 class WriterGlossaryType(GlossaryInfoCommonType):
+	# def __len__(self) -> int: ...
+
+	# @property
+	# def filename(self) -> str: ...
+
+	def __iter__(self) -> Iterator[EntryType]: ...
+
 	def collectDefiFormat(
 		self,
 		maxCount: int,
@@ -312,6 +205,14 @@ class WriterGlossaryType(GlossaryInfoCommonType):
 
 	@property
 	def tmpDataDir(self) -> str: ...
+
+	def addCleanupPath(self, path: str) -> None: ...
+
+	@property
+	def readOptions(self) -> dict | None: ...
+
+	@property
+	def sqlite(self) -> bool: ...
 
 	def stripFullHtml(
 		self,
