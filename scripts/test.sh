@@ -2,6 +2,7 @@
 set -e
 
 rootDir=$(dirname $(dirname "$0"))
+rootDirAbs=$(realpath $rootDir)
 
 echo "$rootDir/tests"
 cd "$rootDir/tests"
@@ -11,8 +12,8 @@ for F in *_test.py; do
 	python -m unittest "$F"
 done
 
-echo "$rootDir/tests/deprecated/
-cd "$rootDir/tests/deprecated/
+echo "$rootDirAbs/tests/deprecated/"
+cd "$rootDirAbs/tests/deprecated/"
 for F in *_test.py; do
 	echo "$F"
 	python -W ignore::DeprecationWarning -m unittest "$F"
