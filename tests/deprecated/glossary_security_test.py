@@ -62,5 +62,6 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
 
+
 if __name__ == "__main__":
 	unittest.main()

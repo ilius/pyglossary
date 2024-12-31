@@ -1,23 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	Option,
 )
 
-from . import conv
-
-if TYPE_CHECKING:
-	import io
-	from collections.abc import Iterator
-
-	from pyglossary.glossary_types import EntryType, GlossaryType
-
+from .reader import Reader
 
 __all__ = [
 	"Reader",
@@ -71,78 +60,3 @@ optionsProp: dict[str, Option] = {
 		comment="Set to false to disable tones coloring",
 	),
 }
-
-
-class Reader:
-	depends = {
-		"lxml": "lxml",
-	}
-
-	_encoding: str = "utf-8"
-	_traditional_title: bool = False
-	_colorize_tones: bool = True
-
-	def __init__(self, glos: GlossaryType) -> None:
-		self._glos = glos
-		self.file: io.TextIOBase = nullTextIO
-		self._fileSize = 0
-
-	def open(self, filename: str) -> None:
-		# self._glos.sourceLangName = "Chinese"
-		# self._glos.targetLangName = "English"
-
-		cfile = self.file = open(filename, encoding=self._encoding)
-
-		if cfile.seekable():
-			cfile.seek(0, 2)
-			self._fileSize = cfile.tell()
-			cfile.seek(0)
-			# self._glos.setInfo("input_file_size", f"{self._fileSize}")
-		else:
-			log.warning("EDICT2 Reader: file is not seekable")
-
-	def close(self) -> None:
-		self.file.close()
-		self.file = nullTextIO
-
-	def __len__(self) -> int:
-		return 0
-
-	def __iter__(self) -> Iterator[EntryType]:
-		file = self.file
-		fileSize = self._fileSize
-		glos = self._glos
-
-		render_syllables = (
-			conv.render_syllables_color
-			if self._colorize_tones
-			else conv.render_syllables_no_color
-		)
-		parse_line = (
-			conv.parse_line_trad if self._traditional_title else conv.parse_line_simp
-		)
-
-		while True:
-			line = file.readline()
-			if not line:
-				break
-			line = line.rstrip("\n")
-			if not line:
-				continue
-			if line.startswith("#"):
-				continue
-			parts = parse_line(line)
-			if parts is None:
-				log.warning(f"bad line: {line!r}")
-				continue
-			names, article_text = conv.render_article(
-				render_syllables,
-				conv.Article(*parts),
-			)
-			entry = glos.newEntry(
-				names,
-				article_text,
-				defiFormat="h",
-				byteProgress=(file.tell(), fileSize) if fileSize else None,
-			)
-			yield entry
