@@ -1,20 +1,45 @@
 
 from __future__ import annotations
+
 import logging
 import re
+import typing
+from collections.abc import Iterable, Iterator
 from operator import itemgetter
-from typing import TYPE_CHECKING, Iterable, Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from .glossary_types import EntryType, GlossaryExtendedType
+	from .glossary_types import EntryType
 
 __all__ = ["reverseGlossary"]
 
 log = logging.getLogger("pyglossary")
 
+if TYPE_CHECKING:
+	class _GlossaryType(typing.Protocol):
+		def __iter__(self) -> Iterator[EntryType]: ...
+
+		def getInfo(self, key: str) -> str: ...
+
+		def progressInit(
+			self,
+			*args,  # noqa: ANN002
+		) -> None: ...
+
+		def progress(self, pos: int, total: int, unit: str = "entries") -> None: ...
+
+		def progressEnd(self) -> None: ...
+
+		@property
+		def progressbar(self) -> bool: ...
+
+		@progressbar.setter
+		def progressbar(self, enabled: bool) -> None: ...
+
+
 
 def reverseGlossary(
-	glos: GlossaryExtendedType,
+	glos: _GlossaryType,
 	savePath: str = "",
 	words: list[str] | None = None,
 	includeDefs: bool = False,
@@ -25,7 +50,7 @@ def reverseGlossary(
 	"""
 	This is a generator
 	Usage:
-		for wordIndex in glos.reverse(...):
+		for wordIndex in reverseGlossary(glos, ...):
 			pass
 
 	Inside the `for` loop, you can pause by waiting (for input or a flag)
@@ -99,7 +124,7 @@ def reverseGlossary(
 
 
 def takeOutputWords(
-	glos: GlossaryExtendedType,
+	glos: _GlossaryType,
 	entryIter: Iterable[EntryType],
 	minWordLen: int = 3,
 ) -> list[str]:
