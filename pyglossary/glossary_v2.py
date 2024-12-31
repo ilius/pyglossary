@@ -31,10 +31,7 @@ from os.path import (
 	relpath,
 )
 from time import perf_counter as now
-from typing import (
-	TYPE_CHECKING,
-	cast,
-)
+from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 
 from . import core
@@ -748,34 +745,35 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		formatName = formatName or format
 		del format
 
+		filenameAbs = os.path.abspath(filename)
+
 		self._setTmpDataDir(filename)
 
-		filename = os.path.abspath(filename)
-		###
-		inputArgs = PluginManager.detectInputFormat(filename, formatName=formatName)
-		origFilename = filename
-		filename, formatName, compression = inputArgs
+		filenameUC, formatName, compression = PluginManager.detectInputFormat(
+			filenameAbs, formatName=formatName
+		)
+		# filenameUC is the uncompressed file's absolute path
 
 		if compression:
 			from .compression import uncompress
 
-			uncompress(origFilename, filename, compression)
+			uncompress(filenameAbs, filenameUC, compression)
 
 		self._validateReadoptions(formatName, options)
 
-		filenameNoExt, ext = os.path.splitext(filename)
+		filenameBase, ext = os.path.splitext(filenameUC)
 		if ext.lower() not in self.plugins[formatName].extensions:
-			filenameNoExt = filename
+			filenameBase = filenameUC
 
-		self._filename = filenameNoExt
+		self._filename = filenameBase
 		if not self._info.get(c_name):
-			self._info[c_name] = os.path.split(filename)[1]
+			self._info[c_name] = os.path.split(filenameUC)[1]
 
 		if not self._entryFiltersAreSet:
 			self.updateEntryFilters()
 
 		reader = self._createReader(formatName, options)
-		self._openReader(reader, filename)
+		self._openReader(reader, filenameUC)
 
 		self._readOptions = options
 
