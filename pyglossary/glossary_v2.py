@@ -843,13 +843,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		**kwargs,  # noqa: ANN003
 	) -> str:
 		"""
-		Write to a given glossary file, with given format (optional).
-		Return absolute path of output file, or None if failed.
+		Write to a given glossary file, with given formatName (optional).
+		Return absolute path of output file.
+		Raises Error exception if failed.
 
 		Parameters
 		----------
 		filename (str): file name or path to write.
-		format (str): format name
+		formatName (str): format name
 		sort (bool):
 			True (enable sorting),
 			False (disable sorting),
@@ -1185,7 +1186,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 	def convertV2(self, args: ConvertArgs) -> str:
 		"""
-		Return absolute path of output file, or None if failed.
+		Return absolute path of output file.
+		Raises Error exception if failed.
 
 		sortKeyName:
 			name of sort key/algorithm
