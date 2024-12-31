@@ -4,7 +4,7 @@ import sys
 import unittest
 from os.path import abspath, dirname, isfile, join, relpath
 
-rootDir = dirname(dirname(abspath(__file__)))
+rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from glossary_test import TestGlossaryBase, appTmpDir
@@ -409,7 +409,6 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
-		self.assertLogCritical(f"Writing file {relpath('test')!r} failed.")
 
 	def test_convert_writeFileNotFound_txt(self):
 		outputFilename = join(

@@ -11,7 +11,7 @@ import zipfile
 from os.path import abspath, dirname, isdir, isfile, join
 from urllib.request import urlopen
 
-rootDir = dirname(dirname(abspath(__file__)))
+rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from typing import TYPE_CHECKING

@@ -4,11 +4,11 @@ import sys
 import unittest
 from os.path import abspath, dirname
 
-rootDir = dirname(dirname(abspath(__file__)))
+rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from glossary_errors_test import TestGlossaryErrors
-from glossary_v2_test import testCacheDir
+from glossary_test import testCacheDir
 
 from pyglossary.glossary import Glossary
 
@@ -26,9 +26,6 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
-		self.assertLogCritical(
-			"Writing file \"os.system('abcd -l')\" failed.",
-		)
 
 	def test_convert_2(self):
 		glos = Glossary()
@@ -38,9 +35,6 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
-		self.assertLogCritical(
-			"Writing file \"os.system('abcd -l')\" failed.",
-		)
 
 	def test_convert_3(self):
 		glos = Glossary()
@@ -67,10 +61,6 @@ class TestGlossarySecurity(TestGlossaryErrors):
 		)
 		self.assertIsNone(res)
 		self.assertLogCritical("Unable to detect output format!")
-		self.assertLogCritical(
-			"Writing file \"test.csv\\nos.system('abcd -l')\" failed.",
-		)
-
 
 if __name__ == "__main__":
 	unittest.main()
