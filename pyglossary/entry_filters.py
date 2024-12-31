@@ -12,7 +12,9 @@ from .text_utils import (
 )
 
 if TYPE_CHECKING:
-	from .glossary_types import Callable, EntryType, GlossaryExtendedType, GlossaryType
+	from pyglossary.langs import Lang
+
+	from .glossary_types import Callable, EntryType
 
 
 __all__ = [
@@ -29,12 +31,24 @@ __all__ = [
 log = logging.getLogger("pyglossary")
 
 
+class _GlossaryType(typing.Protocol):
+	@property
+	def sourceLang(self) -> Lang | None: ...
+
+	@property
+	def targetLang(self) -> Lang | None: ...
+
+	def progress(self, pos: int, total: int, unit: str = "entries") -> None: ...
+
+	def __len__(self) -> int: ...
+
+
 class EntryFilterType(typing.Protocol):
 	name: str = ""
 	desc: str = ""
 	falseComment: str = ""
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		raise NotImplementedError
 
 	def prepare(self) -> None:
@@ -49,7 +63,7 @@ class EntryFilter:
 	desc: str = ""
 	falseComment: str = ""
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		self.glos = glos
 
 	def prepare(self) -> None:
@@ -123,7 +137,7 @@ class LowerWord(EntryFilter):
 	desc = "Lowercase word(s)"
 	falseComment = "Do not lowercase words before writing"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
 		self._re_word_ref = re.compile("href=[\"'](bword://[^\"']+)[\"']")
 
@@ -154,7 +168,7 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 	def __init__(
 		self,
-		glos: GlossaryType,  # noqa: ARG002
+		glos: _GlossaryType,  # noqa: ARG002
 	) -> None:
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",
@@ -194,7 +208,7 @@ class RemoveHtmlTags(EntryFilter):
 	name = "remove_html"
 	desc = "Remove given comma-separated HTML tags (not their contents) from definition"
 
-	def __init__(self, glos: GlossaryType, tagsStr: str) -> None:
+	def __init__(self, glos: _GlossaryType, tagsStr: str) -> None:
 		tags = tagsStr.split(",")
 		self.glos = glos
 		self.tags = tags
@@ -215,7 +229,7 @@ class StripFullHtml(EntryFilter):
 
 	def __init__(
 		self,
-		glos: GlossaryType,  # noqa: ARG002
+		glos: _GlossaryType,  # noqa: ARG002
 		errorHandler: Callable[[EntryType, str], None] | None,
 	) -> None:
 		self._errorHandler = errorHandler
@@ -258,7 +272,7 @@ class NormalizeHtml(EntryFilter):
 
 	def __init__(
 		self,
-		glos: GlossaryType,  # noqa: ARG002
+		glos: _GlossaryType,  # noqa: ARG002
 	) -> None:
 		log.info("Normalizing HTML tags")
 		self._pattern = re.compile(
@@ -292,7 +306,7 @@ class LanguageCleanup(EntryFilter):
 	name = "lang"
 	desc = "Language-specific cleanup/fixes"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
 		self._run_func: Callable[[EntryType], EntryType | None] | None = None
 
@@ -359,7 +373,7 @@ class PreventDuplicateWords(EntryFilter):
 	name = "prevent_duplicate_words"
 	desc = "Prevent duplicate words"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
 		self._wordSet: set[str] = set()
 
@@ -390,7 +404,7 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 	name = "skip_duplicate_headword"
 	desc = "Skip entries with a duplicate headword"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
 		self._wset: set[str] = set()
 
@@ -406,7 +420,7 @@ class TrimArabicDiacritics(EntryFilter):
 	name = "trim_arabic_diacritics"
 	desc = "Trim Arabic diacritics from headword"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile("[\u064b-\u065f]")
 
@@ -425,7 +439,7 @@ class UnescapeWordLinks(EntryFilter):
 	name = "unescape_word_links"
 	desc = "Unescape Word Links"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		from pyglossary.html_utils import unescape_unicode
 
 		EntryFilter.__init__(self, glos)
@@ -449,9 +463,8 @@ class ShowProgressBar(EntryFilter):
 	name = "progressbar"
 	desc = "Progress Bar"
 
-	def __init__(self, glos: GlossaryExtendedType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
-		self.glos: GlossaryExtendedType = glos
 		self._wordCount = -1
 		self._wordCountThreshold = 0
 		self._lastPos = 0
@@ -488,7 +501,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 	desc = "Show Max Memory Usage"
 	MAX_WORD_LEN = 30
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: _GlossaryType) -> None:
 		import os
 
 		import psutil

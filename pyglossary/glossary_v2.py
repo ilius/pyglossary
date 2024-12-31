@@ -974,7 +974,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		return filename
 
-	def _compressOutput(self, filename: str, compression: str) -> str:
+	@staticmethod
+	def _compressOutput(filename: str, compression: str) -> str:
 		from .compression import compress
 
 		return compress(filename, compression)
