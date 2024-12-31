@@ -956,9 +956,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		self._sort = sort
 
 		if sort:
-			t0 = now()
 			self._data.sort()
-			log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 		if self._readers:
 			self._iter = self._readersEntryGen()
@@ -1140,7 +1138,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		return namedSortKey, sortEncoding
 
 	@staticmethod
-	def _convertValidateStrings(args: ConvertArgs) -> None:
+	def _convertValidateArgs(args: ConvertArgs) -> None:
 		if type(args.inputFilename) is not str:
 			raise TypeError("inputFilename must be str")
 		if type(args.outputFilename) is not str:
@@ -1150,6 +1148,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 			raise TypeError("inputFormat must be str")
 		if args.outputFormat is not None and type(args.outputFormat) is not str:
 			raise TypeError("outputFormat must be str")
+
+		if args.outputFilename == args.inputFilename:
+			raise Error("Input and output files are the same")
 
 	def _convertPrepare(
 		self,
@@ -1162,11 +1163,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 				f"Directory already exists and not empty: {relpath(outputFilename)}",
 			)
 
-		outputPlugin = self.plugins[outputFormat]
-
 		direct, sort = self._resolveSortParams(
 			args=args,
-			plugin=outputPlugin,
+			plugin=self.plugins[outputFormat],
 		)
 
 		showMemoryUsage()
@@ -1200,9 +1199,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		sortEncoding:
 			encoding/charset for sorting, default to utf-8
 		"""
-		self._convertValidateStrings(args)
-		if args.outputFilename == args.inputFilename:
-			raise Error("Input and output files are the same")
+		self._convertValidateArgs(args)
 
 		tm0 = now()
 

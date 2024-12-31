@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import logging
+from time import perf_counter as now
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -85,7 +86,9 @@ class EntryList:
 	def sort(self) -> None:
 		if self._sortKey is None:
 			raise ValueError("EntryList.sort: sortKey is not set")
+		t0 = now()
 		self._l.sort(key=self._sortKey)
+		log.info(f"Sorting took {now() - t0:.1f} seconds")
 
 	def close(self) -> None:
 		pass
