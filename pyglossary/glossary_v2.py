@@ -1162,11 +1162,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		outputPlugin = self.plugins[outputFormat]
 
-		sortParams = self._resolveSortParams(
+		direct, sort = self._resolveSortParams(
 			args=args,
 			plugin=outputPlugin,
 		)
-		direct, sort = sortParams
 
 		showMemoryUsage()
 
@@ -1206,14 +1205,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 
 		tm0 = now()
 
-		outputArgs = self.detectOutputFormat(
+		outputFilename, outputFormat, compression = self.detectOutputFormat(
 			filename=args.outputFilename,
 			formatName=args.outputFormat,
 			inputFilename=args.inputFilename,
 		)
-		if not outputArgs:
-			raise Error(f"Writing file {relpath(args.outputFilename)!r} failed.")
-		outputFilename, outputFormat, compression = outputArgs
 
 		sort = self._convertPrepare(
 			args=args,
