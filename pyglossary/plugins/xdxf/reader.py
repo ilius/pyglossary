@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator, Sequence
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element
 
 from lxml import etree as ET
@@ -62,7 +62,7 @@ class Reader:
 		"full_title": "name",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.IOBase = nullBinaryIO

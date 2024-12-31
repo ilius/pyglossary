@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 # original expression from
 # http://stackoverflow.com/questions/694344/regular-expression-that-matches-between-quotes-containing-escaped-quotes
@@ -303,7 +303,7 @@ class WordNet:
 
 
 class Reader:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0

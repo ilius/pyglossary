@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 sys.setrecursionlimit(10000)
@@ -182,7 +182,7 @@ class Writer:
 	_jing: bool = False
 	_indexes: str = ""  # FIXME: rename to indexes_lang?
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._dirname = ""
 

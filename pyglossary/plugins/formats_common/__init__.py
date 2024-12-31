@@ -31,7 +31,7 @@ from pyglossary.flags import (
 	NEVER,
 	YesNoAlwaysNever,
 )
-from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, ReaderGlossaryType, WriterGlossaryType
 from pyglossary.option import (
 	BoolOption,
 	DictOption,
@@ -77,12 +77,13 @@ __all__ = [
 	"EntryType",
 	"FileSizeOption",
 	"FloatOption",
-	"GlossaryType",
 	"HtmlColorOption",
 	"IntOption",
 	"ListOption",
 	"NewlineOption",
+	"ReaderGlossaryType",
 	"StrOption",
+	"WriterGlossaryType",
 	"YesNoAlwaysNever",
 	"cacheDir",
 	"compressionOpen",

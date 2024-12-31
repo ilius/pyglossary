@@ -31,7 +31,7 @@ from pyglossary.langs import Lang
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 class GroupStateBySize:
@@ -139,7 +139,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <guide></guide>
 </package>"""
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		import uuid
 
 		EbookWriter.__init__(

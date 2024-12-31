@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.plugin_lib.readmdict import MDD, MDX
 
 
@@ -41,7 +41,7 @@ class Reader:
 	_same_dir_data_files: bool = False
 	_audio: bool = False
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 		self._re_internal_link = re.compile("href=([\"'])(entry://|[dx]:)")

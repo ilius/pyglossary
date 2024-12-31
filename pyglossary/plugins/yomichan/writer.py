@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
 	from collections.abc import Generator, Sequence
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 def _isKana(char: str) -> bool:
@@ -72,7 +72,7 @@ class Writer:
 	_rule_vk_defi_pattern = ""
 	_rule_adji_defi_pattern = ""
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		# Yomichan technically supports "structured content" that renders to

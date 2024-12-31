@@ -25,7 +25,7 @@ from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.text_reader import TextGlossaryReader
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import GlossaryType
+	from pyglossary.glossary_types import ReaderGlossaryType
 
 
 class Reader(TextGlossaryReader):
@@ -35,7 +35,7 @@ class Reader(TextGlossaryReader):
 
 	_extract_inline_images: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		TextGlossaryReader.__init__(self, glos, hasInfo=False)
 
 	def open(self, filename: str) -> None:

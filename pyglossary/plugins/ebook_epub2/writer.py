@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any
 from pyglossary.ebook_base import EbookWriter
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import GlossaryType
+	from pyglossary.glossary_types import WriterGlossaryType
 
 
 class Writer(EbookWriter):
@@ -160,7 +160,7 @@ p.groupDefinition {
 
 	COVER_TEMPLATE = '<meta name="cover" content="{cover}" />'
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		import uuid
 
 		EbookWriter.__init__(

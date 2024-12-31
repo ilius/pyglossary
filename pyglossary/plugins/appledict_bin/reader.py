@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 		HtmlProcessingInstruction,
 	)
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element
 
 	from .appledict_properties import AppleDictProperties
@@ -82,8 +82,8 @@ class Reader:
 		".strings",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
-		self._glos: GlossaryType = glos
+	def __init__(self, glos: ReaderGlossaryType) -> None:
+		self._glos: ReaderGlossaryType = glos
 		self._dictDirPath = ""
 		self._contentsPath = ""
 		self._file: io.BufferedIOBase = nullBinaryIO

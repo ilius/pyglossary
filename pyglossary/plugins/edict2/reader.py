@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 class Reader:
@@ -23,7 +23,7 @@ class Reader:
 	_traditional_title: bool = False
 	_colorize_tones: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self.file: io.TextIOBase = nullTextIO
 		self._fileSize = 0

@@ -5,11 +5,11 @@ from __future__ import annotations
 # -*- coding: utf-8 -*-
 from collections.abc import Iterator
 
-from pyglossary.glossary_types import EntryType, GlossaryType
+from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 class Reader:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._wordCount = 0

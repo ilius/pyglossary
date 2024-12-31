@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 from pyglossary.core import log
@@ -50,7 +50,7 @@ class Reader:
 	_xsl: bool = False
 	_unicode_errors: str = "strict"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 

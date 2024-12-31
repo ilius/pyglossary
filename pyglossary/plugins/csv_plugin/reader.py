@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterable, Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 class Reader:
@@ -45,7 +45,7 @@ class Reader:
 	_newline: str = "\n"
 	_delimiter: str = ","
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self.clear()
 

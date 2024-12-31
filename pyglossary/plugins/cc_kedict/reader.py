@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 	import lxml
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 from pyglossary.core import exc_note, log, pip
 from pyglossary.text_reader import TextGlossaryReader
@@ -29,7 +29,7 @@ class YamlReader(TextGlossaryReader):
 
 	def __init__(  # noqa: PLR0913
 		self,
-		glos: GlossaryType,
+		glos: ReaderGlossaryType,
 		spellKey: str = "",
 		posKey: str = "",
 		synsKey: str = "",
@@ -272,7 +272,7 @@ class Reader:
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._yaml = YamlReader(
 			glos,

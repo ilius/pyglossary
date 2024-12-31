@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator
 
 	from pyglossary import slob
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 from pyglossary.core import cacheDir, exc_note, log, pip
 from pyglossary.plugins.aard2_slob.tags import (
@@ -65,7 +65,7 @@ class Writer:
 		"mp4": "video/mp4",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._resPrefix = ""

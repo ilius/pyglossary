@@ -11,7 +11,7 @@ from pyglossary.plugin_lib.dictdlib import DictDB
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 def installToDictd(filename: str, dictzip: bool) -> None:
@@ -56,7 +56,7 @@ class Writer:
 	_dictzip: bool = False
 	_install: bool = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._dictdb: DictDB | None = None

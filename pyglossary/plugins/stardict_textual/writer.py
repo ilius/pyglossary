@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 	from lxml import builder
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 from pyglossary.compression import (
@@ -27,7 +27,7 @@ class Writer:
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._resDir = ""

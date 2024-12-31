@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 	from libzim.reader import Archive  # type: ignore
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 from pyglossary.core import cacheDir, exc_note, log, pip
 
@@ -40,7 +40,7 @@ class Reader:
 		"application/font-woff",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._zimfile: Archive | None = None

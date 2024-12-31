@@ -26,6 +26,8 @@ __all__ = [
 	"GlossaryExtendedType",
 	"GlossaryType",
 	"RawEntryType",
+	"ReaderGlossaryType",
+	"WriterGlossaryType",
 ]
 
 MultiStr: TypeAlias = "str | list[str]"
@@ -249,3 +251,81 @@ class GlossaryExtendedType(GlossaryType, typing.Protocol):
 
 	@progressbar.setter
 	def progressbar(self, enabled: bool) -> None: ...
+
+
+class GlossaryInfoCommonType(typing.Protocol):
+	def getInfo(self, key: str) -> str: ...
+
+	def setInfo(self, key: str, value: str) -> None: ...
+
+	@property
+	def sourceLang(self) -> Lang | None: ...
+
+	@property
+	def targetLang(self) -> Lang | None: ...
+
+	@property
+	def sourceLangName(self) -> str: ...
+
+	@sourceLangName.setter
+	def sourceLangName(self, langName: str) -> None: ...
+
+	@property
+	def targetLangName(self) -> str: ...
+
+	@targetLangName.setter
+	def targetLangName(self, langName: str) -> None: ...
+
+	@property
+	def author(self) -> str: ...
+
+
+class ReaderGlossaryType(GlossaryInfoCommonType):
+	def newEntry(
+		self,
+		word: MultiStr,
+		defi: str,
+		defiFormat: str = "",
+		byteProgress: tuple[int, int] | None = None,
+	) -> EntryType: ...
+
+	def newDataEntry(self, fname: str, data: bytes) -> EntryType: ...
+
+	@property
+	def progressbar(self) -> bool: ...
+
+	def setDefaultDefiFormat(self, defiFormat: str) -> None: ...
+
+	def titleTag(self, sample: str) -> str: ...
+
+
+class WriterGlossaryType(GlossaryInfoCommonType):
+	def collectDefiFormat(
+		self,
+		maxCount: int,
+	) -> dict[str, float] | None: ...
+
+	def iterInfo(self) -> Iterator[tuple[str, str]]: ...
+
+	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]: ...
+
+	def wordTitleStr(
+		self,
+		word: str,
+		sample: str = "",
+		class_: str = "",
+	) -> str: ...
+
+	@property
+	def tmpDataDir(self) -> str: ...
+
+	def stripFullHtml(
+		self,
+		errorHandler: Callable[[EntryType, str], None] | None = None,
+	) -> None: ...
+
+	def preventDuplicateWords(self) -> None: ...
+
+	def mergeEntriesWithSameHeadwordPlaintext(self) -> None: ...
+
+	def removeHtmlTagsAll(self) -> None: ...

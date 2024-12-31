@@ -21,7 +21,7 @@ from typing import (
 if TYPE_CHECKING:
 	from collections.abc import Callable, Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 	from pyglossary.langs import Lang
 	from pyglossary.plugins.stardict.sd_types import T_SdList
 
@@ -67,7 +67,7 @@ class Writer:
 
 	dictzipSynFile = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._resDir = ""

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 class Reader:
@@ -22,7 +22,7 @@ class Reader:
 		"polib": "polib",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._alts = glos.alts
 		self.clear()

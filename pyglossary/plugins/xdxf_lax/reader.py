@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 	from lxml.html import HtmlElement as Element
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -65,7 +65,7 @@ class Reader:
 		"full_title": "name",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.IOBase = nullBinaryIO

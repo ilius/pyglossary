@@ -13,13 +13,13 @@ from pyglossary.plugins.tabfile import Reader as TabfileReader
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 class Reader:
 	re_number = re.compile(r"\d+")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._tabFileNames: list[str] = []
 		self._tabFileReader = None

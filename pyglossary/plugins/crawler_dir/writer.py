@@ -15,13 +15,13 @@ from pyglossary.text_utils import (
 )
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import GlossaryType
+	from pyglossary.glossary_types import WriterGlossaryType
 
 
 class Writer:
 	_compression: str = ""
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 

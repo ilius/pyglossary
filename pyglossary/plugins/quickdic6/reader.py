@@ -8,7 +8,7 @@ import zipfile
 from typing import IO, TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 	from .commons import EntryIndexTuple
 
@@ -35,7 +35,7 @@ class Reader:
 		"icu": "PyICU",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._dic: QuickDic | None = None
 

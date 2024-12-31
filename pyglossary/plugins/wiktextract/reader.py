@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
 	from typing import Any
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
@@ -51,7 +51,7 @@ class Reader:
 		# 0.5ex ~= 0.3em, but "ex" is recommended
 	)
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: IOBase = nullBinaryIO

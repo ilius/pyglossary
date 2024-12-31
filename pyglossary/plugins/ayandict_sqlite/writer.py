@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 	from pyglossary.xdxf.transform import XdxfTransformer
 
 from pyglossary.core import log
@@ -18,7 +18,7 @@ from pyglossary.core import log
 class Writer:
 	_fuzzy: int = True
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 

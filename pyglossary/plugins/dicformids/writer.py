@@ -12,7 +12,7 @@ from pyglossary.core import log
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file
@@ -49,7 +49,7 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 
 
 class Writer:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200
 		self.indexFileMaxSize = 32722  # 30000

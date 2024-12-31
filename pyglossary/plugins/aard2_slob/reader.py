@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 	from collections.abc import Iterator
 
 	from pyglossary import slob
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 from pyglossary.core import exc_note, log, pip
 from pyglossary.plugins.aard2_slob.tags import (
@@ -29,7 +29,7 @@ class Reader:
 		"icu": "PyICU",  # >=1.5
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 		self._re_bword = re.compile(

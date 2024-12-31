@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element
 	from pyglossary.xdxf.transform import XdxfTransformer
 
@@ -30,7 +30,7 @@ class Reader:
 		"lxml": "lxml",
 	}
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.IOBase = nullBinaryIO

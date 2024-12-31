@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import (
 		EntryType,
-		GlossaryType,
+		ReaderGlossaryType,
 	)
 	from pyglossary.lxml_types import Element, T_htmlfile
 
@@ -231,7 +231,7 @@ class Reader:
 		# TODO: self.set_info("edition", ...)
 		self.setCreationTime(header)
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._wordCount = 0
 		self._filename = ""

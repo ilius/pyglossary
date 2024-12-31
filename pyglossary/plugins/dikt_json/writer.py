@@ -15,7 +15,7 @@ from pyglossary.compression import (
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 class Writer:
@@ -26,7 +26,7 @@ class Writer:
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = None
 		glos.preventDuplicateWords()

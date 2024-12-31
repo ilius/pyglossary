@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 class Writer:
@@ -48,7 +48,7 @@ class Writer:
 	_enable_info: bool = True
 	_word_title: bool = False
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._file: io.TextIOBase = nullTextIO
 

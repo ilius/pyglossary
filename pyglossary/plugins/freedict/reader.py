@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, cast
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
@@ -783,7 +783,7 @@ class Reader(ReaderUtils):
 		self.setCreationTime(header)
 		self.setDescription(header)
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._dirname = ""

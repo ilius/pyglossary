@@ -34,7 +34,7 @@ from pyglossary.os_utils import indir
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 def is_cyrillic_char(c: str) -> bool:
@@ -75,7 +75,7 @@ class Writer:
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._words: list[str] = []

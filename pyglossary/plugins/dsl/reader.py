@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 htmlEntityPattern = re.compile(r"&#?\w+;")
 
@@ -92,7 +92,7 @@ class Reader:
 	_example_color: str = "steelblue"
 	_abbrev: str = "hover"
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._dirPath = ""

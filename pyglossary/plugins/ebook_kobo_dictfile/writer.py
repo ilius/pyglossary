@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 
 def fixWord(word: str) -> str:
@@ -47,7 +47,7 @@ class Writer:
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._file: io.TextIOBase = nullTextIO
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)

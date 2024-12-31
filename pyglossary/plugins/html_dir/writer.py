@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import (
 		EntryType,
-		GlossaryType,
+		WriterGlossaryType,
 	)
 
 from pyglossary.core import log
@@ -59,7 +59,7 @@ class Writer:
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
 		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
 
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._fileObj: io.IOBase | None = None

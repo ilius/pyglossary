@@ -9,12 +9,12 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import (
 		EntryType,
-		GlossaryType,
+		ReaderGlossaryType,
 	)
 
 
 class Reader:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 
 	def close(self) -> None:

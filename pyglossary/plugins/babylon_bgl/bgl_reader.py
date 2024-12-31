@@ -63,7 +63,7 @@ from .bgl_text import (
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 __all__ = ["BGLGzipFile", "BglReader", "Block", "FileOffS", "optionsProp", "tmpDir"]
 
@@ -342,7 +342,7 @@ class BglReader:
 	selected encoding, so the user may fix the encoding if needed.
 	"""
 
-	def __init__(self, glos: GlossaryType) -> None:  # no more arguments
+	def __init__(self, glos: ReaderGlossaryType) -> None:  # no more arguments
 		self._glos = glos
 		self._filename = ""
 		self.info = {}
