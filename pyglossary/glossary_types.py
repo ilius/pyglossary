@@ -252,6 +252,12 @@ class GlossaryExtendedType(GlossaryType, typing.Protocol):
 	@progressbar.setter
 	def progressbar(self, enabled: bool) -> None: ...
 
+	def directRead(
+		self,
+		filename: str,
+		**options,
+	) -> bool: ...
+
 
 class GlossaryInfoCommonType(typing.Protocol):
 	def getInfo(self, key: str) -> str: ...
