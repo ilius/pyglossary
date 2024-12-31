@@ -977,11 +977,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 	def _compressOutput(self, filename: str, compression: str) -> str:
 		from .compression import compress
 
-		return compress(
-			cast("GlossaryType", self),
-			filename,
-			compression,
-		)
+		return compress(filename, compression)
 
 	def _switchToSQLite(
 		self,

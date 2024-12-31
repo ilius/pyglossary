@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 import os
 from os.path import join
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	import io
@@ -114,8 +114,7 @@ def zipFileOrDir(filename: str) -> None:
 				_zipFileAdd(zf, fname)
 
 
-# TODO: remove _glos arg
-def compress(_glos: Any, filename: str, compression: str) -> str:
+def compress(filename: str, compression: str) -> str:
 	"""
 	Filename is the existing file path.
 
