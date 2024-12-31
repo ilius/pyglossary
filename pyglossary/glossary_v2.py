@@ -851,14 +851,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		----------
 		filename (str): file name or path to write.
 		formatName (str): format name
-		sort (bool):
-			True (enable sorting),
-			False (disable sorting),
-			None (auto, get from UI)
-		sortKeyName (str or None):
-			key function name for sorting
-		sortEncoding (str or None):
-			encoding for sorting, default utf-8
 
 		You can pass write-options (of given format) as keyword arguments
 
