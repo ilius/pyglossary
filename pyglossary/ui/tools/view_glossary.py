@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from pyglossary.glossary_types import EntryType, GlossaryExtendedType
+	from pyglossary.glossary_types import EntryType
 
 from pyglossary.core import log
 from pyglossary.glossary_v2 import Glossary
@@ -59,7 +59,7 @@ def getEntryHighlighter() -> Callable[[EntryType], None] | None:
 def viewGlossary(
 	filename: str,
 	formatName: str | None = None,
-	glos: GlossaryExtendedType | None = None,
+	glos: Glossary | None = None,
 	noRes: bool = False,
 ) -> None:
 	highlightEntry = getEntryHighlighter()
