@@ -723,11 +723,12 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		**options,  # noqa: ANN003
 	) -> bool:
 		self._setTmpDataDir(filename)
-		return self._read(
+		self._read(
 			filename=filename,
 			direct=True,
 			**options,
 		)
+		return True
 
 	# these keyword arguments are also used by `directRead`
 	# so renaming them would be a breaking change
@@ -738,7 +739,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		formatName: str = "",
 		direct: bool = False,
 		**options,  # noqa: ANN003
-	) -> bool:
+	) -> None:
 		if format:
 			warnings.warn(
 				"format= argument is deprecated and will be removed in 6.0.0"
@@ -753,8 +754,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		filename = os.path.abspath(filename)
 		###
 		inputArgs = self.detectInputFormat(filename, formatName=formatName)
-		if inputArgs is None:
-			return False
 		origFilename = filename
 		filename, formatName, compression = inputArgs
 
@@ -786,12 +785,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress, PluginManager):  # noqa: PL
 		if not direct:
 			self.loadReader(reader)
 			self._iter = self._loadedEntryGen()
-			return True
+			return
 
 		self._readers.append(reader)
 		self._iter = self._readersEntryGen()
-
-		return True
 
 	def loadReader(self, reader: Any) -> None:  # noqa: ANN401
 		"""
