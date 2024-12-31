@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 
 	from pyglossary.entry_base import MultiStr
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 from pyglossary.compression import (
 	compressionOpen,
@@ -60,7 +60,7 @@ class TextGlossaryReader:
 
 	compressions = stdCompressions
 
-	def __init__(self, glos: GlossaryType, hasInfo: bool = True) -> None:
+	def __init__(self, glos: ReaderGlossaryType, hasInfo: bool = True) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.TextIOBase = nullTextIO

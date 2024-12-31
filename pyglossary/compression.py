@@ -4,13 +4,11 @@ from __future__ import annotations
 import logging
 import os
 from os.path import join
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable
-
-	from .glossary_types import GlossaryType
 
 
 stdCompressions = ("gz", "bz2", "lzma")
@@ -116,7 +114,8 @@ def zipFileOrDir(filename: str) -> None:
 				_zipFileAdd(zf, fname)
 
 
-def compress(_glos: GlossaryType, filename: str, compression: str) -> str:
+# TODO: remove _glos arg
+def compress(_glos: Any, filename: str, compression: str) -> str:
 	"""
 	Filename is the existing file path.
 

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Generator
 
-	from .glossary_types import EntryType, GlossaryType
+	from .glossary_types import EntryType, WriterGlossaryType
 
 from .compression import compressionOpen as c_open
 from .io_utils import nullTextIO
@@ -38,7 +38,7 @@ class TextGlossaryWriter:
 
 	def __init__(
 		self,
-		glos: GlossaryType,
+		glos: WriterGlossaryType,
 		entryFmt: str = "",  # contain {word} and {defi}
 		writeInfo: bool = True,
 		outInfoKeysAliasDict: dict[str, str] | None = None,
@@ -211,7 +211,7 @@ class TextGlossaryWriter:
 
 
 def writeTxt(  # noqa: PLR0913
-	glos: GlossaryType,
+	glos: WriterGlossaryType,
 	entryFmt: str = "",  # contain {word} and {defi}
 	filename: str = "",
 	writeInfo: bool = True,

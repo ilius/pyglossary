@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import (
 		EntryType,
-		GlossaryType,
+		WriterGlossaryType,
 	)
 
 
 class InfoWriter:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._file: io.TextIOBase = nullTextIO

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Generator, Iterator
 
-	from .glossary_types import EntryType, GlossaryType
+	from .glossary_types import EntryType, ReaderGlossaryType, WriterGlossaryType
 
 from .text_utils import (
 	joinByBar,
@@ -20,7 +20,7 @@ from .text_utils import (
 
 
 class Writer:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 
@@ -97,7 +97,7 @@ class Writer:
 
 
 class Reader:
-	def __init__(self, glos: GlossaryType) -> None:
+	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._clear()
 

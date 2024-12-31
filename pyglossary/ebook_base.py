@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator
 	from typing import Any
 
-	from pyglossary.glossary_types import EntryType, GlossaryType
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["EbookWriter"]
 
@@ -139,7 +139,7 @@ class EbookWriter:
 
 	def __init__(
 		self,
-		glos: GlossaryType,
+		glos: WriterGlossaryType,
 		escape_strings: bool = False,
 		# ignore_synonyms=False,
 		# flatten_synonyms=False,
