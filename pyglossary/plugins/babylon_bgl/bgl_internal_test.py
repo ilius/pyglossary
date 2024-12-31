@@ -1,6 +1,6 @@
 import unittest
 
-from pyglossary.plugins.babylon_bgl.bgl_reader_debug import isASCII
+from pyglossary.plugins.babylon_bgl.reader_debug import isASCII
 
 
 class BglInternalTest(unittest.TestCase):

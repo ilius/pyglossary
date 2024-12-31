@@ -30,7 +30,7 @@ from pyglossary.text_utils import (
 	uintFromBytes,
 )
 
-from .bgl_reader import BGLGzipFile, BglReader, Block, FileOffS, tmpDir
+from .reader import BGLGzipFile, Block, FileOffS, Reader, tmpDir
 
 
 def isASCII(data: str) -> bool:
@@ -109,7 +109,7 @@ class GzipWithCheck:
 
 		fileobj - gzip file - archive
 		unpackedPath - path of a file containing original data, for testing.
-		reader - reference to BglReader class instance, used for logging.
+		reader - reference to BGL Reader class instance, used for logging.
 		"""
 		self.file = BGLGzipFile(
 			fileobj=fileobj,
@@ -172,7 +172,7 @@ class GzipWithCheck:
 			self.unpackedFile.flush()
 
 
-class DebugBglReader(BglReader):
+class DebugReader(Reader):
 	_collect_metadata2: bool = False
 	_search_char_samples: bool = False
 	_write_gz: bool = False
@@ -185,7 +185,7 @@ class DebugBglReader(BglReader):
 		self,
 		filename,
 	):
-		if not BglReader.open(self, filename):
+		if not Reader.open(self, filename):
 			return
 
 		self.metadata2 = MetaData2() if self._collect_metadata2 else None
@@ -255,7 +255,7 @@ class DebugBglReader(BglReader):
 			return None
 
 	def close(self) -> None:
-		BglReader.close(self)
+		Reader.close(self)
 		if self.rawDumpFile:
 			self.rawDumpFile.close()
 			self.rawDumpFile = None
@@ -267,17 +267,17 @@ class DebugBglReader(BglReader):
 			self.samplesDumpFile = None
 
 	def __del__(self) -> None:
-		BglReader.__del__(self)
+		Reader.__del__(self)
 
 	def readEntryWord(self, block, pos):
-		succeed, pos, _u_word, b_word = BglReader.readEntryWord(self, block, pos)
+		succeed, pos, _u_word, b_word = Reader.readEntryWord(self, block, pos)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText(f"\n\nblock type = {block.type}\nkey = ")
 		self.rawDumpFileWriteData(b_word)
 
 	def readEntryDefi(self, block, pos, b_key):
-		succeed, pos, _u_defi, b_defi = BglReader.readEntryDefi(self, block, pos, b_key)
+		succeed, pos, _u_defi, b_defi = Reader.readEntryDefi(self, block, pos, b_key)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText("\ndefi = ")
@@ -286,7 +286,7 @@ class DebugBglReader(BglReader):
 	"""
 	def readEntryAlts(self, block, pos, b_key, key):
 		succeed, pos, alts, b_alts = \
-			BglReader.readEntryAlts(self, block, pos, b_key, key)
+			Reader.readEntryAlts(self, block, pos, b_key, key)
 		if not succeed:
 			return
 		for b_alt in b_alts:
@@ -433,7 +433,7 @@ class DebugBglReader(BglReader):
 			pickle.dump(self.metadata2, f)
 
 	def processDefiStat(self, fields, defi, b_key):  # noqa: PLR0912
-		BglReader.processDefiStat(self, fields, defi, b_key)
+		Reader.processDefiStat(self, fields, defi, b_key)
 
 		if fields.b_title:
 			self.rawDumpFileWriteText("\ndefi title: ")

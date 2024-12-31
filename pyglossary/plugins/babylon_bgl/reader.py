@@ -65,7 +65,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
-__all__ = ["BGLGzipFile", "BglReader", "Block", "FileOffS", "optionsProp", "tmpDir"]
+__all__ = ["BGLGzipFile", "Block", "FileOffS", "Reader", "optionsProp", "tmpDir"]
 
 
 file = io.BufferedReader
@@ -293,7 +293,7 @@ class DefinitionFields:
 		self.b_field_13 = None  # bytes
 
 
-class BglReader:
+class Reader:
 	_default_encoding_overwrite: str = ""
 	_source_encoding_overwrite: str = ""
 	_target_encoding_overwrite: str = ""
