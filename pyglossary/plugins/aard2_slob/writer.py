@@ -88,7 +88,7 @@ class Writer:
 			observer=self._slobObserver,
 			workdir=cacheDir,
 			compression=self._compression,
-			version_info=self._version_info,
+			# version_info=self._version_info,
 		)
 
 		# "label" tag is a dictionary name shown in UI

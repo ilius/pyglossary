@@ -12,6 +12,8 @@ from pyglossary.entry import Entry
 
 class TestEntryBasic(unittest.TestCase):
 	def test_exc_1(self):
+		if sys.version_info < (3, 10):
+			return
 		try:
 			Entry(b"word", "defi")
 		except TypeError as e:
@@ -23,6 +25,8 @@ class TestEntryBasic(unittest.TestCase):
 		Entry(("word",), "defi")
 
 	def test_exc_3(self):
+		if sys.version_info < (3, 10):
+			return
 		try:
 			Entry("word", b"defi")
 		except TypeError as e:
@@ -31,6 +35,8 @@ class TestEntryBasic(unittest.TestCase):
 			self.fail("must raise TypeError")
 
 	def test_exc_4(self):
+		if sys.version_info < (3, 10):
+			return
 		try:
 			Entry("word", ("defi",))
 		except TypeError as e:

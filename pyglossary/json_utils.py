@@ -6,9 +6,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import AnyStr, TypeAlias
 
-__all__ = ["dataToPrettyJson", "jsonToData"]
+	JsonEncodable: TypeAlias = dict | list
 
-JsonEncodable: TypeAlias = dict | list
+
+__all__ = ["dataToPrettyJson", "jsonToData"]
 
 
 def dataToPrettyJson(

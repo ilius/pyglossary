@@ -20,7 +20,7 @@ from typing import Any
 __all__ = ["AppleDictProperties", "from_metadata"]
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class AppleDictProperties:
 	# in plist file: IDXDictionaryVersion
 	# values := (1 | 2 | 3)

@@ -426,7 +426,7 @@ class XdxfTransformer:
 		for child in children:
 			if sep and prev is not None and self.shouldAddSep(child, prev):
 				hf.write(sep)
-			if isinstance(child, bytes | tuple):
+			if isinstance(child, (bytes, tuple)):
 				log.warning(f"unexpected {child=}")
 				continue
 			self.writeChild(hf, child, elem, prev, stringSep=stringSep)

@@ -112,19 +112,12 @@ class Reader:
 			raise RuntimeError("iterating over a reader while it's not open")
 
 		slobObj = self._slobObj
-		blobSet = set()
 
 		# slob library gives duplicate blobs when iterating over slobObj
 		# even keeping the last id is not enough, since duplicate blobs
 		# are not all consecutive. so we have to keep a set of blob IDs
 
 		for blob in slobObj:
-			id_ = blob.identity
-			if id_ in blobSet:
-				yield None  # update progressbar
-				continue
-			blobSet.add(id_)
-
 			# blob.key is str, blob.content is bytes
 			word = blob.key
 

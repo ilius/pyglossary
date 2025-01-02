@@ -96,7 +96,7 @@ __all__ = [
 # ]
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class ConvertArgs:
 	inputFilename: str
 	inputFormat: str = ""

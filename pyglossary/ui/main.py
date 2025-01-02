@@ -101,7 +101,7 @@ infoOverrideSpec = (
 )
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class MainPrepareResult:
 	args: argparse.Namespace
 	uiType: str

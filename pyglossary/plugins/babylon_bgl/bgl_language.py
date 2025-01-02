@@ -118,7 +118,7 @@ from dataclasses import dataclass
 __all__ = ["BabylonLanguage", "languageByCode"]
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class BabylonLanguage:
 
 	"""

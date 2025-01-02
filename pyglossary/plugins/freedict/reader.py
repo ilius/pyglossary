@@ -33,7 +33,7 @@ INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
 
 
-@dataclass(slots=True)
+@dataclass
 class ParsedSense:
 	transCits: list[Element]
 	defs: list[Element]
