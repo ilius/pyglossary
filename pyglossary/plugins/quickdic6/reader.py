@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import datetime as dt
 import pathlib
-import typing
 import zipfile
 from typing import IO, TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 	from .commons import EntryIndexTuple
@@ -149,7 +150,7 @@ class Reader:
 			return 0
 		return sum(len(p) for _, p in self._dic.pairs) + len(self._dic.htmls)
 
-	def __iter__(self) -> typing.Iterator[EntryType]:
+	def __iter__(self) -> Iterator[EntryType]:
 		if self._dic is None:
 			raise RuntimeError("dictionary not open")
 		for idx, (_, pairs) in enumerate(self._dic.pairs):

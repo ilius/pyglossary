@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import datetime as dt
 import os
-import typing
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Generator
+
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 from pyglossary.core import log
@@ -67,7 +68,7 @@ class Writer:
 			write_list(fp, write_entry_index, dic.indices)
 			write_string(fp, "END OF DICTIONARY")
 
-	def write(self) -> typing.Generator[None, EntryType, None]:
+	def write(self) -> Generator[None, EntryType, None]:
 		synonyms: dict[str, list[str]] = {}
 		htmls: list[tuple[int, str, str]] = []
 		log.info("Converting individual entries ...")

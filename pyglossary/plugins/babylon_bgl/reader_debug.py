@@ -105,7 +105,7 @@ class GzipWithCheck:
 		closeFileobj=False,
 	) -> None:
 		"""
-		constructor.
+		Constructor.
 
 		fileobj - gzip file - archive
 		unpackedPath - path of a file containing original data, for testing.

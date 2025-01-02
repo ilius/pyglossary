@@ -16,9 +16,12 @@ from __future__ import annotations
 
 import typing
 
+if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
 __all__ = ["KeyData", "RawKeyData"]
 
-RawKeyData: typing.TypeAlias = "tuple[int, int, typing.Sequence[str]]"
+RawKeyData: typing.TypeAlias = "tuple[int, int, Sequence[str]]"
 """tuple(priority, parentalControl, keyTextFields)"""
 
 
