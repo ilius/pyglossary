@@ -99,31 +99,31 @@ def getDataDir() -> str:
 	if os.sep == "/":
 		return join(parent3, "share", "pyglossary")
 
-	dir_ = join(
+	direc = join(
 		parent3,
 		f"Python{sys.version_info.major}{sys.version_info.minor}",
 		"share",
 		"pyglossary",
 	)
-	if isdir(dir_):
-		return dir_
+	if isdir(direc):
+		return direc
 
-	dir_ = join(parent3, "Python3", "share", "pyglossary")
-	if isdir(dir_):
-		return dir_
+	direc = join(parent3, "Python3", "share", "pyglossary")
+	if isdir(direc):
+		return direc
 
-	dir_ = join(parent3, "Python", "share", "pyglossary")
-	if isdir(dir_):
-		return dir_
+	direc = join(parent3, "Python", "share", "pyglossary")
+	if isdir(direc):
+		return direc
 
-	dir_ = join(sys.prefix, "share", "pyglossary")
-	if isdir(dir_):
-		return dir_
+	direc = join(sys.prefix, "share", "pyglossary")
+	if isdir(direc):
+		return direc
 
 	if CONDA_PREFIX := os.getenv("CONDA_PREFIX"):
-		dir_ = join(CONDA_PREFIX, "share", "pyglossary")
-		if isdir(dir_):
-			return dir_
+		direc = join(CONDA_PREFIX, "share", "pyglossary")
+		if isdir(direc):
+			return direc
 
 	raise OSError("failed to detect dataDir")
 
@@ -180,23 +180,21 @@ if os.sep == "/":  # Operating system is Unix-Like
 		cacheDir = join(_libDir, "Caches", "PyGlossary")
 		pip = "pip3"
 	else:  # GNU/Linux, Termux, FreeBSD, etc
-		# should switch to "$XDG_CONFIG_HOME/pyglossary" in version 5.0.0
+		# should switch to "$XDG_CONFIG_HOME/pyglossary" in version 6.0.0
 		# which generally means ~/.config/pyglossary
 		confDir = join(homeDir, ".pyglossary")
 		cacheDir = join(homeDir, ".cache", "pyglossary")
 		pip = "pip3" if "/com.termux/" in homeDir else "sudo pip3"
 elif os.sep == "\\":  # Operating system is Windows
 	# FIXME: default values
-	_HOMEDRIVE = os.getenv("HOMEDRIVE", "")
-	_HOMEPATH = os.getenv("HOMEPATH", "")
-	homeDir = join(_HOMEDRIVE, _HOMEPATH)
+	_homeDrive = os.getenv("HOMEDRIVE", "")
+	_homePath = os.getenv("HOMEPATH", "")
+	homeDir = join(_homeDrive, _homePath)
 	tmpDir = os.getenv("TEMP", "")
 	_appData = os.getenv("APPDATA", "")
 	confDir = join(_appData, "PyGlossary")
-	_localAppData = os.getenv("LOCALAPPDATA")
-	if not _localAppData:
-		# Windows Vista or older
-		_localAppData = abspath(join(_appData, "..", "Local"))
+	# Windows Vista or older do not have LOCALAPPDATA
+	_localAppData = os.getenv("LOCALAPPDATA") or abspath(join(_appData, "..", "Local"))
 	cacheDir = join(_localAppData, "PyGlossary", "Cache")
 	pip = "pip3"
 else:
