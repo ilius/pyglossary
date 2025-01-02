@@ -22,13 +22,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from __future__ import annotations
+
 import base64
 import json
 import logging
 import os.path
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from pyglossary.glossary_types import EntryType
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType
+
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.ui_web.weblog import WebLogHandler
 from pyglossary.ui.ui_web.websocket_handler import HTTPWebSocketHandler
