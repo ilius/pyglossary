@@ -31,6 +31,14 @@ TRACE = 5
 logging.addLevelName(TRACE, "TRACE")
 
 
+def trace(log: logging.Logger, msg: str) -> None:
+	func = getattr(log, "trace", None)
+	if func is None:
+		log.error(f"Logger {log} has no 'trace' method")
+		return
+	func(msg)
+
+
 class _Formatter(logging.Formatter):
 	def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
 		logging.Formatter.__init__(self, *args, **kwargs)

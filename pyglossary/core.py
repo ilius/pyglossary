@@ -11,13 +11,9 @@ from os.path import (
 	isfile,
 	join,
 )
-from typing import TYPE_CHECKING
 
 from . import logger
-from .logger import TRACE
-
-if TYPE_CHECKING:
-	import logging
+from .logger import TRACE, trace
 
 
 def exc_note(e: Exception, note: str) -> Exception:
@@ -60,16 +56,7 @@ VERSION = "5.0.3"
 
 homePage = "https://github.com/ilius/pyglossary"
 
-
 noColor = False
-
-
-def trace(log: logging.Logger, msg: str) -> None:
-	func = getattr(log, "trace", None)
-	if func is None:
-		log.error(f"Logger {log} has no 'trace' method")
-		return
-	func(msg)
 
 
 def checkCreateConfDir() -> None:
