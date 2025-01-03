@@ -119,7 +119,7 @@ class MainPrepareResult:
 # TODO:
 # PLR0911 Too many return statements (7 > 6)
 # PLR0915 Too many statements (56 > 50)
-def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
+def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:
 	global log
 
 	uiBase = UIBase()
@@ -127,7 +127,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 	config = uiBase.config
 
 	parser = argparse.ArgumentParser(
-		prog=sys.argv[0],
+		prog=argv[0],
 		add_help=False,
 		# allow_abbrev=False,
 	)
@@ -136,7 +136,7 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 
 	# _______________________________
 
-	args = parser.parse_args()
+	args = parser.parse_args(argv)
 
 	# parser.conflict_handler == "error"
 
@@ -266,8 +266,8 @@ def mainPrepare() -> tuple[bool, MainPrepareResult | None]:
 	)
 
 
-def mainNoExit() -> bool:  # noqa: PLR0912
-	ok, res = mainPrepare()
+def mainNoExit(argv: list[str]) -> bool:  # noqa: PLR0912
+	ok, res = mainPrepare(argv)
 	if not ok:
 		return False
 	if res is None:  # --version or --help
@@ -299,4 +299,4 @@ def mainNoExit() -> bool:  # noqa: PLR0912
 
 
 def main() -> None:
-	sys.exit(int(not mainNoExit()))
+	sys.exit(int(not mainNoExit(sys.argv)))
