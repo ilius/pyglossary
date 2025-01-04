@@ -46,7 +46,7 @@ done
 
 echo "-------------- Check version in GUI: --------------"
 
-~/.local/bin/pyglossary
+~/.local/bin/pyglossary || true
 
 yes_or_no "Continue creating the release?" || exit 1
 
