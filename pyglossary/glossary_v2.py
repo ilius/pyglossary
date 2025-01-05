@@ -649,7 +649,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		formatName: str,
 		options: dict[str, Any],
 	) -> Any:  # noqa: ANN401
-		readerClass = self.plugins[formatName].readerClass
+		readerClass = PluginManager.plugins[formatName].readerClass
 		if readerClass is None:
 			raise ReadError("_createReader: readerClass is None")
 		reader = readerClass(self)
@@ -681,7 +681,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		formatName: str,
 		options: dict[str, Any],
 	) -> None:
-		validOptionKeys = set(self.formatsReadOptions[formatName])
+		validOptionKeys = set(PluginManager.formatsReadOptions[formatName])
 		for key in list(options):
 			if key not in validOptionKeys:
 				log.error(
@@ -762,7 +762,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		self._validateReadoptions(formatName, options)
 
 		filenameBase, ext = os.path.splitext(filenameUC)
-		if ext.lower() not in self.plugins[formatName].extensions:
+		if ext.lower() not in PluginManager.plugins[formatName].extensions:
 			filenameBase = filenameUC
 
 		self._filename = filenameBase
@@ -812,7 +812,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		formatName: str,
 		options: dict[str, Any],
 	) -> Any:  # noqa: ANN401
-		validOptions = self.formatsWriteOptions.get(formatName)
+		validOptions = PluginManager.formatsWriteOptions.get(formatName)
 		if validOptions is None:
 			raise WriteError(f"No write support for {formatName!r} format")
 		validOptionKeys = list(validOptions)
@@ -823,7 +823,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				)
 				del options[key]
 
-		writerClass = self.plugins[formatName].writerClass
+		writerClass = PluginManager.plugins[formatName].writerClass
 		if writerClass is None:
 			raise WriteError("_createWriter: writerClass is None")
 		writer = writerClass(self)
@@ -890,7 +890,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		if self._config.get("save_info_json", False):
 			from pyglossary.info_writer import InfoWriter
 
-			infoWriter = InfoWriter(self)
+			infoWriter = InfoWriter(self)  # pyright: ignore
 			infoWriter.setWriteOptions(options)
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
@@ -926,7 +926,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	) -> str:
 		filename = os.path.abspath(filename)
 
-		if formatName not in self.plugins or not self.plugins[formatName].canWrite:
+		if formatName not in PluginManager.plugins:
+			raise WriteError(f"No plugin {formatName!r} was found")
+
+		if not PluginManager.plugins[formatName].canWrite:
 			raise WriteError(f"No Writer class found for plugin {formatName}")
 
 		if self._readers and sort:
@@ -1073,7 +1076,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				inputFilename=args.inputFilename,
 			)
 		elif not os.getenv("NO_SQLITE"):
-			self._data = self._newInMemorySqEntryList()
+			self._data = self._newInMemorySqEntryList()  # pyright: ignore
 
 		self._data.setSortKey(
 			namedSortKey=namedSortKey,
@@ -1150,7 +1153,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 		direct, sort = self._resolveSortParams(
 			args=args,
-			plugin=self.plugins[outputFormat],
+			plugin=PluginManager.plugins[outputFormat],
 		)
 
 		showMemoryUsage()
@@ -1204,7 +1207,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			for key, value in args.infoOverride.items():
 				self.setInfo(key, value)
 
-		if compression and not self.plugins[outputFormat].singleFile:
+		if compression and not PluginManager.plugins[outputFormat].singleFile:
 			os.makedirs(outputFilename, mode=0o700, exist_ok=True)
 
 		writeOptions = args.writeOptions or {}
