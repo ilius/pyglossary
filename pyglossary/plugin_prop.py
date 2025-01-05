@@ -242,6 +242,10 @@ class PluginProp:  # noqa: PLR0904
 		return self._name
 
 	@property
+	def moduleName(self) -> str:
+		return self._moduleName
+
+	@property
 	def description(self) -> str:
 		return self._description
 
