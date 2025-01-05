@@ -116,10 +116,29 @@ class MainPrepareResult:
 	convertOptions: dict[str, Any]
 
 
-# TODO:
+def getConvertOptions(args: argparse.Namespace) -> dict[str, Any]:
+	convertOptions: dict[str, Any] = {}
+	for key in convertOptionsKeys:
+		value = getattr(args, key, None)
+		if value is not None:
+			convertOptions[key] = value
+
+	infoOverride: dict[str, str] = {}
+	for key, validate in infoOverrideSpec:
+		value = getattr(args, key, None)
+		if value is None:
+			continue
+		value = validate(value)
+		if value is None:
+			continue
+		infoOverride[key] = value
+	if infoOverride:
+		convertOptions["infoOverride"] = infoOverride
+	return convertOptions
+
+
 # PLR0911 Too many return statements (7 > 6)
-# PLR0915 Too many statements (56 > 50)
-def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:
+def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0911
 	global log
 
 	uiBase = UIBase()
@@ -207,23 +226,7 @@ def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:
 	config.update(configFromArgs(args, log))
 	logHandler.config = config
 
-	convertOptions: dict[str, Any] = {}
-	for key in convertOptionsKeys:
-		value = getattr(args, key, None)
-		if value is not None:
-			convertOptions[key] = value
-
-	infoOverride: dict[str, str] = {}
-	for key, validate in infoOverrideSpec:
-		value = getattr(args, key, None)
-		if value is None:
-			continue
-		value = validate(value)
-		if value is None:
-			continue
-		infoOverride[key] = value
-	if infoOverride:
-		convertOptions["infoOverride"] = infoOverride
+	convertOptions = getConvertOptions(args)
 
 	if args.inputFilename and readOptions:
 		readOptions, err = evaluateReadOptions(
