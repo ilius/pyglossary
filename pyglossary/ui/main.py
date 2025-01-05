@@ -136,7 +136,7 @@ def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:
 
 	# _______________________________
 
-	args = parser.parse_args(argv)
+	args = parser.parse_args(argv[1:])
 
 	# parser.conflict_handler == "error"
 
