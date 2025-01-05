@@ -60,7 +60,7 @@ from .glossary_progress import GlossaryProgress
 from .glossary_utils import Error, ReadError, WriteError, splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
-from .plugin_manager import PluginManager
+from .plugin_handler import PluginHandler
 from .sort_keys import defaultSortKeyName, lookupSortKey
 from .sq_entry_list import SqEntryList
 
@@ -649,7 +649,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		formatName: str,
 		options: dict[str, Any],
 	) -> Any:  # noqa: ANN401
-		readerClass = PluginManager.plugins[formatName].readerClass
+		readerClass = PluginHandler.plugins[formatName].readerClass
 		if readerClass is None:
 			raise ReadError("_createReader: readerClass is None")
 		reader = readerClass(self)
@@ -681,7 +681,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		formatName: str,
 		options: dict[str, Any],
 	) -> None:
-		validOptionKeys = set(PluginManager.formatsReadOptions[formatName])
+		validOptionKeys = set(PluginHandler.formatsReadOptions[formatName])
 		for key in list(options):
 			if key not in validOptionKeys:
 				log.error(
@@ -749,7 +749,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 		self._setTmpDataDir(filename)
 
-		filenameUC, formatName, compression = PluginManager.detectInputFormat(
+		filenameUC, formatName, compression = PluginHandler.detectInputFormat(
 			filenameAbs, formatName=formatName
 		)
 		# filenameUC is the uncompressed file's absolute path
@@ -762,7 +762,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		self._validateReadoptions(formatName, options)
 
 		filenameBase, ext = os.path.splitext(filenameUC)
-		if ext.lower() not in PluginManager.plugins[formatName].extensions:
+		if ext.lower() not in PluginHandler.plugins[formatName].extensions:
 			filenameBase = filenameUC
 
 		self._filename = filenameBase
@@ -812,7 +812,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		formatName: str,
 		options: dict[str, Any],
 	) -> Any:  # noqa: ANN401
-		validOptions = PluginManager.formatsWriteOptions.get(formatName)
+		validOptions = PluginHandler.formatsWriteOptions.get(formatName)
 		if validOptions is None:
 			raise WriteError(f"No write support for {formatName!r} format")
 		validOptionKeys = list(validOptions)
@@ -823,7 +823,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				)
 				del options[key]
 
-		writerClass = PluginManager.plugins[formatName].writerClass
+		writerClass = PluginHandler.plugins[formatName].writerClass
 		if writerClass is None:
 			raise WriteError("_createWriter: writerClass is None")
 		writer = writerClass(self)
@@ -926,10 +926,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	) -> str:
 		filename = os.path.abspath(filename)
 
-		if formatName not in PluginManager.plugins:
+		if formatName not in PluginHandler.plugins:
 			raise WriteError(f"No plugin {formatName!r} was found")
 
-		if not PluginManager.plugins[formatName].canWrite:
+		if not PluginHandler.plugins[formatName].canWrite:
 			raise WriteError(f"No Writer class found for plugin {formatName}")
 
 		if self._readers and sort:
@@ -1153,7 +1153,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 		direct, sort = self._resolveSortParams(
 			args=args,
-			plugin=PluginManager.plugins[outputFormat],
+			plugin=PluginHandler.plugins[outputFormat],
 		)
 
 		showMemoryUsage()
@@ -1191,7 +1191,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 		tm0 = now()
 
-		outputFilename, outputFormat, compression = PluginManager.detectOutputFormat(
+		outputFilename, outputFormat, compression = PluginHandler.detectOutputFormat(
 			filename=args.outputFilename,
 			formatName=args.outputFormat,
 			inputFilename=args.inputFilename,
@@ -1207,7 +1207,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			for key, value in args.infoOverride.items():
 				self.setInfo(key, value)
 
-		if compression and not PluginManager.plugins[outputFormat].singleFile:
+		if compression and not PluginHandler.plugins[outputFormat].singleFile:
 			os.makedirs(outputFilename, mode=0o700, exist_ok=True)
 
 		writeOptions = args.writeOptions or {}
@@ -1233,10 +1233,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 # ________________________________________________________________________#
 
 
-class Glossary(GlossaryCommon, PluginManager):
+class Glossary(GlossaryCommon, PluginHandler):
 
 	"""
-	init method is inherited from PluginManager
+	init method is inherited from PluginHandler
 		arguments:
 			usePluginsJson: bool = True
 			skipDisabledPlugins: bool = True.

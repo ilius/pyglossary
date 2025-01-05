@@ -37,7 +37,7 @@ from .glossary_utils import (
 )
 from .plugin_prop import PluginProp
 
-__all__ = ["DetectedFormat", "PluginManager"]
+__all__ = ["DetectedFormat", "PluginHandler"]
 
 log = logging.getLogger("pyglossary")
 
@@ -48,7 +48,7 @@ class DetectedFormat(NamedTuple):
 	compression: str
 
 
-class PluginManager:
+class PluginHandler:
 	plugins: dict[str, PluginProp] = {}
 	pluginByExt: dict[str, PluginProp] = {}
 	loadedModules: set[str] = set()
@@ -61,7 +61,7 @@ class PluginManager:
 	writeFormats: list[str] = []
 
 	@classmethod
-	def loadPluginsFromJson(cls: type[PluginManager], jsonPath: str) -> None:
+	def loadPluginsFromJson(cls: type[PluginHandler], jsonPath: str) -> None:
 		import json
 
 		with open(jsonPath, encoding="utf-8") as _file:
@@ -77,7 +77,7 @@ class PluginManager:
 
 	@classmethod
 	def loadPlugins(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		directory: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -106,7 +106,7 @@ class PluginManager:
 
 	@classmethod
 	def _loadPluginByDict(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		attrs: dict[str, Any],
 		modulePath: str,
 	) -> None:
@@ -145,7 +145,7 @@ class PluginManager:
 
 	@classmethod
 	def _loadPlugin(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		moduleName: str,
 		skipDisabled: bool = True,
 	) -> None:
@@ -192,7 +192,7 @@ class PluginManager:
 
 	@classmethod
 	def _findPlugin(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		query: str,
 	) -> PluginProp | None:
 		"""Find plugin by name or extension."""
@@ -206,7 +206,7 @@ class PluginManager:
 
 	@classmethod
 	def detectInputFormat(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		filename: str,
 		formatName: str = "",
 	) -> DetectedFormat:
@@ -236,7 +236,7 @@ class PluginManager:
 
 	@classmethod
 	def _outputPluginByFormat(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		formatName: str,
 	) -> tuple[PluginProp | None, str]:
 		if not formatName:
@@ -252,7 +252,7 @@ class PluginManager:
 	# PLR0912	Too many branches (14 > 12)
 	@classmethod
 	def detectOutputFormat(  # noqa: PLR0912, PLR0913, C901
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		filename: str = "",
 		formatName: str = "",
 		inputFilename: str = "",
@@ -309,7 +309,7 @@ class PluginManager:
 
 	@classmethod
 	def init(
-		cls: type[PluginManager],
+		cls: type[PluginHandler],
 		usePluginsJson: bool = True,
 		skipDisabledPlugins: bool = True,
 	) -> None:

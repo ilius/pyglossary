@@ -24,7 +24,7 @@ from os.path import relpath
 from time import perf_counter as now
 from typing import TYPE_CHECKING
 
-from pyglossary.plugin_manager import PluginManager
+from pyglossary.plugin_handler import PluginHandler
 
 from .core import log
 from .glossary_v2 import ConvertArgs, Error, GlossaryCommon, ReadError, WriteError
@@ -34,14 +34,14 @@ if TYPE_CHECKING:
 	from typing import Any
 
 	from .glossary_types import EntryType
-	from .plugin_manager import DetectedFormat
+	from .plugin_handler import DetectedFormat
 	from .ui_type import UIType
 
 
 __all__ = ["Glossary"]
 
 
-class Glossary(GlossaryCommon, PluginManager):
+class Glossary(GlossaryCommon, PluginHandler):
 	GLOSSARY_API_VERSION = "1.0"
 
 	def __init__(
@@ -172,7 +172,7 @@ class Glossary(GlossaryCommon, PluginManager):
 		**kwargs,
 	) -> DetectedFormat | None:
 		try:
-			return PluginManager.detectInputFormat(*args, **kwargs)
+			return PluginHandler.detectInputFormat(*args, **kwargs)
 		except Error as e:
 			log.critical(str(e))
 			return None
@@ -184,7 +184,7 @@ class Glossary(GlossaryCommon, PluginManager):
 		**kwargs,
 	) -> DetectedFormat | None:
 		try:
-			return PluginManager.detectOutputFormat(*args, **kwargs)
+			return PluginHandler.detectOutputFormat(*args, **kwargs)
 		except Error as e:
 			log.critical(str(e))
 			return None

@@ -80,7 +80,7 @@ _.dumpBlocks  # unused method (pyglossary/plugins/babylon_bgl/bgl_reader_debug.p
 _.dumpMetadata2  # unused method (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:419)
 escapeNewlines  # unused function (pyglossary/plugins/babylon_bgl/bgl_text.py:158)
 ExcInfoType  # unused variable (pyglossary/core.py:25)
-formatName  # unused variable (pyglossary/plugin_manager.py:44)
+formatName  # unused variable (pyglossary/plugin_handler.py:44)
 _.getConfig  # unused method (pyglossary/glossary_v2.py:540)
 _.getDefaultDefiFormat  # unused method (pyglossary/glossary_v2.py:437)
 _.getReadExtraOptions  # unused method (pyglossary/plugin_prop.py:497)
