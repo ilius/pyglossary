@@ -21,7 +21,7 @@ class BaseEntry:  # noqa: PLR0904
 	def __init__(self) -> None:
 		self._word: str | list[str]
 
-		def isData(self) -> bool: ...
+	def isData(self) -> bool: ...
 
 	def getFileName(self) -> str:
 		raise NotImplementedError
