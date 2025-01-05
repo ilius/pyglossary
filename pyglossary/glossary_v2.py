@@ -676,8 +676,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		os.makedirs(self._tmpDataDir, mode=0o700, exist_ok=True)
 		self._cleanupPathList.add(self._tmpDataDir)
 
+	@staticmethod
 	def _validateReadoptions(
-		self,
 		formatName: str,
 		options: dict[str, Any],
 	) -> None:
