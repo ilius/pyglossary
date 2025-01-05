@@ -35,7 +35,7 @@ class InfoWriter:
 		self._file.close()
 		self._file = nullTextIO
 
-	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, C901
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, PLR0915, C901
 		import re
 		from collections import Counter
 

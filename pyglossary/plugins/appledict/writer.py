@@ -194,7 +194,8 @@ class Writer:
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912
+	# TODO: PLR0915 Too many statements (74 > 50)
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, PLR0915
 		global BeautifulSoup
 		from pyglossary.xdxf.transform import XdxfTransformer
 

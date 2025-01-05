@@ -135,7 +135,8 @@ class Reader:
 		return a
 
 	# TODO: PLR0912 Too many branches (17 > 12)
-	def open(self, filename: str) -> Iterator[tuple[int, int]]:  # noqa: PLR0912
+	# TODO: PLR0915 Too many statements (60 > 50)
+	def open(self, filename: str) -> Iterator[tuple[int, int]]:  # noqa: PLR0912, PLR0915
 		from os.path import dirname
 
 		try:
@@ -499,7 +500,8 @@ class Reader:
 		)
 
 	# TODO: PLR0912 Too many branches (16 > 12)
-	def readKeyTextData(  # noqa: PLR0912
+	# TODO: PLR0915 Too many statements (56 > 50)
+	def readKeyTextData(  # noqa: PLR0912, PLR0915
 		self,
 		buff: io.BufferedIOBase,
 		bufferOffset: int,
