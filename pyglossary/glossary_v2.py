@@ -34,6 +34,8 @@ from time import perf_counter as now
 from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 
+from pyglossary.queued_iter import QueuedIterator
+
 from . import core
 from .core import (
 	cacheDir,
@@ -45,7 +47,6 @@ from .entry_filters import (
 	PreventDuplicateWords,
 	RemoveHtmlTagsAll,
 	ShowMaxMemoryUsage,
-	ShowProgressBar,
 	StripFullHtml,
 	entryFiltersRules,
 )
@@ -65,7 +66,7 @@ from .sort_keys import defaultSortKeyName, lookupSortKey
 from .sq_entry_list import SqEntryList
 
 if TYPE_CHECKING:
-	from collections.abc import Callable, Iterator
+	from collections.abc import Callable, Iterable, Iterator
 	from typing import (
 		Any,
 	)
@@ -304,9 +305,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				args = [value]
 			entryFilters.append(filterClass(glosArg, *tuple(args)))
 
-		if self.progressbar:
-			entryFilters.append(ShowProgressBar(glosArg))
-
 		if log.level <= core.TRACE:
 			try:
 				import psutil  # noqa: F401
@@ -416,12 +414,17 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			yield from self._data
 			return
 
+		iterable = self._progressIter(self._data)
+
 		filters = self._entryFiltersExtra
-		if self.progressbar:
-			filters.append(ShowProgressBar(self))  # pyright: ignore[reportArgumentType]
+		if not filters:
+			self.progressInit("Writing")
+			yield from iterable
+			self.progressEnd()
+			return
 
 		self.progressInit("Writing")
-		for _entry in self._data:
+		for _entry in iterable:
 			entry = _entry
 			for f in filters:
 				entry = f.run(entry)  # type: ignore # pyright: ignore[reportArgumentType]
@@ -432,8 +435,18 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	def _readersEntryGen(self) -> Iterator[EntryType]:
 		for reader in self._readers:
 			self.progressInit("Converting")
+
+			iterator = self._progressIter(reader)
+
+			iterator = self._applyEntryFiltersGen(iterator)
+
+			# turn iterator into background-queued, like buffered channel in Go
+			queueSize = os.getenv("PYGLOSSARY_ASYNC_ITER_SIZE")
+			if queueSize:
+				iterator = QueuedIterator(iterator, int(queueSize))
+
 			try:
-				yield from self._applyEntryFiltersGen(reader)
+				yield from iterator
 			finally:
 				reader.close()
 			self.progressEnd()
@@ -444,10 +457,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	# no point of returning None entries anymore.
 	def _applyEntryFiltersGen(
 		self,
-		gen: Iterator[EntryType],
+		iterable: Iterable[EntryType],
 	) -> Iterator[EntryType]:
 		entry: EntryType | None
-		for entry in gen:
+
+		for entry in iterable:
 			if entry is None:
 				continue
 			for entryFilter in self._entryFilters:
@@ -795,8 +809,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		showMemoryUsage()
 
 		self.progressInit("Reading")
+		iterator = self._progressIter(reader)
+		iterator = self._applyEntryFiltersGen(iterator)
 		try:
-			for entry in self._applyEntryFiltersGen(reader):
+			for entry in iterator:
 				self.addEntry(entry)
 		finally:
 			reader.close()

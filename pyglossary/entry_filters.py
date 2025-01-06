@@ -22,7 +22,6 @@ __all__ = [
 	"PreventDuplicateWords",
 	"RemoveHtmlTagsAll",
 	"ShowMaxMemoryUsage",
-	"ShowProgressBar",
 	"StripFullHtml",
 	"entryFiltersRules",
 ]
@@ -459,43 +458,6 @@ class UnescapeWordLinks(EntryFilter):
 		return entry
 
 
-class ShowProgressBar(EntryFilter):
-	name = "progressbar"
-	desc = "Progress Bar"
-
-	def __init__(self, glos: _GlossaryType) -> None:
-		EntryFilter.__init__(self, glos)
-		self._wordCount = -1
-		self._wordCountThreshold = 0
-		self._lastPos = 0
-		self._index = 0
-
-	def run(self, entry: EntryType) -> EntryType | None:
-		index = self._index
-		self._index = index + 1
-
-		if entry is not None and (bp := entry.byteProgress()):
-			if bp[0] > self._lastPos + 100_000:
-				self.glos.progress(bp[0], bp[1], unit="bytes")
-				self._lastPos = bp[0]
-			return entry
-
-		if self._wordCount == -1:
-			self._wordCount = len(self.glos)
-			self._wordCountThreshold = max(
-				1,
-				min(
-					500,
-					self._wordCount // 200,
-				),
-			)
-
-		if self._wordCount > 1 and index % self._wordCountThreshold == 0:
-			self.glos.progress(index, self._wordCount)
-
-		return entry
-
-
 class ShowMaxMemoryUsage(EntryFilter):
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
@@ -548,6 +510,5 @@ entryFiltersRules = [
 	(None, False, StripFullHtml),
 	# -------------------------------------
 	# filters are added conditionally (other than with config or glossary methods):
-	(None, False, ShowProgressBar),
 	(None, False, ShowMaxMemoryUsage),
 ]
