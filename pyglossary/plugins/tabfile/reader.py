@@ -11,6 +11,8 @@ from pyglossary.text_utils import (
 
 
 class Reader(TextGlossaryReader):
+	useByteProgress = True
+
 	@classmethod
 	def isInfoWord(cls, word: str) -> bool:
 		return word.startswith("#")

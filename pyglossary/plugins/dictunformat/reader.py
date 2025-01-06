@@ -9,6 +9,7 @@ def unescapeDefi(defi: str) -> str:
 
 
 class Reader(TextGlossaryReader):
+	useByteProgress = True
 	_headword_separator = ";   "
 	# https://github.com/cheusov/dictd/blob/master/dictfmt/dictunformat.in#L14
 

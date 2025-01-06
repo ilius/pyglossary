@@ -24,6 +24,7 @@ from pyglossary.io_utils import nullBinaryIO
 
 
 class Reader:
+	useByteProgress = True
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",

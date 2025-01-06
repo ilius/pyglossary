@@ -39,6 +39,7 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = True
 	compressions = stdCompressions
 
 	_encoding: str = "utf-8"

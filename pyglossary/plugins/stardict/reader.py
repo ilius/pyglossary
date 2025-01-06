@@ -46,6 +46,7 @@ class XdxfTransformerType(Protocol):
 
 
 class Reader:
+	useByteProgress = False
 	_xdxf_to_html: bool = True
 	_xsl: bool = False
 	_unicode_errors: str = "strict"

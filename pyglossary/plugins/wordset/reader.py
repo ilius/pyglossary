@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = False
 	_encoding: str = "utf-8"
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

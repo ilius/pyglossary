@@ -12,6 +12,7 @@ from pyglossary.text_utils import splitByBar
 
 
 class Reader(TextGlossaryReader):
+	useByteProgress = True
 	compressions = stdCompressions
 
 	def __len__(self) -> int:

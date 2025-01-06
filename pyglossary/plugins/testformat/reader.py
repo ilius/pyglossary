@@ -9,6 +9,8 @@ from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
 class Reader:
+	useByteProgress = False
+
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""

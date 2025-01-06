@@ -52,6 +52,7 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = True
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",

@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 
 
 class Reader(TextGlossaryReader):
+	useByteProgress = True
 	depends = {
 		"mistune": "mistune==3.0.1",
 	}

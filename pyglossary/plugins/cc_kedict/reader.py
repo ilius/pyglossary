@@ -18,6 +18,7 @@ from pyglossary.text_reader import TextGlossaryReader
 
 
 class YamlReader(TextGlossaryReader):
+	useByteProgress = True
 	tagStyle = (
 		"color:white;"
 		"background:green;"

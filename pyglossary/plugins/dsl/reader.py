@@ -85,6 +85,7 @@ def unwrap_quotes(s: str) -> str:
 
 
 class Reader:
+	useByteProgress = True
 	compressions = stdCompressions + ("dz",)
 
 	_encoding: str = ""

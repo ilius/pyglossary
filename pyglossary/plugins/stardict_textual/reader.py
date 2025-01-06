@@ -22,6 +22,7 @@ from pyglossary.io_utils import nullBinaryIO
 
 
 class Reader:
+	useByteProgress = True
 	_encoding: str = "utf-8"
 	_xdxf_to_html: bool = True
 

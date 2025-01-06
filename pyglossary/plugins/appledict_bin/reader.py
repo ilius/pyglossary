@@ -65,6 +65,7 @@ from pyglossary.io_utils import nullBinaryIO
 
 
 class Reader:
+	useByteProgress = True
 	depends = {
 		"lxml": "lxml",
 		"biplist": "biplist",

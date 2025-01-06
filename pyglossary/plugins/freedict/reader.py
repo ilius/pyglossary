@@ -47,6 +47,7 @@ class ParsedSense:
 
 
 class Reader(ReaderUtils):
+	useByteProgress = True
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",

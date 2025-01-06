@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = False
 	depends = {
 		"polib": "polib",
 	}

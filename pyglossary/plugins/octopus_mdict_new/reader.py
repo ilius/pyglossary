@@ -36,6 +36,7 @@ from pyglossary.text_utils import toStr
 
 
 class Reader:
+	useByteProgress = False
 	_encoding: str = ""
 	_substyle: bool = True
 	_same_dir_data_files: bool = False

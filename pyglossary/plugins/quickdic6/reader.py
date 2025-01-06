@@ -32,6 +32,7 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	useByteProgress = False
 	depends = {
 		"icu": "PyICU",
 	}

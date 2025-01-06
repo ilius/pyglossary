@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = False
 	re_number = re.compile(r"\d+")
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
@@ -44,7 +45,7 @@ class Reader:
 		self.nextTabFile()
 
 	def __len__(self) -> int:
-		raise NotImplementedError  # FIXME
+		return 0
 
 	def __iter__(self) -> Iterator[EntryType]:
 		return self

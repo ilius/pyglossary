@@ -18,6 +18,7 @@ from pyglossary.core import cacheDir, exc_note, log, pip
 class Reader:
 	_text_unicode_errors = "replace"
 	_html_unicode_errors = "replace"
+	useByteProgress = False
 	depends = {
 		"libzim": "libzim>=1.0",
 	}

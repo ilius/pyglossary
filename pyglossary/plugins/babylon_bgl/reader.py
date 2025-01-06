@@ -294,6 +294,8 @@ class DefinitionFields:
 
 
 class Reader:
+	useByteProgress = False
+
 	_default_encoding_overwrite: str = ""
 	_source_encoding_overwrite: str = ""
 	_target_encoding_overwrite: str = ""

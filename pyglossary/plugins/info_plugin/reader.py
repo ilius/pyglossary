@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = False
+
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 

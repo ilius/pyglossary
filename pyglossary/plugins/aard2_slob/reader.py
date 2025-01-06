@@ -25,6 +25,7 @@ from pyglossary.plugins.aard2_slob.tags import (
 
 
 class Reader:
+	useByteProgress = False
 	depends = {
 		"icu": "PyICU",  # >=1.5
 	}

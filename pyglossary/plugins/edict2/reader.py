@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 
 class Reader:
+	useByteProgress = True
 	depends = {
 		"lxml": "lxml",
 	}
