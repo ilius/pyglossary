@@ -29,6 +29,6 @@ Like several filters in a pipe which connects a `reader` object to a `writer` ob
 (with both of their classes defined in plugins and instantiated in `Glossary` class).
 
 You can enable/disable some of these filters using config parameters / command like flags, which
-are documented in [doc/config.rst](./doc/config.rst).
+are documented in [doc/config.rst](./config.rst).
 
-The full list of entry filters is also documented in [doc/entry-filters.md](./doc/entry-filters.md).
+The full list of entry filters is also documented in [doc/entry-filters.md](./entry-filters.md).
