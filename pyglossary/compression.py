@@ -75,16 +75,17 @@ def compressionOpen(
 
 def zipFileOrDir(filename: str) -> None:
 	import shutil
-	import zipfile
 	from os.path import (
 		isdir,
 		isfile,
 		split,
 	)
 
+	from pyglossary.repro_zipfile import ReproducibleZipFile as ZipFile
+
 	from .os_utils import indir
 
-	def _zipFileAdd(zf: zipfile.ZipFile, filename: str) -> None:
+	def _zipFileAdd(zf: ZipFile, filename: str) -> None:
 		if isfile(filename):
 			zf.write(filename)
 			return
@@ -93,7 +94,7 @@ def zipFileOrDir(filename: str) -> None:
 		for subFname in os.listdir(filename):
 			_zipFileAdd(zf, join(filename, subFname))
 
-	with zipfile.ZipFile(f"{filename}.zip", mode="w") as zf:
+	with ZipFile(f"{filename}.zip", mode="w") as zf:
 		if isdir(filename):
 			dirn, name = split(filename)
 			with indir(filename):
