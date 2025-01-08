@@ -19,6 +19,7 @@
 # SOFTWARE.
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.ebook_base import EbookWriter
@@ -163,11 +164,15 @@ p.groupDefinition {
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		import uuid
 
+		idStr = os.getenv("EPUB_UUID")
+		if not idStr:
+			idStr = str(uuid.uuid4()).replace("-", "")
+
 		EbookWriter.__init__(
 			self,
 			glos,
 		)
-		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
+		glos.setInfo("uuid", idStr)
 
 	@classmethod
 	def cls_get_prefix(
