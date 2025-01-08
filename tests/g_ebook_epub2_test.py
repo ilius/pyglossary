@@ -1,3 +1,5 @@
+import hashlib
+import os
 import re
 import sys
 import unittest
@@ -51,6 +53,8 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		inputFname,
 		outputFname,
 		testId,
+		checkZipContents=True,
+		sha1sum="",
 		**convertArgs,
 	):
 		inputFilename = self.downloadFile(f"{inputFname}")
@@ -58,7 +62,11 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			f"{inputFname.replace('.', '_')}-{testId}.epub",
 		)
 
-		expectedFilename = self.downloadFile(f"{outputFname}.epub")
+		if sha1sum:
+			os.environ["EPUB_UUID"] = hashlib.sha1(inputFname.encode("ascii")).hexdigest()
+			os.environ["EBOOK_CREATION_TIME"] = "1730579400"
+			# print(f'{os.environ["EPUB_UUID"]=}')
+
 		glos = self.glos = Glossary()
 		res = glos.convert(
 			ConvertArgs(
@@ -69,20 +77,34 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		)
 		self.assertEqual(outputFilename, res)
 
-		self.compareZipFiles(
-			outputFilename,
-			expectedFilename,
-			{
-				"OEBPS/toc.ncx": self.remove_toc_uid,
-				"OEBPS/content.opf": self.remove_content_extra,
-			},
+		if checkZipContents:
+			self.compareZipFiles(
+				outputFilename,
+				self.downloadFile(f"{outputFname}.epub"),
+				{
+					"OEBPS/toc.ncx": self.remove_toc_uid,
+					"OEBPS/content.opf": self.remove_content_extra,
+				},
+			)
+		if sha1sum:
+			with open(outputFilename, mode="rb") as _file:
+				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
+			self.assertEqual(sha1sum, actualSha1, f"{outputFilename=}")
+
+	def test_convert_txt_epub_1(self):
+		self.convert_to_epub(
+			"100-en-fa.txt",
+			"100-en-fa",
+			testId="a1",
+			checkZipContents=False,
+			sha1sum="f3daca476e1e083e7252d92d6a1a1a7b75f1320a",
 		)
 
 	def test_convert_to_epub_1(self):
 		self.convert_to_epub(
 			"100-en-fa-res.slob",
 			"100-en-fa-res-slob-v2",
-			"1",
+			testId="1",
 		)
 
 	def test_convert_to_epub_2(self):
@@ -90,7 +112,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			self.convert_to_epub(
 				"100-en-fa-res.slob",
 				"100-en-fa-res-slob-v2",
-				"2",
+				testId="2",
 				sort=sort,
 			)
 
@@ -99,7 +121,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			self.convert_to_epub(
 				"100-en-fa-res.slob",
 				"100-en-fa-res-slob-v2",
-				"3",
+				testId="3",
 				sqlite=sqlite,
 			)
 
@@ -108,7 +130,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			self.convert_to_epub(
 				"100-en-fa-res.slob",
 				"100-en-fa-res-slob-v2",
-				"4",
+				testId="4",
 				direct=direct,
 			)
 
@@ -117,7 +139,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			self.convert_to_epub(
 				"100-en-fa.txt",
 				"100-en-fa-prefix3-v2",
-				"5",
+				testId="5",
 				sqlite=sqlite,
 				writeOptions={"group_by_prefix_length": 3},
 			)
@@ -126,7 +148,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		self.convert_to_epub(
 			"300-rand-en-fa.txt",
 			"300-rand-en-fa-prefix3-v2",
-			"6",
+			testId="6",
 			sqlite=True,
 			writeOptions={"group_by_prefix_length": 3},
 		)
@@ -135,7 +157,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		self.convert_to_epub(
 			"300-rand-en-fa.txt",
 			"300-rand-en-fa-prefix3-v2",
-			"7",
+			testId="7",
 			sqlite=False,
 			writeOptions={"group_by_prefix_length": 3},
 		)
