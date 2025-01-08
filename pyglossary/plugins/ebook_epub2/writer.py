@@ -28,6 +28,12 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import WriterGlossaryType
 
 
+def newUUID() -> str:
+	import uuid
+
+	return str(uuid.uuid4()).replace("-", "")
+
+
 class Writer(EbookWriter):
 	# these class attrs are only in Epub
 	# MIMETYPE_CONTENTS, CONTAINER_XML_CONTENTS
@@ -162,17 +168,14 @@ p.groupDefinition {
 	COVER_TEMPLATE = '<meta name="cover" content="{cover}" />'
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
-		import uuid
-
-		idStr = os.getenv("EPUB_UUID")
-		if not idStr:
-			idStr = str(uuid.uuid4()).replace("-", "")
-
+		glos.setInfo(
+			"uuid",
+			os.getenv("EPUB_UUID") or glos.getInfo("uuid") or newUUID(),
+		)
 		EbookWriter.__init__(
 			self,
 			glos,
 		)
-		glos.setInfo("uuid", idStr)
 
 	@classmethod
 	def cls_get_prefix(
