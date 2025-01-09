@@ -4,6 +4,10 @@
 	<img src="res/pyglossary-256x256.png"></img>
 </p>
 
+[![PyPI](https://img.shields.io/pypi/v/pyglossary.svg)](https://pypi.org/project/pyglossary/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/pyglossary)](https://pypi.org/project/pyglossary/)
+[![tests](https://github.com/ilius/pyglossary/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/ilius/pyglossary/actions/workflows/test.yml?query=branch%3Amaster)
+
 A tool for converting dictionary files aka glossaries.
 
 The primary purpose is to be able to use our offline glossaries in any Open
