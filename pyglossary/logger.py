@@ -222,7 +222,11 @@ class StdLogHandler(logging.Handler):
 		try:
 			fp.write(msg + "\n")
 		except UnicodeEncodeError:
-			fp.write((msg + "\n").encode(encoding, errors="xmlcharrefreplace").decode(encoding))
+			fp.write(
+				(msg + "\n")
+				.encode(encoding, errors="xmlcharrefreplace")
+				.decode(encoding)
+			)
 		fp.flush()
 
 
