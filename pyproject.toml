@@ -167,6 +167,10 @@ mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
 
 [tool.ruff.lint.per-file-ignores]
 
+"pyglossary/sort_modules/random.py" = [
+	"A005", # Module `random` shadows a Python standard-library module
+]
+
 "pyglossary/glossary.py" = ["ANN"]
 
 "*_types.py" = [
