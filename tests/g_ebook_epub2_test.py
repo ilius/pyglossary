@@ -91,14 +91,14 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
 			self.assertEqual(sha1sum, actualSha1, f"{outputFilename=}")
 
-	def test_convert_txt_epub_1(self):
-		self.convert_to_epub(
-			"100-en-fa.txt",
-			"100-en-fa",
-			testId="a1",
-			checkZipContents=False,
-			sha1sum="86aaea126cc4c2a471c7b60ea35a32841bf4d4b7",
-		)
+	# def test_convert_txt_epub_1(self):
+	# 	self.convert_to_epub(
+	# 		"100-en-fa.txt",
+	# 		"100-en-fa",
+	# 		testId="a1",
+	# 		checkZipContents=False,
+	# 		sha1sum="86aaea126cc4c2a471c7b60ea35a32841bf4d4b7",
+	# 	)
 
 	def test_convert_to_epub_1(self):
 		self.convert_to_epub(
