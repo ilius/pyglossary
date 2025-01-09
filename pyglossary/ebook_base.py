@@ -65,7 +65,7 @@ class GroupState:
 
 	def add(self, entry: EntryType, prefix: str) -> None:
 		word = entry.s_word
-		defi = entry.defi
+		defi = entry.defi.replace("<br>", "<br/>").replace("<BR>", "<BR/>")
 		if not self.first_word:
 			self.first_word = word
 		self.last_word = word

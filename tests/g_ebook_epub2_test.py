@@ -97,7 +97,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			"100-en-fa",
 			testId="a1",
 			checkZipContents=False,
-			sha1sum="f3daca476e1e083e7252d92d6a1a1a7b75f1320a",
+			sha1sum="86aaea126cc4c2a471c7b60ea35a32841bf4d4b7",
 		)
 
 	def test_convert_to_epub_1(self):
