@@ -1,0 +1,13 @@
+[KOReader]
+web = "http://koreader.rocks/"
+source = "https://github.com/koreader/koreader"
+platforms = [ "Android", "Amazon Kindle", "Kobo eReader", "PocketBook", "Cervantes",]
+license = "AGPLv3"
+plang = "Lua"
+
+[sdcv]
+web = "https://dushistov.github.io/sdcv/"
+source = "https://github.com/Dushistov/sdcv"
+platforms = [ "Linux", "Windows", "Mac", "Android",]
+license = "GPLv2"
+plang = "C++"

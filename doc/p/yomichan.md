@@ -43,3 +43,9 @@ To install, run
 ```sh
 pip3 install beautifulsoup4
 ```
+
+### Dictionary Applications/Tools
+
+| Name & Website                   | Source code                                              | License | Platforms                    | Language   |
+| -------------------------------- | -------------------------------------------------------- | ------- | ---------------------------- | ---------- |
+| [Yomitan](https://yomitan.wiki/) | [@yomidevs/yomitan](https://github.com/yomidevs/yomitan) | GPL     | Chrome, Firefox, Edge, Brave | JavaScript |
