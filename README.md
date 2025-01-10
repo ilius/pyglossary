@@ -51,51 +51,52 @@ Web interface
 
 | Format                                                  |     |    Extension    | Read | Write |
 | ------------------------------------------------------- | :-: | :-------------: | :--: | :---: |
-| [Aard 2 (slob)](./doc/p/aard2_slob.md)                  |  🔢  |      .slob      | ✅ | ✅ |
-| [ABBYY Lingvo DSL](./doc/p/dsl.md)                      |  📝  |      .dsl       | ✅ | ❌ |
-| [Almaany.com](./doc/p/almaany.md) (SQLite3, Arabic)     |  🔢  |       .db       | ✅ | ❌ |
-| [AppleDict Binary](./doc/p/appledict_bin.md)            |  📁  |   .dictionary   | ✅ | ❌ |
-| [AppleDict Source](./doc/p/appledict.md)                |  📁  |                 |    | ✅ |
-| [Babylon BGL](./doc/p/babylon_bgl.md)                   |  🔢  |      .bgl       | ✅ | ❌ |
-| [cc-kedict](./doc/p/cc_kedict.md) (Korean)              |  📝  |                 | ✅ | ❌ |
-| [CSV](./doc/p/csv.md)                                   |  📝  |      .csv       | ✅ | ✅ |
-| [Dict.cc](./doc/p/dict_cc.md) (SQLite3, German)         |  🔢  |       .db       | ✅ |    |
-| [DICT.org / Dictd server](./doc/p/dict_org.md)          |  📁  |    (📝.index)   | ✅ | ✅ |
-| [DICT.org / dictfmt source](./doc/p/dict_org_source.md) |  📝  |     (.dtxt)     |    | ✅ |
-| [dictunformat output file](./doc/p/dictunformat.md)     |  📝  | (.dictunformat) | ✅ |    |
-| [DictionaryForMIDs](./doc/p/dicformids.md)              |  📁  |    (📁.mids)    | ✅ | ✅ |
-| [DigitalNK](./doc/p/digitalnk.md) (SQLite3, N-Korean)   |  🔢  |       .db       | ✅ |    |
-| [DIKT JSON](./doc/p/dikt_json.md)                       |  📝  |     (.json)     |    | ✅ |
-| [EDICT2 (CEDICT)](./doc/p/edict2.md) (Chinese)          |  📝  |     (.u8)       | ✅ | ❌ |
-| [EPUB-2 E-Book](./doc/p/epub2.md)                       |  📦  |      .epub      | ❌ | ✅ |
-| [FreeDict](./doc/p/freedict.md)                         |  📝  |      .tei       | ✅ | ❌ |
-| [Gettext Source](./doc/p/gettext_po.md)                 |  📝  |       .po       | ✅ | ✅ |
-| [HTML Directory (by file size)](./doc/p/html_dir.md)    |  📁  |                 | ❌ | ✅ |
-| [JMDict](./doc/p/jmdict.md) (Japanese)                  |  📝  |                 | ✅ | ❌ |
-| [JSON](./doc/p/json.md)                                 |  📝  |      .json      |    | ✅ |
-| [Kobo E-Reader Dictionary](./doc/p/kobo.md)             |  📦  |    .kobo.zip    | ❌ | ✅ |
-| [Kobo E-Reader Dictfile](./doc/p/kobo_dictfile.md)      |  📝  |       .df       | ✅ | ✅ |
-| [Lingoes Source](./doc/p/lingoes_ldf.md)                |  📝  |      .ldf       | ✅ | ✅ |
-| [Mobipocket E-Book](./doc/p/mobi.md)                    |  🔢  |      .mobi      | ❌ | ✅ |
-| [Octopus MDict](./doc/p/octopus_mdict.md)               |  🔢  |      .mdx       | ✅ | ❌ |
-| [QuickDic version 6](./doc/p/quickdic6.md)              |  📁  |     .quickdic   | ✅ | ✅ |
-| [SQL](./doc/p/sql.md)                                   |  📝  |      .sql       | ❌ | ✅ |
-| [StarDict](./doc/p/stardict.md)                         |  📁  |     (📝.ifo)    | ✅ | ✅ |
-| [StarDict Textual File](./doc/p/stardict_textual.md)    |  📝  |     (.xml)      | ✅ | ✅ |
-| [Tabfile](./doc/p/tabfile.md)                           |  📝  |   .txt, .tab    | ✅ | ✅ |
-| [Wiktextract](./doc/p/wiktextract.md)                   |  📝  |     .jsonl      | ✅ | ❌ |
-| [Wordset.org](./doc/p/wordset.md)                       |  📁  |                 | ✅ |    |
-| [XDXF](./doc/p/xdxf.md)                                 |  📝  |      .xdxf      | ✅ | ❌ |
-| [Yomichan](./doc/p/yomichan.md)                         |  📦  |     (.zip)      |    | ✅ |
-| [Zim (Kiwix)](./doc/p/zim.md)                           |  🔢  |      .zim       | ✅ |    |
+| [Aard 2 (slob)](./doc/p/aard2_slob.md)                  | 🔢  |      .slob      | ✅ | ✅ |
+| [ABBYY Lingvo DSL](./doc/p/dsl.md)                      | 📝  |      .dsl       | ✅ | ❌ |
+| [AppleDict Binary](./doc/p/appledict_bin.md)            | 📁  |   .dictionary   | ✅ | ❌ |
+| [AppleDict Source](./doc/p/appledict.md)                | 📁  |                 |    | ✅ |
+| [Babylon BGL](./doc/p/babylon_bgl.md)                   | 🔢  |      .bgl       | ✅ | ❌ |
+| [CSV](./doc/p/csv.md)                                   | 📝  |      .csv       | ✅ | ✅ |
+| [DICT.org / Dictd server](./doc/p/dict_org.md)          | 📁  |    (📝.index)   | ✅ | ✅ |
+| [DICT.org / dictfmt source](./doc/p/dict_org_source.md) | 📝  |     (.dtxt)     |    | ✅ |
+| [dictunformat output file](./doc/p/dictunformat.md)     | 📝  | (.dictunformat) | ✅ |    |
+| [DictionaryForMIDs](./doc/p/dicformids.md)              | 📁  |    (📁.mids)    | ✅ | ✅ |
+| [DIKT JSON](./doc/p/dikt_json.md)                       | 📝  |     (.json)     |    | ✅ |
+| [EPUB-2 E-Book](./doc/p/epub2.md)                       | 📦  |      .epub      | ❌ | ✅ |
+| [FreeDict](./doc/p/freedict.md)                         | 📝  |      .tei       | ✅ | ❌ |
+| [Gettext Source](./doc/p/gettext_po.md)                 | 📝  |       .po       | ✅ | ✅ |
+| [HTML Directory (by file size)](./doc/p/html_dir.md)    | 📁  |                 | ❌ | ✅ |
+| [JSON](./doc/p/json.md)                                 | 📝  |      .json      |    | ✅ |
+| [Kobo E-Reader Dictionary](./doc/p/kobo.md)             | 📦  |    .kobo.zip    | ❌ | ✅ |
+| [Kobo E-Reader Dictfile](./doc/p/kobo_dictfile.md)      | 📝  |       .df       | ✅ | ✅ |
+| [Lingoes Source](./doc/p/lingoes_ldf.md)                | 📝  |      .ldf       | ✅ | ✅ |
+| [Mobipocket E-Book](./doc/p/mobi.md)                    | 🔢  |      .mobi      | ❌ | ✅ |
+| [Octopus MDict](./doc/p/octopus_mdict.md)               | 🔢  |      .mdx       | ✅ | ❌ |
+| [QuickDic version 6](./doc/p/quickdic6.md)              | 🔢  |     .quickdic   | ✅ | ✅ |
+| [SQL](./doc/p/sql.md)                                   | 📝  |      .sql       | ❌ | ✅ |
+| [StarDict](./doc/p/stardict.md)                         | 📁  |     (📝.ifo)    | ✅ | ✅ |
+| [StarDict Textual File](./doc/p/stardict_textual.md)    | 📝  |     (.xml)      | ✅ | ✅ |
+| [Tabfile](./doc/p/tabfile.md)                           | 📝  |   .txt, .tab    | ✅ | ✅ |
+| [Wiktextract](./doc/p/wiktextract.md)                   | 📝  |     .jsonl      | ✅ | ❌ |
+| [Wordset.org](./doc/p/wordset.md)                       | 📁  |                 | ✅ |    |
+| [XDXF](./doc/p/xdxf.md)                                 | 📝  |      .xdxf      | ✅ | ❌ |
+| [Zim (Kiwix)](./doc/p/zim.md)                           | 🔢  |      .zim       | ✅ |    |
+| [Almaany.com](./doc/p/almaany.md)              (Arabic) | 🛢️  |      .db        | ✅ | ❌ |
+| [cc-kedict](./doc/p/cc_kedict.md)                    🇰🇷 | 📝  |                 | ✅ | ❌ |
+| [Dict.cc](./doc/p/dict_cc.md)                        🇩🇪 | 🛢️  |       .db       | ✅ |    |
+| [DigitalNK](./doc/p/digitalnk.md)                    🇰🇵 | 🛢️  |       .db       | ✅ |    |
+| [EDICT2 (CEDICT)](./doc/p/edict2.md)                 🇨🇳 | 📝  |     (.u8)       | ✅ | ❌ |
+| [JMDict](./doc/p/jmdict.md)                          🇯🇵 | 📝  |                 | ✅ | ❌ |
+| [Yomichan](./doc/p/yomichan.md)                      🇯🇵 | 📦  |     (.zip)      |    | ✅ |
 
 Legend:
 
 - 📁	Directory
 - 📝	Text file
 - 📦	Package/archive file
+- 🛢️	SQLite file
 - 🔢	Binary file
-- ✅		Supported
+- ✅	Supported
 - ❌ 	Will not be supported
 
 **Note**: SQLite-based formats are not detected by extension (`.db`);
