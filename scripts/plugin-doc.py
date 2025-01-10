@@ -200,7 +200,7 @@ def getToolSourceLink(tool):
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [p for p in Glossary.plugins.values() if pluginIsActive(p)]
 
-toolsDir = join(rootDir, "plugins-meta", "tools")
+pluginsDir = join(rootDir, "pyglossary", "plugins")
 
 
 for p in plugins:
@@ -240,7 +240,7 @@ for p in plugins:
 
 	extraDocs = getattr(module, "extraDocs", [])
 
-	toolsFile = join(toolsDir, f"{p.lname}.toml")
+	toolsFile = join(pluginsDir, p.moduleName, "tools.toml")
 	try:
 		with open(toolsFile, encoding="utf-8") as _file:
 			tools_toml = toml.load(_file)
