@@ -315,8 +315,7 @@ def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 		# Ihre$1$Ihres
 		if d1 + 1 < len(b_word) and b_word[d1 + 1] != 0x20:
 			log.debug(
-				f"stripDollarIndexes({b_word!r}):\n"
-				"second $ is followed by non-space",
+				f"stripDollarIndexes({b_word!r}):\nsecond $ is followed by non-space",
 			)
 		b_word_main += b_word[i:d0]
 		i = d1 + 1

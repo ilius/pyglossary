@@ -467,10 +467,7 @@ class Writer:
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			for word in entry.l_word:
 				indexTxtFileObj.write(
-					f"{entryIndex}\t"
-					f"{escapeNTB(word)}\t"
-					f"{tmpFilename}\t"
-					f"{pos}\n",
+					f"{entryIndex}\t{escapeNTB(word)}\t{tmpFilename}\t{pos}\n",
 				)
 			del tmpFilename
 			text = replaceBword(text)

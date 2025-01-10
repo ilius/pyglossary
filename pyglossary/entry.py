@@ -248,10 +248,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		return ""
 
 	def __repr__(self) -> str:
-		return (
-			f"Entry({self._word!r}, {self._defi!r}, "
-			f"defiFormat={self._defiFormat!r})"
-		)
+		return f"Entry({self._word!r}, {self._defi!r}, defiFormat={self._defiFormat!r})"
 
 	@property
 	def s_word(self) -> str:

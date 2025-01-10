@@ -47,8 +47,7 @@ class Reader:
 		if self._cur is None:
 			raise ValueError("cur is None")
 		self._cur.execute(
-			f"select {column1}, {column2}, entry_type from main_ft"
-			f" order by {column1}",
+			f"select {column1}, {column2}, entry_type from main_ft order by {column1}",
 		)
 		for row in self._cur.fetchall():
 			term1 = row[0]

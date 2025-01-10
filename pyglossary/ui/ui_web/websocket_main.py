@@ -66,7 +66,7 @@ def new_client(client, server):
 
 # Called on client disconnecting
 def client_left(client, server):
-	log.info(f'{server}: Client({(client and client.get("id")) or -1}) disconnected')
+	log.info(f"{server}: Client({(client and client.get('id')) or -1}) disconnected")
 
 
 # Callback invoked when client sends a message
@@ -108,7 +108,7 @@ def browse_check_entry(entry: EntryType, wordQuery: str) -> str | None:
 		extension = Path(entry.s_word).suffix[1:]
 		html_entry += f"""
 		<img class="data"
-		src="data:image/{extension};base64,{base64.b64encode(entry.data).decode('utf-8')}"
+		src="data:image/{extension};base64,{base64.b64encode(entry.data).decode("utf-8")}"
 		alt="{entry.s_word}"/>
 		"""
 	return html_entry

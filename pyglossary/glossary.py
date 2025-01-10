@@ -63,8 +63,7 @@ class Glossary(GlossaryCommon, PluginHandler):
 		if info:
 			if not isinstance(info, dict):
 				raise TypeError(
-					"Glossary: `info` has invalid type"
-					", dict or OrderedDict expected",
+					"Glossary: `info` has invalid type, dict or OrderedDict expected",
 				)
 			for key, value in info.items():
 				self.setInfo(key, value)

@@ -26,3 +26,10 @@
 | sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf                           |
 | audio_icon       | `True`  | bool | Add glossary's audio icon                                                |
 | sqlite           | `None`  | bool | Use SQLite to limit memory usage. Default depends on global SQLite mode. |
+
+### Dictionary Applications/Tools
+
+| Name & Website                            | Source code                                                | License | Platforms                                                   | Language |
+| ----------------------------------------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------- | -------- |
+| [KOReader](http://koreader.rocks/)        | [@koreader/koreader](https://github.com/koreader/koreader) | AGPLv3  | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua      |
+| [sdcv](https://dushistov.github.io/sdcv/) | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv)       | GPLv2   | Linux, Windows, Mac, Android                                | C++      |

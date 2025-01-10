@@ -32,10 +32,7 @@ default_de_normalizer_rules = (
 	":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
 )
 default_normalizer_rules = (
-	":: Any-Latin; ' ' > ; "
-	":: Lower; :: NFD; "
-	":: [:Nonspacing Mark:] Remove; "
-	":: NFC ;"
+	":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
 )
 
 

@@ -22,3 +22,9 @@
 | Name  | Default | Type | Comment                  |
 | ----- | ------- | ---- | ------------------------ |
 | fuzzy | `True`  | bool | Create fuzzy search data |
+
+### Dictionary Applications/Tools
+
+| Name & Website                                | Source code                                          | License | Platforms           | Language |
+| --------------------------------------------- | ---------------------------------------------------- | ------- | ------------------- | -------- |
+| [AyanDict](https://github.com/ilius/ayandict) | [@ilius/ayandict](https://github.com/ilius/ayandict) | GPL     | Linux, Windows, Mac | Go       |

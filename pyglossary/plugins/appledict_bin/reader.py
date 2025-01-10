@@ -356,7 +356,7 @@ class Reader:
 			try:
 				(chunkLen,) = unpack("i", bs)
 			except Exception as e:
-				log.error(f"{buffer[pos:pos + 100]!r}")
+				log.error(f"{buffer[pos : pos + 100]!r}")
 				raise e from None
 		return chunkLen, offset
 

@@ -1,0 +1,6 @@
+[AyanDict]
+web = "https://github.com/ilius/ayandict"
+source = "https://github.com/ilius/ayandict"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "Go"
