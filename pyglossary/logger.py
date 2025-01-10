@@ -218,7 +218,15 @@ class StdLogHandler(logging.Handler):
 			print(f"fp=None, levelname={record.levelname}")  # noqa: T201
 			print(msg)  # noqa: T201
 			return
-		fp.write(msg + "\n")
+		encoding = getattr(fp, "encoding", "utf-8") or "utf-8"
+		try:
+			fp.write(msg + "\n")
+		except UnicodeEncodeError:
+			fp.write(
+				(msg + "\n")
+				.encode(encoding, errors="xmlcharrefreplace")
+				.decode(encoding)
+			)
 		fp.flush()
 
 
