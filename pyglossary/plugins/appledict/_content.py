@@ -267,7 +267,7 @@ def remove_style(tag: dict, line: str) -> None:
 
 
 def fix_sound_link(href: str, tag: dict[str, Any]) -> None:
-	tag["href"] = f'javascript:new Audio("{href[len("sound://"):]}").play();'
+	tag["href"] = f'javascript:new Audio("{href[len("sound://") :]}").play();'
 
 
 def link_is_url(href: str) -> bool:

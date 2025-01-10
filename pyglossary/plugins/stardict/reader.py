@@ -406,8 +406,7 @@ class Reader:
 			pos += 4
 			if entryIndex >= self._wordCount:
 				log.error(
-					"Corrupted synonym file. "
-					f"Word {b_alt!r} references invalid item",
+					f"Corrupted synonym file. Word {b_alt!r} references invalid item",
 				)
 				continue
 

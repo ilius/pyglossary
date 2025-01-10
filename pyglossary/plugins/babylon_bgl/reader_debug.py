@@ -22,6 +22,7 @@ from __future__ import annotations
 import gzip
 import os
 import re
+from dataclasses import dataclass
 from os.path import join
 
 from pyglossary.core import log
@@ -52,16 +53,16 @@ class MetaData:
 		self.bglHeader = None  # data before gzip header
 
 
+@dataclass
 class MetaDataBlock:
-	def __init__(self, data: bytes, type_: str) -> None:
-		self.data = data
-		self.type = type_
+	data: bytes
+	type: str
 
 
+@dataclass
 class MetaDataRange:
-	def __init__(self, type_: str, count: int) -> None:
-		self.type = type_
-		self.count = count
+	type: str
+	count: int
 
 
 class MetaData2:

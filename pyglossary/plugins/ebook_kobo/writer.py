@@ -131,8 +131,7 @@ class Writer:
 			htmlContents += "</html>"
 			core.trace(
 				log,
-				f"writeGroup: {lastPrefix!r}, "
-				f"{group_fname!r}, count={groupCounter}",
+				f"writeGroup: {lastPrefix!r}, {group_fname!r}, count={groupCounter}",
 			)
 			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
 				gzipFile.write(htmlContents.encode("utf-8"))

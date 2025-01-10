@@ -413,8 +413,7 @@ class PluginProp:  # noqa: PLR0904
 
 		if not isinstance(self.writeDepends, dict):
 			log.error(
-				f"invalid depends={self.writeDepends}"
-				f" in {self.name!r}.Reader class",
+				f"invalid depends={self.writeDepends} in {self.name!r}.Reader class",
 			)
 
 		for name, opt in self.optionsProp.items():
@@ -475,8 +474,7 @@ class PluginProp:  # noqa: PLR0904
 		):
 			if not hasattr(cls, attr):
 				log.error(
-					f"Invalid Reader class in {self.name!r} plugin"
-					f", no {attr!r} method",
+					f"Invalid Reader class in {self.name!r} plugin, no {attr!r} method",
 				)
 				self._Reader = None
 				return False
@@ -493,8 +491,7 @@ class PluginProp:  # noqa: PLR0904
 		):
 			if not hasattr(cls, attr):
 				log.error(
-					f"Invalid Writer class in {self.name!r} plugin"
-					f", no {attr!r} method",
+					f"Invalid Writer class in {self.name!r} plugin, no {attr!r} method",
 				)
 				self._Writer = None
 				return False

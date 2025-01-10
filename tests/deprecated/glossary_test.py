@@ -116,8 +116,7 @@ class TestGlossaryBase(unittest.TestCase):
 		actual_crc32 = crc32hex(data)
 		if actual_crc32 != crc32:
 			raise RuntimeError(
-				"CRC32 check failed for downloaded file: "
-				f"{filename}: {actual_crc32}",
+				f"CRC32 check failed for downloaded file: {filename}: {actual_crc32}",
 			)
 		with open(fpath, mode="wb") as _file:
 			_file.write(data)

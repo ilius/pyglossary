@@ -63,7 +63,9 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 		)
 
 		if sha1sum:
-			os.environ["EPUB_UUID"] = hashlib.sha1(inputFname.encode("ascii")).hexdigest()
+			os.environ["EPUB_UUID"] = hashlib.sha1(
+				inputFname.encode("ascii")
+			).hexdigest()
 			os.environ["EBOOK_CREATION_TIME"] = "1730579400"
 			# print(f'{os.environ["EPUB_UUID"]=}')
 

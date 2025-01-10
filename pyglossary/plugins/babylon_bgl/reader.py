@@ -191,8 +191,7 @@ class Block:
 
 	def __str__(self) -> str:
 		return (
-			f"Block type={self.type}, length={self.length}, "
-			f"len(data)={len(self.data)}"
+			f"Block type={self.type}, length={self.length}, len(data)={len(self.data)}"
 		)
 
 
@@ -470,8 +469,7 @@ class Reader:
 			# self.bgl_numEntries may be less than the number of entries
 			# we've read.
 			log.warning(
-				f"bgl_numEntries={self.bgl_numEntries}"
-				f", numEntries={self.numEntries}",
+				f"bgl_numEntries={self.bgl_numEntries}, numEntries={self.numEntries}",
 			)
 
 		self.numBlocks = 0
@@ -614,8 +612,7 @@ class Reader:
 			return -1
 		if len(buf) != num:
 			log.error(
-				f"readBytes: expected to read {num} bytes"
-				f", but found {len(buf)} bytes",
+				f"readBytes: expected to read {num} bytes, but found {len(buf)} bytes",
 			)
 			return -1
 		return uintFromBytes(buf)

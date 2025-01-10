@@ -367,9 +367,9 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		header = bytearray()
 		payload = struct.pack("!H", status) + reason
 		payload_length = len(payload)
-		assert (
-			payload_length <= 125
-		), "We only support short closing reasons at the moment"
+		assert payload_length <= 125, (
+			"We only support short closing reasons at the moment"
+		)
 
 		# Send CLOSE with status & reason
 		header.append(FIN | OPCODE_CLOSE_CONN)

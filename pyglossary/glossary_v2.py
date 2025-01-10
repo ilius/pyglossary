@@ -203,8 +203,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		if info:
 			if not isinstance(info, dict):
 				raise TypeError(
-					"Glossary: `info` has invalid type"
-					", dict or OrderedDict expected",
+					"Glossary: `info` has invalid type, dict or OrderedDict expected",
 				)
 			warnings.warn(
 				"info= argument is deprecated. Use glos.setInfo(key, value)",
@@ -1076,8 +1075,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			sqlite = self._config.get("auto_sqlite", True)
 			if sqlite:
 				log.info(
-					"Automatically switching to SQLite mode"
-					f" for writing {plugin.name}",
+					f"Automatically switching to SQLite mode for writing {plugin.name}",
 				)
 
 		sortKeyTuple = self._checkSortKey(

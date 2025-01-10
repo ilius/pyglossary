@@ -296,8 +296,7 @@ def validateFlags(args: argparse.Namespace, log: logging.Logger) -> bool:
 	if args.sortKeyName and not lookupSortKey(args.sortKeyName):
 		valuesStr = ", ".join(_sk.name for _sk in namedSortKeyList)
 		log.critical(
-			f"Invalid sortKeyName={args.sortKeyName!r}"
-			f". Supported values:\n{valuesStr}",
+			f"Invalid sortKeyName={args.sortKeyName!r}. Supported values:\n{valuesStr}",
 		)
 		return False
 

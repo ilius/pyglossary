@@ -34,26 +34,23 @@ HASH_SET_INIT2 = (
 """Second part of Java serialization of java.util.HashSet"""
 
 LINKED_HASH_SET_INIT = (
-	(
-		b"\xac\xed"  # magic
-		b"\x00\x05"  # version
-		b"\x73"  # object
-		b"\x72"  # class
-		# Java String "java.util.LinkedHashSet":
-		b"\x00\x17\x6a\x61\x76\x61\x2e\x75\x74\x69"
-		b"\x6c\x2e\x4c\x69\x6e\x6b\x65\x64"
-		b"\x48\x61\x73\x68\x53\x65\x74"
-		# serialization ID:
-		b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
-		b"\x02"  # flags
-		b"\x00\x00"  # fields count
-		b"\x78"  # blockdata end
-		b"\x72"  # superclass (java.util.HashSet)
-		b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
-		b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
-	)
-	+ HASH_SET_INIT2
-)
+	b"\xac\xed"  # magic
+	b"\x00\x05"  # version
+	b"\x73"  # object
+	b"\x72"  # class
+	# Java String "java.util.LinkedHashSet":
+	b"\x00\x17\x6a\x61\x76\x61\x2e\x75\x74\x69"
+	b"\x6c\x2e\x4c\x69\x6e\x6b\x65\x64"
+	b"\x48\x61\x73\x68\x53\x65\x74"
+	# serialization ID:
+	b"\xd8\x6c\xd7\x5a\x95\xdd\x2a\x1e"
+	b"\x02"  # flags
+	b"\x00\x00"  # fields count
+	b"\x78"  # blockdata end
+	b"\x72"  # superclass (java.util.HashSet)
+	b"\x00\x11\x6a\x61\x76\x61\x2e\x75\x74\x69"
+	b"\x6c\x2e\x48\x61\x73\x68\x53\x65\x74"
+) + HASH_SET_INIT2
 """Header of Java serialization of java.util.LinkedHashSet"""
 
 HASH_SET_CAPACITY_FACTOR = 0.75

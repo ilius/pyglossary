@@ -213,7 +213,7 @@ def lexRefText(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	if not target:
 		target = text
 
-	tr.addHtml(f'<a href={quoteattr("bword://" + target)}>{escape(text)}</a>')
+	tr.addHtml(f"<a href={quoteattr('bword://' + target)}>{escape(text)}</a>")
 	tr.resetBuf()
 	return lexRoot, None
 

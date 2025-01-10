@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from pyglossary import gregorian
@@ -40,22 +41,11 @@ if TYPE_CHECKING:
 __all__ = ["charsetInfoDecode", "infoType3ByCode"]
 
 
+@dataclass(slots=True)
 class InfoItem:
-	__slots__ = (
-		"attr",
-		"decode",
-		"name",
-	)
-
-	def __init__(
-		self,
-		name: str,
-		decode: Callable[[bytes], Any] | None = None,
-		attr: bool = False,
-	) -> None:
-		self.name = name
-		self.decode = decode
-		self.attr = attr
+	name: str
+	decode: Callable[[bytes], Any] | None = None
+	attr: bool = False
 
 
 def decodeBglBinTime(b_value: bytes) -> str:
