@@ -1,7 +1,6 @@
-["GoldenDict by xiaoyifang"]
-web = "https://github.com/xiaoyifang/goldendict"
-source = "https://github.com/xiaoyifang/goldendict"
-# https://xiaoyifang.github.io/goldendict/
+["GoldenDict-NG by @xiaoyifang"]
+web = "https://xiaoyifang.github.io/goldendict-ng/"
+source = "https://github.com/xiaoyifang/goldendict-ng"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
@@ -15,9 +14,9 @@ license = "GPL"
 plang = "C++"
 
 [QTranslate]
-web = "https://quest-app.appspot.com/"
+web = "https://qtranslate.en.lo4d.com/windows"
 platforms = [ "Windows",]
-license = "Proprietary"
+license = "Freeware"
 plang = "C++"
 
 [Alpus]

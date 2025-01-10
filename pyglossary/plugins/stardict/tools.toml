@@ -8,7 +8,6 @@ plang = "Go"
 ["GoldenDict-NG by @xiaoyifang"]
 web = "https://xiaoyifang.github.io/goldendict-ng/"
 source = "https://github.com/xiaoyifang/goldendict-ng"
-# https://xiaoyifang.github.io/goldendict-ng/
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
