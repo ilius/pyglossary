@@ -52,7 +52,6 @@ Web interface
 | Format                                                  |     |    Extension    | Read | Write |
 | ------------------------------------------------------- | :-: | :-------------: | :--: | :---: |
 | [Aard 2 (slob)](./doc/p/aard2_slob.md)                  | 🔢  |      .slob      | ✅ | ✅ |
-| [ABBYY Lingvo DSL](./doc/p/dsl.md)                      | 📝  |      .dsl       | ✅ | ❌ |
 | [AppleDict Binary](./doc/p/appledict_bin.md)            | 📁  |   .dictionary   | ✅ | ❌ |
 | [AppleDict Source](./doc/p/appledict.md)                | 📁  |                 |    | ✅ |
 | [Babylon BGL](./doc/p/babylon_bgl.md)                   | 🔢  |      .bgl       | ✅ | ❌ |
@@ -78,16 +77,19 @@ Web interface
 | [StarDict Textual File](./doc/p/stardict_textual.md)    | 📝  |     (.xml)      | ✅ | ✅ |
 | [Tabfile](./doc/p/tabfile.md)                           | 📝  |   .txt, .tab    | ✅ | ✅ |
 | [Wiktextract](./doc/p/wiktextract.md)                   | 📝  |     .jsonl      | ✅ | ❌ |
-| [Wordset.org](./doc/p/wordset.md)                       | 📁  |                 | ✅ |    |
 | [XDXF](./doc/p/xdxf.md)                                 | 📝  |      .xdxf      | ✅ | ❌ |
 | [Zim (Kiwix)](./doc/p/zim.md)                           | 🔢  |      .zim       | ✅ |    |
+| [ABBYY Lingvo DSL](./doc/p/dsl.md)                   🇷🇺 | 📝  |      .dsl       | ✅ | ❌ |
 | [Almaany.com](./doc/p/almaany.md)              (Arabic) | 🛢️  |      .db        | ✅ | ❌ |
 | [cc-kedict](./doc/p/cc_kedict.md)                    🇰🇷 | 📝  |                 | ✅ | ❌ |
 | [Dict.cc](./doc/p/dict_cc.md)                        🇩🇪 | 🛢️  |       .db       | ✅ |    |
 | [DigitalNK](./doc/p/digitalnk.md)                    🇰🇵 | 🛢️  |       .db       | ✅ |    |
 | [EDICT2 (CEDICT)](./doc/p/edict2.md)                 🇨🇳 | 📝  |     (.u8)       | ✅ | ❌ |
 | [JMDict](./doc/p/jmdict.md)                          🇯🇵 | 📝  |                 | ✅ | ❌ |
-| [Yomichan](./doc/p/yomichan.md)                      🇯🇵 | 📦  |     (.zip)      |    | ✅ |
+| [JMnedict](./doc/p/jmnedict.md)                      🇯🇵 | 📝  |                 | ✅ | ❌ |
+| [WordNet](./doc/p/wordnet.md)                        🇬🇧 | 📁  |                 | ✅ | ❌ |
+| [@wordset dictionary](./doc/p/wordset.md)            🇬🇧 | 📁  |                 | ✅ |    |
+| [Yomichan / Yomitan](./doc/p/yomichan.md)            🇯🇵 | 📦  |     (.zip)      |    | ✅ |
 
 Legend:
 
@@ -215,6 +217,8 @@ Converting glossaries into these formats requires [sorting](#sorting) entries:
 - [StarDict](./doc/p/stardict.md)
 - [EPUB-2](./doc/p/epub2.md)
 - [Mobipocket E-Book](./doc/p/mobi.md)
+- [Yomichan](./doc/p/yomichan.md)
+- [DictionaryForMIDs](./doc/p/dicformids.md)
 
 That's why direct mode will not work for these formats, and PyGlossary has to
 switch to indirect mode (or it previously had to, see [SQLite mode](#sqlite-mode)).
