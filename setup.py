@@ -110,6 +110,7 @@ package_data = {
 		"ui/ui_web/*.js",
 		"xdxf/xdxf.xsl",
 		"xdxf/*.py",
+		"repro_zipfile/*.py",
 	]
 	+ [
 		# safest way found so far to include every resource of plugins
