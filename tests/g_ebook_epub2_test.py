@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import os
 import re
@@ -5,12 +6,17 @@ import sys
 import unittest
 from os.path import abspath, dirname
 
+from freezegun import freeze_time
+
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from glossary_v2_test import TestGlossaryBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
+
+testTimeEpoch = 1730579400
+testTime = datetime.datetime.fromtimestamp(testTimeEpoch, tz=datetime.timezone.utc)
 
 
 class TestGlossaryEPUB2(TestGlossaryBase):
@@ -66,7 +72,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			os.environ["EPUB_UUID"] = hashlib.sha1(
 				inputFname.encode("ascii")
 			).hexdigest()
-			os.environ["EBOOK_CREATION_TIME"] = "1730579400"
+			os.environ["EBOOK_CREATION_TIME"] = str(testTimeEpoch)
 			# print(f'{os.environ["EPUB_UUID"]=}')
 
 		glos = self.glos = Glossary()
@@ -93,14 +99,17 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
 			self.assertEqual(sha1sum, actualSha1, f"{outputFilename=}")
 
-	# def test_convert_txt_epub_1(self):
-	# 	self.convert_to_epub(
-	# 		"100-en-fa.txt",
-	# 		"100-en-fa",
-	# 		testId="a1",
-	# 		checkZipContents=False,
-	# 		sha1sum="86aaea126cc4c2a471c7b60ea35a32841bf4d4b7",
-	# 	)
+	# sha1sum still depends on current date (but not time)
+	# despite using ReproducibleZipFile and EBOOK_CREATION_TIME env var. not sure why.
+	@freeze_time(testTime)
+	def test_convert_txt_epub_1(self):
+		self.convert_to_epub(
+			"100-en-fa.txt",
+			"100-en-fa",
+			testId="a1",
+			checkZipContents=False,
+			sha1sum="beb3ad8227dd9561223cd18d805aff8dd0aef27b",
+		)
 
 	def test_convert_to_epub_1(self):
 		self.convert_to_epub(

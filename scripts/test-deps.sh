@@ -1,4 +1,5 @@
 python -m pip install \
+	freezegun \
 	PyICU \
 	lxml==5.3 \
 	beautifulsoup4 \
