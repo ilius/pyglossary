@@ -27,8 +27,29 @@ import json
 import logging
 import sys
 import threading
+from collections.abc import Callable
 from http.server import HTTPServer
 from socketserver import ThreadingMixIn
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+	class ServerType(Protocol):
+		def send_message_to_all(self, msg: str | dict) -> None: ...
+		def shutdown(self) -> None: ...
+
+	class HandlerType(Protocol):
+		def send_pong(self, message: str | bytes) -> None: ...
+
+		def send_close(
+			self,
+			status: int,
+			reason: bytes,
+		) -> None: ...
+
+		def set_keep_alive(self, keep_alive: bool) -> None: ...
+
+		def finish(self) -> None: ...
+
 
 """
 +-+-+-+-+-------+-+-------------+-------------------------------+
@@ -65,31 +86,42 @@ DEFAULT_CLOSE_REASON = b""
 
 
 class API:
-	def run_forever(self, threaded=False):
-		return self._run_forever(threaded)
+	def run_forever(self, threaded: bool = False) -> None:
+		raise NotImplementedError
 
-	def new_client(self, client, server):
+	def new_client(self, client: dict[str, Any], server: ServerType) -> None:
 		pass
 
-	def client_left(self, client, server):
+	def client_left(self, client: dict[str, Any], server: ServerType) -> None:
 		pass
 
-	def message_received(self, client, server, message):
+	def message_received(
+		self,
+		client: dict[str, Any],
+		server: ServerType,
+		message: str,
+	) -> None:
 		pass
 
-	def set_fn_new_client(self, fn):
+	def set_fn_new_client(
+		self,
+		fn: Callable[[dict[str, Any], ServerType], None],
+	) -> None:
 		self.new_client = fn
 
-	def set_fn_client_left(self, fn):
+	def set_fn_client_left(
+		self,
+		fn: Callable[[dict[str, Any], ServerType], None],
+	) -> None:
 		self.client_left = fn
 
-	def set_fn_message_received(self, fn):
+	def set_fn_message_received(self, fn) -> None:  # noqa: ANN001
 		self.message_received = fn
 
-	def send_message(self, client, msg):
+	def send_message(self, client: dict[str, Any], msg: str | bytes) -> None:
 		self._unicast(client, msg)
 
-	def send_message_to_all(self, msg):
+	def send_message_to_all(self, msg: str | dict) -> None:
 		if isinstance(msg, str):
 			self._multicast(msg)
 		else:
@@ -97,32 +129,32 @@ class API:
 
 	def deny_new_connections(
 		self,
-		status=CLOSE_STATUS_NORMAL,
-		reason=DEFAULT_CLOSE_REASON,
-	):
+		status: int = CLOSE_STATUS_NORMAL,
+		reason: int = DEFAULT_CLOSE_REASON,
+	) -> None:
 		self._deny_new_connections(status, reason)
 
-	def allow_new_connections(self):
+	def allow_new_connections(self) -> None:
 		self._allow_new_connections()
 
 	def shutdown_gracefully(
 		self,
-		status=CLOSE_STATUS_NORMAL,
-		reason=DEFAULT_CLOSE_REASON,
-	):
+		status: int = CLOSE_STATUS_NORMAL,
+		reason: int = DEFAULT_CLOSE_REASON,
+	) -> None:
 		self._shutdown_gracefully(status, reason)
 
-	def shutdown_abruptly(self):
+	def shutdown_abruptly(self) -> None:
 		self._shutdown_abruptly()
 
 	def disconnect_clients_gracefully(
 		self,
-		status=CLOSE_STATUS_NORMAL,
-		reason=DEFAULT_CLOSE_REASON,
-	):
+		status: int = CLOSE_STATUS_NORMAL,
+		reason: int = DEFAULT_CLOSE_REASON,
+	) -> None:
 		self._disconnect_clients_gracefully(status, reason)
 
-	def disconnect_clients_abruptly(self):
+	def disconnect_clients_abruptly(self) -> None:
 		self._disconnect_clients_abruptly()
 
 
@@ -154,9 +186,9 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 		self,
 		handlerClass: type,
 		logger: logging.Logger,
-		host="127.0.0.1",
-		port=0,
-	):
+		host: str = "127.0.0.1",
+		port: int = 0,
+	) -> None:
 		# server's own logger
 		HTTPServer.__init__(self, (host, port), handlerClass)
 		self.host = host
@@ -174,16 +206,16 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 	def url(self) -> str:
 		return f"http://{self.host}:{self.port}/"
 
-	def info(self, *args, **kwargs) -> None:
+	def info(self, *args, **kwargs) -> None:  # noqa: ANN002
 		self.logger.info(*args, **kwargs)
 
-	def error(self, *args, **kwargs) -> None:
+	def error(self, *args, **kwargs) -> None:  # noqa: ANN002
 		self.logger.error(*args, **kwargs)
 
-	def exception(self, *args, **kwargs) -> None:
+	def exception(self, *args, **kwargs) -> None:  # noqa: ANN002
 		self.logger.error(*args, **kwargs)
 
-	def _run_forever(self, threaded):
+	def run_forever(self, threaded: bool = False) -> None:
 		cls_name = self.__class__.__name__
 		try:
 			self.info(f"Listening on http://{self.host}:{self.port}/")
@@ -207,16 +239,16 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 			self.exception(str(e), exc_info=True)
 			sys.exit(1)
 
-	def message_received_handler(self, handler, msg):
+	def message_received_handler(self, handler: HandlerType, msg: str) -> None:
 		self.message_received(self.handler_to_client(handler), self, msg)
 
-	def ping_received_handler(self, handler, msg):
+	def ping_received_handler(self, handler: HandlerType, msg: str) -> None:
 		handler.send_pong(msg)
 
-	def pong_received_handler(self, handler, msg):
+	def pong_received_handler(self, handler: HandlerType, msg: str) -> None:
 		pass
 
-	def new_client_handler(self, handler):
+	def new_client_handler(self, handler: HandlerType) -> None:
 		if self._deny_clients:
 			status = self._deny_clients["status"]
 			reason = self._deny_clients["reason"]
@@ -233,50 +265,52 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 		self.clients.append(client)
 		self.new_client(client, self)
 
-	def client_left_handler(self, handler):
+	def client_left_handler(self, handler: HandlerType) -> None:
 		client = self.handler_to_client(handler)
+		if not client:
+			self.logger.warning("client handler was not found")
+			return
 		self.client_left(client, self)
 		if client in self.clients:
 			self.clients.remove(client)
 
-	def _unicast(self, receiver_client, msg):
+	def _unicast(self, receiver_client: dict[str, Any], msg: str | bytes) -> None:
 		receiver_client["handler"].send_message(msg)
 
-	def _multicast(self, msg):
+	def _multicast(self, msg: str | bytes) -> None:
 		for client in self.clients:
 			try:
 				self._unicast(client, msg)
 			except Exception as e:
 				print(str(e))
 
-	def handler_to_client(self, handler):
+	def handler_to_client(self, handler: HandlerType) -> dict[str, Any] | None:
 		for client in self.clients:
 			if client["handler"] == handler:
 				return client
 		return None
 
-	def _terminate_client_handler(self, handler):
-		handler.keep_alive = False
+	def _terminate_client_handler(self, handler: HandlerType) -> None:
+		handler.set_keep_alive(False)
 		handler.finish()
-		handler.connection.close()
 
-	def _terminate_client_handlers(self):
+	def _terminate_client_handlers(self) -> None:
 		"""Ensures request handler for each client is terminated correctly."""
 		for client in self.clients:
 			self._terminate_client_handler(client["handler"])
 
 	def _shutdown_gracefully(
 		self,
-		status=CLOSE_STATUS_NORMAL,
-		reason=DEFAULT_CLOSE_REASON,
-	):
+		status: int = CLOSE_STATUS_NORMAL,
+		reason: bytes = DEFAULT_CLOSE_REASON,
+	) -> None:
 		"""Send a CLOSE handshake to all connected clients before terminating server."""
 		self.keep_alive = False
 		self._disconnect_clients_gracefully(status, reason)
 		self.server_close()
 		self.shutdown()
 
-	def _shutdown_abruptly(self):
+	def _shutdown_abruptly(self) -> None:
 		"""Terminate server without sending a CLOSE handshake."""
 		self.keep_alive = False
 		self._disconnect_clients_abruptly()
@@ -285,26 +319,30 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 
 	def _disconnect_clients_gracefully(
 		self,
-		status=CLOSE_STATUS_NORMAL,
-		reason=DEFAULT_CLOSE_REASON,
-	):
+		status: int = CLOSE_STATUS_NORMAL,
+		reason: bytes = DEFAULT_CLOSE_REASON,
+	) -> None:
 		"""Terminate clients gracefully without shutting down the server."""
 		for client in self.clients:
 			client["handler"].send_close(status, reason)
 		self._terminate_client_handlers()
 
-	def _disconnect_clients_abruptly(self):
+	def _disconnect_clients_abruptly(self) -> None:
 		"""
 		Terminate clients abruptly
 		(no CLOSE handshake) without shutting down the server.
 		"""
 		self._terminate_client_handlers()
 
-	def _deny_new_connections(self, status, reason):
+	def _deny_new_connections(
+		self,
+		status: int,
+		reason: bytes,
+	) -> None:
 		self._deny_clients = {
 			"status": status,
 			"reason": reason,
 		}
 
-	def _allow_new_connections(self):
+	def _allow_new_connections(self) -> None:
 		self._deny_clients = False

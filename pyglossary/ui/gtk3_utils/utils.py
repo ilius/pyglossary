@@ -20,12 +20,16 @@ from __future__ import annotations
 
 import logging
 from os.path import isabs, join
+from typing import TYPE_CHECKING
 
 from gi.repository import Pango as pango
 
 from pyglossary.core import appResDir
 
 from . import gdk, gtk
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
 
 __all__ = [
 	"HBox",
@@ -41,25 +45,20 @@ __all__ = [
 log = logging.getLogger("pyglossary")
 
 
-def VBox(**kwargs):
+def VBox(**kwargs) -> gtk.Box:
 	return gtk.Box(orientation=gtk.Orientation.VERTICAL, **kwargs)
 
 
-def HBox(**kwargs):
+def HBox(**kwargs) -> gtk.Box:
 	return gtk.Box(orientation=gtk.Orientation.HORIZONTAL, **kwargs)
 
 
-def set_tooltip(widget, text):
-	try:
-		widget.set_tooltip_text(text)  # PyGTK 2.12 or above
-	except AttributeError:
-		try:
-			widget.set_tooltip(gtk.Tooltips(), text)
-		except Exception:
-			log.exception("")
+# TODO: remove
+def set_tooltip(widget, text) -> None:  # noqa: ANN001
+	widget.set_tooltip_text(text)
 
 
-def imageFromFile(path):  # the file must exist
+def imageFromFile(path: str) -> gtk.Image:  # the file must exist
 	if not isabs(path):
 		path = join(appResDir, path)
 	im = gtk.Image()
@@ -70,7 +69,7 @@ def imageFromFile(path):  # the file must exist
 	return im
 
 
-def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
+def imageFromIconName(iconName: str, size: int, nonStock: bool = False) -> gtk.Image:
 	# So gtk.Image.new_from_stock is deprecated
 	# And the doc says we should use gtk.Image.new_from_icon_name
 	# which does NOT have the same functionality!
@@ -87,18 +86,20 @@ def imageFromIconName(iconName: str, size: int, nonStock=False) -> gtk.Image:
 		return gtk.Image.new_from_icon_name(iconName, size)
 
 
-def rgba_parse(colorStr):
+def rgba_parse(colorStr: str) -> gdk.RGBA:
 	rgba = gdk.RGBA()
 	if not rgba.parse(colorStr):
 		raise ValueError(f"bad color string {colorStr!r}")
 	return rgba
 
 
-def color_parse(colorStr):
-	return rgba_parse(colorStr).to_color()
-
-
-def pack(box, child, expand=False, fill=False, padding=0):
+def pack(
+	box: gtk.Box | gtk.CellLayout,
+	child: gtk.Widget | gtk.CellRenderer,
+	expand: bool = False,
+	fill: bool = False,
+	padding: int = 0,
+) -> None:
 	if isinstance(box, gtk.Box):
 		box.pack_start(child, expand, fill, padding)
 	elif isinstance(box, gtk.CellLayout):
@@ -108,31 +109,30 @@ def pack(box, child, expand=False, fill=False, padding=0):
 
 
 def dialog_add_button(
-	dialog,
-	_iconName,
-	label,
-	resId,
-	onClicked=None,
-	tooltip="",
-):
+	dialog: gtk.Dialog,
+	_iconName: str,  # TODO: remove
+	label: str,
+	resId: int,
+	onClicked: Callable | None = None,
+	tooltip: str = "",
+) -> None:
 	b = dialog.add_button(label, resId)
 	if onClicked:
 		b.connect("clicked", onClicked)
 	if tooltip:
 		set_tooltip(b, tooltip)
-	return b
 
 
 def showMsg(  # noqa: PLR0913
-	msg,
-	iconName="",
-	parent=None,
-	transient_for=None,
-	title="",
-	borderWidth=10,
-	iconSize=gtk.IconSize.DIALOG,
-	selectable=False,
-):
+	msg: str,
+	iconName: str = "",
+	parent: gtk.Widget | None = None,
+	transient_for: gtk.Widget | None = None,
+	title: str = "",
+	borderWidth: int = 10,
+	iconSize: gtk.IconSize = gtk.IconSize.DIALOG,
+	selectable: bool = False,
+) -> None:
 	win = gtk.Dialog(
 		parent=parent,
 		transient_for=transient_for,
@@ -167,19 +167,19 @@ def showMsg(  # noqa: PLR0913
 	win.destroy()
 
 
-def showError(msg, **kwargs):
+def showError(msg, **kwargs) -> None:  # noqa: ANN001
 	# gtk-dialog-error is deprecated since version 3.10:
 	# Use named icon “dialog-error”.
 	showMsg(msg, iconName="gtk-dialog-error", **kwargs)
 
 
-def showWarning(msg, **kwargs):
+def showWarning(msg, **kwargs) -> None:  # noqa: ANN001
 	# gtk-dialog-warning is deprecated since version 3.10:
 	# Use named icon “dialog-warning”.
 	showMsg(msg, iconName="gtk-dialog-warning", **kwargs)
 
 
-def showInfo(msg, **kwargs):
+def showInfo(msg, **kwargs) -> None:  # noqa: ANN001
 	# gtk-dialog-info is deprecated since version 3.10:
 	# Use named icon “dialog-information”.
 	showMsg(msg, iconName="gtk-dialog-info", **kwargs)

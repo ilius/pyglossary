@@ -17,23 +17,25 @@
 # GNU General Public License for more details.
 
 
+from collections.abc import Callable
+
 from gi.repository import Gdk as gdk
 
 from .utils import gtk_event_iteration_loop
 
 
 class MyDialog:
-	def startWaiting(self):
+	def startWaiting(self) -> None:
 		self.queue_draw()
 		self.vbox.set_sensitive(False)
 		self.get_window().set_cursor(gdk.Cursor.new(gdk.CursorType.WATCH))
 		gtk_event_iteration_loop()
 
-	def endWaiting(self):
+	def endWaiting(self) -> None:
 		self.get_window().set_cursor(gdk.Cursor.new(gdk.CursorType.LEFT_PTR))
 		self.vbox.set_sensitive(True)
 
-	def waitingDo(self, func, *args, **kwargs):
+	def waitingDo(self, func: Callable, *args, **kwargs) -> None:  # noqa: ANN002
 		self.startWaiting()
 		try:
 			func(*args, **kwargs)

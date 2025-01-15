@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from tqdm import tqdm
+
+if TYPE_CHECKING:
+	from collections.abc import MutableMapping
 
 __all__ = ["createProgressBar"]
 
 
-def createProgressBar(title: str):
+def createProgressBar(title: str) -> MyTqdm:
 	return MyTqdm(
 		total=1.0,
 		desc=title,
@@ -16,7 +21,7 @@ def createProgressBar(title: str):
 
 class MyTqdm(tqdm):
 	@property
-	def format_dict(self):
+	def format_dict(self) -> MutableMapping[str, Any]:
 		d = super().format_dict
 		# return dict(
 		# 	n=self.n, total=self.total,

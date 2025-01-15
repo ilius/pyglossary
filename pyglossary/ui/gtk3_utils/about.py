@@ -78,7 +78,7 @@ class AboutWidget(gtk.Box):
 		text: str,
 		wrap: bool = False,
 		justification: gtk.Justification | None = None,
-	):
+	) -> gtk.ScrolledWindow:
 		tv = gtk.TextView()
 		tv.set_editable(False)
 		tv.set_can_focus(False)
@@ -104,7 +104,7 @@ class AboutWidget(gtk.Box):
 		text: str,
 		# wrap: bool = False,
 		# justification: "gtk.Justification | None" = None,
-	):
+	) -> gtk.ScrolledWindow:
 		box = VBox()
 		box.set_border_width(10)
 		label = gtk.Label()
@@ -127,7 +127,7 @@ class AboutWidget(gtk.Box):
 		return swin
 
 	@staticmethod
-	def newTabTitle(title: str, icon: str):
+	def newTabTitle(title: str, icon: str) -> gtk.Box:
 		box = gtk.Box(orientation=gtk.Orientation.VERTICAL)
 		if icon:
 			box.pack_start(imageFromFile(icon), False, False, 5)

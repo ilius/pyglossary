@@ -59,6 +59,8 @@ from .gtk3_utils.utils import (  # noqa: E402
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from pyglossary.plugin_prop import PluginProp
 
 # from gi.repository import GdkPixbuf
@@ -78,7 +80,7 @@ writeDesc = [
 ]
 
 
-def getMonitor():
+def getMonitor() -> gdk.Monitor | None:
 	display = gdk.Display.get_default()
 
 	monitor = display.get_monitor_at_point(1, 1)
@@ -107,19 +109,11 @@ def getWorkAreaSize() -> tuple[int, int] | None:
 	return rect.width, rect.height
 
 
-def buffer_get_text(b):
-	return b.get_text(
-		b.get_start_iter(),
-		b.get_end_iter(),
-		True,
-	)
-
-
 class FormatDialog(gtk.Dialog):
 	def __init__(
 		self,
 		descList: list[str],
-		parent=None,
+		parent: gtk.Widget | None = None,
 		**kwargs,
 	) -> None:
 		gtk.Dialog.__init__(self, parent=parent, **kwargs)
@@ -187,13 +181,13 @@ class FormatDialog(gtk.Dialog):
 		self.resize(400, 400)
 		self.connect("realize", self.onRealize)
 
-	def onRealize(self, _widget=None):
+	def onRealize(self, _widget: Any = None) -> None:
 		if self.activeDesc:
 			self.treev.grab_focus()
 		else:
 			self.entry.grab_focus()
 
-	def onEntryChange(self, entry):
+	def onEntryChange(self, entry: gtk.Entry) -> None:
 		text = entry.get_text().strip()
 		if not text:
 			self.items = self.descList
@@ -214,7 +208,7 @@ class FormatDialog(gtk.Dialog):
 		self.items = items1 + items2
 		self.updateTree()
 
-	def setCursor(self, desc: str):
+	def setCursor(self, desc: str) -> None:
 		model = self.treev.get_model()
 		iter_ = model.iter_children(None)
 		while iter_ is not None:
@@ -225,7 +219,7 @@ class FormatDialog(gtk.Dialog):
 				return
 			iter_ = model.iter_next(iter_)
 
-	def updateTree(self):
+	def updateTree(self) -> None:
 		model = self.treev.get_model()
 		model.clear()
 		for desc in self.items:
@@ -242,7 +236,7 @@ class FormatDialog(gtk.Dialog):
 		desc = model.get_value(iter_, 0)
 		return pluginByDesc[desc]
 
-	def setActive(self, plugin):
+	def setActive(self, plugin: PluginProp) -> None:
 		if plugin is None:
 			self.activeDesc = ""
 			return
@@ -250,7 +244,12 @@ class FormatDialog(gtk.Dialog):
 		self.activeDesc = desc
 		self.setCursor(desc)
 
-	def rowActivated(self, treev, path, _col):
+	def rowActivated(
+		self,
+		treev: gtk.TreeView,
+		path: gtk.GtkTreePath,
+		_col: Any,
+	) -> None:
 		model = treev.get_model()
 		iter_ = model.get_iter(path)
 		desc = model.get_value(iter_, 0)
@@ -264,7 +263,7 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: list[str], parent=None) -> None:
+	def __init__(self, descList: list[str], parent: gtk.Widget | None = None) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
@@ -274,10 +273,10 @@ class FormatButton(gtk.Button):
 		###
 		self.connect("clicked", self.onClick)
 
-	def onChanged(self, obj=None):
+	def onChanged(self, _obj: Any = None) -> None:
 		pass
 
-	def onClick(self, _button=None):
+	def onClick(self, _button: Any = None) -> None:
 		dialog = FormatDialog(
 			descList=self.descList,
 			parent=self._parent,
@@ -295,13 +294,13 @@ class FormatButton(gtk.Button):
 			self.set_label(self.noneLabel)
 		self.onChanged()
 
-	def getActive(self):
+	def getActive(self) -> str:
 		if self.activePlugin is None:
 			return ""
 		return self.activePlugin.name
 
-	def setActive(self, format_):
-		plugin = Glossary.plugins[format_]
+	def setActive(self, formatName: str) -> None:
+		plugin = Glossary.plugins[formatName]
 		self.activePlugin = plugin
 		self.set_label(plugin.description)
 		self.onChanged()
@@ -315,7 +314,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		formatName: str,
 		options: list[str],
 		optionsValues: dict[str, Any],
-		parent=None,
+		parent: gtk.Widget | None = None,
 	) -> None:
 		gtk.Dialog.__init__(self, parent=parent)
 		optionsProp = Glossary.plugins[formatName].optionsProp
@@ -410,14 +409,14 @@ class FormatOptionsDialog(gtk.Dialog):
 		pack(self.vbox, treev, 1, 1)
 		self.vbox.show_all()
 
-	def enableToggled(self, cell, path):
+	def enableToggled(self, cell: gtk.CellRenderer, path: gtk.TreePath) -> None:
 		# enable is column 0
 		model = self.treev.get_model()
 		active = not cell.get_active()
 		itr = model.get_iter(path)
 		model.set_value(itr, 0, active)
 
-	def valueEdited(self, _cell, path, rawValue):
+	def valueEdited(self, _cell: Any, path: gtk.TreePath, rawValue: str) -> None:
 		# value is column 3
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -434,12 +433,12 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, self.valueCol, rawValue)
 		model.set_value(itr, 0, enable)
 
-	def rowActivated(self, _treev, path, _col):
+	def rowActivated(self, _treev: Any, path: gtk.TreePath, _col: Any) -> bool:
 		# forceMenu=True because we can not enter edit mode
 		# if double-clicked on a cell other than Value
 		return self.valueCellClicked(path, forceMenu=True)
 
-	def treeviewButtonPress(self, treev, gevent):
+	def treeviewButtonPress(self, treev: gtk.TreeView, gevent: gdk.ButtonEvent) -> bool:
 		if gevent.button != 1:
 			return False
 		pos_t = treev.get_path_at_pos(int(gevent.x), int(gevent.y))
@@ -453,14 +452,14 @@ class FormatOptionsDialog(gtk.Dialog):
 			return self.valueCellClicked(path)
 		return False
 
-	def valueItemActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter):
+	def valueItemActivate(self, item: gtk.MenuItem, itr: gtk.TreeIter) -> None:
 		# value is column 3
 		value = item.get_label()
 		model = self.treev.get_model()
 		model.set_value(itr, self.valueCol, value)
 		model.set_value(itr, 0, True)  # enable it
 
-	def valueCustomOpenDialog(self, itr: gtk.TreeIter, optName: str):
+	def valueCustomOpenDialog(self, itr: gtk.TreeIter, optName: str) -> None:
 		model = self.treev.get_model()
 		prop = self.optionsProp[optName]
 		currentValue = model.get_value(itr, self.valueCol)
@@ -498,12 +497,12 @@ class FormatOptionsDialog(gtk.Dialog):
 		self,
 		_item: gtk.MenuItem,
 		itr: gtk.TreeIter,
-	):
+	) -> None:
 		model = self.treev.get_model()
 		optName = model.get_value(itr, 1)
 		self.valueCustomOpenDialog(itr, optName)
 
-	def valueCellClicked(self, path, forceMenu=False) -> bool:
+	def valueCellClicked(self, path: gtk.TreePath, forceMenu: bool = False) -> bool:
 		"""
 		Returns True if event is handled, False if not handled
 		(need to enter edit mode).
@@ -565,7 +564,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		menu.popup(None, None, None, None, 3, etime)
 		return True
 
-	def getOptionsValues(self):
+	def getOptionsValues(self) -> dict[str, Any]:
 		model = self.treev.get_model()
 		optionsValues: dict[str, Any] = {}
 		for row in model:
@@ -583,7 +582,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: list[str], parent=None) -> None:
+	def __init__(self, descList: list[str], parent: gtk.Widget = None) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
 		self.optionsValues = {}
@@ -601,19 +600,21 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
-	def setOptionsValues(self, optionsValues: dict[str, Any]):
+	def setOptionsValues(self, optionsValues: dict[str, Any]) -> None:
 		self.optionsValues = optionsValues
 
-	def kind(self):
+	def kind(self) -> str:
 		"""Return 'r' or 'w'."""
 		raise NotImplementedError
 
-	def getActiveOptions(self):
+	def getActiveOptions(self) -> list[str] | None:
 		raise NotImplementedError
 
-	def optionsButtonClicked(self, _button):
+	def optionsButtonClicked(self, _button: Any) -> None:
 		formatName = self.getActive()
 		options = self.getActiveOptions()
+		if options is None:
+			return
 		dialog = FormatOptionsDialog(
 			formatName,
 			options,
@@ -627,7 +628,7 @@ class FormatBox(FormatButton):
 		self.optionsValues = dialog.getOptionsValues()
 		dialog.destroy()
 
-	def dependsButtonClicked(self, button):
+	def dependsButtonClicked(self, button: gtk.Button) -> None:
 		formatName = self.getActive()
 		pkgNames = button.pkgNames
 		if not pkgNames:
@@ -643,15 +644,14 @@ class FormatBox(FormatButton):
 		)
 		self.onChanged(self)
 
-	def onChanged(self, _obj=None):
+	def onChanged(self, _widget: Any = None) -> None:
 		name = self.getActive()
 		if not name:
 			self.optionsButton.set_visible(False)
 			return
 		self.optionsValues.clear()
 
-		options = self.getActiveOptions()
-		self.optionsButton.set_visible(bool(options))
+		self.optionsButton.set_visible(bool(self.getActiveOptions()))
 
 		kind = self.kind()
 		plugin = Glossary.plugins[name]
@@ -673,11 +673,11 @@ class InputFormatBox(FormatBox):
 	def __init__(self, **kwargs) -> None:
 		FormatBox.__init__(self, readDesc, **kwargs)
 
-	def kind(self):
+	def kind(self) -> str:
 		"""Return 'r' or 'w'."""
 		return "r"
 
-	def getActiveOptions(self):
+	def getActiveOptions(self) -> list[str] | None:
 		formatName = self.getActive()
 		if not formatName:
 			return None
@@ -690,23 +690,23 @@ class OutputFormatBox(FormatBox):
 	def __init__(self, **kwargs) -> None:
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
-	def kind(self):
+	def kind(self) -> str:
 		"""Return 'r' or 'w'."""
 		return "w"
 
-	def getActiveOptions(self):
+	def getActiveOptions(self) -> list[str] | None:
 		return list(Glossary.formatsWriteOptions[self.getActive()])
 
 
 class GtkTextviewLogHandler(logging.Handler):
-	def __init__(self, ui, treeview_dict) -> None:
+	def __init__(self, ui: UI, textview_dict: dict[str, gtk.TextView]) -> None:
 		logging.Handler.__init__(self)
 
 		self.ui = ui
 		self.buffers = {}
 		for levelNameCap in log.levelNamesCap[:-1]:
 			levelName = levelNameCap.upper()
-			textview = treeview_dict[levelName]
+			textview = textview_dict[levelName]
 
 			buff = textview.get_buffer()
 			tag = gtk.TextTag.new(levelName)
@@ -714,14 +714,14 @@ class GtkTextviewLogHandler(logging.Handler):
 
 			self.buffers[levelName] = buff
 
-	def getTag(self, levelname):
+	def getTag(self, levelname: str) -> gtk.TextTag:
 		return self.buffers[levelname].get_tag_table().lookup(levelname)
 
 	def setColor(self, levelname: str, rgba: gdk.RGBA) -> None:
 		self.getTag(levelname).set_property("foreground-rgba", rgba)
 		# foreground-gdk is deprecated since Gtk 3.4
 
-	def emit(self, record):
+	def emit(self, record: logging.LogRecord) -> None:
 		msg = ""
 		if record.getMessage():
 			msg = self.format(record)
@@ -749,7 +749,7 @@ class GtkTextviewLogHandler(logging.Handler):
 
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
-	def __init__(self, ui, textview) -> None:
+	def __init__(self, ui: UI, textview: gtk.TextView) -> None:
 		GtkTextviewLogHandler.__init__(
 			self,
 			ui,
@@ -767,10 +767,10 @@ class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
 class BrowseButton(gtk.Button):
 	def __init__(
 		self,
-		setFilePathFunc,
-		label="Browse",
-		actionSave=False,
-		title="Select File",
+		setFilePathFunc: Callable[[str], None],
+		label: str = "Browse",
+		actionSave: bool = False,
+		title: str = "Select File",
 	) -> None:
 		gtk.Button.__init__(self)
 
@@ -788,7 +788,7 @@ class BrowseButton(gtk.Button):
 
 		self.connect("clicked", self.onClick)
 
-	def onClick(self, _widget):
+	def onClick(self, _widget: Any) -> None:
 		fcd = gtk.FileChooserNative(
 			transient_for=(
 				self.get_root() if hasattr(self, "get_root") else self.get_toplevel()
@@ -813,7 +813,7 @@ sortKeyNames = [_sk.name for _sk in namedSortKeyList]
 
 
 class SortOptionsBox(gtk.Box):
-	def __init__(self, ui) -> None:
+	def __init__(self, ui: UI) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.ui = ui
 		###
@@ -864,13 +864,13 @@ class SortOptionsBox(gtk.Box):
 		###
 		self.show_all()
 
-	def onSortCheckClicked(self, check):
+	def onSortCheckClicked(self, check: gtk.CheckButton) -> None:
 		sort = check.get_active()
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)
 		self.localeHBox.set_sensitive(sort)
 
-	def updateWidgets(self):
+	def updateWidgets(self) -> None:
 		convertOptions = self.ui.convertOptions
 		sort = convertOptions.get("sort")
 		self.sortCheck.set_active(sort)
@@ -889,7 +889,7 @@ class SortOptionsBox(gtk.Box):
 			self.encodingCheck.set_active(True)
 			self.encodingEntry.set_text(convertOptions["sortEncoding"])
 
-	def applyChanges(self):
+	def applyChanges(self) -> None:
 		convertOptions = self.ui.convertOptions
 		sort = self.sortCheck.get_active()
 		if not sort:
@@ -911,16 +911,16 @@ class SortOptionsBox(gtk.Box):
 
 
 class GeneralOptionsDialog(gtk.Dialog):
-	def onDeleteEvent(self, _widget, _event):
+	def onDeleteEvent(self, _widget: Any, _event: Any) -> bool:
 		self.hide()
 		return True
 
-	def onResponse(self, _widget, _event):
+	def onResponse(self, _widget: Any, _event: Any) -> bool:
 		self.applyChanges()
 		self.hide()
 		return True
 
-	def __init__(self, ui, **kwargs) -> None:
+	def __init__(self, ui: UI, **kwargs) -> None:
 		gtk.Dialog.__init__(
 			self,
 			transient_for=ui,
@@ -983,7 +983,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 			return sqlite
 		return self.ui.config.get("auto_sqlite", True)
 
-	def updateWidgets(self):
+	def updateWidgets(self) -> None:
 		config = self.ui.config
 		self.sortOptionsBox.updateWidgets()
 		self.sqliteCheck.set_active(self.getSQLite())
@@ -991,7 +991,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 			default = self.configParams[param]
 			check.set_active(config.get(param, default))
 
-	def applyChanges(self):
+	def applyChanges(self) -> None:
 		# print("applyChanges")
 		self.sortOptionsBox.applyChanges()
 
@@ -1005,20 +1005,20 @@ class GeneralOptionsDialog(gtk.Dialog):
 
 
 class GeneralOptionsButton(gtk.Button):
-	def __init__(self, ui) -> None:
+	def __init__(self, ui: UI) -> None:
 		gtk.Button.__init__(self, label="General Options")
 		self.ui = ui
 		self.connect("clicked", self.onClick)
 		self.dialog = None
 
-	def onClick(self, _widget):
+	def onClick(self, _widget: Any) -> None:
 		if self.dialog is None:
 			self.dialog = GeneralOptionsDialog(self.ui)
 		self.dialog.present()
 
 
 class UI(gtk.Dialog, MyDialog, UIBase):
-	def status(self, msg):
+	def status(self, msg: str) -> None:
 		# try:
 		# 	_id = self.statusMsgDict[msg]
 		# except KeyError:
@@ -1386,7 +1386,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,
 		glossarySetAttrs: dict[str, Any] | None = None,
-	):
+	) -> None:
 		self.config = config
 
 		if inputFilename:
@@ -1417,7 +1417,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		gtk.Dialog.present(self)
 		gtk.main()
 
-	def onDeleteEvent(self, _widget, _event):
+	def onDeleteEvent(self, _widget: Any, _event: Any) -> None:
 		self.destroy()
 		# gtk.main_quit()
 		# if called while converting, main_quit does not exit program,
@@ -1425,25 +1425,25 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# and makes you close the terminal or force kill the process
 		gtk.main_quit()
 
-	def consoleClearButtonClicked(self, _widget=None):
+	def consoleClearButtonClicked(self, _widget: Any = None) -> None:
 		self.convertConsoleTextview.get_buffer().set_text("")
 
-	def verbosityComboChanged(self, _widget=None):
+	def verbosityComboChanged(self, _widget: Any = None) -> None:
 		verbosity = self.verbosityCombo.get_active()
 		# or int(self.verbosityCombo.get_active_text())
 		log.setVerbosity(verbosity)
 
-	def convertClicked(self, _widget=None):
+	def convertClicked(self, _widget: Any = None) -> None:
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
 			log.critical("Input file path is empty!")
-			return None
+			return
 		inFormat = self.convertInputFormatCombo.getActive()
 
 		outPath = self.convertOutputEntry.get_text()
 		if not outPath:
 			log.critical("Output file path is empty!")
-			return None
+			return
 		outFormat = self.convertOutputFormatCombo.getActive()
 
 		while gtk.events_pending():
@@ -1467,7 +1467,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		log.debug(f"config: {self.config}")
 
 		try:
-			finalOutputFile = glos.convert(
+			glos.convert(
 				ConvertArgs(
 					inPath,
 					inputFormat=inFormat,
@@ -1478,23 +1478,18 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 					**self.convertOptions,
 				),
 			)
-			if finalOutputFile:
-				self.status("Convert finished")
-			return bool(finalOutputFile)
+			self.status("Convert finished")
 
 		except Error as e:
 			log.critical(str(e))
 			glos.cleanup()
-			return False
 
 		finally:
 			self.convertButton.set_sensitive(True)
 			self.assert_quit = False
 			self.progressTitle = ""
 
-		return True
-
-	def convertInputEntryChanged(self, _widget=None):
+	def convertInputEntryChanged(self, _widget: Any = None) -> None:
 		inPath = self.convertInputEntry.get_text()
 		inFormat = self.convertInputFormatCombo.getActive()
 		if inPath.startswith("file://"):
@@ -1514,7 +1509,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 		self.status("Select output file")
 
-	def convertOutputEntryChanged(self, _widget=None):
+	def convertOutputEntryChanged(self, _widget: Any = None) -> None:
 		outPath = self.convertOutputEntry.get_text()
 		outFormat = self.convertOutputFormatCombo.getActive()
 		if not outPath:
@@ -1540,13 +1535,13 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		else:
 			self.status("Select output format")
 
-	def reverseLoad(self):
+	def reverseLoad(self) -> None:
 		pass
 
-	def reverseStartLoop(self):
+	def reverseStartLoop(self) -> None:
 		pass
 
-	def reverseStart(self):
+	def reverseStart(self) -> None:
 		if not self.reverseLoad():
 			return
 		###
@@ -1558,10 +1553,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseStopButton.set_sensitive(True)
 
-	def reverseStartClicked(self, _widget=None):
+	def reverseStartClicked(self, _widget: Any = None) -> None:
 		self.waitingDo(self.reverseStart)
 
-	def reversePause(self):
+	def reversePause(self) -> None:
 		self.reverseStatus = "pause"
 		###
 		self.reverseStartButton.set_sensitive(False)
@@ -1569,10 +1564,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.reverseResumeButton.set_sensitive(True)
 		self.reverseStopButton.set_sensitive(True)
 
-	def reversePauseClicked(self, _widget=None):
+	def reversePauseClicked(self, _widget: Any = None) -> None:
 		self.waitingDo(self.reversePause)
 
-	def reverseResume(self):
+	def reverseResume(self) -> None:
 		self.reverseStatus = "doing"
 		###
 		self.reverseStartButton.set_sensitive(False)
@@ -1580,10 +1575,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseStopButton.set_sensitive(True)
 
-	def reverseResumeClicked(self, _widget=None):
+	def reverseResumeClicked(self, _widget: Any = None) -> None:
 		self.waitingDo(self.reverseResume)
 
-	def reverseStop(self):
+	def reverseStop(self) -> None:
 		self.reverseStatus = "stop"
 		###
 		self.reverseStartButton.set_sensitive(True)
@@ -1591,10 +1586,10 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		self.reverseResumeButton.set_sensitive(False)
 		self.reverseStopButton.set_sensitive(False)
 
-	def reverseStopClicked(self, _widget=None):
+	def reverseStopClicked(self, _widget: Any = None) -> None:
 		self.waitingDo(self.reverseStop)
 
-	def reverseInputEntryChanged(self, _widget=None):
+	def reverseInputEntryChanged(self, _widget: Any = None) -> None:
 		inPath = self.reverseInputEntry.get_text()
 		if inPath.startswith("file://"):
 			inPath = urlToPath(inPath)
@@ -1612,13 +1607,13 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 				inFormat = inputArgs[1]
 				self.reverseInputFormatCombo.setActive(inFormat)
 
-	def reverseOutputEntryChanged(self, widget=None):
+	def reverseOutputEntryChanged(self, _widget: Any = None) -> None:
 		pass
 
-	def progressInit(self, title):
+	def progressInit(self, title: str) -> None:
 		self.progressTitle = title
 
-	def progress(self, ratio, text=None):
+	def progress(self, ratio: float, text: str = "") -> None:
 		if not text:
 			text = "%" + str(int(ratio * 100))
 		text += " - " + self.progressTitle

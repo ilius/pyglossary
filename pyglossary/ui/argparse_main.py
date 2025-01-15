@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	import logging
 
 
-def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]):
+def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]) -> None:
 	defaultHasColor = config.get(
 		"color.enable.cmd.windows" if os.sep == "\\" else "color.enable.cmd.unix",
 		True,

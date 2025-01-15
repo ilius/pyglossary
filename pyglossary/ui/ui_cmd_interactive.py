@@ -103,7 +103,7 @@ class MiniCheckBoxPrompt:
 		self.fmt = fmt
 		self.value = value
 
-	def formatMessage(self):
+	def formatMessage(self) -> str:
 		msg = self.fmt.format(
 			check="[x]" if self.value else "[ ]",
 			message=self.message,
@@ -178,7 +178,11 @@ infoOverrideFlags = {
 }
 
 
-def dataToPrettyJson(data, ensure_ascii=False, sort_keys=False):
+def dataToPrettyJson(
+	data: dict[str, Any] | list[Any],
+	ensure_ascii: bool = False,
+	sort_keys: bool = False,
+) -> str:
 	return json.dumps(
 		data,
 		sort_keys=sort_keys,
@@ -191,7 +195,7 @@ def prompt(
 	message: ANSI | str,
 	multiline: bool = False,
 	**kwargs,
-):
+) -> str:
 	if kwargs.get("default", "") is None:
 		kwargs["default"] = ""
 	text = promptLow(message=message, **kwargs)
@@ -212,7 +216,7 @@ class MyPathCompleter(PathCompleter):
 	def __init__(
 		self,
 		reading: bool,  # noqa: ARG002
-		fs_action_names=None,
+		fs_action_names: list[str] | None = None,
 		**kwargs,
 	) -> None:
 		PathCompleter.__init__(
@@ -220,9 +224,7 @@ class MyPathCompleter(PathCompleter):
 			file_filter=self.file_filter,
 			**kwargs,
 		)
-		if fs_action_names is None:
-			fs_action_names = []
-		self.fs_action_names = fs_action_names
+		self.fs_action_names = fs_action_names or []
 
 	@staticmethod
 	def file_filter(_filename: str) -> bool:
@@ -326,7 +328,7 @@ class UI(ui_cmd.UI):
 		}
 
 	@staticmethod
-	def fs_pwd(args: list[str]):
+	def fs_pwd(args: list[str]) -> None:
 		if args:
 			print(f"extra arguments: {args}")
 		print(os.getcwd())
@@ -361,7 +363,7 @@ class UI(ui_cmd.UI):
 			details.append(f"-> {os.readlink(argPath)}")
 		return "  ".join(details)
 
-	def fs_ls(self, args: list[str]):
+	def fs_ls(self, args: list[str]) -> None:
 		opts, args = self.ls_parser.parse_known_args(args=args)
 
 		if opts.help:
@@ -408,7 +410,7 @@ class UI(ui_cmd.UI):
 				)
 
 	@staticmethod
-	def fs_cd_parent(args: list[str]):
+	def fs_cd_parent(args: list[str]) -> None:
 		if args:
 			log.error("This command does not take arguments")
 			return
@@ -417,7 +419,7 @@ class UI(ui_cmd.UI):
 		print(f"Changed current directory to: {newDir}")
 
 	@staticmethod
-	def fs_cd(args: list[str]):
+	def fs_cd(args: list[str]) -> None:
 		if len(args) != 1:
 			log.error("This command takes exactly one argument")
 			return
@@ -427,7 +429,12 @@ class UI(ui_cmd.UI):
 		os.chdir(newDir)
 		print(f"Changed current directory to: {newDir}")
 
-	def formatPromptMsg(self, level, msg, colon=":"):
+	def formatPromptMsg(
+		self,
+		level: int,
+		msg: str,
+		colon: str = ":",
+	) -> tuple[str, bool]:
 		indent_ = self.promptIndentStr * level
 
 		if core.noColor:
@@ -441,13 +448,13 @@ class UI(ui_cmd.UI):
 
 		return f"{indent_} {msg}{colon} ", True
 
-	def prompt(self, level, msg, colon=":", **kwargs):
-		msg, colored = self.formatPromptMsg(level, msg, colon)
+	def prompt(self, level: int, msg: str, colon: str = ":", **kwargs) -> str:
+		msg2, colored = self.formatPromptMsg(level, msg, colon)
 		if colored:
-			msg = ANSI(msg)
-		return prompt(msg, **kwargs)
+			msg2 = ANSI(msg)
+		return prompt(msg2, **kwargs)
 
-	def checkbox_prompt(self, level, msg, colon=":", **kwargs):
+	def checkbox_prompt(self, level: int, msg: str, colon: str = ":", **kwargs) -> bool:
 		# FIXME: colors are not working, they are being escaped
 		msg = f"{self.promptIndentStr * level} {msg}{colon} "
 		# msg, colored = self.formatPromptMsg(level, msg, colon)
@@ -459,7 +466,7 @@ class UI(ui_cmd.UI):
 		histName: str,
 		varName: str,
 		reading: bool,
-	):
+	) -> str:
 		from shlex import split as shlex_split
 
 		history = AbsolutePathHistory(join(histDir, histName))
@@ -500,7 +507,7 @@ class UI(ui_cmd.UI):
 			return filename
 		raise ValueError(f"{kind} is not given")
 
-	def askInputFile(self):
+	def askInputFile(self) -> str:
 		return self.askFile(
 			"Input file",
 			"filename-input",
@@ -508,7 +515,7 @@ class UI(ui_cmd.UI):
 			True,
 		)
 
-	def askOutputFile(self):
+	def askOutputFile(self) -> str:
 		return self.askFile(
 			"Output file",
 			"filename-output",
@@ -577,20 +584,20 @@ class UI(ui_cmd.UI):
 				return plugin.name
 		raise ValueError("output format is not given")
 
-	def finish(self):
+	def finish(self) -> None:
 		pass
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
 	@staticmethod
-	def getOptionValueSuggestValues(option: Option):
+	def getOptionValueSuggestValues(option: Option) -> list[str] | None:
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
 			return ["True", "False"]
 		return None
 
-	def getOptionValueCompleter(self, option: Option):
+	def getOptionValueCompleter(self, option: Option) -> WordCompleter | None:
 		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
@@ -602,7 +609,7 @@ class UI(ui_cmd.UI):
 		return None
 
 	# PLR0912 Too many branches (15 > 12)
-	def askReadOptions(self):  # noqa: PLR0912
+	def askReadOptions(self) -> None:  # noqa: PLR0912
 		options = Glossary.formatsReadOptions.get(self._inputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._inputFormat!r}")
@@ -678,7 +685,7 @@ class UI(ui_cmd.UI):
 				break
 
 	# PLR0912 Too many branches (15 > 12)
-	def askWriteOptions(self):  # noqa: PLR0912
+	def askWriteOptions(self) -> None:  # noqa: PLR0912
 		options = Glossary.formatsWriteOptions.get(self._outputFormat)
 		if options is None:
 			log.error(f"internal error: invalid format {self._outputFormat!r}")
@@ -753,13 +760,13 @@ class UI(ui_cmd.UI):
 				self._writeOptions[optName] = valueNew
 				break
 
-	def resetReadOptions(self):
+	def resetReadOptions(self) -> None:
 		self._readOptions = {}
 
-	def resetWriteOptions(self):
+	def resetWriteOptions(self) -> None:
 		self._writeOptions = {}
 
-	def askConfigValue(self, configKey, option):
+	def askConfigValue(self, configKey: str, option: Option) -> str:
 		default = self.config.get(configKey, "")
 		if option.typ == "bool":
 			return str(
@@ -779,7 +786,7 @@ class UI(ui_cmd.UI):
 			completer=self.getOptionValueCompleter(option),
 		)
 
-	def askConfig(self):
+	def askConfig(self) -> None:
 		configKeys = sorted(self.configDefDict)
 		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
@@ -826,28 +833,28 @@ class UI(ui_cmd.UI):
 				self.config[configKey] = valueNew
 				break
 
-	def showOptions(self):
+	def showOptions(self) -> None:
 		print(f"readOptions = {self._readOptions}")
 		print(f"writeOptions = {self._writeOptions}")
 		print(f"convertOptions = {self._convertOptions}")
 		print(f"config = {self.config}")
 		print()
 
-	def setIndirect(self):
+	def setIndirect(self) -> None:
 		self._convertOptions["direct"] = False
 		self._convertOptions["sqlite"] = None
 		print("Switched to indirect mode")
 
-	def setSQLite(self):
+	def setSQLite(self) -> None:
 		self._convertOptions["direct"] = None
 		self._convertOptions["sqlite"] = True
 		print("Switched to SQLite mode")
 
-	def setNoProgressbar(self):
+	def setNoProgressbar(self) -> None:
 		self._glossarySetAttrs["progressbar"] = False
 		print("Disabled progress bar")
 
-	def setSort(self):
+	def setSort(self) -> None:
 		try:
 			value = self.checkbox_prompt(
 				2,
@@ -858,7 +865,7 @@ class UI(ui_cmd.UI):
 			return
 		self._convertOptions["sort"] = value
 
-	def setSortKey(self):
+	def setSortKey(self) -> None:
 		completer = WordCompleter(
 			[_sk.name for _sk in namedSortKeyList],
 			ignore_case=False,
@@ -945,7 +952,7 @@ class UI(ui_cmd.UI):
 			"glossarySetAttrs": self._glossarySetAttrs,
 		}
 
-	def checkInputFormat(self, forceAsk: bool = False):
+	def checkInputFormat(self, forceAsk: bool = False) -> None:
 		if not forceAsk:
 			try:
 				inputArgs = Glossary.detectInputFormat(self._inputFilename)
@@ -957,7 +964,7 @@ class UI(ui_cmd.UI):
 				return
 		self._inputFormat = self.askInputFormat()
 
-	def checkOutputFormat(self, forceAsk: bool = False):
+	def checkOutputFormat(self, forceAsk: bool = False) -> None:
 		if not forceAsk:
 			try:
 				outputArgs = Glossary.detectOutputFormat(
@@ -971,17 +978,17 @@ class UI(ui_cmd.UI):
 				return
 		self._outputFormat = self.askOutputFormat()
 
-	def askFormats(self):
+	def askFormats(self) -> None:
 		self.checkInputFormat(forceAsk=True)
 		self.checkOutputFormat(forceAsk=True)
 
-	def askInputOutputAgain(self):
+	def askInputOutputAgain(self) -> None:
 		self.askInputFile()
 		self.checkInputFormat(forceAsk=True)
 		self.askOutputFile()
 		self.checkOutputFormat(forceAsk=True)
 
-	def printNonInteractiveCommand(self):  # noqa: PLR0912
+	def printNonInteractiveCommand(self) -> None:  # noqa: PLR0912
 		cmd = [
 			ui_cmd.COMMAND,
 			self._inputFilename,
@@ -1063,7 +1070,7 @@ class UI(ui_cmd.UI):
 		# shlex.join is added in Python 3.8
 		print(shlex.join(cmd))
 
-	def setConfigAttrs(self):
+	def setConfigAttrs(self) -> None:
 		config = self.config
 		self.promptIndentStr = config.get("cmdi.prompt.indent.str", ">")
 		self.promptIndentColor = config.get("cmdi.prompt.indent.color", 2)
@@ -1071,7 +1078,7 @@ class UI(ui_cmd.UI):
 		self.msgColor = config.get("cmdi.msg.color", -1)
 
 	# PLR0912 Too many branches (19 > 12)
-	def main(self, again=False):  # noqa: PLR0912
+	def main(self, again: bool = False) -> None:  # noqa: PLR0912
 		if again or not self._inputFilename:
 			try:
 				self.askInputFile()

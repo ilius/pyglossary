@@ -70,7 +70,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 	browse_roots = []
 
 	@classmethod
-	def add_browse_root(cls, path):
+	def add_browse_root(cls, path: str) -> None:
 		"""Additional browse roots for css/js/etc resources."""
 		cls.browse_roots.append(path)
 
@@ -79,9 +79,9 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		socket: socketlib.socket,
 		addr: tuple[str, int],  # (ip: str, port: int)
 		server: socketserver.BaseServer,
-		*args,
+		*args,  # noqa: ANN001, ANN002
 		**kwargs,
-	):
+	) -> None:
 		if hasattr(self, "_send_lock"):
 			raise RuntimeError("_send_lock already exists")
 
@@ -100,7 +100,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			directory=webroot,
 		)
 
-	def translate_path(self, path):
+	def translate_path(self, path: str) -> str:
 		"""
 		Overlay of https://github.com/python/cpython/blob/47c5a0f307cff3ed477528536e8de095c0752efa/Lib/http/server.py#L841
 		patched to support multiple browse roots
@@ -141,13 +141,13 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		# fallback to super for other methods
 		return super().translate_path(path)
 
-	def do_GET(self):
+	def do_GET(self) -> None:
 		if self.path == "/config":
 			self.send_config()
 		else:
 			super().do_GET()
 
-	def send_config(self):
+	def send_config(self) -> None:
 		self.send_response(HTTPStatus.OK)
 		self.send_header("Content-Type", "application/json")
 		self.end_headers()
@@ -163,7 +163,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		}
 		self.wfile.write(json.dumps(conversion_config).encode())
 
-	def do_POST(self):
+	def do_POST(self) -> None:
 		# custom ajax action for /convert POST
 		if self.path == "/convert":
 			self.handle_convert_job()
@@ -179,13 +179,16 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			self.wfile,
 		)
 
-	def setup(self):
+	def setup(self) -> None:
 		SimpleHTTPRequestHandler.setup(self)
 		self.keep_alive = True
 		self.handshake_done = False
 		self.valid_client = False
 
-	def handle(self):
+	def set_keep_alive(self, keep_alive: bool) -> None:
+		self.keep_alive = keep_alive
+
+	def handle(self) -> None:
 		self.close_connection = True
 
 		try:
@@ -195,14 +198,14 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		except Exception as e:
 			self.log_error(str(e))
 
-	def handle_ws(self):
+	def handle_ws(self) -> None:
 		while self.keep_alive:
 			if not self.handshake_done:
 				self.handshake()
 			elif self.valid_client:
 				self.read_next_message()
 
-	def handle_convert_job(self):
+	def handle_convert_job(self) -> None:
 		try:
 			payload: dict[str, Any] = json.loads(
 				self.rfile.read(int(self.headers.get("Content-Length", 0)))
@@ -234,7 +237,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		self.end_headers()
 		json.dump({"error": str(e)}, self.wfile)
 
-	def json_decode_error(self):
+	def json_decode_error(self) -> None:
 		self.send_response(HTTPStatus.BAD_REQUEST)
 		self.send_header("Content-type", "application/json")
 		self.end_headers()
@@ -247,7 +250,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		self.end_headers()
 		self.wfile.write(f"Error: {e!s}".encode())
 
-	def _handle_one_request(self):
+	def _handle_one_request(self) -> None:
 		self.raw_requestline = self.rfile.readline(65537)
 
 		if len(self.raw_requestline) > 65536:
@@ -277,7 +280,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		method()
 		self.wfile.flush()  # actually send the response if not already done.
 
-	def handle_one_request(self):
+	def handle_one_request(self) -> None:
 		"""
 		Handle a single HTTP/WS request.
 		Override ootb method to delegate to WebSockets handler based
@@ -290,10 +293,10 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			self.log_error("Request timed out: %r", e)
 			self.close_connection = True
 
-	def read_bytes(self, num):
+	def read_bytes(self, num: int) -> bytes:
 		return self.rfile.read(num)
 
-	def read_next_message(self):
+	def read_next_message(self) -> None:
 		try:
 			b1, b2 = self.read_bytes(2)
 		except OSError as e:  # to be replaced with ConnectionResetError for py3
@@ -346,13 +349,17 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			message_bytes.append(message_byte)
 		opcode_handler(self, message_bytes.decode("utf8"))
 
-	def send_message(self, message):
+	def send_message(self, message: str | bytes) -> None:
 		self.send_text(message)
 
-	def send_pong(self, message):
+	def send_pong(self, message: str | bytes) -> None:
 		self.send_text(message, OPCODE_PONG)
 
-	def send_close(self, status=CLOSE_STATUS_NORMAL, reason=DEFAULT_CLOSE_REASON):
+	def send_close(
+		self,
+		status: int = CLOSE_STATUS_NORMAL,
+		reason: bytes = DEFAULT_CLOSE_REASON,
+	) -> None:
 		"""
 		Send CLOSE to client.
 
@@ -380,16 +387,15 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			except Exception as e:
 				self.log_error(f"ws: CLOSE not sent - client disconnected! {e!s}")
 
-	def send_text(self, message, opcode=OPCODE_TEXT):
+	def send_text(self, message: str | bytes, opcode: int = OPCODE_TEXT) -> bool | None:
 		"""
 		Important: Fragmented(=continuation) messages are not supported since
 		their usage cases are limited - when we don't know the payload length.
 		"""
 		# Validate message
 		if isinstance(message, bytes):
-			message = try_decode_UTF8(
-				message
-			)  # this is slower but ensures we have UTF-8
+			# this is slower but ensures we have UTF-8
+			message = try_decode_UTF8(message)
 			if not message:
 				log.warning("Can't send message, message is not valid UTF-8")
 				return False
@@ -428,7 +434,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			self.request.send(header + payload)  # type: ignore
 			return None
 
-	def handshake(self):
+	def handshake(self) -> None:
 		try:
 			key = self.headers.get("sec-websocket-key")
 		except KeyError:
@@ -443,7 +449,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		self.server.new_client_handler(self)
 
 	@classmethod
-	def make_handshake_response(cls, key):
+	def make_handshake_response(cls, key: str) -> str:
 		return (
 			"HTTP/1.1 101 Switching Protocols\r\n"
 			"Upgrade: websocket\r\n"
@@ -453,13 +459,14 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		)
 
 	@classmethod
-	def calculate_response_key(cls, key):
+	def calculate_response_key(cls, key: str) -> str:
 		seed = sha1(key.encode() + b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
 		response_key = b64encode(seed.digest()).strip()
 		return response_key.decode("ASCII")
 
-	def finish(self):
+	def finish(self) -> None:
 		self.server.client_left_handler(self)
+		self.connection.close()
 
 
 def encode_to_UTF8(data: str) -> bytes:

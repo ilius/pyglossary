@@ -84,13 +84,13 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			stdin=PIPE,
 		)
 
-		def write(msg: str):
+		def write(msg: str) -> None:
 			proc.stdin.write(msg.encode("utf-8"))
 
 	else:
 		proc = None
 
-		def write(msg: str):
+		def write(msg: str) -> None:
 			print(msg, end="")
 
 	if header:
@@ -246,7 +246,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			sys.stdout.flush()
 		count += 1
 
-	def run():  # noqa: PLR0912
+	def run() -> None:  # noqa: PLR0912
 		nonlocal index1, index2
 
 		while True:

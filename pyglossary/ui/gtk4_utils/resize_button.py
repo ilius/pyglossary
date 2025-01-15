@@ -24,7 +24,11 @@ from .utils import imageFromFile
 
 
 class ResizeButton(gtk.Box):
-	def __init__(self, win, edge=gdk.SurfaceEdge.SOUTH_EAST) -> None:
+	def __init__(
+		self,
+		win: gtk.Window,
+		edge: gdk.SurfaceEdge = gdk.SurfaceEdge.SOUTH_EAST,
+	) -> None:
 		gtk.Box.__init__(self)
 		self.win = win
 		self.edge = edge
@@ -35,7 +39,7 @@ class ResizeButton(gtk.Box):
 		gesture.connect("pressed", self.buttonPress)
 		self.add_controller(gesture)
 
-	def buttonPress(self, gesture, button, x, y):
+	def buttonPress(self, gesture: gtk.EventController, button, x, y) -> None:  # noqa: ANN001
 		# Gesture is subclass of EventController
 		pass  # FIXME
 		# self.win.begin_resize(

@@ -29,15 +29,20 @@ import json
 import logging
 import os.path
 from pathlib import Path
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-	from pyglossary.glossary_types import EntryType
+from typing import TYPE_CHECKING, Any, Protocol
 
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.ui_web.weblog import WebLogHandler
 from pyglossary.ui.ui_web.websocket_handler import HTTPWebSocketHandler
 from pyglossary.ui.ui_web.websocket_server import HttpWebsocketServer
+
+if TYPE_CHECKING:
+	from pyglossary.glossary_types import EntryType
+
+	class ServerType(Protocol):
+		def send_message_to_all(self, msg: str | dict) -> None: ...
+		def shutdown(self) -> None: ...
+
 
 MAX_IMAGE_SIZE = 512000
 DEFAULT_MAX_BROWSE_ENTRIES = 42
@@ -56,7 +61,7 @@ Custom endpoints:
 #  ======================= IMPLEMENTATION SECTION =========================
 
 
-def new_client(client, server):
+def new_client(client: dict[str, Any], server: ServerType) -> None:
 	client_id = client.get("id", "n/a")
 	print(f"New client connected and was given id {client_id}")
 	server.send_message_to_all(
@@ -65,12 +70,12 @@ def new_client(client, server):
 
 
 # Called on client disconnecting
-def client_left(client, server):
+def client_left(client: dict[str, Any], server: ServerType) -> None:
 	log.info(f"{server}: Client({(client and client.get('id')) or -1}) disconnected")
 
 
 # Callback invoked when client sends a message
-def message_received(client, server, message):
+def message_received(client: dict[str, Any], server: ServerType, message: str) -> None:
 	if message == "ping":
 		print(f"Client({client.get('id')}) said: {message}")
 		server.send_message_to_all({"type": "info", "text": "ws: pong ✔️"})
@@ -114,7 +119,11 @@ def browse_check_entry(entry: EntryType, wordQuery: str) -> str | None:
 	return html_entry
 
 
-def handle_browse_request(client, server, message):
+def handle_browse_request(
+	client: dict[str, Any],
+	server: ServerType,
+	message: str,
+) -> None:
 	log.debug(f"processing client #{client} message")
 	params = json.loads(message)
 	wordQuery = params.get("word")
@@ -177,7 +186,7 @@ def handle_browse_request(client, server, message):
 			break
 
 
-def create_server(host: str, port: int):
+def create_server(host: str, port: int) -> HttpWebsocketServer:
 	server = HttpWebsocketServer(
 		HTTPWebSocketHandler,
 		log,

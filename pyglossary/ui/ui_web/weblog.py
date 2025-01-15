@@ -25,14 +25,19 @@
 
 import logging
 import traceback
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:
+	class ServerType(Protocol):
+		def send_message_to_all(self, msg: str | dict) -> None: ...
 
 
 class WebLogHandler(logging.Handler):
-	def __init__(self, server) -> None:
+	def __init__(self, server: ServerType) -> None:
 		logging.Handler.__init__(self)
 		self.srv = server
 
-	def emit(self, record: logging.LogRecord):
+	def emit(self, record: logging.LogRecord) -> None:
 		msg = ""
 		if record.getMessage():
 			msg = self.format(record)

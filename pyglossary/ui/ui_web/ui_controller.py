@@ -29,7 +29,7 @@ class WebUI(UIBase):
 			json.dumps({"type": "progress", "text": title or "", "ratio": 0})
 		)
 
-	def progress(self, ratio: float, text=None) -> None:
+	def progress(self, ratio: float, text: str = "") -> None:
 		if not text:
 			text = f"{int(ratio * 100)!s}%"
 

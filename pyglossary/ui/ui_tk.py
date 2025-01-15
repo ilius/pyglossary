@@ -55,7 +55,7 @@ writeDesc = [
 ]
 
 
-def set_window_icon(window):
+def set_window_icon(window) -> None:
 	window.iconphoto(
 		True,
 		tk.PhotoImage(file=logo),
@@ -72,15 +72,15 @@ def decodeGeometry(gs):
 	return (int(p[1]), int(p[2]), int(w), int(h))
 
 
-def encodeGeometry(x, y, w, h):
+def encodeGeometry(x, y, w, h) -> str:
 	return f"{w}x{h}+{x}+{y}"
 
 
-def encodeLocation(x, y):
+def encodeLocation(x, y) -> str:
 	return f"+{x}+{y}"
 
 
-def centerWindow(win):
+def centerWindow(win) -> None:
 	"""
 	Centers a tkinter window
 	:param win: the root or Toplevel window to center.
@@ -101,7 +101,7 @@ def centerWindow(win):
 def newButton(*args, **kwargs):
 	button = ttk.Button(*args, **kwargs)
 
-	def onEnter(_event):
+	def onEnter(_event) -> None:
 		button.invoke()
 
 	button.bind("<Return>", onEnter)
@@ -151,7 +151,7 @@ class TkTextLogHandler(logging.Handler):
 		###
 		self.tktext = tktext
 
-	def emit(self, record):
+	def emit(self, record) -> None:
 		msg = ""
 		if record.getMessage():
 			msg = self.format(record)
@@ -251,13 +251,13 @@ class ProgressBar(ttk.Frame):
 		self.bind("<Configure>", self.update)
 		self.canvas.pack(side="top", fill="x", expand="no")
 
-	def updateProgress(self, value, max_=None, text=""):
+	def updateProgress(self, value, max_=None, text="") -> None:
 		if max_:
 			self.max = max_
 		self.value = value
 		self.update(None, text)
 
-	def update(self, event=None, labelText=""):  # noqa: ARG002
+	def update(self, event=None, labelText="") -> None:  # noqa: ARG002
 		# Trim the values to be between min and max
 		value = self.value
 		value = min(value, self.max)
@@ -399,11 +399,11 @@ class FormatDialog(tk.Toplevel):
 
 		# self.bind("<KeyPress>", self.onKeyPress)
 
-	def setActiveRow(self, desc):
+	def setActiveRow(self, desc) -> None:
 		self.treev.selection_set(desc)
 		self.treev.see(desc)
 
-	def updateTree(self):
+	def updateTree(self) -> None:
 		treev = self.treev
 		current = treev.get_children()
 		if current:
@@ -414,7 +414,7 @@ class FormatDialog(tk.Toplevel):
 		if self.activeDesc in self.items:
 			self.setActiveRow(self.activeDesc)
 
-	def onEntryKeyRelease(self, _event):
+	def onEntryKeyRelease(self, _event) -> None:
 		text = self.entry.get().strip()
 		if text == self.lastSearch:
 			return
@@ -440,16 +440,16 @@ class FormatDialog(tk.Toplevel):
 		self.updateTree()
 		self.lastSearch = text
 
-	def onTreeDoubleClick(self, _event):
+	def onTreeDoubleClick(self, _event) -> None:
 		self.okClicked()
 
-	def cancelClicked(self):
+	def cancelClicked(self) -> None:
 		self.destroy()
 
-	def onReturnPress(self, _event):
+	def onReturnPress(self, _event) -> None:
 		self.okClicked()
 
-	def onDownPress(self, _event):
+	def onDownPress(self, _event) -> None:
 		treev = self.treev
 		selection = treev.selection()
 		if selection:
@@ -460,7 +460,7 @@ class FormatDialog(tk.Toplevel):
 			self.setActiveRow(self.items[0])
 		treev.focus()
 
-	def onUpPress(self, _event):
+	def onUpPress(self, _event) -> None:
 		treev = self.treev
 		treev.focus()
 		selection = treev.selection()
@@ -472,10 +472,10 @@ class FormatDialog(tk.Toplevel):
 		if nextDesc:
 			self.setActiveRow(nextDesc)
 
-	def onKeyPress(self, event):
+	def onKeyPress(self, event) -> None:
 		print(f"FormatDialog: onKeyPress: {event}")
 
-	def okClicked(self):
+	def okClicked(self) -> None:
 		treev = self.treev
 		selectedList = treev.selection()
 		desc = selectedList[0] if selectedList else ""
@@ -508,24 +508,24 @@ class FormatButton(ttk.Button):
 		self.bind("<Return>", self.onEnter)
 		self.bind("<KP_Enter>", self.onEnter)
 
-	def onEnter(self, _event=None):
+	def onEnter(self, _event=None) -> None:
 		self.invoke()
 
-	def onChange(self, desc):
+	def onChange(self, desc) -> None:
 		self.setValue(desc)
 		self._onChange(desc)
 
 	def get(self):
 		return self.activeDesc
 
-	def setValue(self, desc):
+	def setValue(self, desc) -> None:
 		if desc:
 			self.var.set(desc)
 		else:
 			self.var.set(self.noneLabel)
 		self.activeDesc = desc
 
-	def onClick(self):
+	def onClick(self) -> None:
 		dialog = FormatDialog(
 			descList=self.descList,
 			title=self.dialogTitle,
@@ -577,7 +577,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		okButton.pack(side="right")
 		buttonBox.pack(fill="x")
 
-	def createOptionsList(self):
+	def createOptionsList(self) -> None:
 		values = self.values
 		self.valueCol = "#3"
 		cols = [
@@ -638,7 +638,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		formatName: str,
 		optName: str,
 		menu=None,
-	):
+	) -> None:
 		if menu:
 			menu.destroy()
 			self.menu = None
@@ -674,7 +674,7 @@ class FormatOptionsDialog(tk.Toplevel):
 
 		prop = Glossary.plugins[formatName].optionsProp[optName]
 
-		def customOkClicked(_event=None):
+		def customOkClicked(_event=None) -> None:
 			rawValue = entry.get()
 			if not prop.validateRaw(rawValue):
 				log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
@@ -703,7 +703,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		frame.pack(fill="x")
 		dialog.focus()
 
-	def valueMenuItemSelected(self, optName, menu, value):
+	def valueMenuItemSelected(self, optName, menu, value) -> None:
 		treev = self.treev
 		treev.set(optName, self.valueCol, value)
 		treev.set(optName, "#1", "1")  # enable it
@@ -713,7 +713,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		menu.destroy()
 		self.menu = None
 
-	def valueCellClicked(self, event, optName):
+	def valueCellClicked(self, event, optName) -> None:
 		if not optName:
 			return
 		treev = self.treev
@@ -762,7 +762,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		maxItemW = 0
 
 		def valueMenuItemSelectedCommand(value):
-			def callback():
+			def callback() -> None:
 				self.valueMenuItemSelected(optName, menu, value)
 
 			return callback
@@ -792,7 +792,7 @@ class FormatOptionsDialog(tk.Toplevel):
 					command=valueMenuItemSelectedCommand(value),
 				)
 
-		def close():
+		def close() -> None:
 			menu.destroy()
 			self.menu = None
 
@@ -811,7 +811,7 @@ class FormatOptionsDialog(tk.Toplevel):
 			# make sure to release the grab (Tk 8.0a1 only)
 			menu.grab_release()
 
-	def treeClicked(self, event):
+	def treeClicked(self, event) -> None:
 		treev = self.treev
 		if self.menu:
 			self.menu.destroy()
@@ -828,7 +828,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		if col == self.valueCol:
 			self.valueCellClicked(event, optName)
 
-	def okClicked(self):
+	def okClicked(self) -> None:
 		treev = self.treev
 		for optName in self.options:
 			enable = bool(int(treev.set(optName, "#1")))
@@ -866,10 +866,10 @@ class FormatOptionsButton(ttk.Button):
 		self.values = values
 		self.formatInput = formatInput
 
-	def setOptionsValues(self, values):
+	def setOptionsValues(self, values) -> None:
 		self.values = values
 
-	def buttonClicked(self):
+	def buttonClicked(self) -> None:
 		formatD = self.formatInput.get()
 		if not formatD:
 			return
@@ -1261,12 +1261,12 @@ class UI(tk.Frame, UIBase):
 		else:  # Linux
 			rootWin.deiconify()
 
-	def textSelectAll(self, tktext):
+	def textSelectAll(self, tktext) -> None:
 		tktext.tag_add(tk.SEL, "1.0", tk.END)
 		tktext.mark_set(tk.INSERT, "1.0")
 		tktext.see(tk.INSERT)
 
-	def consoleKeyPress(self, e):
+	def consoleKeyPress(self, e) -> str | None:
 		# print(e.state, e.keysym)
 		if e.state > 0:
 			if e.keysym == "c":
@@ -1278,7 +1278,7 @@ class UI(tk.Frame, UIBase):
 			return None
 		return "break"
 
-	def verbosityChanged(self, _index, _value, _op):
+	def verbosityChanged(self, _index, _value, _op) -> None:
 		log.setVerbosity(
 			int(self.verbosityCombo.get()),
 		)
@@ -1295,7 +1295,7 @@ class UI(tk.Frame, UIBase):
 	# 		if "info" in x:
 	# 			log.debug(x)
 
-	def inputFormatChanged(self, *_args):
+	def inputFormatChanged(self, *_args) -> None:
 		formatDesc = self.formatButtonInputConvert.get()
 		if not formatDesc:
 			return
@@ -1311,7 +1311,7 @@ class UI(tk.Frame, UIBase):
 		else:
 			self.readOptionsButton.grid_forget()
 
-	def outputFormatChanged(self, *_args):
+	def outputFormatChanged(self, *_args) -> None:
 		formatDesc = self.formatButtonOutputConvert.get()
 		if not formatDesc:
 			return
@@ -1347,11 +1347,11 @@ class UI(tk.Frame, UIBase):
 				pathNoExt + plugin.extensionCreate,
 			)
 
-	def anyEntryChanged(self, _event=None):
+	def anyEntryChanged(self, _event=None) -> None:
 		self.inputEntryChanged()
 		self.outputEntryChanged()
 
-	def inputEntryChanged(self, _event=None):
+	def inputEntryChanged(self, _event=None) -> None:
 		# char = event.keysym
 		pathI = self.entryInputConvert.get()
 		if self.pathI == pathI:
@@ -1375,7 +1375,7 @@ class UI(tk.Frame, UIBase):
 						self.inputFormatChanged()
 		self.pathI = pathI
 
-	def outputEntryChanged(self, _event=None):
+	def outputEntryChanged(self, _event=None) -> None:
 		pathO = self.entryOutputConvert.get()
 		if self.pathO == pathO:
 			return
@@ -1401,13 +1401,13 @@ class UI(tk.Frame, UIBase):
 					self.outputFormatChanged()
 		self.pathO = pathO
 
-	def save_fcd_dir(self):
+	def save_fcd_dir(self) -> None:
 		if not self.fcd_dir:
 			return
 		with open(self.fcd_dir_save_path, mode="w", encoding="utf-8") as fp:
 			fp.write(self.fcd_dir)
 
-	def browseInputConvert(self):
+	def browseInputConvert(self) -> None:
 		path = filedialog.askopenfilename(initialdir=self.fcd_dir)
 		if path:
 			self.entryInputConvert.delete(0, "end")
@@ -1416,7 +1416,7 @@ class UI(tk.Frame, UIBase):
 			self.fcd_dir = os.path.dirname(path)
 			self.save_fcd_dir()
 
-	def browseOutputConvert(self):
+	def browseOutputConvert(self) -> None:
 		path = filedialog.asksaveasfilename()
 		if path:
 			self.entryOutputConvert.delete(0, "end")
@@ -1482,7 +1482,7 @@ class UI(tk.Frame, UIBase):
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,
 		glossarySetAttrs: dict[str, Any] | None = None,
-	):
+	) -> None:
 		self.config = config
 
 		if inputFilename:
@@ -1527,10 +1527,10 @@ class UI(tk.Frame, UIBase):
 		# which is not implemented
 		self.mainloop()
 
-	def progressInit(self, title):
+	def progressInit(self, title) -> None:
 		self.progressTitle = title
 
-	def progress(self, ratio, text=""):
+	def progress(self, ratio, text="") -> None:
 		if not text:
 			text = "%" + str(int(ratio * 100))
 		text += " - " + self.progressTitle
@@ -1539,7 +1539,7 @@ class UI(tk.Frame, UIBase):
 		# self.pbar.update()
 		self.rootWin.update()
 
-	def console_clear(self, _event=None):
+	def console_clear(self, _event=None) -> None:
 		self.console.delete("1.0", "end")
 		self.console.insert("end", "Console:\n")
 
