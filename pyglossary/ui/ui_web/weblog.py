@@ -28,6 +28,7 @@ import traceback
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
+
 	class ServerType(Protocol):
 		def send_message_to_all(self, msg: str | dict) -> None: ...
 

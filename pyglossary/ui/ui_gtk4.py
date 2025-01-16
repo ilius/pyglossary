@@ -521,7 +521,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		path: gtk.TreePath,
 		name: str,
 		callback: Callable,
-		*args  # noqa: ANN002
+		*args,  # noqa: ANN002
 	) -> str:
 		actionId = self.formatName + "_" + str(path[0]) + "_" + name
 		if actionId not in self.actionIds:
@@ -617,7 +617,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		menu.popup()
 		return True
 
-	def getOptionsValues(self) ->  dict[str, Any]:
+	def getOptionsValues(self) -> dict[str, Any]:
 		model = self.treev.get_model()
 		optionsValues: dict[str, Any] = {}
 		for row in model:
