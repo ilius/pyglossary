@@ -29,16 +29,7 @@ jobs:
                   cd ${{ github.workspace }}
                   ls -l
             - name: Install dependencies
-              run: |
-                  python -m pip install \
-                    PyICU \
-                    beautifulsoup4 \
-                    biplist html5lib \
-                    python-idzip \
-                    lxml==5.3 \
-                    marisa-trie \
-                    mistune \
-                    polib
+              run: sh ./scripts/test-deps.sh
             - name: Remove test cache
               run: rm -rf /home/runner/.cache/pyglossary/test || true
             - name: Run tests
