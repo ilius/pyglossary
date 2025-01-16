@@ -17,7 +17,7 @@ testTimeEpoch = 1730579400
 testTime = datetime.datetime.fromtimestamp(testTimeEpoch, tz=datetime.timezone.utc)
 
 
-class TestGlossaryEPUB2(TestGlossaryBase):
+class TestGlossaryYomichan(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
@@ -27,6 +27,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			},
 		)
 
+	@freeze_time(testTime)
 	def convert_to_yomichan(
 		self,
 		inputFname,
@@ -55,12 +56,18 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
 			self.assertEqual(sha1sum, actualSha1, f"{outputFilename=}")
 
-	@freeze_time(testTime)
 	def test_convert_txt_yomichan_1(self):
 		self.convert_to_yomichan(
 			"050-JMdict-English-v3.txt",
 			testId="1",
 			sha1sum="e54bc12755924586c306831b54a44a3dfd45cf7b",
+		)
+
+	def test_convert_txt_yomichan_2(self):
+		self.convert_to_yomichan(
+			"100-ja-en.txt",
+			testId="2",
+			sha1sum="02bf6195eba15d0e76b3b119fa9c57d3f17eb169",
 		)
 
 
