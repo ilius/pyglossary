@@ -54,7 +54,6 @@ from .gtk4_utils.utils import (  # noqa: E402
 	imageFromFile,
 	pack,
 	rgba_parse,
-	set_tooltip,
 	showInfo,
 )
 
@@ -1441,7 +1440,7 @@ check {
 		# image.set_icon_name(...)
 		# clearButton.add(image)
 		clearButton.connect("clicked", self.consoleClearButtonClicked)
-		set_tooltip(clearButton, "Clear Console")
+		clearButton.set_tooltip_text("Clear Console")
 		pack(hbox, clearButton)
 		####
 		# hbox.sepLabel1 = gtk.Label(label="")

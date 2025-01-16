@@ -54,7 +54,6 @@ from .gtk3_utils.utils import (  # noqa: E402
 	imageFromFile,
 	pack,
 	rgba_parse,
-	set_tooltip,
 	showInfo,
 )
 
@@ -1337,7 +1336,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		# clearButton.add(image)
 		clearButton.set_border_width(0)
 		clearButton.connect("clicked", self.consoleClearButtonClicked)
-		set_tooltip(clearButton, "Clear Console")
+		clearButton.set_tooltip_text("Clear Console")
 		pack(hbox, clearButton, 0, 0)
 		####
 		# hbox.sepLabel1 = gtk.Label(label="")

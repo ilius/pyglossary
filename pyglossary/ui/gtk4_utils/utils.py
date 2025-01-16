@@ -38,7 +38,6 @@ __all__ = [
 	"imageFromFile",
 	"pack",
 	"rgba_parse",
-	"set_tooltip",
 	"showInfo",
 ]
 
@@ -68,11 +67,6 @@ def VBox(**kwargs) -> gtk.Box:
 
 def HBox(**kwargs) -> gtk.Box:
 	return gtk.Box(orientation=gtk.Orientation.HORIZONTAL, **kwargs)
-
-
-# TODO: remove
-def set_tooltip(widget, text) -> None:  # noqa: ANN001
-	widget.set_tooltip_text(text)
 
 
 def imageFromFile(path: str) -> gtk.Image:  # the file must exist
@@ -154,7 +148,7 @@ def dialog_add_button(
 	if onClicked:
 		label.connect("clicked", onClicked)
 	if tooltip:
-		set_tooltip(label, tooltip)
+		label.set_tooltip_text(tooltip)
 
 
 def showMsg(  # noqa: PLR0913
