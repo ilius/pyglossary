@@ -28,10 +28,10 @@ from .write_funcs import (
 __all__ = ["Writer"]
 
 
-default_de_normalizer_rules = (
+_defaultNormalizerRulesDE = (
 	":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
 )
-default_normalizer_rules = (
+_defaultNormalizerRules = (
 	":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
 )
 
@@ -132,7 +132,7 @@ class Writer:
 
 		short_name = long_name = iso = sourceLangCode
 		normalizer_rules = self._normalizer_rules or (
-			default_de_normalizer_rules if iso == "DE" else default_normalizer_rules
+			_defaultNormalizerRulesDE if iso == "DE" else _defaultNormalizerRules
 		)
 		self._dic.add_index(
 			short_name,

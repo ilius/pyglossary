@@ -22,20 +22,22 @@ from __future__ import annotations
 import re
 from typing import Any
 
-re_spaces = re.compile(r"[ \t\n]{2,}")
-re_title = re.compile('<[^<]+?>|"|[<>]|\xef\xbb\xbf')
-re_title_short = re.compile(r"\[.*?\]")
-re_whitespace = re.compile("(\t|\n|\r)")
+__all__ = ["title", "title_long", "title_short"]
+
+_re_spaces = re.compile(r"[ \t\n]{2,}")
+_re_title = re.compile('<[^<]+?>|"|[<>]|\xef\xbb\xbf')
+_re_title_short = re.compile(r"\[.*?\]")
+_re_whitespace = re.compile("(\t|\n|\r)")
 
 # FIXME: rename all/most functions here, add a 'fix_' prefix
 
 
-def spaces(s: str) -> str:
+def _spaces(s: str) -> str:
 	"""
 	Strip off leading and trailing whitespaces and
 	replace contiguous whitespaces with just one space.
 	"""
-	return re_spaces.sub(" ", s.strip())
+	return _re_spaces.sub(" ", s.strip())
 
 
 _brackets_sub = (
@@ -78,7 +80,7 @@ _brackets_sub = (
 )
 
 
-def brackets(s: str) -> str:
+def _brackets(s: str) -> str:
 	r"""
 	Replace all crazy brackets with square ones [].
 
@@ -91,17 +93,17 @@ def brackets(s: str) -> str:
 	if "{" in s:
 		for exp, sub in _brackets_sub:
 			s = exp.sub(sub, s)
-	return spaces(s)
+	return _spaces(s)
 
 
-def truncate(text: str, length: int = 449) -> str:
+def _truncate(text: str, length: int = 449) -> str:
 	"""
 	Trunct a string to given length
 	:param str text:
 	:return: truncated text
 	:rtype: str.
 	"""
-	content = re_whitespace.sub(" ", text)
+	content = _re_whitespace.sub(" ", text)
 	if len(text) > length:
 		# find the next space after max_len chars (do not break inside a word)
 		pos = content[:length].rfind(" ")
@@ -123,10 +125,10 @@ def title(title: str, BeautifulSoup: Any) -> str:
 				# FIXME: html or lxml? gives warning unless it's lxml
 			).get_text(strip=True)
 	else:
-		title = re_title.sub("", title)
+		title = _re_title.sub("", title)
 		title = title.replace("&", "&amp;")
-	title = brackets(title)
-	title = truncate(title, 1126)
+	title = _brackets(title)
+	title = _truncate(title, 1126)
 	return title  # noqa: RET504
 
 
@@ -151,4 +153,4 @@ def title_short(s: str) -> str:
 	title_short("str[ing]") -> str.
 
 	"""
-	return spaces(re_title_short.sub("", s))
+	return _spaces(_re_title_short.sub("", s))

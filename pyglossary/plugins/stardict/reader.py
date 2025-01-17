@@ -32,7 +32,7 @@ from pyglossary.text_utils import (
 __all__ = ["Reader"]
 
 
-def verifySameTypeSequence(s: str) -> bool:
+def _verifySameTypeSequence(s: str) -> bool:
 	if not s:
 		return True
 	# maybe should just check it's in ("h", "m", "x")
@@ -41,8 +41,10 @@ def verifySameTypeSequence(s: str) -> bool:
 	return len(s) == 1
 
 
-class XdxfTransformerType(Protocol):
-	def transformByInnerString(self, text: str) -> str: ...
+if TYPE_CHECKING:
+
+	class XdxfTransformerType(Protocol):
+		def transformByInnerString(self, text: str) -> str: ...
 
 
 class Reader:
@@ -113,7 +115,7 @@ class Reader:
 		self._filename = realpath(self._filename)
 		self.readIfoFile()
 		sametypesequence = self._glos.getInfo("sametypesequence")
-		if not verifySameTypeSequence(sametypesequence):
+		if not _verifySameTypeSequence(sametypesequence):
 			raise LookupError(f"Invalid {sametypesequence = }")
 		self._indexData = self.readIdxFile()
 		self._wordCount = len(self._indexData)

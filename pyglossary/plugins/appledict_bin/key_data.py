@@ -14,15 +14,17 @@
 # GNU General Public License for more details.
 from __future__ import annotations
 
-import typing
+from typing import TYPE_CHECKING
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
 	from collections.abc import Sequence
+	from typing import Any, TypeAlias
 
-__all__ = ["KeyData", "RawKeyData"]
+__all__ = ["KeyData", "RawKeyDataType"]
 
-RawKeyData: typing.TypeAlias = "tuple[int, int, Sequence[str]]"
-"""tuple(priority, parentalControl, keyTextFields)"""
+if TYPE_CHECKING:
+	RawKeyDataType: TypeAlias = tuple[int, int, Sequence[str]]
+	"""tuple(priority, parentalControl, keyTextFields)"""
 
 
 """
@@ -99,7 +101,7 @@ class KeyData:
 		self.entryTitle = entryTitle
 		self.anchor = anchor
 
-	def toDict(self) -> dict[str, typing.Any]:
+	def toDict(self) -> dict[str, Any]:
 		return {
 			"priority": self.priority,
 			"parentalControl": self.parentalControl,
@@ -110,7 +112,7 @@ class KeyData:
 		}
 
 	@staticmethod
-	def fromRaw(rawKeyData: RawKeyData, keyTextFieldOrder: list[str]) -> KeyData:
+	def fromRaw(rawKeyData: RawKeyDataType, keyTextFieldOrder: list[str]) -> KeyData:
 		priority, parentalControl, keyTextFields = rawKeyData
 		keyword = ""
 		headword = ""

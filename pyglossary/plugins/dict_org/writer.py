@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def installToDictd(filename: str, dictzip: bool) -> None:
+def _installToDictd(filename: str, dictzip: bool) -> None:
 	"""Filename is without extension (neither .index or .dict or .dict.dz)."""
 	import shutil
 	import subprocess
@@ -73,7 +73,7 @@ class Writer:
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
 		if self._install:
-			installToDictd(
+			_installToDictd(
 				self._filename,
 				self._dictzip,
 			)

@@ -17,9 +17,19 @@ if TYPE_CHECKING:
 	from pyglossary.lxml_types import T_htmlfile
 
 
-line_reg = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
+__all__ = [
+	"Article",
+	"parse_line_simp",
+	"parse_line_trad",
+	"render_article",
+	"render_syllables_color",
+	"render_syllables_no_color",
+]
 
-COLORS = {
+
+_re_line = re.compile(r"^([^ ]+) ([^ ]+) \[([^\]]+)\] /(.+)/$")
+
+_COLORS = {
 	"": "black",
 	"1": "red",
 	"2": "orange",
@@ -31,7 +41,7 @@ COLORS = {
 
 def parse_line_trad(line: str) -> tuple[str, str, str, list[str]] | None:
 	line = line.strip()
-	match = line_reg.match(line)
+	match = _re_line.match(line)
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
@@ -41,7 +51,7 @@ def parse_line_trad(line: str) -> tuple[str, str, str, list[str]] | None:
 
 def parse_line_simp(line: str) -> tuple[str, str, str, list[str]] | None:
 	line = line.strip()
-	match = line_reg.match(line)
+	match = _re_line.match(line)
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
@@ -82,12 +92,12 @@ def render_syllables_color(
 
 	with hf.element("div", style="display: inline-block"):
 		for index, syllable in enumerate(syllables):
-			with hf.element("font", color=COLORS[tones[index]]):
+			with hf.element("font", color=_COLORS[tones[index]]):
 				hf.write(syllable)
 
 
 # @lru_cache(maxsize=128)
-def convert_pinyin(pinyin: str) -> tuple[Sequence[str], Sequence[str]]:
+def _convert_pinyin(pinyin: str) -> tuple[Sequence[str], Sequence[str]]:
 	return tuple(zip(*map(convert, pinyin.split()), strict=False))  # type: ignore
 
 
@@ -98,7 +108,7 @@ def render_article(
 	names = article.names()
 
 	# pinyin_tones = [convert(syl) for syl in pinyin.split()]
-	pinyin_list, tones = convert_pinyin(article.pinyin)
+	pinyin_list, tones = _convert_pinyin(article.pinyin)
 
 	f = BytesIO()
 	with ET.htmlfile(f, encoding="utf-8") as _hf:  # noqa: PLR1702

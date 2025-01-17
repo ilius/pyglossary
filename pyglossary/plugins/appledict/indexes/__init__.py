@@ -25,9 +25,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from collections.abc import Callable, Sequence
 
-from pyglossary.core import log
-
-__all__ = ["languages", "log"]
+__all__ = ["languages"]
 
 languages: dict[str, Callable[[Sequence[str], str], set[str]]] = {}
 """
@@ -39,12 +37,6 @@ function must follow signature below:
 	:param content: cleaned entry content
 	:return: iterable of indexes (str).
 
-use
-```
-	from . import languages
-	# or
-	from appledict.indexes import languages
-```
 """
 
 here = os.path.dirname(os.path.abspath(__file__))

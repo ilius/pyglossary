@@ -39,21 +39,21 @@ __all__ = ["prepare_content"]
 log = logging.getLogger("pyglossary")
 
 
-re_brhr = re.compile("<(BR|HR)>", re.IGNORECASE)
-re_nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
-re_img = re.compile("<IMG (.*?)>", re.IGNORECASE)
+_re_brhr = re.compile("<(BR|HR)>", re.IGNORECASE)
+_re_nonprintable = re.compile("[\x00-\x07\x0e-\x1f]")
+_re_img = re.compile("<IMG (.*?)>", re.IGNORECASE)
 
-re_div_margin_em = re.compile(r'<div style="margin-left:(\d)em">')
-sub_div_margin_em = r'<div class="m\1">'
+_re_div_margin_em = re.compile(r'<div style="margin-left:(\d)em">')
+_sub_div_margin_em = r'<div class="m\1">'
 
-re_div_margin_em_ex = re.compile(
+_re_div_margin_em_ex = re.compile(
 	r'<div class="ex" style="margin-left:(\d)em;color:steelblue">',
 )
-sub_div_margin_em_ex = r'<div class="m\1 ex">'
+_sub_div_margin_em_ex = r'<div class="m\1 ex">'
 
-re_href = re.compile(r"""href=(["'])(.*?)\1""")
+_re_href = re.compile(r"""href=(["'])(.*?)\1""")
 
-re_margin = re.compile(r"margin-left:(\d)em")
+_re_margin = re.compile(r"margin-left:(\d)em")
 
 
 def prepare_content(
@@ -78,7 +78,7 @@ def prepare_content(
 		content = prepare_content_without_soup(title, body)
 
 	content = content.replace("&nbsp;", "&#160;")
-	content = re_nonprintable.sub("", content)
+	content = _re_nonprintable.sub("", content)
 	return content  # noqa: RET504
 
 
@@ -87,9 +87,9 @@ def prepare_content_without_soup(
 	body: str,
 ) -> str:
 	# somewhat analogue to what BeautifulSoup suppose to do
-	body = re_div_margin_em.sub(sub_div_margin_em, body)
-	body = re_div_margin_em_ex.sub(sub_div_margin_em_ex, body)
-	body = re_href.sub(href_sub, body)
+	body = _re_div_margin_em.sub(_sub_div_margin_em, body)
+	body = _re_div_margin_em_ex.sub(_sub_div_margin_em_ex, body)
+	body = _re_href.sub(_href_sub, body)
 
 	body = (
 		body.replace(
@@ -116,17 +116,17 @@ def prepare_content_without_soup(
 
 	# nice header to display
 	content = f"<h1>{title}</h1>{body}" if title else body
-	content = re_brhr.sub(r"<\g<1> />", content)
-	content = re_img.sub(r"<img \g<1>/>", content)
+	content = _re_brhr.sub(r"<\g<1> />", content)
+	content = _re_img.sub(r"<img \g<1>/>", content)
 	return content  # noqa: RET504
 
 
 def _prepare_href(tag: bs4.element.Tag) -> None:
 	href = tag["href"]
-	href = cleanup_link_target(href)
+	href = _cleanup_link_target(href)
 
 	if href.startswith("sound:"):
-		fix_sound_link(href, tag)
+		_fix_sound_link(href, tag)
 
 	elif href.startswith(("phonetics", "help:phonetics")):
 		# for oxford9
@@ -136,7 +136,7 @@ def _prepare_href(tag: bs4.element.Tag) -> None:
 			src_name = tag.audio["name"].replace("#", "_")
 			tag.audio["src"] = f"{src_name}.mp3"
 
-	elif not link_is_url(href):
+	elif not _link_is_url(href):
 		tag["href"] = f"x-dictionary:d:{href}"
 
 
@@ -187,20 +187,20 @@ def prepare_content_with_soup(  # noqa: PLR0912
 		tag["d:priority"] = "2"
 
 	for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
-		remove_style(tag, "color:steelblue")
+		_remove_style(tag, "color:steelblue")
 		if "ex" not in tag.get("class", []):
 			tag["class"] = tag.get("class", []) + ["ex"]
 
-	for tag in soup(is_green):
-		remove_style(tag, "color:green")
+	for tag in soup(_is_green):
+		_remove_style(tag, "color:green")
 		if "p" not in tag.get("class", ""):
 			tag["class"] = tag.get("class", []) + ["c"]
 
 	for tag in soup(True):
 		if "style" in tag.attrs:
-			m = re_margin.search(tag["style"])
+			m = _re_margin.search(tag["style"])
 			if m:
-				remove_style(tag, m.group(0))
+				_remove_style(tag, m.group(0))
 				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
 
 	for tag in soup(lambda x: "xhtml:" in x.name):
@@ -234,16 +234,16 @@ def prepare_content_with_soup(  # noqa: PLR0912
 	return toStr(soup.encode_contents())
 
 
-def cleanup_link_target(href: str) -> str:
+def _cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
-def href_sub(x: re.Match) -> str:
+def _href_sub(x: re.Match) -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
 
-	href = cleanup_link_target(href)
+	href = _cleanup_link_target(href)
 
 	return "href=" + quoteattr(
 		"x-dictionary:d:"
@@ -254,11 +254,11 @@ def href_sub(x: re.Match) -> str:
 	)
 
 
-def is_green(x: dict) -> bool:
+def _is_green(x: dict) -> bool:
 	return "color:green" in x.get("style", "")
 
 
-def remove_style(tag: dict, line: str) -> None:
+def _remove_style(tag: dict, line: str) -> None:
 	s = "".join(tag["style"].replace(line, "").split(";"))
 	if s:
 		tag["style"] = s
@@ -266,11 +266,11 @@ def remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def fix_sound_link(href: str, tag: dict[str, Any]) -> None:
+def _fix_sound_link(href: str, tag: dict[str, Any]) -> None:
 	tag["href"] = f'javascript:new Audio("{href[len("sound://") :]}").play();'
 
 
-def link_is_url(href: str) -> bool:
+def _link_is_url(href: str) -> bool:
 	for prefix in (
 		"http:",
 		"https:",

@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def is_cyrillic_char(c: str) -> bool:
+def _is_cyrillic_char(c: str) -> bool:
 	# U+0400 - U+04FF: Cyrillic
 	# U+0500 - U+052F: Cyrillic Supplement
 	if "\u0400" <= c <= "\u052f":
@@ -62,7 +62,7 @@ def is_cyrillic_char(c: str) -> bool:
 	return c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
 
 
-def fixFilename(fname: str) -> str:
+def _fixFilename(fname: str) -> str:
 	return Path(fname.replace("/", "2F").replace("\\", "5C")).name
 
 
@@ -98,7 +98,7 @@ class Writer:
 			return "11"
 		if len(wo) > 1 and wo[1] == "\x00":
 			wo = wo[:1]
-		if is_cyrillic_char(wo[0]):
+		if _is_cyrillic_char(wo[0]):
 			return wo
 		# if either of the first 2 chars are not unicode letters, return "11"
 		for c in wo:
@@ -129,7 +129,7 @@ class Writer:
 
 		def writeGroup(lastPrefix: str) -> None:
 			nonlocal htmlContents
-			group_fname = fixFilename(lastPrefix)
+			group_fname = _fixFilename(lastPrefix)
 			htmlContents += "</html>"
 			core.trace(
 				log,

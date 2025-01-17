@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 __all__ = ["Transformer"]
 
-re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
+_re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
 
 class Result(NamedTuple):
@@ -161,7 +161,7 @@ class Transformer:
 
 	def transform(self) -> tuple[Result | None, ErrorType]:
 		# TODO: implement these 2 with lex functions
-		self.input = re_comment_block.sub("", self.input)
+		self.input = _re_comment_block.sub("", self.input)
 
 		lex: LexType = lexRoot
 		tr = cast("TransformerType", self)

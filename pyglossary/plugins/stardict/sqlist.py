@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 
-class BaseSqList:
+class _BaseSqList:
 	def __init__(
 		self,
 		database: str,
@@ -102,7 +102,7 @@ class BaseSqList:
 			yield row[1:]
 
 
-class IdxSqList(BaseSqList):
+class IdxSqList(_BaseSqList):
 	@classmethod
 	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]
@@ -111,7 +111,7 @@ class IdxSqList(BaseSqList):
 		]
 
 
-class SynSqList(BaseSqList):
+class SynSqList(_BaseSqList):
 	@classmethod
 	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]

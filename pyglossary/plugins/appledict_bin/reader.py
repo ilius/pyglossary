@@ -38,7 +38,7 @@ from .appledict_file_tools import (
 )
 from .appledict_properties import from_metadata
 from .article_address import ArticleAddress
-from .key_data import KeyData, RawKeyData
+from .key_data import KeyData
 
 if TYPE_CHECKING:
 	import io
@@ -55,6 +55,7 @@ if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element
 
 	from .appledict_properties import AppleDictProperties
+	from .key_data import RawKeyDataType
 
 from zlib import decompress
 
@@ -95,7 +96,7 @@ class Reader:
 		self._re_xmlns = re.compile(' xmlns:d="[^"<>]+"')
 		self._titleById: dict[str, str] = {}
 		self._wordCount = 0
-		self._keyTextData: dict[ArticleAddress, list[RawKeyData]] = {}
+		self._keyTextData: dict[ArticleAddress, list[RawKeyDataType]] = {}
 		self._cssName = ""
 
 	@staticmethod
@@ -516,7 +517,7 @@ class Reader:
 		Sets self._keyTextData when done.
 		"""
 		buff.seek(bufferOffset)
-		keyTextData: dict[ArticleAddress, list[RawKeyData]] = {}
+		keyTextData: dict[ArticleAddress, list[RawKeyDataType]] = {}
 		while bufferOffset < bufferLimit:
 			yield (bufferOffset, bufferLimit)
 			buff.seek(bufferOffset)
@@ -594,7 +595,7 @@ class Reader:
 					word_form = read_x_bytes_as_word(buff, word_form_len)
 					keyTextFields.append(word_form)
 
-				entryKeyTextData: RawKeyData = (
+				entryKeyTextData: RawKeyDataType = (
 					priority,
 					parentalControl,
 					tuple(keyTextFields),

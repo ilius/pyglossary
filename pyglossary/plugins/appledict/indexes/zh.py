@@ -36,7 +36,7 @@ except ImportError:
 
 from typing import TYPE_CHECKING
 
-from . import languages, log
+from . import languages
 
 if TYPE_CHECKING:
 	from collections.abc import Sequence

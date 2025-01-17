@@ -50,7 +50,7 @@ __all__ = ["Reader"]
 htmlEntityPattern = re.compile(r"&#?\w+;")
 
 
-def unescape(text: str) -> str:
+def _unescape(text: str) -> str:
 	def fixup(m: re.Match) -> str:
 		text = m.group(0)
 		if text[:2] == "&#":
@@ -76,15 +76,12 @@ def unescape(text: str) -> str:
 	return htmlEntityPattern.sub(fixup, text)
 
 
-# }}}
-
-
 # precompiled regexs
-re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
+_re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
 
 
-def unwrap_quotes(s: str) -> str:
-	return re_wrapped_in_quotes.sub("\\2", s)
+def _unwrap_quotes(s: str) -> str:
+	return _re_wrapped_in_quotes.sub("\\2", s)
 
 
 class Reader:
@@ -228,17 +225,17 @@ class Reader:
 		)
 
 	def setInfo(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, unwrap_quotes(value))
+		self._glos.setInfo(key, _unwrap_quotes(value))
 
 	def processHeaderLine(self, line: str) -> None:
 		if line.startswith("#NAME"):
-			self.setInfo("name", unwrap_quotes(line[6:].strip()))
+			self.setInfo("name", _unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):
-			self._glos.sourceLangName = unwrap_quotes(line[16:].strip())
+			self._glos.sourceLangName = _unwrap_quotes(line[16:].strip())
 		elif line.startswith("#CONTENTS_LANGUAGE"):
-			self._glos.targetLangName = unwrap_quotes(line[19:].strip())
+			self._glos.targetLangName = _unwrap_quotes(line[19:].strip())
 		elif line.startswith("#INCLUDE"):
-			self.processInclude(unwrap_quotes(line[9:].strip()))
+			self.processInclude(_unwrap_quotes(line[9:].strip()))
 
 	def processInclude(self, filename: str) -> None:
 		reader = Reader(self._glos)

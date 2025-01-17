@@ -5,7 +5,14 @@ from typing import TYPE_CHECKING
 from pyglossary.core import log
 from pyglossary.io_utils import nullTextIO
 
-from . import conv
+from .conv import (
+	Article,
+	parse_line_simp,
+	parse_line_trad,
+	render_article,
+	render_syllables_color,
+	render_syllables_no_color,
+)
 
 if TYPE_CHECKING:
 	import io
@@ -58,13 +65,11 @@ class Reader:
 		glos = self._glos
 
 		render_syllables = (
-			conv.render_syllables_color
+			render_syllables_color
 			if self._colorize_tones
-			else conv.render_syllables_no_color
+			else render_syllables_no_color
 		)
-		parse_line = (
-			conv.parse_line_trad if self._traditional_title else conv.parse_line_simp
-		)
+		parse_line = parse_line_trad if self._traditional_title else parse_line_simp
 
 		while True:
 			line = file.readline()
@@ -79,9 +84,9 @@ class Reader:
 			if parts is None:
 				log.warning(f"bad line: {line!r}")
 				continue
-			names, article_text = conv.render_article(
+			names, article_text = render_article(
 				render_syllables,
-				conv.Article(*parts),
+				Article(*parts),
 			)
 			entry = glos.newEntry(
 				names,

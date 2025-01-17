@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))  # noqa: E402
 
-from . import main
+from .main import main
 
 log = logging.getLogger("root")
 console_output_handler = logging.StreamHandler(sys.stderr)
@@ -18,4 +18,4 @@ console_output_handler.setFormatter(
 log.addHandler(console_output_handler)
 log.setLevel(logging.INFO)
 
-sys.exit(main.main())
+sys.exit(main())

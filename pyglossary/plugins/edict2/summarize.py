@@ -5,9 +5,9 @@ import string
 
 __all__ = ["summarize"]
 
-parenthetical = re.compile(r"\([^)]+?\)")
-punct_table = {ord(p): " " for p in string.punctuation if p not in "-'"}
-stops = {
+_parenthetical = re.compile(r"\([^)]+?\)")
+_punct_table = {ord(p): " " for p in string.punctuation if p not in "-'"}
+_stops = {
 	"i",
 	"me",
 	"my",
@@ -165,10 +165,10 @@ stops = {
 
 
 def summarize(phrase: str) -> str:
-	phrase = parenthetical.sub("", phrase)
-	phrase = phrase.translate(punct_table)
+	phrase = _parenthetical.sub("", phrase)
+	phrase = phrase.translate(_punct_table)
 	words = phrase.split()
-	relevant_words = [word for word in words if word not in stops]
+	relevant_words = [word for word in words if word not in _stops]
 	if not relevant_words:
 		relevant_words = words
 	return " ".join(relevant_words[:10])

@@ -44,16 +44,16 @@ infoKeys = (
 )
 
 
-# re_newline = re.compile("[\n\r]+")
-re_newline = re.compile("\n\r?|\r\n?")
+# _re_newline = re.compile("[\n\r]+")
+_re_newline = re.compile("\n\r?|\r\n?")
 
 
-def newlinesToSpace(text: str) -> str:
-	return re_newline.sub(" ", text)
+def _newlinesToSpace(text: str) -> str:
+	return _re_newline.sub(" ", text)
 
 
-def newlinesToBr(text: str) -> str:
-	return re_newline.sub("<br>", text)
+def _newlinesToBr(text: str) -> str:
+	return _re_newline.sub("<br>", text)
 
 
 class Writer:
@@ -355,7 +355,7 @@ class Writer:
 		)
 
 	def getBookname(self) -> str:
-		bookname = newlinesToSpace(self._glos.getInfo("name"))
+		bookname = _newlinesToSpace(self._glos.getInfo("name"))
 		sourceLang = self._sourceLang
 		targetLang = self._targetLang
 		if sourceLang and targetLang:
@@ -374,7 +374,7 @@ class Writer:
 		publisher = glos.getInfo("publisher")
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"
-		return newlinesToBr(desc)
+		return _newlinesToBr(desc)
 
 	def writeIfoFile(
 		self,
@@ -409,7 +409,7 @@ class Writer:
 			value = glos.getInfo(key)
 			if not value:
 				continue
-			value = newlinesToSpace(value)
+			value = _newlinesToSpace(value)
 			ifoDict[key] = value
 
 		ifoDict["description"] = self.getDescription()

@@ -26,10 +26,10 @@ from pyglossary.text_utils import (
 
 __all__ = ["Writer"]
 
-nbsp = "\xa0"
-# nbsp = "&nbsp;"
+_nbsp = "\xa0"
+# _nbsp = "&nbsp;"
 
-darkStyle = """
+_darkStyle = """
 body {{
 	background-color: #373737;
 	color: #eee;
@@ -295,7 +295,7 @@ class Writer:
 			if not entry_url_fmt:
 				return ""
 			url = entry_url_fmt.format(word=html.escape(entry.l_word[0]))
-			return f'{nbsp}<a class="no_ul" href="{url}">&#127759;</a>'
+			return f'{_nbsp}<a class="no_ul" href="{url}">&#127759;</a>'
 
 		# from math import log2, ceil
 		# maxPosHexLen = int(ceil(log2(max_file_size) / 4))
@@ -314,7 +314,7 @@ class Writer:
 		title = glos.getInfo("name")
 		style = ""
 		if self._dark:
-			style = darkStyle
+			style = _darkStyle
 
 		cssLink = '<link rel="stylesheet" href="style.css" />' if self._css else ""
 
@@ -345,7 +345,7 @@ class Writer:
 			)
 			return (
 				'<nav style="text-align: center; font-size: 2.5em;">'
-				+ f"{nbsp}{nbsp}{nbsp}".join(links)
+				+ f"{_nbsp}{_nbsp}{_nbsp}".join(links)
 				+ "</nav>"
 			)
 
@@ -446,7 +446,7 @@ class Writer:
 			# entry_link_sym = "&#182;"
 			entry_link_sym = "&#128279;"
 			text = (
-				f'<div id="{entryId}">{title}{nbsp}{nbsp}'
+				f'<div id="{entryId}">{title}{_nbsp}{_nbsp}'
 				f'<a class="no_ul" class="entry_link" href="#{entryId}">'
 				f"{entry_link_sym}</a>"
 				f"{getEntryWebLink(entry)}"

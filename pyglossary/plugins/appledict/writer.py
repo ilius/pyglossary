@@ -32,11 +32,12 @@ from pyglossary.text_utils import toStr
 
 from ._content import prepare_content
 from ._dict import (
-	_normalize,
 	id_generator,
 	indexes_generator,
 	quote_string,
 )
+from ._normalize import title as normalize_title
+from ._normalize import title_long as normalize_title_long
 
 if TYPE_CHECKING:
 	import io
@@ -52,7 +53,7 @@ sys.setrecursionlimit(10000)
 BeautifulSoup = None
 
 
-def loadBeautifulSoup() -> None:
+def _loadBeautifulSoup() -> None:
 	global BeautifulSoup
 	try:
 		import bs4 as BeautifulSoup
@@ -70,13 +71,13 @@ def loadBeautifulSoup() -> None:
 		)
 
 
-def abspath_or_None(path: str | None) -> str | None:
+def _abspath_or_None(path: str | None) -> str | None:
 	if not path:
 		return None
 	return os.path.abspath(os.path.expanduser(path))
 
 
-def write_header(
+def _write_header(
 	toFile: io.TextIOBase,
 	front_back_matter: str | None,
 ) -> None:
@@ -95,7 +96,7 @@ def write_header(
 			toFile.write(_file.read())
 
 
-def format_default_prefs(default_prefs: dict[str, Any] | None) -> str:
+def _format_default_prefs(default_prefs: dict[str, Any] | None) -> str:
 	"""
 	:type default_prefs: dict or None
 
@@ -118,7 +119,7 @@ def format_default_prefs(default_prefs: dict[str, Any] | None) -> str:
 	).strip()
 
 
-def write_css(fname: str, css_file: str) -> None:
+def _write_css(fname: str, css_file: str) -> None:
 	with open(fname, mode="wb") as toFile:
 		if css_file:
 			with open(css_file, mode="rb") as fromFile:
@@ -214,7 +215,7 @@ class Writer:
 
 		if clean_html:
 			if BeautifulSoup is None:
-				loadBeautifulSoup()
+				_loadBeautifulSoup()
 			if BeautifulSoup is None:
 				log.warning(
 					"clean_html option passed but BeautifulSoup not found. "
@@ -228,10 +229,10 @@ class Writer:
 		fileNameBase = basename(dirname).replace(".", "_")
 		filePathBase = join(dirname, fileNameBase)
 		# before chdir (outside indir block)
-		css = abspath_or_None(css)
-		xsl = abspath_or_None(xsl)
-		prefs_html = abspath_or_None(prefs_html)
-		front_back_matter = abspath_or_None(front_back_matter)
+		css = _abspath_or_None(css)
+		xsl = _abspath_or_None(xsl)
+		prefs_html = _abspath_or_None(prefs_html)
+		front_back_matter = _abspath_or_None(front_back_matter)
 
 		generate_id = id_generator()
 		generate_indexes = indexes_generator(indexes)
@@ -241,7 +242,7 @@ class Writer:
 			os.mkdir(myResDir)
 
 		with open(filePathBase + ".xml", mode="w", encoding="utf-8") as toFile:
-			write_header(toFile, front_back_matter)
+			_write_header(toFile, front_back_matter)
 			while True:
 				entry = yield
 				if entry is None:
@@ -254,8 +255,8 @@ class Writer:
 				word, alts = words[0], words[1:]
 				defi = entry.defi
 
-				long_title = _normalize.title_long(
-					_normalize.title(word, BeautifulSoup),
+				long_title = normalize_title_long(
+					normalize_title(word, BeautifulSoup),
 				)
 				if not long_title:
 					continue
@@ -284,7 +285,7 @@ class Writer:
 		if prefs_html:
 			shutil.copy(prefs_html, myResDir)
 
-		write_css(filePathBase + ".css", css)
+		_write_css(filePathBase + ".css", css)
 
 		with open(join(dirname, "Makefile"), mode="w", encoding="utf-8") as toFile:
 			toFile.write(
@@ -332,7 +333,7 @@ class Writer:
 					DCSDictionaryCopyright=copyright_,
 					DCSDictionaryManufacturerName=glos.author,
 					DCSDictionaryXSL=basename(xsl) if xsl else "",
-					DCSDictionaryDefaultPrefs=format_default_prefs(default_prefs),
+					DCSDictionaryDefaultPrefs=_format_default_prefs(default_prefs),
 					DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",
 					DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
 				),

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 __all__ = ["convert"]
 
-TONES = {
+_TONES = {
 	"a1": "ā",
 	"a2": "á",
 	"a3": "ǎ",
@@ -33,7 +33,7 @@ TONES = {
 }
 # using v for the umlauted u
 
-VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
+_VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
 
 
 def convert(word: str) -> tuple[str, str]:
@@ -45,9 +45,9 @@ def convert(word: str) -> tuple[str, str]:
 	if tone not in {"1", "2", "3", "4"}:
 		return word, ""
 
-	for vowel in VOWELS:
+	for vowel in _VOWELS:
 		if vowel in pinyin:
 			vowel1 = vowel[-1]
-			return pinyin.replace(vowel1, TONES[vowel1 + tone]), tone
+			return pinyin.replace(vowel1, _TONES[vowel1 + tone]), tone
 
 	return pinyin, tone

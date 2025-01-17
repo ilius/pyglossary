@@ -23,27 +23,30 @@ import logging
 import string
 from typing import TYPE_CHECKING
 
+from ._normalize import title as normalize_title
+from ._normalize import title_long as normalize_title_long
+from ._normalize import title_short as normalize_title_short
+
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
 	from typing import Any
 
-from . import _normalize
 
-__all__ = ["_normalize", "id_generator", "indexes_generator", "quote_string"]
+__all__ = ["id_generator", "indexes_generator", "quote_string"]
 
 log = logging.getLogger("pyglossary")
 
-digs = string.digits + string.ascii_letters
+_digs = string.digits + string.ascii_letters
 
 
-def base36(x: int) -> str:
+def _base36(x: int) -> str:
 	"""
 	Simplified version of int2base
 	http://stackoverflow.com/questions/2267362/convert-integer-to-a-string-in-a-given-numeric-base-in-python#2267446.
 	"""
 	digits: list[str] = []
 	while x:
-		digits.append(digs[x % 36])
+		digits.append(_digs[x % 36])
 		x //= 36
 	digits.reverse()
 	return "".join(digits)
@@ -53,7 +56,7 @@ def id_generator() -> Iterator[str]:
 	cnt = 1
 
 	while True:
-		yield "_" + base36(cnt)
+		yield "_" + _base36(cnt)
 		cnt += 1
 
 
@@ -77,11 +80,11 @@ def indexes_generator(
 	indexer = None
 	"""Callable[[Sequence[str], str], Sequence[str]]"""
 	if indexes_lang:
-		from . import indexes as idxs
+		from .indexes import languages
 
-		indexer = idxs.languages.get(indexes_lang, None)
+		indexer = languages.get(indexes_lang, None)
 		if not indexer:
-			keys_str = ", ".join(idxs.languages)
+			keys_str = ", ".join(languages)
 			msg = (
 				"extended indexes not supported for the"
 				f" specified language: {indexes_lang}.\n"
@@ -106,9 +109,9 @@ def indexes_generator(
 
 		normal_indexes = set()
 		for idx in indexes:
-			normal = _normalize.title(idx, BeautifulSoup)
-			normal_indexes.add(_normalize.title_long(normal))
-			normal_indexes.add(_normalize.title_short(normal))
+			normal = normalize_title(idx, BeautifulSoup)
+			normal_indexes.add(normalize_title_long(normal))
+			normal_indexes.add(normalize_title_short(normal))
 		normal_indexes.discard(title)
 
 		s = f"<d:index d:value={quoted_title} d:title={quoted_title}/>"

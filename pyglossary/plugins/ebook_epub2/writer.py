@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def newUUID() -> str:
+def _newUUID() -> str:
 	import uuid
 
 	return str(uuid.uuid4()).replace("-", "")
@@ -172,7 +172,7 @@ p.groupDefinition {
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		glos.setInfo(
 			"uuid",
-			os.getenv("EPUB_UUID") or glos.getInfo("uuid") or newUUID(),
+			os.getenv("EPUB_UUID") or glos.getInfo("uuid") or _newUUID(),
 		)
 		EbookWriter.__init__(
 			self,
