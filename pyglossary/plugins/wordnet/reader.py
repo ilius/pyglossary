@@ -29,6 +29,10 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
+
+__all__ = ["Reader"]
+
+
 # original expression from
 # http://stackoverflow.com/questions/694344/regular-expression-that-matches-between-quotes-containing-escaped-quotes
 # "(?:[^\\"]+|\\.)*"

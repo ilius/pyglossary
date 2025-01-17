@@ -42,6 +42,9 @@ from pyglossary.core import log
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.text_utils import toStr
 
+__all__ = ["Reader"]
+
+
 if TYPE_CHECKING:
 
 	class TransformerType(typing.Protocol):

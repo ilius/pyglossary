@@ -7,6 +7,7 @@ from collections.abc import Iterator
 
 from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
+__all__ = ["Reader"]
 
 class Reader:
 	useByteProgress = False

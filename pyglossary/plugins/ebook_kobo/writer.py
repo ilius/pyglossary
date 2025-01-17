@@ -36,6 +36,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 def is_cyrillic_char(c: str) -> bool:
 	# U+0400 - U+04FF: Cyrillic

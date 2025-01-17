@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 class Writer:
 	compressions = stdCompressions

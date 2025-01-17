@@ -10,6 +10,8 @@ from pyglossary.file_utils import fileCountLines
 from pyglossary.text_reader import TextGlossaryReader, nextBlockResultType
 from pyglossary.text_utils import splitByBar
 
+__all__ = ["Reader"]
+
 
 class Reader(TextGlossaryReader):
 	useByteProgress = True

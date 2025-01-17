@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 from pyglossary.core import exc_note, log, pip
 from pyglossary.text_reader import TextGlossaryReader
 
+__all__ = ["Reader"]
+
 
 class YamlReader(TextGlossaryReader):
 	useByteProgress = True

@@ -17,6 +17,8 @@ from pyglossary.text_utils import (
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 class Writer:
 	_compression: str = ""

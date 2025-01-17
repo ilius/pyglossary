@@ -34,6 +34,8 @@ if TYPE_CHECKING:
 from pyglossary.core import log
 from pyglossary.text_utils import toStr
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = False

@@ -37,6 +37,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = True

@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 def makeDir(direc: str) -> None:
 	if not isdir(direc):

@@ -25,6 +25,7 @@ __all__ = [
 	"TRACE",
 	"StdLogHandler",
 	"format_exception",
+	"trace",
 ]
 
 TRACE = 5

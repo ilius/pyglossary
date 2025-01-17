@@ -63,6 +63,8 @@ from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import exc_note, log, pip
 from pyglossary.io_utils import nullBinaryIO
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = True

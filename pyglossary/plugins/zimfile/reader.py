@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 from pyglossary.core import cacheDir, exc_note, log, pip
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	_text_unicode_errors = "replace"

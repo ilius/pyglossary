@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
 
 PROP_TEMPLATE = """#DictionaryForMIDs property file
 infoText={name}, author: {author}

@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 		ReaderGlossaryType,
 	)
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = False

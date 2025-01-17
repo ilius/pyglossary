@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 		WriterGlossaryType,
 	)
 
+__all__ = ["Writer"]
+
 
 class Writer:
 	_encoding: str = "utf-8"

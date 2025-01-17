@@ -21,6 +21,8 @@ from pyglossary.plugins.aard2_slob.tags import (
 	t_uri,
 )
 
+__all__ = ["Writer"]
+
 
 class Writer:
 	depends = {

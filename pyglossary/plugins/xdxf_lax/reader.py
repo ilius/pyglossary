@@ -45,6 +45,9 @@ from pyglossary.text_utils import toStr
 from pyglossary.xdxf.transform import XdxfTransformer
 from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
+__all__ = ["Reader"]
+
+
 if TYPE_CHECKING:
 
 	class TransformerType(typing.Protocol):

@@ -8,6 +8,9 @@ def unescapeDefi(defi: str) -> str:
 	return defi
 
 
+__all__ = ["Reader"]
+
+
 class Reader(TextGlossaryReader):
 	useByteProgress = True
 	_headword_separator = ";   "

@@ -9,6 +9,8 @@ from pyglossary.text_utils import (
 	unescapeNTB,
 )
 
+__all__ = ["Reader"]
+
 
 class Reader(TextGlossaryReader):
 	useByteProgress = True

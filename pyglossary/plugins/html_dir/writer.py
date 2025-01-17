@@ -24,6 +24,8 @@ from pyglossary.text_utils import (
 	unescapeNTB,
 )
 
+__all__ = ["Writer"]
+
 nbsp = "\xa0"
 # nbsp = "&nbsp;"
 

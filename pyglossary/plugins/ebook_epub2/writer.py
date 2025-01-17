@@ -27,6 +27,8 @@ from pyglossary.ebook_base import EbookWriter
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 def newUUID() -> str:
 	import uuid

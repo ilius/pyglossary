@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 def _isKana(char: str) -> bool:
 	assert len(char) == 1

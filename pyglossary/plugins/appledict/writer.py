@@ -44,6 +44,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
 
 sys.setrecursionlimit(10000)
 

@@ -18,6 +18,8 @@ from pyglossary.compression import (
 	stdCompressions,
 )
 
+__all__ = ["Writer"]
+
 
 class Writer:
 	_encoding: str = "utf-8"

@@ -24,6 +24,8 @@ from pyglossary.compression import (
 from pyglossary.core import exc_note, pip
 from pyglossary.io_utils import nullBinaryIO
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = True

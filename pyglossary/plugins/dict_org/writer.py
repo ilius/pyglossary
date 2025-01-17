@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 def installToDictd(filename: str, dictzip: bool) -> None:
 	"""Filename is without extension (neither .index or .dict or .dict.dz)."""

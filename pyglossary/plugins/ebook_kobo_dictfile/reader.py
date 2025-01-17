@@ -27,6 +27,8 @@ from pyglossary.text_reader import TextGlossaryReader
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import ReaderGlossaryType
 
+__all__ = ["Reader"]
+
 
 class Reader(TextGlossaryReader):
 	useByteProgress = True

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import (
-	TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
+
+from pyglossary.core import log
 
 if TYPE_CHECKING:
 	import sqlite3
@@ -12,7 +12,8 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 	from pyglossary.xdxf.transform import XdxfTransformer
 
-from pyglossary.core import log
+
+__all__ = ["Writer"]
 
 
 class Writer:

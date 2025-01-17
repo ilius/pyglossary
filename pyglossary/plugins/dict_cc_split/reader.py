@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 from pyglossary.core import log
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = False

@@ -18,6 +18,8 @@ from pyglossary.core import log
 from pyglossary.glossary_utils import Error
 from pyglossary.text_utils import uint32ToBytes
 
+__all__ = ["Writer"]
+
 
 class Writer(StdWriter):
 	dictzipSynFile = False

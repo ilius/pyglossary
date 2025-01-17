@@ -7,6 +7,7 @@ from collections.abc import Generator
 
 from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
 
 class Writer:
 	def __init__(self, glos: WriterGlossaryType) -> None:

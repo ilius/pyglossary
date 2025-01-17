@@ -33,6 +33,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
+__all__ = ["Writer"]
+
 
 class GroupStateBySize:
 	def __init__(self, writer: Writer) -> None:

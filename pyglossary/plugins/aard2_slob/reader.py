@@ -23,6 +23,8 @@ from pyglossary.plugins.aard2_slob.tags import (
 	t_uri,
 )
 
+__all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = False

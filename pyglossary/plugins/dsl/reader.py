@@ -44,6 +44,9 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
+
+__all__ = ["Reader"]
+
 htmlEntityPattern = re.compile(r"&#?\w+;")
 
 
