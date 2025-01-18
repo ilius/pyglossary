@@ -22,18 +22,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from __future__ import annotations
 
 import json
-import logging
 import sys
 import threading
-from collections.abc import Callable
 from http.server import HTTPServer
 from socketserver import ThreadingMixIn
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
 
+	import logging
+	from collections.abc import Callable
 	class ServerType(Protocol):
 		def send_message_to_all(self, msg: str | dict) -> None: ...
 		def shutdown(self) -> None: ...
