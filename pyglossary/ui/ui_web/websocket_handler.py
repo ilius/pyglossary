@@ -465,6 +465,8 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		return response_key.decode("ASCII")
 
 	def finish(self) -> None:
+		if not self.valid_client:
+			return
 		self.server.client_left_handler(self)
 		self.connection.close()
 
