@@ -114,8 +114,12 @@ on *Windows*, *Mac OS X* and other Unix-based operating systems as well.
 As shown in screenshots, there are multiple User Interface types (multiple
 ways to use the program).
 
-- **Gtk3-based interface**, uses [PyGI (Python Gobject Introspection)](http://pygobject.readthedocs.io/en/latest/getting_started.html)
+- **Gtk3-based interface**, uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html)+Gtk3.
   See [doc/gtk3.md](./doc/gtk3.md) for how to install it on Linux and Mac OS X.
+
+- **Gtk4-based interface**, uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html)+Gtk4.
+  See [doc/gtk4.md](./doc/gtk4.md).
+  This is still not as complete as Gtk3 interface.
 
 - **Tkinter-based interface**, meant to be used in the lack of Gtk. Specially on
   Windows where Tkinter library is installed with Python itself.
