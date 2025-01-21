@@ -19,7 +19,8 @@
 
 from __future__ import annotations
 
-from . import gtk
+from gi.repository import Gtk as gtk
+
 from .utils import (
 	VBox,
 	imageFromFile,

@@ -22,9 +22,11 @@ import logging
 from os.path import isabs, join
 from typing import TYPE_CHECKING, Any
 
-from pyglossary.core import appResDir
+from gi.repository import Gdk as gdk  # noqa: I001
+from gi.repository import GLib as glib
+from gi.repository import Gtk as gtk
 
-from . import gdk, glib, gtk
+from pyglossary.core import appResDir
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -42,6 +44,14 @@ __all__ = [
 ]
 
 log = logging.getLogger("pyglossary")
+
+def getWorkAreaSize(_w: Any) -> tuple[int, int]:
+	display = gdk.Display.get_default()
+	# monitor = display.get_monitor_at_surface(w.get_surface())
+	# if monitor is None:
+	monitor = display.get_primary_monitor()
+	rect = monitor.get_workarea()
+	return rect.width, rect.height
 
 
 def gtk_window_iteration_loop() -> None:
