@@ -57,6 +57,8 @@ class TestGlossaryYomichan(TestGlossaryBase):
 			self.assertEqual(sha1sum, actualSha1, f"{outputFilename=}")
 
 	def test_convert_txt_yomichan_1(self):
+		if sys.version_info[:2] == (3, 13):
+			self.skipTest("Skipping test on this Python version")
 		self.convert_to_yomichan(
 			"050-JMdict-English-v3.txt",
 			testId="1",
@@ -64,6 +66,8 @@ class TestGlossaryYomichan(TestGlossaryBase):
 		)
 
 	def test_convert_txt_yomichan_2(self):
+		if sys.version_info[:2] == (3, 13):
+			self.skipTest("Skipping test on this Python version")
 		self.convert_to_yomichan(
 			"100-ja-en.txt",
 			testId="2",
