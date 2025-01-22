@@ -27,7 +27,6 @@ from pyglossary.ui.config import configDefDict
 from .sort_options import SortOptionsBox
 from .utils import (
 	HBox,
-	dialog_add_button,
 	pack,
 )
 
@@ -63,10 +62,12 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.connect("close-request", self.onCloseRequest)
 		##
 		self.connect("response", self.onResponse)
-		dialog_add_button(
-			self,
-			"gtk-ok",
-			"_OK",
+		self.add_action_widget(
+			gtk.Button(
+				label="_OK",
+				use_underline=True,
+				# icon_name="gtk-ok",
+			),
 			gtk.ResponseType.OK,
 		)
 		##

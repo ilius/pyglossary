@@ -32,7 +32,6 @@ from pyglossary.ui.dependency import checkDepends
 
 from .utils import (
 	HBox,
-	dialog_add_button,
 	pack,
 	showInfo,
 )
@@ -56,6 +55,7 @@ writeDesc = [
 log = logging.getLogger("pyglossary")
 
 
+# TODO: Dialog is deprecated since version 4.10, Use Window instead
 class FormatDialog(gtk.Dialog):
 	def __init__(
 		self,
@@ -72,16 +72,20 @@ class FormatDialog(gtk.Dialog):
 		self.activeDesc = ""
 		##
 		self.connect("response", lambda _w, _e: self.hide())
-		dialog_add_button(
-			self,
-			"gtk-cancel",
-			"_Cancel",
+		self.add_action_widget(
+			gtk.Button(
+				label="_Cancel",
+				use_underline=True,
+				# icon_name="gtk-cancel",
+			),
 			gtk.ResponseType.CANCEL,
 		)
-		dialog_add_button(
-			self,
-			"gtk-ok",
-			"_OK",
+		self.add_action_widget(
+			gtk.Button(
+				label="_OK",
+				use_underline=True,
+				# icon_name="gtk-ok",
+			),
 			gtk.ResponseType.OK,
 		)
 		###
@@ -512,16 +516,20 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.formatName = formatName
 		##
 		self.connect("response", lambda _w, _e: self.hide())
-		dialog_add_button(
-			self,
-			"gtk-cancel",
-			"_Cancel",
+		self.add_action_widget(
+			gtk.Button(
+				label="_Cancel",
+				use_underline=True,
+				# icon_name="gtk-cancel",
+			),
 			gtk.ResponseType.CANCEL,
 		)
-		dialog_add_button(
-			self,
-			"gtk-ok",
-			"_OK",
+		self.add_action_widget(
+			gtk.Button(
+				label="_OK",
+				use_underline=True,
+				# icon_name="gtk-ok",
+			),
 			gtk.ResponseType.OK,
 		)
 		###

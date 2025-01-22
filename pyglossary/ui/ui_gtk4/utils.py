@@ -34,7 +34,6 @@ __all__ = [
 	"FixedSizePicture",
 	"HBox",
 	"VBox",
-	"dialog_add_button",
 	"getWorkAreaSize",
 	"gtk_event_iteration_loop",
 	"hasLightTheme",
@@ -80,12 +79,12 @@ class FixedSizePicture(gtk.Picture):
 		self.set_can_shrink(False)
 
 
-# def imageFromFile(path: str) -> gtk.Image:  # the file must exist
-# 	if not isabs(path):
-# 		path = join(appResDir, path)
-# 	im = gtk.Image()
-# 	im.set_from_file(path)
-# 	return im
+def imageFromFile(path: str) -> gtk.Image:  # the file must exist
+	if not isabs(path):
+		path = join(appResDir, path)
+	im = gtk.Image()
+	im.set_from_file(path)
+	return im
 
 
 def imageFromIconName(iconName: str, size: int, nonStock: bool = False) -> gtk.Image:
@@ -135,40 +134,144 @@ def pack(
 		raise TypeError(f"pack: unknown type {type(box)}")
 
 
-def dialog_add_button(
-	dialog: gtk.Dialog,
-	_iconName: str,  # TODO: remove
-	label: str,
-	resId: int,
-	onClicked: Callable | None = None,
+def newButtonImageBox(label: str, image: gtk.Image, spacing: int = 0) -> gtk.Box:
+	hbox = HBox(spacing=spacing)
+	pack(hbox, image, 0, 0)
+	if label:
+		labelObj = gtk.Label(label=label)
+		labelObj.set_use_underline(True)
+		labelObj.set_xalign(0)
+		pack(hbox, labelObj, 0, 0)
+	hbox.show()
+	return hbox
+
+
+buttonIconEnable = True
+buttonIconSize = 20
+
+
+def labelIconButton(
+	label: str = "",
+	iconName: str = "",
+	size: gtk.IconSize = gtk.IconSize.NORMAL,
+) -> gtk.Button:
+	button = gtk.Button()
+	if buttonIconEnable:
+		button.set_child(
+			newButtonImageBox(
+				label,
+				imageFromIconName(iconName, size),
+				spacing=size / 2,
+			),
+		)
+		return button
+	button.set_label(label)
+	button.set_use_underline(True)
+	return button
+
+
+def labelImageButton(  # noqa: PLR0913
+	label: str = "",
+	imageName: str = "",
+	size: int = 0,
+	func: Callable | None = None,
 	tooltip: str = "",
-) -> None:
-	button = gtk.Button(
-		label=label,
-		use_underline=True,
-		# icon_name=iconName,
-	)
-	# fixed bug: used to ignore resId and pass gtk.ResponseType.OK
-	dialog.add_action_widget(
-		button,
-		resId,
-	)
-	if onClicked:
-		label.connect("clicked", onClicked)
+	spacing: int = 10,
+) -> gtk.Button:
+	button = gtk.Button()
+	if buttonIconEnable or not label:
+		if size == 0:
+			size = buttonIconSize
+		button.set_child(
+			newButtonImageBox(
+				label,
+				imageFromFile(imageName, size=size),
+				spacing=spacing,
+			),
+		)
+		# TODO: the child(HBox) is not centered in the Button
+		# problem can be seen in Preferences window: Apply and OK buttons
+		# button.set_alignment(0.5, 0.5)
+	else:
+		button.set_label(label)
+		button.set_use_underline(True)
+	if func is not None:
+		button.connect("clicked", func)
 	if tooltip:
-		label.set_tooltip_text(tooltip)
+		button.set_tooltip_text(tooltip)
+	return button
+
+
+class MyHButtonBox(gtk.Box):
+	def __init__(self) -> None:
+		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL)
+		self.get_style_context().add_class("margin_10")
+		self._homogeneous = True
+
+	def set_homogeneous(self, homogeneous: bool) -> None:
+		# gtk.ButtonBox.set_homogeneous does not work anymore!
+		# not sure since when
+		self._homogeneous = homogeneous
+
+	def add(self, child: gtk.Widget) -> None:
+		self.append(child)  # or prepend?
+		if not self._homogeneous:
+			self.set_child_non_homogeneous(child, True)
+			# New in gi version 3.2.
+
+	def add_button(
+		self,
+		iconName: str = "",
+		imageName: str = "",
+		label: str = "",
+		onClick: Callable | None = None,
+		tooltip: str = "",
+	) -> gtk.Button:
+		if imageName:
+			b = labelImageButton(
+				label=label,
+				imageName=imageName,
+			)
+		else:
+			b = labelIconButton(
+				label,
+				iconName,
+				gtk.IconSize.NORMAL,
+			)
+		if onClick:
+			b.connect("clicked", onClick)
+		if tooltip:
+			b.set_tooltip_text(tooltip)
+		self.add(b)
+		return b
+
+	def add_ok(self, onClick: Callable | None = None) -> gtk.Button:
+		return self.add_button(
+			# imageName="dialog-ok.svg",
+			label="_Confirm",
+			onClick=onClick,
+		)
+
+	def add_cancel(self, onClick: Callable | None = None) -> gtk.Button:
+		return self.add_button(
+			# imageName="dialog-cancel.svg",
+			label="Cancel",
+			onClick=onClick,
+		)
 
 
 def showMsg(  # noqa: PLR0913
 	msg: str,
 	iconName: str = "",
+	parent: gtk.Window | None = None,
 	transient_for: gtk.Widget | None = None,
 	title: str = "",
 	borderWidth: int = 10,  # noqa: ARG001
 	iconSize: gtk.IconSize = gtk.IconSize.LARGE,
 	selectable: bool = False,
 ) -> None:
-	win = gtk.Dialog(
+	win = gtk.Window(
+		parent=parent,
 		transient_for=transient_for,
 	)
 	# flags=0 makes it skip task bar
@@ -189,28 +292,22 @@ def showMsg(  # noqa: PLR0913
 		label.set_selectable(True)
 	pack(hbox, label)
 	hbox.show()
-	content_area = win.get_content_area()
-	pack(content_area, hbox)
-	dialog_add_button(
-		win,
-		"gtk-close",
-		"_Close",
-		gtk.ResponseType.OK,
-	)
+	vbox = VBox()
+	pack(vbox, hbox, 1, 1)
 
-	def onResponse(_w: gtk.Widget, _response_id: int) -> None:
+	def onOkClicked(_button: gtk.Button) -> None:
 		win.destroy()
 
-	win.connect("response", onResponse)
+	buttonBox = MyHButtonBox()
+	buttonBox.add_ok(onClick=onOkClicked)
+	hbox2 = HBox()
+	pack(hbox2, gtk.Label(), 1, 1)
+	pack(hbox2, buttonBox, 0, 0)
+	pack(vbox, hbox2, 0, 0)
 
+	win.set_child(vbox)
 	# win.resize(600, 1)
 	win.show()
-
-
-def showInfo(msg, **kwargs: Any) -> None:  # noqa: ANN001
-	# gtk-dialog-info is deprecated since version 3.10:
-	# Use named icon “dialog-information”.
-	showMsg(msg, iconName="gtk-dialog-info", **kwargs)
 
 
 def _getLightness(c: gdk.Color) -> float:
@@ -222,3 +319,11 @@ def hasLightTheme(widget: gtk.Widget) -> bool:
 	# bg = ... no idea how to get it in Gtk4
 	# return _getLightness(fg) < _getLightness(bg)
 	return _getLightness(fg) < 0.5
+
+
+def showInfo(msg, **kwargs: Any) -> None:  # noqa: ANN001
+	showMsg(msg, iconName="dialog-information", **kwargs)
+
+
+# def showError(msg, **kwargs) -> None:  # noqa: ANN001
+# 	showMsg(msg, iconName="dialog-error", **kwargs)
