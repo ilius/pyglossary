@@ -18,7 +18,6 @@
 
 from __future__ import annotations
 
-import logging
 from os.path import isabs, join
 from typing import TYPE_CHECKING, Any
 
@@ -36,14 +35,11 @@ __all__ = [
 	"VBox",
 	"dialog_add_button",
 	"gtk_event_iteration_loop",
-	"gtk_window_iteration_loop",
 	"imageFromFile",
 	"pack",
 	"rgba_parse",
 	"showInfo",
 ]
-
-log = logging.getLogger("pyglossary")
 
 
 def getWorkAreaSize(_w: Any) -> tuple[int, int]:
@@ -53,14 +49,6 @@ def getWorkAreaSize(_w: Any) -> tuple[int, int]:
 	monitor = display.get_primary_monitor()
 	rect = monitor.get_workarea()
 	return rect.width, rect.height
-
-
-def gtk_window_iteration_loop() -> None:
-	try:
-		while gtk.Window.get_toplevels():
-			glib.MainContext.default().iteration(True)
-	except KeyboardInterrupt:
-		pass
 
 
 def gtk_event_iteration_loop() -> None:
@@ -84,10 +72,7 @@ def imageFromFile(path: str) -> gtk.Image:  # the file must exist
 	if not isabs(path):
 		path = join(appResDir, path)
 	im = gtk.Image()
-	try:
-		im.set_from_file(path)
-	except Exception:
-		log.exception("")
+	im.set_from_file(path)
 	return im
 
 

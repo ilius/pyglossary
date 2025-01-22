@@ -66,7 +66,7 @@ _ = str  # later replace with translator function
 # or the CSS border-spacing property on containers.
 
 
-class MainWindow(gtk.Window):
+class MainWindow(gtk.ApplicationWindow):
 	# @property
 	# def config(self):
 	# 	return self.ui.config
@@ -122,7 +122,7 @@ check {
 		self.app = app
 		self.ui = ui
 		#####
-		gtk.Window.__init__(self, **kwargs)
+		gtk.ApplicationWindow.__init__(self, application=app, **kwargs)
 		self.set_title("PyGlossary (Gtk3)")
 		self.progressbarEnable = progressbar
 		#####

@@ -26,47 +26,33 @@ from gi.repository import Gtk as gtk
 from pyglossary.ui.base import UIBase
 
 from .mainwin import MainWindow
-from .utils import gtk_window_iteration_loop
 
 log = logging.getLogger("pyglossary")
 
 # gtk.Window.set_default_icon_from_file(logo)  # removed in Gtk 4.0
 
 
-class Application(gtk.Application):
-	def __init__(self) -> None:
-		gtk.Application.__init__(
-			self,
-			application_id="apps.starcal",
-			flags=gio.ApplicationFlags.FLAGS_NONE,
-		)
-		self.win = None
-
-	def do_activate(self) -> None:
-		win = self.props.active_window
-		if not win:
-			win = self.win
-			self.add_window(win)
-			win.set_application(self)
-
-		win.present()
-
-
-class UI(UIBase):
+class UI(UIBase, gtk.Application):
 	def __init__(
 		self,
 		progressbar: bool = True,
 	) -> None:
 		UIBase.__init__(self)
-		self.app = Application()
-		self.win = MainWindow(
-			ui=self,
-			app=self.app,
-			progressbar=progressbar,
+		gtk.Application.__init__(
+			self,
+			application_id="apps.pyglossary",
+			flags=gio.ApplicationFlags.FLAGS_NONE,
 		)
-		self.app.win = self.win
+		self.progressbar = progressbar
+		self.runArgs = {}
 
 	def run(self, **kwargs) -> None:
-		self.win.run(**kwargs)
-		self.app.run(None)
-		gtk_window_iteration_loop()
+		self.runArgs = kwargs
+		gtk.Application.run(self)
+
+	def do_activate(self) -> None:
+		MainWindow(
+			ui=self,
+			app=self,
+			progressbar=self.progressbar,
+		).run(**self.runArgs)
