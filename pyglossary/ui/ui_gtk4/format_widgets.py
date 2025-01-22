@@ -28,7 +28,7 @@ from pyglossary import core
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.dependency import checkDepends
 
-from .utils import (  # noqa: E402
+from .utils import (
 	HBox,
 	dialog_add_button,
 	pack,

@@ -37,15 +37,12 @@ from pyglossary.ui.base import (
 )
 from pyglossary.ui.version import getVersion
 
-from .about import AboutWidget  # noqa: E402
+from .about import AboutWidget
 from .browse import BrowseButton
-from .format_widgets import (
-	InputFormatBox,
-	OutputFormatBox,
-)
+from .format_widgets import InputFormatBox, OutputFormatBox
 from .general_options import GeneralOptionsButton
 from .log_handler import GtkSingleTextviewLogHandler
-from .utils import (  # noqa: E402
+from .utils import (
 	HBox,
 	VBox,
 	getWorkAreaSize,
@@ -273,99 +270,6 @@ check {
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
 		swin.set_child(textview)
 		pack(vbox, swin, expand=True)
-		# ____________________ Tab 2 - Reverse ____________________ #
-		self.reverseStatus = ""
-		####
-		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
-		####
-		vbox = VBox()
-		vbox.label = _("Reverse")
-		vbox.icon = ""  # "*.png"
-		# self.pages.append(vbox)
-		######
-		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input Format:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
-		self.reverseInputFormatCombo = InputFormatBox(self.app)
-		pack(hbox, self.reverseInputFormatCombo)
-		pack(vbox, hbox)
-		###
-		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input File:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
-		self.reverseInputEntry = gtk.Entry()
-		pack(hbox, self.reverseInputEntry, 1, 1)
-		button = BrowseButton(
-			self.reverseInputEntry.set_text,
-			label="Browse",
-			actionSave=False,
-			title="Select Input File",
-		)
-		pack(hbox, button)
-		pack(vbox, hbox)
-		##
-		self.reverseInputEntry.connect(
-			"changed",
-			self.reverseInputEntryChanged,
-		)
-		#####
-		hbox = HBox()
-		hbox.get_style_context().add_class("margin_03")
-		pack(vbox, hbox)
-		#####
-		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output Tabfile:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
-		self.reverseOutputEntry = gtk.Entry()
-		pack(hbox, self.reverseOutputEntry, 1, 1)
-		button = BrowseButton(
-			self.reverseOutputEntry.set_text,
-			label="Browse",
-			actionSave=True,
-			title="Select Output File",
-		)
-		pack(hbox, button)
-		pack(vbox, hbox)
-		##
-		self.reverseOutputEntry.connect(
-			"changed",
-			self.reverseOutputEntryChanged,
-		)
-		#####
-		hbox = HBox(spacing=5)
-		label = gtk.Label(label="")
-		pack(hbox, label, expand=True)
-		###
-		self.reverseStartButton = gtk.Button()
-		self.reverseStartButton.set_label(_("Start"))
-		self.reverseStartButton.connect("clicked", self.reverseStartClicked)
-		pack(hbox, self.reverseStartButton, expand=True)
-		###
-		self.reversePauseButton = gtk.Button()
-		self.reversePauseButton.set_label(_("Pause"))
-		self.reversePauseButton.set_sensitive(False)
-		self.reversePauseButton.connect("clicked", self.reversePauseClicked)
-		pack(hbox, self.reversePauseButton, expand=True)
-		###
-		self.reverseResumeButton = gtk.Button()
-		self.reverseResumeButton.set_label(_("Resume"))
-		self.reverseResumeButton.set_sensitive(False)
-		self.reverseResumeButton.connect("clicked", self.reverseResumeClicked)
-		pack(hbox, self.reverseResumeButton, expand=True)
-		###
-		self.reverseStopButton = gtk.Button()
-		self.reverseStopButton.set_label(_("Stop"))
-		self.reverseStopButton.set_sensitive(False)
-		self.reverseStopButton.connect("clicked", self.reverseStopClicked)
-		pack(hbox, self.reverseStopButton, expand=True)
-		###
-		pack(vbox, hbox)  # FIXME: padding=5
 		######
 		about = AboutWidget(
 			logo=logo,
@@ -651,80 +555,6 @@ check {
 			self.status('Press "Convert"')
 		else:
 			self.status("Select output format")
-
-	def reverseLoad(self) -> None:
-		pass
-
-	def reverseStartLoop(self) -> None:
-		pass
-
-	def reverseStart(self) -> None:
-		if not self.reverseLoad():
-			return
-		###
-		self.reverseStatus = "doing"
-		self.reverseStartLoop()
-		###
-		self.reverseStartButton.set_sensitive(False)
-		self.reversePauseButton.set_sensitive(True)
-		self.reverseResumeButton.set_sensitive(False)
-		self.reverseStopButton.set_sensitive(True)
-
-	def reverseStartClicked(self, _widget: Any = None) -> None:
-		self.waitingDo(self.reverseStart)
-
-	def reversePause(self) -> None:
-		self.reverseStatus = "pause"
-		###
-		self.reverseStartButton.set_sensitive(False)
-		self.reversePauseButton.set_sensitive(False)
-		self.reverseResumeButton.set_sensitive(True)
-		self.reverseStopButton.set_sensitive(True)
-
-	def reversePauseClicked(self, _widget: Any = None) -> None:
-		self.waitingDo(self.reversePause)
-
-	def reverseResume(self) -> None:
-		self.reverseStatus = "doing"
-		###
-		self.reverseStartButton.set_sensitive(False)
-		self.reversePauseButton.set_sensitive(True)
-		self.reverseResumeButton.set_sensitive(False)
-		self.reverseStopButton.set_sensitive(True)
-
-	def reverseResumeClicked(self, _widget: Any = None) -> None:
-		self.waitingDo(self.reverseResume)
-
-	def reverseStop(self) -> None:
-		self.reverseStatus = "stop"
-		###
-		self.reverseStartButton.set_sensitive(True)
-		self.reversePauseButton.set_sensitive(False)
-		self.reverseResumeButton.set_sensitive(False)
-		self.reverseStopButton.set_sensitive(False)
-
-	def reverseStopClicked(self, _widget: Any = None) -> None:
-		self.waitingDo(self.reverseStop)
-
-	def reverseInputEntryChanged(self, _widget: Any = None) -> None:
-		inPath = self.reverseInputEntry.get_text()
-		if inPath.startswith("file://"):
-			inPath = urlToPath(inPath)
-			self.reverseInputEntry.set_text(inPath)
-
-		if (
-			self.config["ui_autoSetFormat"]
-			and not self.reverseInputFormatCombo.getActive()
-		):
-			try:
-				inputArgs = Glossary.detectInputFormat(inPath)
-			except Error:
-				pass
-			else:
-				self.reverseInputFormatCombo.setActive(inputArgs.formatName)
-
-	def reverseOutputEntryChanged(self, _widget: Any = None) -> None:
-		pass
 
 	def progressInit(self, title: str) -> None:
 		self.progressTitle = title

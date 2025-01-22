@@ -24,10 +24,7 @@ from gi.repository import Gtk as gtk
 
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 
-from .utils import (  # noqa: E402
-	HBox,
-	pack,
-)
+from .utils import HBox, pack
 
 # log = logging.getLogger("pyglossary")
 

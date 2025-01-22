@@ -22,12 +22,10 @@ from typing import Any
 
 from gi.repository import Gtk as gtk
 
-from pyglossary.ui.base import (
-	UIBase,
-)
+from pyglossary.ui.base import UIBase
 
 from .sort_options import SortOptionsBox
-from .utils import (  # noqa: E402
+from .utils import (
 	HBox,
 	dialog_add_button,
 	pack,
