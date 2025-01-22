@@ -30,7 +30,6 @@ from pyglossary.ui.dependency import checkDepends
 
 from .utils import (
 	HBox,
-	dialog_add_button,
 	pack,
 	showInfo,
 )
@@ -67,16 +66,20 @@ class FormatDialog(gtk.Dialog):
 		self.activeDesc = ""
 		##
 		self.connect("response", lambda _w, _e: self.hide())
-		dialog_add_button(
-			self,
-			"gtk-cancel",
-			"_Cancel",
+		self.add_action_widget(
+			gtk.Button(
+				label="_Cancel",
+				use_underline=True,
+				# icon_name="gtk-cancel",
+			),
 			gtk.ResponseType.CANCEL,
 		)
-		dialog_add_button(
-			self,
-			"gtk-ok",
-			"_OK",
+		self.add_action_widget(
+			gtk.Button(
+				label="_OK",
+				use_underline=True,
+				# icon_name="gtk-ok",
+			),
 			gtk.ResponseType.OK,
 		)
 		###
@@ -276,16 +279,20 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.actionIds = set()
 		##
 		self.connect("response", lambda _w, _e: self.hide())
-		dialog_add_button(
-			self,
-			"gtk-cancel",
-			"_Cancel",
+		self.add_action_widget(
+			gtk.Button(
+				label="_Cancel",
+				use_underline=True,
+				# icon_name="gtk-cancel",
+			),
 			gtk.ResponseType.CANCEL,
 		)
-		dialog_add_button(
-			self,
-			"gtk-ok",
-			"_OK",
+		self.add_action_widget(
+			gtk.Button(
+				label="_OK",
+				use_underline=True,
+				# icon_name="gtk-ok",
+			),
 			gtk.ResponseType.OK,
 		)
 		###
@@ -427,16 +434,20 @@ class FormatOptionsDialog(gtk.Dialog):
 		label = gtk.Label(label=f"Value for {optDesc}")
 		dialog = gtk.Dialog(transient_for=self, title="Option Value")
 		dialog.connect("response", lambda _w, _e: dialog.hide())
-		dialog_add_button(
-			dialog,
-			"gtk-cancel",
-			"_Cancel",
+		dialog.add_action_widget(
+			gtk.Button(
+				label="_Cancel",
+				use_underline=True,
+				# icon_name="gtk-cancel",
+			),
 			gtk.ResponseType.CANCEL,
 		)
-		dialog_add_button(
-			dialog,
-			"gtk-ok",
-			"_OK",
+		dialog.add_action_widget(
+			gtk.Button(
+				label="_OK",
+				use_underline=True,
+				# icon_name="gtk-ok",
+			),
 			gtk.ResponseType.OK,
 		)
 		pack(dialog.vbox, label)
