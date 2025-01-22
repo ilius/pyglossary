@@ -23,14 +23,10 @@ import logging
 from gi.repository import Gio as gio
 from gi.repository import Gtk as gtk
 
-from pyglossary.ui.base import (
-	UIBase,
-)
+from pyglossary.ui.base import UIBase
 
 from .mainwin import MainWindow
-from .utils import (  # noqa: E402
-	gtk_window_iteration_loop,
-)
+from .utils import gtk_window_iteration_loop
 
 log = logging.getLogger("pyglossary")
 

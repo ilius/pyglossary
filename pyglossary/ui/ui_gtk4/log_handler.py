@@ -25,12 +25,12 @@ from typing import Protocol
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
-# from gi.repository import GdkPixbuf
-
 log = logging.getLogger("pyglossary")
+
 
 class MainWinType(Protocol):
 	def status(self, msg: str) -> None: ...
+
 
 class GtkTextviewLogHandler(logging.Handler):
 	def __init__(

@@ -32,7 +32,6 @@ from .utils import (  # noqa: E402
 # log = logging.getLogger("pyglossary")
 
 
-
 sortKeyNameByDesc = {_sk.desc: _sk.name for _sk in namedSortKeyList}
 sortKeyNames = [_sk.name for _sk in namedSortKeyList]
 

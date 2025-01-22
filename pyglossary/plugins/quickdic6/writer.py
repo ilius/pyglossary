@@ -28,9 +28,7 @@ from .write_funcs import (
 __all__ = ["Writer"]
 
 
-_defaultNormalizerRulesDE = (
-	":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
-)
+_defaultNormalizerRulesDE = ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
 _defaultNormalizerRules = (
 	":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
 )

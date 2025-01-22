@@ -45,6 +45,7 @@ __all__ = [
 
 log = logging.getLogger("pyglossary")
 
+
 def getWorkAreaSize(_w: Any) -> tuple[int, int]:
 	display = gdk.Display.get_default()
 	# monitor = display.get_monitor_at_surface(w.get_surface())

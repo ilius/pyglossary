@@ -32,9 +32,9 @@ from socketserver import ThreadingMixIn
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
-
 	import logging
 	from collections.abc import Callable
+
 	class ServerType(Protocol):
 		def send_message_to_all(self, msg: str | dict) -> None: ...
 		def shutdown(self) -> None: ...
