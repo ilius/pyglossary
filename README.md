@@ -1,7 +1,7 @@
 # PyGlossary
 
 <p align="center">
-	<img src="res/pyglossary-256x256.png"></img>
+	<img src="https://raw.githubusercontent.com/ilius/pyglossary/refs/heads/master/res/pyglossary-256x256.png"></img>
 </p>
 
 [![PyPI](https://img.shields.io/pypi/v/pyglossary.svg)](https://pypi.org/project/pyglossary/)
