@@ -156,8 +156,7 @@ setup(
 		],
 	},
 	package_data=package_data,
-	# data_files is deprecated, but without it
-	# `pip install --user` does not work, tested with pip 22.0.2
+	# without data_files `pip install --user .` makes a broken installation
 	data_files=[
 		(relRootDir, root_data_file_names),
 		(f"{relRootDir}/plugins-meta", ["plugins-meta/index.json"]),
