@@ -28,16 +28,16 @@ from pyglossary.core import log, pip
 from . import languages
 
 try:
-	import pymorphy2  # type: ignore
+	import pymorphy3  # type: ignore
 except ImportError:
 	log.error(
-		f"""module pymorphy2 is required to build extended Russian indexes.
-You can download it here: http://pymorphy2.readthedocs.org/en/latest/.
-Or by running: {pip} install pymorphy2""",
+		f"""module pymorphy3 is required to build extended Russian indexes.
+You can download it here: https://github.com/no-plagiarism/pymorphy3
+Or by running: {pip} install pymorphy3""",
 	)
 	raise
 
-morphy = pymorphy2.MorphAnalyzer()
+morphy = pymorphy3.MorphAnalyzer()
 
 
 def ru(titles: Sequence[str], _: str) -> set[str]:
