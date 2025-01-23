@@ -418,13 +418,12 @@ keywords = ["dictionary", "glossary"]
 classifiers = [
 	"Development Status :: 5 - Production/Stable",
 	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-	"Operating System :: Unix",
-	"Operating System :: MacOS :: MacOS X",
-	"Operating System :: Microsoft :: Windows",
+	"Operating System :: OS Independent",
 	"Typing :: Typed",
 	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3.13",
 ]
 requires-python = ">= 3.10"
 dependencies = []
