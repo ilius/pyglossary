@@ -328,8 +328,10 @@ class Writer:
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
 		with open(self._filename + ".syn", "wb") as synFile:
-			for b_alt, entryIndex in altIndexList:
-				synFile.write(b_alt + b"\x00" + uint32ToBytes(entryIndex))
+			synFile.writelines(
+				b_alt + b"\x00" + uint32ToBytes(entryIndex)
+				for b_alt, entryIndex in altIndexList
+			)
 		log.info(
 			f"Writing {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
 		)
@@ -348,8 +350,7 @@ class Writer:
 		log.info(f"Writing idx with {len(indexList)} entries...")
 		t0 = now()
 		with open(self._filename + ".idx", mode="wb") as indexFile:
-			for key, value in indexList:
-				indexFile.write(key + b"\x00" + value)
+			indexFile.writelines(key + b"\x00" + value for key, value in indexList)
 		log.info(
 			f"Writing idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
@@ -421,5 +422,4 @@ class Writer:
 			newline="\n",
 		) as ifoFile:
 			ifoFile.write("StarDict's dict ifo file\n")
-			for key, value in ifoDict.items():
-				ifoFile.write(f"{key}={value}\n")
+			ifoFile.writelines(f"{key}={value}\n" for key, value in ifoDict.items())

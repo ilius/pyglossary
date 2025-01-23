@@ -795,8 +795,9 @@ class BinMemWriter:
 	) -> None:
 		count = len(self)
 		fout.write(pack(U_INT, count))
-		for content_type_id in self.content_type_ids:
-			fout.write(pack(U_CHAR, content_type_id))
+		fout.writelines(
+			pack(U_CHAR, content_type_id) for content_type_id in self.content_type_ids
+		)
 		content = b"".join(self.item_dir + self.items)
 		compressed = compress(content)
 		fout.write(pack(U_INT, len(compressed)))

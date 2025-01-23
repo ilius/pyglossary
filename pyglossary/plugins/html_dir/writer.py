@@ -258,10 +258,10 @@ class Writer:
 				'<th width="%90">Value</th>'
 				"</tr>\n",
 			)
-			for key, value in glos.iterInfo():
-				_file.write(
-					f"<tr><td>{key}</td><td>{value}</td></tr>\n",
-				)
+			_file.writelines(
+				f"<tr><td>{key}</td><td>{value}</td></tr>\n"
+				for key, value in glos.iterInfo()
+			)
 			_file.write("</table></body></html>")
 
 	@staticmethod
@@ -467,10 +467,10 @@ class Writer:
 				fileObj.write(navBar())
 			pos = fileObj.tell()
 			tmpFilename = escapeNTB(self._filenameList[-1])
-			for word in entry.l_word:
-				indexTxtFileObj.write(
-					f"{entryIndex}\t{escapeNTB(word)}\t{tmpFilename}\t{pos}\n",
-				)
+			indexTxtFileObj.writelines(
+				f"{entryIndex}\t{escapeNTB(word)}\t{tmpFilename}\t{pos}\n"
+				for word in entry.l_word
+			)
 			del tmpFilename
 			text = replaceBword(text)
 			addLinks(text, pos)

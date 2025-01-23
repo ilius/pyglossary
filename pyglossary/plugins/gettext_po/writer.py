@@ -39,8 +39,10 @@ class Writer:
 		self._filename = filename
 		self._file = file = open(filename, mode="w", encoding="utf-8")
 		file.write('#\nmsgid ""\nmsgstr ""\n')
-		for key, value in self._glos.iterInfo():
-			file.write(f'"{po_escape(key)}: {po_escape(value)}\\n"\n')
+		file.writelines(
+			f'"{po_escape(key)}: {po_escape(value)}\\n"\n'
+			for key, value in self._glos.iterInfo()
+		)
 
 	def finish(self) -> None:
 		self._filename = ""
