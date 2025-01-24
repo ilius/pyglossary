@@ -49,8 +49,6 @@ class GlossaryInfo:
 	def infoKeys(self) -> list[str]:
 		return list(self._info)
 
-	# def formatInfoKeys(self, format: str):# FIXME
-
 	def iterInfo(self) -> Iterator[tuple[str, str]]:
 		return iter(self._info.items())
 

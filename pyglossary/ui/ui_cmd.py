@@ -156,9 +156,12 @@ class NullObj:
 	def __call__(
 		self,
 		*args: tuple[Any],
-		**kwargs: Mapping[Any],
+		**kwargs: Mapping[str, Any],
 	) -> None:
 		pass
+
+	def __bool__(self) -> bool:
+		return False
 
 
 class UI(UIBase):
@@ -196,8 +199,7 @@ class UI(UIBase):
 
 	def fillMessage(self, msg: str) -> str:
 		term_width = self.pbar.term_width
-		if term_width is None:
-			# FIXME: why?
+		if not term_width:
 			return msg
 		return "\r" + wc_ljust(msg, term_width)
 
@@ -326,7 +328,7 @@ class UI(UIBase):
 		if reverse:
 			import signal
 
-			signal.signal(signal.SIGINT, self.onSigInt)  # good place? FIXME
+			signal.signal(signal.SIGINT, self.onSigInt)
 			readOptions["direct"] = True
 			if not glos.read(
 				inputFilename,

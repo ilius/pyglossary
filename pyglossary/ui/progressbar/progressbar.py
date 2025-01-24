@@ -113,7 +113,7 @@ class ProgressBar:
         self,
         maxval=None,
         widgets=None,
-        term_width=None,
+        term_width: int | None = None,
         poll=1,
         left_justify=True,
         fd=None,

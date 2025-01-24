@@ -51,7 +51,7 @@ class Reader(TextGlossaryReader):
 			line = self.readline()
 			if not line:
 				raise StopIteration
-			line = line.rstrip("\n\r")  # FIXME
+			line = line.rstrip("\n\r")
 			if line.startswith("###"):
 				parts = line.split(":")
 				key = parts[0].strip()
@@ -73,7 +73,12 @@ class Reader(TextGlossaryReader):
 				return None
 			word = entryLines[0]
 			defi = "\n".join(entryLines[1:])
-			defi = defi.replace("<br/>", "\n")  # FIXME
+			defi = (
+				defi.replace("<br/>", "\n")
+				.replace("<BR/>", "\n")
+				.replace("<br>", "\n")
+				.replace("<BR>", "\n")
+			)
 
 			words = splitByBar(word)
 

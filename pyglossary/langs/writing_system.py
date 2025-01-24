@@ -325,7 +325,7 @@ writingSystemList = [
 		iso=[(321, "Takr")],
 		unicode=["TAKRI"],
 		titleTag="b",
-		# comma="", FIXME
+		comma=", ",
 	),
 	# _____________________________________________________
 	WritingSystem(

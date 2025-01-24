@@ -129,7 +129,6 @@ check {
 		self.vbox = VBox()
 		self.set_child(self.vbox)
 		#####
-		# FIXME
 		screenW, screenH = getWorkAreaSize(self)
 		winSize = min(800, screenW - 50, screenH - 50)
 		self.set_default_size(winSize, winSize)
@@ -263,7 +262,7 @@ check {
 		self.convertButton.set_size_request(300, 40)
 		pack(hbox, self.convertButton)
 		##
-		pack(vbox, hbox)  # FIXME: padding=15
+		pack(vbox, hbox)
 		#####
 		self.convertConsoleTextview = textview = gtk.TextView()
 		swin = gtk.ScrolledWindow()

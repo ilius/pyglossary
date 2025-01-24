@@ -324,9 +324,6 @@ class LanguageCleanup(EntryFilter):
 
 		entry.editFuncWord(faEditStr)
 		entry.editFuncDefi(faEditStr)
-		# RLM = "\xe2\x80\x8f"
-		# defi = "\n".join(RLM+line for line in defi.split("\n"))
-		# for GoldenDict ^^ FIXME
 		return entry
 
 	def run(self, entry: EntryType) -> EntryType | None:

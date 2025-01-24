@@ -241,7 +241,7 @@ class EbookWriter:
 		if index < self.GROUP_START_INDEX:
 			# or index >= groupCount + self.GROUP_START_INDEX:
 			# number of groups are not known, FIXME
-			# so we can191 not say if the current group is the last or not
+			# so we can not say if the current group is the last or not
 			return "#groupPage"
 		return f"g{index:06d}.xhtml"
 

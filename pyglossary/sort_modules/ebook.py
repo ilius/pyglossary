@@ -17,7 +17,6 @@ def normal(
 ) -> SortKeyType:
 	length = options.get("group_by_prefix_length", 2)
 
-	# FIXME: return bytes?
 	def sortKey(words: list[str]) -> Any:
 		word = words[0]
 		if not word:

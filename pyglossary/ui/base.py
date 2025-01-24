@@ -104,7 +104,7 @@ class UIBase:
 			comment="Enable alternates",
 			falseComment="Disable alternates",
 		),
-		# FIXME: replace with "resources"
+		# TODO: version 6.0: replace with "resources"
 		# 	comment="Use resources (images, audio, etc)"
 		"skip_resources": BoolOption(
 			hasFlag=True,
