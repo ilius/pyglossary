@@ -682,11 +682,10 @@ class UI(ui_cmd.UI):
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if value == "":  # noqa: PLC1901
+				if value == "" and option.typ != "str":  # noqa: PLC1901
 					if optName in self._readOptions:
 						print(f"Unset read-option {optName!r}")
 						del self._readOptions[optName]
-					# FIXME: set empty value?
 					break
 				valueNew, ok = option.evaluate(value)
 				if not ok or not option.validate(valueNew):
@@ -758,11 +757,10 @@ class UI(ui_cmd.UI):
 					)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if value == "":  # noqa: PLC1901
+				if value == "" and option.typ != "str":  # noqa: PLC1901
 					if optName in self._writeOptions:
 						print(f"Unset write-option {optName!r}")
 						del self._writeOptions[optName]
-					# FIXME: set empty value?
 					break
 				valueNew, ok = option.evaluate(value)
 				if not ok or not option.validate(valueNew):
@@ -831,11 +829,10 @@ class UI(ui_cmd.UI):
 					value = self.askConfigValue(configKey, option)
 				except (KeyboardInterrupt, EOFError):
 					break
-				if value == "":  # noqa: PLC1901
+				if value == "" and option.typ != "str":  # noqa: PLC1901
 					if configKey in self.config:
 						print(f"Unset config {configKey!r}")
 						del self.config[configKey]
-					# FIXME: set empty value?
 					break
 				valueNew, ok = option.evaluate(value)
 				if not ok or not option.validate(valueNew):
