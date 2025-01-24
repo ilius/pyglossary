@@ -206,19 +206,12 @@ class ProgressBar(ttk.Frame):
 		background="gray",
 		labelColor="yellow",
 		labelFont="Verdana",
-		labelFormat="%d%%",
 		value=0,
 	) -> None:
-		self.rootWin = rootWin
 		self.min = min_
 		self.max = max_
 		self.width = width
 		self.height = height
-		self.fillColor = fillColor
-		self.labelFont = labelFont
-		self.labelColor = labelColor
-		self.background = background
-		self.labelFormat = labelFormat
 		self.value = value
 		ttk.Frame.__init__(self, rootWin, relief=appearance)
 		self.canvas = tk.Canvas(
@@ -242,12 +235,11 @@ class ProgressBar(ttk.Frame):
 			text="",
 			anchor="c",
 			fill=labelColor,
-			font=self.labelFont,
+			font=labelFont,
 		)
 		self.update()
 		self.bind("<Configure>", self.update)
-		self.canvas.pack(side="top", fill="x", expand="no")
-		self.canvas.itemconfig(self.scale, fill=self.fillColor)
+		self.canvas.pack(side="top", fill="x", expand=False)
 
 	def updateProgress(self, value, max_=None, text="") -> None:
 		if max_:
@@ -256,14 +248,10 @@ class ProgressBar(ttk.Frame):
 		self.update(None, text)
 
 	def update(self, event=None, labelText="") -> None:
-		if event:
+		if event:  # instance of tkinter.Event
 			width = getattr(event, "width", None) or int(self.winfo_width())
 			if width != self.width:  # window is resized
-				self.canvas.coords(
-					self.label,
-					width / 2,
-					self.height / 2,
-				)
+				self.canvas.coords(self.label, width / 2, self.height / 2)
 				self.width = width
 		else:
 			width = self.width
@@ -281,22 +269,21 @@ class ProgressBar(ttk.Frame):
 			self.canvas.itemconfig(
 				self.label,
 				text=labelText[: width // 10],
-				fill=self.labelColor,
 			)
 
 		self.canvas.update_idletasks()
 
 
 # class VerticalProgressBar(ProgressBar):
-	# def update(self, event=None, labelText="") -> None:
-		# ...
-		# self.canvas.coords(
-		# 	self.scale,
-		# 	0,
-		# 	self.height * (1 - value / self.max),
-		# 	width,
-		# 	self.height,
-		# )
+# def update(self, event=None, labelText="") -> None:
+# ...
+# self.canvas.coords(
+# 	self.scale,
+# 	0,
+# 	self.height * (1 - value / self.max),
+# 	width,
+# 	self.height,
+# )
 
 
 class FormatDialog(tk.Toplevel):
@@ -1154,48 +1141,42 @@ class UI(tk.Frame, UIBase):
 		####
 		self.console = console
 		##################
-		versionFrame = ttk.Frame(notebook)
-		label = newLabelWithImage(versionFrame, file=logo)
-		label.pack(fill="both", expand=True)
-		##
-		##
-		label = ttk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}")
-		label.pack(fill="both", expand=True)
-		##
-		versionFrame.pack(side="top", fill="x")
-
 		aboutFrame = ttk.Frame(notebook)
-		authorsFrame = ttk.Frame(notebook)
-		licenseFrame = ttk.Frame(notebook)
-
-		notebook.add(convertFrame, text="Convert", underline=0)
-		notebook.add(authorsFrame, text="Authors", underline=0)
-		notebook.add(licenseFrame, text="License", underline=0)
-		notebook.add(aboutFrame, text="About", underline=0)
-		notebook.add(versionFrame, text="Version", underline=0)
-
-		label = newReadOnlyText(
+		versionFrame = ttk.Frame(aboutFrame)
+		newLabelWithImage(versionFrame, file=logo).pack(
+			side="left", fill="both", expand=False
+		)
+		ttk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}").pack(
+			side="left", fill="both", expand=False
+		)
+		versionFrame.pack(side="top", fill="x")
+		##
+		newReadOnlyText(
 			aboutFrame,
 			text=f"{aboutText}\nHome page: {core.homePage}",
 			font=("DejaVu Sans", 11, ""),
-		)
-		label.pack(fill="x")
+		).pack(fill="both", expand=True)
+		aboutFrame.pack(side="top", fill="x")
 
-		authorsText = "\n".join(authors)
-		authorsText = authorsText.replace("\t", "    ")
-		label = newReadOnlyText(
+		authorsFrame = ttk.Frame(notebook)
+		authorsText = "\n".join(authors).replace("\t", "    ")
+		newReadOnlyText(
 			authorsFrame,
 			text=authorsText,
 			font=("DejaVu Sans", 11, ""),
-		)
-		label.pack(fill="x")
+		).pack(fill="both", expand=True)
 
-		label = newReadOnlyText(
+		licenseFrame = ttk.Frame(notebook)
+		newReadOnlyText(
 			licenseFrame,
 			text=licenseText,
 			font=("DejaVu Sans", 11, ""),
-		)
-		label.pack(fill="x")
+		).pack(fill="both", expand=True)
+
+		notebook.add(convertFrame, text="Convert", underline=-1)
+		notebook.add(aboutFrame, text="About", underline=-1)
+		notebook.add(authorsFrame, text="Authors", underline=-1)
+		notebook.add(licenseFrame, text="License", underline=-1)
 
 		######################
 		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
@@ -1239,12 +1220,12 @@ class UI(tk.Frame, UIBase):
 			statusBarframe,
 			comboVar,
 			log.getVerbosity(),  # default
-			0,
-			1,
-			2,
-			3,
-			4,
-			5,
+			"0",
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
 		)
 		comboVar.trace_add("write", self.verbosityChanged)
 		combo.pack(side="left")
@@ -1252,7 +1233,7 @@ class UI(tk.Frame, UIBase):
 		comboVar.set(log.getVerbosity())
 		#####
 		pbar = ProgressBar(statusBarframe, width=700, height=28)
-		pbar.pack(side="left", fill="x", expand=True)
+		pbar.pack(side="left", fill="x", expand=True, padx=10)
 		self.pbar = pbar
 		statusBarframe.pack(fill="x")
 		self.progressTitle = ""
