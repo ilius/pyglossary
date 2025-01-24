@@ -7,6 +7,8 @@ import shutil
 from os.path import isfile, splitext
 from typing import TYPE_CHECKING
 
+from pyglossary.glossary_utils import WriteError
+
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
@@ -121,7 +123,7 @@ class Writer:
 			exc_note(e, f"Run `{pip} install PyICU` to install")
 			raise
 		if isfile(filename):
-			raise OSError(f"File '{filename}' already exists")
+			raise WriteError(f"File '{filename}' already exists")
 		namePostfix = ""
 		if self._file_size_approx > 0:
 			namePostfix = " (part 1)"
