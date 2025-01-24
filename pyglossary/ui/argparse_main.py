@@ -12,10 +12,9 @@ if TYPE_CHECKING:
 
 
 def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]) -> None:
-	defaultHasColor = config.get(
-		"color.enable.cmd.windows" if os.sep == "\\" else "color.enable.cmd.unix",
-		True,
-	)
+	osType = "windows" if os.sep == "\\" else "unix"
+	colorConf = f"color.enable.cmd.{osType}"
+	defaultHasColor = config.get(colorConf, True) and not os.getenv("NO_COLOR")
 	parser.add_argument(
 		"-v",
 		"--verbosity",
