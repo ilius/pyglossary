@@ -96,7 +96,7 @@ class MiniCheckBoxPrompt:
 	def __init__(
 		self,
 		message: str = "",
-		fmt: str = "{message}: {check}",
+		fmt: str = "{message}{check}",
 		value: bool = False,
 	) -> None:
 		self.message = message
@@ -451,7 +451,7 @@ class UI(ui_cmd.UI):
 	def prompt(self, level: int, msg: str, colon: str = ":", **kwargs) -> str:
 		msg2, colored = self.formatPromptMsg(level, msg, colon)
 		if colored:
-			msg2 = ANSI(msg)
+			msg2 = ANSI(msg2)
 		return prompt(msg2, **kwargs)
 
 	def checkbox_prompt(self, level: int, msg: str, colon: str = ":", **kwargs) -> bool:
