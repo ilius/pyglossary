@@ -3,7 +3,7 @@ set -e
 
 function yes_or_no {
 	while true; do
-		read -p "$* [y/n]: " yn
+		read -r -p "$* [y/n]: " yn
 		case $yn in
 		[Yy]*) return 0 ;;
 		[Nn]*)
@@ -18,10 +18,10 @@ function yes_or_no {
 # 	pip $PIP_OPTS index versions pyglossary --pre --ignore-requires-python | grep "$1,"
 # }
 
-CUR_VERSION=$($(dirname $0)/version-core)
+CUR_VERSION=$($(dirname "$0")/version-core)
 
 VERSION=$1
-if [ -z $VERSION ]; then
+if [ -z "$VERSION" ]; then
 	echo "Usage: $0 VERSION"
 	echo "Current version: $CUR_VERSION"
 	exit 1
@@ -29,7 +29,7 @@ fi
 
 set -x
 
-$(dirname $0)/version-set.py $VERSION
+$(dirname "$0")/version-set.py "$VERSION"
 
 git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
 git commit -m "version $VERSION" || echo "------ Already committed"
@@ -40,7 +40,7 @@ echo "Pushing to origin..."
 git push
 
 echo "Waiting for pypi release..."
-while ! pip $PIP_OPTS install pyglossary==$VERSION; do
+while ! pip $PIP_OPTS install "pyglossary==$VERSION"; do
 	sleep 5
 done
 
@@ -51,11 +51,18 @@ echo "-------------- Check version in GUI: --------------"
 yes_or_no "Continue creating the release?" || exit 1
 
 echo "Creating tag $VERSION"
-git tag -a -m "version $VERSION" $VERSION
+if ! git tag -a -m "version $VERSION" "$VERSION"; then
+	echo "------ Already tagged"
+	CUR_VERSION=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+fi
 
 echo "Pushing tag to origin..."
-git push origin $VERSION
+git push origin "$VERSION"
 
 MD_PATH=$(realpath $(dirname $0)/../doc/releases/$VERSION.md)
-git log --pretty='%h %s' --reverse $CUR_VERSION..$VERSION >$MD_PATH
+echo -e "## What's Changed\n" >"$MD_PATH"
+git log --pretty='- %h %s' --reverse "$CUR_VERSION..$VERSION" >>"$MD_PATH"
+echo -e "\n\n**Full Changelog**: https://github.com/ilius/pyglossary/compare/$CUR_VERSION...$VERSION\n" >>"$MD_PATH"
+
 echo "Created $MD_PATH"
+xdg-open "$MD_PATH"
