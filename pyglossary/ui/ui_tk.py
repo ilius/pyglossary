@@ -197,7 +197,6 @@ class ProgressBar(ttk.Frame):
 	def __init__(  # noqa: PLR0913
 		self,
 		rootWin=None,
-		orientation="horizontal",
 		min_=0,
 		max_=100,
 		width=100,
@@ -210,9 +209,7 @@ class ProgressBar(ttk.Frame):
 		labelFormat="%d%%",
 		value=0,
 	) -> None:
-		# preserve various values
 		self.rootWin = rootWin
-		self.orientation = orientation
 		self.min = min_
 		self.max = max_
 		self.width = width
@@ -250,6 +247,7 @@ class ProgressBar(ttk.Frame):
 		self.update()
 		self.bind("<Configure>", self.update)
 		self.canvas.pack(side="top", fill="x", expand="no")
+		self.canvas.itemconfig(self.scale, fill=self.fillColor)
 
 	def updateProgress(self, value, max_=None, text="") -> None:
 		if max_:
@@ -257,42 +255,48 @@ class ProgressBar(ttk.Frame):
 		self.value = value
 		self.update(None, text)
 
-	def update(self, event=None, labelText="") -> None:  # noqa: ARG002
-		# Trim the values to be between min and max
-		value = self.value
-		value = min(value, self.max)
-		value = max(value, self.min)
-		# Adjust the rectangle
-		width = int(self.winfo_width())
-		# width = self.width
-		ratio = float(value) / self.max
-		if self.orientation == "horizontal":
-			self.canvas.coords(
-				self.scale,
-				0,
-				0,
-				width * ratio,
-				self.height,
-			)
+	def update(self, event=None, labelText="") -> None:
+		if event:
+			width = getattr(event, "width", None) or int(self.winfo_width())
+			if width != self.width:  # window is resized
+				self.canvas.coords(
+					self.label,
+					width / 2,
+					self.height / 2,
+				)
+				self.width = width
 		else:
-			self.canvas.coords(
-				self.scale,
-				0,
-				self.height * (1 - ratio),
-				width,
-				self.height,
+			width = self.width
+
+		self.canvas.coords(
+			self.scale,
+			0,
+			0,
+			width * max(min(self.value, self.max), self.min) / self.max,
+			self.height,
+		)
+
+		if labelText:
+			# TODO: replace below `// 10` with a number based on current font size
+			self.canvas.itemconfig(
+				self.label,
+				text=labelText[: width // 10],
+				fill=self.labelColor,
 			)
-		# Now update the colors
-		self.canvas.itemconfig(self.scale, fill=self.fillColor)
-		self.canvas.itemconfig(self.label, fill=self.labelColor)
-		# And update the label
-		if not labelText:
-			labelText = self.labelFormat % int(ratio * 100)
-		self.canvas.itemconfig(self.label, text=labelText)
-		# FIXME: resizing window causes problem in progressbar
-		# self.canvas.move(self.label, width/2, self.height/2)
-		# self.canvas.scale(self.label, 0, 0, float(width)/self.width, 1)
+
 		self.canvas.update_idletasks()
+
+
+# class VerticalProgressBar(ProgressBar):
+	# def update(self, event=None, labelText="") -> None:
+		# ...
+		# self.canvas.coords(
+		# 	self.scale,
+		# 	0,
+		# 	self.height * (1 - value / self.max),
+		# 	width,
+		# 	self.height,
+		# )
 
 
 class FormatDialog(tk.Toplevel):
