@@ -188,25 +188,19 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 
 
 class ProgressBar(ttk.Frame):
-
-	"""
-	Comes from John Grayson's book "Python and Tkinter programming"
-	Edited by Saeed Rasooli.
-	"""
-
 	def __init__(  # noqa: PLR0913
 		self,
-		rootWin=None,
-		min_=0,
-		max_=100,
-		width=100,
-		height=18,
-		appearance="sunken",
-		fillColor="blue",
-		background="gray",
-		labelColor="yellow",
-		labelFont="Verdana",
-		value=0,
+		rootWin,
+		min_: float,
+		max_: float,
+		width: int,
+		height: int,
+		appearance: str,  # "sunken"
+		fillColor: str,
+		background: str,
+		labelColor: str,
+		labelFont: str,
+		value: float = 0,
 	) -> None:
 		self.min = min_
 		self.max = max_
@@ -1197,7 +1191,7 @@ class UI(tk.Frame, UIBase):
 
 		# _________________________________________________________________ #
 
-		statusBarframe = ttk.Frame(self)
+		statusBarframe = self.statusBarframe = ttk.Frame(self)
 		clearB = newButton(
 			statusBarframe,
 			text="Clear",
@@ -1231,20 +1225,6 @@ class UI(tk.Frame, UIBase):
 		combo.pack(side="left")
 		self.verbosityCombo = comboVar
 		comboVar.set(log.getVerbosity())
-		#####
-		pbar = ProgressBar(statusBarframe, width=700, height=28)
-		pbar.pack(side="left", fill="x", expand=True, padx=10)
-		self.pbar = pbar
-		statusBarframe.pack(fill="x")
-		self.progressTitle = ""
-		# _________________________________________________________________ #
-
-		centerWindow(rootWin)
-		# show the window
-		if os.sep == "\\":  # Windows
-			rootWin.attributes("-alpha", 1.0)
-		else:  # Linux
-			rootWin.deiconify()
 
 	def textSelectAll(self, tktext) -> None:
 		tktext.tag_add(tk.SEL, "1.0", tk.END)
@@ -1468,6 +1448,7 @@ class UI(tk.Frame, UIBase):
 		convertOptions: dict[str, Any] | None = None,
 		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> None:
+		config = config or {}
 		self.config = config
 
 		if inputFilename:
@@ -1490,6 +1471,31 @@ class UI(tk.Frame, UIBase):
 
 		if reverse:
 			log.error("Tkinter interface does not support Reverse feature")
+
+		pbar = ProgressBar(
+			self.statusBarframe,
+			min_=0,
+			max_=100,
+			width=700,
+			height=28,
+			appearance="sunken",
+			fillColor=config.get("tk.progressbar.color.fill", "blue"),
+			background=config.get("tk.progressbar.color.background", "gray"),
+			labelColor=config.get("tk.progressbar.color.text", "yellow"),
+			labelFont=config.get("tk.progressbar.font", "Sans"),
+		)
+		pbar.pack(side="left", fill="x", expand=True, padx=10)
+		self.pbar = pbar
+		self.statusBarframe.pack(fill="x")
+		self.progressTitle = ""
+		# _________________________________________________________________ #
+
+		centerWindow(self.rootWin)
+		# show the window
+		if os.sep == "\\":  # Windows
+			self.rootWin.attributes("-alpha", 1.0)
+		else:  # Linux
+			self.rootWin.deiconify()
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()

@@ -149,7 +149,26 @@ class UIBase:
 		"cmdi.prompt.indent.color": IntOption(hasFlag=False),
 		"cmdi.prompt.msg.color": IntOption(hasFlag=False),
 		"cmdi.msg.color": IntOption(hasFlag=False),
+		# general GUI options
 		"ui_autoSetFormat": BoolOption(hasFlag=False),
+		# Tkinter
+		"tk.progressbar.color.fill": StrOption(
+			hasFlag=False,
+			comment="Tkinter: progressbar fill color",
+		),
+		"tk.progressbar.color.background": StrOption(
+			hasFlag=False,
+			comment="Tkinter: progressbar background color",
+		),
+		"tk.progressbar.color.text": StrOption(
+			hasFlag=False,
+			comment="Tkinter: progressbar text color",
+		),
+		"tk.progressbar.font": StrOption(
+			hasFlag=False,
+			comment='Tkinter: progressbar text font. Example: "Sans", "Sans 15"',
+		),
+		# Reverse
 		"reverse_matchWord": BoolOption(hasFlag=False),
 		"reverse_showRel": StrOption(hasFlag=False),
 		"reverse_saveStep": IntOption(hasFlag=False),

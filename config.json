@@ -32,6 +32,11 @@
 
 	"ui_autoSetFormat": true,
 
+	"tk.progressbar.color.fill": "blue",
+	"tk.progressbar.color.background": "gray",
+	"tk.progressbar.color.text": "yellow",
+	"tk.progressbar.font": "Sans",
+
 	"reverse_matchWord": true,
 	"reverse_showRel": "Percent",
 	"reverse_saveStep": 1000,
