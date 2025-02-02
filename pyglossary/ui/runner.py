@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 ui_list = ["gtk", "gtk4", "tk", "web"]
-if os.sep == "\\":
+if os.sep == "\\" or core.sysName == "darwin":  # windows or mac
 	ui_list = ["tk", "gtk", "gtk4", "web"]
 
 log: logging.Logger | None = None
