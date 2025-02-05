@@ -105,6 +105,17 @@ class TextGlossaryReader:
 		except StopIteration:
 			return ""
 
+	def _calcFilzeSize(self, cfile: io.TextIOBase, filename: str) -> None:
+		if cfile.seekable():
+			log.info("Calculating file size")
+			cfile.seek(0, 2)
+			self._fileSize = cfile.tell()
+			cfile.seek(0)
+			log.debug(f"File size of {filename}: {self._fileSize}")
+			self._glos.setInfo("input_file_size", str(self._fileSize))
+		else:
+			log.warning("TextGlossaryReader: file is not seekable")
+
 	def _openGen(self, filename: str) -> Iterator[tuple[int, int]]:
 		self._fileIndex += 1
 		log.info(f"Reading file: {filename}")
@@ -117,16 +128,11 @@ class TextGlossaryReader:
 			),
 		)
 
-		if cfile.seekable():
-			cfile.seek(0, 2)
-			self._fileSize = cfile.tell()
-			cfile.seek(0)
-			log.debug(f"File size of {filename}: {self._fileSize}")
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+		if self._glos.progressbar:
+			self._calcFilzeSize(cfile, filename)
+			self._progress = self._fileSize > 0
 		else:
-			log.warning("TextGlossaryReader: file is not seekable")
-
-		self._progress = self._glos.progressbar and self._fileSize > 0
+			self._progress = False
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)
 		if self._hasInfo:
