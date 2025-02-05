@@ -77,7 +77,10 @@ class TextGlossaryReader:
 		self._resFileNames: list[str] = []
 
 	def _setResDir(self, resDir: str) -> bool:
+		if self._glos.getConfig("skip_resources", False):
+			return False
 		if isdir(resDir):
+			log.info(f"Listing res dir {self._resDir}")
 			self._resDir = resDir
 			self._resFileNames = os.listdir(self._resDir)
 			return True
