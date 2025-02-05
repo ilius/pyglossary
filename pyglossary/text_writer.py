@@ -99,9 +99,10 @@ class TextGlossaryWriter:
 			self._glos.setInfo("file_count", "-1")
 		self._open(filename)
 		self._filename = filename
-		self._resDir = f"{filename}_res"
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
+		if not self._glos.getConfig("skip_resources", False):
+			self._resDir = f"{filename}_res"
+			if not isdir(self._resDir):
+				os.mkdir(self._resDir)
 
 	def _doWriteInfo(self, file: io.TextIOBase) -> None:
 		entryFmt = self._entryFmt
