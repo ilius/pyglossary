@@ -167,6 +167,7 @@ class TextGlossaryWriter:
 		file_size_approx = self._file_size_approx
 		entryCount = 0
 		fileIndex = 0
+		glosName = self._glos.getInfo("name") or self._filename
 
 		while True:
 			entry = yield
@@ -201,6 +202,8 @@ class TextGlossaryWriter:
 					and file.tell() >= file_size_approx
 				):
 					fileIndex += 1
+					log.info(f"Creating {self._filename}.{fileIndex}")
+					self._glos.setInfo("name", f"{glosName} part {fileIndex + 1}")
 					file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self) -> None:
