@@ -70,6 +70,7 @@ class TestGlossaryBase(unittest.TestCase):
 			"res/stardict.png": "7e1447fa",
 			"res/test.json": "41f8cf31",
 		}
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def addDirCRC32(self, dirPath: str, files: "dict[str, str]") -> None:
 		for fpath, _hash in files.items():

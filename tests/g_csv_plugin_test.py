@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from os.path import abspath, dirname
@@ -20,6 +21,7 @@ class TestGlossaryCSV(TestGlossaryBase):
 				"100-ja-en.csv": "7af18cf3",
 			},
 		)
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_csv(self, fname, fname2, **convertArgs):
 		self.convert(

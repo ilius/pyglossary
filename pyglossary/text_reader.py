@@ -132,6 +132,8 @@ class TextGlossaryReader:
 			self._calcFilzeSize(cfile, filename)
 			self._progress = self._fileSize > 0
 		else:
+			if os.environ.get("CALC_FILE_SIZE"):
+				self._calcFilzeSize(cfile, filename)
 			self._progress = False
 
 		self._file = TextFilePosWrapper(cfile, self._encoding)

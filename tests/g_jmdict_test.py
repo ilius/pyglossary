@@ -17,6 +17,7 @@ class TestGlossaryJMdict(TestGlossaryBase):
 				"050-JMdict-English-v3.txt": "6068b9a7",
 			},
 		)
+		# os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_jmdict_txt(self, fname, fname2, **convertArgs):
 		self.convert(

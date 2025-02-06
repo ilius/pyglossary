@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from os.path import abspath, dirname
@@ -24,6 +25,7 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 				"wiktextract/03-kaikki-fa-selection.txt": "f54d1a97",
 			},
 		)
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_jsonl_txt(self, fname, fname2, **convertArgs):
 		self.convert(

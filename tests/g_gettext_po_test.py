@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from os.path import abspath, dirname
@@ -18,6 +19,7 @@ class TestGlossaryGetttestPo(TestGlossaryBase):
 				"100-en-fa.po.txt": "f0c3ea53",
 			},
 		)
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_po(self, fname, fname2, **convertArgs):
 		self.convert(

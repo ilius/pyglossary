@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from glossary_v2_test import TestGlossaryBase
@@ -12,6 +13,7 @@ class TestGlossaryDictOrg(TestGlossaryBase):
 				"100-en-fa.dtxt": "05d6e939",
 			},
 		)
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_dict_org_source(self, fname, fname2, **convertArgs):
 		self.convert(

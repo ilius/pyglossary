@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from glossary_v2_test import TestGlossaryBase
@@ -13,6 +14,7 @@ class TestGlossarySQL(TestGlossaryBase):
 				"100-en-fa.txt-v2.sql": "70cd0514",
 			},
 		)
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_sql(self, fname, fname2, **convertArgs):
 		self.convert(

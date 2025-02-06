@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from glossary_v2_test import TestGlossaryBase
@@ -13,6 +14,7 @@ class TestGlossaryDictunformat(TestGlossaryBase):
 				"100-en-fa-2.dictunformat.txt": "c88207ec",
 			},
 		)
+		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_dictunformat_txt(self, fname, fname2, **convertArgs):
 		self.convert(
