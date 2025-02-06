@@ -178,13 +178,6 @@ class SqEntryList:
 		self._orderBy = columnNames
 		return True
 
-	def deleteAll(self) -> None:
-		if self._con is None:
-			return
-		self._con.execute("DELETE FROM data;")
-		self._con.commit()
-		self._len = 0
-
 	def clear(self) -> None:
 		self.close()
 

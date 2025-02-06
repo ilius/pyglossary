@@ -72,7 +72,6 @@ _.defiProcessedCount  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_rea
 _.defiProcessedCount  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:79)
 _.defiUtf8Count  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:475)
 _.defiUtf8Count  # unused attribute (pyglossary/plugins/babylon_bgl/bgl_reader_debug.py:80)
-_.deleteAll  # unused method (pyglossary/sq_entry_list.py:208)
 _.detach  # unused method (pyglossary/io_utils.py:119)
 _.detach  # unused method (pyglossary/io_utils.py:47)
 _.directRead  # unused method (pyglossary/glossary_v2.py:677)
