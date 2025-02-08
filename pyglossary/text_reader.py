@@ -73,6 +73,7 @@ class TextGlossaryReader:
 		self._fileCount = 1
 		self._fileIndex = -1
 		self._bufferLine = ""
+		self._entryIndex = 0
 		self._resDir = ""
 		self._resFileNames: list[str] = []
 
@@ -132,7 +133,7 @@ class TextGlossaryReader:
 			self._calcFilzeSize(cfile, filename)
 			self._progress = self._fileSize > 0
 		else:
-			if os.environ.get("CALC_FILE_SIZE"):
+			if os.getenv("CALC_FILE_SIZE"):
 				self._calcFilzeSize(cfile, filename)
 			self._progress = False
 
@@ -183,7 +184,9 @@ class TextGlossaryReader:
 	def newEntry(self, word: MultiStr, defi: str) -> EntryType:
 		byteProgress: tuple[int, int] | None = None
 		if self._progress:
-			byteProgress = (self._file.tell(), self._fileSize)
+			self._entryIndex += 1
+			if self._entryIndex % 1000 == 0:
+				byteProgress = (self._file.tell(), self._fileSize)
 		return self._glos.newEntry(
 			word,
 			defi,
@@ -223,7 +226,7 @@ class TextGlossaryReader:
 		except StopIteration:
 			pass
 
-		if self._fileIndex == 0:
+		if self._fileIndex == 0 and not os.getenv("NO_READ_MULTI_PART"):
 			fileCountStr = self._glos.getInfo("file_count")
 			if fileCountStr:
 				self._fileCount = int(fileCountStr)
