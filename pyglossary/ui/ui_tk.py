@@ -43,6 +43,7 @@ from .version import getVersion
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
+	from tkinter.font import Font
 
 log = logging.getLogger("pyglossary")
 
@@ -880,6 +881,73 @@ class FormatOptionsButton(ttk.Button):
 		dialog.focus()
 
 
+class VerticalNotebook(ttk.Frame):
+	def __init__(
+		self,
+		parent: tk.Widget,
+		font: Font | None = None,
+		**kwargs
+	):
+		ttk.Frame.__init__(self, parent, **kwargs)
+		self.rowconfigure(0, weight=1)
+		self.columnconfigure(2, weight=1)
+		# scrollable tabs
+		self._listbox = tk.Listbox(
+			self,
+			width=1,
+			highlightthickness=0,
+			relief="raised",
+			justify="center",
+			font=font,
+		)
+		self._listbox.configure()
+
+		# list of widgets associated with the tabs
+		self._tabs = []
+		self._current_tab = None  # currently displayed tab
+
+		self._listbox.grid(row=0, column=1, sticky="ns")
+		# binding to display the selected tab
+		self._listbox.bind("<<ListboxSelect>>", self._on_listbox_select)
+		self._maxWidth = 0
+
+	# add tab
+	def add(self, widget: tk.Widget, text: str):
+		self._listbox.insert("end", text)
+		# resize listbox to be large enough to show all tab labels
+		self._maxWidth = max(self._maxWidth, len(text))
+		self._listbox.configure(
+			width=self._maxWidth + 2,
+		)
+		index = len(self._tabs)
+		self._tabs.append(widget)
+		if self._current_tab is None:
+			self.switch_tab(index)
+
+	def switch_tab(self, index: int):
+		self._show_tab_index(index)
+		self._listbox.selection_clear(0, "end")
+		self._listbox.selection_set(index)
+		self._listbox.see(index)
+
+	def _show_tab_index(self, index: int):
+		widget = self._tabs[index]
+		if self._current_tab is not None:
+			self._current_tab.grid_remove()
+		self._current_tab = widget
+		widget.grid(in_=self, column=2, row=0, sticky="ewns")
+
+	def _on_listbox_select(self, _event=None):
+		selection = self._listbox.curselection()
+		if not selection:
+			return
+		index = selection[0]
+		if index >= len(self._tabs):
+			print(f"{index=}")
+			return
+		self._show_tab_index(index)
+
+
 class UI(tk.Frame, UIBase):
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
@@ -904,7 +972,7 @@ class UI(tk.Frame, UIBase):
 		#########
 		# Linux: ('clam', 'alt', 'default', 'classic')
 		# Windows: ('winnative', 'clam', 'alt', 'default', 'classic', 'vista',
-		#           'xpnative')
+		# 'xpnative')
 		style = ttk.Style()
 		style.configure("TButton", borderwidth=3)
 		# style.theme_use("default")
@@ -917,8 +985,10 @@ class UI(tk.Frame, UIBase):
 		if core.sysName in {"linux", "freebsd"}:
 			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
 		####
-		self.biggerFont = defaultFont.copy()
-		self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
+		self.bigFont = defaultFont.copy()
+		self.bigFont.configure(size=int(defaultFont.cget("size") * 1.6))
+		# self.biggerFont = defaultFont.copy()
+		# self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
 		######################
 		self.glos = Glossary(ui=self)
 		self.glos.config = self.config
@@ -1136,7 +1206,8 @@ class UI(tk.Frame, UIBase):
 		self.console = console
 		##################
 		aboutFrame = ttk.Frame(notebook)
-		versionFrame = ttk.Frame(aboutFrame)
+
+		versionFrame = ttk.Frame(aboutFrame, borderwidth=5)
 		newLabelWithImage(versionFrame, file=logo).pack(
 			side="left", fill="both", expand=False
 		)
@@ -1145,32 +1216,40 @@ class UI(tk.Frame, UIBase):
 		)
 		versionFrame.pack(side="top", fill="x")
 		##
+
+		aboutNotebook = VerticalNotebook(aboutFrame, font=self.bigFont)
+
+		aboutAboutFrame = ttk.Frame()
 		newReadOnlyText(
-			aboutFrame,
+			aboutAboutFrame,
 			text=f"{aboutText}\nHome page: {core.homePage}",
 			font=("DejaVu Sans", 11, ""),
 		).pack(fill="both", expand=True)
-		aboutFrame.pack(side="top", fill="x")
+		aboutAboutFrame.pack(side="top", fill="x")
+		aboutNotebook.add(aboutAboutFrame, "About")
 
-		authorsFrame = ttk.Frame(notebook)
+		authorsFrame = ttk.Frame()
 		authorsText = "\n".join(authors).replace("\t", "    ")
 		newReadOnlyText(
 			authorsFrame,
 			text=authorsText,
 			font=("DejaVu Sans", 11, ""),
 		).pack(fill="both", expand=True)
+		aboutNotebook.add(authorsFrame, "Authors")
 
-		licenseFrame = ttk.Frame(notebook)
+		licenseFrame = ttk.Frame()
 		newReadOnlyText(
 			licenseFrame,
 			text=licenseText,
 			font=("DejaVu Sans", 11, ""),
 		).pack(fill="both", expand=True)
+		aboutNotebook.add(licenseFrame, "License")
+
+		aboutNotebook.pack(fill="both", expand=True)
+		# aboutNotebook.show_tab_index(0)
 
 		notebook.add(convertFrame, text="Convert", underline=-1)
 		notebook.add(aboutFrame, text="About", underline=-1)
-		notebook.add(authorsFrame, text="Authors", underline=-1)
-		notebook.add(licenseFrame, text="License", underline=-1)
 
 		######################
 		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
