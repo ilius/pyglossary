@@ -886,7 +886,7 @@ class VerticalNotebook(ttk.Frame):
 		self,
 		parent: tk.Widget,
 		font: Font | None = None,
-		**kwargs
+		**kwargs,
 	):
 		ttk.Frame.__init__(self, parent, **kwargs)
 		self.rowconfigure(0, weight=1)
