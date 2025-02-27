@@ -975,7 +975,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		writerList = [writer]
 		try:
 			self._writeEntries(writerList, filename, options)
-		except (FileNotFoundError, LookupError) as e:
+		except FileNotFoundError as e:
+			# catching LookupError also catches IndexError:
+			# issubclass(IndexError, LookupError)
 			raise WriteError(str(e)) from e
 		finally:
 			showMemoryUsage()
