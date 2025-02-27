@@ -348,6 +348,10 @@ class Reader:
 		if subglos_key:
 			add_subglos()
 
+		if not terms:
+			log.warning(f"No terms: {main_text=}")
+			return
+
 		defi = self.transform(
 			text=main_text,
 			header=terms[0],
