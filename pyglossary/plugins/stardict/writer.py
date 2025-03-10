@@ -57,7 +57,7 @@ def _newlinesToBr(text: str) -> str:
 
 
 class Writer:
-	_large_file: bool = False
+	_large_file: bool = True
 	_dictzip: bool = True
 	_sametypesequence: Literal["", "h", "m", "x"] | None = ""
 	_stardict_client: bool = False
