@@ -1,32 +1,30 @@
 name: "Validate Plugins"
 
 on:
-    push:
-        branches: ["master", "dev", "github-action"]
-    pull_request:
-    schedule:
-        - cron: "33 1 * * 3"
+  push:
+    branches: ["master", "dev", "github-action"]
+  pull_request:
+  schedule:
+    - cron: "33 1 * * 3"
 
 jobs:
-    ubuntu:
-        name: Ubuntu
+  ubuntu:
+    name: Ubuntu
 
-        strategy:
-            fail-fast: false
-            matrix:
-                python-version: ["3.13"]
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13"]
 
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: cd and ls
-              run: |
-                  cd ${{ github.workspace }}
-                  ls -l
-            - name: Validate Plugins
-              run: python ./scripts/plugin-validate.py
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: List files
+        run: ls -l
+      - name: Validate Plugins
+        run: python ./scripts/plugin-validate.py
