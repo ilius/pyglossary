@@ -7,6 +7,7 @@ from pyglossary.option import (
 	BoolOption,
 	FileSizeOption,
 	IntOption,
+	ListOption,
 	Option,
 	StrOption,
 )
@@ -48,6 +49,9 @@ optionsProp: dict[str, Option] = {
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),
 	# specific to mobi
+	"kindlegen_args": ListOption(
+		comment="Additional arguments for kindlegen",
+	),
 	"kindlegen_path": StrOption(
 		comment="Path to kindlegen executable",
 	),

@@ -60,6 +60,7 @@ class GroupStateBySize:
 class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
+	_kindlegen_args: list = []
 	_kindlegen_path: str = ""
 	_file_size_approx: int = 271360
 	_hide_word_index: bool = False
@@ -268,6 +269,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		import subprocess
 
 		filename = self._filename
+		kindlegen_args = self._kindlegen_args
 		kindlegen_path = self._kindlegen_path
 
 		yield from EbookWriter.write(self)
@@ -287,13 +289,19 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			)
 			return
 
+		if "-gen_ff_mobi7" not in kindlegen_args:
+			kindlegen_args.append("-gen_ff_mobi7")
+
 		# name = self._glos.getInfo("name")
-		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
+		log.info(
+			f"Creating .mobi file with kindlegen, using {kindlegen_path!r}"
+			f" with arguments '{', '.join(kindlegen_args)}'"
+		)
 		direc, filename = split(filename)
 		cmd = [
 			kindlegen_path,
 			join(filename, "OEBPS", "content.opf"),
-			"-gen_ff_mobi7",
+			*kindlegen_args,
 			"-o",
 			"content.mobi",
 		]

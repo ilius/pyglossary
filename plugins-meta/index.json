@@ -839,6 +839,11 @@
 				"customValue": true,
 				"comment": "Prefix length for grouping"
 			},
+			"kindlegen_args": {
+				"class": "ListOption",
+				"type": "list",
+				"comment": "Additional arguments for kindlegen"
+			},
 			"kindlegen_path": {
 				"class": "StrOption",
 				"type": "str",
@@ -905,6 +910,7 @@
 			"group_by_prefix_length": 2,
 			"css": "",
 			"cover_path": "",
+			"kindlegen_args": [],
 			"kindlegen_path": "",
 			"file_size_approx": 271360,
 			"hide_word_index": false,
