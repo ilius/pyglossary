@@ -112,4 +112,4 @@ class ReaderUtils:
 		if elem.text:
 			hf.write(f"{langDesc}: {elem.text}")
 		else:
-			hf.write(f"{langDesc}")  # noqa: FURB183
+			hf.write(f"{langDesc}")
