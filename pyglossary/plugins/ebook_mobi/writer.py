@@ -294,6 +294,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			kindlegen_path,
 			join(filename, "OEBPS", "content.opf"),
 			"-gen_ff_mobi7",
+			"-dont_append_source",
+			"-verbose",
 			"-o",
 			"content.mobi",
 		]
