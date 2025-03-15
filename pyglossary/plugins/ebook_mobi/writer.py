@@ -287,6 +287,11 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			)
 			return
 
+		if not self._glos.sourceLang:
+			log.error("Source language is empty, pass --source-lang=LANG flag.")
+		if not self._glos.targetLang:
+			log.error("Target language is empty, pass --target-lang=LANG flag.")
+
 		# name = self._glos.getInfo("name")
 		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
 		direc, filename = split(filename)
