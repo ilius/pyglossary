@@ -622,7 +622,7 @@ class Reader(ReaderUtils):
 
 		inflectedKeywords: list[str] = []
 
-		for form in entry.findall("form", _NAMESPACE):
+		for form in entry.findall(".//form", _NAMESPACE):
 			inflected = form.get("type") == "infl"
 			for orth in form.findall("orth", _NAMESPACE):
 				if not orth.text:
