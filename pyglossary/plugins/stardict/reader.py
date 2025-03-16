@@ -210,6 +210,29 @@ class Reader:
 
 		return indexData
 
+	def decodeDefiTypeR(  # noqa: PLR6301
+		self,
+		b_defiPart: bytes,
+	) -> tuple[str, str]:
+		result = '<div class="sdct_r">'
+
+		for b_item in b_defiPart.split(b"\n"):
+			item = b_item.decode("utf-8")
+			type_, _, fname = item.partition(":")
+			if type_ == "img":
+				result += f'<img src="{fname}"/>'
+			elif type_ == "snd":
+				result += f'<audio controls src="{fname}"></audio>'
+			elif type_ == "vdo":
+				result += f'<video controls src="{fname}"></video>'
+			elif type_ == "att":
+				result += f'<a download href="{fname}">{fname}</a>'
+			else:
+				log.warning(f"Unsupported resource type {type_}")
+
+		result += "</div>"
+		return "h", result
+
 	def decodeRawDefiPart(
 		self,
 		b_defiPart: bytes,
@@ -217,6 +240,8 @@ class Reader:
 		unicode_errors: str,
 	) -> tuple[str, str]:
 		type_ = chr(i_type)
+		if type_ == "r":
+			return self.decodeDefiTypeR(b_defiPart)
 
 		"""
 		_type: 'r'
