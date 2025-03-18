@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 __all__ = ["formatDiff", "xmlDiff"]
 
+zwnj = "\u200c"
 wordRE = re.compile(r"(\W)", re.MULTILINE)
 xmlTagRE = re.compile(
 	"</?[a-z][0-9a-z]* *[^<>]*>",
@@ -54,7 +55,7 @@ def formatDiff(diff: Iterator[str]) -> str:
 			res += part[2:]
 			continue
 		if part[0] == "-":
-			res += red + part[2:] + reset
+			res += red + part[2:] + reset + zwnj
 			continue
 		if part[0] == "+":
 			res += green + part[2:] + reset
