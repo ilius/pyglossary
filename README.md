@@ -149,7 +149,7 @@ ways to use the program).
 
 ## UI (User Interface) selection
 
-When you run PyGlossary without any command-line arguments or options/flags, PyGlossary will try to run the first available interface in this order:
+When you run PyGlossary without any command-line arguments or options/flags, PyGlossary will try to run the first available interface:
 
 - It tries to find PyGI+Gtk3 and open **Gtk3-based** interface.
 - It tries to find PyGI+Gtk4 and open **Gtk4-based** interface.
@@ -157,10 +157,13 @@ When you run PyGlossary without any command-line arguments or options/flags, PyG
 - If it's run in command line (with stdin connected to a terminal) it tries to find `prompt_toolkit` and run **interactive command-line** interface.
 - It runs a HTTP server and opens the **web interface** in your browser.
 
-But you can explicitly select user interface type using `--ui`
+The order depends on operating system. Currently on Mac OS and Windows, Tkinter is checked before Gtk.
 
-- `./main.py --ui=gtk`
+You can explicitly select user interface type using `--ui`
+
+- `./main.py --ui=gtk3`
 - `./main.py --ui=gtk4`
+- `./main.py --ui=gtk` which currently selects `gtk3`
 - `./main.py --ui=tk`
 - `./main.py --ui=web`
 - `./main.py --ui=cmd`

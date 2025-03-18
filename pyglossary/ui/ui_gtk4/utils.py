@@ -150,7 +150,6 @@ def dialog_add_button(
 def showMsg(  # noqa: PLR0913
 	msg: str,
 	iconName: str = "",
-	parent: gtk.Widget | None = None,
 	transient_for: gtk.Widget | None = None,
 	title: str = "",
 	borderWidth: int = 10,  # noqa: ARG001
@@ -158,7 +157,6 @@ def showMsg(  # noqa: PLR0913
 	selectable: bool = False,
 ) -> None:
 	win = gtk.Dialog(
-		parent=parent,
 		transient_for=transient_for,
 	)
 	# flags=0 makes it skip task bar

@@ -15,9 +15,9 @@ if TYPE_CHECKING:
 	from typing import Any
 
 
-ui_list = ["gtk", "gtk4", "tk", "web"]
+ui_list = ["gtk3", "gtk4", "tk", "web"]
 if os.sep == "\\" or core.sysName == "darwin":  # windows or mac
-	ui_list = ["tk", "gtk", "gtk4", "web"]
+	ui_list = ["tk", "gtk3", "gtk4", "web"]
 
 log: logging.Logger | None = None
 
@@ -117,6 +117,9 @@ def getRunner(
 			log.error("no input file given, try --help")
 			return None
 		return UI(**uiArgs).run
+
+	if ui_type == "gtk":
+		ui_type = "gtk3"
 
 	if ui_type == "auto":
 		if not args.no_interactive and sys.stdin.isatty():

@@ -44,6 +44,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]) -> None
 		choices=(
 			"cmd",
 			"gtk",
+			"gtk3",
 			"gtk4",
 			"tk",
 			"web",
@@ -67,6 +68,14 @@ def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]) -> None
 		const="gtk",
 		default=None,
 		help="use Gtk-based user interface",
+	)
+	parser.add_argument(
+		"--gtk3",
+		dest="ui_type",
+		action="store_const",
+		const="gtk3",
+		default=None,
+		help="use Gtk4-based user interface",
 	)
 	parser.add_argument(
 		"--gtk4",
