@@ -742,7 +742,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	def _read(
 		self,
 		filename: str,
-		format: str = "",  # to be removed in 6.0.0 # noqa: A002
+		format: str | None = None,  # to be removed in 6.0.0 # noqa: A002
 		formatName: str = "",
 		direct: bool = False,
 		**options,  # noqa: ANN003
@@ -849,7 +849,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	def write(
 		self,
 		filename: str,
-		format: str = "",  # to be removed in 6.0.0 # noqa: A002
+		format: str | None = None,  # to be removed in 6.0.0 # noqa: A002
 		formatName: str = "",
 		**kwargs,  # noqa: ANN003
 	) -> str:
