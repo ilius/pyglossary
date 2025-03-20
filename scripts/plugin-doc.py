@@ -242,7 +242,7 @@ for p in plugins:
 
 	toolsFile = join(pluginsDir, p.moduleName, "tools.toml")
 	try:
-		with open(toolsFile, encoding="utf-8") as _file:
+		with open(toolsFile, "rb") as _file:
 			tools_toml = toml.load(_file)
 	except FileNotFoundError:
 		tools = []
