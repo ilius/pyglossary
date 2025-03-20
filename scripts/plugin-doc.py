@@ -4,7 +4,7 @@ import sys
 from os.path import abspath, dirname, join
 from pathlib import Path
 
-import toml
+import tomllib as toml
 from mako.template import Template
 
 rootDir = dirname(dirname(abspath(__file__)))
