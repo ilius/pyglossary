@@ -1170,9 +1170,6 @@ class UI(tk.Frame, UIBase):
 			pady=5,
 		)
 		# print(f"row number for Convert button: {row}")
-		######
-		convertFrame.pack(fill="x")
-		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 		#################
 		row += 1
 		console = tk.Text(
@@ -1248,8 +1245,54 @@ class UI(tk.Frame, UIBase):
 		aboutNotebook.pack(fill="both", expand=True)
 		# aboutNotebook.show_tab_index(0)
 
+		statusBarFrame = self.statusBarFrame = ttk.Frame(convertFrame)
+		statusBarFrame.grid(
+			row=row + 1,
+			column=0,
+			columnspan=4,
+			sticky=tk.W + tk.E,
+			padx=5,
+			pady=0,
+		)
+		clearB = newButton(
+			statusBarFrame,
+			text="Clear",
+			command=self.console_clear,
+			# how to set borderwidth using style?
+			# bg="black",
+			# fg="#ffff00",
+			# activebackground="#333333",
+			# activeforeground="#ffff00",
+			# borderwidth=3,
+			# height=2,
+		)
+		clearB.pack(side="left")
+		####
+		label = ttk.Label(statusBarFrame, text="Verbosity")
+		label.pack(side="left")
+		##
+		comboVar = tk.StringVar()
+		combo = ttk.OptionMenu(
+			statusBarFrame,
+			comboVar,
+			log.getVerbosity(),  # default
+			"0",
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+		)
+		comboVar.trace_add("write", self.verbosityChanged)
+		combo.pack(side="left")
+		self.verbosityCombo = comboVar
+		comboVar.set(log.getVerbosity())
+
 		notebook.add(convertFrame, text="Convert", underline=-1)
 		notebook.add(aboutFrame, text="About", underline=-1)
+
+		# convertFrame.pack(fill="x")
+		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 
 		######################
 		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
@@ -1267,43 +1310,6 @@ class UI(tk.Frame, UIBase):
 		# _________________________________________________________________ #
 
 		notebook.pack(fill="both", expand=True)
-
-		# _________________________________________________________________ #
-
-		statusBarframe = self.statusBarframe = ttk.Frame(self)
-		clearB = newButton(
-			statusBarframe,
-			text="Clear",
-			command=self.console_clear,
-			# how to set borderwidth using style?
-			# bg="black",
-			# fg="#ffff00",
-			# activebackground="#333333",
-			# activeforeground="#ffff00",
-			# borderwidth=3,
-			# height=2,
-		)
-		clearB.pack(side="left")
-		####
-		label = ttk.Label(statusBarframe, text="Verbosity")
-		label.pack(side="left")
-		##
-		comboVar = tk.StringVar()
-		combo = ttk.OptionMenu(
-			statusBarframe,
-			comboVar,
-			log.getVerbosity(),  # default
-			"0",
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-		)
-		comboVar.trace_add("write", self.verbosityChanged)
-		combo.pack(side="left")
-		self.verbosityCombo = comboVar
-		comboVar.set(log.getVerbosity())
 
 	def textSelectAll(self, tktext) -> None:
 		tktext.tag_add(tk.SEL, "1.0", tk.END)
@@ -1552,7 +1558,7 @@ class UI(tk.Frame, UIBase):
 			log.error("Tkinter interface does not support Reverse feature")
 
 		pbar = ProgressBar(
-			self.statusBarframe,
+			self.statusBarFrame,
 			min_=0,
 			max_=100,
 			width=700,
@@ -1565,7 +1571,7 @@ class UI(tk.Frame, UIBase):
 		)
 		pbar.pack(side="left", fill="x", expand=True, padx=10)
 		self.pbar = pbar
-		self.statusBarframe.pack(fill="x")
+		pbar.pack(fill="x")
 		self.progressTitle = ""
 		# _________________________________________________________________ #
 
