@@ -27,6 +27,7 @@ from gi.repository import Gtk as gtk
 from pyglossary.ui.base import UIBase
 
 from .mainwin import MainWindow
+from .utils import gtk_event_iteration_loop
 
 log = logging.getLogger("pyglossary")
 
@@ -45,16 +46,36 @@ class UI(UIBase, gtk.Application):
 			application_id="apps.pyglossary",
 			flags=gio.ApplicationFlags.FLAGS_NONE,
 		)
-		self.progressbar = progressbar
+		if progressbar:
+			self.progressBar = gtk.ProgressBar()
+			self.progressBar.set_fraction(0)
+		else:
+			self.progressBar = None
 		self.runArgs = {}
+		self.mainWindow: MainWindow | None = None
 
 	def run(self, **kwargs) -> None:
 		self.runArgs = kwargs
 		gtk.Application.run(self)
 
 	def do_activate(self) -> None:
-		MainWindow(
+		self.mainWindow = MainWindow(
 			ui=self,
 			app=self,
-			progressbar=self.progressbar,
-		).run(**self.runArgs)
+			progressBar=self.progressBar,
+		)
+		self.mainWindow.run(**self.runArgs)
+
+	def progressInit(self, title: str) -> None:
+		self.progressTitle = title
+
+	def progress(self, ratio: float, text: str = "") -> None:
+		if self.mainWindow is None:
+			return
+		if not text:
+			text = "%" + str(int(ratio * 100))
+		text += " - " + self.progressTitle
+		self.progressBar.set_fraction(ratio)
+		# self.progressBar.set_text(text)  # not working
+		self.mainWindow.status(text)
+		gtk_event_iteration_loop()

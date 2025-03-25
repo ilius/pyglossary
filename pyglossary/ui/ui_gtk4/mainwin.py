@@ -116,7 +116,7 @@ check {
 		self,
 		ui: UIBase,
 		app: gtk.Application,
-		progressbar: bool = True,
+		progressBar: gtk.ProgressBar | None,
 		**kwargs,
 	) -> None:
 		self.app = app
@@ -124,7 +124,7 @@ check {
 		#####
 		gtk.ApplicationWindow.__init__(self, application=app, **kwargs)
 		self.set_title("PyGlossary (Gtk4)")
-		self.progressbarEnable = progressbar
+		self.progressBar = progressBar
 		#####
 		self.vbox = VBox()
 		self.set_child(self.vbox)
@@ -325,12 +325,11 @@ check {
 		textview.set_editable(False)
 		# ____________________________________________________________ #
 		self.progressTitle = ""
-		self.progressBar = pbar = gtk.ProgressBar()
-		pbar.set_fraction(0)
-		# pbar.set_text(_("Progress Bar"))
-		# pbar.get_style_context()
-		# pbar.set_property("height-request", 20)
-		pack(self.vbox, pbar)
+		if progressBar:
+			# progressBar.set_text(_("Progress Bar"))
+			# progressBar.get_style_context()
+			# progressBar.set_property("height-request", 20)
+			pack(self.vbox, progressBar)
 		############
 		hbox = HBox(spacing=5)
 		clearButton = gtk.Button(
@@ -467,6 +466,7 @@ check {
 			return
 		outFormat = self.convertOutputFormatCombo.getActive()
 
+		self.status("Converting...")
 		gtk_event_iteration_loop()
 
 		self.convertButton.set_sensitive(False)
@@ -476,7 +476,7 @@ check {
 
 		glos = Glossary(ui=self.ui)
 		glos.config = self.config
-		glos.progressbar = self.progressbarEnable
+		glos.progressbar = self.progressBar is not None
 
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(glos, attr, value)
@@ -554,15 +554,3 @@ check {
 			self.status('Press "Convert"')
 		else:
 			self.status("Select output format")
-
-	def progressInit(self, title: str) -> None:
-		self.progressTitle = title
-
-	def progress(self, ratio: float, text: str = "") -> None:
-		if not text:
-			text = "%" + str(int(ratio * 100))
-		text += " - " + self.progressTitle
-		self.progressBar.set_fraction(ratio)
-		# self.progressBar.set_text(text)  # not working
-		self.status(text)
-		gtk_event_iteration_loop()
