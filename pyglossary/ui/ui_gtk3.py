@@ -1016,7 +1016,33 @@ class GeneralOptionsButton(gtk.Button):
 		self.dialog.present()
 
 
-class UI(gtk.Dialog, MyDialog, UIBase):
+class UI(UIBase, gtk.Application):
+	def __init__(
+		self,
+		progressbar: bool = True,
+	) -> None:
+		UIBase.__init__(self)
+		gtk.Application.__init__(
+			self,
+			application_id="apps.pyglossary",
+			# flags=gio.ApplicationFlags.FLAGS_NONE,
+		)
+		self.progressbar = progressbar
+		self.runArgs = {}
+
+	def run(self, **kwargs) -> None:
+		self.runArgs = kwargs
+		gtk.Application.run(self)
+
+	def do_activate(self) -> None:
+		MainWindow(
+			ui=self,
+			app=self,
+			progressbar=self.progressbar,
+		).run(**self.runArgs)
+
+
+class MainWindow(gtk.Dialog, MyDialog):
 	def status(self, msg: str) -> None:
 		# try:
 		# 	_id = self.statusMsgDict[msg]
@@ -1028,10 +1054,14 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 
 	def __init__(
 		self,
+		ui: UIBase,
+		app: gtk.Application,
 		progressbar: bool = True,
 	) -> None:
+		self.app = app
+		self.ui = ui
+		###
 		gtk.Dialog.__init__(self)
-		UIBase.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
 		###
 		self.progressbarEnable = progressbar
@@ -1453,7 +1483,7 @@ class UI(gtk.Dialog, MyDialog, UIBase):
 		readOptions = self.convertInputFormatCombo.optionsValues
 		writeOptions = self.convertOutputFormatCombo.optionsValues
 
-		glos = Glossary(ui=self)
+		glos = Glossary(ui=self.ui)
 		glos.config = self.config
 		glos.progressbar = self.progressbarEnable
 
