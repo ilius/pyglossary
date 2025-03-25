@@ -123,7 +123,7 @@ check {
 		self.ui = ui
 		#####
 		gtk.ApplicationWindow.__init__(self, application=app, **kwargs)
-		self.set_title("PyGlossary (Gtk3)")
+		self.set_title("PyGlossary (Gtk4)")
 		self.progressbarEnable = progressbar
 		#####
 		self.vbox = VBox()

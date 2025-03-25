@@ -21,6 +21,7 @@ from __future__ import annotations
 import logging
 
 from gi.repository import Gio as gio
+from gi.repository import GLib as glib
 from gi.repository import Gtk as gtk
 
 from pyglossary.ui.base import UIBase
@@ -29,6 +30,7 @@ from .mainwin import MainWindow
 
 log = logging.getLogger("pyglossary")
 
+glib.set_prgname("PyGlossary (Gtk4)")
 # gtk.Window.set_default_icon_from_file(logo)  # removed in Gtk 4.0
 
 
