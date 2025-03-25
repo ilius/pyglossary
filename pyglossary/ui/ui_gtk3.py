@@ -43,6 +43,9 @@ from .version import getVersion
 
 gi.require_version("Gtk", "3.0")
 
+from gi.repository import Gio as gio
+from gi.repository import GLib as glib
+
 from .gtk3_utils import gdk, gtk  # noqa: E402
 from .gtk3_utils.about import AboutWidget  # noqa: E402
 from .gtk3_utils.dialog import MyDialog  # noqa: E402
@@ -66,6 +69,8 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("pyglossary")
 
+glib.set_prgname("PyGlossary (Gtk3)")
+glib.set_application_name("PyGlossary (Gtk3)")
 gtk.Window.set_default_icon_from_file(logo)
 
 _ = str  # later replace with translator function
@@ -1025,7 +1030,7 @@ class UI(UIBase, gtk.Application):
 		gtk.Application.__init__(
 			self,
 			application_id="apps.pyglossary",
-			# flags=gio.ApplicationFlags.FLAGS_NONE,
+			flags=gio.ApplicationFlags.FLAGS_NONE,
 		)
 		if progressbar:
 			self.progressBar = gtk.ProgressBar()
