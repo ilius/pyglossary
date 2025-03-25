@@ -1496,6 +1496,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 			return
 		outFormat = self.convertOutputFormatCombo.getActive()
 
+		self.status("Converting...")
 		while gtk.events_pending():
 			gtk.main_iteration_do(False)
 
