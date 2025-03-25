@@ -955,7 +955,11 @@ class UI(tk.Frame, UIBase):
 		self,
 		progressbar: bool = True,
 	) -> None:
-		rootWin = self.rootWin = tk.Tk()
+		rootWin = self.rootWin = tk.Tk(
+			# baseName="PyGlossary",  # no effect
+			className="PyGlossary",
+			# ^ capitalized as Pyglossary regardless of case or spaces
+		)
 		# a hack that hides the window until we move it to the center of screen
 		if os.sep == "\\":  # Windows
 			rootWin.attributes("-alpha", 0.0)
