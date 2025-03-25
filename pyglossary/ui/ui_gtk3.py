@@ -1027,19 +1027,41 @@ class UI(UIBase, gtk.Application):
 			application_id="apps.pyglossary",
 			# flags=gio.ApplicationFlags.FLAGS_NONE,
 		)
-		self.progressbar = progressbar
+		if progressbar:
+			self.progressBar = gtk.ProgressBar()
+			self.progressBar.set_fraction(0)
+		else:
+			self.progressBar = None
 		self.runArgs = {}
+		self.progressTitle = ""
+		self.mainWin: MainWindow | None = None
 
 	def run(self, **kwargs) -> None:
 		self.runArgs = kwargs
 		gtk.Application.run(self)
 
 	def do_activate(self) -> None:
-		MainWindow(
+		self.mainWin = MainWindow(
 			ui=self,
 			app=self,
-			progressbar=self.progressbar,
-		).run(**self.runArgs)
+			progressBar=self.progressBar,
+		)
+		self.mainWin.run(**self.runArgs)
+
+	def progressInit(self, title: str) -> None:
+		self.progressTitle = title
+
+	def progress(self, ratio: float, text: str = "") -> None:
+		if self.mainWin is None:
+			return
+		if not text:
+			text = "%" + str(int(ratio * 100))
+		text += " - " + self.progressTitle
+		self.progressBar.set_fraction(ratio)
+		# self.progressBar.set_text(text)  # not working
+		self.mainWin.status(text)
+		while gtk.events_pending():
+			gtk.main_iteration_do(False)
 
 
 class MainWindow(gtk.Dialog, MyDialog):
@@ -1056,7 +1078,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 		self,
 		ui: UIBase,
 		app: gtk.Application,
-		progressbar: bool = True,
+		progressBar: gtk.ProgressBar | None,
 	) -> None:
 		self.app = app
 		self.ui = ui
@@ -1064,7 +1086,8 @@ class MainWindow(gtk.Dialog, MyDialog):
 		gtk.Dialog.__init__(self)
 		self.set_title("PyGlossary (Gtk3)")
 		###
-		self.progressbarEnable = progressbar
+		self.progressBar = progressBar
+		self.progressbarEnable = progressBar is not None
 		#####
 		screenSize = getWorkAreaSize()
 		if screenSize:
@@ -1346,13 +1369,11 @@ class MainWindow(gtk.Dialog, MyDialog):
 		textview.get_buffer().set_text("Output & Error Console:\n")
 		textview.set_editable(False)
 		# ____________________________________________________________ #
-		self.progressTitle = ""
-		self.progressBar = pbar = gtk.ProgressBar()
-		pbar.set_fraction(0)
-		# pbar.set_text(_("Progress Bar"))
-		# pbar.get_style_context()
-		# pbar.set_property("height-request", 20)
-		pack(self.vbox, pbar, 0, 0)
+		if progressBar:
+			# progressBar.set_text(_("Progress Bar"))
+			# progressBar.get_style_context()
+			# progressBar.set_property("height-request", 20)
+			pack(self.vbox, progressBar, 0, 0)
 		############
 		hbox = HBox(spacing=5)
 		clearButton = gtk.Button(
@@ -1638,16 +1659,3 @@ class MainWindow(gtk.Dialog, MyDialog):
 
 	def reverseOutputEntryChanged(self, _widget: Any = None) -> None:
 		pass
-
-	def progressInit(self, title: str) -> None:
-		self.progressTitle = title
-
-	def progress(self, ratio: float, text: str = "") -> None:
-		if not text:
-			text = "%" + str(int(ratio * 100))
-		text += " - " + self.progressTitle
-		self.progressBar.set_fraction(ratio)
-		# self.progressBar.set_text(text)  # not working
-		self.status(text)
-		while gtk.events_pending():
-			gtk.main_iteration_do(False)
