@@ -155,8 +155,13 @@ class Reader:
 						hf.write(br())
 
 				hf_ = cast("T_htmlfile", hf)
-
-				self.writeSoundList(hf_, data.get("sounds"))
+    
+				_lang = data.get("lang")
+				_lang_code =  data.get("lang_code")
+				if _lang == "Chinese" or _lang_code == "zh":
+					self.writeSoundListChinese(hf_, data.get("sounds"))
+				else:
+					self.writeSoundList(hf_, data.get("sounds"))
 
 				pos: str | None = data.get("pos")
 				if pos:
@@ -241,7 +246,7 @@ class Reader:
 					},
 				):
 					pass
-
+ 
 	def writeSoundList(
 		self,
 		hf: T_htmlfile,
@@ -270,7 +275,46 @@ class Reader:
 
 		for sound in audioList:
 			with hf.element("div", attrib={"class": "audio"}):
-				self.writeSoundAudio(hf, sound)
+				self.writeSoundAudio(hf, sound)    
+
+	# The pattern is quite complicated and required a little bit more work. As for now only IPA will be rendered.
+	# 
+	# TODO: add various romanization / system. Perhabs in table style.
+	# 
+	# Temporally fix: only get IPA reading from item with both "tags" (dialact name) and "ipa" keys
+	# strings in tags will simply join together for now
+  
+	def writeSoundPronChinese(
+     	self,
+		hf: T_htmlfile,
+		sound: dict[str, str|list[str]],
+	) -> None:
+		_tags = " ".join(sound.get("tags"))
+  
+		with hf.element("font", color=self._pron_color):
+			hf.write(str(sound.get("ipa")))
+			hf.write(f" ({_tags}; ipa)")
+	
+	def writeSoundListChinese(
+    	self,
+		hf: T_htmlfile,
+		soundList: list[dict[str, Any]] | None,
+  	) -> None:
+		if not soundList:
+			return
+
+		def is_labeled(d: dict[str, Any]) -> bool:
+			return all(("tags" in d, "ipa" in d))
+  
+		labeledSoundList: list[dict[str, Any]] = list(filter(is_labeled, soundList))
+		if not labeledSoundList:
+			return
+
+		with hf.element("div", attrib={"class": "pronunciations"}):
+			for i, sound in enumerate(labeledSoundList):
+				if i > 0:
+					hf.write(", ")
+				self.writeSoundPronChinese(hf, sound)
 
 	def writeSenseList(
 		self,
