@@ -18,9 +18,7 @@ from .text_utils import joinByBar
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
-	from typing import (
-		Any,
-	)
+	from typing import Any
 
 	from .glossary_types import RawEntryType
 
@@ -42,6 +40,10 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	@classmethod
 	def isData(cls) -> bool:
 		return True
+
+	@property
+	def tmpPath(self) -> str | None:
+		return self._tmpPath
 
 	def __init__(
 		self,

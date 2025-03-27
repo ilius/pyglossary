@@ -21,7 +21,8 @@ class BaseEntry:  # noqa: PLR0904
 	def __init__(self) -> None:
 		self._word: str | list[str]
 
-	def isData(self) -> bool: ...
+	@classmethod
+	def isData(cls) -> bool: ...
 
 	def getFileName(self) -> str:
 		raise NotImplementedError
@@ -93,3 +94,7 @@ class BaseEntry:  # noqa: PLR0904
 	def removeEmptyAndDuplicateAltWords(self) -> None: ...
 
 	def stripFullHtml(self) -> str | None: ...
+
+	@property
+	def tmpPath(self) -> str | None:
+		raise NotImplementedError
