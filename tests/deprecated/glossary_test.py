@@ -507,12 +507,16 @@ class TestGlossary(TestGlossaryBase):
 	def test_lang_getObj_source(self):
 		glos = self.glos = Glossary()
 		glos.setInfo("sourcelang", "farsi")
-		self.assertEqual(glos.sourceLang.name, "Persian")
+		self.assertIsNotNone(glos.sourceLang)
+		if glos.sourceLang:
+			self.assertEqual(glos.sourceLang.name, "Persian")
 
 	def test_lang_getObj_target(self):
 		glos = self.glos = Glossary()
 		glos.setInfo("targetlang", "malay")
-		self.assertEqual(glos.targetLang.name, "Malay")
+		self.assertIsNotNone(glos.targetLang)
+		if glos.targetLang:
+			self.assertEqual(glos.targetLang.name, "Malay")
 
 	def test_lang_detect_1(self):
 		glos = self.glos = Glossary()
@@ -820,33 +824,41 @@ class TestGlossary(TestGlossaryBase):
 		tmpFname = "test_cleanup_cleanup"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
-		tmpFpath = entry._tmpPath
+		tmpFpath = entry.tmpPath
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
-		self.assertTrue(
-			isfile(tmpFpath),
-			msg=f"tmp file does not exist: {tmpFpath}",
-		)
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
+			)
 
 		glos.cleanup()
 
-		self.assertTrue(
-			not isfile(tmpFpath),
-			msg=f"tmp file still exists: {tmpFpath}",
-		)
+		if tmpFpath:
+			self.assertTrue(
+				not isfile(tmpFpath),
+				msg=f"tmp file still exists: {tmpFpath}",
+			)
 
 	def test_cleanup_noCleanup(self):
 		glos = self.glos = Glossary()
 		tmpFname = "test_cleanup_noCleanup"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
-		tmpFpath = entry._tmpPath
+		tmpFpath = entry.tmpPath
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
-		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+			)
 
 		glos.config = {"cleanup": False}
 		glos.cleanup()
 
-		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+			)
 
 	def addWordsList(self, glos, words, newDefiFunc=str, defiFormat=""):
 		wordsList = []
