@@ -235,9 +235,12 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		tmpFname = "test_cleanup_removed"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
-		tmpFpath = entry._tmpPath
+		tmpFpath = entry.tmpPath
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
-		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+			)
 
 		rmtree(appTmpDir)
 		glos.cleanup()
@@ -270,7 +273,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_lang_err_setObj_source(self):
 		glos = Glossary()
 		try:
-			glos.sourceLang = "foobar"
+			glos.sourceLang = "foobar"  # pyright: ignore
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid lang='foobar', must be a Lang object")
 		else:
@@ -279,7 +282,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_lang_err_setObj_target(self):
 		glos = Glossary()
 		try:
-			glos.targetLang = "foobar"
+			glos.targetLang = "foobar"  # pyright: ignore
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid lang='foobar', must be a Lang object")
 		else:

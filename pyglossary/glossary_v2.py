@@ -598,7 +598,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			return f'<{tag} class="{class_}">{word}</{tag}><br>'
 		return f"<{tag}>{word}</{tag}><br>"
 
-	def getConfig(self, name: str, default: str | None) -> str | None:
+	def getConfig(self, name: str, default: Any) -> Any:
 		return self._config.get(name, default)
 
 	def addEntry(self, entry: EntryType) -> None:

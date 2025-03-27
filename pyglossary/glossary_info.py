@@ -19,7 +19,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -60,7 +60,7 @@ class GlossaryInfo:
 			"",
 		)
 
-	def setInfo(self, key: str, value: str | None) -> None:
+	def setInfo(self, key: str, value: Any) -> None:
 		if value is None:
 			try:
 				del self._info[key]

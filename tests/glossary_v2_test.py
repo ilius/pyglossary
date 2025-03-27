@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import hashlib
 import json
 import logging
@@ -14,7 +16,7 @@ from urllib.request import urlopen
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import cacheDir, log, tmpDir
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
@@ -407,7 +409,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_setInfo_err1(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.setInfo(1, "a")
+			glos.setInfo(1, "a")  # pyright: ignore
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid key=1, must be str")
 		else:
@@ -416,7 +418,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_getInfo_err1(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.getInfo(1)
+			glos.getInfo(1)  # pyright: ignore
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid key=1, must be str")
 		else:
@@ -515,12 +517,16 @@ class TestGlossary(TestGlossaryBase):
 	def test_lang_getObj_source(self):
 		glos = self.glos = Glossary()
 		glos.setInfo("sourcelang", "farsi")
-		self.assertEqual(glos.sourceLang.name, "Persian")
+		self.assertIsNotNone(glos.sourceLang)
+		if glos.sourceLang is not None:
+			self.assertEqual(glos.sourceLang.name, "Persian")
 
 	def test_lang_getObj_target(self):
 		glos = self.glos = Glossary()
 		glos.setInfo("targetlang", "malay")
-		self.assertEqual(glos.targetLang.name, "Malay")
+		self.assertIsNotNone(glos.targetLang)
+		if glos.targetLang is not None:
+			self.assertEqual(glos.targetLang.name, "Malay")
 
 	def test_lang_detect_1(self):
 		glos = self.glos = Glossary()
@@ -804,35 +810,49 @@ class TestGlossary(TestGlossaryBase):
 		tmpFname = "test_cleanup_cleanup"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
-		tmpFpath = entry._tmpPath
+		tmpFpath = entry.tmpPath
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
-		self.assertTrue(
-			isfile(tmpFpath),
-			msg=f"tmp file does not exist: {tmpFpath}",
-		)
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
+			)
 
 		glos.cleanup()
 
-		self.assertTrue(
-			not isfile(tmpFpath),
-			msg=f"tmp file still exists: {tmpFpath}",
-		)
+		if tmpFpath:
+			self.assertTrue(
+				not isfile(tmpFpath),
+				msg=f"tmp file still exists: {tmpFpath}",
+			)
 
 	def test_cleanup_noCleanup(self):
 		glos = self.glos = Glossary()
 		tmpFname = "test_cleanup_noCleanup"
 		entry = glos.newDataEntry(tmpFname, b"test")
 
-		tmpFpath = entry._tmpPath
+		tmpFpath = entry.tmpPath
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
-		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+			)
 
 		glos.config = {"cleanup": False}
 		glos.cleanup()
 
-		self.assertTrue(isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}")
+		if tmpFpath:
+			self.assertTrue(
+				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+			)
 
-	def addWordsList(self, glos, words, newDefiFunc=str, defiFormat=""):
+	def addWordsList(
+		self,
+		glos: Glossary,
+		words: list[str],
+		newDefiFunc: Callable[[Any], str] = str,
+		defiFormat: str = "",
+	) -> list[list[str]]:
 		wordsList = []
 		for index, line in enumerate(words):
 			words = line.rstrip().split("|")
