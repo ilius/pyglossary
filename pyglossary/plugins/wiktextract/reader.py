@@ -310,7 +310,7 @@ class Reader:
 		def is_labeled(d: dict[str, Any]) -> bool:
 			return all(("tags" in d, "ipa" in d))
 
-		labeledSoundList: list[dict[str, Any]] = list(filter(is_labeled, soundList))
+		labeledSoundList = [s for s in soundList if is_labeled(s)]
 		if not labeledSoundList:
 			return
 
