@@ -296,8 +296,9 @@ class Reader:
 		_tagsText = " ".join(list(_tags))
 
 		with hf.element("font", color=self._pron_color):
-			_ipa = sound.get("ipa")
-			hf.write(f"{_ipa} ({_tagsText}; ipa)")
+			value = sound.get("ipa")
+			hf.write(str(value))
+		hf.write(f" ({_tagsText}; ipa)")
 
 	def writeSoundListChinese(
 		self,
