@@ -157,7 +157,7 @@ class Reader:
 				hf_ = cast("T_htmlfile", hf)
 
 				lang = data.get("lang")
-				lang_code =  data.get("lang_code")
+				lang_code = data.get("lang_code")
 				if lang == "Chinese" or lang_code == "zh":
 					self.writeSoundListChinese(hf_, data.get("sounds"))
 				else:
@@ -287,7 +287,7 @@ class Reader:
 	def writeSoundPronChinese(
 		self,
 		hf: T_htmlfile,
-		sound: dict[str, str|list[str]],
+		sound: dict[str, str | list[str]],
 	) -> None:
 		tags = sound.get("tags")
 		if "Sinological-IPA" in tags and len(tags) > 1:
