@@ -156,9 +156,9 @@ class Reader:
 
 				hf_ = cast("T_htmlfile", hf)
 
-				_lang = data.get("lang")
-				_lang_code =  data.get("lang_code")
-				if _lang == "Chinese" or _lang_code == "zh":
+				lang = data.get("lang")
+				lang_code =  data.get("lang_code")
+				if lang == "Chinese" or lang_code == "zh":
 					self.writeSoundListChinese(hf_, data.get("sounds"))
 				else:
 					self.writeSoundList(hf_, data.get("sounds"))
@@ -289,16 +289,16 @@ class Reader:
 		hf: T_htmlfile,
 		sound: dict[str, str|list[str]],
 	) -> None:
-		_tags = sound.get("tags")
-		if "Sinological-IPA" in _tags and len(_tags) > 1:
-			_tags.remove("Sinological-IPA")
+		tags = sound.get("tags")
+		if "Sinological-IPA" in tags and len(tags) > 1:
+			tags.remove("Sinological-IPA")
 
-		_tagsText = " ".join(list(_tags))
-
+		tagsText = " ".join(list(tags))
+		value = sound.get("ipa")
+		
 		with hf.element("font", color=self._pron_color):
-			value = sound.get("ipa")
 			hf.write(str(value))
-		hf.write(f" ({_tagsText}; ipa)")
+		hf.write(f" ({tagsText}; ipa)")
 
 	def writeSoundListChinese(
 		self,
@@ -309,7 +309,7 @@ class Reader:
 			return
 
 		def is_labeled(d: dict[str, Any]) -> bool:
-			return all(("tags" in d, "ipa" in d))
+			return "tags" in d and "ipa" in d
 
 		labeledSoundList = [s for s in soundList if is_labeled(s)]
 		if not labeledSoundList:
