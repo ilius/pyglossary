@@ -25,14 +25,13 @@ log = logging.getLogger("pyglossary")
 
 def optionFromDict(data: dict[str, Any]) -> Option:
 	className = data.pop("class")
-	optClass: type
+
 	if className == "Option":
 		data["typ"] = data.pop("type")
-		optClass = Option
-	else:
-		data.pop("type")
-		optClass = Option.classes[className]
-	return optClass(**data)
+		return Option(**data)
+
+	del data["type"]
+	return Option.classes[className](**data)
 
 
 class Option:
