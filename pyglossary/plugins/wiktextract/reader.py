@@ -318,7 +318,7 @@ class Reader:
 		with hf.element("div", attrib={"class": "pronunciations"}):
 			for i, sound in enumerate(labeledSoundList):
 				if i > 0:
-					hf.write(",  ")
+					hf.write(", ")
 				self.writeSoundPronChinese(hf, sound)
 
 	def writeSenseList(
