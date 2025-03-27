@@ -295,7 +295,7 @@ class Reader:
 
 		tagsText = " ".join(list(tags))
 		value = sound.get("ipa")
-		
+
 		with hf.element("font", color=self._pron_color):
 			hf.write(str(value))
 		hf.write(f" ({tagsText}; ipa)")
