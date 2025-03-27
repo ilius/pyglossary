@@ -386,12 +386,12 @@ class Reader:
 		example.pop("ref", "")
 		example.pop("type", "")
 
-		# implement rudimentary ruby text handler by simply put them in "()"
+		# Implement rudimentary ruby text handler by simply put them in "()"
 		# TODO: implement correctly formatted ruby text (i.e., as small script on top)
 		if "ruby" in example:
-			for word, phon in example.get("ruby"):
+			for word, phon in example["ruby"]:
 				example["text"] = example["text"].replace(word, f"{word}({phon})")
-			example.pop("ruby", "")
+			del example["ruby"]
 
 		for key, value in example.items():
 			if not value:
