@@ -269,46 +269,6 @@ check {
 		swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
 		swin.set_child(textview)
 		pack(vbox, swin, expand=True)
-		######
-		about = AboutWidget(
-			logo=logo,
-			header=f"PyGlossary\nVersion {getVersion()}",
-			# about=summary,
-			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
-			authors="\n".join(authors),
-			license_text=licenseText,
-		)
-		about.label = _("About")
-		about.icon = ""  # "*.png"
-		self.pages.append(about)
-		#####
-		# ____________________________________________________________ #
-		notebook = gtk.Notebook()
-		self.notebook = notebook
-		#########
-		for vbox in self.pages:
-			label = gtk.Label(label=vbox.label)
-			label.set_use_underline(True)
-			vb = VBox(spacing=3)
-			if vbox.icon:
-				vbox.image = imageFromFile(vbox.icon)
-				pack(vb, vbox.image)
-			pack(vb, label)
-			vb.show()
-			notebook.append_page(vbox, vb)
-			try:
-				notebook.set_tab_reorderable(vbox, True)
-			except AttributeError:
-				pass
-		#######################
-		pack(self.vbox, notebook, 1, 1)
-		# for i in ui.pagesOrder:
-		# 	try:
-		# 		j = pagesOrder[i]
-		# 	except IndexError:
-		# 		continue
-		# 	notebook.reorder_child(self.pages[i], j)
-		# ____________________________________________________________ #
 		##########
 		textview.get_style_context().add_class("console")
 		handler = GtkSingleTextviewLogHandler(self, textview)
@@ -368,7 +328,46 @@ check {
 		# hbox.resizeButton = ResizeButton(self)
 		# pack(hbox, hbox.resizeButton)
 		######
-		pack(self.vbox, hbox)
+		pack(vbox, hbox)
+
+		######
+		about = AboutWidget(
+			logo=logo,
+			header=f"PyGlossary\nVersion {getVersion()}",
+			# about=summary,
+			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
+			authors="\n".join(authors),
+			license_text=licenseText,
+		)
+		about.label = _("About")
+		about.icon = ""  # "*.png"
+		self.pages.append(about)
+		# ____________________________________________________________ #
+		notebook = gtk.Notebook()
+		self.notebook = notebook
+		#########
+		for vbox in self.pages:
+			label = gtk.Label(label=vbox.label)
+			label.set_use_underline(True)
+			vb = VBox(spacing=3)
+			if vbox.icon:
+				vbox.image = imageFromFile(vbox.icon)
+				pack(vb, vbox.image)
+			pack(vb, label)
+			vb.show()
+			notebook.append_page(vbox, vb)
+			try:
+				notebook.set_tab_reorderable(vbox, True)
+			except AttributeError:
+				pass
+		#######################
+		pack(self.vbox, notebook, 1, 1)
+		# for i in ui.pagesOrder:
+		# 	try:
+		# 		j = pagesOrder[i]
+		# 	except IndexError:
+		# 		continue
+		# 	notebook.reorder_child(self.pages[i], j)
 		# ____________________________________________________________ #
 		self.vbox.show()
 		notebook.set_current_page(0)  # Convert tab
