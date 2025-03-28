@@ -22,8 +22,8 @@ from __future__ import annotations
 from gi.repository import Gtk as gtk
 
 from .utils import (
+	FixedSizePicture,
 	VBox,
-	imageFromFile,
 	pack,
 )
 
@@ -36,16 +36,10 @@ class AboutTabTitleBox(gtk.Box):
 		self.set_spacing(10)
 		pack(self, VBox(), expand=0)
 		if icon:
-			image = imageFromFile(icon)
-			image.get_pixel_size()
-			image.set_size_request(24, 24)
-			# I don't know how to stop Gtk from resizing the image
-			# I should probably use svg files to avoid blurry images
-			pack(self, image, expand=0)
+			pack(self, FixedSizePicture(icon))
 		if title:
 			pack(self, gtk.Label(label=title), expand=0)
 		pack(self, VBox(), expand=0)
-		self.set_size_request(60, 60)
 
 	# def do_get_preferred_height_for_width(self, size: int) -> tuple[int, int]:
 	# 	height = int(size * 1.5)
@@ -71,8 +65,10 @@ class AboutWidget(gtk.Box):
 		self.set_spacing(15)
 		##
 		headerBox = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
+		headerBox.set_spacing(20)
 		if logo:
-			pack(headerBox, imageFromFile(logo))
+			pack(headerBox, gtk.Label())
+			pack(headerBox, FixedSizePicture(logo))
 		headerLabel = gtk.Label(label=header)
 		headerLabel.set_selectable(True)
 		pack(headerBox, headerLabel)

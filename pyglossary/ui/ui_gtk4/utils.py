@@ -68,6 +68,16 @@ def HBox(**kwargs) -> gtk.Box:
 	return gtk.Box(orientation=gtk.Orientation.HORIZONTAL, **kwargs)
 
 
+class FixedSizePicture(gtk.Picture):
+	def __init__(self, path: str) -> None:
+		gtk.Picture.__init__(self)
+		# self.size = size
+		if not isabs(path):
+			path = join(appResDir, path)
+		self.set_filename(path)
+		self.set_can_shrink(False)
+
+
 def imageFromFile(path: str) -> gtk.Image:  # the file must exist
 	if not isabs(path):
 		path = join(appResDir, path)
