@@ -34,9 +34,9 @@ def processSoundList(
 
     # might need to adding more languages in the future
     # data from wiktextract does not provide the groupping
-    NORTHERN_MIN: tuple[str] = ("Jian'ou") # noqa:F841
-    EASTERN_MIN: tuple[str] = ("Fuzhou") # noqa:F841
-    SOUTHERN_MIN: tuple[str] = ("Hokkien", "Teochew", "Leizhou") # noqa:F841
+    NORTHERN_MIN: tuple[str] = ("Jian'ou")  # noqa:F841
+    EASTERN_MIN: tuple[str] = ("Fuzhou")  # noqa:F841
+    SOUTHERN_MIN: tuple[str] = ("Hokkien", "Teochew", "Leizhou")  # noqa:F841
 
     PHON_SYSTEMS: tuple[str] = (
         "Pinyin", "Hanyu-Pinyin", "bopomofo", "Cyrillic",
@@ -115,7 +115,6 @@ def processSoundList(
         processedSounds[langText][dialectText][phonSystemText].append(phonText)
 
     return processedSounds
-
 
 
 def processChinese(data: dict[str, Any]) -> dict[str, Any]:
