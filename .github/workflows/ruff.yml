@@ -20,4 +20,4 @@ jobs:
       - name: Download ruff
         run: ./.github/scripts/get-ruff.sh
       - name: Run ruff
-        run: ./ruff check ./pyglossary ./tests/
+        run: ./ruff check ./pyglossary ./tests/ --preview
