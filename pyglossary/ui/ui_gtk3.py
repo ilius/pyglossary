@@ -1236,32 +1236,6 @@ class MainWindow(gtk.Dialog, MyDialog):
 		about.icon = ""  # "*.png"
 		self.pages.append(about)
 		# ____________________________________________________________ #
-		notebook = gtk.Notebook()
-		self.notebook = notebook
-		#########
-		for vbox in self.pages:
-			label = gtk.Label(label=vbox.label)
-			label.set_use_underline(True)
-			vb = VBox(spacing=3)
-			if vbox.icon:
-				vbox.image = imageFromFile(vbox.icon)
-				pack(vb, vbox.image)
-			pack(vb, label)
-			vb.show_all()
-			notebook.append_page(vbox, vb)
-			try:
-				notebook.set_tab_reorderable(vbox, True)
-			except AttributeError:
-				pass
-		#######################
-		pack(self.vbox, notebook, 1, 1)
-		# for i in ui.pagesOrder:
-		# 	try:
-		# 		j = pagesOrder[i]
-		# 	except IndexError:
-		# 		continue
-		# 	notebook.reorder_child(self.pages[i], j)
-		# ____________________________________________________________ #
 		handler = GtkSingleTextviewLogHandler(self, textview)
 		log.addHandler(handler)
 		###
@@ -1284,7 +1258,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 			# progressBar.set_text(_("Progress Bar"))
 			# progressBar.get_style_context()
 			# progressBar.set_property("height-request", 20)
-			pack(self.vbox, progressBar, 0, 0)
+			pack(vbox, progressBar, 0, 0)
 		############
 		hbox = HBox(spacing=5)
 		clearButton = gtk.Button(
@@ -1324,7 +1298,33 @@ class MainWindow(gtk.Dialog, MyDialog):
 		hbox.resizeButton = ResizeButton(self)
 		pack(hbox, hbox.resizeButton, 0, 0)
 		######
-		pack(self.vbox, hbox, 0, 0)
+		pack(vbox, hbox, 0, 0)
+		# ____________________________________________________________ #
+		notebook = gtk.Notebook()
+		self.notebook = notebook
+		#########
+		for vbox in self.pages:
+			label = gtk.Label(label=vbox.label)
+			label.set_use_underline(True)
+			vb = VBox(spacing=3)
+			if vbox.icon:
+				vbox.image = imageFromFile(vbox.icon)
+				pack(vb, vbox.image)
+			pack(vb, label)
+			vb.show_all()
+			notebook.append_page(vbox, vb)
+			try:
+				notebook.set_tab_reorderable(vbox, True)
+			except AttributeError:
+				pass
+		#######################
+		pack(self.vbox, notebook, 1, 1)
+		# for i in ui.pagesOrder:
+		# 	try:
+		# 		j = pagesOrder[i]
+		# 	except IndexError:
+		# 		continue
+		# 	notebook.reorder_child(self.pages[i], j)
 		# ____________________________________________________________ #
 		self.vbox.show_all()
 		notebook.set_current_page(0)  # Convert tab
