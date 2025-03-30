@@ -130,6 +130,13 @@ class Reader:
 		if word:
 			keywords.append(word)
 
+		# Check if the entry is need preprocessing
+		lang = data.get("lang")
+		langCode = data.get("lang_code")
+		if lang == "Chinese" or langCode == "zh":
+			from .zh_utils import processChinese
+			data = processChinese(data)
+
 		for formDict in data.get("forms", []):
 			form: str = formDict.get("form", "")
 			if not form:
@@ -156,10 +163,9 @@ class Reader:
 
 				hf_ = cast("T_htmlfile", hf)
 
-				lang = data.get("lang")
-				lang_code =  data.get("lang_code")
-				if lang == "Chinese" or lang_code == "zh":
-					self.writeSoundListChinese(hf_, data.get("sounds"))
+				# TODO: change this
+				if lang == "Chinese" or langCode == "zh":
+					self.writeSoundsChinese(hf_, data.get("sounds"))
 				else:
 					self.writeSoundList(hf_, data.get("sounds"))
 
@@ -212,7 +218,8 @@ class Reader:
 	) -> None:
 		# "homophone" key found in Dutch and Arabic dictionaries
 		# (similar-sounding words for Arabic)
-		for key in ("ipa", "other", "rhymes", "homophone"):
+		KEYS = ("ipa", "other", "rhymes", "homophone")
+		for key in KEYS:
 			value = sound.get(key)
 			if not value:
 				continue
@@ -247,6 +254,36 @@ class Reader:
 				):
 					pass
 
+	def writeSoundsChinese(
+		self,
+		hf: T_htmlfile,
+		soundList: dict[str, Any] | None,
+	) -> None:
+
+		if not soundList:
+			return
+
+		def writePhonDialect(hf: T_htmlfile, dialect: dict[str, Any]) -> None:
+			with hf.element("ul"):
+				for phonSystem, text in dialect.items():
+					with hf.element("li"):
+						with hf.element("font", color=self._pron_color):
+							hf.write(str(", ".join(text)))
+						phonSystemText = f" ({phonSystem})" if phonSystem != "_" else ""
+						hf.write(phonSystemText)
+
+		with hf.element("div", attrib={"class": "pronunciations"}):
+			for lang in soundList:
+				with hf.element("ul"), hf.element("li"):
+					hf.write(f"{lang}: ")
+					for dialect in soundList[lang]:
+						if dialect == "_":
+							writePhonDialect(hf, soundList[lang][dialect])
+							continue
+						with hf.element("ul"), hf.element("li"):
+							hf.write(dialect)
+							writePhonDialect(hf, soundList[lang][dialect])
+
 	def writeSoundList(
 		self,
 		hf: T_htmlfile,
@@ -276,50 +313,6 @@ class Reader:
 		for sound in audioList:
 			with hf.element("div", attrib={"class": "audio"}):
 				self.writeSoundAudio(hf, sound)
-
-	# The pattern for Chinese phonology is quite complicated and required more work.
-	# As for now, only IPA readings of each languages/dialacts will be rendered.
-	#
-	# TODO: add various romanization / phonetic systems. Perhabs in table style.
-	#
-	# strings in tags will simply join together for now (with "Sinological-IPA" removed)
-
-	def writeSoundPronChinese(
-		self,
-		hf: T_htmlfile,
-		sound: dict[str, str|list[str]],
-	) -> None:
-		tags = sound.get("tags")
-		if "Sinological-IPA" in tags and len(tags) > 1:
-			tags.remove("Sinological-IPA")
-
-		tagsText = " ".join(list(tags))
-		value = sound.get("ipa")
-
-		with hf.element("font", color=self._pron_color):
-			hf.write(str(value))
-		hf.write(f" ({tagsText}; ipa)")
-
-	def writeSoundListChinese(
-		self,
-		hf: T_htmlfile,
-		soundList: list[dict[str, Any]] | None,
-	) -> None:
-		if not soundList:
-			return
-
-		def is_labeled(d: dict[str, Any]) -> bool:
-			return "tags" in d and "ipa" in d
-
-		labeledSoundList = [s for s in soundList if is_labeled(s)]
-		if not labeledSoundList:
-			return
-
-		with hf.element("div", attrib={"class": "pronunciations"}):
-			for i, sound in enumerate(labeledSoundList):
-				if i > 0:
-					hf.write(", ")
-				self.writeSoundPronChinese(hf, sound)
 
 	def writeSenseList(
 		self,
