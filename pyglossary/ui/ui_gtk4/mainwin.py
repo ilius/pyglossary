@@ -289,7 +289,7 @@ check {
 			# progressBar.set_text(_("Progress Bar"))
 			# progressBar.get_style_context()
 			# progressBar.set_property("height-request", 20)
-			pack(self.vbox, progressBar)
+			pack(vbox, progressBar)
 		############
 		hbox = HBox(spacing=5)
 		clearButton = gtk.Button(
