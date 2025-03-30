@@ -80,9 +80,11 @@ class AboutWidget(gtk.Box):
 		pack(self, notebook, expand=True)
 		notebook.set_tab_pos(gtk.PositionType.LEFT)
 		##
-		tab1_about = self.newTabLabelWidget(about)
-		tab2_authors = self.newTabWidgetTextView(authors)
-		tab3_license = self.newTabWidgetTextView(license_text)
+		tab1_about = self.newTabLabelWidget(about, wrap=True)
+		# ^ it keeps selecting all text in this label when I switch back to this tab
+		# with textview, it does not automatically render hyperlink (<a>)
+		tab2_authors = self.newTabWidgetTextView(authors, wrap=True)
+		tab3_license = self.newTabWidgetTextView(license_text, wrap=True)
 		##
 		tabs = [
 			(tab1_about, self.newTabTitle("About", "dialog-information-22.png")),
@@ -123,7 +125,7 @@ class AboutWidget(gtk.Box):
 	@staticmethod
 	def newTabLabelWidget(
 		text: str,
-		# wrap: bool = False,
+		wrap: bool = False,
 		# justification: "gtk.Justification | None" = None,
 	) -> gtk.ScrolledWindow:
 		box = VBox()
@@ -132,6 +134,7 @@ class AboutWidget(gtk.Box):
 		label.set_selectable(True)
 		label.set_xalign(0)
 		label.set_yalign(0)
+		label.set_wrap(wrap)
 		pack(box, label, 0, 0)
 		# if wrap:
 		# 	tv.set_wrap_mode(gtk.WrapMode.WORD)
