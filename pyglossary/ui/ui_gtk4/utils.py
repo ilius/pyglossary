@@ -113,8 +113,8 @@ def rgba_parse(colorStr: str) -> gdk.RGBA:
 def pack(
 	box: gtk.Box | gtk.CellLayout,
 	child: gtk.Widget | gtk.CellRenderer,
-	expand: bool = False,
-	fill: bool = False,  # noqa: ARG001
+	expand: bool | int = False,
+	fill: bool | int = False,  # noqa: ARG001
 	padding: int = 0,
 ) -> None:  # noqa: ARG001
 	if padding > 0:

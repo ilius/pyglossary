@@ -174,10 +174,9 @@ check {
 		self.pages.append(vbox)
 		######
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input File:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
+		label = gtk.Label(label=_("Input File:"))
+		pack(hbox, label)
+		label.set_property("xalign", 0)
 		self.convertInputEntry = gtk.Entry()
 		pack(hbox, self.convertInputEntry, 1, 1)
 		button = BrowseButton(
@@ -187,6 +186,7 @@ check {
 			title="Select Input File",
 		)
 		pack(hbox, button)
+		labelSizeGroup.add_widget(label)
 		buttonSizeGroup.add_widget(button)
 		pack(vbox, hbox)
 		##
@@ -196,16 +196,16 @@ check {
 		)
 		###
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Input Format:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
-		self.convertInputFormatCombo = InputFormatBox(self.app, parent=self)
-		buttonSizeGroup.add_widget(self.convertInputFormatCombo.optionsButton)
-		pack(hbox, self.convertInputFormatCombo)
+		label = gtk.Label(label=_("Input Format:"))
+		pack(hbox, label)
+		label.set_property("xalign", 0)
+		self.convertInputFormatCombo = combo = InputFormatBox(self.app, parent=self)
+		pack(hbox, combo)
 		pack(hbox, gtk.Label(), 1, 1)
-		pack(hbox, self.convertInputFormatCombo.dependsButton)
-		pack(hbox, self.convertInputFormatCombo.optionsButton)
+		pack(hbox, combo.dependsButton)
+		pack(hbox, combo.optionsButton)
+		labelSizeGroup.add_widget(label)
+		buttonSizeGroup.add_widget(combo.optionsButton)
 		pack(vbox, hbox)
 		#####
 		hbox = HBox()
@@ -213,10 +213,9 @@ check {
 		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output File:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
+		label = gtk.Label(label=_("Output File:"))
+		pack(hbox, label)
+		label.set_property("xalign", 0)
 		self.convertOutputEntry = gtk.Entry()
 		pack(hbox, self.convertOutputEntry, 1, 1)
 		button = BrowseButton(
@@ -226,6 +225,7 @@ check {
 			title="Select Output File",
 		)
 		pack(hbox, button)
+		labelSizeGroup.add_widget(label)
 		buttonSizeGroup.add_widget(button)
 		pack(vbox, hbox)
 		##
@@ -235,16 +235,16 @@ check {
 		)
 		###
 		hbox = HBox(spacing=3)
-		hbox.label = gtk.Label(label=_("Output Format:"))
-		pack(hbox, hbox.label)
-		labelSizeGroup.add_widget(hbox.label)
-		hbox.label.set_property("xalign", 0)
+		label = gtk.Label(label=_("Output Format:"))
+		pack(hbox, label)
+		label.set_property("xalign", 0)
 		self.convertOutputFormatCombo = OutputFormatBox(self.app, parent=self)
-		buttonSizeGroup.add_widget(self.convertOutputFormatCombo.optionsButton)
 		pack(hbox, self.convertOutputFormatCombo)
 		pack(hbox, gtk.Label(), 1, 1)
 		pack(hbox, self.convertOutputFormatCombo.dependsButton)
 		pack(hbox, self.convertOutputFormatCombo.optionsButton)
+		labelSizeGroup.add_widget(label)
+		buttonSizeGroup.add_widget(self.convertOutputFormatCombo.optionsButton)
 		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=10)
