@@ -113,30 +113,28 @@ def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
 				separator = ", " if langText and writtingSystemText else ""
 				text += f" ({langText}{separator}{writtingSystemText})"
 
-			keyText = translationText + romanText
+			key = (translationText, romanText)
 
-			if keyText not in tempExamples:
-				tempExamples[keyText] = {
+			if key not in tempExamples:
+				tempExamples[key] = {
 					"type": "example",
 					"text": [],
 					targetLang: translationText,
 				}
-			tempExamples[keyText]["text"].append(text)
+			tempExamples[key]["text"].append(text)
 			if romanText:
-				tempExamples[keyText][romanSystemText] = romanText
+				tempExamples[key][romanSystemText] = romanText
 
 		return list(tempExamples.values()) + skippedExamples
 
-	processedSenses = []
-	for sense in senseList:
+	def processSense(sense: dict[str, Any]) -> dict[str, Any]:
 		if "examples" in sense:
-			processedSense = sense
-			processedSense["examples"] = processExamples(sense["examples"])
-			processedSenses.append(processedSense)
+			sense["examples"] = processExamples(sense["examples"])
+		return sense
 
 		# Add other sense-related fix here later.
 
-	return processedSenses
+	return [processSense(s) for s in senseList]
 
 
 def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
