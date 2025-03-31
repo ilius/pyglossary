@@ -72,7 +72,8 @@ def processSoundList(
         "Hakka-Romanization-System": "Hakka Romanization System",
         "Guangdong-Romanization": "Guangdong",
         "Wiktionary-specific": "Wiktionary",
-        "Sinological-IPA": "ipa"
+        "Sinological-IPA": "IPA",
+        "bopomofo": "Bopomofo"
     }
 
     processedSounds = {}
