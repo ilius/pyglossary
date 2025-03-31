@@ -135,6 +135,7 @@ class Reader:
 		langCode = data.get("lang_code")
 		if lang == "Chinese" or langCode == "zh":
 			from .zh_utils import processChinese
+
 			data = processChinese(data)
 
 		for formDict in data.get("forms", []):
@@ -259,7 +260,6 @@ class Reader:
 		hf: T_htmlfile,
 		soundList: dict[str, Any] | None,
 	) -> None:
-
 		if not soundList:
 			return
 
