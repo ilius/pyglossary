@@ -114,7 +114,6 @@ class ConvertArgs:
 
 
 class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
-
 	"""
 	The signature of 'convert' method is different in glossary_v2.py
 		See help(Glossary.convert).
@@ -1250,7 +1249,6 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 
 class Glossary(GlossaryCommon, PluginHandler):
-
 	"""
 	init method is inherited from PluginHandler
 		arguments:

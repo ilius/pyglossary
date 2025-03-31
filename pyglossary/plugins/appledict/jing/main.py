@@ -14,7 +14,6 @@ log.setLevel(logging.DEBUG)
 
 
 class JingTestError(subprocess.CalledProcessError):
-
 	"""
 	A exception that is raised when jing test failed, e.g. returned non-zero.
 	the exit status will be stored in the `returncode` attribute.

@@ -120,7 +120,6 @@ __all__ = ["BabylonLanguage", "languageByCode"]
 
 @dataclass(slots=True, frozen=True)
 class BabylonLanguage:
-
 	"""
 	Babylon language properties.
 

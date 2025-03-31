@@ -51,7 +51,6 @@ show article with title "fine" and point to element id = 'm_en_gbus0362750.070'
 
 # TODO: switch to dataclass
 class KeyData:
-
 	"""
 	Dictionary entries are opened by entering different search texts.
 	This class contains texts by which entry is searchable and other properties.

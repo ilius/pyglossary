@@ -66,7 +66,6 @@ class MetaDataRange:
 
 
 class MetaData2:
-
 	"""
 	Second pass metadata.
 	We need to scan all definitions in order to collect these
@@ -92,7 +91,6 @@ class MetaData2:
 
 
 class GzipWithCheck:
-
 	"""
 	gzip.GzipFile with check.
 	It checks that unpacked data match what was packed.

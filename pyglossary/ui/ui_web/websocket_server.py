@@ -161,7 +161,6 @@ class API:
 
 
 class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
-
 	"""
 	A websocket server waiting for clients to connect.
 

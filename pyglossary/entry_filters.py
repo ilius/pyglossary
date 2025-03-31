@@ -333,7 +333,6 @@ class LanguageCleanup(EntryFilter):
 
 
 class TextListSymbolCleanup(EntryFilter):
-
 	"""
 	Symbols like ♦ (diamond) ● (black circle) or * (star) are used in some
 	plaintext or even html glossaries to represent items of a list

@@ -74,7 +74,6 @@ class GroupState:
 
 
 class EbookWriter:
-
 	"""
 	A class representing a generic ebook containing a dictionary.
 

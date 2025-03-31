@@ -139,6 +139,7 @@ ignore = [
 	"D104",    # Missing docstring in public package
 	"D105",    # Missing docstring in magic method
 	"D107",    # Missing docstring in `__init__`
+	"D203",    # incorrect-blank-line-before-class: may cause conflicts when used with the formatter
 	"D205",    # 1 blank line required between summary line and description
 	"D206",    # Docstring should be indented with spaces, not tabs
 	"D211",    # (Do not enable) no-blank-line-before-class

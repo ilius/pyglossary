@@ -19,7 +19,6 @@ log = logging.getLogger("pyglossary")
 
 
 class indir:
-
 	"""
 	mkdir + chdir shortcut to use with `with` statement.
 

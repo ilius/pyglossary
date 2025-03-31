@@ -159,7 +159,6 @@ class EntryWordData(NamedTuple):
 
 
 class BGLGzipFile(GzipFile):
-
 	"""
 	gzip_no_crc.py contains GzipFile class without CRC check.
 
@@ -196,7 +195,6 @@ class Block:
 
 
 class FileOffS(file):
-
 	"""
 	A file class with an offset.
 
@@ -242,7 +240,6 @@ class FileOffS(file):
 
 
 class DefinitionFields:
-
 	"""
 	Fields of entry definition.
 
