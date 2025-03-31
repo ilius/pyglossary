@@ -314,50 +314,6 @@ class Reader:
 			with hf.element("div", attrib={"class": "audio"}):
 				self.writeSoundAudio(hf, sound)
 
-	# The pattern for Chinese phonology is quite complicated and required more work.
-	# As for now, only IPA readings of each languages/dialacts will be rendered.
-	#
-	# TODO: add various romanization / phonetic systems. Perhabs in table style.
-	#
-	# strings in tags will simply join together for now (with "Sinological-IPA" removed)
-
-	def writeSoundPronChinese(
-		self,
-		hf: T_htmlfile,
-		sound: dict[str, str | list[str]],
-	) -> None:
-		tags = sound.get("tags")
-		if "Sinological-IPA" in tags and len(tags) > 1:
-			tags.remove("Sinological-IPA")
-
-		tagsText = " ".join(list(tags))
-		value = sound.get("ipa")
-
-		with hf.element("font", color=self._pron_color):
-			hf.write(str(value))
-		hf.write(f" ({tagsText}; ipa)")
-
-	def writeSoundListChinese(
-		self,
-		hf: T_htmlfile,
-		soundList: list[dict[str, Any]] | None,
-	) -> None:
-		if not soundList:
-			return
-
-		def is_labeled(d: dict[str, Any]) -> bool:
-			return "tags" in d and "ipa" in d
-
-		labeledSoundList = [s for s in soundList if is_labeled(s)]
-		if not labeledSoundList:
-			return
-
-		with hf.element("div", attrib={"class": "pronunciations"}):
-			for i, sound in enumerate(labeledSoundList):
-				if i > 0:
-					hf.write(", ")
-				self.writeSoundPronChinese(hf, sound)
-
 	def writeSenseList(
 		self,
 		hf: T_htmlfile,

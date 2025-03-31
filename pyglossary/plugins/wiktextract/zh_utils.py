@@ -6,8 +6,138 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from typing import Any
 
+LANGS: tuple[str] = (
+	"Mandarin",
+	"MSC",
+	"Cantonese",
+	"Gan",
+	"Hakka",
+	"Jin",
+	"Hokkien",
+	"Shanghainese",
+	"Teochew",
+	"Leizhou",
+	"Xiang",
+	"Jian'ou",
+	"Fuzhou",
+	"Puxian-Min",
+	"Southern-Pinghua",
+	"Wu",
+	"Middle-Chinese",
+	"Old-Chinese",
+)
 
-def processSoundList(soundList: dict[str, Any]) -> dict[str, Any]:
+PHON_SYSTEMS: tuple[str] = (
+	"Pinyin",
+	"Hanyu-Pinyin",
+	"bopomofo",
+	"Cyrillic",
+	"Tongyong-Pinyin",
+	"Wade-Giles",
+	"Yale",
+	"Gwoyeu-Romatsyh",
+	"Palladius",
+	"Latinxua-Sin-Wenz",
+	"Guangdong",
+	"Guangdong-Romanization",
+	"Kienning-Colloquial-Romanized",
+	"Wugniu",
+	"Jyutping",
+	"Wiktionary-specific",
+	"Phak-fa-su",
+	"PFS",
+	"Hakka-Romanization-System",
+	"Hagfa-Pinyim",
+	"POJ",
+	"Peng'im",
+	"Sinological-IPA",
+	"Foochow-Romanized",
+	"Tai-lo",
+	"Phofsit-Daibuun",
+	"Zhengzhang",
+	"Baxter-Sagart",
+)
+
+WRITTING_SYSTEMS: dict[str, str] = {
+	"Traditional Chinese": "trad.",
+	"Simplified Chinese": "simp.",
+}
+
+
+def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
+	if not senseList:
+		return None
+
+	def processExamples(exampleList: list[dict[str, Any]]) -> list[dict[str, Any]]:
+		# there are "tags" and "raw_tags" which contain language
+		# and writting system info. Usually there are 2 entries for
+		# traditional and simplified characters.
+		# the word is consider the same if both "roman" and translation is the same
+
+		skippedExamples = []
+
+		# {translation+phonetic: {script1: str, script2: str, ...}}
+		tempExamples = {}
+		for example in exampleList:
+			tags = example.get("tags", []) + example.get("raw_tags", [])
+
+			targetLang = "Translation"
+			translationText = ""
+
+			# Only English for now, but other languages should use different keys
+			for _lang in ["english"]:
+				if _lang in example:
+					translationText = example[_lang]
+					targetLang = _lang.capitalize()
+
+			if not tags and not translationText:
+				# Nothing to process, simply copy this example
+				skippedExamples.append(example)
+				continue
+
+			lang = [t for t in tags if t in LANGS]
+			langText = lang[0] if lang else ""
+
+			romanSystem = [t for t in tags if t in PHON_SYSTEMS]
+			romanSystemText = romanSystem[0] if romanSystem else "Romanization"
+
+			writtingSystem = [
+				WRITTING_SYSTEMS[t] for t in tags if t in WRITTING_SYSTEMS
+			]
+			writtingSystemText = writtingSystem[0] if writtingSystem else ""
+
+			romanText = example.get("roman", "")
+
+			text = example.get("text", "")
+			if langText or writtingSystemText:
+				separator = ", " if langText and writtingSystemText else ""
+				text += f" ({langText}{separator}{writtingSystemText})"
+
+			key = (translationText, romanText)
+
+			if key not in tempExamples:
+				tempExamples[key] = {
+					"type": "example",
+					"text": [],
+					targetLang: translationText,
+				}
+			tempExamples[key]["text"].append(text)
+			if romanText:
+				tempExamples[key][romanSystemText] = romanText
+
+		return list(tempExamples.values()) + skippedExamples
+
+	def processSense(sense: dict[str, Any]) -> dict[str, Any]:
+		if "examples" in sense:
+			sense["examples"] = processExamples(sense["examples"])
+		return sense
+
+		# Add other sense-related fix here later.
+
+	return [processSense(s) for s in senseList]
+
+
+def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
 	# {"lang":{"dialect": {"system": ["phonatic"]}}}
 	# "_" = not found
 
@@ -22,60 +152,11 @@ def processSoundList(soundList: dict[str, Any]) -> dict[str, Any]:
 	# Note that many item in data["sounds"] are not extracted properly
 	# in the first place, so only correctly extracted one will be rendered
 
-	LANGS: tuple[str] = (
-		"Mandarin",
-		"Cantonese",
-		"Gan",
-		"Hakka",
-		"Jin",
-		"Hokkien",
-		"Teochew",
-		"Leizhou",
-		"Xiang",
-		"Jian'ou",
-		"Fuzhou",
-		"Puxian-Min",
-		"Southern-Pinghua",
-		"Wu",
-		"Middle-Chinese",
-		"Old-Chinese",
-	)
-
 	# might need to adding more languages in the future
 	# data from wiktextract does not provide the groupping
 	NORTHERN_MIN: tuple[str] = "Jian'ou"  # noqa:F841
 	EASTERN_MIN: tuple[str] = "Fuzhou"  # noqa:F841
 	SOUTHERN_MIN: tuple[str] = ("Hokkien", "Teochew", "Leizhou")  # noqa:F841
-
-	PHON_SYSTEMS: tuple[str] = (
-		"Pinyin",
-		"Hanyu-Pinyin",
-		"bopomofo",
-		"Cyrillic",
-		"Tongyong-Pinyin",
-		"Wade-Giles",
-		"Yale",
-		"Gwoyeu-Romatsyh",
-		"Palladius",
-		"Latinxua-Sin-Wenz",
-		"Guangdong",
-		"Guangdong-Romanization",
-		"Kienning-Colloquial-Romanized",
-		"Jyutping",
-		"Wiktionary-specific",
-		"Phak-fa-su",
-		"PFS",
-		"Hakka-Romanization-System",
-		"Hagfa-Pinyim",
-		"POJ",
-		"Peng'im",
-		"Sinological-IPA",
-		"Foochow-Romanized",
-		"Tai-lo",
-		"Phofsit-Daibuun",
-		"Zhengzhang",
-		"Baxter-Sagart",
-	)
 
 	# it seem like readings without specified phonetic system have default
 	# however, i'm not so sure and the list here is based purely on
@@ -149,5 +230,6 @@ def processSoundList(soundList: dict[str, Any]) -> dict[str, Any]:
 def processChinese(data: dict[str, Any]) -> dict[str, Any]:
 	if "sounds" in data:
 		data["sounds"] = processSoundList(data["sounds"])
-	# TODO
+	if "senses" in data:
+		data["senses"] = processSenses(data["senses"])
 	return data
