@@ -72,7 +72,8 @@ def processSoundList(
         "Hakka-Romanization-System": "Hakka Romanization System",
         "Guangdong-Romanization": "Guangdong",
         "Wiktionary-specific": "Wiktionary",
-        "Sinological-IPA": "ipa"
+        "Sinological-IPA": "IPA",
+        "bopomofo": "Bopomofo"
     }
 
     processedSounds = {}
@@ -99,9 +100,11 @@ def processSoundList(
         if not dialectText:
             dialectText = "_"
 
+        # Few entries from wiktionary e.g.,「鿦」　have non-unicode text string
+        # i.e., "uie\x06". This seem to be an error from wiktionary side.
         phonText = sound.get("zh-pron", "") + sound.get("ipa", "")
-        if not phonText:
-            return None
+        if not phonText or phonText == "uie\x06":
+            continue
 
         if langText not in processedSounds:
             processedSounds[langText] = {dialectText: {phonSystemText: [phonText]}}
