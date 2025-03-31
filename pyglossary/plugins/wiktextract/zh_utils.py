@@ -100,8 +100,10 @@ def processSoundList(
             dialectText = "_"
 
         phonText = sound.get("zh-pron", "") + sound.get("ipa", "")
-        if not phonText:
-            return None
+        # Few entries from wiktionary e.g.,「鿦」　have non-unicode text string
+        # i.e., "uie\x06". This seem to be an error from wiktionary side.
+        if not phonText or phonText == "uie\x06":
+            continue
 
         if langText not in processedSounds:
             processedSounds[langText] = {dialectText: {phonSystemText: [phonText]}}
