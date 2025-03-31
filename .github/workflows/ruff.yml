@@ -19,5 +19,7 @@ jobs:
         run: ls -l
       - name: Download ruff
         run: ./.github/scripts/get-ruff.sh
-      - name: Run ruff
-        run: ./ruff check ./pyglossary ./tests/ --preview
+      - name: Format and check code with ruff
+        run: ./ruff format; ./ruff check --fix --preview
+      - name: Check for changes
+        run: ./.github/scripts/no-diff.sh
