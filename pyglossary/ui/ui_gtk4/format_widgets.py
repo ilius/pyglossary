@@ -40,6 +40,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.plugin_prop import PluginProp
 
+_ = str
+
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readDesc = [
 	plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
@@ -207,18 +209,21 @@ class FormatButton(gtk.Button):
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
-	def __init__(self, descList: list[str], parent: gtk.Widget | None = None) -> None:
+	def __init__(
+		self,
+		descList: list[str],
+		onChanged: Callable,
+		parent: gtk.Widget | None = None,
+	) -> None:
 		gtk.Button.__init__(self)
 		self.set_label(self.noneLabel)
 		###
 		self.descList = descList
+		self.onChanged = onChanged
 		self._parent = parent
 		self.activePlugin = None
 		###
 		self.connect("clicked", self.onClick)
-
-	def onChanged(self, _obj: Any = None) -> None:
-		pass
 
 	def onDialogResponse(self, dialog: gtk.Dialog, response_id: int) -> None:
 		print(f"onDialogResponse: {dialog}, {response_id}")
@@ -479,7 +484,8 @@ class FormatOptionsDialog(gtk.Dialog):
 		callback: Callable,
 		*args,  # noqa: ANN002
 	) -> str:
-		actionId = self.formatName + "_" + str(path[0]) + "_" + name
+		name = name.strip()
+		actionId = self.formatName + "." + chr(97 + int(path[0])) + "." + name
 		if actionId not in self.actionIds:
 			action = gio.SimpleAction(name=actionId)
 			action.connect("activate", callback, *args)
@@ -515,8 +521,9 @@ class FormatOptionsDialog(gtk.Dialog):
 			else:
 				return False
 		menu = gtk.PopoverMenu()
-		menu.set_parent(self)
-		menuM = menu.get_menu_model()  # gio.MenuModel
+		# menu.set_parent(self)
+		menuM = gio.Menu()
+		menu.set_menu_model(menuM)  # gio.MenuModel
 		if prop.customValue:
 			item = gio.MenuItem()
 			item.set_label("[Custom Value]")
@@ -561,14 +568,20 @@ class FormatOptionsDialog(gtk.Dialog):
 						subMenu.append_item(subItem)
 					item.set_submenu(subMenu)
 				item.show()
-				menu.append_item(item)
+				menuM.append_item(item)
 		else:
 			for value in propValues:
 				item = gio.MenuItem()
 				item.set_label(value)
-				item.connect("activate", self.valueItemActivate, itr)
-				item.show()
-				menu.append_item(item)
+				item.set_detailed_action(
+					self.addAction(
+						path,
+						f"value-{value}",
+						self.valueItemActivate,
+						itr,
+					),
+				)
+				menuM.append_item(item)
 		# etime = gtk.get_current_event_time()
 		menu.popup()
 		return True
@@ -590,17 +603,26 @@ class FormatOptionsDialog(gtk.Dialog):
 		return optionsValues
 
 
-class FormatBox(FormatButton):
+class FormatBox(gtk.Box):
 	def __init__(
 		self,
 		app: gtk.Application,
 		descList: list[str],
 		parent: gtk.Widget | None = None,
+		labelSizeGroup: gtk.SizeGroup = None,
+		buttonSizeGroup: gtk.SizeGroup = None,
 	) -> None:
-		self.app = app
-		FormatButton.__init__(self, descList, parent=parent)
+		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL, spacing=3)
 
-		self.optionsValues = {}
+		self.app = app
+		self._parent = parent
+		self.button = FormatButton(
+			descList,
+			parent=parent,
+			onChanged=self.onChanged,
+		)
+
+		self._optionsValues = {}
 
 		self.optionsButton = gtk.Button(label="Options")
 		# TODO: self.optionsButton.set_icon_name
@@ -614,8 +636,34 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
 
+		label = gtk.Label(label=_("Input Format:"), xalign=0)
+		pack(self, label)
+		pack(self, self.button)
+		pack(self, gtk.Label(), 1, 1)
+		pack(self, self.dependsButton)
+		pack(self, self.optionsButton)
+
+		self.show()
+		self.dependsButton.hide()
+		self.optionsButton.hide()
+
+		if labelSizeGroup:
+			labelSizeGroup.add_widget(label)
+		if buttonSizeGroup:
+			buttonSizeGroup.add_widget(self.optionsButton)
+
+	def getActive(self) -> str:
+		return self.button.getActive()
+
+	def setActive(self, active: str) -> None:
+		self.button.setActive(active)
+
+	@property
+	def optionsValues(self) -> dict[str, Any]:
+		return self._optionsValues
+
 	def setOptionsValues(self, optionsValues: dict[str, Any]) -> None:
-		self.optionsValues = optionsValues
+		self._optionsValues = optionsValues
 
 	def kind(self) -> str:
 		"""Return 'r' or 'w'."""
@@ -633,7 +681,7 @@ class FormatBox(FormatButton):
 			self.app,
 			formatName,
 			options,
-			self.optionsValues,
+			self._optionsValues,
 			transient_for=self._parent,
 		)
 		dialog.set_title("Options for " + formatName)
@@ -646,7 +694,7 @@ class FormatBox(FormatButton):
 		response_id: gtk.ResponseType,
 	) -> None:
 		if response_id == gtk.ResponseType.OK:
-			self.optionsValues = dialog.getOptionsValues()
+			self._optionsValues = dialog.getOptionsValues()
 		dialog.destroy()
 
 	def dependsButtonClicked(self, button: gtk.Button) -> None:
@@ -670,7 +718,7 @@ class FormatBox(FormatButton):
 		if not name:
 			self.optionsButton.set_visible(False)
 			return
-		self.optionsValues.clear()
+		self._optionsValues.clear()
 
 		self.optionsButton.set_visible(bool(self.getActiveOptions()))
 
