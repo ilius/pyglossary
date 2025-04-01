@@ -4,9 +4,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Sequence
 	from typing import Any
 
-LANGS: tuple[str] = (
+LANGS: Sequence[str] = (
 	"Mandarin",
 	"MSC",
 	"Cantonese",
@@ -27,7 +28,7 @@ LANGS: tuple[str] = (
 	"Old-Chinese",
 )
 
-PHON_SYSTEMS: tuple[str] = (
+PHON_SYSTEMS: Sequence[str] = (
 	"Pinyin",
 	"Hanyu-Pinyin",
 	"bopomofo",
@@ -154,9 +155,9 @@ def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
 
 	# might need to adding more languages in the future
 	# data from wiktextract does not provide the groupping
-	NORTHERN_MIN: tuple[str] = "Jian'ou"  # noqa:F841
-	EASTERN_MIN: tuple[str] = "Fuzhou"  # noqa:F841
-	SOUTHERN_MIN: tuple[str] = ("Hokkien", "Teochew", "Leizhou")  # noqa:F841
+	NORTHERN_MIN: Sequence[str] = ("Jian'ou",)  # noqa:F841
+	EASTERN_MIN: Sequence[str] = ("Fuzhou",)  # noqa:F841
+	SOUTHERN_MIN: Sequence[str] = ("Hokkien", "Teochew", "Leizhou")  # noqa:F841
 
 	# it seem like readings without specified phonetic system have default
 	# however, i'm not so sure and the list here is based purely on
