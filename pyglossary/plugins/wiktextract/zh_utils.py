@@ -140,7 +140,6 @@ def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
 
 def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
 	# {"lang":{"dialect": {"system": ["phonatic"]}}}
-	# "_" = not found
 
 	# key 'tags' contains:
 	#   - language ["Mandarin"]
@@ -200,13 +199,9 @@ def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
 		if not phonSystem:
 			phonSystem.append(DEFAULT_PS.get(langText, ""))
 		phonSystemText = ", ".join(PREFERRED_PS_NAME.get(p, p) for p in phonSystem)
-		if not phonSystemText:
-			phonSystemText = "_"
 
 		dialect = [t for t in tags if t != langText and t not in phonSystem]
 		dialectText = ", ".join(dialect)
-		if not dialectText:
-			dialectText = "_"
 
 		# Few entries from wiktionary e.g.,「鿦」　have non-unicode text string
 		# i.e., "uie\x06". This seem to be an error from wiktionary side.

@@ -272,7 +272,7 @@ class Reader:
 		def writePhonDialect(hf: T_htmlfile, dialect: dict[str, Any]) -> None:
 			with hf.element("ul"):
 				for phonSystem, text in dialect.items():
-					className = f"pron {phonSystem}" if phonSystem != "_" else "pron"
+					className = f"pron {phonSystem}" if phonSystem else "pron"
 					with hf.element("li"):
 						with hf.element(
 							"font",
@@ -282,7 +282,7 @@ class Reader:
 							},
 						):
 							hf.write(str(", ".join(text)))
-						if phonSystem != "_":
+						if phonSystem:
 							hf.write(f" ({phonSystem})")
 
 		with hf.element("div", attrib={"class": "pronunciations"}):
@@ -290,7 +290,7 @@ class Reader:
 				with hf.element("ul"), hf.element("li"):
 					hf.write(f"{lang}: ")
 					for dialect in soundList[lang]:
-						if dialect == "_":
+						if not dialect:
 							writePhonDialect(hf, soundList[lang][dialect])
 							continue
 						with hf.element("ul"), hf.element("li"):
