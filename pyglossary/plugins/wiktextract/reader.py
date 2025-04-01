@@ -224,7 +224,13 @@ class Reader:
 			value = sound.get(key)
 			if not value:
 				continue
-			with hf.element("font", color=self._pron_color):
+			with hf.element(
+				"font",
+				attrib={
+					"color": self._pron_color,
+					"class": f"pron {key}",
+				},
+			):
 				hf.write(str(value))
 			hf.write(f" ({key})")
 
@@ -266,11 +272,18 @@ class Reader:
 		def writePhonDialect(hf: T_htmlfile, dialect: dict[str, Any]) -> None:
 			with hf.element("ul"):
 				for phonSystem, text in dialect.items():
+					className = f"pron {phonSystem}" if phonSystem != "_" else "pron"
 					with hf.element("li"):
-						with hf.element("font", color=self._pron_color):
+						with hf.element(
+							"font",
+							attrib={
+								"color": self._pron_color,
+								"class": className,
+							},
+						):
 							hf.write(str(", ".join(text)))
-						phonSystemText = f" ({phonSystem})" if phonSystem != "_" else ""
-						hf.write(phonSystemText)
+						if phonSystem != "_":
+							hf.write(f" ({phonSystem})")
 
 		with hf.element("div", attrib={"class": "pronunciations"}):
 			for lang in soundList:
