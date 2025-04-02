@@ -33,7 +33,7 @@ __all__ = ["Reader"]
 class Reader(TextGlossaryReader):
 	useByteProgress = True
 	depends = {
-		"mistune": "mistune==3.0.1",
+		"mistune": "mistune",
 	}
 
 	_extract_inline_images: bool = True

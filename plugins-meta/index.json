@@ -815,7 +815,7 @@
 			"encoding": "utf-8"
 		},
 		"readDepends": {
-			"mistune": "mistune==3.0.1"
+			"mistune": "mistune"
 		},
 		"readCompressions": [
 			"gz",
