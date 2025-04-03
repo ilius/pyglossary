@@ -210,6 +210,9 @@ mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
 	"RUF015",  # Prefer `next(zip(*_list, strict=False))` over single element slice
 	"PLR2004", # Magic value used in comparison, consider replacing `...` with a constant variable
 ]
+"pyglossary/plugins/wiktextract/reader.py" = [
+	"RUF003", # Comment contains ambiguous ...
+]
 "scripts/wiki-formats.py" = ["E501"]
 "pyglossary/io_utils.py" = ["ANN"]
 "pyglossary/plugins/babylon_bgl/reader_debug.py" = ["ANN", "FURB"]

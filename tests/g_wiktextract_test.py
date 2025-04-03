@@ -18,11 +18,11 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 				"wiktextract/10-kaikki-fa-PlacesInIran.jsonl": "f7f4a92f",
 				"wiktextract/10-kaikki-fa-pos-adv.jsonl": "2ddcbbbd",
 				"wiktextract/03-kaikki-fa-selection.jsonl": "31223225",
-				"wiktextract/03-kaikki-fa-selection-v2.txt": "33a6083c",
-				"wiktextract/10-kaikki-fa-PlacesInIran-category-v2.txt": "4cc78fab",
-				"wiktextract/10-kaikki-fa-PlacesInIran-v2.txt": "5c8bac1a",
-				"wiktextract/10-kaikki-fa-pos-adv-v2.txt": "21ac7cc8",
-				"wiktextract/10-kaikki-fa-pos-adv-word_title-v2.txt": "cc836696",
+				"wiktextract/03-kaikki-fa-selection-v3.txt": "9e6dcb38",
+				"wiktextract/10-kaikki-fa-PlacesInIran-category-v3.txt": "da7ae87d",
+				"wiktextract/10-kaikki-fa-PlacesInIran-v3.txt": "c904b376",
+				"wiktextract/10-kaikki-fa-pos-adv-v3.txt": "6bd35c97",
+				"wiktextract/10-kaikki-fa-pos-adv-word_title-v3.txt": "3217ea15",
 			},
 		)
 		os.environ["CALC_FILE_SIZE"] = "1"
@@ -42,13 +42,13 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 	def test_convert_jsonl_txt_1(self):
 		self.convert_jsonl_txt(
 			"10-kaikki-fa-PlacesInIran",
-			"10-kaikki-fa-PlacesInIran-v2",
+			"10-kaikki-fa-PlacesInIran-v3",
 		)
 
 	def test_convert_jsonl_txt_1_cats(self):
 		self.convert_jsonl_txt(
 			"10-kaikki-fa-PlacesInIran",
-			"10-kaikki-fa-PlacesInIran-category-v2",
+			"10-kaikki-fa-PlacesInIran-category-v3",
 			readOptions={
 				"categories": True,
 			},
@@ -57,13 +57,13 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 	def test_convert_jsonl_txt_2(self):
 		self.convert_jsonl_txt(
 			"10-kaikki-fa-pos-adv",
-			"10-kaikki-fa-pos-adv-v2",
+			"10-kaikki-fa-pos-adv-v3",
 		)
 
 	def test_convert_jsonl_txt_2_word_title(self):
 		self.convert_jsonl_txt(
 			"10-kaikki-fa-pos-adv",
-			"10-kaikki-fa-pos-adv-word_title-v2",
+			"10-kaikki-fa-pos-adv-word_title-v3",
 			readOptions={
 				"word_title": True,
 			},
@@ -72,7 +72,7 @@ class TestGlossaryWiktextract(TestGlossaryBase):
 	def test_convert_jsonl_txt_3(self):
 		self.convert_jsonl_txt(
 			"03-kaikki-fa-selection",
-			"03-kaikki-fa-selection-v2",
+			"03-kaikki-fa-selection-v3",
 		)
 		# testing these features
 		# "antonyms" in sense

@@ -1811,7 +1811,6 @@
 		"canWrite": false,
 		"readOptions": {
 			"word_title": false,
-			"pron_color": "gray",
 			"gram_color": "green",
 			"example_padding": "10px 20px",
 			"audio": true,
