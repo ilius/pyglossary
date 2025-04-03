@@ -35,6 +35,7 @@ __all__ = [
 	"VBox",
 	"dialog_add_button",
 	"gtk_event_iteration_loop",
+	"hasLightTheme",
 	"imageFromFile",
 	"pack",
 	"rgba_parse",
@@ -221,3 +222,14 @@ def showInfo(msg, **kwargs) -> None:  # noqa: ANN001
 	# gtk-dialog-info is deprecated since version 3.10:
 	# Use named icon “dialog-information”.
 	showMsg(msg, iconName="gtk-dialog-info", **kwargs)
+
+
+def _getLightness(c: gdk.Color) -> float:
+	return (max(c.red, c.green, c.blue) + min(c.red, c.green, c.blue)) / 2
+
+
+def hasLightTheme(widget: gtk.Widget) -> bool:
+	fg = widget.get_color()
+	# bg = ... no idea how to get it in Gtk4
+	# return _getLightness(fg) < _getLightness(bg)
+	return _getLightness(fg) < 0.5

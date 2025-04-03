@@ -7,7 +7,11 @@ from pyglossary.ui.ui_gtk4.utils import rgba_parse
 
 
 class ConvertConsole(gtk.ScrolledWindow):
-	def __init__(self, mainWin: MainWinType) -> None:
+	def __init__(
+		self,
+		mainWin: MainWinType,
+		lightTheme: bool = False,
+	) -> None:
 		gtk.ScrolledWindow.__init__(self)
 		self.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
 		self._textview = textview = gtk.TextView()
@@ -16,12 +20,16 @@ class ConvertConsole(gtk.ScrolledWindow):
 		textview.get_style_context().add_class("console")
 		self._handler = handler = GtkSingleTextviewLogHandler(mainWin, textview)
 		###
-		handler.setColor("CRITICAL", rgba_parse("red"))
-		handler.setColor("ERROR", rgba_parse("red"))
-		handler.setColor("WARNING", rgba_parse("yellow"))
-		handler.setColor("INFO", rgba_parse("white"))
-		handler.setColor("DEBUG", rgba_parse("white"))
-		handler.setColor("TRACE", rgba_parse("white"))
+		normalColor = rgba_parse("black" if lightTheme else "white")
+		errorColor = rgba_parse("red")
+		warningColor = rgba_parse("hsl(30, 100%, 50%)" if lightTheme else "yellow")
+		###
+		handler.setColor("CRITICAL", errorColor)
+		handler.setColor("ERROR", errorColor)
+		handler.setColor("WARNING", warningColor)
+		handler.setColor("INFO", normalColor)
+		handler.setColor("DEBUG", normalColor)
+		handler.setColor("TRACE", normalColor)
 		###
 		textview.get_buffer().set_text("Output & Error Console:\n")
 		textview.set_editable(False)

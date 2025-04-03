@@ -46,6 +46,7 @@ from .utils import (
 	VBox,
 	getWorkAreaSize,
 	gtk_event_iteration_loop,
+	hasLightTheme,
 	pack,
 )
 
@@ -131,10 +132,6 @@ class MainWindow(gtk.ApplicationWindow):
 	# 	return self.ui.config
 
 	css = """
-textview.console text {
-	background-color: rgb(0, 0, 0);
-}
-
 check {
 	min-width: 1.25em;
 	min-height: 1.25em;
@@ -178,6 +175,15 @@ progressbar progress, trough {min-height: 0.6em;}
 		self.ui = ui
 		#####
 		gtk.ApplicationWindow.__init__(self, application=app, **kwargs)
+		#####
+		self.lightTheme = hasLightTheme(self)
+		# this may not be needed in most themes,
+		# but just to be sure the colors are not messed up
+		if self.lightTheme:
+			self.css += "textview.console text {background-color: rgb(255, 255, 255);}"
+		else:
+			self.css += "textview.console text {background-color: rgb(0, 0, 0);}"
+		#####
 		self.set_title("PyGlossary (Gtk4)")
 		self.progressBar = progressBar
 		#####
@@ -315,7 +321,10 @@ progressbar progress, trough {min-height: 0.6em;}
 		self.inOutBoxes.append(hbox)
 		pack(page, hbox)
 		#####
-		self.convertConsole = ConvertConsole(self)
+		self.convertConsole = ConvertConsole(
+			self,
+			lightTheme=self.lightTheme,
+		)
 		log.addHandler(self.convertConsole.handler)
 		pack(page, self.convertConsole, expand=True)
 		# ____________________________________________________________ #
