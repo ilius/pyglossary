@@ -140,6 +140,8 @@ check {
 	min-height: 1.25em;
 }
 
+progressbar progress, trough {min-height: 0.6em;}
+
 .margin_03 {
 	margin-top: 0.5em;
 	margin-right: 0.5em;
