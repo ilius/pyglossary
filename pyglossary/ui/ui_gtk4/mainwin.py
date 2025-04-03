@@ -220,6 +220,7 @@ check {
 		# ____________________ Tab 1 - Convert ____________________ #
 		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
+		self.inOutBoxes: list[gtk.Box] = []
 		####
 		page = VBox(spacing=5)
 		page.label = _("Convert")
@@ -241,6 +242,7 @@ check {
 		pack(hbox, button)
 		labelSizeGroup.add_widget(label)
 		buttonSizeGroup.add_widget(button)
+		self.inOutBoxes.append(hbox)
 		pack(page, hbox)
 		##
 		self.convertInputEntry.connect(
@@ -254,6 +256,7 @@ check {
 			labelSizeGroup=labelSizeGroup,
 			buttonSizeGroup=buttonSizeGroup,
 		)
+		self.inOutBoxes.append(self.inputFormatBox)
 		pack(page, self.inputFormatBox)
 		#####
 		hbox = HBox()
@@ -275,6 +278,7 @@ check {
 		pack(hbox, button)
 		labelSizeGroup.add_widget(label)
 		buttonSizeGroup.add_widget(button)
+		self.inOutBoxes.append(hbox)
 		pack(page, hbox)
 		##
 		self.convertOutputEntry.connect(
@@ -282,13 +286,14 @@ check {
 			self.convertOutputEntryChanged,
 		)
 		###
-		self.outputFormatCombo = OutputFormatBox(
+		self.outputFormatBox = OutputFormatBox(
 			self.app,
 			parent=self,
 			labelSizeGroup=labelSizeGroup,
 			buttonSizeGroup=buttonSizeGroup,
 		)
-		pack(page, self.outputFormatCombo)
+		self.inOutBoxes.append(self.outputFormatBox)
+		pack(page, self.outputFormatBox)
 		#####
 		hbox = HBox(spacing=10)
 		hbox.get_style_context().add_class("margin_03")
@@ -305,6 +310,7 @@ check {
 		self.convertButton.set_size_request(300, 40)
 		pack(hbox, self.convertButton)
 		##
+		self.inOutBoxes.append(hbox)
 		pack(page, hbox)
 		#####
 		self.convertConsole = ConvertConsole(self)
@@ -379,7 +385,7 @@ check {
 		if inputFormat:
 			self.inputFormatBox.setActive(inputFormat)
 		if outputFormat:
-			self.outputFormatCombo.setActive(outputFormat)
+			self.outputFormatBox.setActive(outputFormat)
 
 		if reverse:
 			log.error("Gtk interface does not support Reverse feature")
@@ -387,7 +393,7 @@ check {
 		if readOptions:
 			self.inputFormatBox.setOptionsValues(readOptions)
 		if writeOptions:
-			self.outputFormatCombo.setOptionsValues(writeOptions)
+			self.outputFormatBox.setOptionsValues(writeOptions)
 
 		self.convertOptions = convertOptions
 		if convertOptions:
@@ -425,6 +431,10 @@ check {
 	def consoleClearButtonClicked(self, _widget: Any = None) -> None:
 		self.convertConsole.set_text("")
 
+	def setInOutBoxesSensivive(self, sensitive: bool) -> None:
+		for hbox in self.inOutBoxes:
+			hbox.set_sensitive(sensitive)
+
 	def convertClicked(self, _widget: Any = None) -> None:
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
@@ -436,15 +446,15 @@ check {
 		if not outPath:
 			log.critical("Output file path is empty!")
 			return
-		outFormat = self.outputFormatCombo.getActive()
+		outFormat = self.outputFormatBox.getActive()
 
 		self.status("Converting...")
+		self.setInOutBoxesSensivive(False)
 		gtk_event_iteration_loop()
 
-		self.convertButton.set_sensitive(False)
 		self.progressTitle = "Converting"
 		readOptions = self.inputFormatBox.optionsValues
-		writeOptions = self.outputFormatCombo.optionsValues
+		writeOptions = self.outputFormatBox.optionsValues
 		glos = Glossary(ui=self.ui)
 		glos.config = self.config
 		glos.progressbar = self.progressBar is not None
@@ -476,7 +486,7 @@ check {
 			glos.cleanup()
 
 		finally:
-			self.convertButton.set_sensitive(True)
+			self.setInOutBoxesSensivive(True)
 			self.assert_quit = False
 			self.progressTitle = ""
 
@@ -502,7 +512,7 @@ check {
 
 	def convertOutputEntryChanged(self, _widget: Any = None) -> None:
 		outPath = self.convertOutputEntry.get_text()
-		outFormat = self.outputFormatCombo.getActive()
+		outFormat = self.outputFormatBox.getActive()
 		if not outPath:
 			return
 		if outPath.startswith("file://"):
@@ -519,7 +529,7 @@ check {
 				pass
 			else:
 				outFormat = outputArgs.formatName
-				self.outputFormatCombo.setActive(outFormat)
+				self.outputFormatBox.setActive(outFormat)
 
 		if outFormat:
 			self.status('Press "Convert"')
