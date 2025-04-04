@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 
-import glob
 import logging
 import os
 import re
 import sys
+from glob import glob
 from os.path import dirname, exists, isdir, join
 
 from setuptools import setup
@@ -80,6 +80,15 @@ root_data_file_names = [
 	"config.json",
 ]
 
+res_files = (
+	glob("res/*.png")
+	+ glob("res/*.svg")
+	+ [
+		"res/pyglossary.ico",
+		"res/resources.xml",
+	]
+)
+
 sep = "\\\\" if os.sep == "\\" else os.sep
 
 package_data = {
@@ -90,8 +99,6 @@ package_data = {
 	],
 	"pyglossary": [
 		"*.py",
-		"xdxf.xsl",
-		"res/*",
 		"plugins/*",
 		"langs/*",
 		"plugin_lib/*.py",
@@ -112,6 +119,7 @@ package_data = {
 		"xdxf/*.py",
 		"repro_zipfile/*.py",
 	]
+	+ res_files
 	+ [
 		# safest way found so far to include every resource of plugins
 		# producing plugins/pkg/*, plugins/pkg/sub1/*, ... except .pyc/.pyo
@@ -120,7 +128,7 @@ package_data = {
 			"",
 			join(dirpath, fname),
 		)
-		for top in glob.glob(
+		for top in glob(
 			join(dirname(__file__), "pyglossary", "plugins"),
 		)
 		for dirpath, _, files in os.walk(top)
@@ -132,6 +140,7 @@ package_data = {
 
 with open("README.md", encoding="utf-8") as fh:
 	long_description = fh.read()
+
 
 setup(
 	name="pyglossary",
@@ -160,7 +169,7 @@ setup(
 	data_files=[
 		(relRootDir, root_data_file_names),
 		(f"{relRootDir}/plugins-meta", ["plugins-meta/index.json"]),
-		(f"{relRootDir}/res", glob.glob("res/*")),
+		(f"{relRootDir}/res", res_files),
 	],
 	extras_require={
 		"full": [
