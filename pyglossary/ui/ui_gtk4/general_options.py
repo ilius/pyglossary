@@ -31,6 +31,8 @@ from .utils import (
 	pack,
 )
 
+__all__ = ["GeneralOptionsButton"]
+
 
 class GeneralOptionsDialog(gtk.Dialog):
 	def onCloseRequest(self, _widget: Any) -> bool:

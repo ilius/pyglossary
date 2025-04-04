@@ -31,6 +31,8 @@ from pyglossary.ui.base import UIBase
 from .mainwin import MainWindow
 from .utils import gtk_event_iteration_loop
 
+__all__ = ["UI"]
+
 log = logging.getLogger("pyglossary")
 
 glib.set_prgname("PyGlossary (Gtk4)")

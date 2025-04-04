@@ -27,6 +27,8 @@ from gi.repository import Gtk as gtk
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+__all__ = ["BrowseButton"]
+
 
 class BrowseButton(gtk.Button):
 	def __init__(

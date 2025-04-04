@@ -40,6 +40,9 @@ if TYPE_CHECKING:
 
 	from pyglossary.plugin_prop import PluginProp
 
+__all__ = ["InputFormatBox", "OutputFormatBox"]
+
+
 _ = str
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}

@@ -31,9 +31,11 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 __all__ = [
+	"FixedSizePicture",
 	"HBox",
 	"VBox",
 	"dialog_add_button",
+	"getWorkAreaSize",
 	"gtk_event_iteration_loop",
 	"hasLightTheme",
 	"imageFromFile",

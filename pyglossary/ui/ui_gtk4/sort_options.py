@@ -26,6 +26,9 @@ from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 
 from .utils import HBox, pack
 
+__all__ = ["SortOptionsBox"]
+
+
 # log = logging.getLogger("pyglossary")
 
 

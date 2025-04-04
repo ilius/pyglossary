@@ -55,6 +55,9 @@ if TYPE_CHECKING:
 
 	from pyglossary.ui_type import UIType
 
+__all__ = ["MainWindow"]
+
+
 log = logging.getLogger("pyglossary")
 
 _ = str  # later replace with translator function

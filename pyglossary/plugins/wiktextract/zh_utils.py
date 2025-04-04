@@ -7,6 +7,8 @@ if TYPE_CHECKING:
 	from collections.abc import Sequence
 	from typing import Any
 
+__all__ = ["processChinese"]
+
 LANGS: Sequence[str] = (
 	"Mandarin",
 	"MSC",
