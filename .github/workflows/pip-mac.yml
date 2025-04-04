@@ -1,0 +1,36 @@
+name: pip-macos
+
+on:
+  push:
+    branches: ["master", "dev", "github-action-macos"]
+
+jobs:
+  pip-git-url:
+    name: pip install git+... on Mac OS
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - name: pip install git+...
+        id: create-release
+        run: python -m pip install git+https://github.com/ilius/pyglossary.git
+
+  pip-local:
+    name: pip install . on Mac OS
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Fetch tags
+        run: git fetch --prune --unshallow --tags
+      - name: List tags
+        run: git tag
+      - name: pip install .
+        id: create-release
+        run: python -m pip install .
