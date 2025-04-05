@@ -484,8 +484,6 @@ class Reader(ReaderUtils):
 		hf: T_htmlfile,
 		gramGrpList: list[Element],
 	) -> None:
-		from lxml import etree as ET
-
 		color = self._gram_color
 		attrib = {
 			"class": self.gramClass,
@@ -505,10 +503,9 @@ class Reader(ReaderUtils):
 			sep = self.getCommaSep(parts[0])
 			text = sep.join(parts)
 
-			with hf.element("font", attrib=attrib):
-				hf.write(text)
-
-			hf.write(ET.Element("br"))
+			with hf.element("div"):
+				with hf.element("font", attrib=attrib):
+					hf.write(text)
 
 	def writeGramGroupChildren(
 		self,
