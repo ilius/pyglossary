@@ -125,6 +125,8 @@ class Reader(ReaderUtils):
 		"infl",
 		"obj",
 		"lbl",
+		"gloss",
+		"idarex",
 	}
 
 	def writeRef(  # noqa: PLR6301
@@ -330,10 +332,13 @@ class Reader(ReaderUtils):
 		langs: list[Element] = []
 		for child in sense.iterchildren():
 			if child.tag == f"{_TEI}cit":
-				if child.attrib.get("type", "trans") == "trans":
+				typ = child.attrib.get("type", "trans")
+				if typ == "trans":
 					transCits.append(child)
-				elif child.attrib.get("type") == "example":
+				elif typ == "example":
 					exampleCits.append(child)
+				elif typ == "idiom":
+					transCits.append(child)  # FIXME
 				else:
 					log.warning(f"unknown cit type: {self.tostring(child)}")
 				continue
@@ -377,7 +382,10 @@ class Reader(ReaderUtils):
 				xrList.append(child)
 				continue
 
-			log.warning(f"unknown tag {child.tag} in <sense>")
+			if child.tag == f"{_TEI}form":
+				continue
+
+			log.warning(f"unknown tag {child.tag} in <sense>: {self.tostring(child)}")
 
 		return _ParsedSense(
 			transCits=transCits,
@@ -514,6 +522,11 @@ class Reader(ReaderUtils):
 	) -> None:
 		self.writeGramGroups(hf, elem.findall("gramGrp", _NAMESPACE))
 
+	@classmethod
+	def isMetaSense(cls, sense: Element) -> bool:
+		childTagSet = {child.tag for child in sense.iterchildren()}
+		return childTagSet == {f"{_TEI}sense"}
+
 	def writeSense(
 		self,
 		hf: T_htmlfile,
@@ -521,9 +534,14 @@ class Reader(ReaderUtils):
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
 		self.writeGramGroupChildren(hf, sense)
+		subSenses = [
+			subSense
+			for subSense in sense.findall(".//sense", _NAMESPACE)
+			if not self.isMetaSense(subSense)
+		]
 		self.makeList(
 			hf,
-			sense.findall("sense", _NAMESPACE),
+			subSenses,
 			self.writeSenseSense,
 			single_prefix="",
 		)
