@@ -22,6 +22,7 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from gi.repository import Gio as gio
+from gi.repository import GObject as gobject
 from gi.repository import Gtk as gtk
 
 from pyglossary import core
@@ -56,6 +57,14 @@ writeDesc = [
 log = logging.getLogger("pyglossary")
 
 
+class FormatListViewItem(gobject.Object):
+	desc = gobject.Property(type=str)
+
+	def __init__(self, desc: str) -> None:
+		super().__init__()
+		self.desc = desc
+
+
 class FormatDialog(gtk.Dialog):
 	def __init__(
 		self,
@@ -85,25 +94,33 @@ class FormatDialog(gtk.Dialog):
 			gtk.ResponseType.OK,
 		)
 		###
-		treev = gtk.TreeView()
-		treeModel = gtk.ListStore(str)
-		treev.set_headers_visible(False)
-		treev.set_model(treeModel)
-		treev.connect("row-activated", self.rowActivated)
-		# treev.connect("response", self.onResponse)
-		###
-		self.treev = treev
-		#############
-		cell = gtk.CellRendererText(editable=False)
-		col = gtk.TreeViewColumn(
-			title="Descriptin",
-			cell_renderer=cell,
-			text=0,
+		listModel = gio.ListStore.new(FormatListViewItem)
+		factory = gtk.SignalListItemFactory()
+		factory.connect("setup", self.onSetup)
+		factory.connect("bind", self.onBind)
+		columnView = gtk.ColumnView(
+			hexpand=True,
+			single_click_activate=False,
 		)
-		col.set_property("expand", True)
-		col.set_resizable(True)
-		treev.append_column(col)
-		self.descCol = col
+		columnView.set_model(gtk.SingleSelection.new(listModel))
+		col = gtk.ColumnViewColumn(
+			expand=True,
+			resizable=True,
+			# title="Descriptin",
+		)
+		col.set_factory(factory)
+		columnView.append_column(col)
+		self.column = col
+
+		# FIXME: double-click or Enter does not trigger activate signal
+		# What a pain! I hate Gtk4!
+		# columnView.connect("activate", self.rowActivated)
+		# rowFactory = gtk.SignalListItemFactory()
+		# columnView.set_row_factory(rowFactory)
+		# rowFactory.connect("activate", self.rowActivated)
+		###
+		self.listView = columnView
+		self.listModel = listModel
 		############
 		hbox = HBox(spacing=15)
 		hbox.get_style_context().add_class("margin_05")
@@ -115,14 +132,14 @@ class FormatDialog(gtk.Dialog):
 		entry.connect("changed", self.onEntryChange)
 		############
 		self.swin = swin = gtk.ScrolledWindow()
-		swin.set_child(treev)
+		swin.set_child(columnView)
 		swin.set_policy(gtk.PolicyType.NEVER, gtk.PolicyType.AUTOMATIC)
 		pack(self.vbox, swin, 1, 1)
 		self.vbox.show()
 		##
-		treev.set_can_focus(True)  # no need, just to be safe
+		columnView.set_can_focus(True)  # no need, just to be safe
 		# treev.set_can_default(True)
-		treev.set_receives_default(True)
+		columnView.set_receives_default(True)
 		# print("can_focus:", treev.get_can_focus())
 		# print("can_default:", treev.get_can_default())
 		# print("receives_default:", treev.get_receives_default())
@@ -130,9 +147,49 @@ class FormatDialog(gtk.Dialog):
 		self.updateTree()
 		self.connect("realize", self.onRealize)
 
+	def onSetup(
+		self,
+		_factory: gtk.SignalListItemFactory,
+		cell: gtk.ColumnViewCell,
+	) -> None:
+		# print("onSetup", type(cell))
+		# cell.get_item() is None
+		label = gtk.Label(halign=gtk.Align.START)
+		label.set_selectable(False)
+		cell.set_child(label)
+
+	def onBind(
+		self,
+		_factory: gtk.SignalListItemFactory,
+		cell: gtk.ColumnViewCell,
+	) -> None:
+		# from time import time; print(time(), "onBind", type(cell))
+		cell.get_child().set_label(cell.get_item().desc)
+
+	# def onHeaderSetup(self, factory, item: gtk.ListHeader):
+	# print("onHeaderSetup", type(item))
+
+	# def onHeaderBind(self, factory, item: gtk.ListHeader):
+	# print("onHeaderBind", type(item))
+
+	# def onRowSetup(
+	# self,
+	# factory: gtk.SignalListItemFactory,
+	# row: gtk.ColumnViewRow,
+	# ) -> None:
+	# print("onSetup", type(row))
+
+	# def onRowBind(
+	# self,
+	# factory: gtk.SignalListItemFactory,
+	# row: gtk.ColumnViewRow,
+	# ) -> None:
+	# print("onBind", row.get_item().desc)
+	# return
+
 	def onRealize(self, _widget: Any = None) -> None:
 		if self.activeDesc:
-			self.treev.grab_focus()
+			self.listView.grab_focus()
 		else:
 			self.entry.grab_focus()
 
@@ -144,11 +201,10 @@ class FormatDialog(gtk.Dialog):
 			return
 
 		text = text.lower()
-		descList = self.descList
 
 		items1 = []
 		items2 = []
-		for desc in descList:
+		for desc in self.descList:
 			if desc.lower().startswith(text):
 				items1.append(desc)
 			elif text in desc.lower():
@@ -158,31 +214,33 @@ class FormatDialog(gtk.Dialog):
 		self.updateTree()
 
 	def setCursor(self, desc: str) -> None:
-		model = self.treev.get_model()
-		iter_ = model.iter_children(None)
-		while iter_ is not None:
-			if model.get_value(iter_, 0) == desc:
-				path = model.get_path(iter_)
-				self.treev.set_cursor(path, self.descCol, False)
-				self.treev.scroll_to_cell(path)
-				return
-			iter_ = model.iter_next(iter_)
+		model = self.listView.get_model()
+		index = self.items.index(desc)
+		# print("setCursor", index, desc)
+		model.select_item(index, True)
+		# FIXME: scroll does not work
+		# but neither it does for Treeview in Gtk 4.12
+		self.listView.scroll_to(
+			index,
+			self.column,
+			gtk.ListScrollFlags.NONE,
+			None,
+		)
 
 	def updateTree(self) -> None:
-		model = self.treev.get_model()
-		model.clear()
+		model = self.listModel
+		model.remove_all()
 		for desc in self.items:
-			model.append([desc])
+			model.append(FormatListViewItem(desc))
 
 		if self.activeDesc:
 			self.setCursor(self.activeDesc)
 
 	def getActive(self) -> PluginProp | None:
-		iter_ = self.treev.get_selection().get_selected()[1]
-		if iter_ is None:
-			return None
-		model = self.treev.get_model()
-		desc = model.get_value(iter_, 0)
+		selection = self.listView.get_model().get_selection()
+		# selection.get_size() == 1
+		index = selection.get_nth(0)
+		desc = self.listModel.get_item(index).desc
 		return pluginByDesc[desc]
 
 	def setActive(self, plugin: PluginProp) -> None:
@@ -195,11 +253,12 @@ class FormatDialog(gtk.Dialog):
 
 	def rowActivated(
 		self,
-		treev: gtk.TreeView,
+		listView: gtk.ListView,
 		path: gtk.GtkTreePath,
 		_col: Any,
 	) -> None:
-		model = treev.get_model()
+		print("rowActivated", listView.get_model())
+		model = self.listModel
 		iter_ = model.get_iter(path)
 		desc = model.get_value(iter_, 0)
 		self.activeDesc = desc
@@ -297,7 +356,7 @@ class FormatOptionsDialog(gtk.Dialog):
 			gtk.ResponseType.OK,
 		)
 		###
-		treev = gtk.TreeView()
+		treev = gtk.ListView()
 		treeModel = gtk.ListStore(
 			bool,  # enable
 			str,  # name
@@ -306,10 +365,10 @@ class FormatOptionsDialog(gtk.Dialog):
 		)
 		treev.set_headers_clickable(True)
 		treev.set_model(treeModel)
-		treev.connect("row-activated", self.rowActivated)
+		treev.connect("activate", self.rowActivated)
 
 		gesture = gtk.GestureClick.new()
-		gesture.connect("pressed", self.treeviewButtonPress)
+		gesture.connect("pressed", self.ListViewButtonPress)
 		treev.add_controller(gesture)
 		###
 		self.treev = treev
@@ -317,14 +376,14 @@ class FormatOptionsDialog(gtk.Dialog):
 		cell = gtk.CellRendererToggle()
 		# cell.set_property("activatable", True)
 		cell.connect("toggled", self.enableToggled)
-		col = gtk.TreeViewColumn(title="Enable", cell_renderer=cell)
+		col = gtk.ListViewColumn(title="Enable", cell_renderer=cell)
 		col.add_attribute(cell, "active", 0)
 		# cell.set_active(False)
 		col.set_property("expand", False)
 		col.set_resizable(True)
 		treev.append_column(col)
 		###
-		col = gtk.TreeViewColumn(
+		col = gtk.ListViewColumn(
 			title="Name",
 			cell_renderer=gtk.CellRendererText(),
 			text=1,
@@ -337,7 +396,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.valueCell = cell
 		self.valueCol = 3
 		cell.connect("edited", self.valueEdited)
-		col = gtk.TreeViewColumn(
+		col = gtk.ListViewColumn(
 			title="Value",
 			cell_renderer=cell,
 			text=self.valueCol,
@@ -347,7 +406,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		col.set_min_width(200)
 		treev.append_column(col)
 		###
-		col = gtk.TreeViewColumn(
+		col = gtk.ListViewColumn(
 			title="Comment",
 			cell_renderer=gtk.CellRendererText(),
 			text=2,
@@ -404,7 +463,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		# if double-clicked on a cell other than Value
 		return self.valueCellClicked(path, forceMenu=True)
 
-	def treeviewButtonPress(self, _gesture: Any, _n_press: Any, x: int, y: int) -> bool:
+	def ListViewButtonPress(self, _gesture: Any, _n_press: Any, x: int, y: int) -> bool:
 		# if gevent.button != 1:
 		# 	return False
 		pos_t = self.treev.get_path_at_pos(int(x), int(y))
