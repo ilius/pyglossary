@@ -45,7 +45,10 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from tkinter.font import Font
 
-log = logging.getLogger("pyglossary")
+	from pyglossary.logger import Logger
+
+
+log: Logger = logging.getLogger("pyglossary")
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readDesc = [
@@ -1276,21 +1279,23 @@ class UI(tk.Frame, UIBase):
 		label.pack(side="left")
 		##
 		comboVar = tk.StringVar()
+		verbosity = log.getVerbosity()
 		combo = ttk.OptionMenu(
 			statusBarFrame,
 			comboVar,
-			log.getVerbosity(),  # default
-			"0",
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
+			f"{verbosity} - {log.levelNamesCap[verbosity]}",
+			"0 - Critical",
+			"1 - Error",
+			"2 - Warning",
+			"3 - Info",
+			"4 - Debug",
+			"5 - Trace",
+			"6 - All",
 		)
+
 		comboVar.trace_add("write", self.verbosityChanged)
 		combo.pack(side="left")
 		self.verbosityCombo = comboVar
-		comboVar.set(log.getVerbosity())
 
 		notebook.add(convertFrame, text="Convert", underline=-1)
 		notebook.add(aboutFrame, text="About", underline=-1)
@@ -1334,7 +1339,7 @@ class UI(tk.Frame, UIBase):
 
 	def verbosityChanged(self, _index, _value, _op) -> None:
 		log.setVerbosity(
-			int(self.verbosityCombo.get()),
+			int(self.verbosityCombo.get()[0]),
 		)
 
 	# def resized(self, event):
