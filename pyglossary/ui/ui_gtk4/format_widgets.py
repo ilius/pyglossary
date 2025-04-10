@@ -265,6 +265,7 @@ class FormatButton(gtk.Button):
 
 class FormatOptionsDialog(gtk.Dialog):
 	commentLen = 60
+	actionIds = set()
 
 	def __init__(
 		self,
@@ -281,7 +282,6 @@ class FormatOptionsDialog(gtk.Dialog):
 		optionsProp = Glossary.plugins[formatName].optionsProp
 		self.optionsProp = optionsProp
 		self.formatName = formatName
-		self.actionIds = set()
 		##
 		self.connect("response", lambda _w, _e: self.hide())
 		dialog_add_button(
@@ -407,7 +407,8 @@ class FormatOptionsDialog(gtk.Dialog):
 	def treeviewButtonPress(self, _gesture: Any, _n_press: Any, x: int, y: int) -> bool:
 		# if gevent.button != 1:
 		# 	return False
-		pos_t = self.treev.get_path_at_pos(int(x), int(y))
+		x2, y2 = self.treev.convert_widget_to_bin_window_coords(int(x), int(y))
+		pos_t = self.treev.get_path_at_pos(x2, y2)
 		if not pos_t:
 			return False
 		# pos_t == path, col, xRel, yRel
@@ -485,14 +486,19 @@ class FormatOptionsDialog(gtk.Dialog):
 		path: gtk.TreePath,
 		name: str,
 		callback: Callable,
-		*args,  # noqa: ANN002
+		itr: gtk.TreeIter,  # noqa: ARG002
+		# *args,  # noqa: ANN002
 	) -> str:
 		name = name.strip()
 		actionId = self.formatName + "." + chr(97 + int(path[0])) + "." + name
+		print(actionId)
 		if actionId not in self.actionIds:
 			action = gio.SimpleAction(name=actionId)
-			action.connect("activate", callback, *args)
+			action.set_enabled(True)
+			action.connect("activate", callback)  # itr
 			self.app.add_action(action)
+			# self.install_action(actionId, None, callback)
+			self.actionIds.add(actionId)
 
 		return "app." + actionId
 
@@ -505,6 +511,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		itr = model.get_iter(path)
 		optName = model.get_value(itr, 1)
 		prop = self.optionsProp[optName]
+
 		if prop.typ == "bool":
 			rawValue = model.get_value(itr, self.valueCol)
 			if rawValue == "":  # noqa: PLC1901
@@ -517,74 +524,88 @@ class FormatOptionsDialog(gtk.Dialog):
 			model.set_value(itr, self.valueCol, str(not value))
 			model.set_value(itr, 0, True)  # enable it
 			return True
+
 		propValues = prop.values
 		if not propValues:
 			if forceMenu:
 				propValues = []
 			else:
 				return False
+
+		print("valueCellClicked: building menu")
+
 		menu = gtk.PopoverMenu()
-		# menu.set_parent(self)
+		menu.set_parent(self.treev)
+		# menu.get_menu_model() is None
 		menuM = gio.Menu()
 		menu.set_menu_model(menuM)  # gio.MenuModel
-		if prop.customValue:
-			item = gio.MenuItem()
-			item.set_label("[Custom Value]")
+
+		# menu.add_child(gtk.Label("Test child"), "test")
+		# menu.set_flags(gtk.PopoverMenuFlags.NESTED)
+
+		def setAction(item: gio.MenuItem, name: str, callback: Callable) -> None:
 			item.set_detailed_action(
-				self.addAction(
-					path,
-					"__custom__",
-					self.valueItemCustomActivate,
-					itr,
-				),
+				self.addAction(path, name, callback, itr),
 			)
-			menuM.append_item(item)
+
+		def newItem(
+			label: str,
+			name: str = "",
+			callback: Callable | None = None,
+		) -> gio.MenuItem:
+			item = gio.MenuItem()
+			item.set_label(label)
+			if name:
+				setAction(item, name, callback)
+			return item
+
+		def addItem(label: str, name: str, callback: Callable) -> None:
+			menuM.append_item(newItem(label, name, callback))
+
+		if prop.customValue:
+			addItem(
+				"[Custom Value]",
+				"__custom__",
+				self.valueItemCustomActivate,
+			)
+
+		# addItem(
+		# 	"Test test test",
+		# 	"test123",
+		# 	self.valueItemCustomActivate,
+		# )
+
 		groupedValues = None
 		if len(propValues) > 10:
 			groupedValues = prop.groupValues()
 		if groupedValues:
 			for groupName, values in groupedValues.items():
-				item = gio.MenuItem()
-				item.set_label(groupName)
+				item = newItem(groupName)
 				if values is None:
-					item.set_detailed_action(
-						self.addAction(
-							path,
-							groupName,
-							self.valueItemActivat,
-							itr,
-						),
-					)
+					setAction(item, groupName, self.valueItemActivate)
 				else:
 					subMenu = gio.Menu()
 					for subValue in values:
-						subItem = gio.MenuItem()
-						subItem.set_label(str(subValue))
-						item.set_detailed_action(
-							self.addAction(
-								path,
-								groupName,
+						# FIXME: need to pass subValue as arg?
+						subMenu.append_item(
+							newItem(
+								str(subValue),
+								f"{groupName}-{subValue}",
 								self.valueItemActivate,
-								itr,
-							),
+							)
 						)
-						subMenu.append_item(subItem)
 					item.set_submenu(subMenu)
-				item.show()
+				# item.show()
 				menuM.append_item(item)
 		else:
 			for value in propValues:
-				item = gio.MenuItem()
-				item.set_label(value)
-				item.set_detailed_action(
-					self.addAction(
-						path,
-						f"value-{value}",
-						self.valueItemActivate,
-						itr,
-					),
+				addItem(
+					value,
+					f"value-{value}",
+					self.valueItemActivate,
 				)
-				menuM.append_item(item)
+
+		# menu.show()
 		# etime = gtk.get_current_event_time()
 		menu.popup()
 		return True
