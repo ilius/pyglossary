@@ -586,9 +586,15 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
-	def __init__(self, descList: list[str], parent: gtk.Widget = None) -> None:
+	def __init__(
+		self,
+		descList: list[str],
+		parent: gtk.Widget | None = None,
+		onChange: Callable | None = None,
+	) -> None:
 		FormatButton.__init__(self, descList, parent=parent)
 
+		self._onChange = onChange
 		self.optionsValues = {}
 
 		self.optionsButton = gtk.Button(label="Options")
@@ -598,7 +604,7 @@ class FormatBox(FormatButton):
 				gtk.IconSize.BUTTON,
 			),
 		)
-		self.optionsButton.connect("clicked", self.optionsButtonClicked)
+		self.optionsButton.connect("clicked", self.openOptions)
 
 		self.dependsButton = gtk.Button(label="Install dependencies")
 		self.dependsButton.pkgNames = []
@@ -614,7 +620,10 @@ class FormatBox(FormatButton):
 	def getActiveOptions(self) -> list[str] | None:
 		raise NotImplementedError
 
-	def optionsButtonClicked(self, _button: Any) -> None:
+	def hasOptions(self) -> bool:
+		return bool(self.getActiveOptions())  # not None or []
+
+	def openOptions(self, _button: Any = None) -> None:
 		formatName = self.getActive()
 		options = self.getActiveOptions()
 		if options is None:
@@ -670,6 +679,9 @@ class FormatBox(FormatButton):
 		self.dependsButton.pkgNames = uninstalled
 		self.dependsButton.set_visible(bool(uninstalled))
 
+		if self._onChange:
+			self._onChange()
+
 
 class InputFormatBox(FormatBox):
 	dialogTitle = "Select Input Format"
@@ -699,7 +711,10 @@ class OutputFormatBox(FormatBox):
 		return "w"
 
 	def getActiveOptions(self) -> list[str] | None:
-		return list(Glossary.formatsWriteOptions[self.getActive()])
+		formatName = self.getActive()
+		if not formatName:
+			return None
+		return list(Glossary.formatsWriteOptions[formatName])
 
 
 class GtkTextviewLogHandler(logging.Handler):
@@ -1008,17 +1023,46 @@ class GeneralOptionsDialog(gtk.Dialog):
 			config[param] = check.get_active()
 
 
-class GeneralOptionsButton(gtk.Button):
-	def __init__(self, ui: UI) -> None:
-		gtk.Button.__init__(self, label="General Options")
+class OptionsButton(gtk.MenuButton):
+	def __init__(
+		self,
+		ui: UI,
+		onReadOptionClick: Callable,
+		onWriteOptionClick: Callable,
+	) -> None:
+		gtk.MenuButton.__init__(self, label=" Options ")
 		self.ui = ui
-		self.connect("clicked", self.onClick)
-		self.dialog = None
+		self.generalDialog = None
+		###
+		menu = gtk.Menu()
+		##
+		itemGeneral = gtk.MenuItem("General Options")
+		itemGeneral.connect("activate", self._onGeneralOptionClick)
+		menu.append(itemGeneral)
+		##
+		self.itemRead = gtk.MenuItem("Input Options")
+		self.itemRead.connect("activate", onReadOptionClick)
+		self.itemRead.set_sensitive(False)
+		menu.append(self.itemRead)
+		##
+		self.itemWrite = gtk.MenuItem("Output Options")
+		self.itemWrite.connect("activate", onWriteOptionClick)
+		self.itemWrite.set_sensitive(False)
+		menu.append(self.itemWrite)
+		##
+		menu.show_all()
+		self.set_popup(menu)
 
-	def onClick(self, _widget: Any) -> None:
-		if self.dialog is None:
-			self.dialog = GeneralOptionsDialog(self.ui)
-		self.dialog.present()
+	def _onGeneralOptionClick(self, _widget: Any) -> None:
+		if self.generalDialog is None:
+			self.generalDialog = GeneralOptionsDialog(self.ui)
+		self.generalDialog.present()
+
+	def setEnableReadOptions(self, enable: bool) -> None:
+		self.itemRead.set_sensitive(enable)
+
+	def setEnableWriteOptions(self, enable: bool) -> None:
+		self.itemWrite.set_sensitive(enable)
 
 
 class UI(UIBase, gtk.Application):
@@ -1154,12 +1198,15 @@ class MainWindow(gtk.Dialog, MyDialog):
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.convertInputFormatCombo = InputFormatBox(parent=self)
-		buttonSizeGroup.add_widget(self.convertInputFormatCombo.optionsButton)
-		pack(hbox, self.convertInputFormatCombo)
+		self.inputFormatBox = InputFormatBox(
+			parent=self,
+			onChange=self.onInputFormatChange,
+		)
+		buttonSizeGroup.add_widget(self.inputFormatBox.optionsButton)
+		pack(hbox, self.inputFormatBox)
 		pack(hbox, gtk.Label(), 1, 1)
-		pack(hbox, self.convertInputFormatCombo.dependsButton)
-		pack(hbox, self.convertInputFormatCombo.optionsButton)
+		pack(hbox, self.inputFormatBox.dependsButton)
+		pack(hbox, self.inputFormatBox.optionsButton)
 		pack(vbox, hbox)
 		#####
 		vbox.sep1 = gtk.Label(label="")
@@ -1193,21 +1240,28 @@ class MainWindow(gtk.Dialog, MyDialog):
 		pack(hbox, hbox.label)
 		labelSizeGroup.add_widget(hbox.label)
 		hbox.label.set_property("xalign", 0)
-		self.convertOutputFormatCombo = OutputFormatBox(parent=self)
-		buttonSizeGroup.add_widget(self.convertOutputFormatCombo.optionsButton)
-		pack(hbox, self.convertOutputFormatCombo)
+		self.outputFormatBox = OutputFormatBox(
+			parent=self,
+			onChange=self.onOutputFormatChange,
+		)
+		buttonSizeGroup.add_widget(self.outputFormatBox.optionsButton)
+		pack(hbox, self.outputFormatBox)
 		pack(hbox, gtk.Label(), 1, 1)
-		pack(hbox, self.convertOutputFormatCombo.dependsButton)
-		pack(hbox, self.convertOutputFormatCombo.optionsButton)
+		pack(hbox, self.outputFormatBox.dependsButton)
+		pack(hbox, self.outputFormatBox.optionsButton)
 		pack(vbox, hbox)
 		#####
 		hbox = HBox(spacing=10)
 		label = gtk.Label(label="")
 		pack(hbox, label, 1, 1, 5)
 		##
-		button = GeneralOptionsButton(self)
-		button.set_size_request(300, 40)
-		pack(hbox, button, 0, 0, 0)
+		self.optionsButton = OptionsButton(
+			self,
+			onReadOptionClick=self.inputFormatBox.openOptions,
+			onWriteOptionClick=self.outputFormatBox.openOptions,
+		)
+		# self.optionsButton.set_size_request(300, 40)
+		pack(hbox, self.optionsButton, 0, 0, 0)
 		##
 		self.convertButton = gtk.Button()
 		self.convertButton.set_label("Convert")
@@ -1328,12 +1382,18 @@ class MainWindow(gtk.Dialog, MyDialog):
 		# ____________________________________________________________ #
 		self.vbox.show_all()
 		notebook.set_current_page(0)  # Convert tab
-		self.convertInputFormatCombo.dependsButton.hide()
-		self.convertOutputFormatCombo.dependsButton.hide()
-		self.convertInputFormatCombo.optionsButton.hide()
-		self.convertOutputFormatCombo.optionsButton.hide()
+		self.inputFormatBox.dependsButton.hide()
+		self.outputFormatBox.dependsButton.hide()
+		self.inputFormatBox.optionsButton.hide()
+		self.outputFormatBox.optionsButton.hide()
 		########
 		self.status("Select input file")
+
+	def onInputFormatChange(self) -> None:
+		self.optionsButton.setEnableReadOptions(self.inputFormatBox.hasOptions())
+
+	def onOutputFormatChange(self) -> None:
+		self.optionsButton.setEnableWriteOptions(self.outputFormatBox.hasOptions())
 
 	def run(  # noqa: PLR0913
 		self,
@@ -1356,17 +1416,17 @@ class MainWindow(gtk.Dialog, MyDialog):
 			self.convertOutputEntry.set_text(abspath(outputFilename))
 
 		if inputFormat:
-			self.convertInputFormatCombo.setActive(inputFormat)
+			self.inputFormatBox.setActive(inputFormat)
 		if outputFormat:
-			self.convertOutputFormatCombo.setActive(outputFormat)
+			self.outputFormatBox.setActive(outputFormat)
 
 		if reverse:
 			log.error("Gtk interface does not support Reverse feature")
 
 		if readOptions:
-			self.convertInputFormatCombo.setOptionsValues(readOptions)
+			self.inputFormatBox.setOptionsValues(readOptions)
 		if writeOptions:
-			self.convertOutputFormatCombo.setOptionsValues(writeOptions)
+			self.outputFormatBox.setOptionsValues(writeOptions)
 
 		self.convertOptions = convertOptions
 		if convertOptions:
@@ -1399,13 +1459,13 @@ class MainWindow(gtk.Dialog, MyDialog):
 		if not inPath:
 			log.critical("Input file path is empty!")
 			return
-		inFormat = self.convertInputFormatCombo.getActive()
+		inFormat = self.inputFormatBox.getActive()
 
 		outPath = self.convertOutputEntry.get_text()
 		if not outPath:
 			log.critical("Output file path is empty!")
 			return
-		outFormat = self.convertOutputFormatCombo.getActive()
+		outFormat = self.outputFormatBox.getActive()
 
 		self.status("Converting...")
 		while gtk.events_pending():
@@ -1413,8 +1473,8 @@ class MainWindow(gtk.Dialog, MyDialog):
 
 		self.convertButton.set_sensitive(False)
 		self.progressTitle = "Converting"
-		readOptions = self.convertInputFormatCombo.optionsValues
-		writeOptions = self.convertOutputFormatCombo.optionsValues
+		readOptions = self.inputFormatBox.optionsValues
+		writeOptions = self.outputFormatBox.optionsValues
 
 		glos = Glossary(ui=self.ui)
 		glos.config = self.config
@@ -1453,7 +1513,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 
 	def convertInputEntryChanged(self, _widget: Any = None) -> None:
 		inPath = self.convertInputEntry.get_text()
-		inFormat = self.convertInputFormatCombo.getActive()
+		inFormat = self.inputFormatBox.getActive()
 		if inPath.startswith("file://"):
 			inPath = urlToPath(inPath)
 			self.convertInputEntry.set_text(inPath)
@@ -1464,7 +1524,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 			except Error:
 				pass
 			else:
-				self.convertInputFormatCombo.setActive(inputArgs.formatName)
+				self.inputFormatBox.setActive(inputArgs.formatName)
 
 		if not isfile(inPath):
 			return
@@ -1473,7 +1533,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 
 	def convertOutputEntryChanged(self, _widget: Any = None) -> None:
 		outPath = self.convertOutputEntry.get_text()
-		outFormat = self.convertOutputFormatCombo.getActive()
+		outFormat = self.outputFormatBox.getActive()
 		if not outPath:
 			return
 		if outPath.startswith("file://"):
@@ -1490,7 +1550,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 				pass
 			else:
 				outFormat = outputArgs.formatName
-				self.convertOutputFormatCombo.setActive(outFormat)
+				self.outputFormatBox.setActive(outFormat)
 
 		if outFormat:
 			self.status('Press "Convert"')
