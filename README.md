@@ -168,15 +168,11 @@ You can explicitly select user interface type using `--ui`
 - `./main.py --ui=web`
 - `./main.py --ui=cmd`
 
-## Installation on Windows
+## Installation
 
-- [Download and install Python](https://www.python.org/downloads/windows/) (3.10 or above)
-- Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
-- To ensure you have `pip`, run: `python -m ensurepip --upgrade`
-- To install, run: `pip install --upgrade pyglossary`
-- Now you should be able to run `pyglossary` command
-- If command was not found, make sure Python environment variables are set up:
-  <img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
+- [Install UV](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer)
+- Now you should be able to run pyglossary simply by running:  
+  `uvx pyglossary`
 
 ## Feature-specific requirements
 
