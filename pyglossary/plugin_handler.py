@@ -71,7 +71,10 @@ class PluginLoader:
 		return PluginProp.fromModule(module)
 
 	@staticmethod
-	def loadPluginsFromJson(jsonPath: str) -> list[PluginProp]:
+	def loadPluginsFromJson(
+		jsonPath: str,
+		skipDisabled: bool = True,
+	) -> list[PluginProp]:
 		import json
 
 		with open(jsonPath, encoding="utf-8") as _file:
@@ -84,6 +87,8 @@ class PluginLoader:
 				modulePath=join(pluginsDir, attrs["module"]),
 			)
 			if prop is None:
+				continue
+			if not prop.enable and skipDisabled:
 				continue
 			plugins.append(prop)
 		return plugins
@@ -137,8 +142,15 @@ class PluginHandler:
 	writeFormats: list[str] = []
 
 	@classmethod
-	def loadPluginsFromJson(cls: type[PluginHandler], jsonPath: str) -> None:
-		for prop in PluginLoader.loadPluginsFromJson(jsonPath):
+	def loadPluginsFromJson(
+		cls: type[PluginHandler],
+		jsonPath: str,
+		skipDisabled: bool = True,
+	) -> None:
+		for prop in PluginLoader.loadPluginsFromJson(
+			jsonPath,
+			skipDisabled=skipDisabled,
+		):
 			cls._addPlugin(prop)
 
 	@classmethod
@@ -318,7 +330,7 @@ class PluginHandler:
 		# possible new plugins that are not in json file
 
 		if usePluginsJson:
-			cls.loadPluginsFromJson(pluginsJsonPath)
+			cls.loadPluginsFromJson(pluginsJsonPath, skipDisabled=skipDisabledPlugins)
 
 		cls.loadPlugins(pluginsDir, skipDisabled=skipDisabledPlugins)
 
