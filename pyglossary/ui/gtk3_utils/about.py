@@ -43,11 +43,11 @@ class AboutWidget(gtk.Box):
 		##
 		headerBox = gtk.Box(orientation=gtk.Orientation.HORIZONTAL)
 		if logo:
-			headerBox.pack_start(imageFromFile(logo), False, False, 0)
+			headerBox.pack_start(imageFromFile(logo), False, False, 16)
 		headerLabel = gtk.Label(label=header)
 		headerLabel.set_selectable(True)
 		headerLabel.set_can_focus(False)
-		headerBox.pack_start(headerLabel, False, False, 15)
+		headerBox.pack_start(headerLabel, False, False, 0)
 		headerBox.show_all()
 		self.pack_start(headerBox, False, False, 0)
 		##
