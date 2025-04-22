@@ -73,7 +73,7 @@ class TestGlossaryBase(unittest.TestCase):
 		}
 		os.environ["CALC_FILE_SIZE"] = "1"
 
-	def addDirCRC32(self, dirPath: str, files: "dict[str, str]") -> None:
+	def addDirCRC32(self, dirPath: str, files: dict[str, str]) -> None:
 		for fpath, _hash in files.items():
 			self.dataFileCRC32[f"{dirPath}/{fpath}"] = _hash
 
@@ -189,7 +189,7 @@ class TestGlossaryBase(unittest.TestCase):
 		self,
 		fpath1,
 		fpath2,
-		dataReplaceFuncs: "dict[str, Callable]",
+		dataReplaceFuncs: dict[str, Callable],
 	):
 		zf1 = zipfile.ZipFile(fpath1)
 		zf2 = zipfile.ZipFile(fpath2)
@@ -215,8 +215,8 @@ class TestGlossaryBase(unittest.TestCase):
 	def checkZipFileSha1sum(
 		self,
 		fpath,
-		sha1sumDict: "dict[str, str]",
-		dataReplaceFuncs: "dict[str, Callable] | None" = None,
+		sha1sumDict: dict[str, str],
+		dataReplaceFuncs: dict[str, Callable] | None = None,
 	):
 		if dataReplaceFuncs is None:
 			dataReplaceFuncs = {}
