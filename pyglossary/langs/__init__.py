@@ -6,6 +6,8 @@ from os.path import join
 
 from pyglossary.core import rootDir
 
+__all__ = ["Lang", "langDict"]
+
 log = logging.getLogger("pyglossary")
 
 
