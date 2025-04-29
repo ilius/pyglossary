@@ -354,6 +354,19 @@ verbose = false
 
 [tool.import-analyzer]
 exclude = ["pyglossary/ui/wcwidth/", "build/"]
+exclude_toplevel_module = [
+	"BeautifulSoup",
+	"bs4",
+	"english_words",
+	"gi",
+	"lzo",
+	"mako",
+	"packaging",
+	"psutil",
+	"PyQt4",
+	"romkan",
+	"yaml",
+]
 
 [tool.pyright]
 pythonVersion = "3.10"
