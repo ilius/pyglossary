@@ -40,7 +40,7 @@ exclude = [
 
 [tool.ruff.lint]
 select = [
-	"ANN", # flake8-annotationsq
+	"ANN", # annotations
 	"F",   # Pyflakes
 	"E",   # pycodestyle Error
 	"W",   # pycodestyle Warning
@@ -51,11 +51,10 @@ select = [
 	"UP",  # pyupgrade
 	"YTT", # flake8-2020
 	"ASYNC1", # flake8-trio
-	"BLE", # flake8-blind-except
-	"B", # flake8-bugbear
-	"A", # flake8-builtins
-	"COM", # flake8-commas
-	# "CPY", # flake8-copyright   --preview
+	"BLE",  # flake8-blind-except
+	"B",    # flake8-bugbear
+	"A",    # flake8-builtins
+	"COM",  # flake8-commas
 	"C4",   # flake8-comprehensions
 	"DTZ",  # flake8-datetimez
 	"T10",  # flake8-debugger
@@ -80,18 +79,19 @@ select = [
 	"TCH",  # flake8-type-checking
 	"INT",  # flake8-gettext
 	"ARG",  # flake8-unused-arguments
-	# "PTH",   # flake8-use-pathlib
-	"PD",  # pandas-vet
-	"PGH", # pygrep-hooks
-	"PL",  # Pylint
-	# "TRY",   # tryceratops, they all sound BS
-	# "FLY",   # flynt
+	"PD",   # pandas-vet
+	"PGH",  # pygrep-hooks
+	"PL",   # Pylint
 	"NPY",  # NumPy-specific rules
 	"AIR",  # Airflow
 	"PERF", # Perflint
-	"FURB", # refurb   --preview
+	"FURB", # refurb
 	"LOG",  # flake8-logging
 	"RUF",  # Ruff-specific rules
+	# "CPY", # flake8-copyright
+	# "PTH",   # flake8-use-pathlib
+	# "TRY",   # tryceratops, they don't make sense
+	# "FLY",   # flynt
 ]
 ignore = [
 	"ANN003",  # Missing type annotation for `**kwargs`, 15 remaining
@@ -100,10 +100,12 @@ ignore = [
 	"ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in ...
 
 	"PYI042",  # Type alias `...` should be CamelCase FIXME
+
 	"RUF039",  # First argument to `re.compile()` is not raw string
 	"FURB189",
 	# FURB189 Subclassing `dict` can be error prone, use `collections.UserDict` instead
 	# FURB189 Subclassing `str` can be error prone, use `collections.UserStr` instead
+
 	"COM812", # Trailing comma missing
 	"SLF",    # Private member accessed
 	"PYI034", # py3.11: `__iadd__` methods in classes like `SqEntryList` usually return `self` at runtime
@@ -163,7 +165,8 @@ unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-mccabe.max-complexity = 13 # Unlike Flake8, default to a complexity level of 10.
+# Unlike Flake8, defaults to a complexity level of 10
+mccabe.max-complexity = 13
 
 
 [tool.ruff.lint.per-file-ignores]
