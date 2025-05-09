@@ -36,6 +36,9 @@ git commit -m "version $VERSION" || echo "------ Already committed"
 git -p show || true
 git -p log || true
 
+echo "Press Enter to continue"
+read
+
 echo "Pushing to origin..."
 git push
 
@@ -61,7 +64,7 @@ git push origin "$VERSION"
 
 MD_PATH=$(realpath $(dirname $0)/../doc/releases/$VERSION.md)
 echo -e "## What's Changed\n" >"$MD_PATH"
-git log --pretty='- %h %s' --reverse "$CUR_VERSION..$VERSION" >>"$MD_PATH"
+git log --pretty='- %h %s' "$CUR_VERSION..$VERSION^" | sort -i -k 3,4 >>"$MD_PATH"
 echo -e "\n\n**Full Changelog**: https://github.com/ilius/pyglossary/compare/$CUR_VERSION...$VERSION\n" >>"$MD_PATH"
 
 echo "Created $MD_PATH"
