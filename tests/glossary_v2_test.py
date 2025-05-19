@@ -115,14 +115,14 @@ class TestGlossaryBase(unittest.TestCase):
 				raise RuntimeError(f"CRC32 check failed for existing file: {fpath!r}")
 			return fpath
 		if "GITHUB_RUN_ID" in os.environ:
-			time.sleep(0.1)
+			time.sleep(0.05)
 		try:
 			with urlopen(dataURL.format(filename=unixFilename)) as res:
 				data = res.read()
 		except HTTPError as err:
 			print(f"HTTPError: {err=}, {filename=}")
 			if err.code == 429:
-				time.sleep(0.5)
+				time.sleep(0.1)
 				return self.downloadFile(filename)
 			raise err from None
 		except Exception as e:
