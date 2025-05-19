@@ -415,15 +415,16 @@ class Reader:
 		# TODO: implement correctly formatted ruby text (i.e., as small script on top)
 
 		textList: list[tuple[str | None, str]] = []
-		mainText: str | list = example.pop("example", "")
-		if mainText:
-			assert isinstance(mainText, str)
-			textList.append((None, mainText))
-			ruby = example.pop("ruby", None)
-			if ruby:
-				for word, phon in ruby:
-					mainText = mainText.replace(word, f"{word}({phon})")
-				example["text"] = mainText
+		exampleValue: str | list = example.pop("example", "")
+		textValue: str = example.get("text", "")
+		ruby = example.pop("ruby", None)
+		if exampleValue:
+			assert isinstance(exampleValue, str)
+			textList.append((None, exampleValue))
+		if textValue and ruby:
+			for word, phon in ruby:
+				textValue = textValue.replace(word, f"{word}({phon})")
+			example["text"] = textValue
 
 		def addList(key: str, prefix: str | None, value: list) -> None:
 			if key in self._badExampleKeys:
