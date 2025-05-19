@@ -7,6 +7,7 @@ import os
 import random
 import sys
 import tempfile
+import time
 import tracemalloc
 import unittest
 import zipfile
@@ -102,6 +103,8 @@ class TestGlossaryBase(unittest.TestCase):
 		return filename.replace("/", "__").replace("\\", "__")
 
 	def downloadFile(self, filename):
+		from urllib.error import HTTPError
+
 		unixFilename = filename.replace("\\", "/")
 		crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(testCacheDir, self.fixDownloadFilename(filename))
@@ -111,9 +114,17 @@ class TestGlossaryBase(unittest.TestCase):
 			if crc32hex(data) != crc32:
 				raise RuntimeError(f"CRC32 check failed for existing file: {fpath!r}")
 			return fpath
+		if "GITHUB_RUN_ID" in os.environ:
+			time.sleep(0.1)
 		try:
 			with urlopen(dataURL.format(filename=unixFilename)) as res:
 				data = res.read()
+		except HTTPError as err:
+			print(f"HTTPError: {err=}, {filename=}")
+			if err.code == 429:
+				time.sleep(0.5)
+				return self.downloadFile(filename)
+			raise err from None
 		except Exception as e:
 			print(f"{filename=}")
 			raise e from None
