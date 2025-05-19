@@ -59,6 +59,7 @@ class Reader:
 		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._wordCount = 0
+		self._badExampleKeys = set()
 
 	def open(
 		self,
@@ -403,21 +404,41 @@ class Reader:
 		example: dict[str, str | list],
 	) -> None:
 		# example keys: text, "english", "ref", "type"
-		textList: list[tuple[str | None, str]] = []
-		text_: str | list = example.pop("example", "")
-		if text_:
-			assert isinstance(text_, str)
-			textList.append((None, text_))
 
 		example.pop("ref", "")
 		example.pop("type", "")
+		example.pop("bold_text_offsets", "")
+		example.pop("bold_roman_offsets", "")
+		example.pop("bold_translation_offsets", "")
 
 		# Implement rudimentary ruby text handler by simply put them in "()"
 		# TODO: implement correctly formatted ruby text (i.e., as small script on top)
-		if "ruby" in example:
-			for word, phon in example["ruby"]:
-				example["text"] = example["text"].replace(word, f"{word}({phon})")
-			del example["ruby"]
+
+		textList: list[tuple[str | None, str]] = []
+		mainText: str | list = example.pop("example", "")
+		if mainText:
+			assert isinstance(mainText, str)
+			textList.append((None, mainText))
+			ruby = example.pop("ruby", None)
+			if ruby:
+				for word, phon in ruby:
+					mainText = mainText.replace(word, f"{word}({phon})")
+				example["text"] = mainText
+
+		def addList(key: str, prefix: str | None, value: list) -> None:
+			if key in self._badExampleKeys:
+				return
+			for item in value:
+				if isinstance(item, str):
+					textList.append((prefix, item))
+					continue
+				if isinstance(item, list):
+					addList(key, prefix, item)
+					continue
+
+				log.warning(f"writeSenseExample: bad item {item=} in {key=}")
+				self._badExampleKeys.add(key)
+				return
 
 		for key, value in example.items():
 			if not value:
@@ -429,11 +450,7 @@ class Reader:
 			if isinstance(value, str):
 				textList.append((prefix, value))
 			elif isinstance(value, list):
-				for item in value:
-					if isinstance(item, str):
-						textList.append((prefix, item))
-					elif isinstance(item, list):
-						textList += [(prefix, item2) for item2 in item]
+				addList(key, prefix, value)
 			else:
 				log.error(f"writeSenseExample: invalid type for {value=}")
 
