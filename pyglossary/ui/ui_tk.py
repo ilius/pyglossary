@@ -22,6 +22,7 @@ import logging
 import os
 import tkinter as tk
 import traceback
+import ctypes
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, ttk
 from tkinter import font as tkFont
@@ -47,7 +48,12 @@ if TYPE_CHECKING:
 
 	from pyglossary.logger import Logger
 
-
+# Make app DPI-aware, remove blurry fonts on Windows
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)  # 1 = system DPI aware
+except Exception:
+    pass
+	
 log: Logger = logging.getLogger("pyglossary")
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
