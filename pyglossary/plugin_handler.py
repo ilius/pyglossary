@@ -318,7 +318,7 @@ class PluginHandler:
 		skipDisabledPlugins: bool = True,
 	) -> None:
 		"""
-		Initialize the glossary class (not an insatnce).
+		Initialize the glossary class (not an instance).
 		Must be called only once, so make sure you put it in the right place.
 		Probably in the top of your program's main function or module.
 		"""
