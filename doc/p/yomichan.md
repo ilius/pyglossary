@@ -8,7 +8,7 @@
 | snake_case_name | yomichan                                              |
 | Description     | Yomichan (.zip)                                       |
 | Extensions      | `.zip`                                                |
-| Read support    | No                                                    |
+| Read support    | Yes                                                   |
 | Write support   | Yes                                                   |
 | Single-file     | Yes                                                   |
 | Kind            | 📦 package                                             |

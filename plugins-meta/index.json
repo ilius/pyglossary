@@ -2045,7 +2045,7 @@
 		"canWrite": true,
 		"sortOnWrite": "always",
 		"sortKeyName": "headword",
-		"readCompressions": ["zip"],
+		"readOptions": {},
 		"writeOptions": {
 			"term_bank_size": 10000,
 			"term_from_headword_only": true,
@@ -2062,7 +2062,10 @@
 		},
 		"writeDepends": {
 			"bs4": "beautifulsoup4"
-		}
+		},
+		"readCompressions": [
+			"zip"
+		]
 	},
 	{
 		"module": "zimfile",
