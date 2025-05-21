@@ -67,9 +67,7 @@ from .sq_entry_list import SqEntryList
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
-	from typing import (
-		Any,
-	)
+	from typing import Any
 
 	from .entry_base import MultiStr
 	from .glossary_types import (
@@ -754,7 +752,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				stacklevel=3,
 			)
 
-		formatName = formatName or format
+		formatName: str = formatName or format or ""
 		del format
 
 		filenameAbs = os.path.abspath(filename)
@@ -876,10 +874,11 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				stacklevel=2,
 			)
 
-		formatName = formatName or format
+		formatArg: str | None = formatName or format
 		del format
-		if formatName is not None and type(formatName) is not str:
+		if formatArg is not None and type(formatArg) is not str:
 			raise TypeError("formatName must be str")
+		formatName: str = formatArg or ""
 
 		return self._write(
 			filename=filename,

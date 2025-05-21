@@ -14,7 +14,7 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-	from typing import AnyStr, TypeAlias
+	from typing import TypeAlias
 
 	from .langs import Lang
 	from .sort_keys import NamedSortKey
@@ -85,12 +85,12 @@ class EntryType(Protocol):  # noqa: PLR0904
 
 	def editFuncWord(
 		self,
-		func: Callable[[str], str] | Callable[[AnyStr], str],
+		func: Callable[[str], str],
 	) -> None: ...
 
 	def editFuncDefi(
 		self,
-		func: Callable[[str], str] | Callable[[AnyStr], str],
+		func: Callable[[str], str],
 	) -> None: ...
 
 	def strip(self) -> None: ...

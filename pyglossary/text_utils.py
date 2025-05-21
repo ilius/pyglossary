@@ -61,6 +61,10 @@ def fixUtf8(st: AnyStr) -> str:
 	return st.replace(b"\x00", b"").decode("utf-8", "replace")
 
 
+def fixUtf8Str(st: str) -> str:
+	return st.encode("utf-8").replace(b"\x00", b"").decode("utf-8", "replace")
+
+
 pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")

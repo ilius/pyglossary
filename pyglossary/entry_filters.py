@@ -7,9 +7,7 @@ import typing
 from typing import TYPE_CHECKING
 
 from . import core
-from .text_utils import (
-	fixUtf8,
-)
+from .text_utils import fixUtf8Str
 
 if TYPE_CHECKING:
 	from pyglossary.langs import Lang
@@ -126,8 +124,8 @@ class FixUnicode(EntryFilter):
 	falseComment = "Do not fix Unicode in word(s) and definition"
 
 	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
-		entry.editFuncWord(fixUtf8)
-		entry.editFuncDefi(fixUtf8)
+		entry.editFuncWord(fixUtf8Str)
+		entry.editFuncDefi(fixUtf8Str)
 		return entry
 
 
