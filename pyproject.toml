@@ -248,6 +248,9 @@ mccabe.max-complexity = 13
 "doc/lib-examples/*.py" = ["ANN", "INP"]
 
 
+[tool.ty.rules]
+unresolved-import = "ignore"
+
 [tool.mypy]
 exclude = [
 	# '.*/plugin_lib/.*',

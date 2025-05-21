@@ -167,11 +167,12 @@ class Glossary(GlossaryCommon, PluginHandler):
 	@classmethod
 	def detectInputFormat(  # type: ignore
 		cls,
+		filename: str,
 		*args,
 		**kwargs,
 	) -> DetectedFormat | None:
 		try:
-			return PluginHandler.detectInputFormat(*args, **kwargs)
+			return PluginHandler.detectInputFormat(filename, *args, **kwargs)
 		except Error as e:
 			log.critical(str(e))
 			return None

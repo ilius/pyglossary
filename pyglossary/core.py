@@ -18,7 +18,7 @@ from .logger import TRACE, trace
 
 def exc_note(e: Exception, note: str) -> Exception:
 	if hasattr(e, "add_note"):
-		e.add_note(note)
+		e.add_note(note)  # ty: ignore[call-non-callable]
 	elif hasattr(e, "msg"):
 		e.msg += "\n" + note
 	return e

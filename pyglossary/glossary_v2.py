@@ -754,7 +754,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				stacklevel=3,
 			)
 
-		formatName = formatName or format
+		formatName: str = formatName or format or ""
 		del format
 
 		filenameAbs = os.path.abspath(filename)
@@ -876,7 +876,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				stacklevel=2,
 			)
 
-		formatName = formatName or format
+		formatName: str = formatName or format or ""
 		del format
 		if formatName is not None and type(formatName) is not str:
 			raise TypeError("formatName must be str")
@@ -1062,12 +1062,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				f"Conflictng arguments: direct={args.direct}, sqlite={args.sqlite}",
 			)
 
-		sort = self._checkSortFlag(plugin, args.sort)
+		sort: bool = self._checkSortFlag(plugin, args.sort)
 
+		direct: bool | None  = args.direct
 		if not sort:
-			if args.direct is None:
+			if direct is None:
 				return True, False
-			return args.direct, False
+			assert isinstance(direct, bool)
+			return direct, False
 
 		# from this point we can assume sort == True and direct == False
 

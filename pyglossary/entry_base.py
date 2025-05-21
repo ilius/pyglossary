@@ -22,7 +22,8 @@ class BaseEntry:  # noqa: PLR0904
 		self._word: str | list[str]
 
 	@classmethod
-	def isData(cls) -> bool: ...
+	def isData(cls) -> bool:
+		raise NotImplementedError
 
 	def getFileName(self) -> str:
 		raise NotImplementedError
@@ -66,14 +67,15 @@ class BaseEntry:  # noqa: PLR0904
 	@property
 	def defiFormat(self) -> str:
 		# TODO: type: Literal["m", "h", "x", "b"]
-		...
+		raise NotImplementedError
 
 	@defiFormat.setter
 	def defiFormat(self, defiFormat: str) -> None:
 		# TODO: type: Literal["m", "h", "x", "b"]
 		...
 
-	def detectDefiFormat(self, default: str = "") -> str: ...
+	def detectDefiFormat(self, default: str = "") -> str:
+		raise NotImplementedError
 
 	def addAlt(self, alt: str) -> None: ...
 
