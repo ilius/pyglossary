@@ -17,11 +17,10 @@ from .logger import TRACE, trace
 
 
 def exc_note(e: Exception, note: str) -> Exception:
-	try:
-		e.add_note(note)  # pyright: ignore[reportAttributeAccessIssue]
-	except AttributeError:
-		if hasattr(e, "msg"):
-			e.msg += "\n" + note  # pyright: ignore[reportAttributeAccessIssue]
+	if hasattr(e, "add_note"):
+		e.add_note(note)
+	elif hasattr(e, "msg"):
+		e.msg += "\n" + note
 	return e
 
 

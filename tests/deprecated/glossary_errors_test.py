@@ -201,7 +201,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 
 	def test_init_infoBadType(self):
 		try:
-			Glossary(info=["a"])  # pyright: ignore
+			Glossary(info=["a"])
 		except Exception as e:
 			self.assertEqual(str(type(e)), "<class 'TypeError'>")
 			self.assertEqual(
@@ -254,7 +254,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_lang_err_setObj_source(self):
 		glos = Glossary()
 		try:
-			glos.sourceLang = "foobar"  # pyright: ignore
+			glos.sourceLang = "foobar"
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid lang='foobar', must be a Lang object")
 		else:
@@ -263,7 +263,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_lang_err_setObj_target(self):
 		glos = Glossary()
 		try:
-			glos.targetLang = "foobar"  # pyright: ignore
+			glos.targetLang = "foobar"
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid lang='foobar', must be a Lang object")
 		else:

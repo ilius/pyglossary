@@ -22,7 +22,7 @@ class T_Collator(typing.Protocol):
 
 	# mypy: error: Self argument missing for a non-static method
 	# (or an invalid type for self)  [misc]
-	@classmethod  # pyright: ignore[reportArgumentType]
+	@classmethod
 	def createInstance(cls: T_Locale) -> T_Collator: ...  # type: ignore
 
 	@property

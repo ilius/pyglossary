@@ -165,7 +165,7 @@ class Glossary(GlossaryCommon, PluginHandler):
 		self._iter = self._loadedEntryGen()
 
 	@classmethod
-	def detectInputFormat(  # type: ignore # pyright: ignore[reportIncompatibleMethodOverride]
+	def detectInputFormat(  # type: ignore
 		cls,
 		*args,
 		**kwargs,
@@ -177,7 +177,7 @@ class Glossary(GlossaryCommon, PluginHandler):
 			return None
 
 	@classmethod
-	def detectOutputFormat(  # type: ignore # pyright: ignore[reportIncompatibleMethodOverride]
+	def detectOutputFormat(  # type: ignore
 		cls,
 		*args,
 		**kwargs,

@@ -420,7 +420,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_setInfo_err1(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.setInfo(1, "a")  # pyright: ignore
+			glos.setInfo(1, "a")
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid key=1, must be str")
 		else:
@@ -429,7 +429,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_getInfo_err1(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.getInfo(1)  # pyright: ignore
+			glos.getInfo(1)
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid key=1, must be str")
 		else:
