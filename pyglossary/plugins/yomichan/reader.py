@@ -24,6 +24,7 @@ __all__ = ["Reader"]
 
 FIELDS_TO_WRITE = ["title", "author", "description", "sourceLanguage", "targetLanguage"]
 TERM_BASE_PATTERN = re.compile(r"term_bank_(\d+).json\Z")
+BASE_BANK_PATTERN = re.compile(r".+_(meta_)?bank_(\d+).json\Z")
 
 
 class Reader:
@@ -51,7 +52,11 @@ class Reader:
             match = TERM_BASE_PATTERN.match(file.filename)
             if match is not None:
                 termFiles.append((int(match.group(1)), file))
+                continue
             if file.filename == "index.json" or file.is_dir():
+                continue
+            # As currently there is no support for them
+            if BASE_BANK_PATTERN.match(file.filename):
                 continue
             resourceFiles.append(file)
         self._termBankFiles = [val for _, val in sorted(termFiles, key=lambda v: v[0])]
@@ -82,10 +87,11 @@ class Reader:
             raise RuntimeError("Yomichan: resources were read while reader is not open")
         with self._dictFile.open("index.json") as indexFile:
             index = jsonToData(indexFile.read())
-        assert isinstance(index, dict), "Invalid format"
+        if not isinstance(index, dict):
+            raise RuntimeError("Yomichan: ill-formed yomichan dictionary")
         if index["format"] != 3:
             raise NotImplementedError(
-                "Yomichan: Supported only dictionaries of 3 version",
+                "Yomichan: supported only dictionaries of 3 version",
             )
         self._glos.setInfo("sourceLang", "ja")
         for c_field in FIELDS_TO_WRITE:
@@ -120,22 +126,41 @@ def _ReadSubStructuredContent(elem: StructuredContent) -> str:
         return elem
     if isinstance(elem, list):
         return " ".join(map(_ReadSubStructuredContent, elem))
-    additional_properties = "".join((
+    styles = []
+    additional_properties = [
         f' {key}="{val}"'
         for key, val in elem.get("data", {}).items()
-    ))
+    ]
+    if "style" in elem:
+        styles = [f"{k}: {v};" for k, v in elem["style"].items()]
+    for field in ("lang", "title", "alt", "href", "colSpan", "rowSpan"):
+        if field not in elem:
+            continue
+        additional_properties.append(f' {field}="{elem.get(field)}"')
+
+    # Tag processing
     # TODO: Process all tags?
-    if elem["tag"] == "a":
-        additional_properties += f' href="{elem["href"]}"'
+    if elem["tag"] == "br":
+        return f"<br{''.join(additional_properties)}>"
     if elem["tag"] == "img":
-        tag = f"<img src=\"{elem['path']}\"{additional_properties}>"
-    elif elem["tag"] == "br":
-        tag = f"<br{additional_properties}>"
-    else:
-        tag = elem["tag"]
-        content = _ReadSubStructuredContent(elem.get("content", ""))
-        tag = f"<{tag}{additional_properties}>{content}</{tag}>"
-    return tag
+        for name in ("width", "height"):
+            if name not in elem:
+                continue
+            if elem.get("sizeUnits", "px") == "em":
+                styles.append(f"{name}: {elem.get(name)}em;")
+            else:
+                additional_properties.append(f" {name}={elem.get(name)}")
+        if "verticalAlign" in elem:
+            styles.append(f"vertical-align: {elem['verticalAlign']};")
+        additional_properties.append(f' style="{"".join(styles)}"')
+        additional_properties = "".join(additional_properties)
+        return f"<img src=\"{elem['path']}\"{additional_properties}>"
+    # General tags
+    tag = elem["tag"]
+    content = _ReadSubStructuredContent(elem.get("content", ""))
+    additional_properties.append(f' style="{"".join(styles)}"')
+    additional_properties = "".join(additional_properties)
+    return f"<{tag}{additional_properties}>{content}</{tag}>"
 
 
 def _ReadStructuredContent(elem: DefinitionObj) -> str:
@@ -144,7 +169,12 @@ def _ReadStructuredContent(elem: DefinitionObj) -> str:
     if elem["type"] == "structured-content":
         return _ReadSubStructuredContent(elem["content"])
     if elem["type"] == "image":
-        return f"<img src=\"{elem['path']}\">"
+        properties = []
+        for name in ["alt", "width", "height", "title"]:
+            prop = elem.get(name)
+            if prop is not None:
+                properties.append(f' {name}="{prop}"')
+        return f"<img src=\"{elem['path']}\"{''.join(properties)}>"
     raise RuntimeError("Ill-formed Yomichan dictionary")
 
 
@@ -154,6 +184,6 @@ def _ReadDefinition(definition: list[YomichanDefinition]) -> str:
             return defi
         if isinstance(defi, dict):
             return _ReadStructuredContent(defi)
-        raise NotImplementedError("Unknown elem in definition: {defi}")
+        raise NotImplementedError("Yomichan: unknown elem in definition: {defi}")
 
     return "\n".join(map(_ParseDefinition, definition))

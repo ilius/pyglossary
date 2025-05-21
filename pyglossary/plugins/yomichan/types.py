@@ -50,7 +50,7 @@ StructuredContentObj: TypeAlias = Union[
     "LinkTagStructContent",
 ]
 DataAttributes: TypeAlias = dict[str, str]
-StyleAttributes: TypeAlias = dict[str, str]
+StyleAttributes: TypeAlias = dict[str, str | int]
 
 class EmptyTagStructContent(TypedDict):
     tag: Literal["br"]
