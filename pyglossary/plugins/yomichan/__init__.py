@@ -9,9 +9,11 @@ from pyglossary.option import (
 	StrOption,
 )
 
+from .reader import Reader
 from .writer import Writer
 
 __all__ = [
+	"Reader",
 	"Writer",
 	"description",
 	"enable",

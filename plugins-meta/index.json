@@ -2041,10 +2041,11 @@
 				"comment": "When given, if any substring of an entry's definition matches this regular expression, then the term(s) created from entry are labeled as i-adjective. Yomichan uses this information to match conjugated forms of words. `^` and `$` can be used to match start and end of lines, respectively. For example, setting this option to `r'^\\(\u5f62\\)$'` identify entries where there's a line of '(\u5f62)'."
 			}
 		},
-		"canRead": false,
+		"canRead": true,
 		"canWrite": true,
 		"sortOnWrite": "always",
 		"sortKeyName": "headword",
+		"readOptions": {},
 		"writeOptions": {
 			"term_bank_size": 10000,
 			"term_from_headword_only": true,
@@ -2061,7 +2062,10 @@
 		},
 		"writeDepends": {
 			"bs4": "beautifulsoup4"
-		}
+		},
+		"readCompressions": [
+			"zip"
+		]
 	},
 	{
 		"module": "zimfile",
