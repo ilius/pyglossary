@@ -305,11 +305,24 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.convert(
 				ConvertArgs(
-					inputFilename=MyStr(""),
+					inputFilename=1,
 				),
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "inputFilename must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_convert_typeErr_1a(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename=MyStr(""),
+				),
+			)
+		except Error as e:
+			self.assertEqual(str(e), "Input and output files are the same")
 		else:
 			self.fail("must raise TypeError")
 
@@ -319,11 +332,25 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 			glos.convert(
 				ConvertArgs(
 					inputFilename="",
-					outputFilename=MyStr(""),
+					outputFilename=1,
 				),
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "outputFilename must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_convert_typeErr_2a(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename="",
+					outputFilename=MyStr(""),
+				),
+			)
+		except Error as e:
+			self.assertEqual(str(e), "Input and output files are the same")
 		else:
 			self.fail("must raise TypeError")
 
@@ -334,11 +361,26 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 				ConvertArgs(
 					inputFilename="",
 					outputFilename="",
-					inputFormat=MyStr(""),
+					inputFormat=1,
 				),
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "inputFormat must be str")
+		else:
+			self.fail("must raise TypeError")
+
+	def test_convert_typeErr_3a(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename="",
+					outputFilename="",
+					inputFormat=MyStr(""),
+				),
+			)
+		except Error as e:
+			self.assertEqual(str(e), "Input and output files are the same")
 		else:
 			self.fail("must raise TypeError")
 
@@ -350,7 +392,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 					inputFilename="",
 					outputFilename="",
 					inputFormat="",
-					outputFormat=MyStr(""),
+					outputFormat=1,
 				),
 			)
 		except TypeError as e:
@@ -358,11 +400,27 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		else:
 			self.fail("must raise TypeError")
 
+	def test_convert_typeErr_4a(self):
+		glos = Glossary()
+		try:
+			glos.convert(
+				ConvertArgs(
+					inputFilename="",
+					outputFilename="",
+					inputFormat="",
+					outputFormat=MyStr(""),
+				),
+			)
+		except Error as e:
+			self.assertEqual(str(e), "Input and output files are the same")
+		else:
+			self.fail("must raise TypeError")
+
 	def test_write_typeErr_1(self):
 		glos = Glossary()
 		try:
 			glos.write(
-				filename=MyStr(""),
+				filename=1,
 				formatName="",
 			)
 		except TypeError as e:

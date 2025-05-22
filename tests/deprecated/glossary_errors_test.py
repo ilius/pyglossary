@@ -285,7 +285,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		glos = Glossary()
 		try:
 			glos.convert(
-				inputFilename=MyStr(""),
+				inputFilename=1,
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "inputFilename must be str")
@@ -297,7 +297,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.convert(
 				inputFilename="",
-				outputFilename=MyStr(""),
+				outputFilename=1,
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "outputFilename must be str")
@@ -310,7 +310,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 			glos.convert(
 				inputFilename="",
 				outputFilename="",
-				inputFormat=MyStr(""),
+				inputFormat=1,
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "inputFormat must be str")
@@ -324,7 +324,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 				inputFilename="",
 				outputFilename="",
 				inputFormat="",
-				outputFormat=MyStr(""),
+				outputFormat=2,
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "outputFormat must be str")
@@ -335,7 +335,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		glos = Glossary()
 		try:
 			glos.read(
-				filename=MyStr(""),
+				filename=1,
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "filename must be str")
@@ -346,7 +346,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		glos = Glossary()
 		try:
 			glos.write(
-				filename=MyStr(""),
+				filename=1,
 				format="",
 			)
 		except TypeError as e:
@@ -359,7 +359,7 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			glos.write(
 				filename="",
-				format=MyStr(""),
+				format=1,
 			)
 		except TypeError as e:
 			self.assertEqual(str(e), "formatName must be str")
