@@ -29,6 +29,7 @@ __all__ = [
 	"escapeNTB",
 	"excMessage",
 	"fixUtf8",
+	"fixUtf8Str",
 	"joinByBar",
 	"replacePostSpaceChar",
 	"splitByBar",
