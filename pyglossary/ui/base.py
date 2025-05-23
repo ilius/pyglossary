@@ -52,8 +52,6 @@ summary = (
 
 
 class UIBase:
-	configDefDict = configDefDict
-
 	conflictingParams = [
 		("sqlite", "direct"),
 		("remove_html", "remove_html_all"),

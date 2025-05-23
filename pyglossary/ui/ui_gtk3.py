@@ -30,6 +30,7 @@ from pyglossary import core
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
+from pyglossary.ui.config import configDefDict
 
 from .base import (
 	UIBase,
@@ -990,7 +991,6 @@ class GeneralOptionsDialog(gtk.Dialog):
 			"remove_html_all": True,
 		}
 		self.configCheckButtons = {}
-		configDefDict = UIBase.configDefDict
 		for param in self.configParams:
 			hbox = gtk.HBox()
 			comment = configDefDict[param].comment

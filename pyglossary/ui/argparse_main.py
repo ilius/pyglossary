@@ -4,6 +4,7 @@ import os
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.ui.base import UIBase
+from pyglossary.ui.config import configDefDict
 from pyglossary.ui.option_ui import registerConfigOption
 
 if TYPE_CHECKING:
@@ -277,7 +278,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]) -> None
 
 	# _______________________________
 
-	for key, option in UIBase.configDefDict.items():
+	for key, option in configDefDict.items():
 		registerConfigOption(parser, key, option)
 
 
@@ -316,7 +317,7 @@ def configFromArgs(
 	log: logging.Logger,
 ) -> dict[str, Any]:
 	config: dict[str, Any] = {}
-	for key, option in UIBase.configDefDict.items():
+	for key, option in configDefDict.items():
 		if not option.hasFlag:
 			continue
 		value = getattr(args, key, None)

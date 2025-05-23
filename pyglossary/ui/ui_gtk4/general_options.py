@@ -23,7 +23,7 @@ from typing import Any
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
-from pyglossary.ui.base import UIBase
+from pyglossary.ui.config import configDefDict
 
 from .sort_options import SortOptionsBox
 from .utils import (
@@ -88,7 +88,6 @@ class GeneralOptionsDialog(gtk.Dialog):
 			"remove_html_all": True,
 		}
 		self.configCheckButtons = {}
-		configDefDict = UIBase.configDefDict
 		for param in self.configParams:
 			hbox = HBox(spacing=hpad)
 			comment = configDefDict[param].comment

@@ -11,11 +11,10 @@ rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
 from pyglossary.ui.base import UIBase
+from pyglossary.ui.config import configDefDict
 
 ui = UIBase()
 ui.loadConfig(user=False)
-
-# ui.configDefDict
 
 re_flag = re.compile("(\\s)(--[a-z\\-]+)")
 
@@ -170,7 +169,7 @@ paramsTable = title + renderTable(
 			defaultOptionValue(name, opt, images),
 			optionComment(name, opt),
 		)
-		for name, opt in ui.configDefDict.items()
+		for name, opt in configDefDict.items()
 		if not opt.disabled
 	],
 )

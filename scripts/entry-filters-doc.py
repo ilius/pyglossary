@@ -10,6 +10,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.entry_filters import entryFiltersRules
 from pyglossary.ui.base import UIBase
+from pyglossary.ui.config import configDefDict
 
 ui = UIBase()
 ui.loadConfig(user=False)
@@ -54,7 +55,7 @@ def renderTable(rows):
 def getCommandFlagsMD(name):
 	if name is None:
 		return ""
-	opt = ui.configDefDict[name]
+	opt = configDefDict[name]
 	flag = name.replace("_", "-")
 
 	if opt.falseComment:

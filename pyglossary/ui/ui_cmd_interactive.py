@@ -86,6 +86,7 @@ from pyglossary.core import confDir
 from pyglossary.glossary_v2 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
+from pyglossary.ui.config import configDefDict
 from pyglossary.ui.termcolors import colors
 
 __all__ = ["UI"]
@@ -800,7 +801,7 @@ class UI(ui_cmd.UI):
 		)
 
 	def askConfig(self) -> None:
-		configKeys = sorted(self.configDefDict)
+		configKeys = sorted(configDefDict)
 		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -823,7 +824,7 @@ class UI(ui_cmd.UI):
 				return
 			if not configKey:
 				return
-			option = self.configDefDict[configKey]
+			option = configDefDict[configKey]
 			while True:
 				try:
 					value = self.askConfigValue(configKey, option)
@@ -1023,7 +1024,7 @@ class UI(ui_cmd.UI):
 					continue
 				if value == self.savedConfig.get(key):
 					continue
-				option = self.configDefDict.get(key)
+				option = configDefDict.get(key)
 				if option is None:
 					log.error(f"config key {key} was not found")
 				if not option.hasFlag:
