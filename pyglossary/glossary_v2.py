@@ -69,6 +69,8 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
 	from typing import Any
 
+	from pyglossary.config_type import ConfigType
+
 	from .entry_base import MultiStr
 	from .glossary_types import (
 		EntryListType,
@@ -186,7 +188,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		"""
 		GlossaryInfo.__init__(self)
 		GlossaryProgress.__init__(self, ui=ui)
-		self._config: dict[str, Any] = {}
+		self._config: ConfigType = {}
 		self._data: EntryListType = EntryList(
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
@@ -537,7 +539,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		raise NotImplementedError
 
 	@config.setter
-	def config(self, config: dict[str, Any]) -> None:
+	def config(self, config: ConfigType) -> None:
 		if self._config:
 			log.error("glos.config is set more than once")
 			return
