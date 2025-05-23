@@ -11,10 +11,7 @@ from os.path import (
 	realpath,
 	splitext,
 )
-from typing import (
-	TYPE_CHECKING,
-	Protocol,
-)
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
 	import io

@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import (
-	TYPE_CHECKING,
-	Any,
-	Protocol,
-	TypeVar,
-)
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator

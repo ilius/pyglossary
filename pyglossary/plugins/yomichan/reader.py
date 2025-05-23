@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import re
 from operator import itemgetter
-from typing import (
-	TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
 from zipfile import ZipFile, ZipInfo
 
 from pyglossary.json_utils import jsonToData

@@ -13,10 +13,7 @@ from os.path import (
 	splitext,
 )
 from time import perf_counter as now
-from typing import (
-	TYPE_CHECKING,
-	Literal,
-)
+from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Generator

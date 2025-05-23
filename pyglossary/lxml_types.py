@@ -16,11 +16,7 @@ from contextlib import (
 from contextlib import (
 	AbstractContextManager as ContextManager,
 )
-from typing import (
-	AnyStr,
-	Literal,
-	TypeAlias,
-)
+from typing import AnyStr, Literal, TypeAlias
 
 from lxml.etree import QName, _Element  # noqa: PLC2701
 

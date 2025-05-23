@@ -21,11 +21,7 @@ from io import BytesIO
 from operator import attrgetter
 from os.path import isdir, isfile, join, split, splitext
 from struct import unpack
-from typing import (
-	TYPE_CHECKING,
-	Any,
-	cast,
-)
+from typing import TYPE_CHECKING, Any, cast
 
 from lxml import etree
 

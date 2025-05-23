@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 from time import perf_counter as now
-from typing import (
-	TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
 
 from pyglossary.plugins.stardict import Writer as StdWriter
 

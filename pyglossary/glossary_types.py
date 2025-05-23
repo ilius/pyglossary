@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 from collections.abc import (
@@ -5,13 +6,7 @@ from collections.abc import (
 	Iterator,
 	Sequence,
 )
-
-# -*- coding: utf-8 -*-
-from typing import (
-	TYPE_CHECKING,
-	Any,
-	Protocol,
-)
+from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
 	from typing import TypeAlias
