@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from typing import Any
 
+	from pyglossary.config_type import ConfigType
+
 
 ui_list = ["gtk3", "gtk4", "tk", "web"]
 if os.sep == "\\" or core.sysName == "darwin":  # windows or mac
@@ -49,7 +51,7 @@ def base_ui_run(  # noqa: PLR0913
 	inputFormat: str = "",
 	outputFormat: str = "",
 	reverse: bool = False,
-	config: dict[str, Any] | None = None,
+	config: ConfigType | None = None,
 	readOptions: dict[str, Any] | None = None,
 	writeOptions: dict[str, Any] | None = None,
 	convertOptions: dict[str, Any] | None = None,
