@@ -86,6 +86,7 @@ if TYPE_CHECKING:
 	from prompt_toolkit.formatted_text import StyleAndTextTuples
 	from prompt_toolkit.key_binding.key_processor import KeyPressEvent
 
+	from pyglossary.config_type import ConfigType
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
@@ -237,7 +238,7 @@ class UI(ui_cmd.UI):
 		self._outputFilename = ""
 		self._inputFormat = ""
 		self._outputFormat = ""
-		self.config: dict[str, Any] = {}
+		self.config: ConfigType = {}
 		self._readOptions = {}
 		self._writeOptions = {}
 		self._convertOptions = {}
@@ -1137,7 +1138,7 @@ class UI(ui_cmd.UI):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict[str, Any] | None = None,
+		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,

@@ -53,6 +53,7 @@ from .utils import (
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+	from pyglossary.config_type import ConfigType
 	from pyglossary.ui_type import UIType
 
 __all__ = ["MainWindow"]
@@ -326,7 +327,7 @@ progressbar progress, trough {min-height: 0.6em;}
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict[str, Any] | None = None,
+		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,

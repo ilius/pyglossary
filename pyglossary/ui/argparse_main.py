@@ -11,8 +11,10 @@ if TYPE_CHECKING:
 	import argparse
 	import logging
 
+	from pyglossary.config_type import ConfigType
 
-def defineFlags(parser: argparse.ArgumentParser, config: dict[str, Any]) -> None:
+
+def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 	osType = "windows" if os.sep == "\\" else "unix"
 	colorConf = f"color.enable.cmd.{osType}"
 	defaultHasColor = config.get(colorConf, True) and not os.getenv("NO_COLOR")
@@ -316,7 +318,7 @@ def configFromArgs(
 	args: argparse.Namespace,
 	log: logging.Logger,
 ) -> dict[str, Any]:
-	config: dict[str, Any] = {}
+	config: ConfigType = {}
 	for key, option in configDefDict.items():
 		if not option.hasFlag:
 			continue

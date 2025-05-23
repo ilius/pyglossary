@@ -35,6 +35,8 @@ if TYPE_CHECKING:
 	import logging
 	from collections.abc import Mapping
 
+	from pyglossary.config_type import ConfigType
+
 __all__ = ["COMMAND", "UI", "parseFormatOptionsStr", "printHelp"]
 
 
@@ -273,7 +275,7 @@ class UI(UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict[str, Any] | None = None,
+		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,

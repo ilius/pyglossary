@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import Literal, TypeAlias, Union
+from typing import Literal, NotRequired, Required, TypeAlias, Union
 
-from typing_extensions import NotRequired, Required, TypedDict
+from typing_extensions import TypedDict
 
 DefinitionObj: TypeAlias = Union[
 	"DefinitionString",

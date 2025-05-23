@@ -64,6 +64,7 @@ from .gtk3_utils.utils import (  # noqa: E402
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+	from pyglossary.config_type import ConfigType
 	from pyglossary.plugin_prop import PluginProp
 
 # from gi.repository import GdkPixbuf
@@ -1412,7 +1413,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict[str, Any] | None = None,
+		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,

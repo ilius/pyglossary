@@ -30,7 +30,7 @@ import warnings
 from abc import abstractmethod
 from bisect import bisect_left
 from builtins import open as fopen
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import cache, lru_cache
 from io import BufferedIOBase, IOBase
 from os.path import isdir
@@ -1073,9 +1073,7 @@ class Writer:
 
 		self.current_bin: BinMemWriter | None = None
 
-		created_at = (
-			os.getenv("SLOB_TIMESTAMP") or datetime.now(timezone.utc).isoformat()
-		)
+		created_at = os.getenv("SLOB_TIMESTAMP") or datetime.now(UTC).isoformat()
 
 		self.blob_count = 0
 		self.ref_count = 0

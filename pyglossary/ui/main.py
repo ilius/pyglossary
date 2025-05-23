@@ -25,12 +25,15 @@ import argparse
 import logging
 import sys
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from pyglossary import core, logger  # essential
 from pyglossary.langs import langDict
 from pyglossary.ui.argparse_main import configFromArgs, defineFlags, validateFlags
 from pyglossary.ui.base import UIBase
+
+if TYPE_CHECKING:
+	from pyglossary.config_type import ConfigType
 
 __all__ = ["main", "mainNoExit"]
 
@@ -110,7 +113,7 @@ class MainPrepareResult:
 	inputFormat: str | None
 	outputFormat: str | None
 	reverse: bool
-	config: dict
+	config: ConfigType
 	readOptions: dict[str, Any]
 	writeOptions: dict[str, Any]
 	convertOptions: dict[str, Any]
