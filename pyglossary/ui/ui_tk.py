@@ -45,6 +45,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from tkinter.font import Font
 
+	from pyglossary.config_type import ConfigType
 	from pyglossary.logger import Logger
 
 log: Logger = logging.getLogger("pyglossary")  # pyright: ignore
@@ -1546,7 +1547,7 @@ class UI(tk.Frame, UIBase):
 		inputFormat: str = "",
 		outputFormat: str = "",
 		reverse: bool = False,
-		config: dict[str, Any] | None = None,
+		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,

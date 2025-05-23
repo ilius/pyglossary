@@ -8,7 +8,7 @@ exclude = ["pyglossary/plugin_lib/ripemd128.py"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [

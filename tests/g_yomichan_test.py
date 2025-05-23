@@ -14,7 +14,7 @@ from glossary_v2_test import TestGlossaryBase
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 testTimeEpoch = 1730579400
-testTime = datetime.datetime.fromtimestamp(testTimeEpoch, tz=datetime.timezone.utc)
+testTime = datetime.datetime.fromtimestamp(testTimeEpoch, tz=datetime.UTC)
 
 
 class TestGlossaryYomichan(TestGlossaryBase):
