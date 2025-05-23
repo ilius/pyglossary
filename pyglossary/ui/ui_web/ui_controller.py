@@ -4,11 +4,14 @@ import json
 import logging
 import webbrowser
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
 from pyglossary.ui.ui_web.websocket_main import create_server
+
+if TYPE_CHECKING:
+	from pyglossary.config_type import ConfigType
 
 log = logging.getLogger("pyglossary.web")
 
@@ -44,7 +47,7 @@ class WebUI(UIBase):
 		inputFormat: str,
 		outputFormat: str,
 		reverse: bool = False,
-		config: dict[str, Any] | None = None,
+		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,
