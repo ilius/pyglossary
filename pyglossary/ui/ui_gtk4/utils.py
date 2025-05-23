@@ -19,7 +19,7 @@
 from __future__ import annotations
 
 from os.path import isabs, join
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from gi.repository import Gdk as gdk  # noqa: I001
 from gi.repository import GLib as glib
@@ -45,7 +45,7 @@ __all__ = [
 ]
 
 
-def getWorkAreaSize(_w: Any) -> tuple[int, int]:
+def getWorkAreaSize(_w: object) -> tuple[int, int]:
 	display = gdk.Display.get_default()
 	# monitor = display.get_monitor_at_surface(w.get_surface())
 	# if monitor is None:
@@ -199,7 +199,7 @@ def showMsg(  # noqa: PLR0913
 		gtk.ResponseType.OK,
 	)
 
-	def onResponse(_w: Any, _response_id: int) -> None:
+	def onResponse(_w: gtk.Widget, _response_id: int) -> None:
 		win.destroy()
 
 	win.connect("response", onResponse)

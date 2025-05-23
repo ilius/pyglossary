@@ -185,7 +185,7 @@ class FormatDialog(gtk.Dialog):
 		self.resize(400, 400)
 		self.connect("realize", self.onRealize)
 
-	def onRealize(self, _widget: Any = None) -> None:
+	def onRealize(self, _widget: gtk.Widget = None) -> None:
 		if self.activeDesc:
 			self.treev.grab_focus()
 		else:
@@ -252,7 +252,7 @@ class FormatDialog(gtk.Dialog):
 		self,
 		treev: gtk.TreeView,
 		path: gtk.GtkTreePath,
-		_col: Any,
+		_col: gtk.TreeViewColumn,
 	) -> None:
 		model = treev.get_model()
 		iter_ = model.get_iter(path)
@@ -277,10 +277,10 @@ class FormatButton(gtk.Button):
 		###
 		self.connect("clicked", self.onClick)
 
-	def onChanged(self, _obj: Any = None) -> None:
+	def onChanged(self, _obj: gtk.Widget = None) -> None:
 		pass
 
-	def onClick(self, _button: Any = None) -> None:
+	def onClick(self, _button: gtk.Widget = None) -> None:
 		dialog = FormatDialog(
 			descList=self.descList,
 			parent=self._parent,
@@ -420,7 +420,12 @@ class FormatOptionsDialog(gtk.Dialog):
 		itr = model.get_iter(path)
 		model.set_value(itr, 0, active)
 
-	def valueEdited(self, _cell: Any, path: gtk.TreePath, rawValue: str) -> None:
+	def valueEdited(
+		self,
+		_cell: gtk.CellRenderer,
+		path: gtk.TreePath,
+		rawValue: str,
+	) -> None:
 		# value is column 3
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -437,7 +442,12 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, self.valueCol, rawValue)
 		model.set_value(itr, 0, enable)
 
-	def rowActivated(self, _treev: Any, path: gtk.TreePath, _col: Any) -> bool:
+	def rowActivated(
+		self,
+		_treev: gtk.Widget,
+		path: gtk.TreePath,
+		_col: gtk.TreeViewColumn,
+	) -> bool:
 		# forceMenu=True because we can not enter edit mode
 		# if double-clicked on a cell other than Value
 		return self.valueCellClicked(path, forceMenu=True)
@@ -623,7 +633,7 @@ class FormatBox(FormatButton):
 	def hasOptions(self) -> bool:
 		return bool(self.getActiveOptions())  # not None or []
 
-	def openOptions(self, _button: Any = None) -> None:
+	def openOptions(self, _button: gtk.Widget = None) -> None:
 		formatName = self.getActive()
 		options = self.getActiveOptions()
 		if options is None:
@@ -657,7 +667,7 @@ class FormatBox(FormatButton):
 		)
 		self.onChanged(self)
 
-	def onChanged(self, _widget: Any = None) -> None:
+	def onChanged(self, _widget: gtk.Widget = None) -> None:
 		name = self.getActive()
 		if not name:
 			self.optionsButton.set_visible(False)
@@ -807,7 +817,7 @@ class BrowseButton(gtk.Button):
 
 		self.connect("clicked", self.onClick)
 
-	def onClick(self, _widget: Any) -> None:
+	def onClick(self, _widget: gtk.Widget) -> None:
 		fcd = gtk.FileChooserNative(
 			transient_for=(
 				self.get_root() if hasattr(self, "get_root") else self.get_toplevel()
@@ -930,11 +940,11 @@ class SortOptionsBox(gtk.Box):
 
 
 class GeneralOptionsDialog(gtk.Dialog):
-	def onDeleteEvent(self, _widget: Any, _event: Any) -> bool:
+	def onDeleteEvent(self, _widget: gtk.Widget, _event: gdk.Event) -> bool:
 		self.hide()
 		return True
 
-	def onResponse(self, _widget: Any, _event: Any) -> bool:
+	def onResponse(self, _widget: gtk.Widget, _event: gdk.Event) -> bool:
 		self.applyChanges()
 		self.hide()
 		return True
@@ -1053,7 +1063,7 @@ class OptionsButton(gtk.MenuButton):
 		menu.show_all()
 		self.set_popup(menu)
 
-	def _onGeneralOptionClick(self, _widget: Any) -> None:
+	def _onGeneralOptionClick(self, _widget: gtk.Widget) -> None:
 		if self.generalDialog is None:
 			self.generalDialog = GeneralOptionsDialog(self.ui)
 		self.generalDialog.present()
@@ -1438,7 +1448,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 		gtk.Dialog.present(self)
 		gtk.main()
 
-	def onDeleteEvent(self, _widget: Any, _event: Any) -> None:
+	def onDeleteEvent(self, _widget: gtk.Widget, _event: gdk.Event) -> None:
 		self.destroy()
 		# gtk.main_quit()
 		# if called while converting, main_quit does not exit program,
@@ -1446,15 +1456,15 @@ class MainWindow(gtk.Dialog, MyDialog):
 		# and makes you close the terminal or force kill the process
 		gtk.main_quit()
 
-	def consoleClearButtonClicked(self, _widget: Any = None) -> None:
+	def consoleClearButtonClicked(self, _widget: gtk.Widget | None = None) -> None:
 		self.convertConsoleTextview.get_buffer().set_text("")
 
-	def verbosityComboChanged(self, _widget: Any = None) -> None:
+	def verbosityComboChanged(self, _widget: gtk.Widget | None = None) -> None:
 		verbosity = self.verbosityCombo.get_active()
 		# or int(self.verbosityCombo.get_active_text())
 		log.setVerbosity(verbosity)
 
-	def convertClicked(self, _widget: Any = None) -> None:
+	def convertClicked(self, _widget: gtk.Widget | None = None) -> None:
 		inPath = self.convertInputEntry.get_text()
 		if not inPath:
 			log.critical("Input file path is empty!")
@@ -1511,7 +1521,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 			self.assert_quit = False
 			self.progressTitle = ""
 
-	def convertInputEntryChanged(self, _widget: Any = None) -> None:
+	def convertInputEntryChanged(self, _widget: gtk.Widget | None = None) -> None:
 		inPath = self.convertInputEntry.get_text()
 		inFormat = self.inputFormatBox.getActive()
 		if inPath.startswith("file://"):
@@ -1531,7 +1541,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 
 		self.status("Select output file")
 
-	def convertOutputEntryChanged(self, _widget: Any = None) -> None:
+	def convertOutputEntryChanged(self, _widget: gtk.Widget | None = None) -> None:
 		outPath = self.convertOutputEntry.get_text()
 		outFormat = self.outputFormatBox.getActive()
 		if not outPath:

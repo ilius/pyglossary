@@ -18,8 +18,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from gi.repository import Gtk as gtk
 
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
@@ -77,7 +75,7 @@ class SortOptionsBox(gtk.Box):
 		###
 		self.show()
 
-	def onSortCheckToggled(self, *_args: Any) -> None:
+	def onSortCheckToggled(self, *_args: object) -> None:
 		sort = self.sortCheck.get_active()
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)

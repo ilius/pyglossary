@@ -147,16 +147,16 @@ class NullObj:
 	def __getattr__(self, attr: str) -> NullObj:
 		return self
 
-	def __setattr__(self, attr: str, value: Any) -> None:
+	def __setattr__(self, attr: str, value: object) -> None:
 		pass
 
-	def __setitem__(self, key: str, value: Any) -> None:
+	def __setitem__(self, key: str, value: object) -> None:
 		pass
 
 	def __call__(
 		self,
-		*args: tuple[Any],
-		**kwargs: Mapping[str, Any],
+		*args: object,
+		**kwargs: object,
 	) -> None:
 		pass
 

@@ -110,7 +110,7 @@ class ConvertStatusBox(gtk.Box):
 		self.statusBar.push(self.statusNewId % 4294967295, msg)
 		self.statusNewId += 1
 
-	def verbosityComboChanged(self, _widget: Any = None) -> None:
+	def verbosityComboChanged(self, _widget: gtk.Widget | None = None) -> None:
 		verbosity = self.verbosityCombo.get_active()
 		# or int(self.verbosityCombo.get_active_text())
 		log.setVerbosity(verbosity)
@@ -363,7 +363,7 @@ progressbar progress, trough {min-height: 0.6em;}
 		self.destroy()
 		# unlike Gtk3, no need for sys.exit or gtk.main_quit (which does not exist)
 
-	def onCloseRequest(self, _widget: Any) -> None:
+	def onCloseRequest(self, _widget: gtk.Widget) -> None:
 		self.exitApp()
 
 	def onKeyPress(
@@ -379,20 +379,20 @@ progressbar progress, trough {min-height: 0.6em;}
 	def onButtonPress(
 		self,
 		gesture: gtk.GestureClick,
-		_n_press: Any,
+		_n_press: int,
 		_x: int,
 		_y: int,
 	) -> None:
 		print(f"MainWindow.onButtonPress: {gesture}")
 
-	def consoleClearButtonClicked(self, _widget: Any = None) -> None:
+	def consoleClearButtonClicked(self, _widget: gtk.Widget = None) -> None:
 		self.convertConsole.set_text("")
 
 	def setInOutBoxesSensivive(self, sensitive: bool) -> None:
 		for hbox in self.inOutBoxes:
 			hbox.set_sensitive(sensitive)
 
-	def convertClicked(self, _widget: Any = None) -> None:
+	def convertClicked(self, _widget: gtk.Widget | None = None) -> None:
 		inPath = self.inputFileBox.get_text()
 		if not inPath:
 			log.critical("Input file path is empty!")

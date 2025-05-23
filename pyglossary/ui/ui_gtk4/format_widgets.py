@@ -130,7 +130,7 @@ class FormatDialog(gtk.Dialog):
 		self.updateTree()
 		self.connect("realize", self.onRealize)
 
-	def onRealize(self, _widget: Any = None) -> None:
+	def onRealize(self, _widget: gtk.Widget = None) -> None:
 		if self.activeDesc:
 			self.treev.grab_focus()
 		else:
@@ -197,7 +197,7 @@ class FormatDialog(gtk.Dialog):
 		self,
 		treev: gtk.TreeView,
 		path: gtk.GtkTreePath,
-		_col: Any,
+		_col: object,
 	) -> None:
 		model = treev.get_model()
 		iter_ = model.get_iter(path)
@@ -241,7 +241,7 @@ class FormatButton(gtk.Button):
 			self.set_label(self.noneLabel)
 		self.onChanged()
 
-	def onClick(self, _button: Any = None) -> None:
+	def onClick(self, _button: gtk.Widget = None) -> None:
 		dialog = FormatDialog(
 			descList=self.descList,
 			parent=self._parent,
@@ -382,7 +382,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		itr = model.get_iter(path)
 		model.set_value(itr, 0, active)
 
-	def valueEdited(self, _cell: Any, path: gtk.TreePath, rawValue: str) -> None:
+	def valueEdited(self, _cell: object, path: gtk.TreePath, rawValue: str) -> None:
 		# value is column 3
 		model = self.treev.get_model()
 		itr = model.get_iter(path)
@@ -399,12 +399,16 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, self.valueCol, rawValue)
 		model.set_value(itr, 0, enable)
 
-	def rowActivated(self, _treev: Any, path: gtk.TreePath, _col: Any) -> bool:
+	def rowActivated(
+		self, _treev: gtk.Widget, path: gtk.TreePath, _col: object
+	) -> bool:
 		# forceMenu=True because we can not enter edit mode
 		# if double-clicked on a cell other than Value
 		return self.valueCellClicked(path, forceMenu=True)
 
-	def treeviewButtonPress(self, _gesture: Any, _n_press: Any, x: int, y: int) -> bool:
+	def treeviewButtonPress(
+		self, _gesture: object, _n_press: object, x: int, y: int
+	) -> bool:
 		# if gevent.button != 1:
 		# 	return False
 		x2, y2 = self.treev.convert_widget_to_bin_window_coords(int(x), int(y))
@@ -459,7 +463,7 @@ class FormatOptionsDialog(gtk.Dialog):
 
 	def valueCustomDialogResponse(
 		self,
-		_dialog: Any,
+		_dialog: gtk.Window,
 		response_id: int,
 		entry: gtk.Entry,
 	) -> None:
@@ -696,7 +700,7 @@ class FormatBox(gtk.Box):
 	def getActiveOptions(self) -> list[str] | None:
 		raise NotImplementedError
 
-	def optionsButtonClicked(self, _button: Any) -> None:
+	def optionsButtonClicked(self, _button: gtk.Widget) -> None:
 		formatName = self.getActive()
 		options = self.getActiveOptions()
 		if options is None:
@@ -737,7 +741,7 @@ class FormatBox(gtk.Box):
 		)
 		self.onChanged(self)
 
-	def onChanged(self, _obj: Any = None) -> None:
+	def onChanged(self, _obj: gtk.Widget = None) -> None:
 		name = self.getActive()
 		if not name:
 			self.optionsButton.set_visible(False)

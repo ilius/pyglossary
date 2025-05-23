@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 __all__ = ["MemSdList"]
 
 
+# TODO py3.12: MemSdList[T]
 class MemSdList:
 	def __init__(self) -> None:
 		self._l: list[Any] = []

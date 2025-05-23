@@ -1007,7 +1007,7 @@ class Store(ItemList[StoreItem]):
 
 class WriterEvent(NamedTuple):
 	name: str
-	data: Any
+	data: object
 
 
 class Writer:
@@ -1188,7 +1188,7 @@ class Writer:
 	def _fire_event(
 		self,
 		name: str,
-		data: Any = None,
+		data: object = None,
 	) -> None:
 		if self.observer:
 			self.observer(WriterEvent(name, data))

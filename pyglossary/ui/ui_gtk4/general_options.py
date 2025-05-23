@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
 from pyglossary.ui.base import UIBase
@@ -35,11 +36,11 @@ __all__ = ["GeneralOptionsButton"]
 
 
 class GeneralOptionsDialog(gtk.Dialog):
-	def onCloseRequest(self, _widget: Any) -> bool:
+	def onCloseRequest(self, _widget: gtk.Widget) -> bool:
 		self.hide()
 		return True
 
-	def onResponse(self, _widget: Any, _event: Any) -> bool:
+	def onResponse(self, _widget: gtk.Widget, _event: gdk.Event) -> bool:
 		self.applyChanges()
 		self.hide()
 		return True
@@ -136,7 +137,7 @@ class GeneralOptionsButton(gtk.Button):
 		self.connect("clicked", self.onClick)
 		self.dialog = None
 
-	def onClick(self, _widget: Any) -> None:
+	def onClick(self, _widget: gtk.Widget) -> None:
 		if self.dialog is None:
 			self.dialog = GeneralOptionsDialog(self.mainWin)
 		self.dialog.present()

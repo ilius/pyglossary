@@ -81,7 +81,7 @@ class Writer:
 	def _slobObserver(
 		event: slob.WriterEvent,  # noqa: F401, F821
 	) -> None:
-		log.debug(f"slob: {event.name}{': ' + event.data if event.data else ''}")
+		log.debug(f"slob: {event.name}{': ' + str(event.data) if event.data else ''}")
 
 	def _open(self, filepath: str, namePostfix: str) -> slob.Writer:
 		from pyglossary import slob

@@ -18,7 +18,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from gi.repository import Gio as gio
 from gi.repository import GLib as glib
@@ -79,7 +79,7 @@ class BrowseButton(gtk.Button):
 			return
 		self.setFilePathFunc(file.get_path())
 
-	def onClick(self, _widget: Any) -> None:
+	def onClick(self, _widget: gtk.Widget) -> None:
 		dialog = gtk.FileDialog.new()
 		dialog.set_title(self.title)
 		# dialog.set_initial_folder(dir_name)

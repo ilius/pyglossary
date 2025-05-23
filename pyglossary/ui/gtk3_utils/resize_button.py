@@ -19,8 +19,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from . import gdk, gtk
 from .utils import imageFromFile
 
@@ -41,7 +39,7 @@ class ResizeButton(gtk.EventBox):
 		self.add(self.image)
 		self.connect("button-press-event", self.buttonPress)
 
-	def buttonPress(self, _obj: Any, gevent: gdk.ButtonEvent) -> None:
+	def buttonPress(self, _obj: gtk.Widget, gevent: gdk.ButtonEvent) -> None:
 		self.win.begin_resize_drag(
 			self.edge,
 			gevent.button,
