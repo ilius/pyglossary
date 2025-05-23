@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
+from pyglossary.core import cacheDir, exc_note, log, pip
+
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
@@ -12,7 +14,6 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
-from pyglossary.core import cacheDir, exc_note, log, pip
 
 __all__ = ["Reader"]
 

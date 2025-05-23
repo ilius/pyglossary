@@ -5,11 +5,6 @@ import datetime as dt
 import os
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-	from collections.abc import Generator
-
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
-
 from pyglossary.core import log
 
 from .quickdic import QuickDic
@@ -24,6 +19,11 @@ from .write_funcs import (
 	write_long,
 	write_string,
 )
+
+if TYPE_CHECKING:
+	from collections.abc import Generator
+
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["Writer"]
 

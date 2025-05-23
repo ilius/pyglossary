@@ -7,10 +7,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from pyglossary.compression import (
-	# compressionOpen,
-	stdCompressions,
-)
+from pyglossary.compression import stdCompressions
 
 if TYPE_CHECKING:
 	from collections.abc import Generator

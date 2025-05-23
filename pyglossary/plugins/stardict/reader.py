@@ -13,18 +13,21 @@ from os.path import (
 )
 from typing import TYPE_CHECKING, Protocol
 
+from pyglossary.core import log
+from pyglossary.text_utils import (
+	uint32FromBytes,
+	uint64FromBytes,
+)
+
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
+	class XdxfTransformerType(Protocol):
+		def transformByInnerString(self, text: str) -> str: ...
 
-from pyglossary.core import log
-from pyglossary.text_utils import (
-	uint32FromBytes,
-	uint64FromBytes,
-)
 
 __all__ = ["Reader"]
 
@@ -36,12 +39,6 @@ def _verifySameTypeSequence(s: str) -> bool:
 	if not s.isalpha():
 		return False
 	return len(s) == 1
-
-
-if TYPE_CHECKING:
-
-	class XdxfTransformerType(Protocol):
-		def transformByInnerString(self, text: str) -> str: ...
 
 
 class Reader:

@@ -3,16 +3,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from pyglossary.core import log
+from pyglossary.langs import langDict
+from pyglossary.langs.writing_system import getWritingSystemFromText
+
 if TYPE_CHECKING:
 	from collections.abc import Callable
 	from typing import Any
 
 	from pyglossary.lxml_types import Element, T_htmlfile
 
-
-from pyglossary.core import log
-from pyglossary.langs import langDict
-from pyglossary.langs.writing_system import getWritingSystemFromText
 
 __all__ = ["XMLLANG", "ReaderUtils"]
 

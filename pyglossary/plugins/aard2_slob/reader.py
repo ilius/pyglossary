@@ -4,12 +4,6 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-	from collections.abc import Iterator
-
-	from pyglossary import slob
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-
 from pyglossary.core import exc_note, log, pip
 from pyglossary.plugins.aard2_slob.tags import (
 	supported_tags,
@@ -22,6 +16,13 @@ from pyglossary.plugins.aard2_slob.tags import (
 	t_license_url,
 	t_uri,
 )
+
+if TYPE_CHECKING:
+	from collections.abc import Iterator
+
+	from pyglossary import slob
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+
 
 __all__ = ["Reader"]
 

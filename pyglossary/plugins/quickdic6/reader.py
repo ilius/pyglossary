@@ -6,13 +6,6 @@ import pathlib
 import zipfile
 from typing import IO, TYPE_CHECKING
 
-if TYPE_CHECKING:
-	from collections.abc import Iterator
-
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-
-	from .commons import EntryIndexTuple
-
 from pyglossary.html_utils import unescape_unicode
 
 from .quickdic import QuickDic
@@ -27,6 +20,13 @@ from .read_funcs import (
 	read_long,
 	read_string,
 )
+
+if TYPE_CHECKING:
+	from collections.abc import Iterator
+
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+
+	from .commons import EntryIndexTuple
 
 __all__ = ["Reader"]
 

@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from .reader import Reader
+
 if TYPE_CHECKING:
 	from pyglossary.option import Option
 
-from .reader import Reader
 
 __all__ = [
 	"Reader",

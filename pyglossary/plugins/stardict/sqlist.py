@@ -5,14 +5,14 @@ import os
 from os.path import isfile
 from typing import TYPE_CHECKING
 
+from pyglossary.core import log
+
 if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Iterator, Sequence
 
 	from pyglossary.glossary_types import EntryType
 
-
-from pyglossary.core import log
 
 __all__ = [
 	"IdxSqList",

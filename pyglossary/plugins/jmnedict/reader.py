@@ -6,6 +6,13 @@ import re
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import exc_note, pip
+from pyglossary.io_utils import nullBinaryIO
+
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Iterator
@@ -16,12 +23,6 @@ if TYPE_CHECKING:
 	)
 	from pyglossary.lxml_types import Element, T_htmlfile
 
-from pyglossary.compression import (
-	compressionOpen,
-	stdCompressions,
-)
-from pyglossary.core import exc_note, pip
-from pyglossary.io_utils import nullBinaryIO
 
 __all__ = ["Reader"]
 

@@ -6,6 +6,9 @@ from io import BytesIO
 from os.path import isdir, join
 from typing import TYPE_CHECKING, Any
 
+from pyglossary.core import exc_note, log, pip
+from pyglossary.text_reader import TextGlossaryReader
+
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
 
@@ -13,8 +16,6 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
-from pyglossary.core import exc_note, log, pip
-from pyglossary.text_reader import TextGlossaryReader
 
 __all__ = ["Reader"]
 

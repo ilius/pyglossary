@@ -3,6 +3,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
+from pyglossary.compression import (
+	compressionOpen,
+	stdCompressions,
+)
+from pyglossary.core import exc_note, log, pip
+from pyglossary.html_utils import unescape_unicode
+from pyglossary.io_utils import nullBinaryIO
+
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
@@ -11,14 +19,6 @@ if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element
 	from pyglossary.xdxf.transform import XdxfTransformer
 
-
-from pyglossary.compression import (
-	compressionOpen,
-	stdCompressions,
-)
-from pyglossary.core import exc_note, log, pip
-from pyglossary.html_utils import unescape_unicode
-from pyglossary.io_utils import nullBinaryIO
 
 __all__ = ["Reader"]
 

@@ -4,17 +4,16 @@ from __future__ import annotations
 from time import perf_counter as now
 from typing import TYPE_CHECKING
 
+from pyglossary.core import log
+from pyglossary.glossary_utils import Error
 from pyglossary.plugins.stardict import Writer as StdWriter
+from pyglossary.text_utils import uint32ToBytes
 
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
 	from pyglossary.glossary_types import EntryType
 
-
-from pyglossary.core import log
-from pyglossary.glossary_utils import Error
-from pyglossary.text_utils import uint32ToBytes
 
 __all__ = ["Writer"]
 

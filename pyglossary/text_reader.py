@@ -7,18 +7,19 @@ import typing
 from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
-if TYPE_CHECKING:
-	from collections.abc import Generator, Iterator
-
-	from pyglossary.entry_base import MultiStr
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-
 from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
 from pyglossary.entry import DataEntry
 from pyglossary.io_utils import nullTextIO
+
+if TYPE_CHECKING:
+	from collections.abc import Generator, Iterator
+
+	from pyglossary.entry_base import MultiStr
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+
 
 __all__ = ["TextFilePosWrapper", "TextGlossaryReader", "nextBlockResultType"]
 

@@ -15,6 +15,12 @@ from os.path import (
 from time import perf_counter as now
 from typing import TYPE_CHECKING, Literal
 
+from pyglossary.core import log
+from pyglossary.glossary_utils import Error
+from pyglossary.plugins.stardict.memlist import MemSdList
+from pyglossary.plugins.stardict.sqlist import IdxSqList, SynSqList
+from pyglossary.text_utils import uint32ToBytes, uint64ToBytes
+
 if TYPE_CHECKING:
 	from collections.abc import Callable, Generator
 
@@ -22,12 +28,6 @@ if TYPE_CHECKING:
 	from pyglossary.langs import Lang
 	from pyglossary.plugins.stardict.sd_types import T_SdList
 
-
-from pyglossary.core import log
-from pyglossary.glossary_utils import Error
-from pyglossary.plugins.stardict.memlist import MemSdList
-from pyglossary.plugins.stardict.sqlist import IdxSqList, SynSqList
-from pyglossary.text_utils import uint32ToBytes, uint64ToBytes
 
 __all__ = ["Writer"]
 

@@ -6,12 +6,6 @@ import io
 import struct
 from typing import IO, TYPE_CHECKING, TypeVar
 
-if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from .commons import EntryIndexTuple, IndexEntryType
-
-
 from pyglossary.plugin_lib import mutf8
 
 from .commons import (
@@ -20,6 +14,11 @@ from .commons import (
 	HASH_SET_INIT2,
 	LINKED_HASH_SET_INIT,
 )
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
+
+	from .commons import EntryIndexTuple, IndexEntryType
 
 __all__ = [
 	"read_entry_html",

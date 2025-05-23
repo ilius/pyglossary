@@ -9,6 +9,12 @@ from functools import lru_cache
 from os.path import isdir, isfile, join
 from typing import TYPE_CHECKING
 
+from pyglossary.core import log
+from pyglossary.text_utils import (
+	escapeNTB,
+	unescapeNTB,
+)
+
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
@@ -17,12 +23,6 @@ if TYPE_CHECKING:
 		EntryType,
 		WriterGlossaryType,
 	)
-
-from pyglossary.core import log
-from pyglossary.text_utils import (
-	escapeNTB,
-	unescapeNTB,
-)
 
 __all__ = ["Writer"]
 

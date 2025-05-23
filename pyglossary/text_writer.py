@@ -7,14 +7,15 @@ from os.path import (
 )
 from typing import TYPE_CHECKING, cast
 
+from .compression import compressionOpen as c_open
+from .io_utils import nullTextIO
+
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Generator
 
 	from .glossary_types import EntryType, WriterGlossaryType
 
-from .compression import compressionOpen as c_open
-from .io_utils import nullTextIO
 
 __all__ = ["TextGlossaryWriter", "writeTxt"]
 

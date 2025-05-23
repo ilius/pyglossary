@@ -6,17 +6,16 @@ from typing import TYPE_CHECKING
 
 from .core import log
 from .glossary_utils import Error
+from .text_utils import (
+	joinByBar,
+	splitByBar,
+)
 
 if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Generator, Iterator
 
 	from .glossary_types import EntryType, ReaderGlossaryType, WriterGlossaryType
-
-from .text_utils import (
-	joinByBar,
-	splitByBar,
-)
 
 
 class Writer:

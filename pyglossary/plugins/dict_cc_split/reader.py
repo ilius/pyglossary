@@ -4,13 +4,14 @@ from __future__ import annotations
 import html
 from typing import TYPE_CHECKING
 
+from pyglossary.core import log
+
 if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
-from pyglossary.core import log
 
 __all__ = ["Reader"]
 

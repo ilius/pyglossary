@@ -24,15 +24,15 @@ import sys
 from os.path import dirname, extsep, isfile, join, splitext
 from typing import TYPE_CHECKING
 
+from pyglossary.core import log
+from pyglossary.text_utils import toStr
+
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.plugin_lib.readmdict import MDD, MDX
 
-
-from pyglossary.core import log
-from pyglossary.text_utils import toStr
 
 __all__ = ["Reader"]
 

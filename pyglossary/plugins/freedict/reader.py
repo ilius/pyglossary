@@ -7,13 +7,6 @@ from io import BytesIO, IOBase
 from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
-if TYPE_CHECKING:
-	from collections.abc import Iterator
-
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.lxml_types import Element, T_htmlfile
-
-
 from pyglossary.compression import compressionOpen, stdCompressions
 from pyglossary.core import exc_note, log, pip
 from pyglossary.html_utils import unescape_unicode
@@ -23,6 +16,13 @@ from pyglossary.langs.writing_system import getWritingSystemFromText
 
 from .options import optionsProp
 from .utils import XMLLANG, ReaderUtils
+
+if TYPE_CHECKING:
+	from collections.abc import Iterator
+
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.lxml_types import Element, T_htmlfile
+
 
 __all__ = ["Reader"]
 

@@ -28,11 +28,12 @@ import re
 from typing import TYPE_CHECKING, Any
 from xml.sax.saxutils import quoteattr, unescape
 
+from pyglossary.text_utils import toStr
+
 if TYPE_CHECKING:
 	import bs4 as BeautifulSoup
 	import bs4.element
 
-from pyglossary.text_utils import toStr
 
 __all__ = ["prepare_content"]
 

@@ -27,14 +27,6 @@ import typing
 from os.path import join
 from typing import TYPE_CHECKING, cast
 
-if TYPE_CHECKING:
-	import io
-	from collections.abc import Iterator, Sequence
-
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.lxml_types import Element
-
-
 from lxml import etree as ET
 
 from pyglossary.compression import (
@@ -45,13 +37,18 @@ from pyglossary.core import log, rootDir
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.text_utils import toStr
 
-__all__ = ["Reader"]
-
-
 if TYPE_CHECKING:
+	import io
+	from collections.abc import Iterator, Sequence
+
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.lxml_types import Element
 
 	class TransformerType(typing.Protocol):
 		def transform(self, article: Element) -> str: ...
+
+
+__all__ = ["Reader"]
 
 
 class Reader:

@@ -22,8 +22,14 @@ from operator import attrgetter
 from os.path import isdir, isfile, join, split, splitext
 from struct import unpack
 from typing import TYPE_CHECKING, Any, cast
+from zlib import decompress
 
 from lxml import etree
+
+from pyglossary import core
+from pyglossary.apple_utils import substituteAppleCSS
+from pyglossary.core import exc_note, log, pip
+from pyglossary.io_utils import nullBinaryIO
 
 from .appledict_file_tools import (
 	APPLEDICT_FILE_OFFSET,
@@ -53,12 +59,6 @@ if TYPE_CHECKING:
 	from .appledict_properties import AppleDictProperties
 	from .key_data import RawKeyDataType
 
-from zlib import decompress
-
-from pyglossary import core
-from pyglossary.apple_utils import substituteAppleCSS
-from pyglossary.core import exc_note, log, pip
-from pyglossary.io_utils import nullBinaryIO
 
 __all__ = ["Reader"]
 

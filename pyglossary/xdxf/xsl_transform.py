@@ -4,14 +4,14 @@ import logging
 from os.path import join
 from typing import TYPE_CHECKING
 
+from pyglossary import core
+from pyglossary.core import rootDir
+
 if TYPE_CHECKING:
 	from lxml.etree import _XSLTResultTree
 
 	from pyglossary.lxml_types import Element
 
-
-from pyglossary import core
-from pyglossary.core import rootDir
 
 log = logging.getLogger("pyglossary")
 

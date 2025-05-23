@@ -20,11 +20,11 @@ if TYPE_CHECKING:
 	from collections.abc import Sequence
 	from typing import Any, TypeAlias
 
-__all__ = ["KeyData", "RawKeyDataType"]
-
-if TYPE_CHECKING:
 	RawKeyDataType: TypeAlias = tuple[int, int, Sequence[str]]
 	"""tuple(priority, parentalControl, keyTextFields)"""
+
+
+__all__ = ["KeyData", "RawKeyDataType"]
 
 
 """
