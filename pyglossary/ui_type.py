@@ -1,7 +1,10 @@
 __all__ = ["UIType"]
 
 
-class UIType:
+from typing import Protocol
+
+
+class UIType(Protocol):
 	def progressInit(self, title: str) -> None:
 		raise NotImplementedError
 
