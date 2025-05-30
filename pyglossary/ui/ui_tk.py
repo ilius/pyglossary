@@ -18,7 +18,6 @@
 # GNU General Public License for more details.
 from __future__ import annotations
 
-import ctypes
 import logging
 import os
 import tkinter as tk
@@ -48,13 +47,18 @@ if TYPE_CHECKING:
 
 	from pyglossary.logger import Logger
 
-# on Windows: make app DPI-aware, fix blurry fonts
-try:
-	ctypes.windll.shcore.SetProcessDpiAwareness(1)  # 1 = system DPI aware
-except Exception:
-	pass
+log: Logger = logging.getLogger("pyglossary")  # pyright: ignore
 
-log: Logger = logging.getLogger("pyglossary")
+# on Windows: make app DPI-aware, fix blurry fonts
+if os.sep == "\\":
+	import ctypes
+
+	try:
+		# 1 = system DPI aware
+		ctypes.windll.shcore.SetProcessDpiAwareness(1)  # pyright: ignore
+	except Exception:
+		log.exception("")
+
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readDesc = [
@@ -122,7 +126,8 @@ def newButton(*args, **kwargs):
 def newLabelWithImage(parent, file=""):
 	image = tk.PhotoImage(file=file)
 	label = ttk.Label(parent, image=image)
-	label.image = image  # keep a reference!
+	# keep a reference:
+	label.image = image  # pyright: ignore
 	return label
 
 
@@ -130,7 +135,7 @@ def newReadOnlyText(
 	parent,
 	text="",
 	borderwidth=10,
-	font=None,
+	font: tuple[str, int, str] = ("DejaVu Sans", 11, ""),
 ):
 	height = len(text.strip().split("\n"))
 	widget = tk.Text(
@@ -217,7 +222,11 @@ class ProgressBar(ttk.Frame):
 		self.width = width
 		self.height = height
 		self.value = value
-		ttk.Frame.__init__(self, rootWin, relief=appearance)
+		ttk.Frame.__init__(
+			self,
+			rootWin,
+			relief=appearance,  # pyright: ignore
+		)
 		self.canvas = tk.Canvas(
 			self,
 			height=height,
@@ -237,7 +246,7 @@ class ProgressBar(ttk.Frame):
 			width / 2,
 			height / 2,
 			text="",
-			anchor="c",
+			anchor="center",
 			fill=labelColor,
 			font=labelFont,
 		)
@@ -624,7 +633,10 @@ class FormatOptionsDialog(tk.Toplevel):
 					value = value.zfill(20)
 					# to reserve window width, because it's hard to resize it later
 				col_w = tkFont.Font().measure(value)
-				if treev.column(cols[col_i], width=None) < col_w:
+				# treev.column: if you pass width=None, returns width as int!
+				# but with no arg, returns dict[str, Any] with "width" key!
+				current_width: int = treev.column(cols[col_i], width=None)  # pyright: ignore
+				if current_width < col_w:
 					treev.column(cols[col_i], width=col_w)
 
 	def valueMenuItemCustomSelected(
@@ -703,7 +715,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		treev.set(optName, self.valueCol, value)
 		treev.set(optName, "#1", "1")  # enable it
 		col_w = tkFont.Font().measure(value)
-		if treev.column("Value", width=None) < col_w:
+		if treev.column("Value", width=None) < col_w:  # pyright: ignore
 			treev.column("Value", width=col_w)
 		menu.destroy()
 		self.menu = None
@@ -724,10 +736,9 @@ class FormatOptionsDialog(tk.Toplevel):
 				)
 			return
 		if prop.typ == "bool":
-			rawValue = treev.set(optName, self.valueCol)
-			if rawValue == "":  # noqa: PLC1901
-				value = False
-			else:
+			rawValue: str = treev.set(optName, self.valueCol)
+			value = False
+			if rawValue:
 				value, isValid = prop.evaluate(rawValue)
 				if not isValid:
 					log.error(f"invalid {optName} = {rawValue!r}")
@@ -735,6 +746,7 @@ class FormatOptionsDialog(tk.Toplevel):
 			treev.set(optName, self.valueCol, str(not value))
 			treev.set(optName, "#1", "1")  # enable it
 			return
+		value: Any = None
 		menu = tk.Menu(
 			master=treev,
 			title=optName,
@@ -894,7 +906,7 @@ class VerticalNotebook(ttk.Frame):
 	def __init__(
 		self,
 		parent: tk.Widget,
-		font: Font | None = None,
+		font: Font,
 		**kwargs,
 	):
 		ttk.Frame.__init__(self, parent, **kwargs)
@@ -1310,18 +1322,10 @@ class UI(tk.Frame, UIBase):
 		# convertFrame.grid(sticky=tk.W + tk.E + tk.N + tk.S)
 
 		######################
-		tk.Grid.columnconfigure(convertFrame, 0, weight=1)
-		tk.Grid.columnconfigure(convertFrame, 1, weight=30)
-		tk.Grid.columnconfigure(convertFrame, 2, weight=20)
-		tk.Grid.columnconfigure(convertFrame, 3, weight=1)
-		tk.Grid.rowconfigure(convertFrame, 0, weight=50)
-		tk.Grid.rowconfigure(convertFrame, 1, weight=50)
-		tk.Grid.rowconfigure(convertFrame, 2, weight=1)
-		tk.Grid.rowconfigure(convertFrame, 3, weight=50)
-		tk.Grid.rowconfigure(convertFrame, 4, weight=50)
-		tk.Grid.rowconfigure(convertFrame, 5, weight=1)
-		tk.Grid.rowconfigure(convertFrame, 6, weight=50)
-
+		for column, weight in enumerate([1, 30, 20, 1]):
+			tk.Grid.columnconfigure(convertFrame, column, weight=weight)  # pyright: ignore
+		for row, weight in enumerate([50, 50, 1, 50, 50, 1, 50]):
+			tk.Grid.rowconfigure(convertFrame, row, weight=weight)  # pyright: ignore
 		# _________________________________________________________________ #
 
 		notebook.pack(fill="both", expand=True)
@@ -1608,7 +1612,7 @@ class UI(tk.Frame, UIBase):
 			self.writeOptionsButton.setOptionsValues(writeOptions)
 			self.writeOptions = writeOptions
 
-		self._convertOptions = convertOptions
+		self._convertOptions: dict[str, Any] = convertOptions or {}
 		if convertOptions:
 			log.info(f"Using {convertOptions=}")
 
@@ -1642,11 +1646,3 @@ class UI(tk.Frame, UIBase):
 
 	# def reverseLoad(self):
 	# 	pass
-
-
-if __name__ == "__main__":
-	import sys
-
-	_path = sys.argv[1] if len(sys.argv) > 1 else ""
-	_ui = UI(_path)
-	_ui.run()
