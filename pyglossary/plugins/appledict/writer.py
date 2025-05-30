@@ -63,7 +63,7 @@ def _loadBeautifulSoup() -> None:
 		except ImportError:
 			return
 	version: str = BeautifulSoup.__version__  # type: ignore
-	if int(version.split(".")[0]) < 4:
+	if int(version.split(".", maxsplit=1)[0]) < 4:
 		raise ImportError(
 			"BeautifulSoup is too old, required at least version 4, "
 			f"{version!r} found.\n"

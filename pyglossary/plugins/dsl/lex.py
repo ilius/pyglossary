@@ -313,7 +313,7 @@ def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:  # n
 		tr.closeTag(tag[1:])
 		return lexRoot, None
 
-	tag = tag.split(" ")[0]
+	tag = tag.split(" ", maxsplit=1)[0]
 
 	if tag == "ref":
 		return lexRefText(tr)
