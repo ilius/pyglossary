@@ -753,7 +753,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				stacklevel=3,
 			)
 
-		formatName: str = formatName or format or ""
+		formatName = formatName or format or ""
 		del format
 
 		filenameAbs = os.path.abspath(filename)
@@ -880,7 +880,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		del format
 		if formatArg is not None and not isinstance(formatArg, str):
 			raise TypeError("formatName must be str")
-		formatName: str = formatArg or ""
+		formatName = formatArg or ""
 
 		sort = self._writeCheckPluginSort(formatName, sort, **options)
 
