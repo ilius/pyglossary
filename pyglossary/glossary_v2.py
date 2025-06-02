@@ -848,7 +848,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		filename: str,
 		format: str | None = None,  # to be removed in 6.0.0 # noqa: A002
 		formatName: str = "",
-		**kwargs,  # noqa: ANN003
+		sort: bool = False,
+		**options: Any,
 	) -> str:
 		"""
 		Write to a given glossary file, with given formatName (optional).
@@ -880,11 +881,33 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			raise TypeError("formatName must be str")
 		formatName: str = formatArg or ""
 
+		sort = self._writeCheckPluginSort(formatName, sort, **options)
+
 		return self._write(
 			filename=filename,
 			formatName=formatName,
-			**kwargs,
+			sort=sort,
+			**options,
 		)
+
+	def _writeCheckPluginSort(
+		self,
+		formatName: str,
+		sort: bool,
+		**options: Any,
+	) -> bool:
+		plugin = PluginHandler.plugins[formatName]
+		if plugin.sortOnWrite != ALWAYS:
+			return sort
+		assert plugin.sortKeyName
+		namedSortKey = lookupSortKey(plugin.sortKeyName)
+		assert namedSortKey
+		self._data.setSortKey(
+			namedSortKey=namedSortKey,
+			sortEncoding="utf-8",
+			writeOptions=options,
+		)
+		return True
 
 	def _writeEntries(
 		self,
