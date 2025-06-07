@@ -72,7 +72,7 @@ class Writer:
 			if entry is None:
 				break
 			if entry.isData():
-				log.warn(f"Ignoring binary data entry {entry.l_word[0]}")
+				log.warning(f"Ignoring binary data entry {entry.l_word[0]}")
 				continue
 
 			entry.detectDefiFormat()
