@@ -253,6 +253,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			if entry is None:
 				break
 			if entry.isData():
+				entry.save("OEBPS")
 				continue
 
 			if state.group_size >= self._file_size_approx:
