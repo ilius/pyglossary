@@ -48,11 +48,11 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def __init__(
 		self,
 		fname: str,
-		data: bytes = b"",
+		data: bytes | None = None,
 		tmpPath: str | None = None,
 		byteProgress: tuple[int, int] | None = None,
 	) -> None:
-		if data and tmpPath:
+		if data is not None and tmpPath:
 			os.makedirs(dirname(tmpPath), mode=0o755, exist_ok=True)
 			with open(tmpPath, "wb") as toFile:
 				toFile.write(data)
