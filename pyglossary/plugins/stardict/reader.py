@@ -14,6 +14,7 @@ from os.path import (
 from typing import TYPE_CHECKING, Protocol
 
 from pyglossary.core import log
+from pyglossary.os_utils import listFilesRecursiveRelPath
 from pyglossary.text_utils import (
 	uint32FromBytes,
 	uint64FromBytes,
@@ -384,7 +385,7 @@ class Reader:
 			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
 
 		if isdir(self._resDir):
-			for fname in os.listdir(self._resDir):
+			for fname in listFilesRecursiveRelPath(self._resDir):
 				fpath = join(self._resDir, fname)
 				with open(fpath, "rb") as _file:
 					yield self._glos.newDataEntry(
