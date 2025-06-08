@@ -4,13 +4,14 @@ import logging
 import os
 import shutil
 import sys
+from os.path import join, normpath
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from pyglossary import core
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
+	from collections.abc import Callable, Iterable
 	from types import TracebackType
 
 __all__ = ["indir", "rmtree", "runDictzip", "showMemoryUsage"]
@@ -171,3 +172,31 @@ def showMemoryUsage() -> None:
 		return
 	usage = psutil.Process(os.getpid()).memory_info().rss // 1024
 	core.trace(log, f"Memory Usage: {usage:,} kB")
+
+
+def listFilesRecursive(direc: str) -> Iterable[str]:
+	"""
+	Iterate over full paths of all files (directly/indirectly)
+	inside given directory.
+	"""
+	for root, _subDirs, files in os.walk(direc):
+		for fname in files:
+			yield join(root, fname)
+
+
+def listFilesRecursiveRelPath(direc: str) -> Iterable[str]:
+	"""
+	Iterate over relative paths of all files (directly/indirectly)
+	inside given directory.
+	"""
+	direc = normpath(direc)  # remove trailing slash/sep or leading "./"
+	direcLen = len(direc) + 1
+	for root, _subDirs, files in os.walk(direc):
+		rootRel = root[direcLen:]
+		for fname in files:
+			yield join(rootRel, fname)
+
+
+# if __name__ == "__main__":
+# 	for direc in sys.argv[1:]:
+# 		print(list(listFilesRecursiveRelPath(direc)))

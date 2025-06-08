@@ -13,6 +13,7 @@ from pyglossary.compression import (
 )
 from pyglossary.entry import DataEntry
 from pyglossary.io_utils import nullTextIO
+from pyglossary.os_utils import listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
@@ -21,7 +22,12 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 
-__all__ = ["TextFilePosWrapper", "TextGlossaryReader", "nextBlockResultType"]
+__all__ = [
+	"TextFilePosWrapper",
+	"TextGlossaryReader",
+	"listFilesRecursiveRelPath",
+	"nextBlockResultType",
+]
 
 log = logging.getLogger("pyglossary")
 
@@ -84,7 +90,7 @@ class TextGlossaryReader:
 		if isdir(resDir):
 			log.info(f"Listing res dir {self._resDir}")
 			self._resDir = resDir
-			self._resFileNames = os.listdir(self._resDir)
+			self._resFileNames = list(listFilesRecursiveRelPath(self._resDir))
 			return True
 		return False
 
