@@ -6,13 +6,13 @@ Each entry contains:
 
 - Headword (title or main phrase for lookup)
 - Alternates (some alternative phrases for lookup)
-- Definition
+- Definition / article
 
-In PyGlossary, headword and alternates together are accessible as a single Python list `entry.l_word`
+Headword and alternates together are accessible as a single Python list `entry.l_word`, and `entry.l_word[0]` is the headword.
 
-`entry.defi` is the definition as a Python Unicode `str`. Also `entry.b_defi` is definition in UTF-8 byte array.
+`entry.defi` is the definition as a Python Unicode `str`. Also `entry.b_defi` is definition in UTF-8 byte array (`bytes`).
 
-`entry.defiFormat` is definition format. If definition is plaintext (not rich text), the value is `m`. And if it's in HTML (contains any html tag), then `defiFormat` is `h`. The value `x` is also allowed for XFXF, but XDXF is not widely supported in dictionary applications.
+`entry.defiFormat` is definition format. If definition is plaintext (not rich text), the value is `m`. And if it's in HTML (containing any HTML tag), then `defiFormat` is `h`. The value `x` is also allowed for XDXF, although XDXF is not widely supported in dictionary applications.
 
 There is another type of entry which is called **Data Entry**, and generally contains an image, audio, css, or any other file that was included in input glossary. For data entries:
 
