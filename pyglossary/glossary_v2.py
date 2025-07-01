@@ -34,8 +34,6 @@ from time import perf_counter as now
 from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 
-from pyglossary.queued_iter import QueuedIterator
-
 from . import core
 from .core import (
 	cacheDir,
@@ -62,6 +60,7 @@ from .glossary_utils import Error, ReadError, WriteError, splitFilenameExt
 from .info import c_name
 from .os_utils import rmtree, showMemoryUsage
 from .plugin_handler import PluginHandler
+from .queued_iter import QueuedIterator
 from .sort_keys import defaultSortKeyName, lookupSortKey
 from .sq_entry_list import SqEntryList
 
@@ -380,7 +379,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	# 	Should be only called in writer.open.
 	# 	"""
-	# 	from pyglossary.entry_merge import mergeHtmlEntriesWithSameHeadword
+	# 	from .entry_merge import mergeHtmlEntriesWithSameHeadword
 
 	# 	self._iter = mergeHtmlEntriesWithSameHeadword(self._iter)
 
@@ -392,7 +391,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 		Should be only called in writer.open.
 		"""
-		from pyglossary.entry_merge import mergePlaintextEntriesWithSameHeadword
+		from .entry_merge import mergePlaintextEntriesWithSameHeadword
 
 		assert self._iter
 		self._iter = mergePlaintextEntriesWithSameHeadword(self._iter)
@@ -924,7 +923,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			genList.append(gen)
 
 		if self._config.get("save_info_json", False):
-			from pyglossary.info_writer import InfoWriter
+			from .info_writer import InfoWriter
 
 			infoWriter = InfoWriter(self)  # pyright: ignore
 			infoWriter.setWriteOptions(options)

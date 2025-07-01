@@ -8,7 +8,7 @@ from os.path import join, normpath
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from pyglossary import core
+from . import core
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable

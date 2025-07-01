@@ -5,7 +5,7 @@ import logging
 import re
 from os.path import join
 
-from pyglossary.text_utils import crc32hex
+from .text_utils import crc32hex
 
 __all__ = ["extractInlineHtmlImages"]
 

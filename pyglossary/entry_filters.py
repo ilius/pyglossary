@@ -10,9 +10,8 @@ from . import core
 from .text_utils import fixUtf8Str
 
 if TYPE_CHECKING:
-	from pyglossary.langs import Lang
-
 	from .glossary_types import Callable, EntryType
+	from .langs import Lang
 
 
 __all__ = [
@@ -433,7 +432,7 @@ class UnescapeWordLinks(EntryFilter):
 	desc = "Unescape Word Links"
 
 	def __init__(self, glos: _GlossaryType) -> None:
-		from pyglossary.html_utils import unescape_unicode
+		from .html_utils import unescape_unicode
 
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile(

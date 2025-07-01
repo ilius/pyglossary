@@ -33,15 +33,15 @@ from datetime import datetime
 from os.path import join
 from typing import TYPE_CHECKING, cast
 
-from pyglossary.os_utils import indir, rmtree
-from pyglossary.repro_zipfile import ReproducibleZipFile as ZipFile
+from .os_utils import indir, rmtree
+from .repro_zipfile import ReproducibleZipFile as ZipFile
 
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 	from typing import Any
 
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
+	from .glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["EbookWriter"]
 

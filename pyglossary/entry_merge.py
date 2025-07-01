@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.entry import Entry
-from pyglossary.xdxf.transform import XdxfTransformer
+from .entry import Entry
+from .xdxf.transform import XdxfTransformer
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType
+	from .glossary_types import EntryType
 
 _xdxfTr: XdxfTransformer | None = None
 

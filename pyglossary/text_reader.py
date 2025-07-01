@@ -7,19 +7,19 @@ import typing
 from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
-from pyglossary.compression import (
+from .compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.entry import DataEntry
-from pyglossary.io_utils import nullTextIO
-from pyglossary.os_utils import listFilesRecursiveRelPath
+from .entry import DataEntry
+from .io_utils import nullTextIO
+from .os_utils import listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 
-	from pyglossary.entry_base import MultiStr
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from .entry_base import MultiStr
+	from .glossary_types import EntryType, ReaderGlossaryType
 
 
 __all__ = [

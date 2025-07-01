@@ -3,14 +3,14 @@ from __future__ import annotations
 from os.path import splitext
 from typing import TYPE_CHECKING, Any
 
-from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
+from .core import log
+from .io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import (
+	from .glossary_types import (
 		EntryType,
 		WriterGlossaryType,
 	)
@@ -39,8 +39,8 @@ class InfoWriter:
 		import re
 		from collections import Counter
 
-		from pyglossary.json_utils import dataToPrettyJson
-		from pyglossary.langs.writing_system import getWritingSystemFromText
+		from .json_utils import dataToPrettyJson
+		from .langs.writing_system import getWritingSystemFromText
 
 		glos = self._glos
 

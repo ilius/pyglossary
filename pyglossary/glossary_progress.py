@@ -8,8 +8,7 @@ if TYPE_CHECKING:
 	from collections.abc import Iterable, Iterator
 	from typing import Protocol
 
-	from pyglossary.glossary_types import EntryType
-
+	from .glossary_types import EntryType
 	from .ui_type import UIType
 
 	class ReaderType(Protocol):

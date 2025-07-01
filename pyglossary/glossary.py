@@ -24,10 +24,9 @@ from os.path import relpath
 from time import perf_counter as now
 from typing import TYPE_CHECKING
 
-from pyglossary.plugin_handler import PluginHandler
-
 from .core import log
 from .glossary_v2 import ConvertArgs, Error, GlossaryCommon, ReadError, WriteError
+from .plugin_handler import PluginHandler
 from .sort_keys import lookupSortKey
 
 if TYPE_CHECKING:

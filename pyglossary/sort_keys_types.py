@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Protocol, TypeAlias
 
 if TYPE_CHECKING:
-	from pyglossary.icu_types import T_Collator
+	from .icu_types import T_Collator
 
 SortKeyType: TypeAlias = Callable[
 	[list[str]],
