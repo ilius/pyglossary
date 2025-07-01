@@ -11,7 +11,7 @@ from os.path import dirname, exists, isdir, join
 from setuptools import setup
 from setuptools.command.install import install
 
-VERSION = "5.0.10"
+VERSION = "5.1.0"
 log = logging.getLogger("root")
 relRootDir = "share/pyglossary"
 
