@@ -1,4 +1,4 @@
-name: "Tests"
+name: "Test"
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   ubuntu:
-    name: Ubuntu
+    name: Test on Ubuntu
 
     strategy:
       fail-fast: false

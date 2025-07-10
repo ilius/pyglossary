@@ -9,21 +9,16 @@ on:
 
 jobs:
   ubuntu:
-    name: Ubuntu
-
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.13"]
+    name: "Python 3.13"
 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.13
       - name: List files
         run: ls -l
       - name: Validate Plugins

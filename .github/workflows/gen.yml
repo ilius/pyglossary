@@ -9,7 +9,7 @@ on:
 
 jobs:
   gen:
-    name: "Generated files check"
+    name: "Check generated files"
     runs-on: ubuntu-latest
 
     steps:
