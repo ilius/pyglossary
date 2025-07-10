@@ -161,7 +161,7 @@ class Reader(ReaderUtils):
 		children = elem.xpath("child::node()")
 		if not children:
 			return
-		assert isinstance(children, list)
+		assert isinstance(children, list), f"{children=}"
 
 		quotes: list[Element] = []
 		sense = ET.Element(f"{_TEI}sense")

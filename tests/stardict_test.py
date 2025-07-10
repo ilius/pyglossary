@@ -12,7 +12,7 @@ def toBytes(s: str | bytes) -> bytes:
 
 
 def sortKeyBytes(ba: bytes) -> Any:
-	assert isinstance(ba, bytes)
+	assert isinstance(ba, bytes), f"{ba=}"
 	# ba.lower() + ba is wrong
 	return (
 		ba.lower(),

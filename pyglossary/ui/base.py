@@ -77,7 +77,7 @@ class UIBase:
 		from pyglossary.json_utils import jsonToData
 
 		data = jsonToData(fread(rootConfJsonFile))
-		assert isinstance(data, dict)
+		assert isinstance(data, dict), f"{data=}"
 		if user and isfile(confJsonFile):
 			try:
 				userData = jsonToData(fread(confJsonFile))

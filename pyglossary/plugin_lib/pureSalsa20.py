@@ -202,7 +202,7 @@ class Salsa20:
 		self.setRounds(rounds)
 
 	def setKey(self, key):
-		assert isinstance(key, bytes)
+		assert isinstance(key, bytes), f"{key=}"
 		ctx = self.ctx
 		if len(key) == 32:  # recommended
 			constants = b"expand 32-byte k"
@@ -217,7 +217,7 @@ class Salsa20:
 		ctx[0], ctx[5], ctx[10], ctx[15] = little4_i32.unpack(constants)
 
 	def setIV(self, IV):
-		assert isinstance(IV, bytes)
+		assert isinstance(IV, bytes), f"{IV=}"
 		assert len(IV) * 8 == 64, "nonce (IV) not 64 bits"
 		self.IV = IV
 		ctx = self.ctx
@@ -227,7 +227,7 @@ class Salsa20:
 	setNonce = setIV  # support an alternate name
 
 	def setCounter(self, counter):
-		assert isinstance(counter, int)
+		assert isinstance(counter, int), f"{counter=}"
 		assert 0 <= counter < 1 << 64, "counter < 0 or >= 2**64"
 		ctx = self.ctx
 		ctx[8], ctx[9] = little2_i32.unpack(little_u64.pack(counter))
@@ -327,7 +327,7 @@ def trunc32(w):
 	This creates longs temporarily, but returns an int.
 	"""
 	w = int((w & 0x7FFFFFFF) | -(w & 0x80000000))
-	assert isinstance(w, int)
+	assert isinstance(w, int), f"{w=}"
 	return w
 
 

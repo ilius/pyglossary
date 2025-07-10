@@ -419,7 +419,7 @@ class Reader:
 		textValue: str = example.get("text", "")
 		ruby = example.pop("ruby", None)
 		if exampleValue:
-			assert isinstance(exampleValue, str)
+			assert isinstance(exampleValue, str), f"{exampleValue=}"
 			textList.append((None, exampleValue))
 		if textValue and ruby:
 			for word, phon in ruby:

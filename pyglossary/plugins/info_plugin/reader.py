@@ -29,7 +29,7 @@ class Reader:
 
 		with open(filename, encoding="utf-8") as infoFp:
 			info = jsonToData(infoFp.read())
-		assert isinstance(info, dict)
+		assert isinstance(info, dict), f"{info=}"
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
