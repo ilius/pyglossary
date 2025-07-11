@@ -15,12 +15,15 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+from __future__ import annotations
 
-
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
+
+if TYPE_CHECKING:
+	from collections.abc import Callable
 
 __all__ = ["MyDialog"]
 

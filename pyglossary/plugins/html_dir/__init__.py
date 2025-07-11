@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	IntOption,
-	Option,
 	StrOption,
 )
 
 from .writer import Writer
+
+if TYPE_CHECKING:
+	from pyglossary.option import (
+		Option,
+	)
 
 __all__ = [
 	"Writer",

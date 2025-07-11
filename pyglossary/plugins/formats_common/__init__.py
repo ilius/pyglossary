@@ -15,6 +15,8 @@ from pyglossary.core import rootDir
 
 sys.path.insert(0, rootDir)  # noqa: E402
 
+from typing import TYPE_CHECKING
+
 from pyglossary import core
 from pyglossary.compression import (
 	compressionOpen,
@@ -42,11 +44,15 @@ from pyglossary.option import (
 	IntOption,
 	ListOption,
 	NewlineOption,
-	Option,
 	StrOption,
 )
 from pyglossary.os_utils import indir
 from pyglossary.text_utils import toStr
+
+if TYPE_CHECKING:
+	from pyglossary.option import (
+		Option,
+	)
 
 log = logging.getLogger("pyglossary")
 

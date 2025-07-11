@@ -19,14 +19,20 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pyglossary.entry_filters import entryFiltersRules
 from pyglossary.option import (
 	BoolOption,
 	FloatOption,
 	IntOption,
-	Option,
 	StrOption,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.option import (
+		Option,
+	)
 
 _entryFilterConfigDict = {
 	configParam: (filterClass, default)

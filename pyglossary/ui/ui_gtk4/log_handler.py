@@ -20,10 +20,12 @@ from __future__ import annotations
 
 import logging
 import traceback
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
-from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
+
+if TYPE_CHECKING:
+	from gi.repository import Gdk as gdk
 
 log = logging.getLogger("pyglossary")
 

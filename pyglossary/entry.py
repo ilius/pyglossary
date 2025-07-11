@@ -12,7 +12,7 @@ from os.path import (
 )
 from typing import TYPE_CHECKING
 
-from .entry_base import BaseEntry, MultiStr
+from .entry_base import BaseEntry
 from .iter_utils import unique_everseen
 from .text_utils import joinByBar
 
@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from typing import Any
 
+	from .entry_base import MultiStr
 	from .glossary_types import RawEntryType
 
 

@@ -18,9 +18,8 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
 from pyglossary.ui.config import configDefDict
@@ -31,6 +30,9 @@ from .utils import (
 	dialog_add_button,
 	pack,
 )
+
+if TYPE_CHECKING:
+	from gi.repository import Gdk as gdk
 
 __all__ = ["GeneralOptionsButton"]
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from io import BytesIO, IOBase
+from io import BytesIO
 from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
@@ -19,6 +19,7 @@ from .utils import XMLLANG, ReaderUtils
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
+	from io import IOBase
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element, T_htmlfile

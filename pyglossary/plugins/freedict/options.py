@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from typing import TYPE_CHECKING
+
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
-	Option,
 	StrOption,
 )
+
+if TYPE_CHECKING:
+	from pyglossary.option import (
+		Option,
+	)
 
 __all__ = ["optionsProp"]
 

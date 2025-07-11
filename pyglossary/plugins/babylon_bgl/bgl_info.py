@@ -33,10 +33,12 @@ from pyglossary.text_utils import (
 )
 
 from .bgl_charset import charsetByCode
-from .bgl_language import BabylonLanguage, languageByCode
+from .bgl_language import languageByCode
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
+
+	from .bgl_language import BabylonLanguage
 
 __all__ = ["charsetInfoDecode", "infoType3ByCode"]
 

@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from pyglossary.option import Option, UnicodeErrorsOption
+from typing import TYPE_CHECKING
+
+from pyglossary.option import UnicodeErrorsOption
 
 from .reader import Reader
+
+if TYPE_CHECKING:
+	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",

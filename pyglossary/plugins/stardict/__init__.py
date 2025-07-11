@@ -2,16 +2,21 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 from pyglossary.flags import ALWAYS, DEFAULT_YES
 from pyglossary.option import (
 	BoolOption,
-	Option,
 	StrOption,
 )
 
 from .reader import Reader
 from .writer import Writer
+
+if TYPE_CHECKING:
+	from pyglossary.option import (
+		Option,
+	)
 
 __all__ = [
 	"Reader",

@@ -20,12 +20,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from gi.repository import Gio as gio
 from gi.repository import GLib as glib
 from gi.repository import Gtk as gtk
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
+
+	from gi.repository import Gio as gio
 
 __all__ = ["BrowseButton"]
 

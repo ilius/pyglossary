@@ -4,12 +4,13 @@ from __future__ import annotations
 import re
 from operator import itemgetter
 from typing import TYPE_CHECKING
-from zipfile import ZipFile, ZipInfo
+from zipfile import ZipFile
 
 from pyglossary.json_utils import jsonToData
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
+	from zipfile import ZipInfo
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 

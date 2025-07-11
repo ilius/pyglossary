@@ -39,6 +39,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
+future-annotations = true
 select = [
 	"ANN", # annotations
 	"F",   # Pyflakes

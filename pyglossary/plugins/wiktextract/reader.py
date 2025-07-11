@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import collections
-from collections import Counter
-from io import BytesIO, IOBase
+from io import BytesIO
 from json import loads as json_loads
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+	from collections import Counter
 	from collections.abc import Callable, Iterator
+	from io import IOBase
 	from typing import Any
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType

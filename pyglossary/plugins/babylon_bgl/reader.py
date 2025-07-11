@@ -32,7 +32,6 @@ from pyglossary.option import (
 	BoolOption,
 	EncodingOption,
 	HtmlColorOption,
-	Option,
 	StrOption,
 )
 from pyglossary.text_utils import (
@@ -64,6 +63,9 @@ if TYPE_CHECKING:
 	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.option import (
+		Option,
+	)
 
 __all__ = ["BGLGzipFile", "Block", "FileOffS", "Reader", "optionsProp", "tmpDir"]
 

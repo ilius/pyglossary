@@ -32,11 +32,11 @@ from bisect import bisect_left
 from builtins import open as fopen
 from datetime import UTC, datetime
 from functools import cache, lru_cache
-from io import BufferedIOBase, IOBase
+from io import BufferedIOBase
 from os.path import isdir
 from struct import calcsize, pack, unpack
 from threading import RLock
-from types import MappingProxyType, TracebackType
+from types import MappingProxyType
 from typing import (
 	TYPE_CHECKING,
 	Any,
@@ -52,6 +52,8 @@ from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator, Mapping, Sequence
+	from io import IOBase
+	from types import TracebackType
 
 	from .icu_types import T_Collator
 
