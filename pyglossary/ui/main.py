@@ -272,22 +272,22 @@ def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:  # no
 	)
 
 
-def mainNoExit(argv: list[str]) -> bool:  # noqa: PLR0912
+def mainNoExit(argv: list[str]) -> int:  # noqa: PLR0912
 	ok, res = mainPrepare(argv)
 	if not ok:
-		return False
+		return 2
 	if res is None:  # --version or --help
-		return True
+		return 0
 
 	from pyglossary.ui.runner import getRunner
 
 	assert log
 	run = getRunner(res.args, res.uiType, log)
 	if run is None:
-		return False
+		return 2
 
 	try:
-		return run(
+		ok = run(
 			inputFilename=res.inputFilename,
 			outputFilename=res.outputFilename,
 			inputFormat=res.inputFormat,
@@ -301,8 +301,12 @@ def mainNoExit(argv: list[str]) -> bool:  # noqa: PLR0912
 		)
 	except KeyboardInterrupt:
 		log.error("Cancelled")
-		return False
+		return 1
+
+	if not ok:
+		return 1
+	return 0
 
 
 def main() -> None:
-	sys.exit(int(not mainNoExit(sys.argv)))
+	sys.exit(mainNoExit(sys.argv))
