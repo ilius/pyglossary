@@ -63,9 +63,7 @@ if TYPE_CHECKING:
 	from collections.abc import Iterator
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.option import (
-		Option,
-	)
+	from pyglossary.option import Option
 
 __all__ = ["BGLGzipFile", "Block", "FileOffS", "Reader", "optionsProp", "tmpDir"]
 

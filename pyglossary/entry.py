@@ -5,11 +5,7 @@ import logging
 import os
 import re
 import shutil
-from os.path import (
-	dirname,
-	getsize,
-	join,
-)
+from os.path import dirname, getsize, join
 from typing import TYPE_CHECKING
 
 from .entry_base import BaseEntry

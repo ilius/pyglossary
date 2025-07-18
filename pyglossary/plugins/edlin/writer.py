@@ -6,9 +6,7 @@ import os
 from os.path import isdir, join
 from typing import TYPE_CHECKING
 
-from pyglossary.text_utils import (
-	escapeNTB,
-)
+from pyglossary.text_utils import escapeNTB
 
 if TYPE_CHECKING:
 	from collections.abc import Generator

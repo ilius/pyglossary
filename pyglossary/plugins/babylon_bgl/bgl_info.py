@@ -28,9 +28,7 @@ from typing import TYPE_CHECKING, Any
 
 from pyglossary import gregorian
 from pyglossary.core import log
-from pyglossary.text_utils import (
-	uintFromBytes,
-)
+from pyglossary.text_utils import uintFromBytes
 
 from .bgl_charset import charsetByCode
 from .bgl_language import languageByCode

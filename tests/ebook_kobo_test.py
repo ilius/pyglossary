@@ -9,9 +9,7 @@ sys.path.insert(0, rootDir)
 
 
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.plugins.ebook_kobo import (
-	Writer,
-)
+from pyglossary.plugins.ebook_kobo import Writer
 
 
 class GetPrefixTest(unittest.TestCase):

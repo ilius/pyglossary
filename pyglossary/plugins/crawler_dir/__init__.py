@@ -3,17 +3,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.option import (
-	StrOption,
-)
+from pyglossary.option import StrOption
 
 from .reader import Reader
 from .writer import Writer
 
 if TYPE_CHECKING:
-	from pyglossary.option import (
-		Option,
-	)
+	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",

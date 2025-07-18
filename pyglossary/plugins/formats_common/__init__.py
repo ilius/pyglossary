@@ -50,9 +50,7 @@ from pyglossary.os_utils import indir
 from pyglossary.text_utils import toStr
 
 if TYPE_CHECKING:
-	from pyglossary.option import (
-		Option,
-	)
+	from pyglossary.option import Option
 
 log = logging.getLogger("pyglossary")
 

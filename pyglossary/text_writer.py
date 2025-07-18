@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from os.path import (
-	isdir,
-)
+from os.path import isdir
 from typing import TYPE_CHECKING, cast
 
 from .compression import compressionOpen as c_open

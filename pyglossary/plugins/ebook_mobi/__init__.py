@@ -15,9 +15,7 @@ from pyglossary.option import (
 from .writer import Writer
 
 if TYPE_CHECKING:
-	from pyglossary.option import (
-		Option,
-	)
+	from pyglossary.option import Option
 
 __all__ = [
 	"Writer",

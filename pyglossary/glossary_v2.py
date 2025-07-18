@@ -35,10 +35,7 @@ from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 
 from . import core
-from .core import (
-	cacheDir,
-	log,
-)
+from .core import cacheDir, log
 from .entry import DataEntry, Entry
 from .entry_filters import (
 	PreventDuplicateWords,
@@ -70,9 +67,7 @@ if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
 
 	from .entry_base import MultiStr
-	from .entry_filters import (
-		EntryFilterType,
-	)
+	from .entry_filters import EntryFilterType
 	from .glossary_types import (
 		EntryListType,
 		EntryType,

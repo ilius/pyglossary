@@ -3,16 +3,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.option import (
-	EncodingOption,
-)
+from pyglossary.option import EncodingOption
 
 from .reader import Reader
 
 if TYPE_CHECKING:
-	from pyglossary.option import (
-		Option,
-	)
+	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",

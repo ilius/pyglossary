@@ -5,13 +5,9 @@ from os import listdir
 from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING
 
-from pyglossary.compression import (
-	compressionOpenFunc,
-)
+from pyglossary.compression import compressionOpenFunc
 from pyglossary.core import log
-from pyglossary.text_utils import (
-	splitByBarUnescapeNTB,
-)
+from pyglossary.text_utils import splitByBarUnescapeNTB
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator

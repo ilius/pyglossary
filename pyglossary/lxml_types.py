@@ -10,12 +10,8 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Mapping
-from contextlib import (
-	AbstractAsyncContextManager as AsyncContextManager,
-)
-from contextlib import (
-	AbstractContextManager as ContextManager,
-)
+from contextlib import AbstractAsyncContextManager as AsyncContextManager
+from contextlib import AbstractContextManager as ContextManager
 from typing import AnyStr, Literal, TypeAlias
 
 from lxml.etree import QName, _Element  # noqa: PLC2701

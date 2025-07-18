@@ -23,20 +23,14 @@ import warnings
 from typing import TYPE_CHECKING
 
 from . import core
-from .flags import (
-	DEFAULT_NO,
-	flagsByName,
-)
+from .flags import DEFAULT_NO, flagsByName
 from .option import optionFromDict
 
 if TYPE_CHECKING:
 	import pathlib
 	from typing import Any
 
-	from .flags import (
-		StrWithDesc,
-		YesNoAlwaysNever,
-	)
+	from .flags import StrWithDesc, YesNoAlwaysNever
 	from .option import Option
 
 __all__ = ["PluginProp"]

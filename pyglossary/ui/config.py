@@ -30,9 +30,7 @@ from pyglossary.option import (
 )
 
 if TYPE_CHECKING:
-	from pyglossary.option import (
-		Option,
-	)
+	from pyglossary.option import Option
 
 _entryFilterConfigDict = {
 	configParam: (filterClass, default)
