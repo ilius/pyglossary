@@ -14,7 +14,13 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable
 	from types import TracebackType
 
-__all__ = ["indir", "rmtree", "runDictzip", "showMemoryUsage"]
+__all__ = [
+	"indir",
+	"listFilesRecursiveRelPath",
+	"rmtree",
+	"runDictzip",
+	"showMemoryUsage",
+]
 
 log = logging.getLogger("pyglossary")
 

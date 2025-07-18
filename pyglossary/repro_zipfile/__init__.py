@@ -11,6 +11,7 @@ try:
 except ImportError:
     _MASK_COMPRESS_OPTION_1 = 0x02
 
+__all__ = ['ReproducibleZipFile']
 __version__ = "0.3.1"
 
 

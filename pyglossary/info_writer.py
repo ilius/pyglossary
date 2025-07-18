@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 		WriterGlossaryType,
 	)
 
+__all__ = ["InfoWriter"]
+
 
 class InfoWriter:
 	def __init__(self, glos: WriterGlossaryType) -> None:

@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 	from .glossary_types import EntryType
 
+__all__ = ["mergePlaintextEntriesWithSameHeadword"]
+
 _xdxfTr: XdxfTransformer | None = None
 
 

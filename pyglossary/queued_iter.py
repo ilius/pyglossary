@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
+__all__ = ["QueuedIterator"]
+
 
 class QueuedIterator:
 	def __init__(
