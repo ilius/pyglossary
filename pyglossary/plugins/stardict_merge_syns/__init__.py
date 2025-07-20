@@ -49,6 +49,7 @@ website = (
 	"huzheng.org/stardict",
 )
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
+relatedFormats: list[str] = ["Stardict", "StardictTextual"]
 optionsProp: dict[str, Option] = {
 	"large_file": BoolOption(
 		comment="Use idxoffsetbits=64 bits, for large files only",

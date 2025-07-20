@@ -20,3 +20,7 @@
 | Name & Website                                                                     | Source code | License     | Platforms | Language |
 | ---------------------------------------------------------------------------------- | ----------- | ----------- | --------- | -------- |
 | [dict.cc dictionary](https://play.google.com/store/apps/details?id=cc.dict.dictcc) | ―           | Proprietary | Android   |          |
+
+### Related Formats
+
+- [Dict.cc (SQLite3) - Split](./dict_cc_split.md)

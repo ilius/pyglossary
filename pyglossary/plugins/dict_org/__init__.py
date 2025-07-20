@@ -47,3 +47,4 @@ website = (
 	"http://dict.org/bin/Dict",
 	"The DICT Development Group",
 )
+relatedFormats: list[str] = ["DictOrgSource", "Dictunformat"]

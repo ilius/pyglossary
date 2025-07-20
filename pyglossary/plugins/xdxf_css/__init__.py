@@ -39,6 +39,7 @@ website = (
 	"https://github.com/soshial/xdxf_makedict/tree/master/format_standard",
 	"XDXF standard - @soshial/xdxf_makedict",
 )
+relatedFormats: list[str] = ["Xdxf", "XdxfLax"]
 optionsProp: dict[str, Option] = {
 	"html": BoolOption(comment="Entries are HTML"),
 }

@@ -32,3 +32,8 @@
 | [GNOME Dictionary](https://wiki.gnome.org/Apps/Dictionary)      | ―           | GPL     | Linux     |          |
 | [Xfce4 Dictionary](https://docs.xfce.org/apps/xfce4-dict/start) | ―           | GPL     | linux     |          |
 | [Ding](https://www-user.tu-chemnitz.de/~fri/ding/)              | ―           | GPL     | linux     |          |
+
+### Related Formats
+
+- [DICT.org dictfmt source file](./dict_org_source.md)
+- [dictunformat output file](./dictunformat.md)

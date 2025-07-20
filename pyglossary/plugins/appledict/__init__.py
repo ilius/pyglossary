@@ -62,6 +62,7 @@ website = (
 	"https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
 	"Dictionary User Guide for Mac",
 )
+relatedFormats: list[str] = ["AppleDictBin"]
 # FIXME: rename indexes arg/option to indexes_lang?
 optionsProp: dict[str, Option] = {
 	"clean_html": BoolOption(comment="use BeautifulSoup parser"),

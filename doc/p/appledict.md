@@ -49,3 +49,7 @@ See [doc/apple.md](../apple.md) for additional AppleDict instructions.
 | Name & Website                                                                              | Source code | License | Platforms | Language |
 | ------------------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
 | [Dictionary Development Kit](https://github.com/SebastianSzturo/Dictionary-Development-Kit) | ―           | Unknown | Mac       |          |
+
+### Related Formats
+
+- [AppleDict Binary](./appledict_bin.md)

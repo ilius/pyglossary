@@ -59,3 +59,8 @@ Use [StarDict (Merge Syns)](./stardict_merge_syns.md) plugin (instead of this on
 | [Fora Dictionary Pro](https://play.google.com/store/apps/details?id=com.ngc.fora.android) | ―                                                                        | Proprietary | Android                                                     |          |
 | [KOReader](http://koreader.rocks/)                                                        | [@koreader/koreader](https://github.com/koreader/koreader)               | AGPLv3      | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua      |
 | [sdcv](https://dushistov.github.io/sdcv/)                                                 | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv)                     | GPLv2       | Linux, Windows, Mac, Android                                | C++      |
+
+### Related Formats
+
+- [StarDict Textual File (.xml)](./stardict_textual.md)
+- [StarDict (Merge Syns)](./stardict_merge_syns.md)

@@ -50,7 +50,7 @@ website = (
 	"http://huzheng.org/stardict/",
 	"huzheng.org/stardict",
 )
-
+relatedFormats: list[str] = ["StardictTextual", "StardictMergeSyns"]
 extraDocs = [
 	(
 		"For sdcv and KOReader users",

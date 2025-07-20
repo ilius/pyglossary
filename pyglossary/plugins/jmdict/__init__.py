@@ -42,6 +42,7 @@ website = (
 	"https://www.edrdg.org/jmdict/j_jmdict.html",
 	"The JMDict Project",
 )
+relatedFormats: list[str] = ["EDICT2", "JMnedict"]
 optionsProp: dict[str, Option] = {
 	"example_color": StrOption(
 		comment="Examples color",

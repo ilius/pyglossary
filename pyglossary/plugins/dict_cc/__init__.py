@@ -37,4 +37,5 @@ website = (
 	"https://play.google.com/store/apps/details?id=cc.dict.dictcc",
 	"dict.cc dictionary - Google Play",
 )
+relatedFormats: list[str] = ["Dictcc_split"]
 optionsProp: dict[str, Option] = {}
