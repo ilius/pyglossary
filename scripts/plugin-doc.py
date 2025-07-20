@@ -77,6 +77,14 @@ ${text.replace('(./doc/', '(../')}
 % endfor
 % endif
 ${toolsTable}
+
+% if relatedFormats:
+${"### Related Formats"}
+
+% for desc, lname in relatedFormats:
+- [${desc}](./${lname}.md)
+% endfor
+% endif
 """,
 )
 
@@ -199,6 +207,7 @@ def getToolSourceLink(tool):
 
 userPluginsDirPath = Path(userPluginsDir)
 plugins = [p for p in Glossary.plugins.values() if pluginIsActive(p)]
+pluginByName = Glossary.plugins
 
 pluginsDir = join(rootDir, "pyglossary", "plugins")
 
@@ -322,6 +331,13 @@ for p in plugins:
 			],
 		)
 
+	relatedFormatNames = getattr(module, "relatedFormats", [])
+	relatedFormats = []
+	for formatName in relatedFormatNames:
+		assert formatName != p.name
+		relatedPlug = pluginByName[formatName]
+		relatedFormats.append((relatedPlug.description, relatedPlug.lname))
+
 	text = template.render(
 		description=p.description,
 		codeValue=codeValue,
@@ -338,6 +354,7 @@ for p in plugins:
 		writeDependsCmd=writeDependsCmd,
 		extraDocs=extraDocs,
 		toolsTable=toolsTable,
+		relatedFormats=relatedFormats,
 	)
 	for _i in range(3):
 		text = text.replace("\n\n\n", "\n\n")

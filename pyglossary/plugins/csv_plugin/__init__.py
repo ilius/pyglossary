@@ -57,6 +57,7 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Comma-separated_values"
 website = None
+relatedFormats: list[str] = ["Tabfile"]
 
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),

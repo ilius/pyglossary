@@ -45,3 +45,7 @@ pip3 install mistune
 | Name & Website                                   | Source code | License | Platforms           | Language |
 | ------------------------------------------------ | ----------- | ------- | ------------------- | -------- |
 | [dictgen](https://pgaskin.net/dictutil/dictgen/) | ―           | MIT     | Linux, Windows, Mac |          |
+
+### Related Formats
+
+- [Kobo E-Reader Dictionary](./kobo.md)

@@ -40,6 +40,7 @@ website = (
 	"https://www.kobo.com",
 	"www.kobo.com",
 )
+relatedFormats: list[str] = ["Dictfile"]
 
 # https://help.kobo.com/hc/en-us/articles/360017640093-Add-new-dictionaries-to-your-Kobo-eReader
 

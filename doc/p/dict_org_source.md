@@ -28,3 +28,8 @@
 | Name & Website                                 | Source code | License | Platforms | Language |
 | ---------------------------------------------- | ----------- | ------- | --------- | -------- |
 | [dictfmt](https://linux.die.net/man/1/dictfmt) | ―           | GPL     | Linux     |          |
+
+### Related Formats
+
+- [DICT.org file format (.index)](./dict_org.md)
+- [dictunformat output file](./dictunformat.md)

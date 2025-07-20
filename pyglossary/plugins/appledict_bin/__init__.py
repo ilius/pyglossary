@@ -38,6 +38,7 @@ website = (
 	"https://support.apple.com/en-gu/guide/dictionary/welcome/mac",
 	"Dictionary User Guide for Mac",
 )
+relatedFormats: list[str] = ["AppleDict"]
 optionsProp: dict[str, Option] = {
 	"html": BoolOption(comment="Entries are HTML"),
 	"html_full": BoolOption(

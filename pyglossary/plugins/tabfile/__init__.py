@@ -42,6 +42,8 @@ singleFile = True
 kind = "text"
 wiki = "https://en.wikipedia.org/wiki/Tab-separated_values"
 website = None
+relatedFormats: list[str] = ["Csv"]
+
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(

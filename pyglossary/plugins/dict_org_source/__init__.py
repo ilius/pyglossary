@@ -38,6 +38,7 @@ website = (
 	"https://github.com/cheusov/dictd",
 	"@cheusov/dictd",
 )
+relatedFormats: list[str] = ["DictOrg", "Dictunformat"]
 optionsProp: dict[str, Option] = {
 	"remove_html_all": BoolOption(comment="Remove all HTML tags"),
 }

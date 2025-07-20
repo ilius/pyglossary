@@ -37,4 +37,5 @@ website = (
 	"https://www.edrdg.org/wiki/index.php/Main_Page",
 	"EDRDG Wiki",
 )
+relatedFormats: list[str] = []
 optionsProp: dict[str, Option] = {}

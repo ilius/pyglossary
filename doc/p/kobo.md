@@ -32,3 +32,7 @@ pip3 install marisa-trie
 | Name & Website                       | Source code | License     | Platforms    | Language |
 | ------------------------------------ | ----------- | ----------- | ------------ | -------- |
 | [Kobo eReader](https://www.kobo.com) | ―           | Proprietary | Kobo eReader |          |
+
+### Related Formats
+
+- [Kobo E-Reader Dictfile (.df)](./kobo_dictfile.md)

@@ -46,6 +46,8 @@ website = (
 )
 # https://github.com/pgaskin/dictutil
 
+relatedFormats: list[str] = ["Kobo"]
+
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"extract_inline_images": BoolOption(comment="Extract inline images"),

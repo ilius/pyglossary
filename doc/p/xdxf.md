@@ -40,3 +40,8 @@ pip3 install lxml
 | [GoldenDict](http://goldendict.org/)                                        | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL      | Linux, Windows, Mac          | C++      |
 | [QTranslate](https://qtranslate.en.lo4d.com/windows)                        | ―                                                                        | Freeware | Windows                      | C++      |
 | [Alpus](https://alpusapp.com/)                                              | ―                                                                        | Freeware | Windows, Mac, Linux, Android | Java     |
+
+### Related Formats
+
+- [XDXF with CSS and JS](./xdxf_css.md)
+- [XDXF Lax (.xdxf)](./xdxf_lax.md)

@@ -43,3 +43,7 @@
 | ---------------------------------------------------------------------- | ----------- | ----------- | ------------------- | -------- |
 | [LibreOffice Calc](https://www.libreoffice.org/discover/calc/)         | ―           | MPL/GPL     | Linux, Windows, Mac |          |
 | [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | ―           | Proprietary | Windows             |          |
+
+### Related Formats
+
+- [Tabfile (.txt, .dic)](./tabfile.md)

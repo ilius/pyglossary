@@ -45,6 +45,7 @@ website = (
 	"/blob/master/dict/doc/TextualDictionaryFileFormat",
 	"TextualDictionaryFileFormat",
 )
+relatedFormats: list[str] = ["Stardict", "StardictMergeSyns"]
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"xdxf_to_html": BoolOption(

@@ -37,3 +37,7 @@ pip3 install lxml biplist
 | Name & Website                                                                   | Source code | License     | Platforms | Language |
 | -------------------------------------------------------------------------------- | ----------- | ----------- | --------- | -------- |
 | [Apple Dictionary](https://support.apple.com/en-gu/guide/dictionary/welcome/mac) | ―           | Proprietary | Mac       |          |
+
+### Related Formats
+
+- [AppleDict Source](./appledict.md)

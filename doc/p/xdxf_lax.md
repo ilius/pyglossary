@@ -31,3 +31,8 @@ To install, run:
 ```sh
 pip3 install lxml
 ```
+
+### Related Formats
+
+- [XDXF (.xdxf)](./xdxf.md)
+- [XDXF with CSS and JS](./xdxf_css.md)
