@@ -1552,7 +1552,7 @@
 		},
 		"writeOptions": {
 			"large_file": false,
-			"dictzip": true,
+			"dictzip": false,
 			"sametypesequence": "",
 			"stardict_client": false,
 			"audio_goldendict": false,
@@ -1630,7 +1630,7 @@
 		"sortKeyName": "stardict",
 		"writeOptions": {
 			"large_file": false,
-			"dictzip": true,
+			"dictzip": false,
 			"sametypesequence": "",
 			"audio_icon": true,
 			"sqlite": null
