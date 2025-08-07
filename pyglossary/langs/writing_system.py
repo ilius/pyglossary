@@ -375,6 +375,18 @@ writingSystemList = [
 		unicode=["NKO"],
 		titleTag="big",
 	),
+	WritingSystem(
+		name="Gothic",
+		iso=[(206, "Goth")],
+		unicode=["GOTHIC"],
+		titleTag="b",
+	),
+	WritingSystem(
+		name="Runic",
+		iso=[(211, "Runr")],
+		unicode=["RUNIC"],
+		titleTag="big",
+	),
 	# _____________________________________________________
 	# WritingSystem(
 	# 	name="Baybayin",
