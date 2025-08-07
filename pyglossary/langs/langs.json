@@ -147,6 +147,14 @@
 		"title_tag": "b"
 	},
 	{
+		"codes": ["bci"],
+		"name": "Baoulé",
+		"alt_names": ["Baule", "Bawule", "wawle"],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Baoul%C3%A9_language",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["be", "bel"],
 		"name": "Belarusian",
 		"alt_names": ["Беларуская", "Белорусский"],
@@ -335,7 +343,7 @@
 		"codes": ["dyu"],
 		"name": "Dyula",
 		"alt_names": ["Jula", "Dioula", "ߖߎ߬ߟߊ߬ߞߊ߲)"],
-		"script": ["N'Ko", "Latin", "Ajami"],
+		"script": ["N'Ko", "Latin", "Arabic"],
 		"wiki": "https://en.wikipedia.org/wiki/Dyula_language",
 		"title_tag": "b"
 	},
