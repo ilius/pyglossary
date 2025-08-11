@@ -48,8 +48,8 @@ class MyTqdm(tqdm):
 		# 	remaining, remaining_s.
 		return d
 
-	def update(self, ratio: float) -> None:
-		tqdm.update(self, ratio - self.n)
+	def update(self, n: float = 1) -> None:
+		tqdm.update(self, n - self.n)
 
 	def finish(self) -> None:
 		self.close()

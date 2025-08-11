@@ -71,21 +71,20 @@ if TYPE_CHECKING:
 		def finish(self) -> None: ...
 
 
-"""
-+-+-+-+-+-------+-+-------------+-------------------------------+
- 0				   1				   2				   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-------+-+-------------+-------------------------------+
-|F|R|R|R| opcode|M| Payload len |	Extended payload length	|
-|I|S|S|S|  (4)  |A|	 (7)	 |			 (16/64)		   |
-|N|V|V|V|	   |S|			 |   (if payload len==126/127)   |
-| |1|2|3|	   |K|			 |							   |
-+-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
-|	 Extended payload length continued, if payload len == 127  |
-+ - - - - - - - - - - - - - - - +-------------------------------+
-|					 Payload Data continued ...				|
-+---------------------------------------------------------------+
-"""
+# +-+-+-+-+-------+-+-------------+-------------------------------+
+#  0				   1				   2				   3
+#  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+# +-+-+-+-+-------+-+-------------+-------------------------------+
+# |F|R|R|R| opcode|M| Payload len |	Extended payload length	|
+# |I|S|S|S|  (4)  |A|	 (7)	 |			 (16/64)		   |
+# |N|V|V|V|	   |S|			 |   (if payload len==126/127)   |
+# | |1|2|3|	   |K|			 |							   |
+# +-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+# |	 Extended payload length continued, if payload len == 127  |
+# + - - - - - - - - - - - - - - - +-------------------------------+
+# |					 Payload Data continued ...				|
+# +---------------------------------------------------------------+
+
 
 FIN = 0x80
 OPCODE = 0x0F
@@ -244,7 +243,7 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 					target=super().serve_forever,
 					daemon=True,
 				)
-				self.info(f"Starting {cls_name} on thread {self.thread.getName()}.")
+				self.info(f"Starting {cls_name} on thread {self.thread.name}.")
 				self.thread.start()
 			else:
 				self.thread = threading.current_thread()
