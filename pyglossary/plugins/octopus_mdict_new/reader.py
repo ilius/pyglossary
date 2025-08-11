@@ -67,19 +67,18 @@ class Reader:
 		self._linksDict: dict[str, str] = {}
 
 	def open(self, filename: str) -> None:
+		"""
+		Multiple MDD files are supported with this naming schema:
+		FILE.mdx
+		FILE.mdd
+		FILE.1.mdd
+		FILE.2.mdd
+		FILE.3.mdd
+		"""
 		from pyglossary.plugin_lib.readmdict import MDD, MDX
 
 		self._filename = filename
 		self._mdx = MDX(filename, self._encoding, self._substyle)
-
-		"""
-			multiple MDD files are supported with this naming schema:
-				FILE.mdx
-				FILE.mdd
-				FILE.1.mdd
-				FILE.2.mdd
-				FILE.3.mdd
-		"""
 
 		filenameNoExt, _ext = splitext(self._filename)
 		mddBase = filenameNoExt + extsep

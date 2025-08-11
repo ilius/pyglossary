@@ -249,8 +249,7 @@ class Reader:
 			line = self._bufferLine
 			self._bufferLine = ""
 			yield line
-		for line in self._file:
-			yield line
+		yield from self._file
 
 	# @staticmethod
 	# def sub_title_line(m: re.Match) -> str:

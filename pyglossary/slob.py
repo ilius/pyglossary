@@ -40,10 +40,9 @@ from types import MappingProxyType
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	Generic,
 	NamedTuple,
+	Protocol,
 	Self,
-	TypeVar,
 	cast,
 )
 from uuid import UUID, uuid4
@@ -78,6 +77,13 @@ DEFAULT_COMPRESSION = "lzma2"
 
 UTF8 = "utf-8"
 MAGIC = b"!-1SLOB\x1f"
+
+
+if TYPE_CHECKING:
+
+	class MiniSequence[T](Protocol):
+		def __getitem__(self, s: int) -> T: ...
+		def __len__(self) -> int: ...
 
 
 class Compression(NamedTuple):
@@ -411,14 +417,14 @@ class Blob:
 		return f"<{self.__class__.__module__}.{self.__class__.__name__} {self.key}>"
 
 
-class KeydItemDict:
+class KeydItemDict[T: (Blob, Ref)]:
 	def __init__(
 		self,
-		blobs: Sequence[Blob | Ref],
+		blobs: MiniSequence[T],
 		strength: int,
 		maxlength: int | None = None,
 	) -> None:
-		self.blobs = blobs
+		self.blobs: MiniSequence[T] = blobs
 		self.sortkey = sortkey(strength, maxlength=maxlength)
 
 	def __len__(self) -> int:
@@ -780,9 +786,10 @@ class Slob:
 		self: Slob,
 		strength: int = TERTIARY,
 		maxlength: int | None = None,
-	) -> KeydItemDict:
+	) -> KeydItemDict[Blob]:
+		blobs: MiniSequence[Blob] = self
 		return KeydItemDict(
-			cast("Sequence", self),
+			blobs,
 			strength=strength,
 			maxlength=maxlength,
 		)
@@ -832,10 +839,7 @@ class BinMemWriter:
 		self.items.clear()
 
 
-ItemT = TypeVar("ItemT")
-
-
-class ItemList(Generic[ItemT]):
+class ItemList[T]:
 	def __init__(
 		self,
 		reader: StructReader,
@@ -868,16 +872,16 @@ class ItemList(Generic[ItemT]):
 			self.reader.seek(self.pos_offset + self.pos_size * i)
 			return unpack(self.pos_spec, self.reader.read(self.pos_size))[0]
 
-	def read(self, pos: int) -> ItemT:
+	def read(self, pos: int) -> T:
 		with self.lock:
 			self.reader.seek(self.data_offset + pos)
 			return self._read_item()
 
 	@abstractmethod
-	def _read_item(self) -> ItemT:
+	def _read_item(self) -> T:
 		pass
 
-	def __getitem__(self, i: int) -> ItemT:
+	def __getitem__(self, i: int) -> T:
 		if i >= len(self) or i < 0:
 			raise IndexError("index out of range")
 		return self.read(self.pos(i))
@@ -924,9 +928,10 @@ class RefList(ItemList[Ref]):
 		self: RefList,
 		strength: int = TERTIARY,
 		maxlength: int | None = None,
-	) -> KeydItemDict:
+	) -> KeydItemDict[Ref]:
+		refs: MiniSequence[Ref] = self
 		return KeydItemDict(
-			cast("Sequence", self),
+			refs,
 			strength=strength,
 			maxlength=maxlength,
 		)

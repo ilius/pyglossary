@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+	from argparse import ArgumentParser, Namespace
 
 __all__ = ["StoreConstAction"]
 
@@ -26,16 +29,18 @@ class StoreConstAction(argparse.Action):
 		self.same_dest = same_dest
 		self.const_value = const_value
 
-	def __call__(  # noqa: PLR0913
+	# if you want to follow mypy about the signature of this function,
+	# it will break runtime. Do not touch the signature
+	def __call__(  # type: ignore[return, override]
 		self,
-		parser: argparse.ArgumentParser | None = None,
-		namespace: argparse.Namespace | None = None,
-		values: list | None = None,  # noqa: ARG002
-		option_strings: list[str] | None = None,  # noqa: ARG002
-		required: bool = False,  # noqa: ARG002
-		dest: str | None = None,
+		*_args: Any,  # DO NOT REMOVE
+		parser: ArgumentParser | None = None,
+		namespace: Namespace | None = None,
+		**_kwargs: Any,
 	) -> StoreConstAction:
-		if not parser:
+		if parser is None:
+			return self
+		if namespace is None:
 			return self
 		dest = self.dest
 		if getattr(namespace, dest) is not None:

@@ -93,7 +93,7 @@ def write_hashset(
 T = TypeVar("T")
 
 
-def write_list(
+def write_list[T](
 	fp: IO[bytes],
 	fun: Callable[[IO[bytes], T], Any],
 	entries: list[T],

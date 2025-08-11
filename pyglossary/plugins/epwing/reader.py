@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import os
 import tempfile
-from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 # Import the Yomichan reader from the existing plugin
@@ -14,6 +13,8 @@ except ImportError:
 	from pyglossary.plugins.yomichan.reader import Reader as YomichanReader
 
 if TYPE_CHECKING:
+	from collections.abc import Iterator
+
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 log = logging.getLogger("pyglossary")
