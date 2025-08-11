@@ -165,7 +165,7 @@ class SortRandomTest(unittest.TestCase):
 				locale.setlocale(locale.LC_ALL, localeName)
 			except Exception as e:
 				if "unsupported locale setting" not in str(e):
-					raise e
+					raise
 				continue
 			# print(localeName)
 			yield localeName
