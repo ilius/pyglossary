@@ -24,8 +24,6 @@ from struct import unpack
 from typing import TYPE_CHECKING, Any, cast
 from zlib import decompress
 
-from lxml import etree
-
 from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import exc_note, log, pip, trace
 from pyglossary.io_utils import nullBinaryIO
@@ -402,6 +400,8 @@ class Reader:
 		self,
 		entryBytes: bytes,
 	) -> Element | None:
+		from lxml import etree
+
 		if not entryBytes.strip():
 			return None
 		try:

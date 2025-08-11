@@ -217,8 +217,8 @@ class TestSort(BaseTest):
 		self.r = slob.open(self.path)
 
 	def test_sort_order(self):
-		for i in range(len(self.r)):
-			self.assertEqual(self.r[i].key, self.data_sorted[i])
+		for i, x in enumerate(self.r):
+			self.assertEqual(x.key, self.data_sorted[i])
 
 	def tearDown(self):
 		self.r.close()

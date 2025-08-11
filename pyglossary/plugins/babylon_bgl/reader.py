@@ -845,18 +845,17 @@ class Reader:
 			return None
 		b_word = block.data[pos : pos + Len]
 		u_word, u_word_html = self.processKey(b_word)
-		"""
-		Entry keys may contain html text, for example:
-		ante<font face'Lucida Sans Unicode'>&lt; meridiem
-		arm und reich c=t&gt;2003;</charset>
-		</font>und<font face='Lucida Sans Unicode'>
-		etc.
 
-		Babylon does not process keys as html, it display them as is.
-		Html in keys is the problem of that particular dictionary.
-		We should not process keys as html, since Babylon do not process
-		them as such.
-		"""
+		# Entry keys may contain html text, for example:
+		# ante<font face'Lucida Sans Unicode'>&lt; meridiem
+		# arm und reich c=t&gt;2003;</charset>
+		# </font>und<font face='Lucida Sans Unicode'>
+		# etc.
+		# Babylon does not process keys as html, it display them as is.
+		# Html in keys is the problem of that particular dictionary.
+		# We should not process keys as html, since Babylon do not process
+		# them as such.
+
 		pos += Len
 		self.wordLenMax = max(self.wordLenMax, len(u_word))
 		return EntryWordData(

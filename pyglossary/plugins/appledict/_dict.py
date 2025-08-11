@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import logging
 import string
-from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from ._normalize import title as normalize_title
@@ -28,7 +27,7 @@ from ._normalize import title_long as normalize_title_long
 from ._normalize import title_short as normalize_title_short
 
 if TYPE_CHECKING:
-	from collections.abc import Callable, Iterator
+	from collections.abc import Callable, Iterator, Sequence
 	from typing import Any
 
 
