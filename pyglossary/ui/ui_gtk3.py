@@ -28,7 +28,6 @@ import gi
 
 from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.option import Option
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import (
 	escapeNRB,
@@ -69,6 +68,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 	from pyglossary.config_type import ConfigType
+	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
 # from gi.repository import GdkPixbuf

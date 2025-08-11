@@ -107,7 +107,7 @@ So you need to select the format (with UI or `--read-format` flag).
 
 ## Requirements
 
-PyGlossary requires **Python 3.11 or higher**, and works in practically all
+PyGlossary requires **Python 3.12 or higher**, and works in practically all
 mainstream operating systems, including *GNU/Linux*, *Windows*, *Mac OS*,
 *FreeBSD* and other common Unix-based operating systems.
 
@@ -170,7 +170,7 @@ You can explicitly select user interface type using `--ui`
 
 ## Installation on Windows
 
-- [Download and install Python](https://www.python.org/downloads/windows/) (3.10 or above)
+- [Download and install Python](https://www.python.org/downloads/windows/) (3.12 or above)
 - Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
 - To ensure you have `pip`, run: `python -m ensurepip --upgrade`
 - To install, run: `pip install --upgrade pyglossary`

@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 
 from pyglossary.core import confDir, homeDir, homePage, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.option import IntOption, Option
+from pyglossary.option import IntOption
 from pyglossary.text_utils import escapeNTB, unescapeNTB, urlToPath
 
 from .base import (
@@ -47,6 +47,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.config_type import ConfigType
 	from pyglossary.logger import Logger
+	from pyglossary.option import Option
 
 __all__ = ["UI"]
 

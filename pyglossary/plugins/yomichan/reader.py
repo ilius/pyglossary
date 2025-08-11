@@ -87,7 +87,7 @@ class Reader:
 		with self._dictFile.open("index.json") as indexFile:
 			index = jsonToData(indexFile.read())
 		if not isinstance(index, dict):
-			raise RuntimeError("Yomichan: ill-formed yomichan dictionary")
+			raise TypeError("Yomichan: ill-formed yomichan dictionary")
 		if index["format"] != 3:
 			raise NotImplementedError(
 				"Yomichan: supported only dictionaries of 3 version",

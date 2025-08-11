@@ -18,12 +18,13 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 from __future__ import annotations
 
-from collections.abc import Callable
 from dataclasses import dataclass
-from types import ModuleType
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+	from types import ModuleType
+
 	from .icu_types import T_Collator, T_Locale
 	from .sort_keys_types import (
 		LocaleSortKeyMakerType,
