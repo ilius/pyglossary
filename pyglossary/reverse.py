@@ -198,7 +198,7 @@ def searchWordInDef(  # noqa: C901, PLR0912, PLR0913
 			w, num, m = outRel[j]  # type: ignore
 			m = m.replace("\n", "\\n").replace("\t", "\\t")
 			onePer = int(1.0 / num)
-			if onePer == 1.0:
+			if onePer == 1:
 				out.append(f"{w}\\n{m}")
 			elif showRel == "Percent":
 				out.append(f"{w}(%{100 * num})\\n{m}")
@@ -214,7 +214,7 @@ def searchWordInDef(  # noqa: C901, PLR0912, PLR0913
 		numP = num
 		w, num = outRel[j]  # type: ignore
 		onePer = int(1.0 / num)
-		if onePer == 1.0:
+		if onePer == 1:
 			out.append(w)
 		elif showRel == "Percent":
 			out.append(f"{w}(%{100 * num})")

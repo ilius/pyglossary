@@ -13,7 +13,7 @@ exclude = [
 
 [tool.ruff]
 line-length = 90
-target-version = "py311"
+target-version = "py312"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -39,6 +39,7 @@ exclude = [
 [tool.ruff.lint]
 future-annotations = true
 select = [
+	"ALL",
 	"ANN", # annotations
 	"F",   # Pyflakes
 	"E",   # pycodestyle Error
@@ -86,8 +87,6 @@ select = [
 	"FURB", # refurb
 	"LOG",  # flake8-logging
 	"RUF",  # Ruff-specific rules
-	# "CPY", # flake8-copyright
-	# "PTH",   # flake8-use-pathlib
 	# "TRY",   # tryceratops, they don't make sense
 	# "FLY",   # flynt
 ]
@@ -95,8 +94,19 @@ ignore = [
 	"PLR0917", # Too many positional arguments (x/5)
 	"PLR0914", # Too many local variables (x/15)
 
+	"DOC",
+	"D400", # First line should end with a period
+	"D415", # First line should end with a period, question mark, or exclamation point
 	"PYI042",  # Type alias `...` should be CamelCase FIXME
-
+	"CPY", # flake8-copyright
+	"EM", # Exception must not use an f-string literal, assign to variable first!! why?
+	"S", # bandit
+	"FBT", # haters of boolean args1
+	"ERA001", # haters of commented code
+	"FIX", # FIXMEs
+	"TD", # TODOs
+	"N",
+	"PTH",   # flake8-use-pathlib
 	"RUF039",  # First argument to `re.compile()` is not raw string
 	"FURB189",
 	# FURB189 Subclassing `dict` can be error prone, use `collections.UserDict` instead
@@ -166,12 +176,21 @@ mccabe.max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 
+
+"pyglossary/plugins/*/__init__.py" = [
+	"RUF067", # `__init__` module should only contain docstrings and re-exports
+]
+# only for __*__ vars, should be able to remove this later:
+"pyglossary/ui/progressbar/__init__.py" = ["RUF067"]
+
+
 "pyglossary/ui/progressbar/*.py" = [
 	"PLW0244", # Slot `format_string` redefined from base class `Timer`
 	"PLW2901", # `for` loop variable `widget` overwritten by assignment target
 	"UP031", # Use format specifiers instead of percent format
 	"A002", # Function argument `format` is shadowing a Python builtin
 	"RUF059", # Unpacked variable `h` is never used
+	"TRY300", # Consider moving this statement to an `else` block
 	"E501", # Line too long
 	"D",
 	"ARG",
@@ -266,6 +285,7 @@ unresolved-import = "ignore"
 exclude = [
 	# '.*/plugin_lib/.*',
 ]
+ignore_missing_imports = true
 
 [tool.refurb]
 ignore = [
@@ -328,6 +348,13 @@ disable = [
 	"method-cache-max-size-none",
 	"global-statement",
 	"R0917", # Too many positional arguments (?/5) (too-many-positional-arguments)
+
+	# pyglossary/plugins/lingoes_ldf/reader.py:23:5
+	"E0203", #Access to member '_entryCount' before its definition line 25 (access-member-before-definition)
+
+	# pyglossary/plugins/appledict/writer.py:
+	"R1708", # Do not raise StopIteration in generator, use return statement instead (stop-iteration-return)
+
 	"R0801",                          # Similar lines in 2 files
 	"ungrouped-imports",              # C0412: Imports from package pyglossary are not grouped
 	"inconsistent-return-statements", # R1710: Either all return statements in a function should return an expression, or none of them should
@@ -335,19 +362,23 @@ disable = [
 ]
 
 [tool.pylint.main]
-py-version = "3.11"
+py-version = "3.12"
 extension-pkg-allow-list = [
 	"lxml.etree",
+	"lxml.builder",
 	"lzo",
 	"marisa_trie",
 ]
 ignore-paths = [
+	"^pyglossary/ui/ui_gtk4/ui.py$",
 	"^pyglossary/glossary.py$",
 	"^pyglossary/reverse.py$",
 	"^tests/unused_test.py$",
 	"^pyglossary/ui/progressbar/.*",
+	"^pyglossary/ui/ui_gtk3.py$",
 	"^pyglossary/ui/ui_qt.py$",
 	"^pyglossary/ui/wcwidth/",
+	"^pyglossary/plugins/babylon_bgl/bgl_gzip.py$",
 ]
 
 [tool.vulture]
@@ -441,11 +472,10 @@ classifiers = [
 	"Development Status :: 5 - Production/Stable",
 	"Operating System :: OS Independent",
 	"Typing :: Typed",
-	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
 	"Programming Language :: Python :: 3.13",
 ]
-requires-python = ">= 3.11"
+requires-python = ">= 3.12"
 dependencies = []
 
 [project.scripts]

@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import os
 import shutil
-import sys
 from os.path import isabs, join, normpath
 from pathlib import Path
 from typing import TYPE_CHECKING, Self
@@ -165,9 +164,6 @@ def _rmtree(direc: str) -> None:
 	# in Python 3.12, onexc is added and onerror is deprecated
 	# https://github.com/python/cpython/blob/main/Lib/shutil.py
 	log.debug(f"_rmtree: removing {direc}")
-	if sys.version_info < (3, 12):
-		shutil.rmtree(direc, onerror=_rmtreeError)
-		return
 	shutil.rmtree(direc, onexc=_rmtreeException)
 
 

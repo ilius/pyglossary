@@ -70,6 +70,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 	from pyglossary.config_type import ConfigType
+	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
 # from gi.repository import GdkPixbuf

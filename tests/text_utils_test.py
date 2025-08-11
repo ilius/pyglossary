@@ -143,13 +143,10 @@ class TestTextUtils(unittest.TestCase):
 
 		with self.assertRaises(struct.error) as ctx:
 			f(-1)
-		if sys.version_info >= (3, 12):
-			self.assertEqual(
-				str(ctx.exception),
-				"'I' format requires 0 <= number <= 4294967295",
-			)
-		else:
-			self.assertEqual(str(ctx.exception), "argument out of range")
+		self.assertEqual(
+			str(ctx.exception),
+			"'I' format requires 0 <= number <= 4294967295",
+		)
 
 	def test_uint32FromBytes(self):
 		f = uint32FromBytes
