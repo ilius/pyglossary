@@ -160,7 +160,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.DOTALL | re.IGNORECASE)
 	htmlPattern = re.compile(
 		".*(?:"
-		+ "|".join(
+		+ "|".join(  # noqa: FLY002
 			[
 				r"<font[ >]",
 				r"<br\s*/?\s*>",

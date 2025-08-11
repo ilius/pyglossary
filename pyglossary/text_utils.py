@@ -51,13 +51,13 @@ log = logging.getLogger("pyglossary")
 endFormat = "\x1b[0;0;0m"  # len=8
 
 
-def toStr(s: AnyStr) -> str:
+def toStr[AnyStr: (bytes, str)](s: AnyStr) -> str:
 	if isinstance(s, bytes):
 		return str(s, "utf-8")
 	return str(s)
 
 
-def fixUtf8(st: AnyStr) -> str:
+def fixUtf8[AnyStr: (bytes, str)](st: AnyStr) -> str:
 	if isinstance(st, str):
 		return st.encode("utf-8").replace(b"\x00", b"").decode("utf-8", "replace")
 	return st.replace(b"\x00", b"").decode("utf-8", "replace")

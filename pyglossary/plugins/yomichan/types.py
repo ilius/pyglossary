@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import Literal, NotRequired, Required, TypeAlias
+from typing import Literal, NotRequired, Required
 
 from typing_extensions import TypedDict
 
@@ -32,12 +32,12 @@ class DefinitionStructContent(TypedDict):
 	content: StructuredContent
 
 
-DefinitionObj: TypeAlias = DefinitionString | DefinitionImage | DefinitionStructContent
-YomichanDefinition: TypeAlias = str | DefinitionObj | tuple[str, list[str]]
+type DefinitionObj = DefinitionString | DefinitionImage | DefinitionStructContent
+type YomichanDefinition = str | DefinitionObj | tuple[str, list[str]]
 
 
-DataAttributes: TypeAlias = dict[str, str]
-StyleAttributes: TypeAlias = dict[str, str | int]
+type DataAttributes = dict[str, str]
+type StyleAttributes = dict[str, str | int]
 
 
 class EmptyTagStructContent(TypedDict):
@@ -105,7 +105,7 @@ class LinkTagStructContent(TypedDict, total=False):
 	lang: str
 
 
-StructuredContentObj: TypeAlias = (
+type StructuredContentObj = (
 	EmptyTagStructContent
 	| GenericContainerStructContent
 	| TableStructContent
@@ -113,4 +113,4 @@ StructuredContentObj: TypeAlias = (
 	| ImageTagStructContent
 	| LinkTagStructContent
 )
-StructuredContent: TypeAlias = str | list["StructuredContent"] | StructuredContentObj
+type StructuredContent = str | list[StructuredContent] | StructuredContentObj

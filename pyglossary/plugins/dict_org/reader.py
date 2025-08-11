@@ -72,7 +72,7 @@ class Reader:
 			try:
 				defi = b_defi.decode("utf_8", "ignore")
 				defi = self.prettifyDefinitionText(defi)
-			except Exception as e:
+			except Exception:
 				log.error(f"{b_defi = }")
-				raise e
+				raise
 			yield self._glos.newEntry(word, defi)

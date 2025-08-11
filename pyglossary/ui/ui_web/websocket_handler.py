@@ -104,44 +104,45 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 	def translate_path(self, path: str) -> str:
 		"""
-		Overlay of https://github.com/python/cpython/blob/47c5a0f307cff3ed477528536e8de095c0752efa/Lib/http/server.py#L841
+		Overlay of https://github.com/python/cpython/blob/v3.14.0a1/Lib/http/server.py#L841
 		patched to support multiple browse roots
 		Translate a /-separated PATH to the local filename syntax.
 
 		Components that mean special things to the local file system
-		(e.g. drive or directory names) are ignored.  (XXX They should
-		probably be diagnosed.)
+		(e.g. drive or directory names) are ignored. TODO They should
+		probably be diagnosed.
 
 		"""
+		if self.command != "GET":
+			# fallback to super for other methods
+			return super().translate_path(path)
+
 		# abandon query parameters
-		if self.command == "GET":
-			path = path.split("?", 1)[0]
-			path = path.split("#", 1)[0]
-			# Handle explicit trailing slash when normalizing
-			trailing_slash = path.rstrip().endswith("/")
-			try:
-				path = unquote(path, errors="surrogatepass")
-			except UnicodeDecodeError:
-				path = unquote(path)
-			path = posixpath.normpath(path)
-			# normpath already replaces // (or /// etc) with /
-			pathParts = path.split("/")
+		path = path.split("?", 1)[0]
+		path = path.split("#", 1)[0]
+		# Handle explicit trailing slash when normalizing
+		trailing_slash = path.rstrip().endswith("/")  # FIXME: do we need this?
+		try:
+			path = unquote(path, errors="surrogatepass")
+		except UnicodeDecodeError:
+			path = unquote(path)
+		path = posixpath.normpath(path)
+		# normpath already replaces // (or /// etc) with /
+		pathParts = path.split("/")
 
-			# Iterate through each browsing root to find a matching path
-			for root in self.browse_roots:
-				rootPath = os.path.join(root, *pathParts)
+		# Iterate through each browsing root to find a matching path
+		for root in self.browse_roots:
+			rootPath = os.path.join(root, *pathParts)
 
-				# Normalize path and check if the file exists
-				if os.path.exists(rootPath):
-					if trailing_slash and os.path.isdir(rootPath):
-						rootPath += "/"
-					return rootPath
+			# Normalize path and check if the file exists
+			if os.path.exists(rootPath):
+				if trailing_slash and os.path.isdir(rootPath):
+					rootPath += "/"  # FIXME: do we need this?
+				return rootPath
 
-			# If no valid path found in any root, send 404
-			self.send_error(HTTPStatus.NOT_FOUND, "Not found")
-			return ""
-		# fallback to super for other methods
-		return super().translate_path(path)
+		# If no valid path found in any root, send 404
+		self.send_error(HTTPStatus.NOT_FOUND, "Not found")
+		return ""
 
 	def do_GET(self) -> None:
 		if self.path == "/config":
@@ -365,13 +366,13 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		"""
 		Send CLOSE to client.
 
-		Args:
-			status: Status as defined in https://datatracker.ietf.org/doc/html/rfc6455#section-7.4.1
-			reason: Text with reason of closing the connection
+		:param status: Status as defined in
+			https://datatracker.ietf.org/doc/html/rfc6455#section-7.4.1
+		:param reason: Text with reason of closing the connection
 
 		"""
 		if status < CLOSE_STATUS_NORMAL or status > 1015:
-			raise Exception(f"CLOSE status must be between 1000 and 1015, got {status}")
+			raise ValueError(f"CLOSE status must be between 1000 and 1015, got {status}")
 
 		header = bytearray()
 		payload = struct.pack("!H", status) + reason
@@ -418,7 +419,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			header.append(payload_length)
 
 		# Extended payload
-		elif payload_length >= 126 and payload_length <= 65535:
+		elif 126 <= payload_length <= 65535:
 			header.append(FIN | opcode)
 			header.append(PAYLOAD_LEN_EXT16)
 			header.extend(struct.pack(">H", payload_length))
@@ -430,7 +431,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			header.extend(struct.pack(">Q", payload_length))
 
 		else:
-			raise Exception("Message is too big. Consider breaking it into chunks.")
+			raise ValueError("Message is too big. Consider breaking it into chunks")
 
 		with self._send_lock:
 			self.request.send(header + payload)  # type: ignore
@@ -479,8 +480,6 @@ def encode_to_UTF8(data: str) -> bytes:
 	except UnicodeEncodeError as e:
 		log.error(f"Could not encode data to UTF-8 -- {e}")
 		return b""
-	except Exception as e:
-		raise e
 
 
 def try_decode_UTF8(data: bytes) -> str | None:
@@ -488,5 +487,3 @@ def try_decode_UTF8(data: bytes) -> str | None:
 		return data.decode("utf-8")
 	except UnicodeDecodeError:
 		return None
-	except Exception as e:
-		raise e
