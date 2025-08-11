@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-	from typing import AnyStr, TypeAlias
+	from typing import AnyStr
 
 __all__ = ["dataToPrettyJson", "jsonToData"]
 
-JsonEncodable: TypeAlias = dict | list
+type JsonEncodable = dict[Any, Any] | list[Any]
 
 
 def dataToPrettyJson(
@@ -24,5 +24,5 @@ def dataToPrettyJson(
 	)
 
 
-def jsonToData(st: AnyStr) -> JsonEncodable:
+def jsonToData[AnyStr: (bytes, str)](st: AnyStr) -> JsonEncodable:
 	return json.loads(st)
