@@ -4,6 +4,8 @@ import logging
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
+from lxml.etree import _Element  # noqa: PLC2701
+
 if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element, T_htmlfile
 
@@ -334,7 +336,10 @@ class XdxfTransformer:
 			hf.write(")")
 
 	def _write_img(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
-		with hf.element("img", attrib=dict(child.attrib)):
+		with hf.element(
+			"img",
+			attrib=dict(child.attrib),  # type: ignore[arg-type]
+		):
 			pass
 
 	def _write_abbr(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
@@ -426,6 +431,7 @@ class XdxfTransformer:
 			return
 		prev = None
 		for child in children:
+			assert isinstance(child, _Element | str)
 			if sep and prev is not None and self.shouldAddSep(child, prev):
 				hf.write(sep)
 			if isinstance(child, bytes | tuple):

@@ -18,7 +18,7 @@ __all__ = [
 class WritingSystem(NamedTuple):
 	name: str
 	iso: list[tuple[int, str]] | list[tuple[int, str, str]] = []
-	unicode: list = []
+	unicode: list[str] = []
 	titleTag: str = "b"
 	direction: Literal["ltr", "rtl", "ttb"] = "ltr"
 	comma: str = ", "

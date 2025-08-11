@@ -18,9 +18,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from collections.abc import Sequence
-	from typing import Any, TypeAlias
+	from typing import Any
 
-	RawKeyDataType: TypeAlias = tuple[int, int, Sequence[str]]
+	type RawKeyDataType = tuple[int, int, Sequence[str]]
 	"""tuple(priority, parentalControl, keyTextFields)"""
 
 

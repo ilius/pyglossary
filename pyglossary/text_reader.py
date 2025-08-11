@@ -3,7 +3,6 @@ from __future__ import annotations
 import io
 import logging
 import os
-import typing
 from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
@@ -30,8 +29,8 @@ __all__ = [
 
 log = logging.getLogger("pyglossary")
 
-nextBlockResultType: typing.TypeAlias = (
-	"tuple[str | list[str], str, list[tuple[str, str]] | None] | None"
+type nextBlockResultType = (
+	tuple[str | list[str], str, list[tuple[str, str]] | None] | None
 )
 # (
 # 	word: str | list[str],

@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self
-
-if TYPE_CHECKING:
-	from typing import TypeAlias
+from typing import Self
 
 __all__ = [
 	"ALWAYS",
@@ -35,4 +32,4 @@ DEFAULT_NO = StrWithDesc("default_no", "No (by default)")
 NEVER = StrWithDesc("never", "Never")
 
 # to satisfy mypy:
-YesNoAlwaysNever: TypeAlias = StrWithDesc
+type YesNoAlwaysNever = StrWithDesc

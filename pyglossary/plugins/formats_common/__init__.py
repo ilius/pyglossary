@@ -12,12 +12,12 @@ from os.path import (
 	splitext,
 )
 from pprint import pformat
+from typing import TYPE_CHECKING
 
 from pyglossary.core import rootDir
 
 sys.path.insert(0, rootDir)  # noqa: E402
 
-from typing import TYPE_CHECKING
 
 from pyglossary import core
 from pyglossary.compression import (

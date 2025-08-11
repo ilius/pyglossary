@@ -251,9 +251,9 @@ for p in plugins:
 			tools_toml = toml.load(_file)
 	except FileNotFoundError:
 		tools = []
-	except Exception as e:
+	except Exception:
 		print(f"\nFile: {toolsFile}")
-		raise e
+		raise
 	else:
 		for toolName, tool in tools_toml.items():
 			tool.update({"name": toolName})

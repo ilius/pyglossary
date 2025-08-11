@@ -24,6 +24,7 @@ import os
 import re
 from dataclasses import dataclass
 from os.path import join
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.text_utils import (
@@ -31,7 +32,19 @@ from pyglossary.text_utils import (
 	uintFromBytes,
 )
 
-from .reader import BGLGzipFile, Block, FileOffS, Reader, tmpDir
+from .reader import (
+	BGLGzipFile,
+	Block,
+	FileOffS,
+	Reader,
+	tmpDir,
+)
+
+if TYPE_CHECKING:
+	from .reader import (
+		DefinitionFields,
+		EntryWordData,
+	)
 
 __all__ = ["isASCII"]
 
@@ -277,23 +290,26 @@ class DebugReader(Reader):
 		self.rawDumpFileWriteText(f"\n\nblock type = {block.type}\nkey = ")
 		self.rawDumpFileWriteData(b_word)
 
-	def readEntryDefi(self, block, pos, b_key):
-		succeed, pos, _u_defi, b_defi = Reader.readEntryDefi(self, block, pos, b_key)
+	def readEntryDefi(
+		self,
+		block: Block,
+		pos: int,
+		word: EntryWordData,
+	) -> tuple[bool, int | None, bytes | None, bytes | None]:
+		succeed, pos, _u_defi, b_defi = Reader.readEntryDefi(self, block, pos, word)
 		if not succeed:
 			return
 		self.rawDumpFileWriteText("\ndefi = ")
 		self.rawDumpFileWriteData(b_defi)
 
-	"""
-	def readEntryAlts(self, block, pos, b_key, key):
-		succeed, pos, alts, b_alts = \
-			Reader.readEntryAlts(self, block, pos, b_key, key)
-		if not succeed:
-			return
-		for b_alt in b_alts:
-			self.rawDumpFileWriteText("\nalt = ")
-			self.rawDumpFileWriteData(b_alt)
-	"""
+	# def readEntryAlts(self, block, pos, b_key, key):
+	# 	succeed, pos, alts, b_alts = \
+	# 		Reader.readEntryAlts(self, block, pos, b_key, key)
+	# 	if not succeed:
+	# 		return
+	# 	for b_alt in b_alts:
+	# 		self.rawDumpFileWriteText("\nalt = ")
+	# 		self.rawDumpFileWriteData(b_alt)
 
 	def charReferencesStat(self, b_text, encoding):
 		"""b_text is bytes instance."""
@@ -433,8 +449,13 @@ class DebugReader(Reader):
 		with open(dumpPath, "wb") as f:
 			pickle.dump(self.metadata2, f)
 
-	def processDefiStat(self, fields, defi, b_key):  # noqa: PLR0912
-		Reader.processDefiStat(self, fields, defi, b_key)
+	def processDefiStat(  # noqa: PLR0912
+		self,
+		fields: DefinitionFields,
+		b_defi: bytes,
+		b_key: bytes,
+	) -> None:
+		Reader.processDefiStat(self, fields, b_defi, b_key)
 
 		if fields.b_title:
 			self.rawDumpFileWriteText("\ndefi title: ")

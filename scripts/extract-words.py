@@ -10,10 +10,13 @@ Sorts them and writes them to words.txt
 
 import os
 import sys
-from collections.abc import Iterable
 from os.path import join
+from typing import TYPE_CHECKING
 
 from pyglossary.glossary_v2 import Error, Glossary
+
+if TYPE_CHECKING:
+	from collections.abc import Iterable
 
 Glossary.init()
 

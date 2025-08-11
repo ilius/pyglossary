@@ -141,7 +141,9 @@ def getConvertOptions(args: argparse.Namespace) -> dict[str, Any]:
 
 
 # PLR0911 Too many return statements (7 > 6)
-def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:  # noqa: PLR0911
+def mainPrepare(  # noqa: PLR0911
+	argv: list[str],
+) -> tuple[bool, MainPrepareResult | None]:
 	global log
 
 	uiBase = UIBase()

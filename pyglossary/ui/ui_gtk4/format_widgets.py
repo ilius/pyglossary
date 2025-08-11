@@ -26,7 +26,6 @@ from gi.repository import Gtk as gtk
 
 from pyglossary.core import pip
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.option import Option
 from pyglossary.text_utils import escapeNRB, unescapeNRB
 from pyglossary.ui.dependency import checkDepends
 
@@ -39,6 +38,7 @@ from .utils import (
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
 __all__ = ["FormatOptionsDialog", "InputFormatBox", "OutputFormatBox"]

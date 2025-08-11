@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import typing
 import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
 
 __all__ = ["BaseEntry", "MultiStr"]
 
-MultiStr: typing.TypeAlias = "str | list[str]"
+type MultiStr = str | list[str]
 
 
 class BaseEntry(ABC):  # noqa: PLR0904

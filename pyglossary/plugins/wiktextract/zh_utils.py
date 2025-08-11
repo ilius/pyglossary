@@ -66,8 +66,14 @@ WRITTING_SYSTEMS: dict[str, str] = {
 	"Simplified Chinese": "simp.",
 }
 
+# class ExampleDict(TypedDict):
+# #type: str
+# text: list[str]
+# Translation: NotRequired[str]
+# English: NotRequired[str]
 
-def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
+
+def processSenses(senseList: list[dict[str, Any]]) -> list[dict[str, Any]] | None:
 	if not senseList:
 		return None
 
@@ -80,7 +86,7 @@ def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
 		skippedExamples = []
 
 		# {translation+phonetic: {script1: str, script2: str, ...}}
-		tempExamples = {}
+		tempExamples: dict[tuple[str, str], dict[str, Any]] = {}
 		for example in exampleList:
 			tags = example.get("tags", []) + example.get("raw_tags", [])
 
@@ -88,10 +94,10 @@ def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
 			translationText = ""
 
 			# Only English for now, but other languages should use different keys
-			for lang_ in ["english"]:
-				if lang_ in example:
-					translationText = example[lang_]
-					targetLang = lang_.capitalize()
+			for tmpLang in ["english"]:
+				if tmpLang in example:
+					translationText = example[tmpLang]
+					targetLang = tmpLang.capitalize()
 
 			if not tags and not translationText:
 				# Nothing to process, simply copy this example

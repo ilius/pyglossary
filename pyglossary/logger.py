@@ -10,9 +10,9 @@ from typing import TYPE_CHECKING, cast
 if TYPE_CHECKING:
 	from collections.abc import Callable
 	from types import TracebackType
-	from typing import Any, TypeAlias
+	from typing import Any
 
-	ExcInfoType: TypeAlias = (
+	type ExcInfoType = (
 		tuple[type[BaseException], BaseException, TracebackType] | tuple[None, None, None]
 	)
 

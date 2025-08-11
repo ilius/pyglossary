@@ -28,7 +28,7 @@ class XslXdxfTransformer:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
 			e.msg += f", run `{pip} install lxml` to install"
-			raise e
+			raise
 
 		with open(
 			join(rootDir, "pyglossary", "xdxf", "xdxf.xsl"),

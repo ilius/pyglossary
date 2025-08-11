@@ -89,7 +89,7 @@ def main() -> int:
 		return 1
 	try:
 		run(sys.argv[1])
-		return 0
 	except JingTestError as e:
 		log.fatal(str(e))
 		return e.returncode
+	return 0

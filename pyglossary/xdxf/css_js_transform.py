@@ -4,6 +4,8 @@ import logging
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
+from lxml.etree import _Element  # noqa: PLC2701
+
 if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element, T_htmlfile
 
@@ -143,12 +145,15 @@ class XdxfTransformer:
 			"div",
 			attrib={"class": elem.tag},
 		):
-			for child in elem.xpath("child::node()"):
+			for child in elem.xpath("child::node()"):  # type: ignore[union-attr]
 				if isinstance(child, str):
 					# if not child.strip():
 					# 	continue
 					self.writeString(hf, child, elem, prev, stringSep=stringSep)
 					continue
+
+				assert isinstance(child, _Element)
+
 				if child.tag == "iref":
 					with hf.element("div"):
 						self._write_iref(hf, child)  # NESTED 5
@@ -159,12 +164,13 @@ class XdxfTransformer:
 						self.writeChildrenOf(hf, child, stringSep=stringSep)
 					continue
 				if child.tag == "ex_tran":
-					ex_trans = elem.xpath("./ex_tran")
-					if ex_trans.index(child) == 0:
+					ex_tran_list: list[Element] = elem.xpath("./ex_tran")  # type: ignore[assignment]
+					# assert isinstance(ex_tran_list, list)
+					if ex_tran_list.index(child) == 0:
 						# when several translations, make HTML unordered list of them
-						if len(ex_trans) > 1:
+						if len(ex_tran_list) > 1:
 							with hf.element("ul", attrib={}):
-								for ex_tran in ex_trans:
+								for ex_tran in ex_tran_list:
 									with hf.element("li", attrib={}):
 										self._write_ex_transl(hf, ex_tran)
 						else:

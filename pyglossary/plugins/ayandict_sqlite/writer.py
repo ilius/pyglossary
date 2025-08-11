@@ -50,9 +50,9 @@ class Writer:
 		):
 			try:
 				con.execute(query)
-			except Exception as e:  # noqa: PERF203
+			except Exception:  # noqa: PERF203
 				log.error(f"query: {query}")
-				raise e
+				raise
 
 		for key, value in self._glos.iterInfo():
 			con.execute(

@@ -207,23 +207,21 @@ class Reader:
 
 		return indexData
 
-	"""
-	Type: 'r'
-	https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat#L431
-	Resource file list.
-	The content can be:
-	img:pic/example.jpg	// Image file
-	snd:apple.wav		// Sound file
-	vdo:film.avi		// Video file
-	att:file.bin		// Attachment file
-	More than one line is supported as a list of available files.
-	StarDict will find the files in the Resource Storage.
-	The image will be shown, the sound file will have a play button.
-	You can "save as" the attachment file and so on.
-	The file list must be a utf-8 string ending with '\0'.
-	Use '\n' for separating new lines.
-	Use '/' character as directory separator.
-	"""
+	# Type: 'r'
+	# https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat#L431
+	# Resource file list.
+	# The content can be:
+	# img:pic/example.jpg	// Image file
+	# snd:apple.wav		// Sound file
+	# vdo:film.avi		// Video file
+	# att:file.bin		// Attachment file
+	# More than one line is supported as a list of available files.
+	# StarDict will find the files in the Resource Storage.
+	# The image will be shown, the sound file will have a play button.
+	# You can "save as" the attachment file and so on.
+	# The file list must be a utf-8 string ending with '\0'.
+	# Use '\n' for separating new lines.
+	# Use '/' character as directory separator.
 
 	def decodeDefiTypeR(  # noqa: PLR6301
 		self,

@@ -9,8 +9,6 @@ from collections.abc import (
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
-	from typing import TypeAlias
-
 	from .langs import Lang
 	from .sort_keys import NamedSortKey
 
@@ -23,12 +21,12 @@ __all__ = [
 	"WriterGlossaryType",
 ]
 
-MultiStr: TypeAlias = "str | list[str]"
+type MultiStr = str | list[str]
 
 # str(rawEntry[0]): defiFormat or ""
 # rawEntry[1]: b_defi
 # rawEntry[2:]: b_term_list
-RawEntryType: TypeAlias = Sequence[bytes]
+type RawEntryType = Sequence[bytes]
 
 
 class EntryType(Protocol):  # noqa: PLR0904
