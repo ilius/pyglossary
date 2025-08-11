@@ -8,7 +8,7 @@ exclude = ["pyglossary/plugin_lib/ripemd128.py"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py311"
+target-version = "py312"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -255,6 +255,7 @@ unresolved-import = "ignore"
 exclude = [
 	# '.*/plugin_lib/.*',
 ]
+ignore_missing_imports = true
 
 [tool.refurb]
 ignore = [
@@ -376,7 +377,7 @@ exclude_toplevel_module = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.10"
+pythonVersion = "3.12"
 pythonPlatform = "Linux"
 reportMissingImports = "error"
 reportMissingTypeStubs = false
@@ -448,12 +449,10 @@ classifiers = [
 	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 	"Operating System :: OS Independent",
 	"Typing :: Typed",
-	"Programming Language :: Python :: 3.10",
-	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
 	"Programming Language :: Python :: 3.13",
 ]
-requires-python = ">= 3.10"
+requires-python = ">= 3.12"
 dependencies = []
 
 [project.optional-dependencies]

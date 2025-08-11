@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from typing import Literal, NotRequired, Required, TypeAlias, Union
+from typing import Literal, NotRequired, Required
 
 from typing_extensions import TypedDict
 
-DefinitionObj: TypeAlias = Union[
-	"DefinitionString",
-	"DefinitionImage",
-	"DefinitionStructContent",
-]
-YomichanDefinition: TypeAlias = str | DefinitionObj | tuple[str, list[str]]
+type DefinitionObj = "DefinitionString" | "DefinitionImage" | "DefinitionStructContent"
+type YomichanDefinition = str | DefinitionObj | tuple[str, list[str]]
 
 
 class DefinitionString(TypedDict):
@@ -39,22 +35,18 @@ class DefinitionStructContent(TypedDict):
 	content: StructuredContent
 
 
-StructuredContent: TypeAlias = Union[
-	str,
-	list["StructuredContent"],
-	"StructuredContentObj",
-]
+type StructuredContent = str | list[StructuredContent] | "StructuredContentObj"
 
-StructuredContentObj: TypeAlias = Union[
-	"EmptyTagStructContent",
-	"GenericContainerStructContent",
-	"TableStructContent",
-	"StylishContainerStructContent",
-	"ImageTagStructContent",
-	"LinkTagStructContent",
-]
-DataAttributes: TypeAlias = dict[str, str]
-StyleAttributes: TypeAlias = dict[str, str | int]
+type StructuredContentObj = (
+	"EmptyTagStructContent"
+	| "GenericContainerStructContent"
+	| "TableStructContent"
+	| "StylishContainerStructContent"
+	| "ImageTagStructContent"
+	| "LinkTagStructContent"
+)
+type DataAttributes = dict[str, str]
+type StyleAttributes = dict[str, str | int]
 
 
 class EmptyTagStructContent(TypedDict):

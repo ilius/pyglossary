@@ -27,7 +27,7 @@ __all__ = ["unique_everseen"]
 
 
 # from https://github.com/erikrose/more-itertools
-def unique_everseen(iterable: Iterable) -> Iterator:
+def unique_everseen[T](iterable: Iterable[T]) -> Iterator[T]:
 	"""List unique elements, preserving order. Remember all elements ever seen."""
 	from itertools import filterfalse
 

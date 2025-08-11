@@ -40,9 +40,8 @@ from types import MappingProxyType
 from typing import (
 	TYPE_CHECKING,
 	Any,
-	Generic,
 	NamedTuple,
-	TypeVar,
+	Protocol,
 	cast,
 )
 from uuid import UUID, uuid4
@@ -77,6 +76,13 @@ DEFAULT_COMPRESSION = "lzma2"
 
 UTF8 = "utf-8"
 MAGIC = b"!-1SLOB\x1f"
+
+
+if TYPE_CHECKING:
+
+	class MiniSequence[T](Protocol):
+		def __getitem__(self, s: int) -> T: ...
+		def __len__(self) -> int: ...
 
 
 class Compression(NamedTuple):
@@ -232,7 +238,7 @@ class IncorrectFileSize(FileFormatException):
 def sortkey(
 	strength: int,
 	maxlength: int | None = None,
-) -> Callable:
+) -> Callable[[str], bytes]:
 	# pass empty locale to use root locale
 	# if you pass no arg, it will use system locale
 	c: T_Collator = Collator.createInstance(Locale(""))
@@ -243,7 +249,11 @@ def sortkey(
 	)
 	if maxlength is None:
 		return c.getSortKey
-	return lambda x: c.getSortKey(x)[:maxlength]
+
+	def func(x):
+		return c.getSortKey(x)[:maxlength]
+
+	return func
 
 
 class MultiFileReader(BufferedIOBase):
@@ -344,14 +354,14 @@ class MultiFileReader(BufferedIOBase):
 		return result
 
 
-class KeydItemDict:
+class KeydItemDict[T: (Blob, Ref)]:
 	def __init__(
 		self,
-		blobs: Sequence[Blob | Ref],
+		blobs: MiniSequence[T],
 		strength: int,
 		maxlength: int | None = None,
 	) -> None:
-		self.blobs = blobs
+		self.blobs: MiniSequence[T] = blobs
 		self.sortkey = sortkey(strength, maxlength=maxlength)
 
 	def __len__(self) -> int:
@@ -391,7 +401,7 @@ class Blob:
 		key: str,
 		fragment: str,
 		read_content_type_func: Callable[[], str],
-		read_func: Callable,
+		read_func: Callable[[], bytes],
 	) -> None:
 		# print(f"read_func is {type(read_func)}")
 		# read_func is <class 'functools._lru_cache_wrapper'>
@@ -711,7 +721,7 @@ class Slob:
 	def __len__(self) -> int:
 		return len(self._refs)
 
-	def __getitem__(self, i: int) -> Any:
+	def __getitem__(self, i: int) -> Blob:
 		# this is called by bisect_left
 		return self.getBlobByIndex(i)
 
@@ -757,9 +767,10 @@ class Slob:
 		self: Slob,
 		strength: int = TERTIARY,
 		maxlength: int | None = None,
-	) -> KeydItemDict:
+	) -> KeydItemDict[Blob]:
+		blobs: MiniSequence[Blob] = self
 		return KeydItemDict(
-			cast("Sequence", self),
+			blobs,
 			strength=strength,
 			maxlength=maxlength,
 		)
@@ -809,10 +820,7 @@ class BinMemWriter:
 		self.items.clear()
 
 
-ItemT = TypeVar("ItemT")
-
-
-class ItemList(Generic[ItemT]):
+class ItemList[T]:
 	def __init__(
 		self,
 		reader: StructReader,
@@ -845,16 +853,16 @@ class ItemList(Generic[ItemT]):
 			self.reader.seek(self.pos_offset + self.pos_size * i)
 			return unpack(self.pos_spec, self.reader.read(self.pos_size))[0]
 
-	def read(self, pos: int) -> ItemT:
+	def read(self, pos: int) -> T:
 		with self.lock:
 			self.reader.seek(self.data_offset + pos)
 			return self._read_item()
 
 	@abstractmethod
-	def _read_item(self) -> ItemT:
+	def _read_item(self) -> T:
 		pass
 
-	def __getitem__(self, i: int) -> ItemT:
+	def __getitem__(self, i: int) -> T:
 		if i >= len(self) or i < 0:
 			raise IndexError("index out of range")
 		return self.read(self.pos(i))
@@ -901,9 +909,10 @@ class RefList(ItemList[Ref]):
 		self: RefList,
 		strength: int = TERTIARY,
 		maxlength: int | None = None,
-	) -> KeydItemDict:
+	) -> KeydItemDict[Ref]:
+		refs: MiniSequence[Ref] = self
 		return KeydItemDict(
-			cast("Sequence", self),
+			refs,
 			strength=strength,
 			maxlength=maxlength,
 		)
@@ -1278,9 +1287,10 @@ class Writer:
 					while count <= self.max_redirects:
 						# is target key itself a redirect?
 						try:
-							alias_item: Blob = next(aliases[to_key])
+							alias_item = next(aliases[to_key])
 						except StopIteration:
 							break
+						assert isinstance(alias_item, Blob)
 						orig_to_key = to_key
 						to_key, fragment = read_key_frag(
 							alias_item,
@@ -1321,8 +1331,10 @@ class Writer:
 				targets.add((ref.bin_index, ref.item_index, ref.fragment))
 				previous = ref
 
-			for bin_index, item_index, fragment in sorted(targets):
-				self._write_ref(previous.key, bin_index, item_index, fragment)
+			if targets:
+				assert previous is not None
+				for bin_index, item_index, fragment in sorted(targets):
+					self._write_ref(previous.key, bin_index, item_index, fragment)
 
 		self._sort()
 		self._fire_event("end_resolve_aliases")
