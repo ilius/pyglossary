@@ -11,14 +11,14 @@ from __future__ import annotations
 import typing
 from collections.abc import Mapping
 from contextlib import AbstractContextManager as ContextManager
-from typing import AnyStr, Literal, TypeAlias
+from typing import AnyStr, Literal
 
 from lxml.etree import QName, _Element  # noqa: PLC2701
 
 __all__ = ["Element", "T_htmlfile"]
 
-_TextArg: TypeAlias = str | bytes | QName
-_TagName: TypeAlias = _TextArg
+type _TextArg = str | bytes | QName
+type _TagName = _TextArg
 
 
 _OutputMethodArg = Literal[
@@ -29,6 +29,16 @@ _OutputMethodArg = Literal[
 	"TEXT",
 	"XML",
 ]
+
+# class SupportsLaxItems[KT, VT](Protocol):
+#     def items(self) -> Collection[tuple[KT, VT]]: ...
+
+# type _AttrNameKey = str | bytes | QName
+# type _AttrVal = _TextArg | QName  # TODO Consider dropping QName
+# type _AttrMapping = SupportsLaxItems[_AttrNameKey, _AttrVal]  # noqa: F821
+
+# class Element(Protocol):
+# 	attrib: _AttrMapping | None
 
 
 # Element type can not be a protocol or interface or even TypeAlias

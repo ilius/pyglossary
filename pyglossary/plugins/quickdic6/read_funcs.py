@@ -86,7 +86,7 @@ def read_hashset(fp: IO[bytes]) -> list[str]:
 T = TypeVar("T")
 
 
-def read_list(
+def read_list[T](
 	fp: IO[bytes],
 	fun: Callable[[IO[bytes]], T],
 ) -> list[T]:

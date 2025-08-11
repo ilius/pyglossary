@@ -8,7 +8,7 @@ exclude = ["pyglossary/plugin_lib/ripemd128.py"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py311"
+target-version = "py312"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -249,6 +249,7 @@ unresolved-import = "ignore"
 exclude = [
 	# '.*/plugin_lib/.*',
 ]
+ignore_missing_imports = true
 
 [tool.refurb]
 ignore = [
@@ -318,7 +319,7 @@ disable = [
 ]
 
 [tool.pylint.main]
-py-version = "3.11"
+py-version = "3.12"
 extension-pkg-allow-list = [
 	"lxml.etree",
 	"lzo",
@@ -423,11 +424,10 @@ classifiers = [
 	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 	"Operating System :: OS Independent",
 	"Typing :: Typed",
-	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
 	"Programming Language :: Python :: 3.13",
 ]
-requires-python = ">= 3.11"
+requires-python = ">= 3.12"
 dependencies = []
 
 [project.optional-dependencies]
