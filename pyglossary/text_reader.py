@@ -73,7 +73,7 @@ class TextGlossaryReader:
 		self._file: io.TextIOBase = nullTextIO
 		self._hasInfo = hasInfo
 		self._pendingEntries: list[EntryType] = []
-		self._wordCount = 0
+		self._entryCount = 0
 		self._fileSize = 0
 		self._progress = True
 		self._pos = -1
@@ -268,7 +268,7 @@ class TextGlossaryReader:
 					self._fileCount == -1 or self._fileIndex < self._fileCount - 1
 				) and self.openNextFile():
 					continue
-				self._wordCount = self._pos
+				self._entryCount = self._pos
 				break
 			if not block:
 				yield None
@@ -293,7 +293,7 @@ class TextGlossaryReader:
 				)
 
 	def __len__(self) -> int:
-		return self._wordCount
+		return self._entryCount
 
 	@classmethod
 	def isInfoWord(cls, word: str) -> bool:

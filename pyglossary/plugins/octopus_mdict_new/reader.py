@@ -56,7 +56,7 @@ class Reader:
 		self._filename = ""
 		self._mdx: MDX | None = None
 		self._mdd: list[MDD] = []
-		self._wordCount = 0
+		self._entryCount = 0
 		self._dataEntryCount = 0
 
 		# dict of mainWord -> newline-separated alternatives
@@ -125,7 +125,7 @@ class Reader:
 		log.info("extracting links...")
 		linksDict: dict[str, str] = {}
 		word = ""
-		wordCount = 0
+		entryCount = 0
 		for b_word, b_defi in mdx.items():
 			word = b_word.decode("utf-8")
 			defi = b_defi.decode("utf-8").strip()
@@ -139,14 +139,14 @@ class Reader:
 				else:
 					linksDict[mainWord] = word
 				continue
-			wordCount += 1
+			entryCount += 1
 
 		log.info(
 			f"extracting links done, sizeof(linksDict)={sys.getsizeof(linksDict)}",
 		)
-		log.info(f"{wordCount = }")
+		log.info(f"{entryCount = }")
 		self._linksDict = linksDict
-		self._wordCount = wordCount
+		self._entryCount = entryCount
 		self._mdx = MDX(self._filename, self._encoding, self._substyle)
 
 	def fixDefi(self, defi: str) -> str:
@@ -218,7 +218,7 @@ class Reader:
 		self._mdd = []
 
 	def __len__(self) -> int:
-		return self._wordCount + self._dataEntryCount
+		return self._entryCount + self._dataEntryCount
 
 	def close(self) -> None:
 		self.clear()

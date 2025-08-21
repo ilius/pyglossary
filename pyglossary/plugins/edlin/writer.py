@@ -43,7 +43,7 @@ class Writer:
 		self._resDir = ""
 		self._encoding = "utf-8"
 		self._hashSet: set[str] = set()
-		# self._wordCount = None
+		# self._entryCount = None
 
 	@staticmethod
 	def hashToPath(h: str) -> str:

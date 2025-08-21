@@ -84,19 +84,19 @@ def reverseGlossary(
 	else:
 		words = takeOutputWords(glos, entries)
 
-	wordCount = len(words)
+	entryCount = len(words)
 	log.info(
 		f"Reversing to file {savePath!r}"
-		f", number of words: {wordCount}",
+		f", number of words: {entryCount}",
 	)
 	glos.progressInit("Reversing")
-	wcThreshold = wordCount // 200 + 1
+	wcThreshold = entryCount // 200 + 1
 
 	with open(savePath, "w", encoding="utf-8") as saveFile:
-		for wordI in range(wordCount):
+		for wordI in range(entryCount):
 			word = words[wordI]
 			if wordI % wcThreshold == 0:
-				glos.progress(wordI, wordCount)
+				glos.progress(wordI, entryCount)
 
 			if wordI % saveStep == 0 and wordI > 0:
 				saveFile.flush()
@@ -120,7 +120,7 @@ def reverseGlossary(
 			yield wordI
 
 	glos.progressEnd()
-	yield wordCount
+	yield entryCount
 
 
 def takeOutputWords(

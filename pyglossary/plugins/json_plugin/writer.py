@@ -60,7 +60,7 @@ class Writer:
 			filename=self._filename,
 			encoding=encoding,
 			writeInfo=enable_info,
-			wordEscapeFunc=escape,
+			termEscapeFunc=escape,
 			defiEscapeFunc=escape,
 			ext=".json",
 			head="{\n",

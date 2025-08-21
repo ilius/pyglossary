@@ -367,13 +367,13 @@ class PreventDuplicateWords(EntryFilter):
 
 	def __init__(self, glos: _GlossaryType) -> None:
 		EntryFilter.__init__(self, glos)
-		self._wordSet: set[str] = set()
+		self._termSet: set[str] = set()
 
 	def run(self, entry: EntryType) -> EntryType | None:
 		if entry.isData():
 			return entry
 
-		wordSet = self._wordSet
+		wordSet = self._termSet
 		word = entry.s_word
 
 		if word not in wordSet:
@@ -386,7 +386,7 @@ class PreventDuplicateWords(EntryFilter):
 		word = f"{word} ({n})"
 
 		wordSet.add(word)
-		entry._word = word  # type: ignore
+		entry._term = word  # type: ignore
 		# use entry.editFuncWord?
 
 		return entry
@@ -423,7 +423,7 @@ class TrimArabicDiacritics(EntryFilter):
 		hw_t = hw_t.replace("\u0622", "\u0627").replace("\u0623", "\u0627")
 		if hw_t == hw or not hw_t:
 			return entry
-		entry._word = [hw_t, *words]  # type: ignore
+		entry._term = [hw_t, *words]  # type: ignore
 		return entry
 
 

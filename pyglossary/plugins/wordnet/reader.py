@@ -312,11 +312,11 @@ class Reader:
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._wordCount = 0
+		self._entryCount = 0
 		self.wordnet: WordNet | None = None
 
 	def __len__(self) -> int:
-		return self._wordCount
+		return self._entryCount
 
 	def open(self, filename: str) -> None:
 		self.wordnet = WordNet(filename)

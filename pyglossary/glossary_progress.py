@@ -74,28 +74,28 @@ class GlossaryProgress:
 				self.progress(bp[0], bp[1], unit="bytes")
 				lastPos = bp[0]
 
-	def _wordCountProgressIter(
+	def _entryCountProgressIter(
 		self,
 		iterable: Iterable[EntryType],
-		wordCount: int,
+		entryCount: int,
 	) -> Iterator[EntryType]:
-		wordCountThreshold = max(
+		entryCountThreshold = max(
 			1,
 			min(
 				500,
-				wordCount // 200,
+				entryCount // 200,
 			),
 		)
 		for index, entry in enumerate(iterable):
 			yield entry
-			if index % wordCountThreshold == 0:
-				self.progress(index, wordCount)
+			if index % entryCountThreshold == 0:
+				self.progress(index, entryCount)
 
 	def _progressIter(self, reader: ReaderType) -> Iterable[EntryType]:
 		if not self.progressbar:
 			return reader
 		if getattr(reader, "useByteProgress", False):
 			return self._byteProgressIter(reader)
-		if (wordCount := len(reader)) > 0:
-			return self._wordCountProgressIter(reader, wordCount)
+		if (entryCount := len(reader)) > 0:
+			return self._entryCountProgressIter(reader, entryCount)
 		return self._byteProgressIter(reader)

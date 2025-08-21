@@ -376,7 +376,7 @@ class Writer:
 
 	def writeIfoFile(
 		self,
-		wordCount: int,
+		entryCount: int,
 		synWordCount: int,
 	) -> None:
 		"""Build .ifo file."""
@@ -387,7 +387,7 @@ class Writer:
 		ifoDict: dict[str, str] = {
 			"version": "3.0.0",
 			"bookname": self.getBookname(),
-			"wordcount": str(wordCount),
+			"wordcount": str(entryCount),
 			"idxfilesize": str(indexFileSize),
 		}
 

@@ -20,16 +20,16 @@ class Reader(TextGlossaryReader):
 	compressions = stdCompressions
 
 	def __len__(self) -> int:
-		if self._wordCount is None:
+		if self._entryCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
-			self._wordCount = (
+			self._entryCount = (
 				fileCountLines(
 					self._filename,
 					newline=b"\n\n",
 				)
 				- self._leadingLinesCount
 			)
-		return self._wordCount
+		return self._entryCount
 
 	@classmethod
 	def isInfoWord(cls, word: str) -> bool:

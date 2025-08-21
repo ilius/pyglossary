@@ -15,11 +15,11 @@ MultiStr: typing.TypeAlias = "str | list[str]"
 
 class BaseEntry:  # noqa: PLR0904
 	__slots__: list[str] = [
-		"_word",
+		"_term",
 	]
 
 	def __init__(self) -> None:
-		self._word: str | list[str]
+		self._term: str | list[str]
 
 	@classmethod
 	def isData(cls) -> bool: ...

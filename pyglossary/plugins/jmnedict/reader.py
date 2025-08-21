@@ -237,14 +237,14 @@ class Reader:
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
-		self._wordCount = 0
+		self._entryCount = 0
 		self._filename = ""
 		self._file: io.IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
 	def __len__(self) -> int:
-		return self._wordCount
+		return self._entryCount
 
 	def close(self) -> None:
 		if self._file:

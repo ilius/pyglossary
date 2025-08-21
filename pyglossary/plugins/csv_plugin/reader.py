@@ -57,7 +57,7 @@ class Reader:
 		self._file: io.TextIOBase = nullTextIO
 		self._fileSize = 0
 		self._leadingLinesCount = 0
-		self._wordCount: int | None = None
+		self._entryCount: int | None = None
 		self._pos = -1
 		self._csvReader: Iterable[list[str]] | None = None
 		self._resDir = ""
@@ -124,12 +124,12 @@ class Reader:
 	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
 
-		if self._wordCount is None:
+		if self._entryCount is None:
 			if hasattr(self._file, "compression"):
 				return 0
 			log.debug("Try not to use len(reader) as it takes extra time")
-			self._wordCount = fileCountLines(self._filename) - self._leadingLinesCount
-		return self._wordCount + len(self._resFileNames)
+			self._entryCount = fileCountLines(self._filename) - self._leadingLinesCount
+		return self._entryCount + len(self._resFileNames)
 
 	def _iterRows(self) -> Iterator[list[str]]:
 		if self._csvReader is None:
@@ -169,12 +169,12 @@ class Reader:
 		if not self._csvReader:
 			raise RuntimeError("iterating over a reader while it's not open")
 
-		wordCount = 0
+		entryCount = 0
 		for row in self._iterRows():
-			wordCount += 1
+			entryCount += 1
 			yield self._processRow(row)
 
-		self._wordCount = wordCount
+		self._entryCount = entryCount
 
 		resDir = self._resDir
 		for fname in self._resFileNames:

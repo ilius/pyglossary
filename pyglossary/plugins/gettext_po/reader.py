@@ -33,7 +33,7 @@ class Reader:
 	def clear(self) -> None:
 		self._filename = ""
 		self._file: io.TextIOBase = nullTextIO
-		self._wordCount: int | None = None
+		self._entryCount: int | None = None
 		self._resDir = ""
 		self._resFileNames: list[str] = []
 
@@ -55,13 +55,13 @@ class Reader:
 	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
 
-		if self._wordCount is None:
+		if self._entryCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")
-			self._wordCount = fileCountLines(
+			self._entryCount = fileCountLines(
 				self._filename,
 				newline=b"\nmsgid",
 			)
-		return self._wordCount
+		return self._entryCount
 
 	def makeEntry(self, word: str, defi: str) -> EntryType:
 		if self._alts:
@@ -80,7 +80,7 @@ class Reader:
 		word = ""
 		defi = ""
 		msgstr = False
-		wordCount = 0
+		entryCount = 0
 		for line_ in file:
 			line = line_.strip()  # noqa: PLW2901
 			if not line:
@@ -90,7 +90,7 @@ class Reader:
 			if line.startswith("msgid "):
 				if word:
 					yield self.makeEntry(word, defi)
-					wordCount += 1
+					entryCount += 1
 					word = ""
 					defi = ""
 				else:
@@ -127,5 +127,5 @@ class Reader:
 				word += line
 		if word:
 			yield self.makeEntry(word, defi)
-			wordCount += 1
-		self._wordCount = wordCount
+			entryCount += 1
+		self._entryCount = entryCount

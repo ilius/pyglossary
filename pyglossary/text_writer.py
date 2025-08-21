@@ -25,8 +25,8 @@ file_size_check_every = 100
 class TextGlossaryWriter:
 	_encoding: str = "utf-8"
 	_newline: str = "\n"
-	_wordListEncodeFunc: Callable[[list[str]], str] | None = None
-	_wordEscapeFunc: Callable[[str], str] | None = None
+	_termListEncodeFunc: Callable[[list[str]], str] | None = None
+	_termEscapeFunc: Callable[[str], str] | None = None
 	_defiEscapeFunc: Callable[[str], str] | None = None
 	_ext: str = ".txt"
 	_head: str = ""
@@ -60,8 +60,8 @@ class TextGlossaryWriter:
 		self,
 		encoding: str | None = None,
 		newline: str | None = None,
-		wordListEncodeFunc: Callable | None = None,
-		wordEscapeFunc: Callable | None = None,
+		termListEncodeFunc: Callable | None = None,
+		termEscapeFunc: Callable | None = None,
 		defiEscapeFunc: Callable | None = None,
 		ext: str | None = None,
 		head: str | None = None,
@@ -74,10 +74,10 @@ class TextGlossaryWriter:
 			self._encoding = encoding
 		if newline is not None:
 			self._newline = newline
-		if wordListEncodeFunc is not None:
-			self._wordListEncodeFunc = wordListEncodeFunc
-		if wordEscapeFunc is not None:
-			self._wordEscapeFunc = wordEscapeFunc
+		if termListEncodeFunc is not None:
+			self._termListEncodeFunc = termListEncodeFunc
+		if termEscapeFunc is not None:
+			self._termEscapeFunc = termEscapeFunc
 		if defiEscapeFunc is not None:
 			self._defiEscapeFunc = defiEscapeFunc
 		if ext is not None:
@@ -106,7 +106,7 @@ class TextGlossaryWriter:
 	def _doWriteInfo(self, file: io.TextIOBase) -> None:
 		entryFmt = self._entryFmt
 		outInfoKeysAliasDict = self._outInfoKeysAliasDict
-		wordEscapeFunc = self._wordEscapeFunc
+		termEscapeFunc = self._termEscapeFunc
 		defiEscapeFunc = self._defiEscapeFunc
 		for key, value in self._glos.iterInfo():
 			# both key and value are supposed to be non-empty string
@@ -117,8 +117,8 @@ class TextGlossaryWriter:
 			if not key:
 				continue
 			word = f"##{key}"
-			if wordEscapeFunc is not None:
-				word = wordEscapeFunc(word)
+			if termEscapeFunc is not None:
+				word = termEscapeFunc(word)
 				if not word:
 					continue
 			if defiEscapeFunc is not None:
@@ -157,8 +157,8 @@ class TextGlossaryWriter:
 		glos = self._glos
 		file = self._file
 		entryFmt = self._entryFmt
-		wordListEncodeFunc = self._wordListEncodeFunc
-		wordEscapeFunc = self._wordEscapeFunc
+		termListEncodeFunc = self._termListEncodeFunc
+		termEscapeFunc = self._termEscapeFunc
 		defiEscapeFunc = self._defiEscapeFunc
 		resources = self._resources
 		word_title = self._word_title
@@ -185,10 +185,10 @@ class TextGlossaryWriter:
 			if word_title:
 				defi = glos.wordTitleStr(entry.l_word[0]) + defi
 
-			if wordListEncodeFunc is not None:
-				word = wordListEncodeFunc(entry.l_word)
-			elif wordEscapeFunc is not None:
-				word = wordEscapeFunc(word)
+			if termListEncodeFunc is not None:
+				word = termListEncodeFunc(entry.l_word)
+			elif termEscapeFunc is not None:
+				word = termEscapeFunc(word)
 
 			if defiEscapeFunc is not None:
 				defi = defiEscapeFunc(defi)
@@ -218,7 +218,7 @@ def writeTxt(  # noqa: PLR0913
 	entryFmt: str = "",  # contain {word} and {defi}
 	filename: str = "",
 	writeInfo: bool = True,
-	wordEscapeFunc: Callable | None = None,
+	termEscapeFunc: Callable | None = None,
 	defiEscapeFunc: Callable | None = None,
 	ext: str = ".txt",
 	head: str = "",
@@ -238,7 +238,7 @@ def writeTxt(  # noqa: PLR0913
 	writer.setAttrs(
 		encoding=encoding,
 		newline=newline,
-		wordEscapeFunc=wordEscapeFunc,
+		termEscapeFunc=termEscapeFunc,
 		defiEscapeFunc=defiEscapeFunc,
 		ext=ext,
 		head=head,

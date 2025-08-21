@@ -707,7 +707,7 @@ class Reader(ReaderUtils):
 			log.warning(f"unexpected {extent=}")
 			return
 		try:
-			self._wordCount = int(extent.split(" ")[0].replace(",", ""))
+			self._entryCount = int(extent.split(" ")[0].replace(",", ""))
 		except Exception:
 			log.exception(f"unexpected {extent=}")
 
@@ -807,7 +807,7 @@ class Reader(ReaderUtils):
 		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._progress = True
-		self._wordCount = 0
+		self._entryCount = 0
 		self._discoveredTags: dict[str, Element] = {}
 
 		self._p_pattern = re.compile(
@@ -822,7 +822,7 @@ class Reader(ReaderUtils):
 		)
 
 	def __len__(self) -> int:
-		return self._wordCount
+		return self._entryCount
 
 	def close(self) -> None:
 		self._file.close()

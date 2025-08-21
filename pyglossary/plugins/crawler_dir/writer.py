@@ -52,7 +52,7 @@ class Writer:
 
 		filename = self._filename
 
-		wordCount = 0
+		entryCount = 0
 		compression = self._compression
 		c_open = compressionOpenFunc(compression)
 		if not c_open:
@@ -76,7 +76,7 @@ class Writer:
 				_file.write(
 					f"{escapeNTB(entry.s_word)}\n{entry.defi}",
 				)
-			wordCount += 1
+			entryCount += 1
 
 		with open(
 			join(filename, "info.json"),
@@ -85,7 +85,7 @@ class Writer:
 		) as infoFile:
 			info = {}
 			info["name"] = self._glos.getInfo("name")
-			info["wordCount"] = wordCount
+			info["wordCount"] = entryCount
 			info |= self._glos.getExtraInfos(["name", "wordCount"])
 
 			infoFile.write(dataToPrettyJson(info))

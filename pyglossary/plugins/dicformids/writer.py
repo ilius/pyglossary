@@ -19,7 +19,7 @@ __all__ = ["Writer"]
 PROP_TEMPLATE = """#DictionaryForMIDs property file
 infoText={name}, author: {author}
 indexFileMaxSize={indexFileMaxSize}\n
-language1IndexNumberOfSourceEntries={wordCount}
+language1IndexNumberOfSourceEntries={entryCount}
 language1DictionaryUpdateClassName=de.kugihan.dictionaryformids.dictgen.DictionaryUpdate
 indexCharEncoding=ISO-8859-1
 dictionaryFileSeparationCharacter='\\t'
@@ -86,7 +86,7 @@ class Writer:
 					name=glos.getInfo("name"),
 					author=glos.author,
 					indexFileMaxSize=self.indexFileMaxSize,
-					wordCount=self.wordCount,
+					entryCount=self.entryCount,
 					directoryPostfix=self.directoryPostfix,
 					dicMaxSize=self.dicMaxSize + 1,
 					language2FilePostfix="fa",  # FIXME
@@ -147,7 +147,7 @@ class Writer:
 			dicFp.close()
 
 		bucketSize = self.linesPerDirectoryFile
-		wordCount = 0
+		entryCount = 0
 		dicIndex = 0
 		entryList: list[EntryType] = []  # aka bucket
 		while True:
@@ -157,7 +157,7 @@ class Writer:
 			if entry.isData():
 				# FIXME
 				continue
-			wordCount += 1
+			entryCount += 1
 			entryList.append(entry)
 			if len(entryList) >= bucketSize:
 				writeBucket(dicIndex, entryList)
@@ -169,7 +169,7 @@ class Writer:
 			entryList = []
 
 		self.dicMaxSize = dicMaxSize
-		self.wordCount = wordCount
+		self.entryCount = entryCount
 
 		langSearchListFp = open(
 			join(

@@ -59,7 +59,7 @@ class Reader:
 		self._filename = ""
 		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
-		self._wordCount = 0
+		self._entryCount = 0
 		self._badExampleKeys = set()
 
 	def open(

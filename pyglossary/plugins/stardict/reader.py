@@ -99,7 +99,7 @@ class Reader:
 		self._sametypesequence = ""
 		self._resDir = ""
 		self._resFileNames: list[str] = []
-		self._wordCount: int | None = None
+		self._entryCount: int | None = None
 
 	def open(self, filename: str) -> None:
 		if splitext(filename)[1].lower() == ".ifo":
@@ -113,7 +113,7 @@ class Reader:
 		if not _verifySameTypeSequence(sametypesequence):
 			raise LookupError(f"Invalid {sametypesequence = }")
 		self._indexData = self.readIdxFile()
-		self._wordCount = len(self._indexData)
+		self._entryCount = len(self._indexData)
 		self._synDict = self.readSynFile()
 		self._sametypesequence = sametypesequence
 		if isfile(self._filename + ".dict.dz"):
@@ -129,11 +129,11 @@ class Reader:
 		# self.readResources()
 
 	def __len__(self) -> int:
-		if self._wordCount is None:
+		if self._entryCount is None:
 			raise RuntimeError(
 				"StarDict: len(reader) called while reader is not open",
 			)
-		return self._wordCount + len(self._resFileNames)
+		return self._entryCount + len(self._resFileNames)
 
 	def readIfoFile(self) -> None:
 		""".ifo file is a text file in utf-8 encoding."""
@@ -395,8 +395,8 @@ class Reader:
 
 	def readSynFile(self) -> dict[int, list[str]]:
 		"""Return synDict, a dict { entryIndex -> altList }."""
-		if self._wordCount is None:
-			raise RuntimeError("self._wordCount is None")
+		if self._entryCount is None:
+			raise RuntimeError("self._entryCount is None")
 
 		unicode_errors = self._unicode_errors
 
@@ -426,7 +426,7 @@ class Reader:
 				break
 			entryIndex = uint32FromBytes(synBytes[pos : pos + 4])
 			pos += 4
-			if entryIndex >= self._wordCount:
+			if entryIndex >= self._entryCount:
 				log.error(
 					f"Corrupted synonym file. Word {b_alt!r} references invalid item",
 				)

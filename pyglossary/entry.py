@@ -238,7 +238,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		if defiFormat not in {"m", "h", "x"}:
 			raise ValueError(f"invalid defiFormat {defiFormat!r}")
 
-		self._word = word
+		self._term = word
 		self._defi = defi
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # tuple[int, int] | None
@@ -247,28 +247,28 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		return ""
 
 	def __repr__(self) -> str:
-		return f"Entry({self._word!r}, {self._defi!r}, defiFormat={self._defiFormat!r})"
+		return f"Entry({self._term!r}, {self._defi!r}, defiFormat={self._defiFormat!r})"
 
 	@property
 	def s_word(self) -> str:
 		"""Returns string of word, and all the alternate words separated by "|"."""
-		if isinstance(self._word, str):
-			return self._word
-		return joinByBar(self._word)
+		if isinstance(self._term, str):
+			return self._term
+		return joinByBar(self._term)
 
 	@property
 	def l_word(self) -> list[str]:
 		"""Returns list of the word and all the alternate words."""
-		if isinstance(self._word, str):
-			return [self._word]
-		return self._word
+		if isinstance(self._term, str):
+			return [self._term]
+		return self._term
 
 	@property
 	def lb_word(self) -> list[bytes]:
 		"""Returns list of the word and all the alternate words."""
-		if isinstance(self._word, str):
-			return [self._word.encode("utf-8")]
-		return [word.encode("utf-8") for word in self._word]
+		if isinstance(self._term, str):
+			return [self._term.encode("utf-8")]
+		return [word.encode("utf-8") for word in self._term]
 
 	@property
 	def defi(self) -> str:
@@ -322,7 +322,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 	def addAlt(self, alt: str) -> None:
 		l_word = self.l_word
 		l_word.append(alt)
-		self._word = l_word
+		self._term = l_word
 
 	def editFuncWord(self, func: Callable[[str], str]) -> None:
 		"""
@@ -331,11 +331,11 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		`func` must accept only one string as argument
 		and return the modified string.
 		"""
-		if isinstance(self._word, str):
-			self._word = func(self._word)
+		if isinstance(self._term, str):
+			self._term = func(self._term)
 			return
 
-		self._word = [func(st) for st in self._word]
+		self._term = [func(st) for st in self._term]
 
 	def editFuncDefi(self, func: Callable[[str], str]) -> None:
 		"""
@@ -360,11 +360,11 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	def replaceInWord(self, source: str, target: str) -> None:
 		"""Replace string `source` with `target` in all words."""
-		if isinstance(self._word, str):
-			self._word = self._word.replace(source, target)
+		if isinstance(self._term, str):
+			self._term = self._term.replace(source, target)
 			return
 
-		self._word = [st.replace(source, target) for st in self._word]
+		self._term = [st.replace(source, target) for st in self._term]
 
 	def replaceInDefi(self, source: str, target: str) -> None:
 		"""Replace string `source` with `target` in all definitions."""
@@ -381,7 +381,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 			return
 		l_word = [word for word in l_word if word]
 		l_word = list(unique_everseen(l_word))
-		self._word = l_word
+		self._term = l_word
 
 	def stripFullHtml(self) -> str | None:
 		"""Remove <html><head><body> tags and returns error."""

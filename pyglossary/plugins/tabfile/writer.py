@@ -48,8 +48,8 @@ class Writer:
 		)
 		writer.setAttrs(
 			encoding=self._encoding,
-			wordListEncodeFunc=joinByBar,
-			wordEscapeFunc=escapeNTB,
+			termListEncodeFunc=joinByBar,
+			termEscapeFunc=escapeNTB,
 			defiEscapeFunc=escapeNTB,
 			ext=".txt",
 			resources=self._resources,

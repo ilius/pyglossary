@@ -55,7 +55,7 @@ class InfoWriter:
 			re.IGNORECASE | re.DOTALL,
 		)
 
-		wordCount = 0
+		entryCount = 0
 		bwordCount = 0
 
 		nonLowercaseWordCount = 0
@@ -74,7 +74,7 @@ class InfoWriter:
 				break
 			defi = entry.defi
 
-			wordCount += 1
+			entryCount += 1
 			bwordCount += defi.count("bword://")
 
 			for word in entry.l_word:
@@ -112,7 +112,7 @@ class InfoWriter:
 		data_entry_count = defiFormatCounter["b"]
 		del defiFormatCounter["b"]
 		info: dict[str, Any] = dict(glos.iterInfo())
-		info["word_count"] = wordCount
+		info["word_count"] = entryCount
 		info["bword_count"] = bwordCount
 		info["non_lowercase_word_count"] = nonLowercaseWordCount
 		info["data_entry_count"] = data_entry_count
