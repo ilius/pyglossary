@@ -61,7 +61,7 @@ class Reader:
 			resourceFiles.append(file)
 		self._termBankFiles = [val for _, val in sorted(termFiles, key=itemgetter(0))]
 		self._resourceFiles = resourceFiles
-		self._ReadIndex()
+		self._readIndex()
 
 	def close(self) -> None:
 		if self._dictFile:
@@ -78,10 +78,10 @@ class Reader:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
 		for termBankFile in self._termBankFiles:
-			yield from self._ReadTermBank(termBankFile.filename)
-		yield from self._ReadUsedResources()
+			yield from self._readTermBank(termBankFile.filename)
+		yield from self._readUsedResources()
 
-	def _ReadIndex(self) -> None:
+	def _readIndex(self) -> None:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
 		with self._dictFile.open("index.json") as indexFile:
@@ -99,7 +99,7 @@ class Reader:
 				self._glos.setInfo(c_field, value)
 		self._isSequenced = index.get("isSequenced", False)
 
-	def _ReadTermBank(self, termBankName: str) -> Generator[EntryType, None, None]:
+	def _readTermBank(self, termBankName: str) -> Generator[EntryType, None, None]:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
 		with self._dictFile.open(termBankName) as termBankFile:
@@ -108,10 +108,10 @@ class Reader:
 			word = term[0]
 			if reading := term[1]:
 				word = [word, reading]
-			definition = _ReadDefinition(term[5])
+			definition = _readDefinition(term[5])
 			yield self._glos.newEntry(word, definition, defiFormat="h")
 
-	def _ReadUsedResources(self) -> Generator[EntryType, None, None]:
+	def _readUsedResources(self) -> Generator[EntryType, None, None]:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
 		for file in self._resourceFiles:
@@ -120,11 +120,11 @@ class Reader:
 			yield self._glos.newDataEntry(file.filename, data)
 
 
-def _ReadSubStructuredContent(elem: StructuredContent) -> str:
+def _readSubStructuredContent(elem: StructuredContent) -> str:
 	if isinstance(elem, str):
 		return elem
 	if isinstance(elem, list):
-		return " ".join(map(_ReadSubStructuredContent, elem))
+		return " ".join(map(_readSubStructuredContent, elem))
 	styles = []
 	additional_properties = [
 		f' {key}="{val}"' for key, val in elem.get("data", {}).items()
@@ -155,17 +155,17 @@ def _ReadSubStructuredContent(elem: StructuredContent) -> str:
 		return f'<img src="{elem["path"]}"{additional_properties}>'
 	# General tags
 	tag = elem["tag"]
-	content = _ReadSubStructuredContent(elem.get("content", ""))
+	content = _readSubStructuredContent(elem.get("content", ""))
 	additional_properties.append(f' style="{"".join(styles)}"')
 	additional_properties = "".join(additional_properties)
 	return f"<{tag}{additional_properties}>{content}</{tag}>"
 
 
-def _ReadStructuredContent(elem: DefinitionObj) -> str:
+def _readStructuredContent(elem: DefinitionObj) -> str:
 	if elem["type"] == "text":
 		return elem["text"]
 	if elem["type"] == "structured-content":
-		return _ReadSubStructuredContent(elem["content"])
+		return _readSubStructuredContent(elem["content"])
 	if elem["type"] == "image":
 		properties = []
 		for name in ["alt", "width", "height", "title"]:
@@ -176,12 +176,12 @@ def _ReadStructuredContent(elem: DefinitionObj) -> str:
 	raise RuntimeError("Ill-formed Yomichan dictionary")
 
 
-def _ReadDefinition(definition: list[YomichanDefinition]) -> str:
+def _readDefinition(definition: list[YomichanDefinition]) -> str:
 	def _ParseDefinition(defi: YomichanDefinition) -> str:
 		if isinstance(defi, str):
 			return defi
 		if isinstance(defi, dict):
-			return _ReadStructuredContent(defi)
+			return _readStructuredContent(defi)
 		raise NotImplementedError(f"Yomichan: unknown elem in definition: {defi}")
 
 	return "\n".join(map(_ParseDefinition, definition))
