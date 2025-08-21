@@ -2,7 +2,7 @@ name: pip-macOS
 
 on:
   push:
-    branches: ["master", "dev", "github-action-macos"]
+    branches: ["master", "dev", "dev2", "github-action-macos"]
 
 jobs:
   pip-git-url:

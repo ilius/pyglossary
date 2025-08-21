@@ -2,7 +2,7 @@ name: "Validate Plugins"
 
 on:
   push:
-    branches: ["master", "dev", "github-action"]
+    branches: ["master", "dev", "dev2", "github-action"]
   pull_request:
   schedule:
     - cron: "33 1 * * 3"
