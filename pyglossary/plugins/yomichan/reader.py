@@ -104,12 +104,12 @@ class Reader:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
 		with self._dictFile.open(termBankName) as termBankFile:
 			termBank = jsonToData(termBankFile.read())
-		for term in termBank:
-			word = term[0]
-			if reading := term[1]:
-				word = [word, reading]
-			definition = _readDefinition(term[5])
-			yield self._glos.newEntry(word, definition, defiFormat="h")
+		for item in termBank:
+			term = item[0]
+			if reading := item[1]:
+				term = [term, reading]
+			definition = _readDefinition(item[5])
+			yield self._glos.newEntry(term, definition, defiFormat="h")
 
 	def _readUsedResources(self) -> Generator[EntryType, None, None]:
 		if self._dictFile is None:

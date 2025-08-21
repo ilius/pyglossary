@@ -75,7 +75,7 @@ class Writer:
 
 	@staticmethod
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
-		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
+		log.error(f"error in stripFullHtml: {error}, terms={entry.l_word!r}")
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos

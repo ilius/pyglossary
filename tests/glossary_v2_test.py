@@ -860,17 +860,17 @@ class TestGlossary(TestGlossaryBase):
 	def addWordsList(
 		self,
 		glos: Glossary,
-		words: list[str],
+		terms: list[str],
 		newDefiFunc: Callable[[Any], str] = str,
 		defiFormat: str = "",
 	) -> list[list[str]]:
 		wordsList = []
-		for index, line in enumerate(words):
-			words = line.rstrip().split("|")
-			wordsList.append(words)
+		for index, line in enumerate(terms):
+			terms = line.rstrip().split("|")
+			wordsList.append(terms)
 			glos.addEntry(
 				glos.newEntry(
-					words,
+					terms,
 					newDefiFunc(index),
 					defiFormat=defiFormat,
 				),

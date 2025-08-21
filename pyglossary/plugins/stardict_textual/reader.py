@@ -165,13 +165,13 @@ class Reader:
 		)
 		for _, _elem in context:
 			elem = cast("Element", _elem)
-			words: list[str] = []
+			terms: list[str] = []
 			defisWithFormat: list[tuple[str, str]] = []
 			for child in elem.iterchildren():
 				if not child.text:
 					continue
 				if child.tag in {"key", "synonym"}:
-					words.append(child.text)
+					terms.append(child.text)
 				elif child.tag == "definition":
 					type_ = child.attrib.get("type", "")
 					if type_:
@@ -200,7 +200,7 @@ class Reader:
 			defi, defiFormat = self.renderDefiList(defisWithFormat)
 
 			yield glos.newEntry(
-				words,
+				terms,
 				defi,
 				defiFormat=defiFormat,
 				byteProgress=(file.tell(), fileSize),

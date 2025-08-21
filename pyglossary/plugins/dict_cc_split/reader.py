@@ -70,10 +70,10 @@ class Reader:
 		column1: str,
 		column2: str,
 	) -> Iterator[EntryType]:
-		for word, defi, entry_type in self.iterRows(column1, column2):
+		for term, defi, entry_type in self.iterRows(column1, column2):
 			if entry_type:
-				word = f"{word} {{{entry_type}}}"  # noqa: PLW2901
-			yield self._glos.newEntry(word, defi, defiFormat="m")
+				term = f"{term} {{{entry_type}}}"  # noqa: PLW2901
+			yield self._glos.newEntry(term, defi, defiFormat="m")
 
 	def __iter__(self) -> Iterator[EntryType]:
 		yield from self._iterOneDirection("term1", "term2")

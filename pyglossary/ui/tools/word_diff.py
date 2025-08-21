@@ -26,20 +26,20 @@ def plainWordSplit(text: str) -> list[str]:
 
 def xmlWordSplit(text: str) -> list[str]:
 	pos = 0
-	words = []
+	terms = []
 
 	for m in xmlTagRE.finditer(text):
 		start, end = m.span()
 		match = m.group()
 		if start > pos:
-			words += plainWordSplit(text[pos:start])
-		words.append(match)
+			terms += plainWordSplit(text[pos:start])
+		terms.append(match)
 		pos = end
 
 	if pos < len(text):
-		words += plainWordSplit(text[pos:])
+		terms += plainWordSplit(text[pos:])
 
-	return words
+	return terms
 
 
 def xmlDiff(text1: str, text2: str) -> Iterator[str]:

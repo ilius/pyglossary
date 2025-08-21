@@ -113,8 +113,8 @@ class Reader:
 		href = a.attrib.get("href", "")
 
 		if href.startswith("x-dictionary:d:"):
-			word = href[len("x-dictionary:d:") :]
-			a.attrib["href"] = href = f"bword://{word}"
+			term = href[len("x-dictionary:d:") :]
+			a.attrib["href"] = href = f"bword://{term}"
 
 		elif href.startswith("x-dictionary:r:"):
 			# https://github.com/ilius/pyglossary/issues/343
@@ -374,12 +374,12 @@ class Reader:
 		entryElems = entryRoot.xpath("/d:entry", namespaces=namespaces)
 		if not entryElems:
 			return None
-		word = entryElems[0].xpath("./@d:title", namespaces=namespaces)[0]
+		term = entryElems[0].xpath("./@d:title", namespaces=namespaces)[0]
 
 		# 2. add alts
 		keyTextFieldOrder = self._properties.key_text_variable_fields
 
-		words = [word]
+		terms = [term]
 
 		keyDataList: list[KeyData] = [
 			KeyData.fromRaw(rawKeyData, keyTextFieldOrder)
@@ -390,12 +390,12 @@ class Reader:
 				key=attrgetter("priority"),
 				reverse=True,
 			)
-			words += [keyData.keyword for keyData in keyDataList]
+			terms += [keyData.keyword for keyData in keyDataList]
 
 		defi = self._getDefi(entryElems[0])
 
 		return self._glos.newEntry(
-			word=words,
+			word=terms,
 			defi=defi,
 			defiFormat=self._defiFormat,
 			byteProgress=(self._absPos, self._limit),

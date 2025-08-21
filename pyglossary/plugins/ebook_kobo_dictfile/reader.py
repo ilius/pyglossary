@@ -90,7 +90,7 @@ class Reader(TextGlossaryReader):
 	def nextBlock(
 		self,
 	) -> tuple[list[str], str, list[tuple[str, str]] | None]:
-		words: list[str] = []
+		terms: list[str] = []
 		defiLines: list[str] = []
 		html = False
 
@@ -100,11 +100,11 @@ class Reader(TextGlossaryReader):
 				break
 			line = line.rstrip("\n\r")
 			if line.startswith("@"):
-				if words:
+				if terms:
 					self._bufferLine = line
 					defi, images = self.fixDefi("\n".join(defiLines), html=html)
-					return words, defi, images
-				words = [line[1:].strip()]
+					return terms, defi, images
+				terms = [line[1:].strip()]
 				continue
 			if line.startswith(": "):
 				defiLines.append(line[2:])
@@ -112,15 +112,15 @@ class Reader(TextGlossaryReader):
 			if line.startswith("::"):
 				continue
 			if line.startswith("&"):
-				words.append(line[1:].strip())
+				terms.append(line[1:].strip())
 				continue
 			if line.startswith("<html>"):
 				line = line[6:]
 				html = True
 			defiLines.append(line)
 
-		if words:
+		if terms:
 			defi, images = self.fixDefi("\n".join(defiLines), html=html)
-			return words, defi, images
+			return terms, defi, images
 
 		raise StopIteration

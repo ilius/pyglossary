@@ -74,16 +74,16 @@ def _ru(title: str, a: set[str], a_norm: set[str]) -> None:
 			normal_form = normal_forms[0]
 
 			for x in normal_form.lexeme:
-				word = x.word
+				term = x.word
 				# Apple Dictionary Services see no difference between
 				# "й" and "и", "ё" and "е", so we're trying to avoid
 				# "* Duplicate index. Skipped..." warning.
 				# new: return indexes with original letters but check for
 				# occurrence against "normal forms".
-				word_norm = normalize(word)
-				if word_norm not in a_norm:
-					a.add(word)
-					a_norm.add(word_norm)
+				term_norm = normalize(term)
+				if term_norm not in a_norm:
+					a.add(term)
+					a_norm.add(term_norm)
 
 
 def normalize(word: str) -> str:

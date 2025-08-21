@@ -55,6 +55,6 @@ class Reader:
 		glos = self._glos
 		for i in range(self._entryCount):
 			# here get word and definition from file(depending on your format)
-			word = f"word_{i}"
+			term = f"term_{i}"
 			defi = f"definition {i}"
-			yield glos.newEntry(word, defi)
+			yield glos.newEntry(term, defi)

@@ -98,13 +98,13 @@ class Reader:
 
 		for entryIndex in range(entryCount):
 			zEntry = zimfile._get_entry_by_id(entryIndex)
-			word = zEntry.title
+			term = zEntry.title
 
 			if zEntry.is_redirect:
 				redirectCount += 1
 				targetWord = zEntry.get_redirect_entry().title
 				yield glos.newEntry(
-					word,
+					term,
 					f'Redirect: <a href="bword://{targetWord}">{targetWord}</a>',
 					defiFormat="h",
 				)
@@ -131,7 +131,7 @@ class Reader:
 			except RuntimeError:
 				invalidMimeTypeCount += 1
 				mimetype = ""
-				yield glos.newDataEntry(word, b_content)
+				yield glos.newDataEntry(term, b_content)
 
 			if mimetype == "undefined":
 				undefinedMimeTypeCount += 1
@@ -143,12 +143,12 @@ class Reader:
 				# can be "text/html;raw=true"
 				defi = b_content.decode("utf-8", errors=html_unicode_errors)
 				defi = defi.replace(' src="../I/', ' src="./')
-				yield glos.newEntry(word, defi, defiFormat="h")
+				yield glos.newEntry(term, defi, defiFormat="h")
 				continue
 
 			if mimetype == "text/plain":
 				yield glos.newEntry(
-					word,
+					term,
 					b_content.decode("utf-8", errors=text_unicode_errors),
 					defiFormat="m",
 				)
@@ -157,17 +157,17 @@ class Reader:
 			if mimetype not in self.resourceMimeTypes:
 				log.warning(f"Unrecognized {mimetype=}")
 
-			if len(word) > f_namemax:
-				fileNameTooLong.append(word)
+			if len(term) > f_namemax:
+				fileNameTooLong.append(term)
 				continue
 
-			if "|" in word:
-				log.warning(f"resource title: {word}")
+			if "|" in term:
+				log.warning(f"resource title: {term}")
 				if windows:
 					continue
 
 			try:
-				entry = glos.newDataEntry(word, b_content)
+				entry = glos.newDataEntry(term, b_content)
 			except Exception as e:
 				log.error(f"error creating file: {e}")
 				continue

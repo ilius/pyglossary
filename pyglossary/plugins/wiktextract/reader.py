@@ -127,9 +127,9 @@ class Reader:
 		keywords: list[str] = []
 		inflectedKeywords: list[str] = []
 
-		word = data.get("word")
-		if word:
-			keywords.append(word)
+		term = data.get("word")
+		if term:
+			keywords.append(term)
 
 		# Check if the entry is need preprocessing
 		lang = data.get("lang")
@@ -507,10 +507,10 @@ class Reader:
 		from lxml import etree as ET
 
 		# {"word": ..., "extra": ...}
-		word = form_of.get("word")
-		if not word:
+		term = form_of.get("word")
+		if not term:
 			return
-		hf.write(word)
+		hf.write(term)
 		extra = form_of.get("extra")
 		if extra:
 			hf.write(ET.Element("br"))
@@ -565,25 +565,25 @@ class Reader:
 				with hf.element("span", style=self.topicStyle):
 					hf.write(topic)
 
-	def addWordLink(  # noqa: PLR6301
+	def addBwordLink(  # noqa: PLR6301
 		self,
 		hf: T_htmlfile,
-		word: str,
+		term: str,
 		wordClass: str = "",
 	) -> None:
-		i = word.find(" [")
+		i = term.find(" [")
 		if i >= 0:
-			word = word[:i]
-		if not word:
+			term = term[:i]
+		if not term:
 			return
-		attrib = {"href": f"bword://{word}"}
+		attrib = {"href": f"bword://{term}"}
 		if wordClass:
 			attrib["class"] = wordClass
 		with hf.element(
 			"a",
 			attrib=attrib,
 		):
-			hf.write(word)
+			hf.write(term)
 
 	def writeSynonyms(
 		self,
@@ -605,10 +605,10 @@ class Reader:
 			for i, item in enumerate(synonyms):
 				if i > 0:
 					hf.write(", ")
-				word = item.get("word")
-				if not word:
+				term = item.get("word")
+				if not term:
 					continue
-				self.addWordLink(hf, word)
+				self.addBwordLink(hf, term)
 
 	def writeAntonyms(
 		self,
@@ -623,10 +623,10 @@ class Reader:
 			for i, item in enumerate(antonyms):
 				if i > 0:
 					hf.write(", ")
-				word = item.get("word")
-				if not word:
+				term = item.get("word")
+				if not term:
 					continue
-				self.addWordLink(hf, word, wordClass="antonym")
+				self.addBwordLink(hf, term, wordClass="antonym")
 
 	def writeRelated(
 		self,
@@ -641,10 +641,10 @@ class Reader:
 			for i, item in enumerate(relatedList):
 				if i > 0:
 					hf.write(", ")
-				word = item.get("word")
-				if not word:
+				term = item.get("word")
+				if not term:
 					continue
-				self.addWordLink(hf, word)
+				self.addBwordLink(hf, term)
 
 	def writeSenseLinks(
 		self,
@@ -667,7 +667,7 @@ class Reader:
 					ref = ref[:sq]
 				if i > 0:
 					hf.write(", ")
-				self.addWordLink(hf, ref)
+				self.addBwordLink(hf, ref)
 
 	def writeSense(
 		self,

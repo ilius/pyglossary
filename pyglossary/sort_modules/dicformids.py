@@ -18,13 +18,13 @@ def normal(**_options) -> SortKeyType:
 	re_tabs = re.compile("\t+")
 
 	def sortKey(words: list[str]) -> str:
-		word = words[0]
-		word = word.strip()
-		word = re_punc.sub("", word)
-		word = re_spaces.sub(" ", word)
-		word = re_tabs.sub(" ", word)
-		word = word.lower()
-		return word  # noqa: RET504
+		term = words[0]
+		term = term.strip()
+		term = re_punc.sub("", term)
+		term = re_spaces.sub(" ", term)
+		term = re_tabs.sub(" ", term)
+		term = term.lower()
+		return term  # noqa: RET504
 
 	return sortKey
 

@@ -130,13 +130,13 @@ class Reader:
 			blobSet.add(id_)
 
 			# blob.key is str, blob.content is bytes
-			word = blob.key
+			term = blob.key
 
 			ctype = blob.content_type.split(";")[0]
 			if ctype not in {MIME_HTML, MIME_TEXT}:
-				log.debug(f"unknown {blob.content_type=} in {word=}")
-				word = word.removeprefix("~/")
-				yield self._glos.newDataEntry(word, blob.content)
+				log.debug(f"unknown {blob.content_type=} in {term=}")
+				term = term.removeprefix("~/")
+				yield self._glos.newDataEntry(term, blob.content)
 				continue
 			defiFormat = ""
 			if ctype == MIME_HTML:
@@ -146,4 +146,4 @@ class Reader:
 
 			defi = blob.content.decode("utf-8")
 			defi = self._re_bword.sub(self._href_sub, defi)
-			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
+			yield self._glos.newEntry(term, defi, defiFormat=defiFormat)

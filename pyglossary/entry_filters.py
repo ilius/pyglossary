@@ -373,20 +373,20 @@ class PreventDuplicateWords(EntryFilter):
 		if entry.isData():
 			return entry
 
-		wordSet = self._termSet
-		word = entry.s_word
+		termSet = self._termSet
+		term = entry.s_word
 
-		if word not in wordSet:
-			wordSet.add(word)
+		if term not in termSet:
+			termSet.add(term)
 			return entry
 
 		n = 2
-		while f"{word} ({n})" in wordSet:
+		while f"{term} ({n})" in termSet:
 			n += 1
-		word = f"{word} ({n})"
+		term = f"{term} ({n})"
 
-		wordSet.add(word)
-		entry._term = word  # type: ignore
+		termSet.add(term)
+		entry._term = term  # type: ignore
 		# use entry.editFuncWord?
 
 		return entry
@@ -401,10 +401,10 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 		self._wset: set[str] = set()
 
 	def run(self, entry: EntryType) -> EntryType | None:
-		word = entry.l_word[0]
-		if word in self._wset:
+		term = entry.l_word[0]
+		if term in self._wset:
 			return None
-		self._wset.add(word)
+		self._wset.add(term)
 		return entry
 
 
@@ -417,13 +417,13 @@ class TrimArabicDiacritics(EntryFilter):
 		self._pat = re.compile("[\u064b-\u065f]")
 
 	def run(self, entry: EntryType) -> EntryType | None:
-		words = list(entry.l_word)
-		hw = words[0]
+		terms = list(entry.l_word)
+		hw = terms[0]
 		hw_t = self._pat.sub("", hw)
 		hw_t = hw_t.replace("\u0622", "\u0627").replace("\u0623", "\u0627")
 		if hw_t == hw or not hw_t:
 			return entry
-		entry._term = [hw_t, *words]  # type: ignore
+		entry._term = [hw_t, *terms]  # type: ignore
 		return entry
 
 
@@ -469,10 +469,10 @@ class ShowMaxMemoryUsage(EntryFilter):
 		usage = self._process.memory_info().rss // 1024
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage
-			word = entry.s_word
-			if len(word) > self.MAX_WORD_LEN:
-				word = word[: self.MAX_WORD_LEN - 3] + "..."
-			core.trace(log, f"MaxMemUsage: {usage:,}, {word=}")
+			term = entry.s_word
+			if len(term) > self.MAX_WORD_LEN:
+				term = term[: self.MAX_WORD_LEN - 3] + "..."
+			core.trace(log, f"MaxMemUsage: {usage:,}, {term=}")
 		return entry
 
 

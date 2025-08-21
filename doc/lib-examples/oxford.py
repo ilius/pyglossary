@@ -5,7 +5,7 @@ def takePhonetic_oxford_gb(glos):
 	phonGlos = Glossary()  # phonetic glossary
 	phonGlos.setInfo("name", glos.getInfo("name") + "_phonetic")
 	for entry in glos:
-		word = entry.s_word
+		term = entry.s_word
 		defi = entry.defi
 		if not defi.startswith("/"):
 			continue
@@ -45,5 +45,5 @@ def takePhonetic_oxford_gb(glos):
 		# 	.replace("\\n ", "\\n")
 		# 	.replace("\\n ", "\\n")
 		if ph:
-			phonGlos.addEntryObj(phonGlos.newEntry(word, ph))
+			phonGlos.addEntryObj(phonGlos.newEntry(term, ph))
 	return phonGlos

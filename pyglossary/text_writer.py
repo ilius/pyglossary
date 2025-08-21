@@ -116,10 +116,10 @@ class TextGlossaryWriter:
 			key = outInfoKeysAliasDict.get(key, key)  # noqa: PLW2901
 			if not key:
 				continue
-			word = f"##{key}"
+			term = f"##{key}"
 			if termEscapeFunc is not None:
-				word = termEscapeFunc(word)
-				if not word:
+				term = termEscapeFunc(term)
+				if not term:
 					continue
 			if defiEscapeFunc is not None:
 				value = defiEscapeFunc(value)  # noqa: PLW2901
@@ -127,7 +127,7 @@ class TextGlossaryWriter:
 					continue
 			file.write(
 				entryFmt.format(
-					word=word,
+					word=term,
 					defi=value,
 				),
 			)
@@ -177,7 +177,7 @@ class TextGlossaryWriter:
 					entry.save(self._resDir)
 				continue
 
-			word = entry.s_word
+			term = entry.s_word
 			defi = entry.defi
 
 			# if glos.alts:  # FIXME
@@ -186,13 +186,13 @@ class TextGlossaryWriter:
 				defi = glos.wordTitleStr(entry.l_word[0]) + defi
 
 			if termListEncodeFunc is not None:
-				word = termListEncodeFunc(entry.l_word)
+				term = termListEncodeFunc(entry.l_word)
 			elif termEscapeFunc is not None:
-				word = termEscapeFunc(word)
+				term = termEscapeFunc(term)
 
 			if defiEscapeFunc is not None:
 				defi = defiEscapeFunc(defi)
-			file.write(entryFmt.format(word=word, defi=defi))
+			file.write(entryFmt.format(word=term, defi=defi))
 
 			if file_size_approx > 0:
 				entryCount += 1

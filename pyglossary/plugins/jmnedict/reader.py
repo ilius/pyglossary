@@ -101,18 +101,18 @@ class Reader:
 		for elem in trans.findall("xref"):
 			if not elem.text:
 				continue
-			word = elem.text.strip()
-			word = self._link_number_postfix.sub("", word)
-			relatedWords.append(word)
+			term = elem.text.strip()
+			term = self._link_number_postfix.sub("", term)
+			relatedWords.append(term)
 
 		if relatedWords:
 			hf.write("Related: ")
-			for i, word in enumerate(relatedWords):
+			for i, term in enumerate(relatedWords):
 				if i > 0:
 					with hf.element("big"):
 						hf.write(" | ")
-				with hf.element("a", href=f"bword://{word}"):
-					hf.write(word)
+				with hf.element("a", href=f"bword://{term}"):
+					hf.write(term)
 			hf.write(br())
 
 	def getEntryByElem(  # noqa: PLR0912

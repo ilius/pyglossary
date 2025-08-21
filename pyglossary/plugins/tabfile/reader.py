@@ -33,8 +33,8 @@ class Reader(TextGlossaryReader):
 		if not line:
 			return None
 		###
-		word: str | list[str]
-		word, tab, defi = line.partition("\t")
+		term: str | list[str]
+		term, tab, defi = line.partition("\t")
 		if not tab:
 			log.warning(
 				f"Warning: line starting with {line[:10]!r} has no tab!",
@@ -42,12 +42,12 @@ class Reader(TextGlossaryReader):
 			return None
 		###
 		if self._glos.alts:
-			word = splitByBarUnescapeNTB(word)
-			if len(word) == 1:
-				word = word[0]
+			term = splitByBarUnescapeNTB(term)
+			if len(term) == 1:
+				term = term[0]
 		else:
-			word = unescapeNTB(word, bar=False)
+			term = unescapeNTB(term, bar=False)
 		###
 		defi = unescapeNTB(defi)
 		###
-		return word, defi, None
+		return term, defi, None

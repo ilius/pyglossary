@@ -18,13 +18,13 @@ def normal(
 	length = options.get("group_by_prefix_length", 2)
 
 	def sortKey(words: list[str]) -> Any:
-		word = words[0]
-		if not word:
+		term = words[0]
+		if not term:
 			return "", ""
-		prefix = word[:length].lower()
+		prefix = term[:length].lower()
 		if prefix[0] < "a":
-			return "SPECIAL", word
-		return prefix, word
+			return "SPECIAL", term
+		return prefix, term
 
 	return sortKey
 
@@ -33,10 +33,10 @@ def sqlite(sortEncoding: str = "utf-8", **options) -> SQLiteSortKeyType:
 	length = options.get("group_by_prefix_length", 2)
 
 	def getPrefix(words: list[str]) -> str:
-		word = words[0]
-		if not word:
+		term = words[0]
+		if not term:
 			return ""
-		prefix = word[:length].lower()
+		prefix = term[:length].lower()
 		if prefix[0] < "a":
 			return "SPECIAL"
 		return prefix

@@ -142,9 +142,9 @@ class Reader:
 		if not row:
 			return None
 
-		word: str | list[str]
+		term: str | list[str]
 		try:
-			word = row[0]
+			term = row[0]
 			defi = row[1]
 		except IndexError:
 			log.error(f"invalid row: {row!r}")
@@ -155,10 +155,10 @@ class Reader:
 		except IndexError:
 			pass
 		else:
-			word = [word] + alts
+			term = [term] + alts
 
 		return self._glos.newEntry(
-			word,
+			term,
 			defi,
 			byteProgress=(
 				(self._file.tell(), self._fileSize) if self._fileSize else None

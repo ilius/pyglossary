@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 def reverseGlossary(
 	glos: _GlossaryType,
 	savePath: str = "",
-	words: list[str] | None = None,
+	terms: list[str] | None = None,
 	includeDefs: bool = False,
 	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
@@ -57,10 +57,6 @@ def reverseGlossary(
 		or stop by breaking
 
 	Potential keyword arguments:
-		words = None ## None, or list
-		reportStep = 300
-		saveStep = 1000
-		savePath = ""
 		matchWord = True
 		sepChars = ".,،"
 		maxNum = 100
@@ -79,30 +75,30 @@ def reverseGlossary(
 	entries: list[EntryType] = list(glos)
 	log.info(f"loaded {len(entries)} entries into memory")
 
-	if words:
-		words = list(words)
+	if terms:
+		terms = list(terms)
 	else:
-		words = takeOutputWords(glos, entries)
+		terms = takeOutputWords(glos, entries)
 
-	entryCount = len(words)
+	entryCount = len(terms)
 	log.info(
 		f"Reversing to file {savePath!r}"
-		f", number of words: {entryCount}",
+		f", number of entries: {entryCount}",
 	)
 	glos.progressInit("Reversing")
 	wcThreshold = entryCount // 200 + 1
 
 	with open(savePath, "w", encoding="utf-8") as saveFile:
-		for wordI in range(entryCount):
-			word = words[wordI]
-			if wordI % wcThreshold == 0:
-				glos.progress(wordI, entryCount)
+		for entryIndex in range(entryCount):
+			term = terms[entryIndex]
+			if entryIndex % wcThreshold == 0:
+				glos.progress(entryIndex, entryCount)
 
-			if wordI % saveStep == 0 and wordI > 0:
+			if entryIndex % saveStep == 0 and entryIndex > 0:
 				saveFile.flush()
 			result = searchWordInDef(
 				entries,
-				word,
+				term,
 				includeDefs=includeDefs,
 				**kwargs,
 			)
@@ -116,8 +112,8 @@ def reverseGlossary(
 					log.exception("")
 					log.debug(f"{result = }")
 					return
-				saveFile.write(f"{word}\t{defi}\n")
-			yield wordI
+				saveFile.write(f"{term}\t{defi}\n")
+			yield entryIndex
 
 	glos.progressEnd()
 	yield entryCount
@@ -129,15 +125,15 @@ def takeOutputWords(
 	minWordLen: int = 3,
 ) -> list[str]:
 	# fr"[\w]{{{minWordLen},}}"
-	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
-	words = set()
+	termPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
+	terms = set()
 	progressbar, glos.progressbar = glos.progressbar, False
 	for entry in entryIter:
-		words.update(wordPattern.findall(
+		terms.update(termPattern.findall(
 			entry.defi,
 		))
 	glos.progressbar = progressbar
-	return sorted(words)
+	return sorted(terms)
 
 
 def searchWordInDef(
@@ -159,11 +155,11 @@ def searchWordInDef(
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
 	outRel: list[tuple[str, float] | tuple[str, float, str]] = []
 	for entry in entryIter:
-		words = entry.l_word
+		terms = entry.l_word
 		defi = entry.defi
 		if st not in defi:
 			continue
-		for word in words:
+		for word in terms:
 			rel = 0.0  # relation value of word (0 <= rel <= 1)
 			for part in splitPattern.split(defi):
 				if not part:

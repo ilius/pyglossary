@@ -77,7 +77,7 @@ class Reader:
 
 		file = self._file
 
-		word = ""
+		term = ""
 		defi = ""
 		msgstr = False
 		entryCount = 0
@@ -88,20 +88,20 @@ class Reader:
 			if line.startswith("#"):
 				continue
 			if line.startswith("msgid "):
-				if word:
-					yield self.makeEntry(word, defi)
+				if term:
+					yield self.makeEntry(term, defi)
 					entryCount += 1
-					word = ""
+					term = ""
 					defi = ""
 				else:
 					pass
 					# TODO: parse defi and set glos info?
 					# but this should be done in self.open
-				word = po_unescape(line[6:])
-				if word.startswith('"'):
-					if len(word) < 2 or word[-1] != '"':
+				term = po_unescape(line[6:])
+				if term.startswith('"'):
+					if len(term) < 2 or term[-1] != '"':
 						raise ValueError("invalid po line: line")
-					word = word[1:-1]
+					term = term[1:-1]
 				msgstr = False
 				continue
 			if line.startswith("msgstr "):
@@ -124,8 +124,8 @@ class Reader:
 			if msgstr:
 				defi += line
 			else:
-				word += line
-		if word:
-			yield self.makeEntry(word, defi)
+				term += line
+		if term:
+			yield self.makeEntry(term, defi)
 			entryCount += 1
 		self._entryCount = entryCount

@@ -59,7 +59,7 @@ class Writer:
 
 	@staticmethod
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
-		log.error(f"error in stripFullHtml: {error}, words={entry.l_word!r}")
+		log.error(f"error in stripFullHtml: {error}, terms={entry.l_word!r}")
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
@@ -125,16 +125,16 @@ class Writer:
 			line = line.rstrip("\n")  # noqa: PLW2901
 			if not line:
 				continue
-			entryIndexStr, wordEsc, filename, _ = line.split("\t")
+			entryIndexStr, termEscaped, filename, _ = line.split("\t")
 			entryIndex = int(entryIndexStr)
 			# entryId = f"entry{entryIndex}"
-			word = unescapeNTB(wordEsc)
-			if word not in linkTargetSet:
+			term = unescapeNTB(termEscaped)
+			if term not in linkTargetSet:
 				continue
-			if word in fileByWord:
-				fileByWord[word].append((filename, entryIndex))
+			if term in fileByWord:
+				fileByWord[term].append((filename, entryIndex))
 			else:
-				fileByWord[word] = [(filename, entryIndex)]
+				fileByWord[term] = [(filename, entryIndex)]
 
 		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
 		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
@@ -221,8 +221,8 @@ class Writer:
 						st = curLink.decode("utf-8")
 						i = st.find('href="#')
 						j = st.find('"', i + 7)
-						word = st[i + 7 : j]
-						url = entry_url_fmt.format(word=word)
+						term = st[i + 7 : j]
+						url = entry_url_fmt.format(word=term)
 						outFile.write(
 							(
 								st[:i] + f'class="broken" href="{url}"' + st[j + 1 :]
@@ -279,7 +279,7 @@ class Writer:
 		filename_format = self._filename_format
 		escape_defi = self._escape_defi
 
-		wordSep = ' <font color="red">|</font> '
+		termSep = ' <font color="red">|</font> '
 
 		initFileSizeMax = 100
 
@@ -433,9 +433,9 @@ class Writer:
 			entryId = f"entry{entryIndex}"
 
 			if word_title:
-				words = [html.escape(word) for word in entry.l_word]
+				terms = [html.escape(word) for word in entry.l_word]
 				title = glos.wordTitleStr(
-					wordSep.join(words),
+					termSep.join(terms),
 					sample=entry.l_word[0],
 					class_="headword",
 				)

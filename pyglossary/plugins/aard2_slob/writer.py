@@ -163,7 +163,7 @@ class Writer:
 		slobWriter.add(content, key, content_type=content_type)
 
 	def addEntry(self, entry: EntryType) -> None:
-		words = entry.l_word
+		terms = entry.l_word
 		b_defi = entry.defi.encode("utf-8")
 		ctype = self._content_type
 		writer = self._slobWriter
@@ -177,7 +177,7 @@ class Writer:
 			if defiFormat == "m":
 				defiFormat = "h"
 			title = self._glos.wordTitleStr(
-				words[0],
+				terms[0],
 			)
 			b_defi = title.encode("utf-8") + b_defi
 
@@ -210,12 +210,12 @@ class Writer:
 		if not self._separate_alternates:
 			writer.add(
 				b_defi,
-				*tuple(words),
+				*tuple(terms),
 				content_type=ctype,
 			)
 			return
 
-		headword, *alts = words
+		headword, *alts = terms
 		writer.add(
 			b_defi,
 			headword,

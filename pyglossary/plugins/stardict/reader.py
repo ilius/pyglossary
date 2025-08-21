@@ -366,14 +366,14 @@ class Reader:
 				log.error(f"Data file is corrupted. Word {b_word!r}")
 				continue
 
-			word: str | list[str]
-			word = b_word.decode("utf-8", errors=unicode_errors)
+			term: str | list[str]
+			term = b_word.decode("utf-8", errors=unicode_errors)
 			try:
 				alts = synDict[entryIndex]
 			except KeyError:  # synDict is dict
 				pass
 			else:
-				word = [word] + alts
+				term = [term] + alts
 
 			defi, defiFormat = self.renderRawDefiList(
 				rawDefiList,
@@ -382,7 +382,7 @@ class Reader:
 
 			# FIXME:
 			# defi = defi.replace(' src="./res/', ' src="./')
-			yield self._glos.newEntry(word, defi, defiFormat=defiFormat)
+			yield self._glos.newEntry(term, defi, defiFormat=defiFormat)
 
 		if isdir(self._resDir):
 			for fname in listFilesRecursiveRelPath(self._resDir):

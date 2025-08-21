@@ -49,9 +49,9 @@ class Reader:
 			log.error(f"invalid extension {ext}")
 			c_open = open
 		with c_open(fpath, "rt", encoding="utf-8") as _file:
-			words = splitByBarUnescapeNTB(_file.readline().rstrip("\n"))
+			terms = splitByBarUnescapeNTB(_file.readline().rstrip("\n"))
 			defi = _file.read()
-			return self._glos.newEntry(words, defi)
+			return self._glos.newEntry(terms, defi)
 
 	@staticmethod
 	def _listdirSortKey(name: str) -> str:

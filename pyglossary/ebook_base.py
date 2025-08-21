@@ -64,13 +64,13 @@ class GroupState:
 		return bool(self.last_prefix) and prefix != self.last_prefix
 
 	def add(self, entry: EntryType, prefix: str) -> None:
-		word = entry.s_word
+		term = entry.s_word
 		defi = entry.defi.replace("<br>", "<br/>").replace("<BR>", "<BR/>")
 		if not self.first_word:
-			self.first_word = word
-		self.last_word = word
+			self.first_word = term
+		self.last_word = term
 		self.last_prefix = prefix
-		self.group_contents.append(self.writer.format_group_content(word, defi))
+		self.group_contents.append(self.writer.format_group_content(term, defi))
 
 
 class EbookWriter:

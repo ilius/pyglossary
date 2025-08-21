@@ -122,13 +122,13 @@ class Writer:
 			if entry.isData():
 				# FIXME
 				continue
-			words = entry.l_word
-			word = fixStr(words[0])
+			terms = entry.l_word
+			term = fixStr(terms[0])
 			defi = fixStr(entry.defi)
 			fileObj.write(
-				f"INSERT INTO word VALUES({id_}, '{word}', '{defi}');\n",
+				f"INSERT INTO word VALUES({id_}, '{term}', '{defi}');\n",
 			)
-			for alt in words[1:]:
+			for alt in terms[1:]:
 				fileObj.write(
 					f"INSERT INTO alt VALUES({id_}, '{fixStr(alt)}');\n",
 				)

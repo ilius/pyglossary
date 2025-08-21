@@ -59,7 +59,7 @@ class Reader:
 		# and self._cur.fetchone() returns None
 		# for row in self._cur:
 		for row in self._cur.fetchall():
-			word = row[0]
+			term = row[0]
 			searchword = row[1]
 			root = row[2]
 			meaning = row[3]
@@ -75,11 +75,11 @@ class Reader:
 			if ws and ws.direction == "rtl":
 				definition = f'<div dir="rtl">{definition}</div>'
 
-			words = [word, searchword]
-			if word in alternateDict:
-				words += alternateDict[word]
+			terms = [term, searchword]
+			if term in alternateDict:
+				terms += alternateDict[term]
 			yield self._glos.newEntry(
-				words,
+				terms,
 				definition,
 				defiFormat="h",
 			)

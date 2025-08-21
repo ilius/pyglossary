@@ -161,11 +161,11 @@ class Reader:
 			except Exception as e:
 				log.exception(s_article)
 				raise e from None
-			words = [toStr(w) for w in self.titles(article)]
+			terms = [toStr(w) for w in self.titles(article)]
 			if self._htmlTr:
 				defi = self._htmlTr.transform(article)
 				defiFormat = "h"
-				if len(words) == 1:
+				if len(terms) == 1:
 					defi = self._re_span_k.sub("", defi)
 			else:
 				b_defi = cast("bytes", tostring(article, encoding=self._encoding))
@@ -174,7 +174,7 @@ class Reader:
 
 			# log.info(f"{defi=}, {words=}")
 			yield self._glos.newEntry(
-				words,
+				terms,
 				defi,
 				defiFormat=defiFormat,
 				byteProgress=(self._file.tell(), self._fileSize),

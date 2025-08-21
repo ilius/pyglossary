@@ -9,14 +9,14 @@ __all__ = ["formatEntry"]
 
 
 def formatEntry(entry: EntryType) -> str:
-	words = entry.l_word
+	terms = entry.l_word
 	headword = ""
-	if words:
-		headword = words[0]
+	if terms:
+		headword = terms[0]
 	lines = [
 		f">> {headword}",
 	]
-	if len(words) > 1:
-		lines += [f"Alt: {alt}" for alt in words[1:]]
+	if len(terms) > 1:
+		lines += [f"Alt: {alt}" for alt in terms[1:]]
 	lines.append(f"\n{entry.defi}")
 	return "\n".join(lines)

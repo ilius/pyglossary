@@ -66,13 +66,13 @@ class Writer:
 		self.re_spaces = re.compile(" +")
 		self.re_tabs = re.compile("\t+")
 
-	def normateWord(self, word: str) -> str:
-		word = word.strip()
-		word = self.re_punc.sub("", word)
-		word = self.re_spaces.sub(" ", word)
-		word = self.re_tabs.sub(" ", word)
-		word = word.lower()
-		return word  # noqa: RET504
+	def normateTerm(self, term: str) -> str:
+		term = term.strip()
+		term = self.re_punc.sub("", term)
+		term = self.re_spaces.sub(" ", term)
+		term = self.re_tabs.sub(" ", term)
+		term = term.lower()
+		return term  # noqa: RET504
 
 	def writeProbs(self) -> None:
 		glos = self._glos
@@ -135,10 +135,10 @@ class Writer:
 				newline="\n",
 			)
 			for entry in entryList:
-				word = entry.s_word
-				n_word = self.normateWord(word)
+				term = entry.s_word
+				n_word = self.normateTerm(term)
 				defi = entry.defi
-				dicLine = word + "\t" + defi + "\n"
+				dicLine = term + "\t" + defi + "\n"
 				dicPos = dicFp.tell()
 				dicFp.write(dicLine)
 				indexData.append((n_word, dicIndex + 1, dicPos))

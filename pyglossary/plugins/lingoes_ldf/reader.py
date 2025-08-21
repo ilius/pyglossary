@@ -73,7 +73,7 @@ class Reader(TextGlossaryReader):
 					f" in file {self._filename}",
 				)
 				return None
-			word = entryLines[0]
+			term = entryLines[0]
 			defi = "\n".join(entryLines[1:])
 			defi = (
 				defi.replace("<br/>", "\n")
@@ -82,6 +82,6 @@ class Reader(TextGlossaryReader):
 				.replace("<BR>", "\n")
 			)
 
-			words = splitByBar(word)
+			terms = splitByBar(term)
 
-			return words, defi, None
+			return terms, defi, None

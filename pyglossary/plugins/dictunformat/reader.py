@@ -51,7 +51,7 @@ class Reader(TextGlossaryReader):
 	def nextBlock(self) -> tuple[str | list[str], str, None] | None:
 		if not self._file:
 			raise StopIteration
-		word = ""
+		term = ""
 		defiLines: list[str] = []
 
 		while True:
@@ -63,32 +63,32 @@ class Reader(TextGlossaryReader):
 				continue
 
 			if not line.strip("_"):
-				if not word:
+				if not term:
 					continue
 				if not defiLines:
-					log.warning(f"no definition/value for {word!r}")
+					log.warning(f"no definition/value for {term!r}")
 				defi = unescapeDefi("\n".join(defiLines))
-				words = word.split(self._headword_separator)
-				return words, defi, None
+				terms = term.split(self._headword_separator)
+				return terms, defi, None
 
-			if not word:
-				word = line
+			if not term:
+				term = line
 				continue
 
-			if line == word:
+			if line == term:
 				continue
-			if line.lower() == word:
-				word = line
+			if line.lower() == term:
+				term = line
 				continue
 
 			defiLines.append(line)
 
-		if word:
+		if term:
 			defi = unescapeDefi("\n".join(defiLines))
-			if word.startswith("00-database-") and defi == "unknown":
-				log.info(f"ignoring {word} -> {defi}")
+			if term.startswith("00-database-") and defi == "unknown":
+				log.info(f"ignoring {term} -> {defi}")
 				return None
-			words = word.split(self._headword_separator)
-			return words, defi, None
+			terms = term.split(self._headword_separator)
+			return terms, defi, None
 
 		raise StopIteration

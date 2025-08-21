@@ -101,14 +101,14 @@ class Writer:
 					entry.save(resDir)
 				continue
 
-			words = entry.l_word
-			if not words:
+			terms = entry.l_word
+			if not terms:
 				continue
-			word, alts = words[0], words[1:]
+			word, alts = terms[0], terms[1:]
 			defi = entry.defi
 
 			if word_title:
-				defi = glos.wordTitleStr(words[0]) + defi
+				defi = glos.wordTitleStr(terms[0]) + defi
 
 			row = [
 				word,

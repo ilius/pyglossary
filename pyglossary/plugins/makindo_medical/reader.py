@@ -49,10 +49,10 @@ class Reader:
 		# and self._cur.fetchone() returns None
 		# for row in self._cur:
 		for row in self._cur.fetchall():
-			word = html.unescape(row[0])
+			term = html.unescape(row[0])
 			definition = row[1].decode("utf-8", errors="ignore")
 			# print(f"{word!r}, {definition!r}")
-			yield self._glos.newEntry(word, definition, defiFormat="h")
+			yield self._glos.newEntry(term, definition, defiFormat="h")
 
 	def close(self) -> None:
 		if self._cur:

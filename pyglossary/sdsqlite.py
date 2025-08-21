@@ -60,7 +60,7 @@ class Writer:
 			entry = yield
 			if entry is None:
 				break
-			word = entry.l_word[0]
+			term = entry.l_word[0]
 			alts = joinByBar(entry.l_word[1:])
 			defi = entry.defi
 			defiFormat = entry.defiFormat
@@ -73,8 +73,8 @@ class Writer:
 				"defi, defiFormat, bindata)"
 				" values (?, ?, ?, ?, ?, ?)",
 				(
-					word,
-					word.lower(),
+					term,
+					term.lower(),
 					alts,
 					defi,
 					defiFormat,
@@ -126,10 +126,10 @@ class Reader:
 			"select word, alts, defi, defiFormat from dict order by wordlower, word",
 		)
 		for row in self._cur:
-			words = [row[0]] + splitByBar(row[1])
+			terms = [row[0]] + splitByBar(row[1])
 			defi = row[2]
 			defiFormat = row[3]
-			yield self._glos.newEntry(words, defi, defiFormat=defiFormat)
+			yield self._glos.newEntry(terms, defi, defiFormat=defiFormat)
 
 	def close(self) -> None:
 		if self._cur:

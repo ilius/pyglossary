@@ -156,20 +156,20 @@ class Reader:
 			raise RuntimeError("dictionary not open")
 		for idx, (_, pairs) in enumerate(self._dic.pairs):
 			syns = self._synonyms.get((0, idx), set())
-			for word, defi in pairs:
-				l_word = [word] + sorted(syns.difference({word}))
+			for term, defi in pairs:
+				l_word = [term] + sorted(syns.difference({term}))
 				yield self._glos.newEntry(l_word, defi, defiFormat="m")
 		for idx, (_, defi) in enumerate(self._dic.texts):
 			if idx not in self._text_tokens:
 				# Ignore this text entry since it is not mentioned in the index at all
 				# so that we don't even have a token or title for it.
 				continue
-			word = self._text_tokens[idx]
+			term = self._text_tokens[idx]
 			syns = self._synonyms.get((2, idx), set())
-			l_word = [word] + sorted(syns.difference({word}))
+			l_word = [term] + sorted(syns.difference({term}))
 			yield self._glos.newEntry(l_word, defi, defiFormat="m")
-		for idx, (_, word, defi) in enumerate(self._dic.htmls):
+		for idx, (_, term, defi) in enumerate(self._dic.htmls):
 			syns = self._synonyms.get((4, idx), set())
-			l_word = [word] + sorted(syns.difference({word}))
+			l_word = [term] + sorted(syns.difference({term}))
 			defi_new = unescape_unicode(defi)
 			yield self._glos.newEntry(l_word, defi_new, defiFormat="h")

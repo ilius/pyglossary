@@ -111,39 +111,39 @@ class Reader:
 		for elem in sense.findall("xref"):
 			if not elem.text:
 				continue
-			word = elem.text.strip()
-			word = self._link_number_postfix.sub("", word)
-			relatedWords.append(word)
+			term = elem.text.strip()
+			term = self._link_number_postfix.sub("", term)
+			relatedWords.append(term)
 
 		if relatedWords:
 			hf.write("Related: ")
-			for i, word in enumerate(relatedWords):
+			for i, term in enumerate(relatedWords):
 				if i > 0:
 					with hf.element("big"):
 						hf.write(" | ")
-				with hf.element("a", href=f"bword://{word}"):
-					hf.write(word)
+				with hf.element("a", href=f"bword://{term}"):
+					hf.write(term)
 			hf.write(br())
 
 		antonymWords: list[str] = []
 		for elem in sense.findall("ant"):
 			if not elem.text:
 				continue
-			word = elem.text.strip()
-			word = self._link_number_postfix.sub("", word)
-			antonymWords.append(word)
+			term = elem.text.strip()
+			term = self._link_number_postfix.sub("", term)
+			antonymWords.append(term)
 		if antonymWords:
 			hf.write("Antonym: ")
-			for i, word in enumerate(antonymWords):
+			for i, term in enumerate(antonymWords):
 				if i > 0:
 					with hf.element("big"):
 						hf.write(" | ")
 				with hf.element(
 					"a",
-					href=f"bword://{word}",
+					href=f"bword://{term}",
 					attrib={"class": "antonym"},
 				):
-					hf.write(word)
+					hf.write(term)
 			hf.write(br())
 
 		for i, elem in enumerate(sense.findall("field")):

@@ -231,8 +231,8 @@ class YamlReader(TextGlossaryReader):
 			from yaml import Loader
 
 		edict = load(yamlBlock, Loader=Loader)
-		word = edict.get("word")
-		if not word:
+		term = edict.get("word")
+		if not term:
 			log.error(f"no word in {edict}")
 			return None
 
@@ -243,7 +243,7 @@ class YamlReader(TextGlossaryReader):
 				self._processEntry(hf, edict)
 
 		defi = f.getvalue().decode("utf-8")
-		return word, defi, None
+		return term, defi, None
 
 	def nextBlock(self) -> EntryType:
 		if not self._file:

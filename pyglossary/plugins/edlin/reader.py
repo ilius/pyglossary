@@ -94,29 +94,29 @@ class Reader:
 					_prevPath, nextPath = header.split(" ")
 				else:
 					nextPath = header
-				word = _file.readline()
-				if not word:
+				term = _file.readline()
+				if not term:
 					yield None  # update progressbar
 					continue
 				defi = _file.read()
 				if not defi:
 					log.warning(
-						f"Edlin Reader: no definition for word {word!r}, skipping",
+						f"Edlin Reader: no definition for word {term!r}, skipping",
 					)
 					yield None  # update progressbar
 					continue
-				word = word.rstrip()
+				term = term.rstrip()
 				defi = defi.rstrip()
 
 			if self._glos.alts:
-				word = splitByBarUnescapeNTB(word)
-				if len(word) == 1:
-					word = word[0]
+				term = splitByBarUnescapeNTB(term)
+				if len(term) == 1:
+					term = term[0]
 			else:
-				word = unescapeNTB(word, bar=False)
+				term = unescapeNTB(term, bar=False)
 
 			# defi = unescapeNTB(defi)
-			yield self._glos.newEntry(word, defi)
+			yield self._glos.newEntry(term, defi)
 
 		if entryCount != self._entryCount:
 			log.warning(

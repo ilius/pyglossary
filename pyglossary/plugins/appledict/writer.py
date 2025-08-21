@@ -251,8 +251,8 @@ class Writer:
 					entry.save(myResDir)
 					continue
 
-				words = entry.l_word
-				word, alts = words[0], words[1:]
+				terms = entry.l_word
+				word, alts = terms[0], terms[1:]
 				defi = entry.defi
 
 				long_title = normalize_title_long(

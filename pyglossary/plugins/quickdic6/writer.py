@@ -79,16 +79,16 @@ class Writer:
 			if entry.defiFormat not in {"h", "m"}:
 				log.error(f"Unsupported defiFormat={entry.defiFormat}, assuming 'h'")
 
-			words = entry.l_word
-			if words[0] in synonyms:
-				synonyms[words[0]].extend(words[1:])
+			terms = entry.l_word
+			if terms[0] in synonyms:
+				synonyms[terms[0]].extend(terms[1:])
 			else:
-				synonyms[words[0]] = words[1:]
+				synonyms[terms[0]] = terms[1:]
 
 			# Note that we currently write out all entries as "html" type entries.
 			# In the future, it might make sense to add an option that somehow
 			# specifies the entry type to use.
-			htmls.append((0, words[0], entry.defi))
+			htmls.append((0, terms[0], entry.defi))
 
 		glos = self._glos
 
