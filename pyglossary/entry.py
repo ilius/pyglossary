@@ -105,7 +105,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 
 	@property
 	def lb_word(self) -> list[bytes]:
-		return [self._fname.encode("trf-8")]
+		return [self._fname.encode("utf-8")]
 
 	@property
 	def defi(self) -> str:
