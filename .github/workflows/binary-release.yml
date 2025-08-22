@@ -364,7 +364,7 @@ jobs:
 
       - name: Set VERSION environment variable
         run: |
-          echo "VERSION=$(git describe || git describe --abbrev=0 --tags)" >> $GITHUB_ENV
+          echo "VERSION=$(git describe --abbrev=0 --tags || git describe)" >> $GITHUB_ENV
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
 
       - name: "create and activate venv"
