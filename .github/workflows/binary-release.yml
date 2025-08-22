@@ -51,7 +51,7 @@ jobs:
           # 0 = all history for all branches and tags. (needed for git describe)
           fetch-depth: 0
           fetch-tags: true
-          ref: nuitka
+          # ref: nuitka-release
 
       - name: Update brew
         run: |
@@ -353,7 +353,7 @@ jobs:
           # 0 = all history for all branches and tags. (needed for git describe)
           fetch-depth: 0
           fetch-tags: true
-          ref: nuitka
+          # ref: nuitka-release
 
       - name: "Set up Python 3.13"
         uses: actions/setup-python@v5
@@ -470,7 +470,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-          ref: nuitka
+          # ref: nuitka-release
 
       - name: Set release vars
         run: |
