@@ -48,17 +48,17 @@ class TestEntryBasic(unittest.TestCase):
 
 	def test_1(self):
 		entry = Entry("test1", "something")
-		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.l_term, ["test1"])
 		self.assertEqual(entry.defi, "something")
 
 	def test_2(self):
 		entry = Entry(["test1"], "something")
-		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.l_term, ["test1"])
 		self.assertEqual(entry.defi, "something")
 
 	def test_3(self):
 		entry = Entry("test1", ["something"])
-		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.l_term, ["test1"])
 		self.assertEqual(entry.defi, "something")
 
 	def test_repr_1(self):
@@ -90,9 +90,9 @@ class TestEntryBasic(unittest.TestCase):
 
 	def test_addAlt_1(self):
 		entry = Entry("test1", "something")
-		self.assertEqual(entry.l_word, ["test1"])
+		self.assertEqual(entry.l_term, ["test1"])
 		entry.addAlt("test 1")
-		self.assertEqual(entry.l_word, ["test1", "test 1"])
+		self.assertEqual(entry.l_term, ["test1", "test 1"])
 
 
 class TestEntryDetectDefiFormat(unittest.TestCase):

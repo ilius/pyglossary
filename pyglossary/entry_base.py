@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import typing
+import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
@@ -33,17 +34,17 @@ class BaseEntry(ABC):  # noqa: PLR0904
 
 	@property
 	@abstractmethod
-	def s_word(self) -> str:
+	def s_term(self) -> str:
 		raise NotImplementedError
 
 	@property
 	@abstractmethod
-	def l_word(self) -> list[str]:
+	def l_term(self) -> list[str]:
 		raise NotImplementedError
 
 	@property
 	@abstractmethod
-	def lb_word(self) -> list[bytes]:
+	def lb_term(self) -> list[bytes]:
 		raise NotImplementedError
 
 	@property
@@ -124,11 +125,49 @@ class BaseEntry(ABC):  # noqa: PLR0904
 		raise NotImplementedError
 
 	@property
-	def b_word(self) -> bytes:
-		"""Returns bytes of word and all the alternate words separated by b"|"."""
-		return self.s_word.encode("utf-8")
+	def b_term(self) -> bytes:
+		"""Returns bytes of main term and all the alternate terms separated by b"|"."""
+		return self.s_term.encode("utf-8")
 
 	@property
 	def b_defi(self) -> bytes:
 		"""Returns definition in bytes."""
 		return self.defi.encode("utf-8")
+
+	# ________________________________________________________
+
+	@property
+	def b_word(self) -> bytes:
+		warnings.warn(
+			"entry.b_word is deprecated, use entry.b_term",
+			category=DeprecationWarning,
+			stacklevel=3,
+		)
+		return self.s_term.encode("utf-8")
+
+	@property
+	def s_word(self) -> str:
+		warnings.warn(
+			"entry.s_word is deprecated, use entry.s_term",
+			category=DeprecationWarning,
+			stacklevel=3,
+		)
+		return self.s_term
+
+	@property
+	def l_word(self) -> list[str]:
+		warnings.warn(
+			"entry.l_word is deprecated, use entry.l_term",
+			category=DeprecationWarning,
+			stacklevel=3,
+		)
+		return self.l_term
+
+	@property
+	def lb_word(self) -> list[bytes]:
+		warnings.warn(
+			"entry.lb_word is deprecated, use entry.lb_term",
+			category=DeprecationWarning,
+			stacklevel=3,
+		)
+		return self.lb_term

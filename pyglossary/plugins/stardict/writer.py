@@ -217,16 +217,16 @@ class Writer:
 				continue
 			entryIndex += 1
 
-			b_words = entry.lb_word
+			b_terms = entry.lb_term
 
-			for b_alt in b_words[1:]:
+			for b_alt in b_terms[1:]:
 				altIndexList.append((b_alt, entryIndex))
 
 			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
 			dictFile.write(b_dictBlock)
 
 			idxFile.write(
-				b_words[0]
+				b_terms[0]
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
 				+ uint32ToBytes(len(b_dictBlock))
@@ -276,9 +276,9 @@ class Writer:
 
 			defiFormat = entry.detectDefiFormat("m")  # call no more than once
 
-			b_words = entry.lb_word
+			b_terms = entry.lb_term
 
-			for b_alt in b_words[1:]:
+			for b_alt in b_terms[1:]:
 				altIndexList.append((b_alt, entryIndex))
 
 			b_defi = self.fixDefi(entry.defi, defiFormat)
@@ -286,7 +286,7 @@ class Writer:
 			dictFile.write(b_dictBlock)
 
 			idxFile.write(
-				b_words[0]
+				b_terms[0]
 				+ b"\x00"
 				+ dictMarkToBytes(dictMark)
 				+ uint32ToBytes(len(b_dictBlock))

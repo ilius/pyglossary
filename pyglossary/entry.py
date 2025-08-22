@@ -96,15 +96,15 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 		return fpath
 
 	@property
-	def s_word(self) -> str:
+	def s_term(self) -> str:
 		return self._fname
 
 	@property
-	def l_word(self) -> list[str]:
+	def l_term(self) -> list[str]:
 		return [self._fname]
 
 	@property
-	def lb_word(self) -> list[bytes]:
+	def lb_term(self) -> list[bytes]:
 		return [self._fname.encode("utf-8")]
 
 	@property
@@ -250,21 +250,21 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		return f"Entry({self._term!r}, {self._defi!r}, defiFormat={self._defiFormat!r})"
 
 	@property
-	def s_word(self) -> str:
+	def s_term(self) -> str:
 		"""Returns string of word, and all the alternate words separated by "|"."""
 		if isinstance(self._term, str):
 			return self._term
 		return joinByBar(self._term)
 
 	@property
-	def l_word(self) -> list[str]:
+	def l_term(self) -> list[str]:
 		"""Returns list of the word and all the alternate words."""
 		if isinstance(self._term, str):
 			return [self._term]
 		return self._term
 
 	@property
-	def lb_word(self) -> list[bytes]:
+	def lb_term(self) -> list[bytes]:
 		"""Returns list of the word and all the alternate words."""
 		if isinstance(self._term, str):
 			return [self._term.encode("utf-8")]
@@ -320,9 +320,9 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		return self._byteProgress
 
 	def addAlt(self, alt: str) -> None:
-		l_word = self.l_word
-		l_word.append(alt)
-		self._term = l_word
+		l_term = self.l_term
+		l_term.append(alt)
+		self._term = l_term
 
 	def editFuncWord(self, func: Callable[[str], str]) -> None:
 		"""
@@ -376,12 +376,12 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		self.replaceInDefi(source, target)
 
 	def removeEmptyAndDuplicateAltWords(self) -> None:
-		l_word = self.l_word
-		if len(l_word) == 1:
+		l_term = self.l_term
+		if len(l_term) == 1:
 			return
-		l_word = [word for word in l_word if word]
-		l_word = list(unique_everseen(l_word))
-		self._term = l_word
+		l_term = [word for word in l_term if word]
+		l_term = list(unique_everseen(l_term))
+		self._term = l_term
 
 	def stripFullHtml(self) -> str | None:
 		"""Remove <html><head><body> tags and returns error."""

@@ -9,7 +9,7 @@ __all__ = ["formatEntry"]
 
 
 def formatEntry(entry: EntryType) -> str:
-	terms = entry.l_word
+	terms = entry.l_term
 	headword = ""
 	if terms:
 		headword = terms[0]

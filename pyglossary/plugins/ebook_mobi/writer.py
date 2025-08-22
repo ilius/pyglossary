@@ -49,9 +49,9 @@ class GroupStateBySize:
 	def add(self, entry: EntryType) -> None:
 		defi = entry.defi
 		content = self.writer.format_group_content(
-			entry.l_word[0],
+			entry.l_term[0],
 			defi,
-			variants=entry.l_word[1:],
+			variants=entry.l_term[1:],
 		)
 		self.group_contents.append(content)
 		self.group_size += len(content.encode("utf-8"))

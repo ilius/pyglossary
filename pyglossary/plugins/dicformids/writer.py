@@ -135,7 +135,7 @@ class Writer:
 				newline="\n",
 			)
 			for entry in entryList:
-				term = entry.s_word
+				term = entry.s_term
 				n_word = self.normateTerm(term)
 				defi = entry.defi
 				dicLine = term + "\t" + defi + "\n"

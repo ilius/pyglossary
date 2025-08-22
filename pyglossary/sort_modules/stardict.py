@@ -11,8 +11,8 @@ desc = "StarDict"
 
 def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
 	def sortKey(words: list[str]) -> Any:
-		b_word = words[0].encode(sortEncoding, errors="replace")
-		return (b_word.lower(), b_word)
+		b_term = words[0].encode(sortEncoding, errors="replace")
+		return (b_term.lower(), b_term)
 
 	return sortKey
 
