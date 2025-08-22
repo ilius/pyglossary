@@ -207,7 +207,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	def __init__(
 		self,
-		word: MultiStr,
+		term: MultiStr,
 		defi: str,
 		defiFormat: str = "m",
 		byteProgress: tuple[int, int] | None = None,
@@ -215,7 +215,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		"""
 		Create a new Entry.
 
-		word: string or a list of strings (including alternate words)
+		term: string or a list of strings (including alternate term/words)
 		defi: string or a list of strings (including alternate definitions)
 		defiFormat (optional): definition format:
 			"m": plain text
@@ -223,11 +223,11 @@ class Entry(BaseEntry):  # noqa: PLR0904
 			"x": xdxf.
 		"""
 		# memory optimization:
-		if isinstance(word, list | tuple):
-			if len(word) == 1:
-				word = word[0]
-		elif not isinstance(word, str):
-			raise TypeError(f"invalid word type {type(word)}")
+		if isinstance(term, list | tuple):
+			if len(term) == 1:
+				term = term[0]
+		elif not isinstance(term, str):
+			raise TypeError(f"invalid word type {type(term)}")
 
 		if isinstance(defi, list):
 			if len(defi) == 1:
@@ -238,7 +238,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		if defiFormat not in {"m", "h", "x"}:
 			raise ValueError(f"invalid defiFormat {defiFormat!r}")
 
-		self._term = word
+		self._term = term
 		self._defi = defi
 		self._defiFormat = defiFormat
 		self._byteProgress = byteProgress  # tuple[int, int] | None
