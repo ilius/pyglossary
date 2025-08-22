@@ -10,7 +10,7 @@ from pyglossary import Glossary
 
 
 def hasBar(entry):
-	return any("|" in word for word in entry.l_word)
+	return any("|" in word for word in entry.l_term)
 
 
 Glossary.init(
@@ -30,7 +30,7 @@ for direct in (True, False):
 	)
 	for entry in glos:
 		if hasBar(entry):
-			print(f"+++ {entry.l_word!r} -> {entry.defi[:60]}")
+			print(f"+++ {entry.l_term!r} -> {entry.defi[:60]}")
 			continue
 
-		# print(f"--- {entry.l_word!r} -> {entry.defi[:60]}")
+		# print(f"--- {entry.l_term!r} -> {entry.defi[:60]}")

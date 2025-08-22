@@ -101,7 +101,7 @@ class Writer:
 					entry.save(resDir)
 				continue
 
-			terms = entry.l_word
+			terms = entry.l_term
 			if not terms:
 				continue
 			word, alts = terms[0], terms[1:]

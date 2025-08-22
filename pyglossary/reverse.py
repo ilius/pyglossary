@@ -155,7 +155,7 @@ def searchWordInDef(
 	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
 	outRel: list[tuple[str, float] | tuple[str, float, str]] = []
 	for entry in entryIter:
-		terms = entry.l_word
+		terms = entry.l_term
 		defi = entry.defi
 		if st not in defi:
 			continue

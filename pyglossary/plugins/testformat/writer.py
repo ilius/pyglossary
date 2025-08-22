@@ -28,7 +28,7 @@ class Writer:
 			if entry.isData():
 				# can save it with entry.save(directory)
 				continue
-			term = entry.s_word  # noqa
+			term = entry.s_term  # noqa
 			defi = entry.defi  # noqa
 			# here write word and defi to the output file (depending on
 			# your format)

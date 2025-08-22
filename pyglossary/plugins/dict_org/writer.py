@@ -97,4 +97,4 @@ class Writer:
 			if entry.isData():
 				# does dictd support resources? and how? FIXME
 				continue
-			dictdb.addEntry(entry.defi, entry.l_word)
+			dictdb.addEntry(entry.defi, entry.l_term)

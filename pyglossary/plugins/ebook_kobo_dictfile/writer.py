@@ -47,7 +47,7 @@ class Writer:
 
 	@staticmethod
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
-		log.error(f"error in stripFullHtml: {error}, terms={entry.l_word!r}")
+		log.error(f"error in stripFullHtml: {error}, terms={entry.l_term!r}")
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
@@ -78,7 +78,7 @@ class Writer:
 			if entry.isData():
 				entry.save(resDir)
 				continue
-			terms = entry.l_word
+			terms = entry.l_term
 			defi = entry.defi
 
 			entry.detectDefiFormat()

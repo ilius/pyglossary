@@ -121,11 +121,11 @@ class Writer:
 		self,
 		entry: EntryType,
 	) -> tuple[list[str], str]:
-		term_expressions = entry.l_word
+		term_expressions = entry.l_term
 
 		alternates_from_word_pattern = self.alternates_from_word_pattern
 		if alternates_from_word_pattern:
-			for word in entry.l_word:
+			for word in entry.l_term:
 				term_expressions += alternates_from_word_pattern.findall(word)
 
 		if self.alternates_from_defi_pattern:
@@ -154,7 +154,7 @@ class Writer:
 		try:
 			reading = next(
 				expression
-				for expression in entry.l_word + term_expressions
+				for expression in entry.l_term + term_expressions
 				if all(map(_isKana, expression))
 			)
 		except StopIteration:

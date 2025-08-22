@@ -252,7 +252,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		if defiFormat is None or defiFormat == self._defaultDefiFormat:
 			defiFormat = ""
 
-		return [defiFormat.encode("ascii"), entry.b_defi] + entry.lb_word
+		return [defiFormat.encode("ascii"), entry.b_defi] + entry.lb_term
 
 	def _entryFromRaw(self, rawEntry: RawEntryType) -> EntryType:
 		defiFormat = rawEntry[0].decode("ascii") or self._defaultDefiFormat
@@ -359,13 +359,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	def preventDuplicateWords(self) -> None:
 		"""
-		Add entry filter to prevent duplicate `entry.s_word`.
+		Add entry filter to prevent duplicate `entry.s_term`.
 
 		This should only be called from a plugin's Writer.__init__ method.
 		Does not apply on entries added with glos.addEntry
 
 		Note: there may be still duplicate headwords or alternate words
-			but we only care about making the whole `entry.s_word`
+			but we only care about making the whole `entry.s_term`
 			(aka entry key) unique
 		"""
 		self._addExtraEntryFilter(PreventDuplicateWords)

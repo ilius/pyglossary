@@ -193,7 +193,7 @@ class Reader:
 		reader = Reader(self._glos)
 		reader.open(abbrevName)
 		for entry in reader:
-			for word in entry.l_word:
+			for word in entry.l_term:
 				self._abbrevDict[word] = entry.defi
 		reader.close()
 

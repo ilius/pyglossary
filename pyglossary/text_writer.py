@@ -177,16 +177,16 @@ class TextGlossaryWriter:
 					entry.save(self._resDir)
 				continue
 
-			term = entry.s_word
+			term = entry.s_term
 			defi = entry.defi
 
 			# if glos.alts:  # FIXME
 
 			if word_title:
-				defi = glos.wordTitleStr(entry.l_word[0]) + defi
+				defi = glos.wordTitleStr(entry.l_term[0]) + defi
 
 			if termListEncodeFunc is not None:
-				term = termListEncodeFunc(entry.l_word)
+				term = termListEncodeFunc(entry.l_term)
 			elif termEscapeFunc is not None:
 				term = termEscapeFunc(term)
 

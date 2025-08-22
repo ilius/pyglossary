@@ -8,7 +8,7 @@ Each entry contains:
 - Alternates (some alternative phrases for lookup)
 - Definition / article
 
-Headword and alternates together are accessible as a single Python list `entry.l_word`, and `entry.l_word[0]` is the headword.
+Headword and alternates together are accessible as a single Python list `entry.l_term`, and `entry.l_term[0]` is the headword.
 
 `entry.defi` is the definition as a Python Unicode `str`. Also `entry.b_defi` is definition in UTF-8 byte array (`bytes`).
 
@@ -16,7 +16,7 @@ Headword and alternates together are accessible as a single Python list `entry.l
 
 There is another type of entry which is called **Data Entry**, and generally contains an image, audio, css, or any other file that was included in input glossary. For data entries:
 
-- `entry.s_word` is file name (and `l_word` is still a list containing this string),
+- `entry.s_term` is file name (and `l_term` is still a list containing this string),
 - `entry.defiFormat` is `b`
 - `entry.data` gives the content of file in `bytes`.
 

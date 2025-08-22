@@ -157,8 +157,8 @@ class Reader:
 		for idx, (_, pairs) in enumerate(self._dic.pairs):
 			syns = self._synonyms.get((0, idx), set())
 			for term, defi in pairs:
-				l_word = [term] + sorted(syns.difference({term}))
-				yield self._glos.newEntry(l_word, defi, defiFormat="m")
+				l_term = [term] + sorted(syns.difference({term}))
+				yield self._glos.newEntry(l_term, defi, defiFormat="m")
 		for idx, (_, defi) in enumerate(self._dic.texts):
 			if idx not in self._text_tokens:
 				# Ignore this text entry since it is not mentioned in the index at all
@@ -166,10 +166,10 @@ class Reader:
 				continue
 			term = self._text_tokens[idx]
 			syns = self._synonyms.get((2, idx), set())
-			l_word = [term] + sorted(syns.difference({term}))
-			yield self._glos.newEntry(l_word, defi, defiFormat="m")
+			l_term = [term] + sorted(syns.difference({term}))
+			yield self._glos.newEntry(l_term, defi, defiFormat="m")
 		for idx, (_, term, defi) in enumerate(self._dic.htmls):
 			syns = self._synonyms.get((4, idx), set())
-			l_word = [term] + sorted(syns.difference({term}))
+			l_term = [term] + sorted(syns.difference({term}))
 			defi_new = unescape_unicode(defi)
-			yield self._glos.newEntry(l_word, defi_new, defiFormat="h")
+			yield self._glos.newEntry(l_term, defi_new, defiFormat="h")

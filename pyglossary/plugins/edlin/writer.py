@@ -57,7 +57,7 @@ class Writer:
 		"""
 		from hashlib import sha1
 
-		hash_ = sha1(entry.s_word.encode("utf-8")).hexdigest()[:8]  # noqa: S324
+		hash_ = sha1(entry.s_term.encode("utf-8")).hexdigest()[:8]  # noqa: S324
 		if hash_ not in self._hashSet:
 			self._hashSet.add(hash_)
 			return hash_
@@ -93,7 +93,7 @@ class Writer:
 				"\n".join(
 					[
 						header,
-						escapeNTB(thisEntry.s_word, bar=False),
+						escapeNTB(thisEntry.s_term, bar=False),
 						thisEntry.defi,
 					],
 				),

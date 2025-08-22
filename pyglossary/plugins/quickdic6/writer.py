@@ -72,14 +72,14 @@ class Writer:
 			if entry is None:
 				break
 			if entry.isData():
-				log.warning(f"Ignoring binary data entry {entry.l_word[0]}")
+				log.warning(f"Ignoring binary data entry {entry.l_term[0]}")
 				continue
 
 			entry.detectDefiFormat()
 			if entry.defiFormat not in {"h", "m"}:
 				log.error(f"Unsupported defiFormat={entry.defiFormat}, assuming 'h'")
 
-			terms = entry.l_word
+			terms = entry.l_term
 			if terms[0] in synonyms:
 				synonyms[terms[0]].extend(terms[1:])
 			else:

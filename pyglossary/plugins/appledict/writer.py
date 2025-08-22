@@ -253,7 +253,7 @@ class Writer:
 					entry.save(myResDir)
 					continue
 
-				terms = entry.l_word
+				terms = entry.l_term
 				word, alts = terms[0], terms[1:]
 				defi = entry.defi
 

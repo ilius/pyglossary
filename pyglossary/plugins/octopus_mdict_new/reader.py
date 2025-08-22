@@ -130,8 +130,8 @@ class Reader:
 		linksDict: dict[str, str] = {}
 		term = ""
 		entryCount = 0
-		for b_word, b_defi in mdx.items():
-			term = b_word.decode("utf-8")
+		for b_term, b_defi in mdx.items():
+			term = b_term.decode("utf-8")
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):
 				if not term:
@@ -181,8 +181,8 @@ class Reader:
 
 		glos = self._glos
 		linksDict = self._linksDict
-		for b_word, b_defi in self._mdx.items():
-			term = b_word.decode("utf-8")
+		for b_term, b_defi in self._mdx.items():
+			term = b_term.decode("utf-8")
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):
 				continue

@@ -190,15 +190,15 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		header = f"=== {yellow}{ids}{reset} "
 
 		altsDiff = difflib.ndiff(
-			[f"Alt: {alt}\n" for alt in entry1.l_word[1:]],
-			[f"Alt: {alt}\n" for alt in entry2.l_word[1:]],
+			[f"Alt: {alt}\n" for alt in entry1.l_term[1:]],
+			[f"Alt: {alt}\n" for alt in entry2.l_term[1:]],
 			linejunk=None,
 			charjunk=None,
 		)
-		if entry1.l_word[0] == entry2.l_word[0]:
-			firstWordLine = f">> {entry1.l_word[0]}"
+		if entry1.l_term[0] == entry2.l_term[0]:
+			firstWordLine = f">> {entry1.l_term[0]}"
 		else:
-			firstWordLine = f">> {entry1.l_word[0]} (A)\n>> {entry2.l_word[0]} (B)"
+			firstWordLine = f">> {entry1.l_term[0]} (A)\n>> {entry2.l_term[0]} (B)"
 		entryFormatted = "\n".join(
 			[
 				firstWordLine,
@@ -220,8 +220,8 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		if entry2 is None:
 			nextEntry2()
 
-		words1 = entry1.l_word
-		words2 = entry2.l_word
+		words1 = entry1.l_term
+		words2 = entry2.l_term
 		if words1 == words2:
 			if entry1.defi == entry2.defi:
 				entry1, entry2 = None, None

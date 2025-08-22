@@ -59,7 +59,7 @@ class Writer:
 
 	@staticmethod
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
-		log.error(f"error in stripFullHtml: {error}, terms={entry.l_word!r}")
+		log.error(f"error in stripFullHtml: {error}, terms={entry.l_term!r}")
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
@@ -294,7 +294,7 @@ class Writer:
 		def getEntryWebLink(entry: EntryType) -> str:
 			if not entry_url_fmt:
 				return ""
-			url = entry_url_fmt.format(word=html.escape(entry.l_word[0]))
+			url = entry_url_fmt.format(word=html.escape(entry.l_term[0]))
 			return f'{_nbsp}<a class="no_ul" href="{url}">&#127759;</a>'
 
 		# from math import log2, ceil
@@ -433,10 +433,10 @@ class Writer:
 			entryId = f"entry{entryIndex}"
 
 			if word_title:
-				terms = [html.escape(word) for word in entry.l_word]
+				terms = [html.escape(word) for word in entry.l_term]
 				title = glos.wordTitleStr(
 					termSep.join(terms),
-					sample=entry.l_word[0],
+					sample=entry.l_term[0],
 					class_="headword",
 				)
 
@@ -469,7 +469,7 @@ class Writer:
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			indexTxtFileObj.writelines(
 				f"{entryIndex}\t{escapeNTB(word)}\t{tmpFilename}\t{pos}\n"
-				for word in entry.l_word
+				for word in entry.l_term
 			)
 			del tmpFilename
 			text = replaceBword(text)

@@ -921,7 +921,7 @@ Japonica"""
 			self.tenWordsStr,
 			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 
 	def test_addEntries_2(self):
 		# entry filters don't apply to loaded entries (added with addEntryObj)
@@ -934,7 +934,7 @@ Japonica"""
 		glos.updateIter()
 		self.assertEqual(
 			[["a"], [""], ["b"], []],
-			[entry.l_word for entry in glos],
+			[entry.l_term for entry in glos],
 		)
 
 	def test_addEntries_3(self):
@@ -952,7 +952,7 @@ Japonica"""
 		wordListList = []
 		dataEntries = []
 		for entry in glos:
-			wordListList.append(entry.l_word)
+			wordListList.append(entry.l_term)
 			if entry.isData():
 				dataEntries.append(entry)
 		self.assertEqual(
@@ -970,9 +970,9 @@ Japonica"""
 			self.tenWordsStr,
 			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 		glos.sortWords()
-		self.assertEqual(sorted(wordsList), [entry.l_word for entry in glos])
+		self.assertEqual(sorted(wordsList), [entry.l_term for entry in glos])
 
 	def test_sortWords_2(self):
 		glos = self.glos = Glossary()
@@ -981,10 +981,10 @@ Japonica"""
 			self.tenWordsStr2,
 			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 		glos.sortWords(sortKeyName="headword")
 		self.assertEqual(
-			[entry.l_word for entry in glos],
+			[entry.l_term for entry in glos],
 			[
 				["Adipocere"],
 				["Caca", "ca-ca"],
@@ -1006,12 +1006,12 @@ Japonica"""
 			self.tenWordsStrFa,
 			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 		glos.sortWords(sortKeyName="headword")
 		ls1 = ["آماسش", "انگیزنده", "بیمارانه", "رشکمندی", "شگفتآفرینی"]
 		ls2 = ["نامبارکی", "ناکاستنی", "نقاهت", "چندپاری", "گالوانومتر"]
 		self.assertEqual(
-			[entry.s_word for entry in glos],
+			[entry.s_term for entry in glos],
 			ls1 + ls2,
 		)
 
@@ -1022,7 +1022,7 @@ Japonica"""
 			self.tenWordsStrFa,
 			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 		glos.sortWords(
 			sortKeyName="headword",
 			sortEncoding="windows-1256",
@@ -1030,7 +1030,7 @@ Japonica"""
 		ls1 = ["چندپاری", "گالوانومتر", "آماسش", "انگیزنده", "بیمارانه"]
 		ls2 = ["رشکمندی", "شگفتآفرینی", "ناکاستنی", "نامبارکی", "نقاهت"]
 		self.assertEqual(
-			[entry.s_word for entry in glos],
+			[entry.s_term for entry in glos],
 			ls1 + ls2,
 		)
 
@@ -1043,13 +1043,13 @@ Japonica"""
 			list(alphabetW1256_shuf),
 			newDefiFunc=lambda _x: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 		glos.sortWords(
 			sortKeyName="headword",
 			sortEncoding="windows-1256",
 		)
 		self.assertEqual(
-			[entry.s_word for entry in glos],
+			[entry.s_term for entry in glos],
 			list(alphabetW1256),
 		)
 

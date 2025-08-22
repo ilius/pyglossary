@@ -33,8 +33,8 @@ def getHtmlDefi(entry: EntryType) -> str:
 		return xdxf_transform(entry.defi)
 	# now assume it's html
 	defi = entry.defi
-	if len(entry.l_word) > 1:
-		defi = "".join(f"<b>{word}</b><br/>" for word in entry.l_word) + defi
+	if len(entry.l_term) > 1:
+		defi = "".join(f"<b>{word}</b><br/>" for word in entry.l_term) + defi
 	return defi
 
 
@@ -58,7 +58,7 @@ def mergeHtmlEntriesWithSameHeadword(
 		if last is None:
 			last = entry
 			continue
-		if entry.l_word[0] != last.l_word[0]:
+		if entry.l_term[0] != last.l_term[0]:
 			yield last
 			last = entry
 			continue
@@ -66,7 +66,7 @@ def mergeHtmlEntriesWithSameHeadword(
 		defi = getHtmlDefi(last) + "\n<hr>\n" + getHtmlDefi(entry)
 
 		last = Entry(  # pyright: ignore
-			entry.l_word[0],
+			entry.l_term[0],
 			defi,
 			defiFormat="h",
 		)
@@ -92,7 +92,7 @@ def mergePlaintextEntriesWithSameHeadword(
 		if last is None:
 			last = entry
 			continue
-		if entry.l_word[0] != last.l_word[0]:
+		if entry.l_term[0] != last.l_term[0]:
 			yield last
 			last = entry
 			continue
@@ -102,13 +102,13 @@ def mergePlaintextEntriesWithSameHeadword(
 			+ "\n\n"
 			+ "-" * 40
 			+ "\n"
-			+ ", ".join(entry.l_word)
+			+ ", ".join(entry.l_term)
 			+ "\n"
 			+ entry.defi
 		)
 
 		last = Entry(  # pyright: ignore
-			entry.l_word[0],
+			entry.l_term[0],
 			defi,
 			defiFormat="m",
 		)

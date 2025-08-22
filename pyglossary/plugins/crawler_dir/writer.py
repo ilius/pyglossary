@@ -63,7 +63,7 @@ class Writer:
 				break
 			if entry.isData():
 				continue
-			fpath = join(filename, self.filePathFromWord(entry.b_word))
+			fpath = join(filename, self.filePathFromWord(entry.b_term))
 			if compression:
 				fpath = f"{fpath}.{compression}"
 			parentDir = dirname(fpath)
@@ -74,7 +74,7 @@ class Writer:
 				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"  # noqa: S324
 			with c_open(fpath, "wt", encoding="utf-8") as _file:
 				_file.write(
-					f"{escapeNTB(entry.s_word)}\n{entry.defi}",
+					f"{escapeNTB(entry.s_term)}\n{entry.defi}",
 				)
 			entryCount += 1
 

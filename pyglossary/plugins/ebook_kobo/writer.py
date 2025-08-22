@@ -75,7 +75,7 @@ class Writer:
 
 	@staticmethod
 	def stripFullHtmlError(entry: EntryType, error: str) -> None:
-		log.error(f"error in stripFullHtml: {error}, terms={entry.l_word!r}")
+		log.error(f"error in stripFullHtml: {error}, terms={entry.l_term!r}")
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
@@ -150,17 +150,17 @@ class Writer:
 			if entry.isData():
 				dataEntryCount += 1
 				continue
-			l_word = entry.l_word
-			allWords += l_word
+			l_term = entry.l_term
+			allWords += l_term
 			wordsByPrefix: dict[str, list[str]] = {}
-			for word in l_word:
+			for word in l_term:
 				prefix = self.get_prefix(word)
 				if prefix in wordsByPrefix:
 					wordsByPrefix[prefix].append(word)
 				else:
 					wordsByPrefix[prefix] = [word]
 			defi = self.fix_defi(entry.defi)
-			mainHeadword = l_word[0]
+			mainHeadword = l_term[0]
 			for prefix, p_words in wordsByPrefix.items():
 				headword, *variants = p_words
 				if headword != mainHeadword:

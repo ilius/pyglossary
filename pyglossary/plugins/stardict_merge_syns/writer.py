@@ -60,8 +60,8 @@ class Writer(StdWriter):
 			dictFile.write(b_dictBlock)
 
 			b_idxBlock = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for b_word in entry.lb_word:
-				idxBlockList.append((b_word, b_idxBlock))
+			for b_term in entry.lb_term:
+				idxBlockList.append((b_term, b_idxBlock))
 
 			dictMark += len(b_dictBlock)
 
@@ -113,8 +113,8 @@ class Writer(StdWriter):
 			dictFile.write(b_dictBlock)
 
 			b_idxBlock = dictMarkToBytes(dictMark) + uint32ToBytes(len(b_dictBlock))
-			for b_word in entry.lb_word:
-				idxBlockList.append((b_word, b_idxBlock))
+			for b_term in entry.lb_term:
+				idxBlockList.append((b_term, b_idxBlock))
 
 			dictMark += len(b_dictBlock)
 
