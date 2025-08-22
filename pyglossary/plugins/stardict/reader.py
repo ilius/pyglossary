@@ -59,7 +59,7 @@ class Reader:
 		indexData format
 		indexData[i] - i-th record in index file,
 						a tuple (previously a list) of length 3
-		indexData[i][0] - b_word (bytes)
+		indexData[i][0] - b_term (bytes)
 		indexData[i][1] - definition block offset in dict file (int)
 		indexData[i][2] - definition block size in dict file (int)
 		REMOVED:
@@ -193,7 +193,7 @@ class Reader:
 			if pos < 0:
 				log.error("Index file is corrupted")
 				break
-			b_word = idxBytes[beg:pos]
+			b_term = idxBytes[beg:pos]
 			pos += 1
 			if pos + 8 > len(idxBytes):
 				log.error("Index file is corrupted")
@@ -201,7 +201,7 @@ class Reader:
 			offset, pos = getOffset()
 			size = uint32FromBytes(idxBytes[pos : pos + 4])
 			pos += 4
-			indexData.append((b_word, offset, size))
+			indexData.append((b_term, offset, size))
 
 		return indexData
 
@@ -339,19 +339,19 @@ class Reader:
 			log.warning("indexData is empty")
 			return
 
-		for entryIndex, (b_word, defiOffset, defiSize) in enumerate(indexData):
-			if not b_word:
+		for entryIndex, (b_term, defiOffset, defiSize) in enumerate(indexData):
+			if not b_term:
 				continue
 
 			dictFile.seek(defiOffset)
 			if dictFile.tell() != defiOffset:
-				log.error(f"Unable to read definition for word {b_word!r}")
+				log.error(f"Unable to read definition for word {b_term!r}")
 				continue
 
 			b_defiBlock = dictFile.read(defiSize)
 
 			if len(b_defiBlock) != defiSize:
-				log.error(f"Unable to read definition for word {b_word!r}")
+				log.error(f"Unable to read definition for word {b_term!r}")
 				continue
 
 			if sametypesequence:
@@ -363,11 +363,11 @@ class Reader:
 				rawDefiList = self.parseDefiBlockGeneral(b_defiBlock)
 
 			if rawDefiList is None:
-				log.error(f"Data file is corrupted. Word {b_word!r}")
+				log.error(f"Data file is corrupted. Word {b_term!r}")
 				continue
 
 			term: str | list[str]
-			term = b_word.decode("utf-8", errors=unicode_errors)
+			term = b_term.decode("utf-8", errors=unicode_errors)
 			try:
 				alts = synDict[entryIndex]
 			except KeyError:  # synDict is dict

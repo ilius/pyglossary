@@ -65,6 +65,6 @@ class Writer:
 					entry.save(filename + "_res")
 				continue
 			file.write(
-				f'msgid "{po_escape(entry.s_word)}"\n'
+				f'msgid "{po_escape(entry.s_term)}"\n'
 				f'msgstr "{po_escape(entry.defi)}"\n\n',
 			)

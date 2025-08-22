@@ -98,7 +98,7 @@ class Writer:
 		# TODO: create article tag with "definition-r" in it?
 		# or just save the file to res/ directory? or both?
 		# article = maker.article(
-		# 	maker.key(entry.s_word),
+		# 	maker.key(entry.s_term),
 		# 	maker.definition_r(
 		# 		ET.CDATA(entry.defi),
 		# 		**{"type": ext})
@@ -134,9 +134,9 @@ class Writer:
 				continue
 			entry.detectDefiFormat()
 			article = maker.article(
-				maker.key(entry.l_word[0]),
+				maker.key(entry.l_term[0]),
 			)
-			for alt in entry.l_word[1:]:
+			for alt in entry.l_term[1:]:
 				article.append(maker.synonym(alt))
 			article.append(
 				maker.definition(

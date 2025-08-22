@@ -77,7 +77,7 @@ class InfoWriter:
 			entryCount += 1
 			bwordCount += defi.count("bword://")
 
-			for word in entry.l_word:
+			for word in entry.l_term:
 				if word.lower() != word:
 					nonLowercaseWordCount += 1
 
@@ -97,15 +97,15 @@ class InfoWriter:
 					for tag in re_possible_html.findall(defi):
 						allTagsCounter[tag.strip("< />").lower()] += 1
 			elif defiFormat == "b":
-				_filenameNoExt, ext = splitext(entry.s_word)
+				_filenameNoExt, ext = splitext(entry.s_term)
 				ext = ext.lstrip(".")
 				dataEntryExtCounter[ext] += 1
 
-			ws = getWritingSystemFromText(entry.s_word)
+			ws = getWritingSystemFromText(entry.s_term)
 			if ws:
 				wsName = ws.name
 			else:
-				log.debug(f"No script detected for word: {entry.s_word}")
+				log.debug(f"No script detected for word: {entry.s_term}")
 				wsName = "None"
 			sourceScriptCounter[wsName] += 1
 

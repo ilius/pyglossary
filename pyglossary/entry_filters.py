@@ -91,7 +91,7 @@ class NonEmptyWordFilter(EntryFilter):
 	desc = "Skip entries with empty word"
 
 	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
-		if not entry.s_word:
+		if not entry.s_term:
 			return None
 		return entry
 
@@ -112,7 +112,7 @@ class RemoveEmptyAndDuplicateAltWords(EntryFilter):
 
 	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		entry.removeEmptyAndDuplicateAltWords()
-		if not entry.l_word:
+		if not entry.l_term:
 			return None
 		return entry
 
@@ -374,7 +374,7 @@ class PreventDuplicateWords(EntryFilter):
 			return entry
 
 		termSet = self._termSet
-		term = entry.s_word
+		term = entry.s_term
 
 		if term not in termSet:
 			termSet.add(term)
@@ -401,7 +401,7 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 		self._wset: set[str] = set()
 
 	def run(self, entry: EntryType) -> EntryType | None:
-		term = entry.l_word[0]
+		term = entry.l_term[0]
 		if term in self._wset:
 			return None
 		self._wset.add(term)
@@ -417,7 +417,7 @@ class TrimArabicDiacritics(EntryFilter):
 		self._pat = re.compile("[\u064b-\u065f]")
 
 	def run(self, entry: EntryType) -> EntryType | None:
-		terms = list(entry.l_word)
+		terms = list(entry.l_term)
 		hw = terms[0]
 		hw_t = self._pat.sub("", hw)
 		hw_t = hw_t.replace("\u0622", "\u0627").replace("\u0623", "\u0627")
@@ -469,7 +469,7 @@ class ShowMaxMemoryUsage(EntryFilter):
 		usage = self._process.memory_info().rss // 1024
 		if usage > self._max_mem_usage:
 			self._max_mem_usage = usage
-			term = entry.s_word
+			term = entry.s_term
 			if len(term) > self.MAX_WORD_LEN:
 				term = term[: self.MAX_WORD_LEN - 3] + "..."
 			core.trace(log, f"MaxMemUsage: {usage:,}, {term=}")

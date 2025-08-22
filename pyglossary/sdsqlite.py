@@ -60,8 +60,8 @@ class Writer:
 			entry = yield
 			if entry is None:
 				break
-			term = entry.l_word[0]
-			alts = joinByBar(entry.l_word[1:])
+			term = entry.l_term[0]
+			alts = joinByBar(entry.l_term[1:])
 			defi = entry.defi
 			defiFormat = entry.defiFormat
 			bindata = None

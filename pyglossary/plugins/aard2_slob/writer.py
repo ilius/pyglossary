@@ -146,7 +146,7 @@ class Writer:
 		slobWriter = self._slobWriter
 		if slobWriter is None:
 			raise ValueError("slobWriter is None")
-		rel_path = entry.s_word
+		rel_path = entry.s_term
 		_, ext = splitext(rel_path)
 		ext = ext.lstrip(os.path.extsep).lower()
 		content_type = self.resourceMimeTypes.get(ext)
@@ -163,7 +163,7 @@ class Writer:
 		slobWriter.add(content, key, content_type=content_type)
 
 	def addEntry(self, entry: EntryType) -> None:
-		terms = entry.l_word
+		terms = entry.l_term
 		b_defi = entry.defi.encode("utf-8")
 		ctype = self._content_type
 		writer = self._slobWriter

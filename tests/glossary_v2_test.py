@@ -915,7 +915,7 @@ Japonica"""
 			self.tenWordsStr,
 			newDefiFunc=lambda _i: str(random.randint(0, 10000)),
 		)
-		self.assertEqual(wordsList, [entry.l_word for entry in glos])
+		self.assertEqual(wordsList, [entry.l_term for entry in glos])
 
 	def test_addEntries_2(self):
 		# entry filters don't apply to loaded entries (added with addEntry)
@@ -927,7 +927,7 @@ Japonica"""
 		glos.updateEntryFilters()
 		self.assertEqual(
 			[["a"], [""], ["b"], []],
-			[entry.l_word for entry in glos],
+			[entry.l_term for entry in glos],
 		)
 
 	def test_addEntries_3(self):
@@ -944,7 +944,7 @@ Japonica"""
 		wordListList = []
 		dataEntries = []
 		for entry in glos:
-			wordListList.append(entry.l_word)
+			wordListList.append(entry.l_term)
 			if entry.isData():
 				dataEntries.append(entry)
 		self.assertEqual(

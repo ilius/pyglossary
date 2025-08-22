@@ -122,7 +122,7 @@ class Writer:
 			if entry.isData():
 				# FIXME
 				continue
-			terms = entry.l_word
+			terms = entry.l_term
 			term = fixStr(terms[0])
 			defi = fixStr(entry.defi)
 			fileObj.write(

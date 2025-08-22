@@ -118,19 +118,19 @@ class Writer:
 
 			cur.execute(
 				"INSERT INTO entry(term, article) VALUES (?, ?);",
-				(entry.l_word[0], defi),
+				(entry.l_term[0], defi),
 			)
 			id_ = cur.lastrowid
 			if id_ is None:
 				raise ValueError("lastrowid is None")
-			for alt in entry.l_word[1:]:
+			for alt in entry.l_term[1:]:
 				cur.execute(
 					"INSERT INTO alt(id, term) VALUES (?, ?);",
 					(id_, alt),
 				)
-			hash_.update(entry.s_word.encode("utf-8"))
+			hash_.update(entry.s_term.encode("utf-8"))
 			if self._fuzzy:
-				self.addFuzzy(id_, entry.l_word)
+				self.addFuzzy(id_, entry.l_term)
 
 		cur.execute(
 			"INSERT INTO meta (key, value) VALUES (?, ?);",
