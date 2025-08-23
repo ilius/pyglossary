@@ -66,6 +66,7 @@ jobs:
       - name: "Install Dependencies"
         run: |
           python3 -m pip install beautifulsoup4 biplist colorize_pinyin html5lib libzim lxml marisa-trie mistune polib prompt-toolkit pygments pymorphy2 python-idzip python-romkan-ng pyyaml tqdm xxhash
+          ## FIXME TODO: ************* replace with self-hosted WHLS *************
           python3 -m pip install --extra-index-url https://glowinthedark.github.io/python-lzo/ python-lzo
           python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
 
