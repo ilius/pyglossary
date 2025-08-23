@@ -79,10 +79,6 @@ jobs:
           uv venv .venv --python ${{ matrix.python-version }}
           echo "VIRTUAL_ENV=$PWD/.venv" >> $GITHUB_ENV
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
-          echo "DEBUG VENV libs"
-          ls -alh "$PWD/.venv/lib"
-          echo "DEBUG nuitka tk plugin"
-          find "$PWD/.venv/lib" -iname TkinterPlugin.py
 
       - name: Activate venv
         run: |
@@ -101,7 +97,6 @@ jobs:
       - name: Set pip build vars
         id: envpip
         run: |
-
           bash .github/scripts/mac/prepare-env-vars.sh
 
       - name: Print env vars
@@ -122,6 +117,11 @@ jobs:
       - name: Patch sources for nuitka build
         shell: bash
         run: |
+          source .venv/bin/activate
+          echo "DEBUG VENV $VIRTUAL_ENV libs"
+          ls -alh "$VIRTUAL_ENV/lib"
+          echo "DEBUG nuitka tk plugin..."
+          find "$VIRTUAL_ENV/lib" -iname TkinterPlugin.py
           python3 .github/scripts/mac/patch_sources.py ${{ matrix.python-version }}
 
       - name: Set PYTHONPATH
