@@ -118,10 +118,6 @@ jobs:
         shell: bash
         run: |
           source .venv/bin/activate
-          echo "DEBUG VENV $VIRTUAL_ENV libs"
-          ls -alh "$VIRTUAL_ENV/lib"
-          echo "DEBUG nuitka tk plugin..."
-          find "$VIRTUAL_ENV/lib" -iname TkinterPlugin.py
           python3 .github/scripts/mac/patch_sources.py ${{ matrix.python-version }}
 
       - name: Set PYTHONPATH
