@@ -81,8 +81,6 @@ jobs:
               Path('__init__.py').unlink()
               p = Path('pyglossary/ui/argparse_main.py'); p.write_text(p.read_text().replace('default="auto"', 'default="tk"'), encoding='utf8')
               p = Path('pyglossary/ui/runner.py'); p.write_text(p.read_text().replace('"gtk", "tk", "web"', '"tk", "gtk", "web"'), encoding='utf8')
-              p = Path('pyglossary/ui/runner.py'); p.write_text(p.read_text().replace('"gtk", "tk", "web"', '"tk", "gtk", "web"'), encoding='utf8')
-              p = Path('.venv/lib/python3.13/site-packages/nuitka/plugins/standard/TkinterPlugin.py'); p.write_text(p.read_text().replace('self.tk_inter_version in ("8.5", "8.6")', 'self.tk_inter_version in ("8.5", "8.6", "9.0")'), encoding='utf8')
           except Exception as e:
               print(str(e))
 
