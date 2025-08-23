@@ -13,7 +13,7 @@ export CXX=clang++
 # NUITKA
 uv pip install nuitka
 
-uv pip install beautifulsoup4 biplist colorize_pinyin html5lib libzim marisa-trie mistune polib prompt-toolkit pygments pymorphy2 python-idzip python-romkan-ng pyyaml tqdm xxhash
+uv pip install beautifulsoup4 biplist colorize_pinyin html5lib libzim marisa-trie mistune polib prompt-toolkit pygments pymorphy3 python-idzip python-romkan-ng pyyaml tqdm xxhash
 
 # DEPENDENCIES THAT NEED COMPILATION
 uv pip install lxml

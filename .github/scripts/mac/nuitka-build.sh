@@ -46,7 +46,7 @@ python -m nuitka \
   --noinclude-pytest-mode=nofollow \
   --noinclude-setuptools-mode=nofollow \
   --plugin-disable=pyqt5 \
-  --include-module=pymorphy2 \
+  --include-module=pymorphy3 \
   --include-module=lxml \
   --include-module=polib \
   --include-module=yaml \
