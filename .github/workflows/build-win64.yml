@@ -1,0 +1,194 @@
+name: 'build win-x64 nuitka'
+on:
+  push:
+    branches:
+      - 'nuitka-none'
+    paths-ignore:
+      - '.vscode/**'
+      - 'doc/**'
+      - '*.md'
+      # - '.github/**'
+
+  workflow_dispatch:
+
+jobs:
+
+  build_windows_x64:
+    strategy:
+      matrix:
+        python-version:
+          # - "3.10"
+          # - "3.11"
+          - "3.13"
+        # os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [windows-2022]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      PYTHONWARNDEFAULTENCODING: true
+      APPNAME: PyGlossaryTk
+      DIST_DIR: dist.nuitka.tk
+      MAIN_SCRIPT: main.py
+      RESOURCE_DIR: "resources"
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          # Number of commits to fetch, ootb only 1 commit
+          # 0 = all history for all branches and tags. (needed for git describe)
+          fetch-depth: 0
+          fetch-tags: true
+          # ref: nuitka-release
+
+      - name: "Set up Python 3.13"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          # x86, x64, or arm64
+          architecture: 'x64'
+
+      - name: Set VERSION environment variable
+        run: |
+          echo "VERSION=$(git describe --abbrev=0 --tags || git describe)" >> $GITHUB_ENV
+          echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
+
+      - name: "create and activate venv"
+        run: |
+          python3 -m venv .venv && .venv\Scripts\activate.bat
+
+      - name: "install nuitka"
+        run: |
+          python3 -m pip install nuitka
+
+      - name: "Install Dependencies"
+        run: |
+          python3 -m pip install beautifulsoup4 biplist colorize_pinyin html5lib libzim lxml marisa-trie mistune polib prompt-toolkit pygments pymorphy2 python-idzip python-romkan-ng pyyaml tqdm xxhash
+          python3 -m pip install --extra-index-url https://glowinthedark.github.io/python-lzo/ python-lzo
+          # python3 -m pip install https://github.com/glowinthedark/pyicu-build/releases/download/v2.15/pyicu-2.15-cp313-cp313-win_amd64.whl
+          python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
+
+      - name: Patch sources
+        shell: python
+        run: |
+          import os
+          from shutil import copy
+          from pathlib import Path
+          try:
+              copy(os.getenv("MAIN_SCRIPT"), os.getenv("APPNAME"))
+              Path('__init__.py').unlink()
+              p = Path('pyglossary/ui/argparse_main.py'); p.write_text(p.read_text().replace('default="auto"', 'default="tk"'), encoding='utf8')
+              p = Path('pyglossary/ui/runner.py'); p.write_text(p.read_text().replace('"gtk", "tk", "web"', '"tk", "gtk", "web"'), encoding='utf8')
+              p = Path('pyglossary/ui/runner.py'); p.write_text(p.read_text().replace('"gtk", "tk", "web"', '"tk", "gtk", "web"'), encoding='utf8')
+              p = Path('.venv/lib/python3.13/site-packages/nuitka/plugins/standard/TkinterPlugin.py'); p.write_text(p.read_text().replace('self.tk_inter_version in ("8.5", "8.6")', 'self.tk_inter_version in ("8.5", "8.6", "9.0")'), encoding='utf8')
+          except Exception as e:
+              print(str(e))
+
+      - name: Nuitka build
+        shell: cmd
+        run: |
+          python -m nuitka --standalone --assume-yes-for-downloads --plugin-enable=dll-files --plugin-enable=anti-bloat --follow-imports --windows-console-mode=disable --windows-icon-from-ico=res\pyglossary.ico --enable-plugin=tk-inter --include-package=pyglossary --include-module=tkinter --include-module=lzo --include-module=pymorphy2 --include-module=_json --include-module=lxml --include-module=polib --include-module=yaml --include-module=bs4 --include-module=html5lib --include-module=icu --include-module=colorize_pinyin --include-package-data=pyglossary --include-data-files=about=about --include-data-files=_license-dialog=_license-dialog --include-data-files=_license-dialog=license-dialog --noinclude-custom-mode=unittest:nofollow --noinclude-pytest-mode=nofollow --noinclude-setuptools-mode=nofollow --nofollow-import-to=pyglossary.ui.ui_gtk --nofollow-import-to=pyglossary.ui.ui_gtk4 --nofollow-import-to=pyglossary.ui.ui_qt --nofollow-import-to=gi --nofollow-import-to=gtk --nofollow-import-to=pyqt4 --nofollow-import-to=pyqt5 --nofollow-import-to=pyqt6 --nofollow-import-to=*.tests --noinclude-pytest-mode=nofollow --noinclude-setuptools-mode=nofollow --plugin-disable=pyqt5 main.py --output-dir="${{ env.DIST_DIR }}" --output-filename=pyglossary.exe
+
+      - name: Copy assets
+        shell: python
+        run: |
+            from pathlib import Path
+            import shutil
+            import sys
+            import os
+            
+            dist_dir = os.getenv("DIST_DIR")
+            app_name = os.getenv("APPNAME")
+            
+            if not dist_dir or not app_name:
+                print('missing env vars')
+                sys.exit(0)
+            
+            target_path = Path(dist_dir)/"main.dist"
+            print(f'TARGET_PATH={target_path}, APPNAME={app_name}')
+            
+            sources = ["about", "AUTHORS", "_license-dialog", "config.json", "plugins-meta", "help", "res", "pyglossary"]
+            
+            if not target_path.exists():
+                print(f'missing target dir {target_path.absolute()}')
+                sys.exit(0)
+            
+            for source in sources:
+                src = Path(source)
+                try:
+                    if src.is_dir():
+                        copied_to = shutil.copytree(src, target_path / src.name, dirs_exist_ok=True, symlinks=True, ignore_dangling_symlinks=True)
+                    else:
+                        copied_to = shutil.copy(src, target_path, follow_symlinks=False)
+                    print(f"Copied {src} -> {copied_to}")
+                except FileNotFoundError:
+                    print(f"Missing {src}")
+                except PermissionError:
+                    print(f"No access {src}")
+                except Exception as e:
+                    print(f"Failed {src}: {e}")
+            print("Done")
+
+      - name: Pack to zip before uploading
+        shell: pwsh
+        run: |
+          # TODO/TBD: integrate with NSIS: https://github.com/marketplace/actions/makensis
+          Compress-Archive -Path "${{ env.DIST_DIR }}\main.dist\*" -DestinationPath "${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip" -Force
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
+          name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}
+          path: |
+            "${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip"
+
+  release:
+    if: true
+    needs: [build_windows_x64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          # TODO: !!! comment out before merging to master
+          ref: nuitka-release
+
+      - name: Set release vars
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
+          echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Show generated artifacts
+        run: |
+          pwd
+          echo ${{ github.workspace }}/artifacts
+          find ${{ github.workspace }}/artifacts   
+
+      - name: make release
+        uses: ncipollo/release-action@v1
+        # https://github.com/ncipollo/release-action
+        with:
+          name: ${{ env.VERSION }}
+          body: |
+            ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
+            ## Windows-X64
+
+          artifacts: "artifacts/*.zip"
+          artifactContentType: application/zip
+          generateReleaseNotes: true
+          makeLatest: true
+          allowUpdates: true
+          tag: ${{ env.VERSION }}
