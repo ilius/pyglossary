@@ -81,7 +81,7 @@ jobs:
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
           echo "DEBUG VENV libs"
           ls -alh "$PWD/.venv/lib"
-          echo "DEBUG nuitka tk plugin
+          echo "DEBUG nuitka tk plugin"
           find "$PWD/.venv/lib" -iname TkinterPlugin.py
 
       - name: Activate venv
