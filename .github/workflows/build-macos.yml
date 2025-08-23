@@ -97,6 +97,7 @@ jobs:
       - name: Set pip build vars
         id: envpip
         run: |
+
           bash .github/scripts/mac/prepare-env-vars.sh
 
       - name: Print env vars
@@ -115,7 +116,7 @@ jobs:
           .github/scripts/mac/prepare-deps.sh
 
       - name: Patch sources for nuitka build
-        shell: python
+        shell: bash
         run: |
           python3 .github/scripts/mac/patch_sources.py ${{ matrix.python-version }}
 
@@ -129,9 +130,9 @@ jobs:
           bash .github/scripts/mac/nuitka-build.sh
 
       - name: Copy assets
-        shell: python
+        shell: bash
         run: |
-          python .github/scripts/mac/copy_assets.py
+          python3 .github/scripts/mac/copy_assets.py
 
       - name: Upload Artifacts zip
         uses: actions/upload-artifact@v4
