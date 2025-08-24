@@ -117,8 +117,7 @@ jobs:
       - name: Patch sources for nuitka build
         shell: bash
         run: |
-          source .venv/bin/activate
-          python3 .github/scripts/mac/patch_sources.py ${{ matrix.python-version }}
+          python3 .github/scripts/mac/patch_sources.py
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PREFIX_ICU4C/lib:$PREFIX_LZO/lib:$PREFIX_LZO/lib:$PREFIX_LIBFFI/lib:$PYTHONPATH" >> $GITHUB_ENV
