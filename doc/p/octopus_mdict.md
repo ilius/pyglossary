@@ -24,6 +24,16 @@
 | same_dir_data_files | `False` | bool | Read data files from same directory |
 | audio               | `False` | bool | Enable audio objects                |
 
+### Dependencies for reading
+
+PyPI Links: [xxhash](https://pypi.org/project/xxhash)
+
+To install, run:
+
+```sh
+pip3 install xxhash
+```
+
 ### `python-lzo` is required for **some** MDX glossaries.
 
 First try converting your MDX file, if failed (`AssertionError` probably),

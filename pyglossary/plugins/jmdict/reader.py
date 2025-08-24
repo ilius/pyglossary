@@ -32,6 +32,7 @@ class Reader:
 	compressions = stdCompressions
 	depends = {
 		"lxml": "lxml",
+		"romkan": "python-romkan-ng",
 	}
 
 	_example_padding: int = 10

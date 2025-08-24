@@ -173,6 +173,8 @@ class Writer:
 		"lxml": "lxml",
 		"bs4": "beautifulsoup4",
 		"html5lib": "html5lib",
+		"colorize_pinyin": "colorize_pinyin",
+		"pymorphy3": "pymorphy3",
 	}
 
 	_clean_html: bool = True
