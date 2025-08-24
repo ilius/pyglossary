@@ -32,12 +32,12 @@
 
 ### Dependencies for writing
 
-PyPI Links: [lxml](https://pypi.org/project/lxml), [beautifulsoup4](https://pypi.org/project/beautifulsoup4), [html5lib](https://pypi.org/project/html5lib)
+PyPI Links: [lxml](https://pypi.org/project/lxml), [beautifulsoup4](https://pypi.org/project/beautifulsoup4), [html5lib](https://pypi.org/project/html5lib), [colorize_pinyin](https://pypi.org/project/colorize_pinyin), [pymorphy3](https://pypi.org/project/pymorphy3)
 
 To install, run
 
 ```sh
-pip3 install lxml beautifulsoup4 html5lib
+pip3 install lxml beautifulsoup4 html5lib colorize_pinyin pymorphy3
 ```
 
 ### Also see:

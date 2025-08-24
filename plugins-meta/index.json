@@ -172,7 +172,9 @@
 		"writeDepends": {
 			"lxml": "lxml",
 			"bs4": "beautifulsoup4",
-			"html5lib": "html5lib"
+			"html5lib": "html5lib",
+			"colorize_pinyin": "colorize_pinyin",
+			"pymorphy3": "pymorphy3"
 		}
 	},
 	{
@@ -1213,7 +1215,8 @@
 			"translitation": false
 		},
 		"readDepends": {
-			"lxml": "lxml"
+			"lxml": "lxml",
+			"romkan": "python-romkan-ng"
 		},
 		"readCompressions": [
 			"gz",
@@ -1381,6 +1384,9 @@
 			"substyle": true,
 			"same_dir_data_files": false,
 			"audio": false
+		},
+		"readDepends": {
+			"xxhash": "xxhash"
 		}
 	},
 	{

@@ -44,6 +44,10 @@ class Reader:
 	_same_dir_data_files: bool = False
 	_audio: bool = False
 
+	depends = {
+		"xxhash": "xxhash",
+	}
+
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self.clear()

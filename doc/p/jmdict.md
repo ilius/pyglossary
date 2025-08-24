@@ -25,12 +25,12 @@
 
 ### Dependencies for reading
 
-PyPI Links: [lxml](https://pypi.org/project/lxml)
+PyPI Links: [lxml](https://pypi.org/project/lxml), [python-romkan-ng](https://pypi.org/project/python-romkan-ng)
 
 To install, run:
 
 ```sh
-pip3 install lxml
+pip3 install lxml python-romkan-ng
 ```
 
 ### Related Formats
