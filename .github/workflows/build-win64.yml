@@ -133,7 +133,6 @@ jobs:
       - name: Pack to zip before uploading
         shell: pwsh
         run: |
-          # TODO/TBD: integrate with NSIS: https://github.com/marketplace/actions/makensis
           Compress-Archive -Path "${{ env.DIST_DIR }}\main.dist\*" -DestinationPath "${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip" -Force
 
       - name: Upload Artifacts
@@ -141,41 +140,10 @@ jobs:
         with:
           # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
           name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}
+          if-no-files-found: error
           path: |
             "${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip"
-
-  release:
-    if: true
-    needs: [build_windows_x64]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-          # TODO: !!! comment out before merging to master
-          ref: nuitka-release
-
-      - name: Set release vars
-        run: |
-          echo "VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
-          echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./artifacts
-          merge-multiple: true
-
-      - name: Show generated artifacts
-        run: |
-          pwd
-          echo ${{ github.workspace }}/artifacts
-          find ${{ github.workspace }}/artifacts
-          
+            
       - name: Create Inno Installer
         shell: cmd
         run: |
@@ -189,6 +157,38 @@ jobs:
           path: |
             Output\*.exe
             
+  release:
+    if: true
+    needs: [build_windows_x64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ########## TODO: comment ref: before merge! ########
+          ref: nuitka-release
+
+      - name: Set release vars
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
+          echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: List generated artifacts
+        run: |
+          pwd
+          echo ${{ github.workspace }}/artifacts
+          find ${{ github.workspace }}/artifacts
+            
       - name: make release
         uses: ncipollo/release-action@v1
         # https://github.com/ncipollo/release-action
@@ -198,7 +198,7 @@ jobs:
             ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
             ## Windows-X64
 
-          artifacts: "artifacts/*.zip,Output/*.exe"
+          artifacts: "artifacts/*.zip,artifacts/*.exe"
           artifactContentType: application/zip
           generateReleaseNotes: true
           makeLatest: true
