@@ -64,7 +64,7 @@ jobs:
       - name: Patch sources for nuitka build
         shell: cmd
         run: |
-          python3 .github\scripts\win\patch_sources.py
+          python3 .github\scripts\mac\patch_sources.py
           
       - name: "install nuitka"
         shell: cmd
