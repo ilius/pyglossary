@@ -106,7 +106,7 @@ jobs:
       - name: Create Inno Installer
         shell: cmd
         run: |
-          iscc .github/scripts/win/inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}\LICENSE"
+          iscc .github/scripts/win/inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ github.workspace }}\${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}\LICENSE"
           
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
