@@ -132,9 +132,9 @@ jobs:
             print("Done")
 
       - name: Pack to zip before uploading
-        shell: pwsh
+        shell: cmd
         run: |
-          Compress-Archive -Path "${{ env.DIST_DIR }}\main.dist\*" -DestinationPath "${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip" -Force
+          7z a -tzip windows-dist.zip "${{ env.DIST_DIR }}\main.dist\*"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -143,7 +143,7 @@ jobs:
           name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}
           if-no-files-found: error
           path: |
-            "${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip"
+            windows-dist.zip
             
       - name: Create Inno Installer
         shell: cmd
