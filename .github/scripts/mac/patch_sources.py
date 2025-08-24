@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 
 main_script, app_name = os.getenv("MAIN_SCRIPT"), os.getenv("APPNAME")
-python_version = sys.argv[1]
 
 if not (main_script and app_name):
 	raise SystemExit("Missing env vars")
