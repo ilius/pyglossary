@@ -13,12 +13,13 @@ export CXX=clang++
 # NUITKA
 uv pip install nuitka
 
-uv pip install beautifulsoup4 biplist colorize_pinyin html5lib libzim marisa-trie mistune polib prompt-toolkit pygments pymorphy3 python-idzip python-romkan-ng pyyaml tqdm xxhash
-
 # DEPENDENCIES THAT NEED COMPILATION
-uv pip install lxml
+
 ########### Install PyICU with static deps ##############
 STATIC_DEPS=true uv pip install --no-binary PyICU PyICU
+
 ########### Install python-lzo with static deps ##############
 ### ALSO SEE: https://github.com/Nuitka/Nuitka/issues/2580#issuecomment-1895611093
 STATIC_DEPS=true uv pip install --no-binary python-lzo python-lzo
+
+uv pip install -r requirements.txt
