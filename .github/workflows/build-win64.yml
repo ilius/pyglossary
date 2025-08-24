@@ -58,14 +58,17 @@ jobs:
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
 
       - name: "create and activate venv"
+        shell: cmd
         run: |
           python3 -m venv .venv && .venv\Scripts\activate.bat
 
       - name: "install nuitka"
+        shell: cmd
         run: |
           python3 -m pip install nuitka
 
       - name: "Install Dependencies"
+        shell: cmd
         run: |
           ## FIXME TODO: ************* replace with self-hosted WHLS *************
           python3 -m pip install --extra-index-url https://glowinthedark.github.io/python-lzo/ python-lzo
