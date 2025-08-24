@@ -145,7 +145,7 @@ jobs:
       - name: Create DMG
         shell: bash
         run: |
-          bash .github/scripts/mac/make-dmg.sh "${{ env.APPNAME }}" "${{ env.DIST_DIR }}" "${{ matrix.os }}" "${{ env.VERSION }}" "${{ env.VERSION_WITH_HASH }}"
+          bash .github/scripts/mac/make-dmg.sh ${{ env.APPNAME }} ${{ env.DIST_DIR }} ${{ matrix.os }} ${{ env.VERSION }} ${{ env.VERSION_WITH_HASH }}
       
       - name: Upload Artifacts DMG
         if: true
