@@ -20,7 +20,6 @@ jobs:
           # - "3.10"
           # - "3.11"
           - "3.13"
-        # os: [macos-latest, ubuntu-latest, windows-latest]
         os: [windows-2022]
 
     runs-on: ${{ matrix.os }}
@@ -62,6 +61,11 @@ jobs:
         run: |
           python3 -m venv .venv && .venv\Scripts\activate.bat
 
+      - name: Patch sources for nuitka build
+        shell: cmd
+        run: |
+          python3 .github\scripts\win\patch_sources.py
+          
       - name: "install nuitka"
         shell: cmd
         run: |
@@ -75,11 +79,6 @@ jobs:
           python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
           python3 -m pip install -r requirements.txt 
 
-      - name: Patch sources for nuitka build
-        shell: cmd
-        run: |
-          python3 .github\scripts\mac\patch_sources.py
-
       - name: Nuitka build
         shell: cmd
         run: |
@@ -88,7 +87,7 @@ jobs:
       - name: Copy assets
         shell: cmd
         run: |
-          python3 .github\scripts\mac\copy_assets.py
+          python3 .github\scripts\win\copy_assets.py
 
       - name: Pack to zip before uploading
         shell: cmd
