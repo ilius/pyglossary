@@ -133,19 +133,20 @@ jobs:
         run: |
           python3 .github/scripts/mac/copy_assets.py
 
-      - name: Upload Artifacts zip
-        uses: actions/upload-artifact@v4
-        with:
-          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
-          overwrite: true
-          name: ${{ github.event.repository.name }}-${{ matrix.os }}-py${{ matrix.python-version }}-${{ env.VERSION_WITH_HASH }}
-          path: |
-            ${{ env.DIST_DIR }}/${{ env.APPNAME }}.app
+      # - name: Upload Artifacts zip
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
+      #     overwrite: true
+      #     name: ${{ github.event.repository.name }}-${{ matrix.os }}-py${{ matrix.python-version }}-${{ env.VERSION_WITH_HASH }}
+      #     path: |
+      #       ${{ env.DIST_DIR }}/${{ env.APPNAME }}.app
 
       - name: Create DMG
         shell: bash
         run: |
           bash .github/scripts/mac/make-dmg.sh "${{ env.APPNAME }}" "${{ env.DIST_DIR }}" "${{ matrix.os }}" "${{ env.VERSION }}" "${{ env.VERSION_WITH_HASH }}"
+      
       - name: Upload Artifacts DMG
         if: true
         uses: actions/upload-artifact@v4
