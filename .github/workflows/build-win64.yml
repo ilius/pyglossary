@@ -198,7 +198,7 @@ jobs:
             ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
             ## Windows-X64
 
-          artifacts: "artifacts/*.zip"
+          artifacts: "artifacts/*.zip,Output/*.exe"
           artifactContentType: application/zip
           generateReleaseNotes: true
           makeLatest: true
