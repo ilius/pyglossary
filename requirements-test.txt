@@ -1,0 +1,10 @@
+PyICU
+beautifulsoup4
+biplist
+freezegun
+html5lib
+lxml==5.3
+marisa-trie
+mistune
+polib
+python-idzip
