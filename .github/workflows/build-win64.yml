@@ -95,7 +95,7 @@ jobs:
         shell: cmd
         working-directory: ${{ env.DIST_DIR }}\main.dist
         run: |
-          7z a -tzip ..\..\windows-dist.zip .
+          7z a -tzip ..\..\${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -104,7 +104,7 @@ jobs:
           name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}
           if-no-files-found: error
           path: |
-            windows-dist.zip
+            ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}-dist.zip
             
       - name: Create Inno Installer
         shell: cmd
