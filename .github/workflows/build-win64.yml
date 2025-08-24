@@ -52,6 +52,7 @@ jobs:
           architecture: 'x64'
 
       - name: Set VERSION environment variable
+        shell: bash
         run: |
           echo "VERSION=$(git describe --abbrev=0 --tags || git describe)" >> $GITHUB_ENV
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
@@ -147,7 +148,7 @@ jobs:
       - name: Create Inno Installer
         shell: cmd
         run: |
-          iscc inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}/LICENSE"
+          iscc inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}\LICENSE"
           
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
