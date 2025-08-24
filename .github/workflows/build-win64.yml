@@ -41,7 +41,8 @@ jobs:
           # 0 = all history for all branches and tags. (needed for git describe)
           fetch-depth: 0
           fetch-tags: true
-          # ref: nuitka-release
+          ########## TODO: comment ref: before merge! ########
+          ref: nuitka-release
 
       - name: "Set up Python 3.13"
         uses: actions/setup-python@v5
@@ -173,8 +174,21 @@ jobs:
         run: |
           pwd
           echo ${{ github.workspace }}/artifacts
-          find ${{ github.workspace }}/artifacts   
-
+          find ${{ github.workspace }}/artifacts
+          
+      - name: Create Inno Installer
+        shell: cmd
+        run: |
+          iscc inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}/LICENSE"
+          
+      - name: Upload Inno Installer EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-installer-${{ env.VERSION }}
+          if-no-files-found: error
+          path: |
+            Output\*.exe
+            
       - name: make release
         uses: ncipollo/release-action@v1
         # https://github.com/ncipollo/release-action
