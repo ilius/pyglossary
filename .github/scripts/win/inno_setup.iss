@@ -39,8 +39,8 @@ ChangesAssociations=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 
-#### defined via cli arg /DLicenseFile="/path/to/license.txt"
-LicenseFile={#LicenseFile} 
+; #### defined via cli arg as /DLicenseFile="/path/to/license.txt"
+LicenseFile={#LicenseFile}
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
