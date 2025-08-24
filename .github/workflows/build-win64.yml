@@ -67,24 +67,15 @@ jobs:
 
       - name: "Install Dependencies"
         run: |
-          python3 -m pip install beautifulsoup4 biplist colorize_pinyin html5lib libzim lxml marisa-trie mistune polib prompt-toolkit pygments pymorphy2 python-idzip python-romkan-ng pyyaml tqdm xxhash
           ## FIXME TODO: ************* replace with self-hosted WHLS *************
           python3 -m pip install --extra-index-url https://glowinthedark.github.io/python-lzo/ python-lzo
           python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
+          python3 -m pip install -r requirements.txt 
 
-      - name: Patch sources
-        shell: python
+      - name: Patch sources for nuitka build
+        shell: bash
         run: |
-          import os
-          from shutil import copy
-          from pathlib import Path
-          try:
-              copy(os.getenv("MAIN_SCRIPT"), os.getenv("APPNAME"))
-              Path('__init__.py').unlink()
-              p = Path('pyglossary/ui/argparse_main.py'); p.write_text(p.read_text().replace('default="auto"', 'default="tk"'), encoding='utf8')
-              p = Path('pyglossary/ui/runner.py'); p.write_text(p.read_text().replace('"gtk", "tk", "web"', '"tk", "gtk", "web"'), encoding='utf8')
-          except Exception as e:
-              print(str(e))
+          python3 .github/scripts/mac/patch_sources.py
 
       - name: Nuitka build
         shell: cmd
@@ -92,44 +83,9 @@ jobs:
           python -m nuitka --standalone --assume-yes-for-downloads --plugin-enable=dll-files --plugin-enable=anti-bloat --follow-imports --windows-console-mode=disable --windows-icon-from-ico=res\pyglossary.ico --enable-plugin=tk-inter --include-package=pyglossary --include-module=tkinter --include-module=lzo --include-module=pymorphy2 --include-module=_json --include-module=lxml --include-module=polib --include-module=yaml --include-module=bs4 --include-module=html5lib --include-module=icu --include-module=colorize_pinyin --include-package-data=pyglossary --include-data-files=about=about --include-data-files=_license-dialog=_license-dialog --include-data-files=_license-dialog=license-dialog --noinclude-custom-mode=unittest:nofollow --noinclude-pytest-mode=nofollow --noinclude-setuptools-mode=nofollow --nofollow-import-to=pyglossary.ui.ui_gtk --nofollow-import-to=pyglossary.ui.ui_gtk4 --nofollow-import-to=pyglossary.ui.ui_qt --nofollow-import-to=gi --nofollow-import-to=gtk --nofollow-import-to=pyqt4 --nofollow-import-to=pyqt5 --nofollow-import-to=pyqt6 --nofollow-import-to=*.tests --noinclude-pytest-mode=nofollow --noinclude-setuptools-mode=nofollow --plugin-disable=pyqt5 main.py --output-dir="${{ env.DIST_DIR }}" --output-filename=pyglossary.exe
 
       - name: Copy assets
-        shell: python
+        shell: bash
         run: |
-            from pathlib import Path
-            import shutil
-            import sys
-            import os
-            
-            dist_dir = os.getenv("DIST_DIR")
-            app_name = os.getenv("APPNAME")
-            
-            if not dist_dir or not app_name:
-                print('missing env vars')
-                sys.exit(0)
-            
-            target_path = Path(dist_dir)/"main.dist"
-            print(f'TARGET_PATH={target_path}, APPNAME={app_name}')
-            
-            sources = ["about", "AUTHORS", "_license-dialog", "config.json", "plugins-meta", "help", "res", "pyglossary"]
-            
-            if not target_path.exists():
-                print(f'missing target dir {target_path.absolute()}')
-                sys.exit(0)
-            
-            for source in sources:
-                src = Path(source)
-                try:
-                    if src.is_dir():
-                        copied_to = shutil.copytree(src, target_path / src.name, dirs_exist_ok=True, symlinks=True, ignore_dangling_symlinks=True)
-                    else:
-                        copied_to = shutil.copy(src, target_path, follow_symlinks=False)
-                    print(f"Copied {src} -> {copied_to}")
-                except FileNotFoundError:
-                    print(f"Missing {src}")
-                except PermissionError:
-                    print(f"No access {src}")
-                except Exception as e:
-                    print(f"Failed {src}: {e}")
-            print("Done")
+          python3 .github/scripts/mac/copy_assets.py
 
       - name: Pack to zip before uploading
         shell: cmd
@@ -148,7 +104,7 @@ jobs:
       - name: Create Inno Installer
         shell: cmd
         run: |
-          iscc inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}\LICENSE"
+          iscc .github/scripts/win/inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}\LICENSE"
           
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
