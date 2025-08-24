@@ -194,10 +194,6 @@ jobs:
         # https://github.com/ncipollo/release-action
         with:
           name: ${{ env.VERSION }}
-          body: |
-            ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
-            ## Windows-X64
-
           artifacts: "artifacts/*.zip,artifacts/*.exe"
           artifactContentType: application/zip
           generateReleaseNotes: true
