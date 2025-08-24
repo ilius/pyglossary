@@ -6,16 +6,19 @@ import sys
 from pathlib import Path
 
 dist_dir = os.getenv("DIST_DIR")
-app_name = os.getenv("APPNAME")
 
-
-if not dist_dir or not app_name:
-	sys.stderr.write("missing env vars!\n")
+if not dist_dir:
+	sys.stderr.write("empty DIST_DIR!")
 	sys.exit(1)
 
-dist_path = Path(dist_dir)
+dist_dir_path = Path(dist_dir)
 
-target_path: Path = dist_path / f"{app_name}.app/Contents/MacOS"
+if not dist_dir_path.exists():
+	sys.stderr.write(f"DIST_DIR does not exist: {dist_dir}")
+	sys.exit(1)
+
+target_path = dist_dir_path / "main.dist"
+
 sources = [
 	"about",
 	"AUTHORS",
@@ -28,7 +31,7 @@ sources = [
 ]
 
 if not target_path.exists():
-	sys.stderr.write(f"target_path not found {target_path.absolute()}\n")
+	sys.stderr.write(f"missing target dir: {target_path.absolute()}")
 	sys.exit(1)
 
 for source in sources:
@@ -44,9 +47,13 @@ for source in sources:
 			)
 		else:
 			copied_to = shutil.copy(src, target_path, follow_symlinks=False)
-	except FileNotFoundError as e:
-		sys.stderr.write(f"source not found {src.absolute()}: {e!s}\n")
-	except PermissionError as e:
-		sys.stderr.write(f"permission error copying {src.absolute()}: {e!s}\n")
+		sys.stdout.write(f"Copied {src} -> {copied_to}")
+	except FileNotFoundError:
+		sys.stderr.write(f"No such file: {src}")
+		sys.exit(1)
+	except PermissionError:
+		sys.stderr.write(f"Cannot access file: {src}")
+		sys.exit(1)
 	except Exception as e:
-		sys.stderr.write(f"error copying: {src.absolute()}: {e!s}\n")
+		sys.stderr.write(f"Error copying file {src}: {e}")
+		sys.exit(1)

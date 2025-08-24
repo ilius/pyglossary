@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 from pathlib import Path
 
 main_script, app_name = os.getenv("MAIN_SCRIPT"), os.getenv("APPNAME")
