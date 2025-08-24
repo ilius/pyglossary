@@ -38,7 +38,9 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ChangesAssociations=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile={#LicenseFile}
+
+#### defined via cli arg /DLicenseFile="/path/to/license.txt"
+LicenseFile={#LicenseFile} 
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
