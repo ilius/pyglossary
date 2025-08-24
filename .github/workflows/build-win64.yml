@@ -93,8 +93,9 @@ jobs:
 
       - name: Pack to zip before uploading
         shell: cmd
+        working-directory: ${{ env.DIST_DIR }}\main.dist
         run: |
-          7z a -tzip windows-dist.zip -w"${{ env.DIST_DIR }}\main.dist" "*"
+          7z a -tzip ..\..\windows-dist.zip .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
