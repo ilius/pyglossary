@@ -1,8 +1,11 @@
-name: 'build mac-x64/arm DMG'
+name: Build for MacOS x86_64 / arm64
 # ALSO SEE: pyicu: https://github.com/googlefonts/pyfontaine/issues/109
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - 'build-release'
+      - 'nuitka-release'
 
 env:
   UV_SYSTEM_PYTHON: 0

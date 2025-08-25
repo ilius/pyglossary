@@ -1,10 +1,10 @@
-name: 'build win-x64 nuitka'
+name: Build for Windows x86_64
 on:
   push:
     branches:
-      - 'nuitka-none'
+      - 'build-release'
+      - 'nuitka-release'
     paths-ignore:
-      - '.vscode/**'
       - 'doc/**'
       - '*.md'
       # - '.github/**'
