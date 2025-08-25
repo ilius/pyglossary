@@ -28,7 +28,6 @@ jobs:
     strategy:
       # DOC: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow
       matrix:
-        # python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
         python-version: ['3.13']
         os: ['macos-13', 'macos-14']
       fail-fast: true
@@ -47,14 +46,7 @@ jobs:
 
       - name: Install brew dependencies
         run: |
-          brew install \
-             libffi \
-             gettext \
-             cmake \
-             ccache \
-             pkg-config \
-             icu4c \
-             lzo
+          brew install libffi gettext cmake ccache pkg-config icu4c lzo
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
