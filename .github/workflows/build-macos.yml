@@ -11,7 +11,7 @@ env:
   UV_SYSTEM_PYTHON: 0
   PYTHONWARNINGS: ignore::EncodingWarning
   PYTHONWARNDEFAULTENCODING: 0
-  APPNAME: PyGlossaryTk
+  APPNAME: PyGlossary
   DIST_DIR: dist.nuitka.tk
   HOMEBREW_NO_INSTALL_CLEANUP: true
   HOMEBREW_NO_ENV_HINTS: true
@@ -202,9 +202,9 @@ jobs:
             ### ⚠️ If macOS displays a warning that _the app is damaged and cannot be opened_ then move the unpacked bundle to `/Applications`, and run from the terminal.app:
             
             ```bash
-            /usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryTk.app
+            /usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossary.app
             ```
-            Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossaryTk.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
+            Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossary.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
             </details>
             </blockquote>
             

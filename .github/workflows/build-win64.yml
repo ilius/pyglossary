@@ -18,7 +18,7 @@ jobs:
 
     env:
       PYTHONWARNDEFAULTENCODING: true
-      APPNAME: PyGlossaryTk
+      APPNAME: PyGlossary
       DIST_DIR: dist.nuitka.tk
       MAIN_SCRIPT: main.py
       RESOURCE_DIR: "resources"

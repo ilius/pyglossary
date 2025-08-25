@@ -44,7 +44,7 @@ LicenseFile={#LicenseFile}
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=PyGlossary-Windows-x64-{#MyAppVersion}-setup
+OutputBaseFilename=PyGlossary-{#MyAppVersion}-Windows-x64-setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
