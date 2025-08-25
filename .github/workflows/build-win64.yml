@@ -75,7 +75,7 @@ jobs:
         shell: cmd
         run: |
           rem ## FIXME TODO: ************* replace with self-hosted WHLS *************
-          python3 -m pip install --extra-index-url https://glowinthedark.github.io/python-lzo/ python-lzo
+          rem ## TODO build python-lzo from source
           python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
           python3 -m pip install -r requirements.txt 
 
