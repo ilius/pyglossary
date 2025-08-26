@@ -24,6 +24,10 @@ echo "DYLD_LIBRARY_PATH: $DYLD_LIBRARY_PATH"
 
 rm -rf "$DIST_DIR"
 
+echo TODO FIXME DEBUG langs wtf
+find -iname langs -exec ls -lahO {} \;
+
+
 python -m nuitka \
   --standalone \
   --assume-yes-for-downloads \
