@@ -11,7 +11,7 @@ env:
   UV_SYSTEM_PYTHON: 0
   PYTHONWARNINGS: ignore::EncodingWarning
   PYTHONWARNDEFAULTENCODING: 0
-  APPNAME: PyGlossary
+  APPNAME: PyGlossaryTk
   DIST_DIR: dist.nuitka.tk
   HOMEBREW_NO_INSTALL_CLEANUP: true
   HOMEBREW_NO_ENV_HINTS: true

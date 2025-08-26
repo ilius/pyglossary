@@ -1,6 +1,6 @@
 .PHONY: all
 
-APPNAME ?= PyGlossary
+APPNAME ?= PyGlossaryTk
 DIST_DIR ?= dist-nuitka
 MAIN_SCRIPT ?= main.py
 ARCH := $(shell uname -m)
