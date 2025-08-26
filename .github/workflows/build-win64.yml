@@ -69,7 +69,8 @@ jobs:
         run: |
           rem ## FIXME TODO: ************* replace with self-hosted WHLS *************
           rem ## TODO build python-lzo from source
-          python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
+          python3 -m pip install ^
+            https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
           python3 -m pip install -r requirements.txt 
 
       - name: Nuitka build
@@ -100,7 +101,11 @@ jobs:
       - name: Create Inno Installer
         shell: cmd
         run: |
-          iscc .github/scripts/win/inno_setup.iss /DMyAppVersion="${{ env.VERSION }}" /DSourceFilesGlob="${{ github.workspace }}\${{ env.DIST_DIR }}\main.dist\*" /DLicenseFile="${{ github.workspace }}\LICENSE" /O${{ github.workspace }}\Output
+          iscc .github/scripts/win/inno_setup.iss   ^
+            /DMyAppVersion="${{ env.VERSION }}"   ^
+            /DSourceFilesGlob="${{ github.workspace }}\${{ env.DIST_DIR }}\main.dist\*"   ^
+            /DLicenseFile="${{ github.workspace }}\LICENSE"   ^
+            /O${{ github.workspace }}\Output
           
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
