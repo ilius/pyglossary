@@ -52,6 +52,7 @@ python -m nuitka \
   --include-module=yaml \
   --include-module=bs4 \
   --include-module=html5lib \
+  --include-module=icu \
   --include-module=colorize_pinyin \
   --include-package-data=pyglossary \
   --include-data-files=about=about \
