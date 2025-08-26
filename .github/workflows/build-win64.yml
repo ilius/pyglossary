@@ -45,7 +45,8 @@ jobs:
       - name: Set environment variables
         shell: bash
         run: |
-          echo "VERSION=$(git describe --abbrev=0 --tags || git describe)" >> $GITHUB_ENV
+          VERSION=$(git describe --abbrev=0 --tags || git describe)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
           echo "FILENAME_BASE=PyGlossary-${VERSION}-Windows-${RUNNER_ARCH}" >> $GITHUB_ENV
 
