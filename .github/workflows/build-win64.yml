@@ -67,9 +67,9 @@ jobs:
 
       - name: "Install Dependencies"
         shell: cmd
-        run: >-
-          rem ## FIXME TODO: ************* replace with self-hosted WHLS *************
-          rem ## TODO build python-lzo from source
+        ## FIXME TODO: ************* replace with self-hosted WHLS *************
+        ## TODO build python-lzo from source
+        run: |
           python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
           python3 -m pip install -r requirements.txt 
 
