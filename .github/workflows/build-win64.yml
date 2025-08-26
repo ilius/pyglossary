@@ -88,16 +88,16 @@ jobs:
         shell: cmd
         working-directory: ${{ env.DIST_DIR }}\main.dist
         run: |
-          7z a -tzip ..\..\${{ github.event.repository.name }}-${{ env.VERSION }}-${{ runner.os }}-${{ runner.arch }}-dist.zip .
+          7z a -tzip ..\..\PyGlossary-${{ env.VERSION }}-Windows-${{ runner.arch }}-dist.zip .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
-          name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-${{ env.VERSION }}
+          name: PyGlossary-${{ env.VERSION }}-Windows-${{ runner.arch }}
           if-no-files-found: error
           path: |
-            ${{ github.event.repository.name }}-${{ env.VERSION }}-${{ runner.os }}-${{ runner.arch }}-dist.zip
+            PyGlossary-${{ env.VERSION }}-Windows-${{ runner.arch }}-dist.zip
             
       - name: Create Inno Installer
         shell: cmd
@@ -107,7 +107,7 @@ jobs:
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-${{ runner.os }}-${{ runner.arch }}-installer-${{ env.VERSION }}
+          name: PyGlossary-Windows-${{ runner.arch }}-installer-${{ env.VERSION }}
           if-no-files-found: error
           path: |
             Output\*.exe
