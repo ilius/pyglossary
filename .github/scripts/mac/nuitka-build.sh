@@ -22,6 +22,8 @@ echo "LDFLAGS: $LDFLAGS"
 echo "CPPFLAGS: $CPPFLAGS"
 echo "DYLD_LIBRARY_PATH: $DYLD_LIBRARY_PATH"
 
+rm -rf "$DIST_DIR"
+
 python -m nuitka \
   --standalone \
   --assume-yes-for-downloads \
