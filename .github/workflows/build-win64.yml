@@ -42,11 +42,12 @@ jobs:
           # x64, or arm64
           architecture: 'x64'
 
-      - name: Set VERSION environment variable
+      - name: Set environment variables
         shell: bash
         run: |
           echo "VERSION=$(git describe --abbrev=0 --tags || git describe)" >> $GITHUB_ENV
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
+          echo "FILENAME_BASE=PyGlossary-${VERSION}-Windows-${RUNNER_ARCH}" >> $GITHUB_ENV
 
       - name: "create and activate venv"
         shell: cmd
@@ -88,16 +89,16 @@ jobs:
         shell: cmd
         working-directory: ${{ env.DIST_DIR }}\main.dist
         run: |
-          7z a -tzip ..\..\PyGlossary-${{ env.VERSION }}-Windows-${{ runner.arch }}-dist.zip .
+          7z a -tzip ..\..\${{ env.FILENAME_BASE }}-dist.zip .
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
-          name: PyGlossary-${{ env.VERSION }}-Windows-${{ runner.arch }}
+          name: ${{ env.FILENAME_BASE }}
           if-no-files-found: error
           path: |
-            PyGlossary-${{ env.VERSION }}-Windows-${{ runner.arch }}-dist.zip
+            ${{ env.FILENAME_BASE }}-dist.zip
             
       - name: Create Inno Installer
         shell: cmd
@@ -107,7 +108,7 @@ jobs:
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
         with:
-          name: PyGlossary-Windows-${{ runner.arch }}-installer-${{ env.VERSION }}
+          name: ${{ env.FILENAME_BASE }}-installer
           if-no-files-found: error
           path: |
             Output\*.exe
