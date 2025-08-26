@@ -11,7 +11,7 @@ export CC=clang
 export CXX=clang++
 
 # NUITKA
-uv pip install -U "https://github.com/Nuitka/Nuitka/archive/develop.zip"
+uv pip install -U nuitka
 
 # DEPENDENCIES THAT NEED COMPILATION
 
