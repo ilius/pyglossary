@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - 'build-release'
-      - 'nuitka-release'
 
 env:
   UV_SYSTEM_PYTHON: 0
@@ -38,7 +37,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           # TODO: !!! comment out before merging to master
-          ref: nuitka-release
+          # ref: build-release
 
       - name: Update brew
         run: |
@@ -164,8 +163,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-          # TODO: !!! comment out before merging to master
-          ref: nuitka-release
+          # ref: build-release # comment out before merge
 
       - name: Set release vars
         run: |
