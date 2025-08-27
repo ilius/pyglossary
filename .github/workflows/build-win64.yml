@@ -1,0 +1,157 @@
+name: Build for Windows x86_64
+on:
+  push:
+    branches:
+      - 'build-release'
+    paths-ignore:
+      - 'doc/**'
+      - '*.md'
+      # - '.github/**'
+
+  workflow_dispatch:
+
+jobs:
+
+  build_windows_x64:
+    runs-on: windows-2022
+
+    env:
+      PYTHONWARNDEFAULTENCODING: true
+      APPNAME: PyGlossary
+      DIST_DIR: dist.nuitka.tk
+      MAIN_SCRIPT: main.py
+      RESOURCE_DIR: "resources"
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          # Number of commits to fetch, ootb only 1 commit
+          # 0 = all history for all branches and tags. (needed for git describe)
+          fetch-depth: 0
+          fetch-tags: true
+          # ref: build-release # comment out before merge!
+
+      - name: "Set up Python 3.13"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          # x64, or arm64
+          architecture: 'x64'
+
+      - name: Set environment variables
+        shell: bash
+        run: |
+          VERSION=$(git describe --abbrev=0 --tags || git describe)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
+          echo "FILENAME_BASE=PyGlossary-${VERSION}-Windows-${RUNNER_ARCH}" >> $GITHUB_ENV
+
+      - name: "create and activate venv"
+        shell: cmd
+        run: |
+          python3 -m venv .venv && .venv\Scripts\activate.bat
+
+      - name: Patch sources for nuitka build
+        shell: cmd
+        run: |
+          python3 .github\scripts\mac\patch_sources.py
+          
+      - name: "install nuitka"
+        shell: cmd
+        run: |
+          python3 -m pip install nuitka
+
+      - name: "Install Dependencies"
+        shell: cmd
+        ## FIXME TODO: ************* replace with self-hosted WHLS *************
+        ## TODO build python-lzo from source
+        run: |
+          python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
+          python3 -m pip install -r requirements.txt 
+
+      - name: Nuitka build
+        env:
+          PYTHONWARNDEFAULTENCODING: 0
+        shell: cmd
+        run: .github\scripts\win\nuitka-build.bat
+
+      - name: Copy assets
+        shell: cmd
+        run: python3 .github\scripts\win\copy_assets.py
+
+      - name: Pack to zip before uploading
+        shell: cmd
+        working-directory: ${{ env.DIST_DIR }}\main.dist
+        run: |
+          7z a -tzip ..\..\${{ env.FILENAME_BASE }}-dist.zip .
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
+          name: ${{ env.FILENAME_BASE }}
+          if-no-files-found: error
+          path: |
+            ${{ env.FILENAME_BASE }}-dist.zip
+            
+      - name: Create Inno Installer
+        shell: cmd
+        run: >-
+          iscc .github/scripts/win/inno_setup.iss
+          /DMyAppVersion="${{ env.VERSION }}"
+          /DSourceFilesGlob="${{ github.workspace }}\${{ env.DIST_DIR }}\main.dist\*"
+          /DLicenseFile="${{ github.workspace }}\LICENSE"
+          /O${{ github.workspace }}\Output
+          
+      - name: Upload Inno Installer EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FILENAME_BASE }}-installer
+          if-no-files-found: error
+          path: |
+            Output\*.exe
+            
+  release:
+    if: true
+    needs: [build_windows_x64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          # ref: build-release # comment out before merge
+
+      - name: Set release vars
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> $GITHUB_ENV
+          echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: List generated artifacts
+        run: |
+          pwd
+          echo ${{ github.workspace }}/artifacts
+          find ${{ github.workspace }}/artifacts
+            
+      - name: make release
+        uses: ncipollo/release-action@v1
+        # https://github.com/ncipollo/release-action
+        with:
+          name: ${{ env.VERSION }}
+          artifacts: "artifacts/*.zip,artifacts/*.exe"
+          artifactContentType: application/zip
+          generateReleaseNotes: true
+          makeLatest: true
+          allowUpdates: true
+          tag: ${{ env.VERSION }}
