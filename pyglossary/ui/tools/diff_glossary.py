@@ -13,14 +13,15 @@ from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.ui.tools.colors import (
+
+from .colors import (
 	green,
 	red,
 	reset,
 	yellow,
 )
-from pyglossary.ui.tools.format_entry import formatEntry
-from pyglossary.ui.tools.word_diff import (
+from .format_entry import formatEntry
+from .word_diff import (
 	formatDiff,
 	xmlDiff,
 )

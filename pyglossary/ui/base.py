@@ -29,7 +29,8 @@ from pyglossary.core import (
 	dataDir,
 	rootConfJsonFile,
 )
-from pyglossary.ui.config import configDefDict
+
+from .config import configDefDict
 
 __all__ = ["UIBase", "aboutText", "authors", "fread", "licenseText", "logo"]
 

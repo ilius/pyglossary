@@ -29,8 +29,9 @@ from typing import TYPE_CHECKING, Any, cast
 
 from pyglossary import core, logger  # essential
 from pyglossary.langs import langDict
-from pyglossary.ui.argparse_main import configFromArgs, defineFlags, validateFlags
-from pyglossary.ui.base import UIBase
+
+from .argparse_main import configFromArgs, defineFlags, validateFlags
+from .base import UIBase
 
 if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
@@ -163,7 +164,7 @@ def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:  # no
 	# parser.conflict_handler == "error"
 
 	if args.version:
-		from pyglossary.ui.version import getVersion
+		from .version import getVersion
 
 		print(f"PyGlossary {getVersion()}")
 		return True, None
@@ -197,7 +198,8 @@ def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:  # no
 	##############################
 
 	from pyglossary.glossary_v2 import Glossary
-	from pyglossary.ui.ui_cmd import printHelp
+
+	from .ui_cmd import printHelp
 
 	Glossary.init()
 
@@ -212,7 +214,7 @@ def mainPrepare(argv: list[str]) -> tuple[bool, MainPrepareResult | None]:  # no
 		printHelp()
 		return True, None
 
-	from pyglossary.ui.option_ui import (
+	from .option_ui import (
 		evaluateReadOptions,
 		evaluateWriteOptions,
 		parseReadWriteOptions,
@@ -279,7 +281,7 @@ def mainNoExit(argv: list[str]) -> int:  # noqa: PLR0912
 	if res is None:  # --version or --help
 		return 0
 
-	from pyglossary.ui.runner import getRunner
+	from .runner import getRunner
 
 	assert log
 	run = getRunner(res.args, res.uiType, log)

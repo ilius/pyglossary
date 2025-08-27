@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING, Any
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
-from pyglossary.ui.ui_web.websocket_main import create_server
+
+from .websocket_main import create_server
 
 if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType

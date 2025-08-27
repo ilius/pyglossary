@@ -34,11 +34,11 @@ from pyglossary.ui.base import (
 	licenseText,
 	logo,
 )
-from pyglossary.ui.ui_gtk4.console import ConvertConsole
-from pyglossary.ui.ui_gtk4.file_widgets import InputFileBox, OutputFileBox
 from pyglossary.ui.version import getVersion
 
 from .about import AboutWidget
+from .console import ConvertConsole
+from .file_widgets import InputFileBox, OutputFileBox
 from .format_widgets import InputFormatBox, OutputFormatBox
 from .general_options import GeneralOptionsButton
 from .utils import (

@@ -64,8 +64,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
 	from typing import Any
 
-	from pyglossary.config_type import ConfigType
-
+	from .config_type import ConfigType
 	from .entry_base import MultiStr
 	from .entry_filters import EntryFilterType
 	from .glossary_types import (

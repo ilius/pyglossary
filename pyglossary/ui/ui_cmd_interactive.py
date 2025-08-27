@@ -74,9 +74,10 @@ from pyglossary import core
 from pyglossary.core import confDir
 from pyglossary.glossary_v2 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
-from pyglossary.ui import ui_cmd
-from pyglossary.ui.config import configDefDict
-from pyglossary.ui.termcolors import colors
+
+from . import ui_cmd
+from .config import configDefDict
+from .termcolors import colors
 
 if TYPE_CHECKING:
 	from collections.abc import Iterable
