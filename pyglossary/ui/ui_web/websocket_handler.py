@@ -40,7 +40,8 @@ from typing import TYPE_CHECKING
 from urllib.parse import unquote
 
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.ui.ui_web.websocket_server import (
+
+from .websocket_server import (
 	CLOSE_STATUS_NORMAL,
 	DEFAULT_CLOSE_REASON,
 	FIN,

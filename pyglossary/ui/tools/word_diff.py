@@ -5,7 +5,7 @@ import re
 import sys
 from typing import TYPE_CHECKING
 
-from pyglossary.ui.tools.colors import green, red, reset
+from .colors import green, red, reset
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator

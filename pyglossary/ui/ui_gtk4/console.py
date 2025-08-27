@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING
 
 from gi.repository import Gtk as gtk
 
-from pyglossary.ui.ui_gtk4.log_handler import GtkSingleTextviewLogHandler
-from pyglossary.ui.ui_gtk4.utils import rgba_parse
+from .log_handler import GtkSingleTextviewLogHandler
+from .utils import rgba_parse
 
 if TYPE_CHECKING:
 	import logging
 
-	from pyglossary.ui.ui_gtk4.log_handler import MainWinType
+	from .log_handler import MainWinType
 
 
 class ConvertConsole(gtk.ScrolledWindow):

@@ -32,9 +32,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
 
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.ui.ui_web.weblog import WebLogHandler
-from pyglossary.ui.ui_web.websocket_handler import HTTPWebSocketHandler
-from pyglossary.ui.ui_web.websocket_server import HttpWebsocketServer
+
+from .weblog import WebLogHandler
+from .websocket_handler import HTTPWebSocketHandler
+from .websocket_server import HttpWebsocketServer
 
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType
