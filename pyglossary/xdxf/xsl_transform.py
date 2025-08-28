@@ -4,8 +4,7 @@ import logging
 from os.path import join
 from typing import TYPE_CHECKING
 
-from pyglossary import core
-from pyglossary.core import rootDir
+from pyglossary.core import pip, rootDir
 
 if TYPE_CHECKING:
 	from lxml.etree import _XSLTResultTree
@@ -28,7 +27,7 @@ class XslXdxfTransformer:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
-			e.msg += f", run `{core.pip} install lxml` to install"
+			e.msg += f", run `{pip} install lxml` to install"
 			raise e
 
 		with open(

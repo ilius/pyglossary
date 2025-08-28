@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any
 from gi.repository import Gio as gio
 from gi.repository import Gtk as gtk
 
-from pyglossary import core
+from pyglossary.core import pip
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.ui.dependency import checkDepends
 
@@ -732,7 +732,7 @@ class FormatBox(gtk.Box):
 			print("All dependencies are stattisfied for " + formatName)
 			return
 		pkgNamesStr = " ".join(pkgNames)
-		msg = f"Run the following command:\n{core.pip} install {pkgNamesStr}"
+		msg = f"Run the following command:\n{pip} install {pkgNamesStr}"
 		showInfo(
 			msg,
 			title="Dependencies for " + formatName,

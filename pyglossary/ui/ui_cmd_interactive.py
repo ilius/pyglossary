@@ -70,8 +70,7 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.shortcuts import PromptSession, confirm
 
-from pyglossary import core
-from pyglossary.core import confDir
+from pyglossary.core import confDir, noColor
 from pyglossary.glossary_v2 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 
@@ -401,7 +400,7 @@ class UI(ui_cmd.UI):
 	) -> tuple[str, bool]:
 		indent_ = self.promptIndentStr * level
 
-		if core.noColor:
+		if noColor:
 			return f"{indent_} {msg}{colon} ", False
 
 		if self.promptIndentColor >= 0:
@@ -419,7 +418,7 @@ class UI(ui_cmd.UI):
 		colon: str = ":",
 	) -> StyleAndTextTuples:
 		indent_ = self.promptIndentStr * level
-		if core.noColor:
+		if noColor:
 			return [("", f"{indent_} {msg}{colon} ")]
 
 		indentStyle = ""

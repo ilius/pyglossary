@@ -24,8 +24,7 @@ from __future__ import annotations
 
 import re
 
-from pyglossary import core
-from pyglossary.core import log
+from pyglossary.core import isDebug, log
 from pyglossary.xml_utils import xml_escape
 
 __all__ = [
@@ -65,7 +64,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: re.Match) -> str:
 
 	u_text = u_match.group(0)
 	u_name = u_match.group(1)
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 		assert isinstance(u_name, str), f"{u_name=}"
 
@@ -137,7 +136,7 @@ def replaceHtmlEntries(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
 	# &#x010b;
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_html_entry.sub(
 		replaceHtmlEntryCB,
@@ -149,7 +148,7 @@ def replaceHtmlEntriesInKeys(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
 	# &#x010b;
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_html_entry_key.sub(
 		replaceHtmlEntryNoEscapeCB,
@@ -163,7 +162,7 @@ def escapeNewlines(u_text: str) -> str:
 	\ -> \\
 	new line -> \n or \r.
 	"""
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_newline_escape.sub(
 		escapeNewlinesCallback,
@@ -172,7 +171,7 @@ def escapeNewlines(u_text: str) -> str:
 
 
 def stripHtmlTags(u_text: str) -> str:
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_strip_tags.sub(
 		" ",
@@ -185,7 +184,7 @@ def removeControlChars(u_text: str) -> str:
 	# \x0a - line feed
 	# \x0b - vertical tab
 	# \x0d - carriage return
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_control_chars.sub(
 		"",
@@ -194,7 +193,7 @@ def removeControlChars(u_text: str) -> str:
 
 
 def removeNewlines(u_text: str) -> str:
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_newline.sub(
 		" ",
@@ -204,7 +203,7 @@ def removeNewlines(u_text: str) -> str:
 
 def normalizeNewlines(u_text: str) -> str:
 	"""Convert new lines to unix style and remove consecutive new lines."""
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_pat_newline.sub(
 		"\n",
@@ -215,7 +214,7 @@ def normalizeNewlines(u_text: str) -> str:
 def replaceAsciiCharRefs(b_text: bytes) -> bytes:
 	# &#0147;
 	# &#x010b;
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(b_text, bytes), f"{b_text=}"
 	b_parts = b_pat_ascii_char_ref.split(b_text)
 	for i_part, b_part in enumerate(b_parts):
@@ -253,13 +252,13 @@ def fixImgLinks(u_text: str) -> str:
 	Control characters \x1e and \x1f are useless in html text, so we may
 	safely remove all of them, irrespective of context.
 	"""
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(u_text, str), f"{u_text=}"
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
 def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
-	if core.isDebug():
+	if isDebug():
 		assert isinstance(b_word, bytes), f"{b_word=}"
 	i = 0
 	b_word_main = b""

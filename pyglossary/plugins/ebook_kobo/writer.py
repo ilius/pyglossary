@@ -27,8 +27,7 @@ from pathlib import Path
 from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
-from pyglossary import core
-from pyglossary.core import exc_note, log, pip
+from pyglossary.core import exc_note, log, pip, trace
 from pyglossary.os_utils import indir
 
 if TYPE_CHECKING:
@@ -131,7 +130,7 @@ class Writer:
 			nonlocal htmlContents
 			group_fname = _fixFilename(lastPrefix)
 			htmlContents += "</html>"
-			core.trace(
+			trace(
 				log,
 				f"writeGroup: {lastPrefix!r}, {group_fname!r}, count={groupCounter}",
 			)

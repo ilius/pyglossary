@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING, Any
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
 
-from pyglossary import core
+from pyglossary.core import homePage
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import (
@@ -295,7 +295,7 @@ progressbar progress, trough {min-height: 0.6em;}
 			logo=logo,
 			header=f"PyGlossary\nVersion {getVersion()}",
 			# about=summary,
-			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
+			about=f'{aboutText}\n<a href="{homePage}">{homePage}</a>',
 			authors="\n".join(authors),
 			license_text=licenseText,
 		)

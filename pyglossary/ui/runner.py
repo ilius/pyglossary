@@ -4,7 +4,7 @@ import os
 import sys
 from typing import TYPE_CHECKING
 
-from pyglossary import core
+from pyglossary.core import sysName
 from pyglossary.glossary_v2 import Error
 
 from .base import UIBase
@@ -19,17 +19,17 @@ if TYPE_CHECKING:
 
 
 ui_list = ["gtk3", "gtk4", "tk", "web"]
-if os.sep == "\\" or core.sysName == "darwin":  # windows or mac
+if os.sep == "\\" or sysName == "darwin":  # windows or mac
 	ui_list = ["tk", "gtk3", "gtk4", "web"]
 
 log: logging.Logger | None = None
 
 
 def canRunGUI() -> bool:
-	if core.sysName == "linux":
+	if sysName == "linux":
 		return bool(os.getenv("DISPLAY"))
 
-	if core.sysName == "darwin":
+	if sysName == "darwin":
 		try:
 			import tkinter  # noqa: F401
 		except ModuleNotFoundError:

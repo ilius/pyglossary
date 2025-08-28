@@ -22,10 +22,7 @@ from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
-from pyglossary.core import (
-	cacheDir,
-	pip,
-)
+from pyglossary.core import cacheDir, pip
 from pyglossary.flags import (
 	ALWAYS,
 	DEFAULT_NO,

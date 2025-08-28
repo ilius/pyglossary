@@ -26,9 +26,8 @@ from zlib import decompress
 
 from lxml import etree
 
-from pyglossary import core
 from pyglossary.apple_utils import substituteAppleCSS
-from pyglossary.core import exc_note, log, pip
+from pyglossary.core import exc_note, log, pip, trace
 from pyglossary.io_utils import nullBinaryIO
 
 from .appledict_file_tools import (
@@ -650,7 +649,7 @@ class Reader:
 				continue
 
 			fname2 = self.fixResFilename(fname, relPath)
-			core.trace(log, f"Using resource {fpath!r} as {fname2!r}")
+			trace(log, f"Using resource {fpath!r} as {fname2!r}")
 			yield self.readResFile(fname2, fpath, ext)
 
 	def __iter__(self) -> Iterator[EntryType]:

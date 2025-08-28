@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Any
 
 import gi
 
-from pyglossary import core
+from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
@@ -660,7 +660,7 @@ class FormatBox(FormatButton):
 			print("All dependencies are stattisfied for " + formatName)
 			return
 		pkgNamesStr = " ".join(pkgNames)
-		msg = f"Run the following command:\n{core.pip} install {pkgNamesStr}"
+		msg = f"Run the following command:\n{pip} install {pkgNamesStr}"
 		showInfo(
 			msg,
 			title="Dependencies for " + formatName,
@@ -1293,7 +1293,7 @@ class MainWindow(gtk.Dialog, MyDialog):
 			logo=logo,
 			header=f"PyGlossary\nVersion {getVersion()}",
 			# about=summary,
-			about=f'{aboutText}\n<a href="{core.homePage}">{core.homePage}</a>',
+			about=f'{aboutText}\n<a href="{homePage}">{homePage}</a>',
 			authors="\n".join(authors),
 			license_text=licenseText,
 		)

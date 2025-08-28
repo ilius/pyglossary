@@ -27,8 +27,7 @@ from tkinter import filedialog, ttk
 from tkinter import font as tkFont
 from typing import TYPE_CHECKING, Any, Literal
 
-from pyglossary import core
-from pyglossary.core import confDir, homeDir
+from pyglossary.core import confDir, homeDir, homePage, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.text_utils import urlToPath
 
@@ -1008,7 +1007,7 @@ class UI(tk.Frame, UIBase):
 		# rootWin.bind("<Configure>", self.resized)
 		#######################
 		defaultFont = tkFont.nametofont("TkDefaultFont")
-		if core.sysName in {"linux", "freebsd"}:
+		if sysName in {"linux", "freebsd"}:
 			defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
 		####
 		self.bigFont = defaultFont.copy()
@@ -1245,7 +1244,7 @@ class UI(tk.Frame, UIBase):
 		aboutAboutFrame = ttk.Frame()
 		newReadOnlyText(
 			aboutAboutFrame,
-			text=f"{aboutText}\nHome page: {core.homePage}",
+			text=f"{aboutText}\nHome page: {homePage}",
 			font=("DejaVu Sans", 11, ""),
 		).pack(fill="both", expand=True)
 		aboutAboutFrame.pack(side="top", fill="x")
