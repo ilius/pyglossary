@@ -9,4 +9,4 @@ rootDir=$(dirname "$myDir1")
 # So there is no way of passing a filename with spaces
 # That's why I changed `python` to `python3` to avoid pyenv
 
-PYTHONPATH=$rootDir python3 "$rootDir/pyglossary/ui/tools/view_glossary.py" "$@"
+PYTHONPATH=$rootDir python3 -m "pyglossary.ui.tools.view_glossary" "$@"
