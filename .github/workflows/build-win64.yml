@@ -50,26 +50,19 @@ jobs:
 
       - name: "create and activate venv"
         shell: cmd
-        run: |
-          python3 -m venv .venv && .venv\Scripts\activate.bat
+        run: python3 -m venv .venv && .venv\Scripts\activate.bat
 
       - name: Patch sources for nuitka build
         shell: cmd
-        run: |
-          python3 .github\scripts\mac\patch_sources.py
-          
+        run: python3 .github\scripts\mac\patch_sources.py
+
       - name: "install nuitka"
         shell: cmd
-        run: |
-          python3 -m pip install nuitka
+        run: python3 -m pip install nuitka
 
       - name: "Install Dependencies"
         shell: cmd
-        ## FIXME TODO: ************* replace with self-hosted WHLS *************
-        ## TODO build python-lzo from source
-        run: |
-          python3 -m pip install https://github.com/cgohlke/pyicu-build/releases/download/v2.15/PyICU-2.15-cp313-cp313-win_amd64.whl
-          python3 -m pip install -r requirements.txt 
+        run: python3 .github\scripts\win\install-deps.py
 
       - name: Nuitka build
         env:
