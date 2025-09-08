@@ -32,6 +32,8 @@ from pyglossary.option import (
 if TYPE_CHECKING:
 	from pyglossary.option import Option
 
+__all__ = ["configDefDict"]
+
 _entryFilterConfigDict = {
 	configParam: (filterClass, default)
 	for configParam, default, filterClass in entryFiltersRules

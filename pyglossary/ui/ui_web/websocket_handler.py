@@ -63,6 +63,7 @@ if TYPE_CHECKING:
 	import socketserver
 	from typing import Any
 
+__all__ = ["HTTPWebSocketHandler"]
 
 log = logging.getLogger("pyglossary.web.server")
 

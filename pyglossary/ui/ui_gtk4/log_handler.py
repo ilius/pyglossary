@@ -27,6 +27,8 @@ from gi.repository import Gtk as gtk
 if TYPE_CHECKING:
 	from gi.repository import Gdk as gdk
 
+__all__ = ["GtkSingleTextviewLogHandler", "MainWinType"]
+
 log = logging.getLogger("pyglossary")
 
 

@@ -31,6 +31,24 @@ from http.server import HTTPServer
 from socketserver import ThreadingMixIn
 from typing import TYPE_CHECKING, Any, Protocol
 
+__all__ = [
+	"CLOSE_STATUS_NORMAL",
+	"DEFAULT_CLOSE_REASON",
+	"FIN",
+	"MASKED",
+	"OPCODE",
+	"OPCODE_BINARY",
+	"OPCODE_CLOSE_CONN",
+	"OPCODE_CONTINUATION",
+	"OPCODE_PING",
+	"OPCODE_PONG",
+	"OPCODE_TEXT",
+	"PAYLOAD_LEN",
+	"PAYLOAD_LEN_EXT16",
+	"PAYLOAD_LEN_EXT64",
+	"HttpWebsocketServer",
+]
+
 if TYPE_CHECKING:
 	import logging
 	from collections.abc import Callable

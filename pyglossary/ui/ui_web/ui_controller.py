@@ -14,6 +14,8 @@ from .websocket_main import create_server
 if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
 
+__all__ = ["WebUI"]
+
 log = logging.getLogger("pyglossary.web")
 
 HOST = "127.0.0.1"

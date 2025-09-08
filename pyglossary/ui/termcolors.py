@@ -1,5 +1,7 @@
 from collections import namedtuple
 
+__all__ = ["colors"]
+
 ColorProp = namedtuple(
 	"ColorProp",
 	(

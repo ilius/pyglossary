@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 
+__all__ = ["StoreConstAction"]
+
 
 class StoreConstAction(argparse.Action):
 	def __init__(

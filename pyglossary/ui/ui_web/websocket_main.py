@@ -45,6 +45,8 @@ if TYPE_CHECKING:
 		def shutdown(self) -> None: ...
 
 
+__all__ = ["create_server"]
+
 MAX_IMAGE_SIZE = 512000
 DEFAULT_MAX_BROWSE_ENTRIES = 42
 

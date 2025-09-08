@@ -28,6 +28,8 @@ from .utils import pack
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+__all__ = ["InputFileBox", "OutputFileBox"]
+
 _ = str  # later replace with translator function
 
 

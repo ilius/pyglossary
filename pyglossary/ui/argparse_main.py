@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.config_type import ConfigType
 
+__all__ = ["configFromArgs", "defineFlags", "validateFlags"]
+
 
 def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 	osType = "windows" if os.sep == "\\" else "unix"

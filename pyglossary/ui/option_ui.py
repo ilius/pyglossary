@@ -10,6 +10,13 @@ if TYPE_CHECKING:
 
 	from pyglossary.option import Option
 
+__all__ = [
+	"evaluateReadOptions",
+	"evaluateWriteOptions",
+	"parseReadWriteOptions",
+	"registerConfigOption",
+]
+
 
 def registerConfigOption(
 	parser: argparse.ArgumentParser,

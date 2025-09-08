@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 	from .log_handler import MainWinType
 
+__all__ = ["ConvertConsole"]
+
 
 class ConvertConsole(gtk.ScrolledWindow):
 	def __init__(

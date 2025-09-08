@@ -28,6 +28,8 @@ import logging
 import traceback
 from typing import TYPE_CHECKING, Protocol
 
+__all__ = ["WebLogHandler"]
+
 if TYPE_CHECKING:
 
 	class ServerType(Protocol):

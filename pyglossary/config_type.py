@@ -1,5 +1,7 @@
 from typing import NotRequired, TypedDict
 
+__all__ = ["ConfigType"]
+
 # NotRequired is added in Python 3.11
 
 

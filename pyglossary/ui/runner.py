@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.config_type import ConfigType
 
+__all__ = ["getRunner"]
 
 ui_list = ["gtk3", "gtk4", "tk", "web"]
 if os.sep == "\\" or sysName == "darwin":  # windows or mac
