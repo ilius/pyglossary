@@ -321,16 +321,6 @@ def salsa20_wordtobyte(input_, nRounds=20, checkRounds=True):
 # --------------------------- 32-bit ops -------------------------------
 
 
-def trunc32(w):
-	"""
-	Return the bottom 32 bits of w as a Python int.
-	This creates longs temporarily, but returns an int.
-	"""
-	w = int((w & 0x7FFFFFFF) | -(w & 0x80000000))
-	assert isinstance(w, int), f"{w=}"
-	return w
-
-
 def add32(a, b):
 	"""
 	Add two 32-bit words discarding carry above 32nd bit,

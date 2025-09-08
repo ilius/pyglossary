@@ -20,7 +20,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from pyglossary.ebook_base import EbookWriter
 
@@ -178,20 +178,6 @@ p.groupDefinition {
 			self,
 			glos,
 		)
-
-	@classmethod
-	def cls_get_prefix(
-		cls: type[EbookWriter],
-		options: dict[str, Any],
-		word: str,
-	) -> str:
-		if not word:
-			return ""
-		length = options.get("group_by_prefix_length", cls._group_by_prefix_length)
-		prefix = word[:length].lower()
-		if prefix[0] < "a":
-			return "SPECIAL"
-		return prefix
 
 	def get_prefix(self, word: str) -> str:
 		if not word:

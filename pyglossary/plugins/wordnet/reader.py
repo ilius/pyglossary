@@ -58,9 +58,9 @@ class SynSet:
 	def offset(self) -> int:
 		return int(self.meta_parts[0])
 
-	@property
-	def lex_filenum(self) -> str:
-		return self.meta_parts[1]
+	# @property
+	# def lex_filenum(self) -> str:
+	# 	return self.meta_parts[1]
 
 	@property
 	def ss_type(self) -> str:

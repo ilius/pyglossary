@@ -120,18 +120,6 @@ def replaceHtmlEntryCB(u_match: re.Match) -> str:
 # 	return chr(code)
 
 
-def escapeNewlinesCallback(u_match: re.Match) -> str:
-	"""u_match: instance of _sre.SRE_Match."""
-	ch = u_match.group(0)
-	if ch == "\n":
-		return "\\n"
-	if ch == "\r":
-		return "\\r"
-	if ch == "\\":
-		return "\\\\"
-	return ch
-
-
 def replaceHtmlEntries(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
@@ -156,18 +144,29 @@ def replaceHtmlEntriesInKeys(u_text: str) -> str:
 	)
 
 
-def escapeNewlines(u_text: str) -> str:
-	r"""
-	Convert text to c-escaped string:
-	\ -> \\
-	new line -> \n or \r.
-	"""
-	if isDebug():
-		assert isinstance(u_text, str), f"{u_text=}"
-	return u_pat_newline_escape.sub(
-		escapeNewlinesCallback,
-		u_text,
-	)
+# def escapeNewlines(u_text: str) -> str:
+# 	r"""
+# 	Convert text to c-escaped string:
+# 	\ -> \\
+# 	new line -> \n or \r.
+# 	"""
+# 	if isDebug():
+# 		assert isinstance(u_text, str), f"{u_text=}"
+# 	return u_pat_newline_escape.sub(
+# 		escapeNewlinesCallback,
+# 		u_text,
+# 	)
+
+# def escapeNewlinesCallback(u_match: re.Match) -> str:
+# 	"""u_match: instance of _sre.SRE_Match."""
+# 	ch = u_match.group(0)
+# 	if ch == "\n":
+# 		return "\\n"
+# 	if ch == "\r":
+# 		return "\\r"
+# 	if ch == "\\":
+# 		return "\\\\"
+# 	return ch
 
 
 def stripHtmlTags(u_text: str) -> str:

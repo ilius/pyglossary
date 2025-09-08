@@ -1423,38 +1423,38 @@ class Writer:
 		self.tmpdir.cleanup()
 		self._fire_event("end_finalize")
 
-	def size_header(self) -> int:
-		size = 0
-		size += len(MAGIC)
-		size += 16  # uuid bytes
-		size += U_CHAR_SIZE + len(self.encoding.encode(UTF8))
-		size += U_CHAR_SIZE + len(self.compression.encode(self.encoding))
+	# def size_header(self) -> int:
+	# 	size = 0
+	# 	size += len(MAGIC)
+	# 	size += 16  # uuid bytes
+	# 	size += U_CHAR_SIZE + len(self.encoding.encode(UTF8))
+	# 	size += U_CHAR_SIZE + len(self.compression.encode(self.encoding))
 
-		size += U_CHAR_SIZE  # tag length
-		size += U_CHAR_SIZE  # content types count
+	# 	size += U_CHAR_SIZE  # tag length
+	# 	size += U_CHAR_SIZE  # content types count
 
-		# tags and content types themselves counted elsewhere
+	# 	# tags and content types themselves counted elsewhere
 
-		size += U_INT_SIZE  # blob count
-		size += U_LONG_LONG_SIZE  # store offset
-		size += U_LONG_LONG_SIZE  # file size
-		size += U_INT_SIZE  # ref count
-		size += U_INT_SIZE  # bin count
+	# 	size += U_INT_SIZE  # blob count
+	# 	size += U_LONG_LONG_SIZE  # store offset
+	# 	size += U_LONG_LONG_SIZE  # file size
+	# 	size += U_INT_SIZE  # ref count
+	# 	size += U_INT_SIZE  # bin count
 
-		return size
+	# 	return size
 
-	def size_tags(self) -> int:
-		size = 0
-		for key in self.tags:
-			size += U_CHAR_SIZE + len(key.encode(self.encoding))
-			size += 255
-		return size
+	# def size_tags(self) -> int:
+	# 	size = 0
+	# 	for key in self.tags:
+	# 		size += U_CHAR_SIZE + len(key.encode(self.encoding))
+	# 		size += 255
+	# 	return size
 
-	def size_content_types(self) -> int:
-		size = 0
-		for content_type in self.content_types:
-			size += U_CHAR_SIZE + len(content_type.encode(self.encoding))
-		return size
+	# def size_content_types(self) -> int:
+	# 	size = 0
+	# 	for content_type in self.content_types:
+	# 		size += U_CHAR_SIZE + len(content_type.encode(self.encoding))
+	# 	return size
 
 	def size_data(self) -> int:
 		files = (

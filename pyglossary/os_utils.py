@@ -180,14 +180,14 @@ def showMemoryUsage() -> None:
 	trace(log, f"Memory Usage: {usage:,} kB")
 
 
-def listFilesRecursive(direc: str) -> Iterable[str]:
-	"""
-	Iterate over full paths of all files (directly/indirectly)
-	inside given directory.
-	"""
-	for root, _subDirs, files in os.walk(direc):
-		for fname in files:
-			yield join(root, fname)
+# def listFilesRecursive(direc: str) -> Iterable[str]:
+# 	"""
+# 	Iterate over full paths of all files (directly/indirectly)
+# 	inside given directory.
+# 	"""
+# 	for root, _subDirs, files in os.walk(direc):
+# 		for fname in files:
+# 			yield join(root, fname)
 
 
 def listFilesRecursiveRelPath(direc: str) -> Iterable[str]:
