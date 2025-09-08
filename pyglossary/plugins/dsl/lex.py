@@ -269,7 +269,18 @@ def lexTagS(tr: TransformerType) -> tuple[LexType, ErrorType]:
 				'<param name="autoplay" value="false" />'
 				"</object>"
 			)
-	elif ext in {"jpg", "jpeg", "gif", "tif", "tiff", "png", "bmp", "webp"}:
+	elif ext in {
+		"bmp",
+		"gif",
+		"ico",
+		"jpeg",
+		"jpg",
+		"png",
+		"svg",
+		"tif",
+		"tiff",
+		"webp",
+	}:
 		tr.addHtml(rf'<img align="top" src="{fname}" alt="{fname}" />')
 	else:
 		log.warning(f"unknown file extension in {fname!r}")
