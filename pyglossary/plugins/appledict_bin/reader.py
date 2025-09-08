@@ -518,12 +518,12 @@ class Reader:
 			buff.seek(bufferOffset)
 			next_section_jump = readInt(buff)
 			if properties.key_text_compression_type == 0:
-				big_len = readInt(buff)  # noqa: F841
+				readInt(buff)  # returns big_len
 			# number of lexemes
 			wordFormCount = read_2_bytes_here(buff)  # 0x01
 			next_lexeme_offset: int = 0
 			for _ in range(wordFormCount):
-				_ = read_2_bytes_here(buff)  # 0x00
+				read_2_bytes_here(buff)  # result is in (0, 22, 24, 28) ???
 				# TODO might be 1 or 2 or more zeros
 				if next_lexeme_offset != 0:
 					buff.seek(next_lexeme_offset)
@@ -685,7 +685,7 @@ class Reader:
 			next_section_jump = readInt(body_file)
 			data_byte_len = readInt(body_file)
 			if properties.body_compression_type > 0:
-				decompressed_byte_len = readInt(body_file)  # noqa: F841
+				readInt(body_file)  # returns decompressed_byte_len
 				decompressed_bytes = body_file.read(data_byte_len - 4)
 				buffer = decompress(decompressed_bytes)
 			else:

@@ -457,7 +457,7 @@ class UI(ui_cmd.UI):
 		)
 
 		@bindings.add(" ")
-		def space(_event: KeyPressEvent) -> None:
+		def _space(_event: KeyPressEvent) -> None:
 			check.value = not check.value
 			# cursor_pos = check.formatMessage().find("[") + 1
 			# cur_cursor_pos = session.default_buffer.cursor_position

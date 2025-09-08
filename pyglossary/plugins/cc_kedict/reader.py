@@ -291,7 +291,7 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		try:
-			from lxml import etree as ET  # noqa: F401
+			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
 			exc_note(e, f"Run `{pip} install lxml` to install")
 			raise

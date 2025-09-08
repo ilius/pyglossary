@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Mapping
-from contextlib import AbstractAsyncContextManager as AsyncContextManager
 from contextlib import AbstractContextManager as ContextManager
 from typing import AnyStr, Literal, TypeAlias
 
@@ -41,17 +40,17 @@ Element = _Element
 
 
 class IncrementalFileWriter(typing.Protocol):
-	def write_declaration(
-		self,
-		version: AnyStr | None = ...,
-		standalone: bool | None = ...,
-		doctype: AnyStr | None = ...,
-	) -> None: ...
+	# def write_declaration(
+	# 	self,
+	# 	version: AnyStr | None = ...,
+	# 	standalone: bool | None = ...,
+	# 	doctype: AnyStr | None = ...,
+	# ) -> None: ...
 
-	def write_doctype(
-		self,
-		doctype: AnyStr | None,
-	) -> None: ...
+	# def write_doctype(
+	# 	self,
+	# 	doctype: AnyStr | None,
+	# ) -> None: ...
 
 	def write(
 		self,
@@ -80,44 +79,42 @@ class IncrementalFileWriter(typing.Protocol):
 		raise NotImplementedError
 
 
-class AsyncIncrementalFileWriter(typing.Protocol):
-	async def write_declaration(
-		self,
-		version: AnyStr | None = ...,
-		standalone: bool | None = ...,
-		doctype: AnyStr | None = ...,
-	) -> None: ...
+# class AsyncIncrementalFileWriter(typing.Protocol):
+# 	async def write_declaration(
+# 		self,
+# 		version: AnyStr | None = ...,
+# 		standalone: bool | None = ...,
+# 		doctype: AnyStr | None = ...,
+# 	) -> None: ...
 
-	async def write_doctype(
-		self,
-		doctype: AnyStr | None,
-	) -> None: ...
+# 	async def write_doctype(
+# 		self,
+# 		doctype: AnyStr | None,
+# 	) -> None: ...
 
-	async def write(
-		self,
-		*args: AnyStr | Element | None,
-		with_tail: bool = ...,
-		pretty_print: bool = ...,
-		method: _OutputMethodArg | None = ...,
-	) -> None: ...
+# 	async def write(
+# 		self,
+# 		*args: AnyStr | Element | None,
+# 		with_tail: bool = ...,
+# 		pretty_print: bool = ...,
+# 		method: _OutputMethodArg | None = ...,
+# 	) -> None: ...
 
-	async def flush(self) -> None: ...
+# 	async def flush(self) -> None: ...
 
-	def method(
-		self,
-		method: _OutputMethodArg | None,
-	) -> AsyncContextManager[None]:
-		raise NotImplementedError
+# 	def method(
+# 		self,
+# 		method: _OutputMethodArg | None,
+# 	) -> AsyncContextManager[None]: ...
 
-	def element(
-		self,
-		tag: _TagName,
-		attrib: Mapping[str, AnyStr] | None = ...,
-		nsmap: dict[str | None, AnyStr] | None = ...,
-		method: _OutputMethodArg | None = ...,
-		**_extra: AnyStr,
-	) -> AsyncContextManager[None]:
-		raise NotImplementedError
+# 	def element(
+# 		self,
+# 		tag: _TagName,
+# 		attrib: Mapping[str, AnyStr] | None = ...,
+# 		nsmap: dict[str | None, AnyStr] | None = ...,
+# 		method: _OutputMethodArg | None = ...,
+# 		**_extra: AnyStr,
+# 	) -> AsyncContextManager[None]: ...
 
 
 class T_htmlfile(  # type: ignore # noqa: PGH003

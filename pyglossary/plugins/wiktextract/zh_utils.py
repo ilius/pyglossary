@@ -154,11 +154,11 @@ def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
 	# Note that many item in data["sounds"] are not extracted properly
 	# in the first place, so only correctly extracted one will be rendered
 
-	# might need to adding more languages in the future
+	# might need for adding more languages in the future
 	# data from wiktextract does not provide the groupping
-	NORTHERN_MIN: Sequence[str] = ("Jian'ou",)  # noqa:F841
-	EASTERN_MIN: Sequence[str] = ("Fuzhou",)  # noqa:F841
-	SOUTHERN_MIN: Sequence[str] = ("Hokkien", "Teochew", "Leizhou")  # noqa:F841
+	# NORTHERN_MIN: Sequence[str] = ("Jian'ou",)  # noqa: F841
+	# EASTERN_MIN: Sequence[str] = ("Fuzhou",)  # noqa: F841
+	# SOUTHERN_MIN: Sequence[str] = ("Hokkien", "Teochew", "Leizhou")  # noqa: F841
 
 	# it seem like readings without specified phonetic system have default
 	# however, i'm not so sure and the list here is based purely on

@@ -31,31 +31,3 @@ class T_Collator(typing.Protocol):
 	def setStrength(self, strength: int) -> None: ...
 
 	def setAttribute(self, attr: int, value: int) -> None: ...
-
-
-class T_UCollAttribute(typing.Protocol):
-	ALTERNATE_HANDLING: int = 1
-	CASE_FIRST: int = 2
-	CASE_LEVEL: int = 3
-	DECOMPOSITION_MODE: int = 4
-	FRENCH_COLLATION: int = 0
-	HIRAGANA_QUATERNARY_MODE: int = 6
-	NORMALIZATION_MODE: int = 4
-	NUMERIC_COLLATION: int = 7
-	STRENGTH: int = 5
-
-
-class T_UCollAttributeValue(typing.Protocol):
-	DEFAULT: int = -1
-	DEFAULT_STRENGTH: int = 2
-	IDENTICAL: int = 15
-	LOWER_FIRST: int = 24
-	NON_IGNORABLE: int = 21
-	OFF: int = 16
-	ON: int = 17
-	PRIMARY: int = 0
-	QUATERNARY: int = 3
-	SECONDARY: int = 1
-	SHIFTED: int = 20
-	TERTIARY: int = 2
-	UPPER_FIRST: int = 25

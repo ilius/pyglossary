@@ -19,7 +19,7 @@ class Writer:
 
 	def write(self) -> Generator[None, EntryType, None]:
 		glos = self._glos
-		filename = self._filename  # noqa
+		# filename = self._filename
 		# log.info(f"some useful message")
 		while True:
 			entry = yield
@@ -28,8 +28,8 @@ class Writer:
 			if entry.isData():
 				# can save it with entry.save(directory)
 				continue
-			term = entry.s_term  # noqa
-			defi = entry.defi  # noqa
+			# term = entry.s_term
+			# defi = entry.defi
 			# here write word and defi to the output file (depending on
 			# your format)
 		# here read info from Glossaey object
@@ -39,6 +39,10 @@ class Writer:
 		copyright = glos.getInfo("copyright")  # noqa
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
+		print(f"{name=}")
+		print(f"{desc=}")
+		print(f"{author=}")
+		print(f"{copyright=}")
 
 	def finish(self) -> None:
 		self._filename = ""

@@ -224,8 +224,6 @@ class Salsa20:
 		ctx[6], ctx[7] = little2_i32.unpack(IV)
 		ctx[8], ctx[9] = 0, 0  # Reset the block counter.
 
-	setNonce = setIV  # support an alternate name
-
 	def setCounter(self, counter):
 		assert isinstance(counter, int), f"{counter=}"
 		assert 0 <= counter < 1 << 64, "counter < 0 or >= 2**64"
