@@ -4,8 +4,8 @@ A glossary contains a number of entries.
 
 Each entry contains:
 
-- Headword (title or main phrase for lookup)
-- Alternates (some alternative phrases for lookup)
+- Headword (title or main term/phrase for lookup)
+- Alternates (some alternative terms/phrases for lookup)
 - Definition / article
 
 Headword and alternates together are accessible as a single Python list `entry.l_term`, and `entry.l_term[0]` is the headword.
@@ -22,7 +22,7 @@ There is another type of entry which is called **Data Entry**, and generally con
 
 ## Entry filters
 
-Entry filters are internal objects that modify words/definition of entries,
+Entry filters are internal objects that modify terms/definition of entries,
 or remove entries (in some special cases).
 
 Like several filters in a pipe which connects a `reader` object to a `writer` object
