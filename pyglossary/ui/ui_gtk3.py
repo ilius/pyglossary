@@ -48,7 +48,6 @@ from gi.repository import GLib as glib
 
 from .gtk3_utils import gdk, gtk  # noqa: E402
 from .gtk3_utils.about import AboutWidget  # noqa: E402
-from .gtk3_utils.dialog import MyDialog  # noqa: E402
 from .gtk3_utils.resize_button import ResizeButton  # noqa: E402
 from .gtk3_utils.utils import (  # noqa: E402
 	HBox,
@@ -1123,7 +1122,7 @@ class UI(UIBase, gtk.Application):
 			gtk.main_iteration_do(False)
 
 
-class MainWindow(gtk.Dialog, MyDialog):
+class MainWindow(gtk.Dialog):
 	def status(self, msg: str) -> None:
 		# try:
 		# 	_id = self.statusMsgDict[msg]

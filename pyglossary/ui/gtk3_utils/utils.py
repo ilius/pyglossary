@@ -161,18 +161,6 @@ def showMsg(  # noqa: PLR0913
 	win.destroy()
 
 
-def showError(msg, **kwargs) -> None:  # noqa: ANN001
-	# gtk-dialog-error is deprecated since version 3.10:
-	# Use named icon “dialog-error”.
-	showMsg(msg, iconName="gtk-dialog-error", **kwargs)
-
-
-def showWarning(msg, **kwargs) -> None:  # noqa: ANN001
-	# gtk-dialog-warning is deprecated since version 3.10:
-	# Use named icon “dialog-warning”.
-	showMsg(msg, iconName="gtk-dialog-warning", **kwargs)
-
-
 def showInfo(msg, **kwargs) -> None:  # noqa: ANN001
 	# gtk-dialog-info is deprecated since version 3.10:
 	# Use named icon “dialog-information”.
