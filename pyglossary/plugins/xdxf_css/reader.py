@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # xdxf file format reader and utils to convert xdxf to html.
 #
-# Copyright © 2023 Saeed Rasooli
+# Copyright © 2025 Saeed Rasooli
 # Copyright © 2016 ivan tkachenko me@ratijas.tk
 #
 # some parts of this file include code from:

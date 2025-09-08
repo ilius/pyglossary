@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright © 2008-2019 Saeed Rasooli <saeed.gnu@gmail.com>
-# Copyright © 2007 Mehdi Bayazee <Bayazee@Gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
