@@ -22,6 +22,7 @@ from __future__ import annotations
 import html
 import html.entities
 import re
+import zipfile
 from os.path import abspath, dirname, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
@@ -284,14 +285,26 @@ class Reader:
 		if text_lines:
 			yield from self.parseEntryBlock(term_lines, text_lines)
 
+		resFileSet = self._resFileSet.copy()
+
+		resZipPath = self._filename + ".files.zip"
+		if isfile(resZipPath):
+			with zipfile.ZipFile(resZipPath, mode="r") as zf:
+				fnameList = zf.namelist()
+				resFileSet -= set(fnameList)
+				for fname in sorted(fnameList):
+					with zf.open(fname) as file:
+						data = file.read()
+					yield self._glos.newDataEntry(fname, data)
+
 		resDir = dirname(self._filename)
-		for fname in sorted(self._resFileSet):
+		for fname in sorted(resFileSet):
 			fpath = join(resDir, fname)
 			if not isfile(fpath):
 				log.warning(f"resource file not found: {fname}")
 				continue
-			with open(fpath, mode="rb") as _file:
-				data = _file.read()
+			with open(fpath, mode="rb") as file:
+				data = file.read()
 			yield self._glos.newDataEntry(fname, data)
 
 	def parseEntryBlock(  # noqa: PLR0912 Too many branches (14 > 12)
