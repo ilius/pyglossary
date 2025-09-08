@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# appledict/indexes/zh.py
 #
 # Copyright © 2016 ivan tkachenko me@ratijas.tk
 #

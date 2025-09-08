@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# text_utils.py
 #
 # Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #

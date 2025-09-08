@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# entry_list.py
 #
 # Copyright © 2020-2023 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary

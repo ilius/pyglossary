@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
-# ui_gtk.py
 #
 # Copyright © 2008-2022 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #

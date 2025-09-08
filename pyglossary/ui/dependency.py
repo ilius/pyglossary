@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# dependency.py
 #
 # Copyright © 2019-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary

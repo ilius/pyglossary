@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # mypy: ignore-errors
-# ui_tk.py
 #
 # Copyright © 2009-2021 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #
