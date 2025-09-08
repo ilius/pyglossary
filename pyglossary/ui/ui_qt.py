@@ -33,7 +33,7 @@ class UI(qt.QWidget, UIBase):
 		qt.QWidget.__init__(self)
 		UIBase.__init__(self)
 		self.setWindowTitle('PyGlossary (Qt)')
-		self.setWindowIcon(qt.QIcon(join(uiDir, 'pyglossary.png')))
+		self.setWindowIcon(qt.QIcon(logo))
 		######################
 		self.running = False
 		self.glos = Glossary(ui=self)
