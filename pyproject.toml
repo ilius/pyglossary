@@ -362,17 +362,29 @@ verbose = false
 exclude = ["pyglossary/ui/wcwidth/", "build/"]
 exclude_toplevel_module = [
 	"BeautifulSoup",
+	"biplist",
 	"bs4",
+	"colorize_pinyin",
 	"english_words",
 	"gi",
+	"html5lib",
+	"icu",
+	"libzim",
+	"lxml",
 	"lzo",
 	"mako",
+	"marisa_trie",
+	"mistune",
 	"packaging",
+	"polib",
+	"prompt_toolkit",
 	"psutil",
+	"pymorphy3",
 	"PyQt4",
 	"romkan",
-	"yaml",
 	"typing_extensions",
+	"xxhash",
+	"yaml",
 ]
 
 [tool.pyright]
