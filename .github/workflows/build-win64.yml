@@ -147,4 +147,5 @@ jobs:
           generateReleaseNotes: true
           makeLatest: true
           allowUpdates: true
+          omitBodyDuringUpdate: true # preserve the existing body during updates:
           tag: ${{ env.VERSION }}
