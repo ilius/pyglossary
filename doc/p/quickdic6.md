@@ -25,12 +25,12 @@
 
 ### Dependencies for reading
 
-PyPI Links: [PyICU](https://pypi.org/project/PyICU)
+PyPI Links: [pyicu](https://pypi.org/project/pyicu)
 
 To install, run:
 
 ```sh
-pip3 install PyICU
+pip3 install pyicu
 ```
 
 ### Dictionary Applications/Tools

@@ -78,10 +78,10 @@
 			"audio_goldendict": false
 		},
 		"readDepends": {
-			"icu": "PyICU"
+			"icu": "pyicu"
 		},
 		"writeDepends": {
-			"icu": "PyICU"
+			"icu": "pyicu"
 		}
 	},
 	{
@@ -1415,7 +1415,7 @@
 			"normalizer_rules": ""
 		},
 		"readDepends": {
-			"icu": "PyICU"
+			"icu": "pyicu"
 		}
 	},
 	{
