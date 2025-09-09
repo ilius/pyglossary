@@ -19,10 +19,10 @@ Configuration Parameters
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
 | ``save_info_json``                  | ``--info``                    | bool  | ``false``     | Save .info file alongside output file(s)                                    |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
-| ``lower``                           | | ``--lower``                 | bool  | ``false``     | Lowercase word(s)                                                           |
+| ``lower``                           | | ``--lower``                 | bool  | ``false``     | Lowercase term(s)                                                           |
 |                                     | | ``--no-lower``              |       |               |                                                                             |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
-| ``utf8_check``                      | | ``--utf8-check``            | bool  | ``false``     | Fix Unicode in word(s) and definition                                       |
+| ``utf8_check``                      | | ``--utf8-check``            | bool  | ``false``     | Fix Unicode in term(s) and definition                                       |
 |                                     | | ``--no-utf8-check``         |       |               |                                                                             |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
 | ``rtl``                             | ``--rtl``                     | bool  | ``false``     | Make definition right-to-left                                               |
@@ -33,11 +33,11 @@ Configuration Parameters
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
 | ``normalize_html``                  | ``--normalize-html``          | bool  | ``false``     | Normalize HTML tags in definition (WIP)                                     |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
-| ``skip_duplicate_headword``         | ``--skip-duplicate-headword`` | bool  | ``false``     | Skip entries with a duplicate headword                                      |
+| ``skip_duplicate_headword``         | ``--skip-duplicate-headword`` | bool  | ``false``     | Skip entries with a duplicate headword (first term)                         |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
-| ``trim_arabic_diacritics``          | ``--trim-arabic-diacritics``  | bool  | ``false``     | Trim Arabic diacritics from headword                                        |
+| ``trim_arabic_diacritics``          | ``--trim-arabic-diacritics``  | bool  | ``false``     | Trim Arabic diacritics from headword (first term)                           |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
-| ``unescape_word_links``             | ``--unescape-word-links``     | bool  | ``false``     | Unescape Word Links                                                         |
+| ``unescape_word_links``             | ``--unescape-word-links``     | bool  | ``false``     | Unescape Term/Entry Links                                                   |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+
 | ``color.enable.cmd.unix``           | ``--no-color``                | bool  | ``true``      | Enable colors in Linux/Unix command line                                    |
 +-------------------------------------+-------------------------------+-------+---------------+-----------------------------------------------------------------------------+

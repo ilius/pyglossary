@@ -37,7 +37,7 @@ from . import core
 from .core import cacheDir, log
 from .entry import DataEntry, Entry
 from .entry_filters import (
-	PreventDuplicateWords,
+	PreventDuplicateTerms,
 	RemoveHtmlTagsAll,
 	ShowMaxMemoryUsage,
 	StripFullHtml,
@@ -366,7 +366,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			but we only care about making the whole `entry.s_term`
 			(aka entry key) unique
 		"""
-		self._addExtraEntryFilter(PreventDuplicateWords)
+		self._addExtraEntryFilter(PreventDuplicateTerms)
 
 	# def mergeEntriesWithSameHeadwordHTML(self):
 	# 	"""
