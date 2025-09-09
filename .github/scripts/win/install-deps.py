@@ -1,6 +1,5 @@
+import subprocess
 import sys
-
-import pip
 
 icuVer = "2.15"
 lzoVer = "1.16"
@@ -14,18 +13,17 @@ pyVer = f"{sys.version_info.major}{sys.version_info.minor}"
 # pyVerSuffix: for example "cp313-cp313"
 pyVerSuffix = f"cp{pyVer}-cp{pyVer}"
 
-pip.main(
-	[
-		"install",
-		f"{icuDownload}/v{icuVer}/PyICU-{icuVer}-{pyVerSuffix}-win_amd64.whl",
-	]
+
+def install(*args: str) -> None:
+	subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", *args])
+
+
+install(
+	f"{icuDownload}/v{icuVer}/PyICU-{icuVer}-{pyVerSuffix}-win_amd64.whl",
 )
 
-pip.main(
-	[
-		"install",
-		f"{lzoDownload}/v{lzoVer}/python_lzo-{lzoVer}-{pyVerSuffix}-win_amd64.whl",
-	]
+install(
+	f"{lzoDownload}/v{lzoVer}/python_lzo-{lzoVer}-{pyVerSuffix}-win_amd64.whl",
 )
 
-pip.main(["install", "-r", "requirements.txt"])
+install("-r", "requirements.txt")
