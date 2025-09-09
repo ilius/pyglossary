@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+from importlib.metadata import distribution
 from os.path import abspath, dirname
 from pathlib import Path
 
@@ -28,6 +29,11 @@ depSet = {
 for p in plugins:
 	depSet |= set(p.readDepends.values())
 	depSet |= set(p.writeDepends.values())
+
+for dep in depSet:
+	name = dep.strip().split(">")[0]
+	distName = distribution(name).name
+	assert name == distName, f"{name=}, {distName=}"
 
 with open("requirements.txt", "w", encoding="utf-8") as file:
 	file.writelines(name + "\n" for name in sorted(depSet))
