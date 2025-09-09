@@ -34,7 +34,7 @@ __all__ = ["Reader"]
 class Reader:
 	useByteProgress = False
 	depends = {
-		"icu": "PyICU",
+		"icu": "pyicu",
 	}
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

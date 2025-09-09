@@ -30,7 +30,7 @@ __all__ = ["Reader"]
 class Reader:
 	useByteProgress = False
 	depends = {
-		"icu": "PyICU",  # >=1.5
+		"icu": "pyicu",  # >=1.5
 	}
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
@@ -55,7 +55,7 @@ class Reader:
 		try:
 			import icu  # type: ignore # noqa: F401
 		except ModuleNotFoundError as e:
-			exc_note(e, f"Run `{pip} install PyICU` to install")
+			exc_note(e, f"Run `{pip} install pyicu` to install")
 			raise
 		from pyglossary import slob
 

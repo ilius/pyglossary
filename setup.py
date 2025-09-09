@@ -175,7 +175,7 @@ setup(
 		"full": [
 			"lxml",
 			"beautifulsoup4",
-			"PyICU",
+			"pyicu",
 			"PyYAML",
 			"marisa-trie",
 			"libzim",

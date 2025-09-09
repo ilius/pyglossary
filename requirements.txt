@@ -1,4 +1,3 @@
-PyICU
 PyYAML
 beautifulsoup4
 biplist
@@ -10,6 +9,7 @@ marisa-trie
 mistune
 polib
 prompt_toolkit
+pyicu
 pymorphy3
 python-romkan-ng
 xxhash

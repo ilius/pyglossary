@@ -81,8 +81,8 @@ optionsProp: dict[str, Option] = {
 
 extraDocs = [
 	(
-		"PyICU",
+		"pyicu",
 		"See [doc/pyicu.md](./doc/pyicu.md) file for more detailed"
-		" instructions on how to install PyICU.",
+		" instructions on how to install pyicu.",
 	),
 ]

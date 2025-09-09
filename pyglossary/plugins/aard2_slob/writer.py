@@ -28,7 +28,7 @@ __all__ = ["Writer"]
 
 class Writer:
 	depends = {
-		"icu": "PyICU",
+		"icu": "pyicu",
 	}
 
 	_compression: str = "zlib"
@@ -121,7 +121,7 @@ class Writer:
 		try:
 			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
-			exc_note(e, f"Run `{pip} install PyICU` to install")
+			exc_note(e, f"Run `{pip} install pyicu` to install")
 			raise
 		if isfile(filename):
 			raise WriteError(f"File '{filename}' already exists")
