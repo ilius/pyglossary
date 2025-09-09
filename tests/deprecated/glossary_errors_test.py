@@ -13,7 +13,7 @@ from pyglossary.core_test import getMockLogger
 from pyglossary.glossary import Glossary
 from pyglossary.os_utils import rmtree
 
-__all__ = ["TestGlossaryErrors", "TestGlossaryErrorsBase"]
+__all__ = ["TestGlossaryErrors"]
 
 
 Glossary.init()

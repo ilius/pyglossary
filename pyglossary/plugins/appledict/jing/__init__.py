@@ -6,6 +6,6 @@ be checked.  otherwise, you need to import this module and call
 `run` function with the filename as its only argument.
 """
 
-__all__ = ["JingTestError", "run"]
+__all__ = ["run"]
 
-from .main import JingTestError, run
+from .main import run

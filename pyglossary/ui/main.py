@@ -35,7 +35,7 @@ from .base import UIBase
 if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
 
-__all__ = ["main", "mainNoExit"]
+__all__ = ["main"]
 
 # TODO: move to docs:
 # examples for read and write options:

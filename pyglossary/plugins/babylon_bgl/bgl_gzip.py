@@ -16,7 +16,7 @@ import struct
 import time
 import zlib
 
-__all__ = ["BadGzipFile", "GzipFile"]
+__all__ = ["GzipFile"]
 
 log = logging.getLogger("root")
 

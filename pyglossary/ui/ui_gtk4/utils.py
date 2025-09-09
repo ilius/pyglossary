@@ -38,7 +38,6 @@ __all__ = [
 	"getWorkAreaSize",
 	"gtk_event_iteration_loop",
 	"hasLightTheme",
-	"imageFromFile",
 	"pack",
 	"rgba_parse",
 	"showInfo",
@@ -81,12 +80,12 @@ class FixedSizePicture(gtk.Picture):
 		self.set_can_shrink(False)
 
 
-def imageFromFile(path: str) -> gtk.Image:  # the file must exist
-	if not isabs(path):
-		path = join(appResDir, path)
-	im = gtk.Image()
-	im.set_from_file(path)
-	return im
+# def imageFromFile(path: str) -> gtk.Image:  # the file must exist
+# 	if not isabs(path):
+# 		path = join(appResDir, path)
+# 	im = gtk.Image()
+# 	im.set_from_file(path)
+# 	return im
 
 
 def imageFromIconName(iconName: str, size: int, nonStock: bool = False) -> gtk.Image:

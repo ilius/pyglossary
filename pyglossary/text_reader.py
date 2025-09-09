@@ -25,7 +25,6 @@ if TYPE_CHECKING:
 __all__ = [
 	"TextFilePosWrapper",
 	"TextGlossaryReader",
-	"listFilesRecursiveRelPath",
 	"nextBlockResultType",
 ]
 

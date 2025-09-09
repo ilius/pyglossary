@@ -27,7 +27,7 @@ from pyglossary.text_utils import crc32hex
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-__all__ = ["TestGlossaryBase", "appTmpDir", "testCacheDir"]
+__all__ = ["TestGlossaryBase", "appTmpDir"]
 
 tracemalloc.start()
 

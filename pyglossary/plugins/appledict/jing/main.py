@@ -7,7 +7,7 @@ import subprocess
 import sys
 from os import path
 
-__all__ = ["JingTestError", "main", "run"]
+__all__ = ["main", "run"]
 
 log = logging.getLogger("pyglossary")
 log.setLevel(logging.DEBUG)
