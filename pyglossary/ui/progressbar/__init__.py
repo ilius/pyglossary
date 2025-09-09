@@ -39,6 +39,8 @@ The progressbar module is very easy to use, yet very powerful. It will also
 automatically enable features like auto-resizing when the system supports it.
 """
 
+__all__ = ['ETA', 'ProgressBar', 'RotatingMarker', 'Percentage', 'Bar', 'AnimatedMarker']
+
 __author__ = 'Nilton Volpato'
 __author_email__ = 'nilton.volpato@gmail.com'
 __date__ = '2011-05-14'

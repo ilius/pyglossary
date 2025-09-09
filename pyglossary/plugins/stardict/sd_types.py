@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Protocol, TypeVar
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
+__all__ = ["T_SdList"]
 
 T_SDListItem_contra = TypeVar("T_SDListItem_contra", contravariant=True)
 

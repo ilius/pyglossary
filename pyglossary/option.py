@@ -17,6 +17,7 @@ __all__ = [
 	"NewlineOption",
 	"Option",
 	"StrOption",
+	"UnicodeErrorsOption",
 	"optionFromDict",
 ]
 

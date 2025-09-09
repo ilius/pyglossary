@@ -33,6 +33,8 @@ from pyglossary.text_utils import (
 
 from .reader import BGLGzipFile, Block, FileOffS, Reader, tmpDir
 
+__all__ = ["isASCII"]
+
 
 def isASCII(data: str) -> bool:
 	for c in data:  # noqa: SIM110

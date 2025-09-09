@@ -20,8 +20,10 @@ if TYPE_CHECKING:
 
 __all__ = [
 	"TRACE",
+	"Logger",
 	"StdLogHandler",
 	"format_exception",
+	"setupLogging",
 	"trace",
 ]
 
