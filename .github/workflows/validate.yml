@@ -22,7 +22,9 @@ jobs:
       - name: List files
         run: ls -l
       - name: Validate Plugins
-        run: python ./scripts/plugin-validate.py
+        run: python scripts/plugin-validate.py
+      - name: Validate pyproject.toml
+        run: python scripts/pyproject-validate.py
       - name: Generate auto-generated files
         run: |
           python -m pip install mako lxml
