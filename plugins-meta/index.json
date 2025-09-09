@@ -173,7 +173,7 @@
 			"lxml": "lxml",
 			"bs4": "beautifulsoup4",
 			"html5lib": "html5lib",
-			"colorize_pinyin": "colorize_pinyin",
+			"colorize_pinyin": "colorize-pinyin",
 			"pymorphy3": "pymorphy3"
 		}
 	},

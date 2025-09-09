@@ -2,14 +2,14 @@ PyICU
 PyYAML
 beautifulsoup4
 biplist
-colorize_pinyin
+colorize-pinyin
 html5lib
 libzim>=1.0
 lxml
 marisa-trie
 mistune
 polib
-prompt-toolkit
+prompt_toolkit
 pymorphy3
 python-romkan-ng
 xxhash

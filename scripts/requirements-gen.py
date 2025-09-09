@@ -21,7 +21,7 @@ plugins = [
 ]
 
 depSet = {
-	"prompt-toolkit",  # used for interactive cli
+	"prompt_toolkit",  # used for interactive cli
 }
 # "tqdm" used for progressbar if installed
 # "python-idzip" is used as dictzip for StarDict if installed
