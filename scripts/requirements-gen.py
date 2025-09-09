@@ -2,11 +2,8 @@
 
 import sys
 import tomllib as toml
-from importlib.metadata import PackageNotFoundError, distribution
 from os.path import abspath, dirname
 from pathlib import Path
-
-import pip
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -37,16 +34,6 @@ for p in plugins:
 	requirements |= set(p.writeDepends.values())
 	moduleNames |= set(p.readDepends)
 	moduleNames |= set(p.writeDepends)
-
-for reqFull in requirements:
-	name = reqFull.strip().split(">")[0]
-	try:
-		dist = distribution(name)
-	except PackageNotFoundError:
-		print(f"{name} is not installed, installing...")
-		pip.main(["install", name])
-		dist = distribution(name)
-	assert name == dist.name, f"{name=}, {dist.name=}"
 
 with open("requirements.txt", "w", encoding="utf-8") as file:
 	file.writelines(name + "\n" for name in sorted(requirements))
