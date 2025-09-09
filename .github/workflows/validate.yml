@@ -1,4 +1,4 @@
-name: "Validate Plugins"
+name: "Validate plugins and generated files"
 
 on:
   push:
@@ -23,5 +23,11 @@ jobs:
         run: ls -l
       - name: Validate Plugins
         run: python ./scripts/plugin-validate.py
+      - name: Generate auto-generated files
+        run: |
+          python -m pip install mako lxml
+          ./scripts/gen.sh
+      - name: Check for changes
+        run: ./.github/scripts/no-diff.sh
       - name: Try to install requirements.txt
         run: python -m pip install -r requirements.txt
