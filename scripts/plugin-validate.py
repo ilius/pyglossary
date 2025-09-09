@@ -1,17 +1,22 @@
 #!/usr/bin/python3
+from __future__ import annotations
 
+import subprocess
 import sys
 from importlib.metadata import PackageNotFoundError, distribution
 from os.path import abspath, dirname
 from pathlib import Path
-
-import pip
+from typing import TYPE_CHECKING
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
+
 from pyglossary.core import userPluginsDir
 from pyglossary.glossary import Glossary
+
+if TYPE_CHECKING:
+	from importlib.metadata import Distribution
 
 Glossary.init(
 	usePluginsJson=False,
@@ -32,12 +37,18 @@ for p in plugins:
 	requirements |= set(p.readDepends.values())
 	requirements |= set(p.writeDepends.values())
 
+
+def getPackageDistribution(name: str) -> Distribution:
+	try:
+		return distribution(name)
+	except PackageNotFoundError:
+		pass
+	print(f"{name} is not installed, installing...")
+	subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", name])
+	return distribution(name)
+
+
 for reqFull in requirements:
 	name = reqFull.strip().split(">")[0]
-	try:
-		dist = distribution(name)
-	except PackageNotFoundError:
-		print(f"{name} is not installed, installing...")
-		pip.main(["install", name])
-		dist = distribution(name)
+	dist = getPackageDistribution(name)
 	assert name == dist.name, f"{name=}, {dist.name=}"
