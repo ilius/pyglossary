@@ -111,7 +111,7 @@ class RemoveEmptyAndDuplicateAltTerms(EntryFilter):
 	desc = "Remove empty and duplicate alternate terms"
 
 	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
-		entry.removeEmptyAndDuplicateAltWords()
+		entry.removeEmptyAndDuplicateAltTerms()
 		if not entry.l_term:
 			return None
 		return entry

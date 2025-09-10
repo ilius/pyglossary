@@ -101,7 +101,7 @@ class BaseEntry(ABC):  # noqa: PLR0904
 		raise NotImplementedError
 
 	@abstractmethod
-	def removeEmptyAndDuplicateAltWords(self) -> None:
+	def removeEmptyAndDuplicateAltTerms(self) -> None:
 		raise NotImplementedError
 
 	@abstractmethod

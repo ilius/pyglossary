@@ -146,7 +146,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def replace(self, source: str, target: str) -> None:
 		pass
 
-	def removeEmptyAndDuplicateAltWords(self) -> None:
+	def removeEmptyAndDuplicateAltTerms(self) -> None:
 		pass
 
 	def stripFullHtml(self) -> str | None:
@@ -375,7 +375,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
 
-	def removeEmptyAndDuplicateAltWords(self) -> None:
+	def removeEmptyAndDuplicateAltTerms(self) -> None:
 		l_term = self.l_term
 		if len(l_term) == 1:
 			return
