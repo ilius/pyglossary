@@ -12,7 +12,6 @@ target-version = "py311"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
-	"pyglossary/repro_zipfile/",
 	"whitelist.py", # for vulture
 	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
 	"pyglossary/plugins/testformat",
