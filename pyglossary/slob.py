@@ -232,7 +232,7 @@ class IncorrectFileSize(FileFormatException):
 def sortkey(
 	strength: int,
 	maxlength: int | None = None,
-) -> Callable:
+) -> Callable[[str], bytes]:
 	# pass empty locale to use root locale
 	# if you pass no arg, it will use system locale
 	c: T_Collator = Collator.createInstance(Locale(""))
@@ -395,7 +395,7 @@ class Blob:
 		key: str,
 		fragment: str,
 		read_content_type_func: Callable[[], str],
-		read_func: Callable,
+		read_func: Callable[[], bytes],
 	) -> None:
 		# print(f"read_func is {type(read_func)}")
 		# read_func is <class 'functools._lru_cache_wrapper'>
@@ -715,7 +715,7 @@ class Slob:
 	def __len__(self) -> int:
 		return len(self._refs)
 
-	def __getitem__(self, i: int) -> Any:
+	def __getitem__(self, i: int) -> Blob:
 		# this is called by bisect_left
 		return self.getBlobByIndex(i)
 
@@ -1282,9 +1282,10 @@ class Writer:
 					while count <= self.max_redirects:
 						# is target key itself a redirect?
 						try:
-							alias_item: Blob = next(aliases[to_key])
+							alias_item = next(aliases[to_key])
 						except StopIteration:
 							break
+						assert isinstance(alias_item, Blob)
 						orig_to_key = to_key
 						to_key, fragment = read_key_frag(
 							alias_item,
@@ -1325,8 +1326,10 @@ class Writer:
 				targets.add((ref.bin_index, ref.item_index, ref.fragment))
 				previous = ref
 
-			for bin_index, item_index, fragment in sorted(targets):
-				self._write_ref(previous.key, bin_index, item_index, fragment)
+			if targets:
+				assert previous is not None
+				for bin_index, item_index, fragment in sorted(targets):
+					self._write_ref(previous.key, bin_index, item_index, fragment)
 
 		self._sort()
 		self._fire_event("end_resolve_aliases")
