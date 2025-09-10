@@ -243,7 +243,11 @@ def sortkey(
 	)
 	if maxlength is None:
 		return c.getSortKey
-	return lambda x: c.getSortKey(x)[:maxlength]
+
+	def func(x: str) -> bytes:
+		return c.getSortKey(x)[:maxlength]
+
+	return func
 
 
 class MultiFileReader(BufferedIOBase):
