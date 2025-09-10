@@ -1,13 +1,19 @@
 
 
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
-# -*- coding: utf-8 -*-
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
-from pyglossary.glossary_types import EntryType, WriterGlossaryType
+from pyglossary.core import log
+
+if TYPE_CHECKING:
+	from collections.abc import Generator
+
+	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["Writer"]
+
 
 class Writer:
 	def __init__(self, glos: WriterGlossaryType) -> None:
@@ -33,16 +39,16 @@ class Writer:
 			# here write word and defi to the output file (depending on
 			# your format)
 		# here read info from Glossaey object
-		name = glos.getInfo("name")  # noqa
-		desc = glos.getInfo("description")  # noqa
-		author = glos.author  # noqa
-		copyright = glos.getInfo("copyright")  # noqa
+		name = glos.getInfo("name")
+		desc = glos.getInfo("description")
+		author = glos.author
+		copyright_ = glos.getInfo("copyright")
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
-		print(f"{name=}")
-		print(f"{desc=}")
-		print(f"{author=}")
-		print(f"{copyright=}")
+		log.info(f"{name=}")
+		log.info(f"{desc=}")
+		log.info(f"{author=}")
+		log.info(f"{copyright_=}")
 
 	def finish(self) -> None:
 		self._filename = ""

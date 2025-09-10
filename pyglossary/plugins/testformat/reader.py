@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
-# -*- coding: utf-8 -*-
-from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
-from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+# -*- coding: utf-8 -*-
+
+if TYPE_CHECKING:
+	from collections.abc import Iterator
+
+	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 __all__ = ["Reader"]
+
 
 class Reader:
 	useByteProgress = False
@@ -25,7 +30,7 @@ class Reader:
 		# iteration begins and __iter__ method is called
 		return self._entryCount
 
-	def open(self, filename: str) -> None:
+	def open(self, filename: str) -> None:  # noqa: ARG002
 		# open the file, read headers / info and set info to self._glos
 		# and set self._entryCount if you can
 		# read-options should be keyword arguments in this method

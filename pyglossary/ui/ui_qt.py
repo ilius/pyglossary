@@ -17,30 +17,32 @@
 # GNU General Public License for more details.
 
 from __future__ import annotations
+
 from os.path import join
 
 from PyQt4 import QtGui as qt
 
-from pyglossary.glossary_v2 import *
+from pyglossary.core import homeDir
+from pyglossary.glossary_v2 import Glossary
 
-from .base import *
+from .base import UIBase, logo
 
-noneItem = 'Not Selected'
+noneItem = "Not Selected"
 
 
 class UI(qt.QWidget, UIBase):
 	def __init__(self) -> None:
 		qt.QWidget.__init__(self)
 		UIBase.__init__(self)
-		self.setWindowTitle('PyGlossary (Qt)')
-		self.setWindowIcon(qt.QIcon(join(uiDir, 'pyglossary.png')))
+		self.setWindowTitle("PyGlossary (Qt)")
+		self.setWindowIcon(qt.QIcon(logo))
 		######################
 		self.running = False
 		self.glos = Glossary(ui=self)
 		self.glos.config = self.config
-		self.pathI = ''
-		self.pathO = ''
-		self.fcd_dir = join(homeDir, 'Desktop')
+		self.pathI = ""
+		self.pathO = ""
+		self.fcd_dir = join(homeDir, "Desktop")
 		######################
 		vbox = qt.QVBoxLayout()
 		self.setLayout(vbox)
