@@ -244,7 +244,6 @@ class UI(UIBase):
 			"matchWord",
 			"showRel",
 			"includeDefs",
-			"reportStep",
 			"saveStep",
 			"maxNum",
 			"minRel",
