@@ -123,7 +123,7 @@ class FixUnicode(EntryFilter):
 	falseComment = "Do not fix Unicode in term(s) and definition"
 
 	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
-		entry.editFuncWord(fixUtf8Str)
+		entry.editFuncTerm(fixUtf8Str)
 		entry.editFuncDefi(fixUtf8Str)
 		return entry
 
@@ -144,7 +144,7 @@ class LowerTerm(EntryFilter):
 		)
 
 	def run(self, entry: EntryType) -> EntryType | None:
-		entry.editFuncWord(str.lower)
+		entry.editFuncTerm(str.lower)
 		entry.editFuncDefi(self.lowerTermRefs)
 		return entry
 
@@ -319,7 +319,7 @@ class LanguageCleanup(EntryFilter):
 	def run_fa(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		from .persian_utils import faEditStr
 
-		entry.editFuncWord(faEditStr)
+		entry.editFuncTerm(faEditStr)
 		entry.editFuncDefi(faEditStr)
 		return entry
 
@@ -387,7 +387,7 @@ class PreventDuplicateTerms(EntryFilter):
 
 		termSet.add(term)
 		entry._term = term  # type: ignore
-		# use entry.editFuncWord?
+		# use entry.editFuncTerm?
 
 		return entry
 

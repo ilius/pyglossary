@@ -78,7 +78,7 @@ class EntryType(Protocol):  # noqa: PLR0904
 
 	def addAlt(self, alt: str) -> None: ...
 
-	def editFuncWord(
+	def editFuncTerm(
 		self,
 		func: Callable[[str], str],
 	) -> None: ...

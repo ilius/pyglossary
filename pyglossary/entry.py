@@ -128,7 +128,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	def addAlt(self, alt: str) -> None:
 		pass
 
-	def editFuncWord(self, func: Callable[[str], str]) -> None:
+	def editFuncTerm(self, func: Callable[[str], str]) -> None:
 		pass
 
 	def editFuncDefi(self, func: Callable[[str], str]) -> None:
@@ -324,7 +324,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		l_term.append(alt)
 		self._term = l_term
 
-	def editFuncWord(self, func: Callable[[str], str]) -> None:
+	def editFuncTerm(self, func: Callable[[str], str]) -> None:
 		"""
 		Run function `func` on all the words.
 
@@ -354,7 +354,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	def strip(self) -> None:
 		"""Strip whitespaces from all words and definitions."""
-		self.editFuncWord(str.strip)
+		self.editFuncTerm(str.strip)
 		self.editFuncDefi(str.strip)
 		self.editFuncDefi(self._stripTrailingBR)
 

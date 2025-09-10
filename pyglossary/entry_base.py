@@ -73,7 +73,7 @@ class BaseEntry(ABC):  # noqa: PLR0904
 		raise NotImplementedError
 
 	@abstractmethod
-	def editFuncWord(self, func: Callable[[str], str]) -> None:
+	def editFuncTerm(self, func: Callable[[str], str]) -> None:
 		raise NotImplementedError
 
 	@abstractmethod
@@ -171,3 +171,11 @@ class BaseEntry(ABC):  # noqa: PLR0904
 			stacklevel=3,
 		)
 		return self.lb_term
+
+	def editFuncWord(self, func: Callable[[str], str]) -> None:
+		warnings.warn(
+			"entry.editFuncWord is deprecated, use entry.editFuncTerm",
+			category=DeprecationWarning,
+			stacklevel=3,
+		)
+		self.editFuncTerm(func)
