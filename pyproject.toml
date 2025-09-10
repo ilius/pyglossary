@@ -13,7 +13,6 @@ target-version = "py311"
 # Exclude a variety of commonly ignored directories.
 exclude = [
 	"whitelist.py", # for vulture
-	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
 	"pyglossary/ui/progressbar/",
 	"pyglossary/reverse.py",
 	"wcwidth*",
@@ -170,6 +169,10 @@ mccabe.max-complexity = 13
 "tests/unused_test.py" = [
 	"F401",  # imported but unused
 	"F811", # Redefinition of unused
+]
+
+"pyglossary/plugins/babylon_bgl/bgl_gzip.py" = [
+	"D402" # First line should not be the function's signature, huh???
 ]
 
 "pyglossary/ui/termcolors.py" = [
