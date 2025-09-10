@@ -7,7 +7,6 @@ on:
       - 'doc/**'
       - '*.md'
       # - '.github/**'
-
   workflow_dispatch:
 
 jobs:

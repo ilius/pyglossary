@@ -3,6 +3,7 @@ name: pypi-publish
 on:
   push:
     branches: ["master", "dev"]
+  workflow_dispatch:
 
 jobs:
   pypi-publish:

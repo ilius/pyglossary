@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'build-release'
+  workflow_dispatch:
 
 env:
   UV_SYSTEM_PYTHON: 0
