@@ -1,14 +1,14 @@
-
 from __future__ import annotations
 
 import logging
 import re
 import typing
-from collections.abc import Iterable, Iterator
 from operator import itemgetter
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+	from collections.abc import Iterable, Iterator
+
 	from .glossary_types import EntryType
 
 __all__ = ["reverseGlossary"]
@@ -16,6 +16,7 @@ __all__ = ["reverseGlossary"]
 log = logging.getLogger("pyglossary")
 
 if TYPE_CHECKING:
+
 	class _GlossaryType(typing.Protocol):
 		def __iter__(self) -> Iterator[EntryType]: ...
 
@@ -37,21 +38,18 @@ if TYPE_CHECKING:
 		def progressbar(self, enabled: bool) -> None: ...
 
 
-
-def reverseGlossary(
+def reverseGlossary(  # noqa: PLR0913
 	glos: _GlossaryType,
 	savePath: str = "",
 	terms: list[str] | None = None,
 	includeDefs: bool = False,
-	reportStep: int = 300,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
 	**kwargs,
 ) -> Iterator[int]:
 	"""
-	This is a generator
 	Usage:
 		for wordIndex in reverseGlossary(glos, ...):
-			pass
+			pass.
 
 	Inside the `for` loop, you can pause by waiting (for input or a flag)
 		or stop by breaking
@@ -75,15 +73,11 @@ def reverseGlossary(
 	entries: list[EntryType] = list(glos)
 	log.info(f"loaded {len(entries)} entries into memory")
 
-	if terms:
-		terms = list(terms)
-	else:
-		terms = takeOutputWords(glos, entries)
+	terms = list(terms) if terms else takeOutputWords(glos, entries)
 
 	entryCount = len(terms)
 	log.info(
-		f"Reversing to file {savePath!r}"
-		f", number of entries: {entryCount}",
+		f"Reversing to file {savePath!r}, number of entries: {entryCount}",
 	)
 	glos.progressInit("Reversing")
 	wcThreshold = entryCount // 200 + 1
@@ -124,19 +118,25 @@ def takeOutputWords(
 	entryIter: Iterable[EntryType],
 	minWordLen: int = 3,
 ) -> list[str]:
-	# fr"[\w]{{{minWordLen},}}"
-	termPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
+	# f"[\\w]{{{minWordLen},}}" == fr"[\w]{{{minWordLen},}}"
+	#   == r"[\w]{%d,}" % minWordLen
+	termPattern = re.compile(rf"[\w]{{{minWordLen},}}", re.UNICODE)
 	terms = set()
 	progressbar, glos.progressbar = glos.progressbar, False
 	for entry in entryIter:
-		terms.update(termPattern.findall(
-			entry.defi,
-		))
+		terms.update(
+			termPattern.findall(
+				entry.defi,
+			)
+		)
 	glos.progressbar = progressbar
 	return sorted(terms)
 
 
-def searchWordInDef(
+# C901 too complex (22 > 13)
+# PLR0912 Too many branches (27 > 12)
+# PLR0913 Too many arguments in function definition (9 > 5)
+def searchWordInDef(  # noqa: C901, PLR0912, PLR0913
 	entryIter: Iterable[EntryType],
 	st: str,
 	matchWord: bool = True,
@@ -152,7 +152,7 @@ def searchWordInDef(
 		"|".join(re.escape(x) for x in sepChars),
 		re.UNICODE,
 	)
-	wordPattern = re.compile(r"[\w]{%d,}" % minWordLen, re.UNICODE)
+	wordPattern = re.compile(rf"[\w]{{{minWordLen},}}", re.UNICODE)
 	outRel: list[tuple[str, float] | tuple[str, float, str]] = []
 	for entry in entryIter:
 		terms = entry.l_term
@@ -204,12 +204,12 @@ def searchWordInDef(
 			if onePer == 1.0:
 				out.append(f"{w}\\n{m}")
 			elif showRel == "Percent":
-				out.append(f"{w}(%{100*num})\\n{m}")
+				out.append(f"{w}(%{100 * num})\\n{m}")
 			elif showRel == "Percent At First":
 				if num == numP:
 					out.append(f"{w}\\n{m}")
 				else:
-					out.append(f"{w}(%{100*num})\\n{m}")
+					out.append(f"{w}(%{100 * num})\\n{m}")
 			else:
 				out.append(f"{w}\\n{m}")
 		return out
@@ -220,12 +220,12 @@ def searchWordInDef(
 		if onePer == 1.0:
 			out.append(w)
 		elif showRel == "Percent":
-			out.append(f"{w}(%{100*num})")
+			out.append(f"{w}(%{100 * num})")
 		elif showRel == "Percent At First":
 			if num == numP:
 				out.append(w)
 			else:
-				out.append(f"{w}(%{100*num})")
+				out.append(f"{w}(%{100 * num})")
 		else:
 			out.append(w)
 	return out

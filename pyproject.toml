@@ -14,7 +14,6 @@ target-version = "py311"
 exclude = [
 	"whitelist.py", # for vulture
 	"pyglossary/ui/progressbar/",
-	"pyglossary/reverse.py",
 	"wcwidth*",
 	".direnv",
 	".eggs",
