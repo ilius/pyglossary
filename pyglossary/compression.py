@@ -21,7 +21,6 @@ __all__ = [
 	"compressionOpenFunc",
 	"stdCompressions",
 	"uncompress",
-	"zipFileOrDir",
 ]
 
 

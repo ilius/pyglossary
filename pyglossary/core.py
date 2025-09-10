@@ -34,7 +34,7 @@ __all__ = [
 	"confDir",
 	"confJsonFile",
 	"dataDir",
-	"getDataDir",
+	"exc_note",
 	"homeDir",
 	"homePage",
 	"isDebug",
@@ -47,7 +47,6 @@ __all__ = [
 	"sysName",
 	"tmpDir",
 	"trace",
-	"uiDir",
 	"userPluginsDir",
 ]
 
