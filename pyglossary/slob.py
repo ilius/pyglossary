@@ -1111,7 +1111,7 @@ class Writer:
 		self._tags[name] = value
 
 	@staticmethod
-	def key_is_too_long(actual_key, fragment) -> bool:
+	def key_is_too_long(actual_key: str, fragment: str) -> bool:
 		return len(actual_key) > MAX_TEXT_LEN or len(fragment) > MAX_TINY_TEXT_LEN
 
 	@staticmethod
@@ -1241,7 +1241,7 @@ class Writer:
 		)
 		self._fire_event("end_sort")
 
-	def _resolve_aliases(self) -> None:  # noqa: PLR0912
+	def _resolve_aliases(self) -> None:  # noqa: PLR0912, C901
 		self._fire_event("begin_resolve_aliases")
 		self.f_aliases.finalize()
 
