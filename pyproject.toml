@@ -397,42 +397,6 @@ exclude_toplevel_module = [
 	"yaml",
 ]
 
-[tool.pyright]
-pythonVersion = "3.10"
-pythonPlatform = "Linux"
-reportMissingImports = "error"
-reportMissingTypeStubs = false
-exclude = [
-	"pyglossary/slob.py",
-	"setup.py",
-	"whitelist.py",       # for vulture
-	# "pyglossary/ui/gtk4_utils/*",
-	# "pyglossary/ui/gtk3_utils/*",
-	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
-	"pyglossary/plugins/testformat.py",
-	# "pyglossary/plugin_lib/*",
-	"pyglossary/ui/gtk*_utils/__init__.py",
-	"pyglossary/ui/ui_qt.py",
-	"pyglossary/ui/progressbar/",
-	"pyglossary/reverse.py",
-	"wcwidth*",
-	".direnv",
-	".eggs",
-	".git",
-	".mypy_cache",
-	".nox",
-	".pants.d",
-	".ruff_cache",
-	".tox",
-	".venv",
-	"__pypackages__",
-	"_build",
-	"buck-out",
-	"build",
-	"dist",
-	"venv",
-]
-
 [tool.fixit]
 disable = ["fixit.rules.no_namedtuple"]
 
