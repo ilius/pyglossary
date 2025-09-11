@@ -6,11 +6,6 @@ from glossary_v2_test import TestGlossaryBase
 class TestGlossaryDictionaryForMIDs(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa.mids.zip": "32d1185f",
-			},
-		)
 
 	def convert_txt_mids(self, fname, sha1sumDict, **convertArgs):
 		outputFname = f"{fname}-2.mids.zip"

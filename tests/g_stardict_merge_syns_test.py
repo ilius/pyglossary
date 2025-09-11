@@ -30,7 +30,7 @@ class TestGlossaryStarDictMergeSyns(TestGlossaryStarDictBase):
 				"004-plain-html-alts-sd-merge-syns-v2/004-plain-html-alts.dict": "889f11f8",
 				"004-plain-html-alts-sd-merge-syns-v2/004-plain-html-alts.idx": "092ba555",
 				"004-plain-html-alts-sd-merge-syns-v2/004-plain-html-alts.ifo": "628abe99",
-				"004-plain-html-alts-sd-merge-syns-v2/004-plain-html-alts.syn": "c07f7111",
+				# "004-plain-html-alts-sd-merge-syns-v2/004-plain-html-alts.syn": "c07f7111",
 				"100-en-de-v4-sd-merge-syns-v2/100-en-de-v4.dict": "5a97476f",
 				"100-en-de-v4-sd-merge-syns-v2/100-en-de-v4.idx": "a99f29d2",
 				"100-en-de-v4-sd-merge-syns-v2/100-en-de-v4.ifo": "2120708c",

@@ -18,7 +18,6 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 				"100-en-fa-sd-v2/100-en-fa.ifo": "bb916827",
 				"100-en-fa-sd-v2/100-en-fa.syn": "1160fa0b",
 				"100-en-fa-sd-v2.txt": "0b8b2ac0",
-				"100-en-fa-sd.txt": "85f9d3fc",
 			},
 		)
 
