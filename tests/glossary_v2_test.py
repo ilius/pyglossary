@@ -111,9 +111,14 @@ class TestGlossaryBase(unittest.TestCase):
 		if isfile(fpath):
 			with open(fpath, mode="rb") as _file:
 				data = _file.read()
-			if crc32hex(data) != crc32:
-				raise RuntimeError(f"CRC32 check failed for existing file: {fpath!r}")
-			return fpath
+			if crc32hex(data) == crc32:
+				return fpath
+			if not os.getenv("TEST_REDOWNLOAD_OUTDATED_CACHE"):
+				raise RuntimeError(f"CRC32 check failed for cached file: {fpath!r}")
+			log.warning(
+				f"CRC32 check failed for cached file (will download): {fpath!r}"
+			)
+
 		if "GITHUB_RUN_ID" in os.environ:
 			time.sleep(0.05)
 		try:
