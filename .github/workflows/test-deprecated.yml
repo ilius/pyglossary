@@ -1,0 +1,39 @@
+name: "Deprecated Test"
+
+on:
+  push:
+    branches: ["master", "dev", "dev2", "github-action"]
+  pull_request:
+  schedule:
+    - cron: "33 1 * * 3"
+  workflow_dispatch:
+
+jobs:
+  ubuntu:
+    name: Test on Ubuntu
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: List files
+        run: ls -l
+      - name: Install dependencies
+        run: sh ./scripts/test-deps.sh
+      - name: Run tests
+        run: bash ./.github/scripts/test-deprecated.sh
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pyglossary-test-ubuntu-py${{ matrix.python-version }}
+          path: artifacts
