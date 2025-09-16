@@ -41,7 +41,7 @@ website = "https://github.com/ilius/pyglossary"
 
 optionsProp = {
 	"encoding": StrOption(
-		values=["utf-8", "utf-16"],
+		values=["utf-8", "utf-16", "gbk", "big5"],
 		comment="Text encoding for the MDX file",
 	),
 	"key_block_size": IntOption(
