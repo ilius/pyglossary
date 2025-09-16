@@ -292,6 +292,36 @@ class TestMdictWriter(unittest.TestCase):
         self.assertEqual(writer._compression_type, 0)
         self.assertTrue(writer._audio)
 
+    def test_encoding_support(self):
+        """Test that different encodings are supported."""
+        test_encodings = ['utf-8', 'utf-16', 'gbk', 'big5']
+
+        for encoding in test_encodings:
+            with self.subTest(encoding=encoding):
+                config = {'encoding': encoding}
+                glos = MockGlossary(config)
+                writer = Writer(glos)
+
+                # Check encoding was applied
+                self.assertEqual(writer._encoding, encoding)
+
+                # Test file creation with this encoding
+                writer.open(self._create_test_file(f'encoding_{encoding.replace("-", "")}.mdx'))
+
+                entries = [MockTextEntry(['test'], 'Hello world')]
+                gen = writer.write()
+                next(gen)
+                for entry in entries:
+                    gen.send(entry)
+                try:
+                    gen.send(None)
+                except StopIteration:
+                    pass
+                writer.finish()
+
+                # File should be created
+                self.assertTrue(os.path.exists(self._create_test_file(f'encoding_{encoding.replace("-", "")}.mdx')))
+
 
 if __name__ == '__main__':
     unittest.main()
