@@ -74,7 +74,7 @@ class Writer:
 			sys.path.insert(0, mdict_utils_path)
 
 		try:
-			from mdict_utils.base.writemdict import MDictWriter
+			from .mdict_writer import MDictWriter
 
 			# Get title and description from glossary
 			title = self._glos.getInfo("name") or "PyGlossary MDX Export"
@@ -85,7 +85,8 @@ class Writer:
 				self._entries,
 				title=title,
 				description=description,
-				block_size=self._record_block_size * 1024,
+				key_size=self._key_block_size,
+				record_size=self._record_block_size,
 				encoding=self._encoding,
 				compression_type=self._compression_type,
 				version="2.0",
@@ -98,9 +99,10 @@ class Writer:
 
 			log.info(f"Successfully wrote {len(self._entries)} entries to {self._filename}")
 
-		except ImportError as e:
-			log.error(f"Failed to import mdict_utils: {e}")
-			log.error("Make sure mdict-utils is available in the parent directory")
+		except Exception as e:
+			log.error(f"Failed to create MDX file: {e}")
+			import traceback
+			traceback.print_exc()
 			# Fallback: create a simple text file
 			with open(self._filename, 'w', encoding=self._encoding) as f:
 				for term, definition in self._entries.items():
