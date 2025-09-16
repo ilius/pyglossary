@@ -56,4 +56,7 @@ optionsProp = {
 		values=[0, 1, 2],  # 0=no compression, 1=lzo, 2=zlib
 		comment="Compression type: 0=none, 1=lzo, 2=zlib",
 	),
+	"audio": BoolOption(
+		comment="Convert HTML5 audio tags back to MDX sound:// format",
+	),
 }

@@ -21,17 +21,50 @@ class Writer:
 	_key_block_size: int = 32  # KB
 	_record_block_size: int = 64  # KB
 	_compression_type: int = 2  # zlib
+	_audio: bool = False  # Convert audio tags back to MDX format
+	_substyle: bool = True  # Enable substyle processing
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._entries: dict[str, str] = {}      # Text entries for MDX
 		self._data_entries: dict[str, bytes] = {}  # Binary data entries for MDD
+		# Regex patterns for link processing (similar to reader)
+		import re
+		self._re_internal_link = re.compile(r'href=["\']bword://([^"\']+)["\']')
+		self._re_audio_link = re.compile(
+			r'<audio[^>]*controls[^>]*src=["\']([^"\']+)["\'][^>]*></audio>'
+		)
+
+		# Initialize options from glossary config
+		config = glos.getConfig()
+		self._encoding = config.get("encoding", self._encoding)
+		self._key_block_size = config.get("key_block_size", self._key_block_size)
+		self._record_block_size = config.get("record_block_size", self._record_block_size)
+		self._compression_type = config.get("compression_type", self._compression_type)
+		self._audio = config.get("audio", self._audio)
 
 	def finish(self) -> None:
 		self._filename = ""
 		self._entries = {}
 		self._data_entries = {}
+
+	def fixDefi(self, defi: str) -> str:
+		"""Process definition for MDX compatibility (reverse of reader transformations)."""
+		# Convert bword:// links back to entry:// format
+		defi = self._re_internal_link.sub(r'href="\1"', defi)
+
+		# Convert relative paths back to file:// format
+		defi = defi.replace(' src="./', ' src="file://')
+
+		# Convert audio tags back to MDX sound:// format if audio option is enabled
+		if self._audio:
+			defi = self._re_audio_link.sub(
+				r'<a href="sound://\1">🔊</a>',
+				defi,
+			)
+
+		return defi
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
@@ -58,6 +91,9 @@ class Writer:
 				continue
 
 			definition = entry.defi
+
+			# Process definition for MDX compatibility
+			definition = self.fixDefi(definition)
 
 			# Store the entry for each term/alias
 			# MDictWriter expects dict[str, str] for MDX files
