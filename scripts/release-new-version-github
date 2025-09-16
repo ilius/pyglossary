@@ -27,6 +27,11 @@ if [ -z "$VERSION" ]; then
 	exit 1
 fi
 
+if [ $(git rev-parse --abbrev-ref HEAD) != "master" ] ; then
+	echo "Not in master branch"
+	exit 1
+fi
+
 set -x
 
 $(dirname "$0")/version-set.py "$VERSION"
