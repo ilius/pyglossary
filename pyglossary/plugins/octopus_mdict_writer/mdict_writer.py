@@ -231,9 +231,13 @@ class MDictWriter(object):
             raise ParameterError("Unknown version")
         self._version = version
 
-        # Check if input is simple dict[str, str] or extended format
-        if d and isinstance(next(iter(d.values())), str):
-            # Simple format: convert to extended format for processing
+        # Check input format: dict, list, or other
+        if isinstance(d, list):
+            # Extended format (list of dicts) - used for MDD data
+            self._input_is_simple = False
+            self._build_offset_table(d)
+        elif d and isinstance(next(iter(d.values())), str):
+            # Simple format dict[str, str] - used for MDX text
             self._input_is_simple = True
             extended_d = []
             for key, value in d.items():
@@ -246,7 +250,7 @@ class MDictWriter(object):
                 })
             self._build_offset_table(extended_d)
         else:
-            # Extended format
+            # Other dict format or empty
             self._input_is_simple = False
             self._build_offset_table(d)
 
