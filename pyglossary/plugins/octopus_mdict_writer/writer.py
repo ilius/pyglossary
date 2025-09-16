@@ -47,17 +47,18 @@ class Writer:
 				# Skip data entries for MDX (they go in MDD files)
 				continue
 
-			# Get the primary term
+			# Get all terms (aliases)
 			terms = entry.l_term
 			if not terms:
 				continue
 
-			primary_term = terms[0]
 			definition = entry.defi
 
-			# Store the entry in the dictionary
+			# Store the entry for each term/alias
 			# MDictWriter expects dict[str, str] for MDX files
-			self._entries[primary_term] = definition
+			# Multiple aliases point to the same definition (efficient in MDX)
+			for term in terms:
+				self._entries[term] = definition
 
 		# Now write all entries to proper MDX file
 		self._writeMdxFile()
