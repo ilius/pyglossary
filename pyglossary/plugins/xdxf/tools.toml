@@ -16,11 +16,11 @@ plang = "C++"
 [QTranslate]
 web = "https://qtranslate.en.lo4d.com/windows"
 platforms = [ "Windows",]
-license = "Freeware"
+license = "Proprietary (Freeware)"
 plang = "C++"
 
 [Alpus]
 web = "https://alpusapp.com/"
 platforms = [ "Windows", "Mac", "Linux", "Android",]
-license = "Freeware"
+license = "Proprietary (Freeware)"
 plang = "Java"

@@ -33,35 +33,21 @@ source = "https://github.com/a-rodin/qstardict"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "GPLv2"
 plang = "C++"
+# active dev in 2025
 
-["GoldenDict Mobile (Free)"]
-web = "http://goldendict.mobi/"
-web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android.free"
-platforms = [ "Android",]
-license = "Freemium"
+[KOReader]
+web = "http://koreader.rocks/"
+source = "https://github.com/koreader/koreader"
+platforms = [ "Android", "Amazon Kindle", "Kobo eReader", "PocketBook", "Cervantes",]
+license = "AGPLv3"
+plang = "Lua"
 
-["GoldenDict Mobile (Full)"]
-web = "http://goldendict.mobi/"
-web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android"
-platforms = [ "Android",]
-license = "Proprietary"
-
-["Twinkle Star Dictionary"]
-web = "https://play.google.com/store/apps/details?id=com.qtier.dict"
-platforms = [ "Android",]
-license = "Unknown"
-# last release: 2015/10/19
-# could not find the source code, license or website
-
-[WordMateX]
-web = "https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/"
-platforms = [ "Android",]
-license = "Proprietary"
-# last release: 2020/01/01, version 2.1.1
-# Google Play says "not compatible with your devices", not letting me
-# download and install, so I downloaded apk from apkcombo.com
-# This is the only Android app (not just for StarDict format) I found
-# that supports auto-RTL
+["sdcv (command line)"]
+web = "https://dushistov.github.io/sdcv/"
+source = "https://github.com/Dushistov/sdcv"
+platforms = [ "Linux", "Windows", "Mac", "Android",]
+license = "GPLv2"
+plang = "C++"
 
 [QDict]
 web = "https://play.google.com/store/apps/details?id=com.annie.dictionary"
@@ -70,12 +56,35 @@ platforms = [ "Android",]
 license = "Apache 2.0"
 plang = "Java"
 # last release: 2017/04/16 (keeps crashing on my device, unusable)
-# last commit: 2020/06/24
+# last commit: 2020/06/24, 2021 (readme)
+
+["GoldenDict Mobile (Free)"]
+web = "http://goldendict.mobi/"
+web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android.free"
+platforms = [ "Android",]
+license = "Proprietary (Freemium)"
+
+["GoldenDict Mobile (Full)"]
+web = "http://goldendict.mobi/"
+web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android"
+platforms = [ "Android",]
+license = "Proprietary"
+
+[WordMateX]
+web = "https://apkcombo.com/wordmatex/org.d1scw0rld.wordmatex/"
+platforms = [ "Android",]
+license = "Proprietary"
+# last release: 2020/01/01, version 2.1.1
+# Google Play says "not compatible with your devices", not letting me
+# download and install, so I downloaded apk from apkcombo.com
+# 2025: Google Play page is gone: https://play.google.com/store/apps/details?id=org.d1scw0rld.wordmatex&hl=en
+# This is the only Android app (not just for StarDict format) I found
+# that supports auto-RTL
 
 ["Fora Dictionary"]
 web = "https://play.google.com/store/apps/details?id=com.ngc.fora"
 platforms = [ "Android",]
-license = "Freemium"
+license = "Proprietary (Freemium)"
 # no dark mode
 # some options show "Premium Feature"
 # has prefix-search-on-type but it's a little slow
@@ -85,17 +94,3 @@ license = "Freemium"
 web = "https://play.google.com/store/apps/details?id=com.ngc.fora.android"
 platforms = [ "Android",]
 license = "Proprietary"
-
-[KOReader]
-web = "http://koreader.rocks/"
-source = "https://github.com/koreader/koreader"
-platforms = [ "Android", "Amazon Kindle", "Kobo eReader", "PocketBook", "Cervantes",]
-license = "AGPLv3"
-plang = "Lua"
-
-[sdcv]
-web = "https://dushistov.github.io/sdcv/"
-source = "https://github.com/Dushistov/sdcv"
-platforms = [ "Linux", "Windows", "Mac", "Android",]
-license = "GPLv2"
-plang = "C++"

@@ -34,12 +34,12 @@ pip3 install lxml
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                              | Source code                                                              | License  | Platforms                    | Language |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------- | ---------------------------- | -------- |
-| [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL      | Linux, Windows, Mac          | C++      |
-| [GoldenDict](http://goldendict.org/)                                        | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL      | Linux, Windows, Mac          | C++      |
-| [QTranslate](https://qtranslate.en.lo4d.com/windows)                        | ―                                                                        | Freeware | Windows                      | C++      |
-| [Alpus](https://alpusapp.com/)                                              | ―                                                                        | Freeware | Windows, Mac, Linux, Android | Java     |
+| Name & Website                                                              | Source code                                                              | License                | Platforms                    | Language |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------- | ---------------------------- | -------- |
+| [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL                    | Linux, Windows, Mac          | C++      |
+| [GoldenDict](http://goldendict.org/)                                        | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL                    | Linux, Windows, Mac          | C++      |
+| [QTranslate](https://qtranslate.en.lo4d.com/windows)                        | ―                                                                        | Proprietary (Freeware) | Windows                      | C++      |
+| [Alpus](https://alpusapp.com/)                                              | ―                                                                        | Proprietary (Freeware) | Windows, Mac, Linux, Android | Java     |
 
 ### Related Formats
 

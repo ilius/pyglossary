@@ -2,7 +2,7 @@
 web = "https://www.babylon-software.com/"
 wiki = "https://en.wikipedia.org/wiki/Babylon_Software"
 platforms = [ "Windows",]
-license = "Freemium"
+license = "Proprietary (Freemium)"
 
 [GoldenDict]
 web = "http://goldendict.org/"
@@ -13,7 +13,7 @@ license = "GPL"
 web = "http://goldendict.mobi/"
 web2 = "https://play.google.com/store/apps/details?id=mobi.goldendict.android.free"
 platforms = [ "Android",]
-license = "Freeware"
+license = "Proprietary (Freeware)"
 
 ["GoldenDict Mobile (Full)"]
 web = "http://goldendict.mobi/"

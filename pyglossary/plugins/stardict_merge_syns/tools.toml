@@ -5,7 +5,7 @@ platforms = [ "Android", "Amazon Kindle", "Kobo eReader", "PocketBook", "Cervant
 license = "AGPLv3"
 plang = "Lua"
 
-[sdcv]
+["sdcv (command line)"]
 web = "https://dushistov.github.io/sdcv/"
 source = "https://github.com/Dushistov/sdcv"
 platforms = [ "Linux", "Windows", "Mac", "Android",]

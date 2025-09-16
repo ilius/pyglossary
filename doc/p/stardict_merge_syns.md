@@ -29,10 +29,10 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                            | Source code                                                | License | Platforms                                                   | Language |
-| ----------------------------------------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------- | -------- |
-| [KOReader](http://koreader.rocks/)        | [@koreader/koreader](https://github.com/koreader/koreader) | AGPLv3  | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua      |
-| [sdcv](https://dushistov.github.io/sdcv/) | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv)       | GPLv2   | Linux, Windows, Mac, Android                                | C++      |
+| Name & Website                                           | Source code                                                | License | Platforms                                                   | Language |
+| -------------------------------------------------------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------- | -------- |
+| [KOReader](http://koreader.rocks/)                       | [@koreader/koreader](https://github.com/koreader/koreader) | AGPLv3  | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua      |
+| [sdcv (command line)](https://dushistov.github.io/sdcv/) | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv)       | GPLv2   | Linux, Windows, Mac, Android                                | C++      |
 
 ### Related Formats
 

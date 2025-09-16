@@ -51,15 +51,7 @@ website = (
 	"huzheng.org/stardict",
 )
 relatedFormats: list[str] = ["StardictTextual", "StardictMergeSyns"]
-extraDocs = [
-	(
-		"For sdcv and KOReader users",
-		"Use [StarDict (Merge Syns)](./stardict_merge_syns.md) plugin"
-		" (instead of this one) to create glossaries for using in"
-		" [sdcv](https://dushistov.github.io/sdcv/)"
-		" or [KOReader](http://koreader.rocks/)",
-	),
-]
+extraDocs = []
 
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
 optionsProp: dict[str, Option] = {

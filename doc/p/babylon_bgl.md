@@ -30,9 +30,9 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                          | Source code | License     | Platforms      | Language |
-| ------------------------------------------------------- | ----------- | ----------- | -------------- | -------- |
-| [Babylon Translator](https://www.babylon-software.com/) | ―           | Freemium    | Windows        |          |
-| [GoldenDict](http://goldendict.org/)                    | ―           | GPL         | Linux, Windows |          |
-| [GoldenDict Mobile (Free)](http://goldendict.mobi/)     | ―           | Freeware    | Android        |          |
-| [GoldenDict Mobile (Full)](http://goldendict.mobi/)     | ―           | Proprietary | Android        |          |
+| Name & Website                                          | Source code | License                | Platforms      | Language |
+| ------------------------------------------------------- | ----------- | ---------------------- | -------------- | -------- |
+| [Babylon Translator](https://www.babylon-software.com/) | ―           | Proprietary (Freemium) | Windows        |          |
+| [GoldenDict](http://goldendict.org/)                    | ―           | GPL                    | Linux, Windows |          |
+| [GoldenDict Mobile (Free)](http://goldendict.mobi/)     | ―           | Proprietary (Freeware) | Android        |          |
+| [GoldenDict Mobile (Full)](http://goldendict.mobi/)     | ―           | Proprietary            | Android        |          |
