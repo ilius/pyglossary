@@ -38,7 +38,6 @@ class Writer(StdWriter):
 		log.debug(f"writeCompact: {defiFormat=}")
 
 		idxBlockList = self.newIdxList()
-		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
 
@@ -75,10 +74,7 @@ class Writer(StdWriter):
 
 		self.writeIdxFile(idxBlockList)
 
-		self.writeIfoFile(
-			len(idxBlockList),
-			len(altIndexList),
-		)
+		self.writeIfoFile(len(idxBlockList), 0)
 
 	def writeGeneral(self) -> Generator[None, EntryType, None]:
 		"""
@@ -88,7 +84,6 @@ class Writer(StdWriter):
 		"""
 		log.debug("writeGeneral")
 		idxBlockList = self.newIdxList()
-		altIndexList = self.newSynList()
 
 		dictFile = open(self._filename + ".dict", "wb")
 
@@ -128,9 +123,6 @@ class Writer(StdWriter):
 
 		self.writeIdxFile(idxBlockList)
 
-		self.writeIfoFile(
-			len(idxBlockList),
-			len(altIndexList),
-		)
+		self.writeIfoFile(len(idxBlockList), 0)
 
 	# TODO: override getDescription to indicate merge_syns
