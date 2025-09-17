@@ -36,13 +36,7 @@ class Writer:
 			r'<audio[^>]*controls[^>]*src=["\']([^"\']+)["\'][^>]*></audio>'
 		)
 
-		# Initialize options from glossary config
-		config = glos.getConfig()
-		self._encoding = config.get("encoding", self._encoding)
-		self._key_block_size = config.get("key_block_size", self._key_block_size)
-		self._record_block_size = config.get("record_block_size", self._record_block_size)
-		self._compression_type = config.get("compression_type", self._compression_type)
-		self._audio = config.get("audio", self._audio)
+		# Options will be set by the framework via setattr() in _createWriter
 
 	def finish(self) -> None:
 		self._filename = ""
