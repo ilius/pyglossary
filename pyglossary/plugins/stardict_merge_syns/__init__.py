@@ -49,6 +49,10 @@ website = (
 	"huzheng.org/stardict",
 )
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
+# https://github.com/ilius/pyglossary/pull/250
+# https://github.com/koreader/koreader/issues/5437
+# https://github.com/koreader/koreader/discussions/12898
+
 relatedFormats: list[str] = ["Stardict", "StardictTextual"]
 optionsProp: dict[str, Option] = {
 	"large_file": BoolOption(
