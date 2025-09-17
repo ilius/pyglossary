@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
-from pyglossary.flags import ALWAYS
+from pyglossary.flags import ALWAYS, DEFAULT_YES
 from pyglossary.option import (
 	BoolOption,
 	IntOption,
@@ -177,3 +178,6 @@ optionsProp: dict[str, Option] = {
 		),
 	),
 }
+
+if os.getenv("PYGLOSSARY_YOMICHAN_NO_FORCE_SORT") == "1":
+	sortOnWrite = DEFAULT_YES
