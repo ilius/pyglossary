@@ -291,6 +291,23 @@ class MDictWriter(object):
                 return -1
             elif key1 < key2:
                 return 1
+
+            # https://github.com/digitalpalidictionary/dpd-db: link to link bug prevention (08.03.2023)
+            # When keys are identical, handle @@@LINK= entries specially
+            if not self._is_mdd:  # Only for MDX files, not MDD
+                value1 = item1['path'].lower() if isinstance(item1['path'], str) else ""
+                value2 = item2['path'].lower() if isinstance(item2['path'], str) else ""
+
+                # If both are @@@LINK= entries, maintain stable order
+                if value1.startswith("@@@link=") and value2.startswith("@@@link="):
+                    return 0  # Don't change order to prevent link loops
+
+                # If one is a link but the other isn't, put links at lower positions
+                if value1.startswith("@@@link="):
+                    return 1   # value1 (link) goes after value2 (definition)
+                if value2.startswith("@@@link="):
+                    return -1  # value2 (link) goes after value1 (definition)
+
             return 0
 
         pattern = '[%s ]+' % string.punctuation

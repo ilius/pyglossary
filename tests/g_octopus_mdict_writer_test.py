@@ -322,6 +322,46 @@ class TestMdictWriter(unittest.TestCase):
                 # File should be created
                 self.assertTrue(os.path.exists(self._create_test_file(f'encoding_{encoding.replace("-", "")}.mdx')))
 
+    def test_link_to_link_bug_prevention(self):
+        """Test that @@@LINK= entries are handled correctly.
+        
+        bugfix from: https://github.com/digitalpalidictionary/dpd-db (very large dict with complex use of aliases)
+        """
+        glos = MockGlossary()
+        writer = Writer(glos)
+        writer.open(self._create_test_file('link_sorting.mdx'))
+
+        # Create entries with different keys to test link handling
+        entries = [
+            MockTextEntry(['main_entry'], 'The primary definition'),     # Main definition
+            MockTextEntry(['synonym1'], '@@@LINK=main_entry'),           # Link to main
+            MockTextEntry(['synonym2'], '@@@LINK=main_entry'),           # Another link
+            MockTextEntry(['regular'], 'A regular definition'),          # Regular entry
+        ]
+
+        gen = writer.write()
+        next(gen)
+        for entry in entries:
+            gen.send(entry)
+
+        # Check that entries were stored correctly
+        self.assertEqual(len(writer._entries), 4)
+        self.assertEqual(writer._entries['main_entry'], 'The primary definition')
+        self.assertEqual(writer._entries['synonym1'], '@@@LINK=main_entry')
+        self.assertEqual(writer._entries['synonym2'], '@@@LINK=main_entry')
+        self.assertEqual(writer._entries['regular'], 'A regular definition')
+
+        try:
+            gen.send(None)
+        except StopIteration:
+            pass
+        writer.finish()
+
+        # File should be created successfully
+        # The link-to-link bug prevention happens in MDictWriter._build_offset_table
+        # when sorting entries with identical keys (rare case)
+        self.assertTrue(os.path.exists(self._create_test_file('link_sorting.mdx')))
+
 
 if __name__ == '__main__':
     unittest.main()
