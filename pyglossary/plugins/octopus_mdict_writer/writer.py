@@ -147,8 +147,10 @@ class Writer:
 				# Convert data entries to MDD format (list of dicts with key/path/size/pos)
 				mdd_data = []
 				for filename, data_bytes in self._data_entries.items():
+					# MDX format expects MDD keys to have leading backslash
+					mdd_key = '\\' + filename.replace('/', '\\')
 					mdd_data.append({
-						'key': filename,
+						'key': mdd_key,
 						'path': data_bytes,  # For MDD, path contains the actual data
 						'pos': 0,            # Not used for in-memory data
 						'size': len(data_bytes)
