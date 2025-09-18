@@ -61,7 +61,7 @@ def _mdx_compress(data, compression_type=2):
 	if actual_compression_type == 0:  # no compression
 		return header + data
 	elif actual_compression_type == 2:  # zlib
-		return header + zlib.compress(data, level=9)  # Maximum compression
+		return header + zlib.compress(data, level=6)  # balanced compression ratio (0=no, 9=max compression)
 	elif actual_compression_type == 1:  # lzo (should not reach here due to fallback above)
 		if HAVE_LZO:
 			return header + lzo.compress(data)[5:]  # python-lzo adds a 5-byte header
