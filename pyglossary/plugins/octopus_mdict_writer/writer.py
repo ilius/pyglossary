@@ -27,7 +27,7 @@ class Writer:
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
-		self._entries: dict[str, str] = {}      # Text entries for MDX
+		self._entries: list[tuple[str, str]] = []  # Text entries for MDX (list to preserve duplicates)
 		self._data_entries: dict[str, bytes] = {}  # Binary data entries for MDD
 		# Regex patterns for link processing (similar to reader)
 		import re
@@ -40,7 +40,7 @@ class Writer:
 
 	def finish(self) -> None:
 		self._filename = ""
-		self._entries = {}
+		self._entries = []
 		self._data_entries = {}
 
 	def fixDefi(self, defi: str) -> str:
@@ -90,10 +90,9 @@ class Writer:
 			definition = self.fixDefi(definition)
 
 			# Store the entry for each term/alias
-			# MDictWriter expects dict[str, str] for MDX files
-			# Multiple aliases point to the same definition (efficient in MDX)
+			# Use list to preserve potential duplicates (homonyms)
 			for term in terms:
-				self._entries[term] = definition
+				self._entries.append((term, definition))
 
 		# Now write all entries to proper MDX file
 		self._writeMdxFile()
@@ -180,7 +179,7 @@ class Writer:
 			# Fallback: create a simple text file for text entries
 			if self._entries:
 				with open(self._filename, 'w', encoding=self._encoding) as f:
-					for term, definition in self._entries.items():
+					for term, definition in self._entries:
 						f.write(f"{term}\n")
 						for line in definition.split('\n'):
 							f.write(f"{line}\n")

@@ -243,8 +243,21 @@ class MDictWriter(object):
             raise ParameterError("Unknown version")
         self._version = version
 
-        # Check input format: dict, list, or other
-        if isinstance(d, list):
+        # Check input format: dict, list of tuples, list of dicts, or other
+        if isinstance(d, list) and d and isinstance(d[0], tuple) and len(d[0]) == 2:
+            # List of tuples format: [(key, value), ...] - used for MDX text with potential duplicates
+            self._input_is_simple = True
+            extended_d = []
+            for key, value in d:
+                # For simple format, we store the data directly
+                extended_d.append({
+                    'key': key,
+                    'path': value,  # Store value directly
+                    'pos': 0,       # Not used for simple format
+                    'size': len((value + '\0').encode(self._python_encoding))
+                })
+            self._build_offset_table(extended_d)
+        elif isinstance(d, list):
             # Extended format (list of dicts) - used for MDD data
             self._input_is_simple = False
             self._build_offset_table(d)
