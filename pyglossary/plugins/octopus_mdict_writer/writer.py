@@ -18,8 +18,8 @@ __all__ = ["Writer"]
 
 class Writer:
 	_encoding: str = "utf-8"
-	_key_block_size: int = 64  # KB - match original mdict-utils default
-	_record_block_size: int = 64  # KB - match original mdict-utils default
+	_key_block_size: int = 32768  # = 32KB match original mdict-utils default
+	_record_block_size: int = 65536  # = 64KB - match original mdict-utils default
 	_compression_type: int = 2  # zlib - best compression we have
 	_audio: bool = False  # Convert audio tags back to MDX format
 	_substyle: bool = True  # Enable substyle processing
