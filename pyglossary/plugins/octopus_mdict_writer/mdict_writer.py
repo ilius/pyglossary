@@ -67,7 +67,7 @@ def _mdx_compress(data, compression_type=2):
 			return header + lzo.compress(data)[5:]  # python-lzo adds a 5-byte header
 		else:
 			# This should not happen due to fallback above, but just in case
-			return header + zlib.compress(data)
+			return header + zlib.compress(data, level=6)
 	else:
 		raise ParameterError("Unknown compression type")
 
