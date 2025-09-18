@@ -18,8 +18,8 @@ __all__ = ["Writer"]
 
 class Writer:
 	_encoding: str = "utf-8"
-	_key_block_size: int = 32768  # = 32KB match original mdict-utils default
-	_record_block_size: int = 65536  # = 64KB - match original mdict-utils default
+	_key_block_size: int = 32  # = 32KB match original mdict-utils default
+	_record_block_size: int = 64  # = 64KB - match original mdict-utils default
 	_compression_type: int = 2  # zlib - best compression we have
 	_audio: bool = False  # Convert audio tags back to MDX format
 	_substyle: bool = True  # Enable substyle processing
@@ -123,8 +123,8 @@ class Writer:
 					self._entries,
 					title=title,
 					description=description,
-					key_size=self._key_block_size,
-					record_size=self._record_block_size,
+					key_size=self._key_block_size * 1024,  # Convert KB to bytes
+					record_size=self._record_block_size * 1024,  # Convert KB to bytes
 					encoding=self._encoding,
 					compression_type=self._compression_type,
 					version="2.0",
@@ -158,8 +158,8 @@ class Writer:
 					mdd_data,  # Pass as list of dicts, not dict
 					title=title,
 					description=description,
-					key_size=self._key_block_size,
-					record_size=self._record_block_size,
+					key_size=self._key_block_size * 1024,  # Convert KB to bytes
+					record_size=self._record_block_size * 1024,  # Convert KB to bytes
 					encoding="",  # MDD doesn't use text encoding
 					compression_type=self._compression_type,
 					version="2.0",
