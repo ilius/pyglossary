@@ -103,11 +103,6 @@ class Writer:
 			log.warning("No entries to write")
 			return
 
-		# Add mdict-utils to path
-		mdict_utils_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'mdict-utils')
-		if mdict_utils_path not in sys.path:
-			sys.path.insert(0, mdict_utils_path)
-
 		try:
 			from .mdict_writer import MDictWriter
 
