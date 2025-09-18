@@ -51,20 +51,28 @@ class ParameterError(Exception):
 
 
 def _mdx_compress(data, compression_type=2):
-    """Compress data using the specified MDX compression type."""
-    header = struct.pack(b"<L", compression_type) + \
-             struct.pack(b">L", zlib.adler32(data) & 0xffffffff)
-    if compression_type == 0:  # no compression
-        return header + data
-    elif compression_type == 2:  # zlib
-        return header + zlib.compress(data)
-    elif compression_type == 1:  # lzo
-        if HAVE_LZO:
-            return header + lzo.compress(data)[5:]  # python-lzo adds a 5-byte header
-        else:
-            raise NotImplementedError("LZO compression not available")
-    else:
-        raise ParameterError("Unknown compression type")
+	"""Compress data using the specified MDX compression type."""
+	# Handle LZO fallback - if LZO requested but not available, use zlib
+	actual_compression_type = compression_type
+	if compression_type == 1 and not HAVE_LZO:  # LZO requested but not available
+		actual_compression_type = 2  # Fall back to zlib
+		log.warning("LZO compression requested but not available, falling back to zlib")
+
+	header = struct.pack(b"<L", actual_compression_type) + \
+	         struct.pack(b">L", zlib.adler32(data) & 0xffffffff)
+
+	if actual_compression_type == 0:  # no compression
+		return header + data
+	elif actual_compression_type == 2:  # zlib
+		return header + zlib.compress(data, level=9)  # Maximum compression
+	elif actual_compression_type == 1:  # lzo (should not reach here due to fallback above)
+		if HAVE_LZO:
+			return header + lzo.compress(data)[5:]  # python-lzo adds a 5-byte header
+		else:
+			# This should not happen due to fallback above, but just in case
+			return header + zlib.compress(data)
+	else:
+		raise ParameterError("Unknown compression type")
 
 
 def _fast_encrypt(data, key):
@@ -172,15 +180,17 @@ class MDictWriter(object):
                  register_by=None,
                  user_email=None,
                  user_device_id=None,
-                 is_mdd=False):
+                 is_mdd=False,
+                 compact="No",
+                 compat="No"):
         """
         Prepares the records for MDX/MDD file creation.
 
         d: dictionary mapping keys to values (strings for MDX, bytes for MDD)
         title: dictionary title
         description: dictionary description
-        key_size: key block size in KB
-        record_size: record block size in KB
+        key_size: key block size in KB (used for key blocks)
+        record_size: record block size in KB (used for record blocks and as base block_size)
         encoding: text encoding ("utf8", "utf16", "gbk", "big5")
         compression_type: 0=none, 1=lzo, 2=zlib
         version: format version ("2.0" or "1.2")
@@ -201,6 +211,8 @@ class MDictWriter(object):
         self._user_device_id = user_device_id
         self._compression_type = compression_type
         self._is_mdd = is_mdd
+        self._compact = compact
+        self._compat = compat
 
         # Set up encoding parameters
         if not is_mdd:
@@ -604,8 +616,8 @@ class MDictWriter(object):
                 'Encoding="{encoding}" '
                 'Format="Html" '
                 'CreationDate="{date.year}-{date.month}-{date.day}" '
-                'Compact="No" '
-                'Compat="No" '
+                'Compact="{compact}" '
+                'Compat="{compat}" '
                 'KeyCaseSensitive="No" '
                 'Description="{description}" '
                 'Title="{title}" '
@@ -618,6 +630,8 @@ class MDictWriter(object):
                 encrypted=encrypted,
                 encoding=self._encoding,
                 date=datetime.date.today(),
+                compact=self._compact,
+                compat=self._compat,
                 description=escape(self._description, quote=True),
                 title=escape(self._title, quote=True),
                 register_by_str=register_by_str,

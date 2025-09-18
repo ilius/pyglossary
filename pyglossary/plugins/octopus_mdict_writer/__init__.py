@@ -28,9 +28,9 @@ __all__ = [
 
 enable = True
 lname = "octopus_mdict_writer"
-name = "Octopus MDict Writer"
-description = "Octopus MDict (.mdx) - Mockup Writer"
-extensions = (".mdx",)
+name = "OctopusMdictWriter"
+description = "Octopus MDict (.mdx) - Writer"
+extensions = ()
 extensionCreate = ".mdx"
 singleFile = True
 sortOnWrite = NEVER  # We'll handle sorting ourselves if needed

@@ -18,9 +18,9 @@ __all__ = ["Writer"]
 
 class Writer:
 	_encoding: str = "utf-8"
-	_key_block_size: int = 32  # KB
-	_record_block_size: int = 64  # KB
-	_compression_type: int = 2  # zlib
+	_key_block_size: int = 64  # KB - match original mdict-utils default
+	_record_block_size: int = 64  # KB - match original mdict-utils default
+	_compression_type: int = 2  # zlib - best compression we have
 	_audio: bool = False  # Convert audio tags back to MDX format
 	_substyle: bool = True  # Enable substyle processing
 
@@ -118,6 +118,8 @@ class Writer:
 
 			# Create MDX file for text entries
 			if self._entries:
+				# Try different compression settings to match original file
+				# Original file might use different block sizes or compression
 				mdx_writer = MDictWriter(
 					self._entries,
 					title=title,
@@ -127,7 +129,9 @@ class Writer:
 					encoding=self._encoding,
 					compression_type=self._compression_type,
 					version="2.0",
-					is_mdd=False
+					is_mdd=False,
+					compact="Yes",
+					compat="Yes"
 				)
 
 				# Write the MDX file
