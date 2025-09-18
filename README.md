@@ -89,7 +89,7 @@ Web interface
 | [JMnedict](./doc/p/jmnedict.md)                      🇯🇵 | 📝  |                 | ✅ | ❌ |
 | [WordNet](./doc/p/wordnet.md)                        🇬🇧 | 📁  |                 | ✅ | ❌ |
 | [@wordset dictionary](./doc/p/wordset.md)            🇬🇧 | 📁  |                 | ✅ |    |
-| [Yomichan / Yomitan](./doc/p/yomichan.md)            🇯🇵 | 📦  |     (.zip)      |    | ✅ |
+| [Yomichan / Yomitan](./doc/p/yomichan.md)            🇯🇵 | 📦  |     (.zip)      | ✅ | ✅ |
 
 Legend:
 
