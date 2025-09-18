@@ -38,11 +38,8 @@ except ImportError:
     HAVE_LZO = False
 
 # HTML escaping for headers
-try:
-    from html import escape
-except ImportError:
-    # Python 2 fallback
-    from cgi import escape
+from html import escape
+
 
 
 class ParameterError(Exception):
