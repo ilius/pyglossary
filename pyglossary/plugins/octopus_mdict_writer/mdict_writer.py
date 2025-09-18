@@ -7,7 +7,7 @@ Original code from: https://github.com/zhansliu/mdict-utils
 Adapted for PyGlossary by removing external dependencies.
 """
 
-from __future__ import unicode_literals
+
 
 import struct
 import zlib
@@ -104,10 +104,7 @@ def _salsa_encrypt(plaintext, dict_key):
 
 def _hexdump(bytes_blob):
     """Returns a hexadecimal representation of bytes_blob."""
-    if bytes == str:  # Python 2
-        return "".join("{:02X}".format(ord(c)) for c in bytes_blob)
-    else:  # Python 3
-        return "".join("{:02X}".format(c) for c in bytes_blob)
+    return "".join("{:02X}".format(c) for c in bytes_blob)
 
 
 def encrypt_key(dict_key, **kwargs):
@@ -133,7 +130,7 @@ def encrypt_key(dict_key, **kwargs):
     return _hexdump(output_key)
 
 
-class _OffsetTableEntry(object):
+class _OffsetTableEntry:
     """Represents one key/record pair in the MDX format."""
     def __init__(self, key, key_null, key_len, offset, record_null, record_size=None, record_pos=None, encoding=None, is_mdd=None):
         self.key = key
@@ -164,7 +161,7 @@ class _OffsetTableEntry(object):
                 return self.record_null
 
 
-class MDictWriter(object):
+class MDictWriter:
     """Writer for MDX (dictionary) and MDD (data) files with proper MDict sorting."""
 
     def __init__(self, d, title, description,
@@ -679,7 +676,7 @@ class MDictWriter(object):
         f.write(struct.pack(b"<L", zlib.adler32(header_string) & 0xffffffff))
 
 
-class _MdxBlock(object):
+class _MdxBlock:
     """Abstract base class for MDX blocks."""
 
     def __init__(self, offset_table, compression_type, version):
