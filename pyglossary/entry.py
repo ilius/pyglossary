@@ -5,6 +5,7 @@ import logging
 import os
 import re
 import shutil
+import warnings
 from os.path import dirname, getsize, join
 from typing import TYPE_CHECKING
 
@@ -207,10 +208,11 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	def __init__(
 		self,
-		term: MultiStr,
-		defi: str,
+		term: MultiStr | None = None,
+		defi: str = "",
 		defiFormat: str = "m",
 		byteProgress: tuple[int, int] | None = None,
+		word: MultiStr | None = None,
 	) -> None:
 		"""
 		Create a new Entry.
@@ -222,12 +224,22 @@ class Entry(BaseEntry):  # noqa: PLR0904
 			"h": html
 			"x": xdxf.
 		"""
+		if word is not None:
+			if term is not None:
+				raise ValueError("both term and word arguments passed")
+			warnings.warn(
+				"word argument is deprecated, use term argument",
+				category=DeprecationWarning,
+				stacklevel=3,
+			)
+			term = word
+
 		# memory optimization:
 		if isinstance(term, list | tuple):
 			if len(term) == 1:
 				term = term[0]
 		elif not isinstance(term, str):
-			raise TypeError(f"invalid word type {type(term)}")
+			raise TypeError(f"invalid term type {type(term)}")
 
 		if isinstance(defi, list):
 			if len(defi) == 1:

@@ -11,11 +11,14 @@ from pyglossary.entry import Entry
 
 
 class TestEntryBasic(unittest.TestCase):
+	def test_exc_deprecated_0(self):
+		Entry(word="word", defi="defi")
+
 	def test_exc_1(self):
 		try:
 			Entry(b"word", "defi")
 		except TypeError as e:
-			self.assertEqual(str(e), "invalid word type <class 'bytes'>")
+			self.assertEqual(str(e), "invalid term type <class 'bytes'>")
 		else:
 			self.fail("must raise TypeError")
 
