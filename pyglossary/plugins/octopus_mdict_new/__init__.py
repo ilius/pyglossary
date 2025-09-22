@@ -54,10 +54,8 @@ optionsProp: dict[str, Option] = {
 	),
 }
 
-extraDocs = [
-	(
-		"`python-lzo` is required for **some** MDX glossaries.",
-		"""First try converting your MDX file, if failed (`AssertionError` probably),
-then try to install [LZO library and Python binding](./doc/lzo.md).""",
-	),
-]
+docTail = """### `python-lzo` is required for **some** MDX glossaries.
+
+First try converting your MDX file, if failed (`AssertionError` probably),
+then try to install [LZO library and Python binding](../lzo.md).
+"""

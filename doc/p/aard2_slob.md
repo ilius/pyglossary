@@ -42,7 +42,8 @@ pip3 install pyicu
 
 ### pyicu
 
-See [doc/pyicu.md](../pyicu.md) file for more detailed instructions on how to install pyicu.
+See [doc/pyicu.md](../pyicu.md) file for more detailed instructions on how
+to install pyicu.
 
 ### Dictionary Applications/Tools
 

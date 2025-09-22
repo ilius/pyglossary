@@ -90,9 +90,7 @@ optionsProp: dict[str, Option] = {
 	),
 }
 
-extraDocs = [
-	(
-		"Also see:",
-		"See [doc/apple.md](./doc/apple.md) for additional AppleDict instructions.",
-	),
-]
+docTail = """### Also see:
+
+See [doc/apple.md](../apple.md) for additional AppleDict instructions.
+"""

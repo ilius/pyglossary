@@ -51,7 +51,6 @@ website = (
 	"huzheng.org/stardict",
 )
 relatedFormats: list[str] = ["StardictTextual", "StardictMergeSyns"]
-extraDocs = []
 
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
 optionsProp: dict[str, Option] = {

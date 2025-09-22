@@ -68,13 +68,9 @@ ${writeDependsCmd}
 	% endif
 % endif
 
-% if extraDocs:
-% for title, text in extraDocs:
-${f"### {title}"}
+% if docTail:
+${docTail.replace('(./doc/', '(../')}
 
-${text.replace('(./doc/', '(../')}
-
-% endfor
 % endif
 ${toolsTable}
 
@@ -247,7 +243,7 @@ for p in plugins:
 		writeDependsCmd,
 	) = makeDependsDoc(getattr(module, "Writer", None))
 
-	extraDocs = getattr(module, "extraDocs", [])
+	docTail = getattr(module, "docTail", [])
 
 	toolsFile = join(pluginsDir, p.moduleName, "tools.toml")
 	try:
@@ -352,7 +348,7 @@ for p in plugins:
 		readDependsCmd=readDependsCmd,
 		writeDependsLinks=writeDependsLinks,
 		writeDependsCmd=writeDependsCmd,
-		extraDocs=extraDocs,
+		docTail=docTail,
 		toolsTable=toolsTable,
 		relatedFormats=relatedFormats,
 	)

@@ -90,10 +90,8 @@ optionsProp: dict[str, Option] = {
 	),
 }
 
-extraDocs = [
-	(
-		"Other Requirements",
-		"Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen)"
-		" for creating Mobipocket e-books.",
-	),
-]
+docTail = """### Other Requirements
+
+Install [KindleGen](https://wiki.mobileread.com/wiki/KindleGen) for creating
+Mobipocket e-books.
+"""
