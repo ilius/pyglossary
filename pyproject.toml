@@ -216,7 +216,7 @@ mccabe.max-complexity = 13
 	"RUF003", # Comment contains ambiguous ...
 ]
 "scripts/wiki-formats.py" = ["E501"]
-"pyglossary/io_utils.py" = ["ANN"]
+"pyglossary/io_utils.py" = []
 "pyglossary/plugins/babylon_bgl/reader_debug.py" = ["ANN", "FURB"]
 "pyglossary/ui/ui_tk.py" = ["ANN"]
 "pyglossary/ui/**/*.py" = [

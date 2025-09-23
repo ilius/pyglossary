@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import io
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Never
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -10,10 +10,10 @@ __all__ = ["nullBinaryIO", "nullTextIO"]
 
 
 class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
-	def __enter__(self, *args):
+	def __enter__(self) -> Never:
 		raise NotImplementedError
 
-	def __exit__(self, *args):
+	def __exit__(self, *args: object) -> Never:
 		raise NotImplementedError
 
 	def close(self) -> None:
@@ -55,10 +55,10 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def read1(self, n: int | None = None) -> bytes:
 		raise NotImplementedError
 
-	def readinto(self, buffer) -> int:
+	def readinto(self, buffer: bytes | bytearray) -> int:
 		raise NotImplementedError
 
-	def readinto1(self, buffer) -> int:
+	def readinto1(self, buffer: bytes | bytearray) -> int:
 		raise NotImplementedError
 
 	# data: "bytearray|memoryview|array[Any]|io.mmap|io._CData|io.PickleBuffer"
@@ -82,10 +82,10 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 
 
 class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
-	def __enter__(self, *args):
+	def __enter__(self) -> Never:
 		raise NotImplementedError
 
-	def __exit__(self, *args):
+	def __exit__(self, *args: object) -> Never:
 		raise NotImplementedError
 
 	def close(self) -> None:
@@ -127,10 +127,10 @@ class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
 	def read1(self, n: int | None = None) -> str:
 		raise NotImplementedError
 
-	def readinto(self, buffer) -> io.BufferedIOBase:
+	def readinto(self, buffer: bytes | bytearray) -> io.BufferedIOBase:
 		raise NotImplementedError
 
-	def readinto1(self, buffer) -> io.BufferedIOBase:
+	def readinto1(self, buffer: bytes | bytearray) -> io.BufferedIOBase:
 		raise NotImplementedError
 
 	# data: "bytearray|memoryview|array[Any]|io.mmap|io._CData|io.PickleBuffer"
