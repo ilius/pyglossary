@@ -160,7 +160,7 @@ progressbar progress, trough {min-height: 0.6em;}
 		ui: UIType,
 		app: gtk.Application,
 		progressBar: gtk.ProgressBar | None,
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		self.app = app
 		self.ui = ui

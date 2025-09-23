@@ -9,6 +9,9 @@ __all__ = ["faEditStr"]
 
 def faEditStr(st: str) -> str:
 	return replacePostSpaceChar(
-		st.replace("ي", "ی").replace("ك", "ک").replace("ۂ", "هٔ").replace("ہ", "ه"),
+		st.replace("ي", "ی")
+		.replace("ك", "ک")
+		.replace("ۂ", "هٔ")
+		.replace("\u06c1", "\u0647"),
 		"،",
 	)

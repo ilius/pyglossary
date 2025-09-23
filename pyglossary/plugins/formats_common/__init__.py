@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import os
 import sys
@@ -55,7 +57,7 @@ enable = False
 lname = ""
 name = "Unknown"
 description = "Unknown"
-extensions: "tuple[str, ...]" = ()
+extensions: tuple[str, ...] = ()
 extensionCreate = ""
 singleFile = False
 kind = ""
@@ -63,7 +65,7 @@ wiki = ""
 website = None
 
 # key is option/argument name, value is instance of Option
-optionsProp: "dict[str, Option]" = {}
+optionsProp: dict[str, Option] = {}
 
 sortOnWrite: YesNoAlwaysNever = DEFAULT_NO
 

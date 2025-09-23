@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import logging
 from os.path import isabs, join
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from gi.repository import Pango as pango
 
@@ -44,11 +44,11 @@ __all__ = [
 log = logging.getLogger("pyglossary")
 
 
-def VBox(**kwargs) -> gtk.Box:
+def VBox(**kwargs: Any) -> gtk.Box:
 	return gtk.Box(orientation=gtk.Orientation.VERTICAL, **kwargs)
 
 
-def HBox(**kwargs) -> gtk.Box:
+def HBox(**kwargs: Any) -> gtk.Box:
 	return gtk.Box(orientation=gtk.Orientation.HORIZONTAL, **kwargs)
 
 
@@ -161,7 +161,7 @@ def showMsg(  # noqa: PLR0913
 	win.destroy()
 
 
-def showInfo(msg, **kwargs) -> None:  # noqa: ANN001
+def showInfo(msg, **kwargs: Any) -> None:  # noqa: ANN001
 	# gtk-dialog-info is deprecated since version 3.10:
 	# Use named icon “dialog-information”.
 	showMsg(msg, iconName="gtk-dialog-info", **kwargs)

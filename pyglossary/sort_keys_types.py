@@ -18,7 +18,7 @@ class SortKeyMakerType(Protocol):
 	def __call__(
 		self,
 		sortEncoding: str = "utf-8",
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> SortKeyType: ...
 
 
@@ -26,7 +26,7 @@ class SQLiteSortKeyMakerType(Protocol):
 	def __call__(
 		self,
 		sortEncoding: str = "utf-8",
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> SQLiteSortKeyType: ...
 
 

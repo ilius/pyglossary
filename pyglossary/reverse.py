@@ -4,7 +4,7 @@ import logging
 import re
 import typing
 from operator import itemgetter
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from collections.abc import Iterable, Iterator
@@ -22,10 +22,7 @@ if TYPE_CHECKING:
 
 		def getInfo(self, key: str) -> str: ...
 
-		def progressInit(
-			self,
-			*args,  # noqa: ANN002
-		) -> None: ...
+		def progressInit(self, *args: Any) -> None: ...
 
 		def progress(self, pos: int, total: int, unit: str = "entries") -> None: ...
 
@@ -44,7 +41,7 @@ def reverseGlossary(  # noqa: PLR0913
 	terms: list[str] | None = None,
 	includeDefs: bool = False,
 	saveStep: int = 1000,  # set this to zero to disable auto saving
-	**kwargs,
+	**kwargs: Any,
 ) -> Iterator[int]:
 	"""
 	Usage:

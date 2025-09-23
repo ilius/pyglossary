@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 import logging
 import os
@@ -25,9 +27,9 @@ log.addHandler(mockLog)
 class StructReaderWriter(slob.StructWriter):
 	def __init__(
 		self,
-		file: "io.BufferedWriter",
-		reader: "slob.StructReader",
-		encoding: "str | None" = None,
+		file: io.BufferedWriter,
+		reader: slob.StructReader,
+		encoding: str | None = None,
 	) -> None:
 		super().__init__(
 			file=file,
@@ -84,7 +86,7 @@ class BaseTest(unittest.TestCase):
 			w.close()
 		self.tmpdir.cleanup()
 
-	def _observer(self, event: "slob.WriterEvent"):
+	def _observer(self, event: slob.WriterEvent):
 		log.info(f"slob: {event.name}{': ' + event.data if event.data else ''}")
 
 	def create(self, *args, observer=None, **kwargs):

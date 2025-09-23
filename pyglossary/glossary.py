@@ -66,11 +66,12 @@ class Glossary(GlossaryCommon, PluginHandler):
 			for key, value in info.items():
 				self.setInfo(key, value)
 
-	def titleElement(  # noqa: ANN201
+	# TODO: use Protocol for hf and return type
+	def titleElement(
 		self,
-		hf,  # noqa: ANN001, type: ignore
+		hf: Any,
 		sample: str = "",
-	):  # type: ignore
+	) -> Any:
 		return hf.element(self.titleTag(sample))
 
 	def read(
@@ -78,7 +79,7 @@ class Glossary(GlossaryCommon, PluginHandler):
 		filename: str,
 		direct: bool = False,
 		progressbar: bool = True,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> bool:
 		"""
 		Read from a given glossary file.

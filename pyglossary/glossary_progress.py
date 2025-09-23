@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .core import log
 
@@ -39,10 +39,7 @@ class GlossaryProgress:
 	def progressbar(self, enabled: bool) -> None:
 		self._progressbar = enabled
 
-	def progressInit(
-		self,
-		*args,  # noqa: ANN002
-	) -> None:
+	def progressInit(self, *args: Any) -> None:
 		if self._ui and self._progressbar:
 			self._ui.progressInit(*args)
 

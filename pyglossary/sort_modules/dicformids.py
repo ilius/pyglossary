@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	from pyglossary.sort_keys_types import SortKeyType, SQLiteSortKeyType
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 desc = "DictionaryForMIDs"
 
 
-def normal(**_options) -> SortKeyType:
+def normal(**_options: Any) -> SortKeyType:
 	re_punc = re.compile(
 		r"""[!"$§%&/()=?´`\\{}\[\]^°+*~#'\-_.:,;<>@|]*""",  # noqa: RUF001
 	)
@@ -29,7 +29,7 @@ def normal(**_options) -> SortKeyType:
 	return sortKey
 
 
-def sqlite(**options) -> SQLiteSortKeyType:
+def sqlite(**options: Any) -> SQLiteSortKeyType:
 	return [
 		(
 			"headword_norm",

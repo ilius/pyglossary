@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 desc = "Random"
 
 
-def normal(**_options) -> SortKeyType:
+def normal(**_options: Any) -> SortKeyType:
 	from random import random
 
 	return lambda _words: random()
@@ -30,13 +30,13 @@ def locale(
 	def sortKey(words: list[str]) -> Any:  # noqa: ARG001
 		return random()
 
-	def warpper(sortEncoding: str = "utf-8", **_options) -> SortKeyType:  # noqa: ARG001
+	def warpper(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:  # noqa: ARG001
 		return sortKey
 
 	return warpper
 
 
-def sqlite(**_options) -> SQLiteSortKeyType:
+def sqlite(**_options: Any) -> SQLiteSortKeyType:
 	from random import random
 
 	return [
@@ -50,7 +50,7 @@ def sqlite(**_options) -> SQLiteSortKeyType:
 
 def sqlite_locale(
 	_collator: T_Collator,  # noqa: F821
-	**_options,
+	**_options: Any,
 ) -> Callable[..., SQLiteSortKeyType]:
 	from random import random
 

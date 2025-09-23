@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from gi.repository import Gdk as gdk
 from gi.repository import Gio as gio
@@ -63,7 +64,7 @@ class UI(UIBase, gtk.Application):
 		self.runArgs = {}
 		self.mainWindow: MainWindow | None = None
 
-	def run(self, **kwargs) -> None:
+	def run(self, **kwargs: Any) -> None:
 		self.runArgs = kwargs
 		gtk.Application.run(self)
 

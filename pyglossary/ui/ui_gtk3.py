@@ -118,7 +118,7 @@ class FormatDialog(gtk.Dialog):
 		self,
 		descList: list[str],
 		parent: gtk.Widget | None = None,
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		gtk.Dialog.__init__(self, parent=parent, **kwargs)
 		self.descList = descList
@@ -696,7 +696,7 @@ class FormatBox(FormatButton):
 class InputFormatBox(FormatBox):
 	dialogTitle = "Select Input Format"
 
-	def __init__(self, **kwargs) -> None:
+	def __init__(self, **kwargs: Any) -> None:
 		FormatBox.__init__(self, readDesc, **kwargs)
 
 	def kind(self) -> str:
@@ -713,7 +713,7 @@ class InputFormatBox(FormatBox):
 class OutputFormatBox(FormatBox):
 	dialogTitle = "Select Output Format"
 
-	def __init__(self, **kwargs) -> None:
+	def __init__(self, **kwargs: Any) -> None:
 		FormatBox.__init__(self, writeDesc, **kwargs)
 
 	def kind(self) -> str:
@@ -949,7 +949,7 @@ class GeneralOptionsDialog(gtk.Dialog):
 		self.hide()
 		return True
 
-	def __init__(self, ui: UI, **kwargs) -> None:
+	def __init__(self, ui: UI, **kwargs: Any) -> None:
 		gtk.Dialog.__init__(
 			self,
 			transient_for=ui,
@@ -1094,7 +1094,7 @@ class UI(UIBase, gtk.Application):
 		self.progressTitle = ""
 		self.mainWin: MainWindow | None = None
 
-	def run(self, **kwargs) -> None:
+	def run(self, **kwargs: Any) -> None:
 		self.runArgs = kwargs
 		gtk.Application.run(self)
 

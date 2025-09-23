@@ -55,7 +55,7 @@ class LocaleNamedSortKey:
 	mod: Any = None
 
 	@property
-	def module(self):  # noqa: ANN201
+	def module(self) -> Any:
 		if self.mod is not None:
 			return self.mod
 		mod = __import__(

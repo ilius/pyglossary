@@ -11,7 +11,7 @@ desc = "ASCII-Lowercase Headword"
 
 def normal(
 	sortEncoding: str = "utf-8",
-	**_options,
+	**_options: Any,
 ) -> SortKeyType:
 	def sortKey(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace").lower()
@@ -25,7 +25,7 @@ def normal(
 # 	raise NotImplementedError("")
 
 
-def sqlite(sortEncoding: str = "utf-8", **_options) -> SQLiteSortKeyType:
+def sqlite(sortEncoding: str = "utf-8", **_options: Any) -> SQLiteSortKeyType:
 	def sortKey(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace").lower()
 

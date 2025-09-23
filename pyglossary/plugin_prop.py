@@ -153,7 +153,7 @@ class PluginProp:  # noqa: PLR0904
 		return self
 
 	@classmethod
-	def fromModule(cls: type, mod: Any) -> PluginProp:  # noqa: ANN401
+	def fromModule(cls: type, mod: Any) -> PluginProp:
 		self = cls()
 		self._mod = mod
 		self._Reader = None
@@ -204,7 +204,7 @@ class PluginProp:  # noqa: PLR0904
 		return self._enable
 
 	@property
-	def module(self) -> Any:  # noqa: ANN401
+	def module(self) -> Any:
 		if self._mod is not None:
 			return self._mod
 		moduleName = self._moduleName
@@ -386,7 +386,7 @@ class PluginProp:  # noqa: PLR0904
 			self._writeDepends = getattr(self.writerClass, "depends", {})
 		return self._writeDepends
 
-	def checkModule(self, module: Any) -> None:  # noqa: ANN401
+	def checkModule(self, module: Any) -> None:
 		name = self.name
 
 		if hasattr(module, "write"):

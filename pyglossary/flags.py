@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 if TYPE_CHECKING:
 	from typing import TypeAlias
@@ -22,7 +22,7 @@ class StrWithDesc(str):
 	desc: str
 	__slots__ = ["desc"]
 
-	def __new__(cls: type, name: str, desc: str) -> StrWithDesc:
+	def __new__(cls: type, name: str, desc: str) -> Self:
 		s: StrWithDesc = str.__new__(cls, name)
 		s.desc = desc
 		flagsByName[name] = s

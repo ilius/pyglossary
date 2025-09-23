@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import sys
 import unittest
@@ -64,7 +66,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 		baseName: str,
 		files: list[str],
 		html_full: bool = False,
-		resFiles: "dict[str, str] | None" = None,
+		resFiles: dict[str, str] | None = None,
 	):
 		if resFiles is None:
 			resFiles = {}

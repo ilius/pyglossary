@@ -61,7 +61,7 @@ class FormatDialog(gtk.Dialog):
 		self,
 		descList: list[str],
 		parent: gtk.Widget | None = None,
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		gtk.Dialog.__init__(self, transient_for=parent, **kwargs)
 		self.set_default_size(400, 400)
@@ -273,7 +273,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		formatName: str,
 		options: list[str],
 		optionsValues: dict[str, Any],
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		self.app = app
 		gtk.Dialog.__init__(self, **kwargs)
@@ -767,7 +767,7 @@ class FormatBox(gtk.Box):
 class InputFormatBox(FormatBox):
 	dialogTitle = "Select Input Format"
 
-	def __init__(self, app: gtk.Application, **kwargs) -> None:
+	def __init__(self, app: gtk.Application, **kwargs: Any) -> None:
 		FormatBox.__init__(self, app, readDesc, **kwargs)
 
 	def kind(self) -> str:
@@ -784,7 +784,7 @@ class InputFormatBox(FormatBox):
 class OutputFormatBox(FormatBox):
 	dialogTitle = "Select Output Format"
 
-	def __init__(self, app: gtk.Application, **kwargs) -> None:
+	def __init__(self, app: gtk.Application, **kwargs: Any) -> None:
 		FormatBox.__init__(self, app, writeDesc, **kwargs)
 
 	def kind(self) -> str:

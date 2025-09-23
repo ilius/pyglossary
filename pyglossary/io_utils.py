@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import io
-from typing import TYPE_CHECKING, Never
+from typing import TYPE_CHECKING, Never, Self
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -10,7 +10,7 @@ __all__ = ["nullBinaryIO", "nullTextIO"]
 
 
 class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
-	def __enter__(self) -> Never:
+	def __enter__(self) -> Self:
 		raise NotImplementedError
 
 	def __exit__(self, *args: object) -> Never:
@@ -82,7 +82,7 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 
 
 class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
-	def __enter__(self) -> Never:
+	def __enter__(self) -> Self:
 		raise NotImplementedError
 
 	def __exit__(self, *args: object) -> Never:

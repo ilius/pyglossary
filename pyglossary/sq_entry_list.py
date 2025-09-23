@@ -19,7 +19,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from .glossary_utils import Error
 
@@ -132,7 +132,7 @@ class SqEntryList:
 		for row in self._cur:
 			yield self._decode(row[0])
 
-	def __iadd__(self, other: Iterable) -> SqEntryList:
+	def __iadd__(self, other: Iterable) -> Self:
 		for item in other:
 			self.append(item)
 		return self

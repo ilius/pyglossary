@@ -89,10 +89,8 @@ select = [
 	# "FLY",   # flynt
 ]
 ignore = [
-	"ANN003",  # Missing type annotation for `**kwargs`, 15 remaining
 	"PLR0917", # Too many positional arguments (x/5)
 	"PLR0914", # Too many local variables (x/15)
-	"ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in ...
 
 	"PYI042",  # Type alias `...` should be CamelCase FIXME
 
@@ -103,7 +101,6 @@ ignore = [
 
 	"COM812", # Trailing comma missing
 	"SLF",    # Private member accessed
-	"PYI034", # py3.11: `__iadd__` methods in classes like `SqEntryList` usually return `self` at runtime
 	"DTZ001", # The use of `datetime.datetime()` without `tzinfo` argument is not allowed
 	"DTZ005", # The use of `datetime.datetime.now()` without `tz` argument is not allowed
 	"PGH003", # Use specific rule codes when ignoring type issues
@@ -147,8 +144,9 @@ ignore = [
 	"SIM105",  # Use contextlib.suppress({exception}) instead of try-except-pass
 	"SIM117",  # Use a single with statement with multiple contexts...
 	"UP009",   # UTF-8 encoding declaration is unnecessary
-	"UP037",   # Remove quotes from type annotation
 	"SIM115",  # Use context handler for opening files
+	"ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in ...
+	"RUF003",  # Comment contains ambiguous ...
 	"W191",    # Indentation contains tabs
 ]
 
@@ -201,10 +199,6 @@ mccabe.max-complexity = 13
 	"C901", # `...` is too complex
 ]
 
-"pyglossary/html_utils.py" = ["RUF003"]
-"persian_utils.py" = ["RUF001"]
-"ru.py" = ["RUF001", "RUF003"]
-"pyglossary/plugins/dikt_json/*.py" = ["RUF003"]
 "pyglossary/plugin_lib/*.py" = [
 	"ANN",
 	"PT018",   # Assertion should be broken down into multiple parts
@@ -212,13 +206,11 @@ mccabe.max-complexity = 13
 	"RUF015",  # Prefer `next(zip(*_list, strict=False))` over single element slice
 	"PLR2004", # Magic value used in comparison, consider replacing `...` with a constant variable
 ]
-"pyglossary/plugins/wiktextract/reader.py" = [
-	"RUF003", # Comment contains ambiguous ...
-]
+
 "scripts/wiki-formats.py" = ["E501"]
 "pyglossary/io_utils.py" = []
 "pyglossary/plugins/babylon_bgl/reader_debug.py" = ["ANN", "FURB"]
-"pyglossary/ui/ui_tk.py" = ["ANN"]
+"pyglossary/ui/ui_tk.py" = ["ANN"] # 81 errors
 "pyglossary/ui/**/*.py" = [
 	"T201",
 	"PERF203",

@@ -42,6 +42,7 @@ from typing import (
 	Any,
 	Generic,
 	NamedTuple,
+	Self,
 	TypeVar,
 	cast,
 )
@@ -271,7 +272,7 @@ class MultiFileReader(BufferedIOBase):
 		self._offset = -1
 		self.seek(0)
 
-	def __enter__(self) -> MultiFileReader:
+	def __enter__(self) -> Self:
 		return self
 
 	def __exit__(
@@ -677,7 +678,7 @@ class Slob:
 			self._header.content_types,
 		)
 
-	def __enter__(self) -> Slob:
+	def __enter__(self) -> Self:
 		return self
 
 	def __exit__(

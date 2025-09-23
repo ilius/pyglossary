@@ -654,7 +654,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		self,
 		formatName: str,
 		options: dict[str, Any],
-	) -> Any:  # noqa: ANN401
+	) -> Any:
 		readerClass = PluginHandler.plugins[formatName].readerClass
 		if readerClass is None:
 			raise ReadError("_createReader: readerClass is None")
@@ -695,7 +695,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				)
 				del options[key]
 
-	def _openReader(self, reader: Any, filename: str) -> None:  # noqa: ANN401
+	def _openReader(self, reader: Any, filename: str) -> None:
 		# reader.open returns "Iterator[tuple[int, int]] | None"
 		progressbar: bool = self.progressbar
 		try:
@@ -721,7 +721,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 	def directRead(
 		self,
 		filename: str,
-		**options,  # noqa: ANN003
+		**options: Any,
 	) -> bool:
 		self._read(
 			filename=filename,
@@ -738,7 +738,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		format: str | None = None,  # to be removed in 6.0.0 # noqa: A002
 		formatName: str = "",
 		direct: bool = False,
-		**options,  # noqa: ANN003
+		**options: Any,
 	) -> None:
 		if format:
 			warnings.warn(
@@ -793,7 +793,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		self._readers.append(reader)
 		self._iter = self._readersEntryGen()
 
-	def loadReader(self, reader: Any) -> None:  # noqa: ANN401
+	def loadReader(self, reader: Any) -> None:
 		"""
 		Iterate over `reader` object and loads the whole data into self._data
 		must call `reader.open(filename)` before calling this function.
@@ -819,7 +819,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		self,
 		formatName: str,
 		options: dict[str, Any],
-	) -> Any:  # noqa: ANN401
+	) -> Any:
 		validOptions = PluginHandler.formatsWriteOptions.get(formatName)
 		if validOptions is None:
 			raise WriteError(f"No write support for {formatName!r} format")
@@ -941,7 +941,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	@staticmethod
 	def _openWriter(
-		writer: Any,  # noqa: ANN401
+		writer: Any,
 		filename: str,
 	) -> None:
 		try:
@@ -954,7 +954,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		filename: str,
 		formatName: str,
 		sort: bool = False,
-		**options,  # noqa: ANN003
+		**options: Any,
 	) -> str:
 		filename = os.path.abspath(filename)
 

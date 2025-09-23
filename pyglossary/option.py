@@ -109,7 +109,7 @@ class Option:
 			return None, True
 		return raw, True
 
-	def validate(self, value: Any) -> bool:  # noqa: ANN401
+	def validate(self, value: Any) -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -139,7 +139,7 @@ class BoolOption(Option):
 	def __init__(
 		self,
 		allowNone: bool = False,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		values: list[bool | None] = [False, True]
 		if allowNone:
@@ -150,7 +150,7 @@ class BoolOption(Option):
 			customValue=False,
 			values=values,
 			allowNone=allowNone,
-			**kwargs,  # noqa: ANN003
+			**kwargs,
 		)
 
 	def toDict(self) -> dict[str, Any]:
@@ -183,7 +183,7 @@ class BoolOption(Option):
 class StrOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		Option.__init__(
 			self,
@@ -191,7 +191,7 @@ class StrOption(Option):
 			**kwargs,
 		)
 
-	def validate(self, value: Any) -> bool:  # noqa: ANN401
+	def validate(self, value: Any) -> bool:
 		if not self.customValue:
 			if not self.values:
 				log.error(
@@ -210,7 +210,7 @@ class StrOption(Option):
 class IntOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		Option.__init__(
 			self,
@@ -296,7 +296,7 @@ class FileSizeOption(IntOption):
 class FloatOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		Option.__init__(
 			self,
@@ -321,7 +321,7 @@ class FloatOption(Option):
 class DictOption(Option):
 	def __init__(
 		self,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		Option.__init__(
 			self,
@@ -359,14 +359,14 @@ class DictOption(Option):
 
 @Option.register
 class ListOption(Option):
-	def __init__(self, **kwargs) -> None:  # noqa: ANN003
+	def __init__(self, **kwargs: Any) -> None:
 		Option.__init__(
 			self,
 			typ="list",
 			customValue=True,
 			allowNone=True,
 			multiline=True,
-			**kwargs,  # noqa: ANN003
+			**kwargs,
 		)
 
 	def toDict(self) -> dict[str, Any]:
@@ -398,7 +398,7 @@ class EncodingOption(Option):
 		customValue: bool = True,
 		values: list[str] | None = None,
 		comment: str | None = None,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		if values is None:
 			values = [
@@ -437,7 +437,7 @@ class EncodingOption(Option):
 			customValue=customValue,
 			values=values,
 			comment=comment,
-			**kwargs,  # noqa: ANN003
+			**kwargs,
 		)
 
 	def toDict(self) -> dict[str, Any]:
@@ -472,7 +472,7 @@ class NewlineOption(Option):
 		customValue: bool = True,
 		values: list[str] | None = None,
 		comment: str | None = None,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		if values is None:
 			values = [
@@ -489,7 +489,7 @@ class NewlineOption(Option):
 			values=values,
 			multiline=True,
 			comment=comment,
-			**kwargs,  # noqa: ANN003
+			**kwargs,
 		)
 
 
@@ -525,11 +525,11 @@ class HtmlColorOption(Option):
 		del data["customValue"]
 		return data
 
-	def __init__(self, **kwargs) -> None:  # noqa: ANN003
+	def __init__(self, **kwargs: Any) -> None:
 		Option.__init__(
 			self,
 			typ="str",
 			customValue=True,
-			**kwargs,  # noqa: ANN003
+			**kwargs,
 		)
 		# TODO: use a specific type?

@@ -6,7 +6,7 @@ import shutil
 import sys
 from os.path import join, normpath
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from .core import TRACE, pip, trace
 
@@ -48,7 +48,7 @@ class indir:
 		self.create = create
 		self.clear = clear
 
-	def __enter__(self) -> None:
+	def __enter__(self) -> Self:
 		self.old_pwd = os.getcwd()
 		if os.path.exists(self.dir):
 			if self.clear:

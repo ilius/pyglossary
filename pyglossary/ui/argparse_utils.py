@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from typing import Any
 
 __all__ = ["StoreConstAction"]
 
@@ -12,7 +13,7 @@ class StoreConstAction(argparse.Action):
 		same_dest: str = "",
 		const_value: bool | None = None,
 		nargs: int = 0,
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		if isinstance(option_strings, str):
 			option_strings = [option_strings]

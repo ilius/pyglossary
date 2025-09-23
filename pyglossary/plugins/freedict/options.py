@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
 __all__ = ["optionsProp"]
 
 
-optionsProp: "dict[str, Option]" = {
+optionsProp: dict[str, Option] = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",
 	),

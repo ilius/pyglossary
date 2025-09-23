@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.sort_modules import ebook
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 desc = "E-Book (prefix length: 3)"
 
 
-def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
+def normal(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:
 	return ebook.normal(
 		sortEncoding=sortEncoding,
 		group_by_prefix_length=3,
@@ -20,7 +20,7 @@ def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
 
 def sqlite(
 	sortEncoding: str = "utf-8",
-	**_options,
+	**_options: Any,
 ) -> SQLiteSortKeyType:
 	return ebook.sqlite(
 		sortEncoding=sortEncoding,

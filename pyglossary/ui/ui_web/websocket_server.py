@@ -135,7 +135,7 @@ class API:
 	) -> None:
 		self.client_left = fn
 
-	def set_fn_message_received(self, fn) -> None:  # noqa: ANN001
+	def set_fn_message_received(self, fn: Callable[[HandlerType, str], None]) -> None:
 		self.message_received = fn
 
 	def send_message(self, client: dict[str, Any], msg: str | bytes) -> None:
@@ -225,13 +225,13 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 	def url(self) -> str:
 		return f"http://{self.host}:{self.port}/"
 
-	def info(self, *args, **kwargs) -> None:  # noqa: ANN002
+	def info(self, *args: Any, **kwargs: Any) -> None:
 		self.logger.info(*args, **kwargs)
 
-	def error(self, *args, **kwargs) -> None:  # noqa: ANN002
+	def error(self, *args: Any, **kwargs: Any) -> None:
 		self.logger.error(*args, **kwargs)
 
-	def exception(self, *args, **kwargs) -> None:  # noqa: ANN002
+	def exception(self, *args: Any, **kwargs: Any) -> None:
 		self.logger.error(*args, **kwargs)
 
 	def run_forever(self, threaded: bool = False) -> None:

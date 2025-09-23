@@ -25,7 +25,7 @@ from __future__ import annotations
 import io
 import os
 import re
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from pyglossary.core import log
 from pyglossary.option import (
@@ -171,7 +171,7 @@ class BGLGzipFile(GzipFile):
 		self,
 		fileobj: io.IOBase | None = None,
 		closeFileobj: bool = False,
-		**kwargs,  # noqa: ANN003
+		**kwargs: Any,
 	) -> None:
 		GzipFile.__init__(self, fileobj=fileobj, **kwargs)
 		self.closeFileobj = closeFileobj

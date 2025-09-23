@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 desc = "Headword"
 
 
-def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
+def normal(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:
 	def sortKey(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace")
 
@@ -30,13 +30,13 @@ def locale(
 	def sortKey(words: list[str]) -> Any:
 		return cSortKey(words[0])
 
-	def warpper(sortEncoding: str = "utf-8", **_options) -> SortKeyType:  # noqa: ARG001
+	def warpper(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:  # noqa: ARG001
 		return sortKey
 
 	return warpper
 
 
-def sqlite(sortEncoding: str = "utf-8", **_options) -> SQLiteSortKeyType:
+def sqlite(sortEncoding: str = "utf-8", **_options: Any) -> SQLiteSortKeyType:
 	def sortKey(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace")
 
@@ -57,7 +57,7 @@ def sqlite_locale(
 	def sortKey(words: list[str]) -> Any:
 		return cSortKey(words[0])
 
-	def wrapper(sortEncoding: str = "", **_options) -> SQLiteSortKeyType:  # noqa: ARG001
+	def wrapper(sortEncoding: str = "", **_options: Any) -> SQLiteSortKeyType:  # noqa: ARG001
 		return [("sortkey", "BLOB", sortKey)]
 
 	return wrapper

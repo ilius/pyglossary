@@ -2,12 +2,13 @@
 
 # read json lines from stdin,
 # sort them by "word" key and print
+from __future__ import annotations
 
 import operator
 import sys
 from json import loads
 
-data: "list[tuple[str, str]]" = []
+data: list[tuple[str, str]] = []
 
 for line in sys.stdin:
 	line = line.strip()  # noqa: PLW2901

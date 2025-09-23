@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import logging
 from os.path import isfile, join
+from typing import Any
 
 from pyglossary.core import (
 	appResDir,
@@ -58,7 +59,7 @@ class UIBase:
 		("remove_html", "remove_html_all"),
 	]
 
-	def __init__(self, **_kwargs) -> None:
+	def __init__(self, **_kwargs: Any) -> None:
 		self.config = {}
 
 	def progressInit(self, title: str) -> None:
@@ -73,7 +74,7 @@ class UIBase:
 	def loadConfig(
 		self,
 		user: bool = True,
-		**options,
+		**options: Any,
 	) -> None:
 		from pyglossary.json_utils import jsonToData
 

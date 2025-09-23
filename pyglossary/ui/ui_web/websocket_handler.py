@@ -81,8 +81,8 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		socket: socketlib.socket,
 		addr: tuple[str, int],  # (ip: str, port: int)
 		server: socketserver.BaseServer,
-		*args,  # noqa: ANN001, ANN002
-		**kwargs,
+		*args: Any,
+		**kwargs: Any,
 	) -> None:
 		if hasattr(self, "_send_lock"):
 			raise RuntimeError("_send_lock already exists")

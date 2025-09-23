@@ -156,7 +156,7 @@ def dataToPrettyJson(
 def prompt(
 	message: ANSI | str,
 	multiline: bool = False,
-	**kwargs,
+	**kwargs: Any,
 ) -> str:
 	if kwargs.get("default", "") is None:
 		kwargs["default"] = ""
@@ -179,7 +179,7 @@ class MyPathCompleter(PathCompleter):
 		self,
 		reading: bool,  # noqa: ARG002
 		fs_action_names: list[str] | None = None,
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		PathCompleter.__init__(
 			self,
@@ -434,7 +434,7 @@ class UI(ui_cmd.UI):
 			("", f"{colon} "),
 		]
 
-	def prompt(self, level: int, msg: str, colon: str = ":", **kwargs) -> str:
+	def prompt(self, level: int, msg: str, colon: str = ":", **kwargs: Any) -> str:
 		msg2, colored = self.formatPromptMsg(level, msg, colon)
 		if colored:
 			msg2 = ANSI(msg2)

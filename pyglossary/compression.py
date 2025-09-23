@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 import os
 from os.path import join
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
 	import io
@@ -49,7 +49,7 @@ def compressionOpenFunc(c: str) -> Callable | None:
 def compressionOpen(
 	filename: str,
 	dz: bool = False,
-	**kwargs,  # noqa: ANN003
+	**kwargs: Any,
 ) -> io.IOBase:
 	from os.path import splitext
 

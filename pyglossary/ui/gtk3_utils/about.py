@@ -19,6 +19,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from . import gtk
 from .utils import (
 	VBox,
@@ -37,7 +39,7 @@ class AboutWidget(gtk.Box):
 		about: str = "",
 		authors: str = "",
 		license_text: str = "",
-		**_kwargs,
+		**_kwargs: Any,
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		##

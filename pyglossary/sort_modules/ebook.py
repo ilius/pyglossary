@@ -13,7 +13,7 @@ desc = "E-Book (prefix length: 2)"
 
 def normal(
 	sortEncoding: str = "utf-8",  # noqa: ARG001
-	**options,
+	**options: Any,
 ) -> SortKeyType:
 	length = options.get("group_by_prefix_length", 2)
 
@@ -29,7 +29,7 @@ def normal(
 	return sortKey
 
 
-def sqlite(sortEncoding: str = "utf-8", **options) -> SQLiteSortKeyType:
+def sqlite(sortEncoding: str = "utf-8", **options: Any) -> SQLiteSortKeyType:
 	length = options.get("group_by_prefix_length", 2)
 
 	def getPrefix(words: list[str]) -> str:

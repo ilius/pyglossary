@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import sys
 from collections import Counter
@@ -9,10 +11,10 @@ from typing import Any
 class Node:
 	Type: str = ""
 
-	Dict: "dict[str, Node] | None" = None
-	KeyScore: "Counter | None" = None
+	Dict: dict[str, Node] | None = None
+	KeyScore: Counter | None = None
 
-	ListOf: "Node | None" = None
+	ListOf: Node | None = None
 
 	def keyScoreList(self):
 		return [f"{count:.1f}: {key}" for key, count in self.KeyScore.most_common()]
@@ -40,10 +42,10 @@ class Node:
 
 
 schema = Node(Type="dict")
-valueSet: "dict[str, set]" = {}
+valueSet: dict[str, set] = {}
 
 
-def addToValueSet(value: "str | int | float | bool", path: list[str]):
+def addToValueSet(value: str | float | bool, path: list[str]):
 	if isinstance(value, str) and "://" in value:
 		return
 	pathStr = ".".join(path)
@@ -108,7 +110,7 @@ def parseList(data: list[Any], path: list[str], node: Node):
 	updateSchema(itemTypesStr, path + ["[]"])
 
 
-def parseDict(data: "dict[str, Any]", path: list[str], node: Node):
+def parseDict(data: dict[str, Any], path: list[str], node: Node):
 	if not node.Dict:
 		node.Dict = {}
 		node.KeyScore = Counter()

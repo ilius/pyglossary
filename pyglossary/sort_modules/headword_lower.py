@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 desc = "Lowercase Headword"
 
 
-def normal(sortEncoding: str = "utf-8", **_options) -> SortKeyType:
+def normal(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:
 	def sortKey(words: list[str]) -> Any:
 		# assert isinstance(words, list)  # OK
 		return words[0].lower().encode(sortEncoding, errors="replace")
@@ -32,7 +32,7 @@ def locale(
 		# assert isinstance(words, list)  # OK
 		return cSortKey(words[0].lower())
 
-	def warpper(sortEncoding: str = "utf-8", **_options) -> SortKeyType:  # noqa: ARG001
+	def warpper(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:  # noqa: ARG001
 		return sortKey
 
 	return warpper
@@ -40,7 +40,7 @@ def locale(
 
 def sqlite(
 	sortEncoding: str = "utf-8",
-	**_options,
+	**_options: Any,
 ) -> SQLiteSortKeyType:
 	def sortKey(words: list[str]) -> Any:
 		return words[0].lower().encode(sortEncoding, errors="replace")
@@ -62,7 +62,7 @@ def sqlite_locale(
 	def sortKey(words: list[str]) -> Any:
 		return cSortKey(words[0].lower())
 
-	def wrapper(sortEncoding: str = "", **_options) -> SQLiteSortKeyType:  # noqa: ARG001
+	def wrapper(sortEncoding: str = "", **_options: Any) -> SQLiteSortKeyType:  # noqa: ARG001
 		return [("sortkey", "BLOB", sortKey)]
 
 	return wrapper
