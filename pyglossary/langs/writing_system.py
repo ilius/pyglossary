@@ -150,7 +150,7 @@ writingSystemList = [
 		name="Greek",
 		iso=[(200, "Grek")],
 		unicode=["GREEK"],
-		titleTag="b",
+		titleTag="big",
 		comma=", ",
 		pop=11,
 	),
@@ -276,7 +276,7 @@ writingSystemList = [
 		name="Syriac",
 		iso=[(135, "Syrc")],
 		unicode=["SYRIAC"],
-		titleTag="b",
+		titleTag="big",
 		direction="rtl",
 		comma="، ",
 		pop=8,  # Syriac=0.4, Lontara=7.6
@@ -340,7 +340,7 @@ writingSystemList = [
 		name="Takri",
 		iso=[(321, "Takr")],
 		unicode=["TAKRI"],
-		titleTag="b",
+		titleTag="big",
 		comma=", ",
 	),
 	# _____________________________________________________
@@ -364,14 +364,14 @@ writingSystemList = [
 		name="Avestan",
 		iso=[(134, "Avst")],
 		unicode=["AVESTAN"],
-		titleTag="b",
+		titleTag="big",
 		direction="rtl",
 	),
 	WritingSystem(
 		name="Glagolitic",
 		iso=[(225, "Glag")],
 		unicode=["GLAGOLITIC"],  # Unicode 4.1
-		titleTag="b",
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Khojki",
@@ -395,7 +395,7 @@ writingSystemList = [
 		name="Gothic",
 		iso=[(206, "Goth")],
 		unicode=["GOTHIC"],
-		titleTag="b",
+		titleTag="big",
 	),
 	WritingSystem(
 		name="Runic",
