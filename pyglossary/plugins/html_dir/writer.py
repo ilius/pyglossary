@@ -7,7 +7,7 @@ import re
 import time
 from functools import lru_cache
 from os.path import isdir, isfile, join
-from typing import TYPE_CHECKING
+from typing import IO, TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.text_utils import (
@@ -18,6 +18,7 @@ from pyglossary.text_utils import (
 if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
+	from re import Pattern
 
 	from pyglossary.glossary_types import (
 		EntryType,
@@ -112,6 +113,46 @@ class Writer:
 		)
 		return self._fileObj
 
+	@staticmethod
+	def _fixLinkItem(
+		re_href: Pattern[bytes],
+		entry_url_fmt: str,
+		inFile: IO[bytes],
+		outFile: IO[bytes],
+		linkLine: str,
+	) -> None:
+		outFile.flush()
+		b_x_start, b_x_size, b_target = linkLine.rstrip(b"\n").split(b"\t")
+		outFile.write(inFile.read(int(b_x_start, 16) - inFile.tell()))
+		curLink = inFile.read(int(b_x_size, 16))
+
+		if b_target:
+			outFile.write(
+				re_href.sub(
+					b' href="./' + b_target + b'"',
+					curLink,
+				),
+			)
+			return
+
+		if not entry_url_fmt:
+			outFile.write(
+				curLink.replace(
+					b' href="#',
+					b' class="broken" href="#',
+				),
+			)
+			return
+
+		st = curLink.decode("utf-8")
+		i = st.find('href="#')
+		j = st.find('"', i + 7)
+		term = st[i + 7 : j]
+		url = entry_url_fmt.format(word=term)
+		outFile.write(
+			(st[:i] + f'class="broken" href="{url}"' + st[j + 1 :]).encode("utf-8"),
+		)
+
 	def fixLinks(self, linkTargetSet: set[str]) -> None:  # noqa: PLR0912
 		import gc
 
@@ -187,48 +228,13 @@ class Writer:
 			with open(join(dirn, filename), mode="rb") as inFile:
 				with open(join(dirn, f"{filename}.new"), mode="wb") as outFile:
 					for linkLine in open(join(dirn, f"links{fileIndex}"), "rb"):
-						outFile.flush()
-						(
-							b_x_start,
-							b_x_size,
-							b_target,
-						) = linkLine.rstrip(b"\n").split(b"\t")
-						outFile.write(
-							inFile.read(
-								int(b_x_start, 16) - inFile.tell(),
-							),
+						self._fixLinkItem(
+							re_href,
+							entry_url_fmt,
+							inFile,
+							outFile,
+							linkLine,
 						)
-						curLink = inFile.read(int(b_x_size, 16))
-
-						if b_target:
-							outFile.write(
-								re_href.sub(
-									b' href="./' + b_target + b'"',
-									curLink,
-								),
-							)
-							continue
-
-						if not entry_url_fmt:
-							outFile.write(
-								curLink.replace(
-									b' href="#',
-									b' class="broken" href="#',
-								),
-							)
-							continue
-
-						st = curLink.decode("utf-8")
-						i = st.find('href="#')
-						j = st.find('"', i + 7)
-						term = st[i + 7 : j]
-						url = entry_url_fmt.format(word=term)
-						outFile.write(
-							(
-								st[:i] + f'class="broken" href="{url}"' + st[j + 1 :]
-							).encode("utf-8"),
-						)
-
 					outFile.write(inFile.read())
 
 			os.remove(join(dirn, filename))
