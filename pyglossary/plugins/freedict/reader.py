@@ -636,6 +636,16 @@ class Reader(ReaderUtils):
 		def br() -> Element:
 			return ET.Element("br")
 
+		def write_keywords_title(keywords: list[str]) -> None:
+			for keyword in keywords:
+				titleTag = glos.titleTag(keyword)
+				if titleTag:
+					with hf.element(titleTag):
+						hf.write(keyword)
+				else:
+					hf.write(keyword)
+				hf.write(br())
+
 		inflectedKeywords: list[str] = []
 
 		for form in entry.findall(".//form", _NAMESPACE):
@@ -660,10 +670,7 @@ class Reader(ReaderUtils):
 		with ET.htmlfile(buff, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._word_title:
-					for keyword in keywords:
-						with hf.element(glos.titleTag(keyword)):
-							hf.write(keyword)
-						hf.write(br())
+					write_keywords_title(keywords)
 
 				# TODO: "form/usg"
 				# <usg type="geo">Brit</usg>

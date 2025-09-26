@@ -124,6 +124,16 @@ class Reader:
 		def br() -> Element:
 			return ET.Element("br")
 
+		def write_keywords_title(keywords: list[str]) -> None:
+			for keyword in keywords:
+				titleTag = glos.titleTag(keyword)
+				if titleTag:
+					with hf.element(titleTag):
+						hf.write(keyword)
+				else:
+					hf.write(keyword)
+				hf.write(br())
+
 		keywords: list[str] = []
 		inflectedKeywords: list[str] = []
 
@@ -158,10 +168,7 @@ class Reader:
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._word_title:
-					for keyword in keywords:
-						with hf.element(glos.titleTag(keyword)):
-							hf.write(keyword)
-						hf.write(br())
+					write_keywords_title(keywords)
 
 				hf_ = cast("T_htmlfile", hf)
 

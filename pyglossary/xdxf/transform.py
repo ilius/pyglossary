@@ -219,8 +219,10 @@ class XdxfTransformer:
 
 	def _write_k(self, hf: T_htmlfile, child: Element) -> None:
 		with hf.element("div", attrib={"class": child.tag}):
-			# with hf.element(glos.titleTag(child.text)):
-			# ^ no glos object here!
+			# no glos object here:
+			# titleTag = glos.titleTag(child.text)
+			# if titleTag:
+			# 	with hf.element(titleTag):
 			with hf.element("b"):
 				self.writeChildrenOf(hf, child)
 

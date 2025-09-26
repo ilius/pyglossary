@@ -223,8 +223,6 @@ class XdxfTransformer:
 		index = child.getparent().index(child)
 		if index == 0:
 			with hf.element("div", attrib={"class": child.tag}):
-				# with hf.element(glos.titleTag(child.text)):
-				# ^ no glos object here!
 				self.writeChildrenOf(hf, child)
 		# TODO Lenny: show other forms in a collapsible list
 		# else:
