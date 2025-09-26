@@ -121,7 +121,6 @@ class Reader:
 	) -> EntryType:
 		from lxml import etree as ET
 
-		glos = self._glos
 		keywords: list[str] = []
 		f = BytesIO()
 
@@ -172,7 +171,7 @@ class Reader:
 						keywords.append(f"{s_keb}・{s_reb}")
 
 				if kebList:
-					with hf.element(glos.titleTag(kebList[0])):
+					with hf.element("big"):
 						for i, s_keb in enumerate(kebList):
 							if i > 0:
 								with hf.element("font", color="red"):

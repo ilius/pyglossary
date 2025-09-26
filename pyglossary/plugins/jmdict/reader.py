@@ -214,7 +214,6 @@ class Reader:
 	) -> EntryType:
 		from lxml import etree as ET
 
-		glos = self._glos
 		keywords: list[str] = []
 		f = BytesIO()
 		translit = self._translitation
@@ -291,7 +290,7 @@ class Reader:
 						keywords.append(f"{s_keb}・{s_reb}")  # noqa: PERF401
 
 				if kebDisplayList:
-					with hf.element(glos.titleTag(kebDisplayList[0])):
+					with hf.element("big"):
 						for i, s_keb in enumerate(kebDisplayList):
 							if i > 0:
 								with hf.element("font", color="red"):
