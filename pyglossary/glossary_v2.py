@@ -348,7 +348,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		if name in self._entryFiltersName:
 			return
 		self._entryFilters.append(
-			StripFullHtml(  # pyright: ignore[reportArgumentType]
+			StripFullHtml(
 				self,
 				errorHandler=errorHandler,
 			),
@@ -419,9 +419,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		for _entry in iterable:
 			entry = _entry
 			for f in filters:
-				entry = f.run(entry)  # type: ignore # pyright: ignore[reportArgumentType]
+				entry = f.run(entry)  # type: ignore
 				# assert entry  # TODO: measure running time in non-optimized mode
-			yield entry  # pyright: ignore[reportReturnType]
+			yield entry
 		self.progressEnd()
 
 	def _readersEntryGen(self) -> Iterator[EntryType]:
@@ -624,10 +624,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	def newDataEntry(self, fname: str, data: bytes) -> EntryType:
 		if self._readers:
-			return DataEntry(fname, data)  # pyright: ignore[reportReturnType]
+			return DataEntry(fname, data)
 
 		if self._tmpDataDir:
-			return DataEntry(  # pyright: ignore[reportReturnType]
+			return DataEntry(
 				fname,
 				data,
 				tmpPath=join(self._tmpDataDir, fname.replace("/", "_")),
@@ -636,7 +636,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		tmpDir = join(cacheDir, "tmp")
 		os.makedirs(tmpDir, mode=0o700, exist_ok=True)
 		self._cleanupPathList.add(tmpDir)
-		return DataEntry(  # pyright: ignore[reportReturnType]
+		return DataEntry(
 			fname,
 			data,
 			tmpPath=join(tmpDir, uuid1().hex),
@@ -922,7 +922,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		if self._config.get("save_info_json", False):
 			from .info_writer import InfoWriter
 
-			infoWriter = InfoWriter(self)  # pyright: ignore
+			infoWriter = InfoWriter(self)
 			infoWriter.setWriteOptions(options)
 			filenameNoExt, _, _, _ = splitFilenameExt(filename)
 			infoWriter.open(f"{filenameNoExt}.info")
@@ -1022,7 +1022,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			log.info(f"Removing and re-creating {sq_fpath!r}")
 			os.remove(sq_fpath)
 
-		self._data = SqEntryList(  # pyright: ignore[reportAttributeAccessIssue]
+		self._data = SqEntryList(
 			entryToRaw=self._entryToRaw,
 			entryFromRaw=self._entryFromRaw,
 			database=sq_fpath,
@@ -1109,7 +1109,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 				inputFilename=args.inputFilename,
 			)
 		elif not os.getenv("NO_SQLITE"):
-			self._data = self._newInMemorySqEntryList()  # pyright: ignore
+			self._data = self._newInMemorySqEntryList()
 
 		self._data.setSortKey(
 			namedSortKey=namedSortKey,

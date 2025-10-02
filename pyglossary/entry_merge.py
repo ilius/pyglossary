@@ -65,7 +65,7 @@ def mergeHtmlEntriesWithSameHeadword(
 
 		defi = getHtmlDefi(last) + "\n<hr>\n" + getHtmlDefi(entry)
 
-		last = Entry(  # pyright: ignore
+		last = Entry(
 			entry.l_term[0],
 			defi,
 			defiFormat="h",
@@ -107,7 +107,7 @@ def mergePlaintextEntriesWithSameHeadword(
 			+ entry.defi
 		)
 
-		last = Entry(  # pyright: ignore
+		last = Entry(
 			entry.l_term[0],
 			defi,
 			defiFormat="m",

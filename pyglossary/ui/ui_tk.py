@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
 	from pyglossary.logger import Logger
 
-log: Logger = logging.getLogger("pyglossary")  # pyright: ignore
+log: Logger = logging.getLogger("pyglossary")
 
 # on Windows: make app DPI-aware, fix blurry fonts
 if os.sep == "\\":
@@ -54,7 +54,7 @@ if os.sep == "\\":
 
 	try:
 		# 1 = system DPI aware
-		ctypes.windll.shcore.SetProcessDpiAwareness(1)  # pyright: ignore
+		ctypes.windll.shcore.SetProcessDpiAwareness(1)
 	except Exception:
 		log.exception("")
 
@@ -126,7 +126,7 @@ def newLabelWithImage(parent, file=""):
 	image = tk.PhotoImage(file=file)
 	label = ttk.Label(parent, image=image)
 	# keep a reference:
-	label.image = image  # pyright: ignore
+	label.image = image
 	return label
 
 
@@ -224,7 +224,7 @@ class ProgressBar(ttk.Frame):
 		ttk.Frame.__init__(
 			self,
 			rootWin,
-			relief=appearance,  # pyright: ignore
+			relief=appearance,
 		)
 		self.canvas = tk.Canvas(
 			self,
@@ -634,7 +634,7 @@ class FormatOptionsDialog(tk.Toplevel):
 				col_w = tkFont.Font().measure(value)
 				# treev.column: if you pass width=None, returns width as int!
 				# but with no arg, returns dict[str, Any] with "width" key!
-				current_width: int = treev.column(cols[col_i], width=None)  # pyright: ignore
+				current_width: int = treev.column(cols[col_i], width=None)
 				if current_width < col_w:
 					treev.column(cols[col_i], width=col_w)
 
@@ -714,7 +714,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		treev.set(optName, self.valueCol, value)
 		treev.set(optName, "#1", "1")  # enable it
 		col_w = tkFont.Font().measure(value)
-		if treev.column("Value", width=None) < col_w:  # pyright: ignore
+		if treev.column("Value", width=None) < col_w:
 			treev.column("Value", width=col_w)
 		menu.destroy()
 		self.menu = None
@@ -1322,9 +1322,9 @@ class UI(tk.Frame, UIBase):
 
 		######################
 		for column, weight in enumerate([1, 30, 20, 1]):
-			tk.Grid.columnconfigure(convertFrame, column, weight=weight)  # pyright: ignore
+			tk.Grid.columnconfigure(convertFrame, column, weight=weight)
 		for row, weight in enumerate([50, 50, 1, 50, 50, 1, 50]):
-			tk.Grid.rowconfigure(convertFrame, row, weight=weight)  # pyright: ignore
+			tk.Grid.rowconfigure(convertFrame, row, weight=weight)
 		# _________________________________________________________________ #
 
 		notebook.pack(fill="both", expand=True)
