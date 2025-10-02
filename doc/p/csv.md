@@ -56,10 +56,10 @@ Here is a simple script that creates such CSV file (without pyglossary library):
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                                         | Source code | License     | Platforms           | Language |
-| ---------------------------------------------------------------------- | ----------- | ----------- | ------------------- | -------- |
-| [LibreOffice Calc](https://www.libreoffice.org/discover/calc/)         | ―           | MPL/GPL     | Linux, Windows, Mac |          |
-| [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | ―           | Proprietary | Windows             |          |
+| Name & Website                                                         | Source code                                                  | License     | Platforms           | Language |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------ | ----------- | ------------------- | -------- |
+| [LibreOffice Calc](https://www.libreoffice.org/discover/calc/)         | [git.libreoffice.org/core](https://git.libreoffice.org/core) | MPL/GPL     | Linux, Windows, Mac | C++      |
+| [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | ―                                                            | Proprietary | Windows             |          |
 
 ### Related Formats
 

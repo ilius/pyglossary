@@ -1,7 +1,9 @@
 ["LibreOffice Calc"]
 web = "https://www.libreoffice.org/discover/calc/"
+source = "https://git.libreoffice.org/core"
 platforms = [ "Linux", "Windows", "Mac",]
 license = "MPL/GPL"
+plang = "C++"
 
 ["Microsoft Excel"]
 web = "https://www.microsoft.com/en-us/microsoft-365/excel"
