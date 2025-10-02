@@ -134,40 +134,6 @@ def _write_css(fname: str, css_file: str) -> None:
 			toFile.write(data)
 
 
-"""
-write glossary to Apple dictionary .xml and supporting files.
-
-:param dirname: directory path, must not have extension
-
-:param clean_html: pass True to use BeautifulSoup parser.
-
-:param css: path to custom .css file
-
-:param xsl: path to custom XSL transformations file.
-
-:param default_prefs: Default prefs in python dictionary literal format,
-i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values
-must be quoted strings; not allowed characters (e.g. single/double
-quotes,equal sign "=", semicolon) must be escaped as hex code
-according to python string literal rules.
-
-:param prefs_html: path to XHTML file with user interface for
-dictionary's preferences. refer to Apple's documentation for details.
-
-:param front_back_matter: path to XML file with top-level tag
-<d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
-	your front/back matter entry content
-</d:entry>
-
-:param jing: pass True to run Jing check on generated XML.
-
-# FIXME: rename to indexes_lang?
-:param indexes: Dictionary.app is dummy and by default it don't know
-how to perform flexible search.  we can help it by manually providing
-additional indexes to dictionary entries.
-"""
-
-
 class Writer:
 	depends = {
 		"lxml": "lxml",

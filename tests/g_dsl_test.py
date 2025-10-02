@@ -167,7 +167,8 @@ class TestGlossaryDSL(TestGlossaryBase):
 		dsl = "headword\n   [m1][p]test\n"
 		txt = (
 			"headword\t"
-			'<p style="padding-left:1em;margin:0"><i class="p"><font color="green">test\\n</font></i>'
+			'<p style="padding-left:1em;margin:0">'
+			'<i class="p"><font color="green">test\\n</font></i>'
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 

@@ -72,17 +72,32 @@ optionsProp: dict[str, Option] = {
 	"xsl": StrOption(
 		comment="custom XSL transformations file path",
 	),
+	# default_prefs: Default prefs in python dictionary literal format,
+	# i.e. {"key1": "value1", "key2": "value2", ...}.  All keys and values
+	# must be quoted strings; not allowed characters (e.g. single/double
+	# quotes,equal sign "=", semicolon) must be escaped as hex code
+	# according to python string literal rules.
 	"default_prefs": DictOption(
 		comment="default prefs in python dict format",
 		# example: {"key": "value", "version": "1"}
 	),
+	# prefs_html: path to XHTML file with user interface for
+	# dictionary's preferences. refer to Apple's documentation for details.
 	"prefs_html": StrOption(
 		comment="preferences XHTML file path",
 	),
+	# front_back_matter: path to XML file with top-level tag
+	# <d:entry id="front_back_matter" d:title="Your Front/Back Matter Title">
+	# 	your front/back matter entry content
+	# </d:entry>
 	"front_back_matter": StrOption(
 		comment="XML file path with top-level tag",
 	),
 	"jing": BoolOption(comment="run Jing check on generated XML"),
+	# indexes: rename to indexes_lang? TODO
+	# Dictionary.app is dummy and by default it don't know
+	# how to perform flexible search.  we can help it by manually providing
+	# additional indexes to dictionary entries.
 	"indexes": StrOption(
 		customValue=False,
 		values=["", "ru", "zh"],

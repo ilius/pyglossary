@@ -79,9 +79,7 @@ def jd_to(jd: int) -> tuple[int, int, int]:
 	cent, dcent = divmod(dqc, 36524)
 	quad, dquad = divmod(dcent, 1461)
 	yindex = dquad // 365  # divmod(dquad, 365)[0]
-	year = (
-		qc * 400 + cent * 100 + quad * 4 + yindex + (cent != 4 and yindex != 4)  # noqa: PLR2004
-	)
+	year = qc * 400 + cent * 100 + quad * 4 + yindex + (cent != 4 and yindex != 4)
 	yearday = jd - to_jd(year, 1, 1)
 
 	if jd < to_jd(year, 3, 1):

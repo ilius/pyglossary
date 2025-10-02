@@ -170,6 +170,8 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 			)
 		except Error as e:
 			err = str(e)
+		else:
+			err = ""
 		self.assertEqual(err, "Invalid format FooBar")
 
 	def test_detectOutputFormat_err3(self):

@@ -30,7 +30,10 @@ def locale(
 	def sortKey(words: list[str]) -> Any:  # noqa: ARG001
 		return random()
 
-	def warpper(sortEncoding: str = "utf-8", **_options: Any) -> SortKeyType:  # noqa: ARG001
+	def warpper(
+		sortEncoding: str = "utf-8",  # noqa: ARG001
+		**_options: Any,
+	) -> SortKeyType:
 		return sortKey
 
 	return warpper

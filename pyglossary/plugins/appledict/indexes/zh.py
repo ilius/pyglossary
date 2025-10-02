@@ -13,18 +13,25 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-from __future__ import annotations
 
 """Chinese wildcard and pinyin indexes."""
 
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 import bs4
 
 from pyglossary.core import log, pip
 
+from . import languages
+
+if TYPE_CHECKING:
+	from collections.abc import Sequence
+
 try:
-	import colorize_pinyin as color  # type: ignore
+	import colorize_pinyin as color
 except ImportError:
 	log.error(
 		"module colorize_pinyin is required to build extended Chinese"
@@ -32,13 +39,6 @@ except ImportError:
 		f"{pip} install colorize-pinyin",
 	)
 	raise
-
-from typing import TYPE_CHECKING
-
-from . import languages
-
-if TYPE_CHECKING:
-	from collections.abc import Sequence
 
 pinyinPattern = re.compile(r",|;")
 nonHieroglyphPattern = re.compile(r"[^\u4e00-\u9fff]")

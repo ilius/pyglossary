@@ -19,7 +19,6 @@
 
 from __future__ import annotations
 
-import html
 import html.entities
 import re
 import zipfile

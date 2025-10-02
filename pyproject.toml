@@ -310,15 +310,24 @@ disable = [
 	"useless-return",
 	"method-cache-max-size-none",
 	"global-statement",
+	"R0917", # Too many positional arguments (?/5) (too-many-positional-arguments)
 	"R0801",                          # Similar lines in 2 files
 	"ungrouped-imports",              # C0412: Imports from package pyglossary are not grouped
 	"inconsistent-return-statements", # R1710: Either all return statements in a function should return an expression, or none of them should
 	"too-many-ancestors",             # R0901: Too many ancestors
 ]
 
-[tool.pylint.master]
+[tool.pylint.main]
+py-version = "3.11"
+extension-pkg-allow-list = [
+	"lxml.etree",
+	"lzo",
+	"marisa_trie",
+]
 ignore-paths = [
+	"^pyglossary/glossary.py$",
 	"^pyglossary/reverse.py$",
+	"^tests/unused_test.py$",
 	"^pyglossary/ui/progressbar/.*",
 	"^pyglossary/ui/ui_qt.py$",
 	"^pyglossary/ui/wcwidth/",
