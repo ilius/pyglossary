@@ -163,6 +163,10 @@ mccabe.max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 
+"doc/*/*.py" = [
+	"INP001", # File ... is part of an implicit namespace package. Add an `__init__.py`.
+]
+
 "tests/unused_test.py" = [
 	"F401",  # imported but unused
 	"F811", # Redefinition of unused

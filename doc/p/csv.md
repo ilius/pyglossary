@@ -37,6 +37,23 @@
 | enable_info     | `True`  | bool | Enable glossary info / metedata                |
 | word_title      | `False` | bool | add headwords title to beginning of definition |
 
+### Columns / file structure
+
+Our supported CSV files consists of these columns:
+
+- Main term (headword)
+- Definiton / translation / article
+- Comma-seperated alternative terms (optional) (needs to be quoted for multiple terms)
+
+For example, with default `delimiter=","`, a line would like like:
+
+```csv
+word,translation,"inflection1,inflection2,inflection3"
+```
+
+Here is a simple script that creates such CSV file (without pyglossary library):
+[doc/format-desc/csv-create.py](../format-desc/csv-create.py)
+
 ### Dictionary Applications/Tools
 
 | Name & Website                                                         | Source code | License     | Platforms           | Language |

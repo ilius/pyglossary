@@ -82,4 +82,21 @@ optionsProp: dict[str, Option] = {
 	),
 }
 
+docTail = """### Columns / file structure
+
+Our supported CSV files consists of these columns:
+
+- Main term (headword)
+- Definiton / translation / article
+- Comma-seperated alternative terms (optional) (needs to be quoted for multiple terms)
+
+For example, with default `delimiter=","`, a line would like like:
+
+```csv
+word,translation,"inflection1,inflection2,inflection3"
+```
+
+Here is a simple script that creates such CSV file (without pyglossary library):
+[doc/format-desc/csv-create.py](./doc/format-desc/csv-create.py)"""
+
 csv.field_size_limit(0x7FFFFFFF)
