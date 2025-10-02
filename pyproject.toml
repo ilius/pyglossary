@@ -71,7 +71,6 @@ select = [
 	"SLOT", # flake8-slots
 	"SIM",  # flake8-simplify
 	"TID",  # flake8-tidy-imports
-	"TCH",  # flake8-type-checking
 	"INT",  # flake8-gettext
 	"ARG",  # flake8-unused-arguments
 	"PD",   # pandas-vet
