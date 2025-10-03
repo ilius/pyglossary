@@ -33,9 +33,9 @@ class StoreConstAction(argparse.Action):
 	# it will break runtime. Do not touch the signature
 	def __call__(  # type: ignore[return, override]
 		self,
+		*_args: Any,  # DO NOT REMOVE
 		parser: ArgumentParser | None = None,
 		namespace: Namespace | None = None,
-		*_args: Any,  # DO NOT REMOVE
 		**_kwargs: Any,
 	) -> StoreConstAction:
 		if parser is None:

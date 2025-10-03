@@ -54,14 +54,13 @@ DEFAULT_MAX_BROWSE_ENTRIES = 42
 log = logging.getLogger("pyglossary.web.server")
 log.setLevel(logging.DEBUG)
 
-"""
-Custom endpoints:
-- ws://localhost:1984/ws : 2-way client-server communication
-- GET /config            : Returns plugins metadata as JSON
-- POST /convert          : Starts a conversion job; takes JSON with paths + formats
-"""
 
-#  ======================= IMPLEMENTATION SECTION =========================
+# Custom endpoints:
+# - ws://localhost:1984/ws : 2-way client-server communication
+# - GET /config            : Returns plugins metadata as JSON
+# - POST /convert          : Starts a conversion job; takes JSON with paths + formats
+
+# ----------------------- IMPLEMENTATION SECTION -----------------------
 
 
 def new_client(client: dict[str, Any], server: ServerType) -> None:
