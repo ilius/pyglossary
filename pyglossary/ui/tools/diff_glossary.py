@@ -336,8 +336,6 @@ def gitDiffMain() -> None:
 
 
 def main() -> None:
-	import os
-
 	if os.getenv("GIT_DIFF_PATH_COUNTER"):
 		return gitDiffMain()
 

@@ -67,7 +67,7 @@ def benchmark_main():
 		for text in textList:
 			unescape_unicode(text)
 
-	print("benchmark 1:", timeit.timeit("run_benchmark1()", globals=locals()))
+	print("benchmark 1:", timeit.timeit(run_benchmark1, globals=locals()))
 
 
 if __name__ == "__main__":

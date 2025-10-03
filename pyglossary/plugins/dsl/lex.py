@@ -154,39 +154,37 @@ def lexTagAttrValue(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexTag, None
 
 
-r"""
-[m{}] => <p style="padding-left:{}em;margin:0">
-[*]   => <span class="sec">
-[ex]  => <span class="ex"><font color="{exampleColor}">
-[c]   => <font color="green">
-[p]   => <i class="p"><font color="green">
+# [m{}] => <p style="padding-left:{}em;margin:0">
+# [*]   => <span class="sec">
+# [ex]  => <span class="ex"><font color="{exampleColor}">
+# [c]   => <font color="green">
+# [p]   => <i class="p"><font color="green">
 
-[']   => <u>
-[b]   => <b>
-[i]   => <i>
-[u]   => <u>
-[sup] => <sup>
-[sub] => <sub>
+# [']   => <u>
+# [b]   => <b>
+# [i]   => <i>
+# [u]   => <u>
+# [sup] => <sup>
+# [sub] => <sub>
 
-[ref]   \
-[url]    } => <a href={}>{}</a>
-<<...>> /
+# [ref]   \
+# [url]    } => <a href={}>{}</a>
+# <<...>> /
 
-[s] =>  <object type="audio/x-wav" data="{}" width="40" height="40">
-			<param name="autoplay" value="false" />
-		</object>
-[s] =>  <img align="top" src="{}" alt="{}" />
+# [s] =>  <object type="audio/x-wav" data="{}" width="40" height="40">
+# 			<param name="autoplay" value="false" />
+# 		</object>
+# [s] =>  <img align="top" src="{}" alt="{}" />
 
-[t] => <font face="Helvetica" class="dsl_t">
+# [t] => <font face="Helvetica" class="dsl_t">
 
-{{...}}   \
-[trn]      |
-[!trn]     |
-[trs]      } => remove
-[!trs]     |
-[lang ...] |
-[com]     /
-"""
+# {{...}}   \
+# [trn]      |
+# [!trn]     |
+# [trs]      } => remove
+# [!trs]     |
+# [lang ...] |
+# [com]     /
 
 
 def lexRefText(tr: TransformerType) -> tuple[LexType, ErrorType]:
@@ -314,7 +312,10 @@ def lexTagC(tr: TransformerType) -> tuple[LexType, ErrorType]:
 
 
 # PLR0912 Too many branches (19 > 12)
-def processTag(tr: TransformerType, tag: str) -> tuple[LexType, ErrorType]:  # noqa: PLR0912
+def processTag(  # noqa: PLR0912
+	tr: TransformerType,
+	tag: str,
+) -> tuple[LexType, ErrorType]:
 	tr.attrName = ""
 	if not tag:
 		tr.resetBuf()
