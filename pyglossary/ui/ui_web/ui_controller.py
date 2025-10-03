@@ -89,7 +89,7 @@ class WebUI(UIBase):
 		if value is None:
 			return ""
 		if not isinstance(value, str):
-			raise ValueError(f"{name} must be string")
+			raise TypeError(f"{name} must be string")
 		return value
 
 	def getPayloadDict(self, payload: dict[str, Any], name: str) -> dict:
@@ -97,7 +97,7 @@ class WebUI(UIBase):
 		if value is None:
 			return {}
 		if not isinstance(value, dict):
-			raise ValueError(f"{name} must be a dict")
+			raise TypeError(f"{name} must be a dict")
 		return {}
 
 	def start_convert_job(self, payload: dict[str, Any]) -> bool:
