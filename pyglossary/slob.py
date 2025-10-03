@@ -349,46 +349,6 @@ class MultiFileReader(BufferedIOBase):
 		return result
 
 
-class KeydItemDict:
-	def __init__(
-		self,
-		blobs: Sequence[Blob | Ref],
-		strength: int,
-		maxlength: int | None = None,
-	) -> None:
-		self.blobs = blobs
-		self.sortkey = sortkey(strength, maxlength=maxlength)
-
-	def __len__(self) -> int:
-		return len(self.blobs)
-
-	# https://docs.python.org/3/library/bisect.html
-	# key= parameter to bisect_left is added in Python 3.10
-	def __getitem__(self, key: str) -> Iterator[Blob | Ref]:
-		blobs = self.blobs
-		key_as_sk = self.sortkey(key)
-		i = bisect_left(
-			blobs,
-			key_as_sk,
-			key=lambda blob: self.sortkey(blob.key),
-		)
-		if i == len(blobs):
-			return
-		while i < len(blobs):
-			if self.sortkey(blobs[i].key) == key_as_sk:
-				yield blobs[i]
-			else:
-				break
-			i += 1
-
-	def __contains__(self, key: str) -> bool:
-		try:
-			next(self[key])
-		except StopIteration:
-			return False
-		return True
-
-
 class Blob:
 	def __init__(  # noqa: PLR0913
 		self,
@@ -431,6 +391,46 @@ class Blob:
 
 	def __repr__(self) -> str:
 		return f"<{self.__class__.__module__}.{self.__class__.__name__} {self.key}>"
+
+
+class KeydItemDict:
+	def __init__(
+		self,
+		blobs: Sequence[Blob | Ref],
+		strength: int,
+		maxlength: int | None = None,
+	) -> None:
+		self.blobs = blobs
+		self.sortkey = sortkey(strength, maxlength=maxlength)
+
+	def __len__(self) -> int:
+		return len(self.blobs)
+
+	# https://docs.python.org/3/library/bisect.html
+	# key= parameter to bisect_left is added in Python 3.10
+	def __getitem__(self, key: str) -> Iterator[Blob | Ref]:
+		blobs = self.blobs
+		key_as_sk = self.sortkey(key)
+		i = bisect_left(
+			blobs,
+			key_as_sk,
+			key=lambda blob: self.sortkey(blob.key),
+		)
+		if i == len(blobs):
+			return
+		while i < len(blobs):
+			if self.sortkey(blobs[i].key) == key_as_sk:
+				yield blobs[i]
+			else:
+				break
+			i += 1
+
+	def __contains__(self, key: str) -> bool:
+		try:
+			next(self[key])
+		except StopIteration:
+			return False
+		return True
 
 
 def read_byte_string(f: IOBase, len_spec: str) -> bytes:
