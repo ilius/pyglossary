@@ -72,23 +72,22 @@ def replaceHtmlEntryNoEscapeCB(u_match: re.Match) -> str:
 		# character reference
 		try:
 			code = int(u_name, 16) if u_text[:3].lower() == "&#x" else int(u_name)
-			if code <= 0:
-				raise ValueError(f"{code = }")
-			return chr(code)
 		except (ValueError, OverflowError):
 			return chr(0xFFFD)  # replacement character
-	elif u_text[0] == "&":
-		"""
-		Babylon dictionaries contain a lot of non-standard entity,
-		references for example, csdot, fllig, nsm, cancer, thlig,
-		tsdot, upslur...
-		This not just a typo. These entries repeat over and over again.
-		Perhaps they had meaning in the source dictionary that was
-		converted to Babylon, but now the meaning is lost. Babylon
-		does render them as is, that is, for example, &csdot; despite
-		other references like &amp; are replaced with corresponding
-		characters.
-		"""
+		if code <= 0:
+			return chr(0xFFFD)  # replacement character
+		return chr(code)
+
+	if u_text[0] == "&":
+		# Babylon dictionaries contain a lot of non-standard entity,
+		# references for example, csdot, fllig, nsm, cancer, thlig,
+		# tsdot, upslur...
+		# This not just a typo. These entries repeat over and over again.
+		# Perhaps they had meaning in the source dictionary that was
+		# converted to Babylon, but now the meaning is lost. Babylon
+		# does render them as is, that is, for example, &csdot; despite
+		# other references like &amp; are replaced with corresponding
+		# characters.
 		# named entity
 		try:
 			return chr(name2codepoint[u_name.lower()])
@@ -226,10 +225,11 @@ def replaceAsciiCharRefs(b_text: bytes) -> bytes:
 				if b_part[:3].lower() == "&#x"
 				else int(b_part[2:-1])
 			)
-			if code <= 0:
-				raise ValueError(f"{code = }")
 		except (ValueError, OverflowError):
 			code = -1
+		else:
+			if code <= 0:
+				code = -1
 		if code < 128 or code > 255:
 			continue
 		# no need to escape "<", ">", "&"
