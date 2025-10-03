@@ -182,6 +182,7 @@ mccabe.max-complexity = 13
 	"UP031", # Use format specifiers instead of percent format
 	"A002", # Function argument `format` is shadowing a Python builtin
 	"RUF059", # Unpacked variable `h` is never used
+	"TRY300", # Consider moving this statement to an `else` block
 	"E501", # Line too long
 	"D",
 	"ARG",

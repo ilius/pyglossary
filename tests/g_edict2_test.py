@@ -3,12 +3,8 @@ from __future__ import annotations
 import sys
 import unittest
 from os.path import abspath, dirname
-from typing import TYPE_CHECKING
 
 from glossary_v2_test import TestGlossaryBase
-
-if TYPE_CHECKING:
-	pass
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
