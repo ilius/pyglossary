@@ -371,7 +371,9 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 
 		"""
 		if status < CLOSE_STATUS_NORMAL or status > 1015:
-			raise Exception(f"CLOSE status must be between 1000 and 1015, got {status}")
+			raise ValueError(
+				f"CLOSE status must be between 1000 and 1015, got {status}",
+			)
 
 		header = bytearray()
 		payload = struct.pack("!H", status) + reason
@@ -430,7 +432,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			header.extend(struct.pack(">Q", payload_length))
 
 		else:
-			raise Exception("Message is too big. Consider breaking it into chunks.")
+			raise ValueError("Message is too big. Consider breaking it into chunks.")
 
 		with self._send_lock:
 			self.request.send(header + payload)  # type: ignore
@@ -479,8 +481,8 @@ def encode_to_UTF8(data: str) -> bytes:
 	except UnicodeEncodeError as e:
 		log.error(f"Could not encode data to UTF-8 -- {e}")
 		return b""
-	except Exception as e:
-		raise e
+	except Exception:
+		raise
 
 
 def try_decode_UTF8(data: bytes) -> str | None:
@@ -488,5 +490,5 @@ def try_decode_UTF8(data: bytes) -> str | None:
 		return data.decode("utf-8")
 	except UnicodeDecodeError:
 		return None
-	except Exception as e:
-		raise e
+	except Exception:
+		raise
