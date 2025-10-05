@@ -46,7 +46,7 @@ jobs:
 
       - name: Install brew dependencies
         run: |
-          brew install libffi gettext cmake ccache pkg-config icu4c lzo
+          brew install libffi gettext cmake pkg-config icu4c lzo
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
