@@ -584,26 +584,28 @@ class FormatOptionsDialog(tk.Toplevel):
 		values = self.values
 		self.valueCol = "#3"
 		cols = [
-			"Enable",  # bool
-			"Name",  # str
-			"Value",  # str
-			"Comment",  # str
+			("Enable", 50, False),  # bool
+			("Name", 200, True),  # str
+			("Value", 200, True),  # str
+			("Comment", 300, False),  # str
 		]
 		treev = self.treev = ttk.Treeview(
 			master=self,
-			columns=cols,
+			columns=[item[0] for item in cols],
 			show="headings",
 		)
-		for col in cols:
+		for title, minwidth, stretch in cols:
 			treev.heading(
-				col,
-				text=col,
+				title,
+				text=title,
 				# command=lambda c=col: sortby(treev, c, 0),
 			)
 			# adjust the column's width to the header string
 			treev.column(
-				col,
-				width=tkFont.Font().measure(col.title()),
+				title,
+				width=tkFont.Font().measure(title.title()),
+				stretch=stretch,
+				minwidth=minwidth,
 			)
 		###
 		treev.bind(
@@ -634,9 +636,9 @@ class FormatOptionsDialog(tk.Toplevel):
 				col_w = tkFont.Font().measure(value)
 				# treev.column: if you pass width=None, returns width as int!
 				# but with no arg, returns dict[str, Any] with "width" key!
-				current_width: int = treev.column(cols[col_i], width=None)
+				current_width: int = treev.column(cols[col_i][0], width=None)
 				if current_width < col_w:
-					treev.column(cols[col_i], width=col_w)
+					treev.column(cols[col_i][0], width=col_w)
 
 	def valueMenuItemCustomSelected(
 		self,
@@ -656,18 +658,6 @@ class FormatOptionsDialog(tk.Toplevel):
 		dialog.title(optName)
 		set_window_icon(dialog)
 		dialog.bind("<Escape>", lambda _e: dialog.destroy())
-
-		px, py, pw, ph = decodeGeometry(treev.winfo_toplevel().geometry())
-		width = 300
-		height = 100
-		dialog.geometry(
-			encodeGeometry(
-				px + pw // 2 - width // 2,
-				py + ph // 2 - height // 2,
-				width,
-				height,
-			),
-		)
 
 		frame = ttk.Frame(master=dialog)
 
@@ -888,14 +878,15 @@ class FormatOptionsButton(ttk.Button):
 		)
 
 		# x, y, w, h = decodeGeometry(dialog.geometry())
-		w, h = 380, 250
 		# w and h are rough estimated width and height of `dialog`
 		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
-		# move dialog without changing the size
+		dialog.update_idletasks()
+		width = dialog.winfo_width() + 200
+		height = dialog.winfo_height()
 		dialog.geometry(
-			encodeLocation(
-				px + pw // 2 - w // 2,
-				py + ph // 2 - h // 2,
+			f"{width}x{height}" + encodeLocation(
+				px + pw // 2 - width // 2,
+				py + ph // 2 - height // 2,
 			),
 		)
 		dialog.focus()
