@@ -884,7 +884,8 @@ class FormatOptionsButton(ttk.Button):
 		width = dialog.winfo_width() + 200
 		height = dialog.winfo_height()
 		dialog.geometry(
-			f"{width}x{height}" + encodeLocation(
+			f"{width}x{height}"
+			+ encodeLocation(
 				px + pw // 2 - width // 2,
 				py + ph // 2 - height // 2,
 			),
