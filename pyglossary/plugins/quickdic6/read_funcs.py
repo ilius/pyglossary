@@ -66,20 +66,22 @@ def read_hashset(fp: IO[bytes]) -> list[str]:
 	hash_set_init = fp.read(len(HASH_SET_INIT))
 	if hash_set_init == HASH_SET_INIT:
 		hash_set_init2 = fp.read(len(HASH_SET_INIT2))
-		assert hash_set_init2 == HASH_SET_INIT2
+		assert hash_set_init2 == HASH_SET_INIT2, f"{hash_set_init2=}"
 	else:
 		n_extra = len(LINKED_HASH_SET_INIT) - len(HASH_SET_INIT)
 		hash_set_init += fp.read(n_extra)
-		assert hash_set_init == LINKED_HASH_SET_INIT
+		assert hash_set_init == LINKED_HASH_SET_INIT, f"{hash_set_init=}"
 	read_int(fp)  # capacity
 	capacity_factor = read_float(fp)
-	assert capacity_factor == HASH_SET_CAPACITY_FACTOR
+	assert capacity_factor == HASH_SET_CAPACITY_FACTOR, f"{capacity_factor=}"
 	num_entries = read_int(fp)
 	data: list[str] = []
 	while len(data) < num_entries:
-		assert read_byte(fp) == 0x74
+		x74 = read_byte(fp)
+		assert x74 == 0x74, f"{x74=}"
 		data.append(read_string(fp))
-	assert read_byte(fp) == 0x78
+	x78 = read_byte(fp)
+	assert x78 == 0x78, f"{x78=}"
 	return data
 
 
@@ -147,7 +149,10 @@ def read_entry_index(fp: IO[bytes]) -> EntryIndexTuple:
 	stop_list_size = read_int(fp)
 	stop_list_offset = fp.tell()
 	stop_list = read_hashset(fp)
-	assert fp.tell() == stop_list_offset + stop_list_size
+	pos = fp.tell()
+	assert pos == stop_list_offset + stop_list_size, (
+		f"{pos=}, {stop_list_offset=}, {stop_list_size=}"
+	)
 
 	num_rows = read_int(fp)
 	row_size = read_int(fp)

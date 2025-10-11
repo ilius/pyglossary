@@ -69,7 +69,8 @@ class Reader:
 		texts = read_list(fp, read_entry_text)
 		htmls = read_list(fp, read_entry_html)
 		indices = read_list(fp, read_entry_index)
-		assert read_string(fp) == "END OF DICTIONARY"
+		endStr = read_string(fp)
+		assert endStr == "END OF DICTIONARY", f"{endStr=}"
 		return QuickDic(
 			name=name,
 			sources=sources,
@@ -116,8 +117,8 @@ class Reader:
 		_, _, _, _, _, _, index_entries, _, rows = index
 		token, start_index, count, _, html_indices = index_entries[i_entry]
 		block_rows = rows[start_index : start_index + count + 1]
-		assert block_rows[0][0] in {1, 3}
-		assert block_rows[0][1] == i_entry
+		assert block_rows[0][0] in {1, 3}, f"{block_rows[0][0]=}"
+		assert block_rows[0][1] == i_entry, f"{block_rows[0][1]=}"
 		e_rows: list[tuple[int, int]] = []
 		for entry_type, entry_idx in block_rows[1:]:
 			if entry_type in {1, 3}:
