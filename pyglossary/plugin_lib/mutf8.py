@@ -24,7 +24,15 @@
 # The code is from https://github.com/TkTech/mutf8 (MIT License) with fixes
 # by @gentlegiantJGC (https://github.com/TkTech/mutf8/pull/7).
 
-__all__ = ["decode_modified_utf8", "encode_modified_utf8"]
+__all__ = [
+	"decode_modified_utf8",
+	"encode_modified_utf8",
+	"safe_decode_modified_utf8",
+]
+
+
+def safe_decode_modified_utf8(s: bytes) -> str:
+	return "\n".join(decode_modified_utf8(p) for p in s.split(b"\x00"))
 
 
 def decode_modified_utf8(s: bytes) -> str:

@@ -59,7 +59,7 @@ def read_float(fp: IO[bytes]) -> float:
 
 def read_string(fp: IO[bytes]) -> str:
 	length = read_short(fp)
-	return mutf8.decode_modified_utf8(fp.read(length))
+	return mutf8.safe_decode_modified_utf8(fp.read(length))
 
 
 def read_hashset(fp: IO[bytes]) -> list[str]:
