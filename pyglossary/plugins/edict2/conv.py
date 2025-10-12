@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+import unicodedata
+from collections import defaultdict
 from io import BytesIO
 from typing import TYPE_CHECKING, NamedTuple, cast
 
@@ -22,6 +24,7 @@ __all__ = [
 	"parse_line_simp",
 	"parse_line_trad",
 	"render_article",
+	"render_syllables",
 	"render_syllables_color",
 	"render_syllables_no_color",
 ]
@@ -45,7 +48,7 @@ def parse_line_trad(line: str) -> tuple[str, str, str, list[str]] | None:
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
-	pinyin = pinyin.replace("u:", "v")
+	pinyin = pinyin.replace("u:", "ü")
 	return trad, simp, pinyin, eng.split("/")
 
 
@@ -55,7 +58,7 @@ def parse_line_simp(line: str) -> tuple[str, str, str, list[str]] | None:
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
-	pinyin = pinyin.replace("u:", "v")
+	pinyin = pinyin.replace("u:", "ü")
 	return simp, trad, pinyin, eng.split("/")
 
 
@@ -69,15 +72,40 @@ class Article(NamedTuple):
 		return [self.first, self.second, self.pinyin] + list(map(summarize, self.eng))
 
 
+def render_syllables(
+	hf: T_htmlfile,
+	syllables: Sequence[str],
+	tones: Sequence[str],
+	color: bool = True,
+) -> None:
+	if color and len(syllables) != len(tones):
+		log.warning(f"unmatched tones: {syllables=}, {tones=}")
+		color = False
+
+	colors = _COLORS if color else defaultdict(lambda: "")
+
+	with hf.element("div", style="display: inline-block"):
+		for index, syllable in enumerate(syllables):
+			tone = tones[index] if len(syllables) == len(tones) else ""
+			with hf.element("font", color=colors[tone]):
+				if index > 0:
+					if syllable[0].isupper() and tone:
+						# Add a space before a capitalized syllable.
+						hf.write(" ")
+					elif (
+						unicodedata.normalize("NFD", syllable[0])[0] in "aeiou" and tone
+					):
+						# Add an apostrophe before a vowel.
+						hf.write("'")
+				hf.write(syllable)
+
+
 def render_syllables_no_color(
 	hf: T_htmlfile,
 	syllables: Sequence[str],
-	_tones: Sequence[str],
+	tones: Sequence[str],
 ) -> None:
-	with hf.element("div", style="display: inline-block"):
-		for syllable in syllables:
-			with hf.element("font", color=""):
-				hf.write(syllable)
+	render_syllables(hf, syllables, tones, False)
 
 
 def render_syllables_color(
@@ -85,15 +113,7 @@ def render_syllables_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	if len(syllables) != len(tones):
-		log.warning(f"unmatched tones: {syllables=}, {tones=}")
-		render_syllables_no_color(hf, syllables, tones)
-		return
-
-	with hf.element("div", style="display: inline-block"):
-		for index, syllable in enumerate(syllables):
-			with hf.element("font", color=_COLORS[tones[index]]):
-				hf.write(syllable)
+	render_syllables(hf, syllables, tones, True)
 
 
 # @lru_cache(maxsize=128)

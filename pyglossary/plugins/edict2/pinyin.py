@@ -26,21 +26,23 @@ _TONES = {
 	"u2": "ú",
 	"u3": "ǔ",
 	"u4": "ù",
-	"v1": "ǖ",
-	"v2": "ǘ",
-	"v3": "ǚ",
-	"v4": "ǜ",
+	"ü1": "ǖ",
+	"ü2": "ǘ",
+	"ü3": "ǚ",
+	"ü4": "ǜ",
 }
-# using v for the umlauted u
 
-_VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
+_VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "ü")
 
 
 def convert(word: str) -> tuple[str, str]:
+	upper = word[0].isupper()
 	tone = word[-1]
 	pinyin = word[:-1].lower()
 
 	if tone == "5":
+		if upper:
+			return pinyin.capitalize(), tone
 		return pinyin, tone
 	if tone not in {"1", "2", "3", "4"}:
 		return word, ""
@@ -48,6 +50,8 @@ def convert(word: str) -> tuple[str, str]:
 	for vowel in _VOWELS:
 		if vowel in pinyin:
 			vowel1 = vowel[-1]
+			if upper:
+				return pinyin.replace(vowel1, _TONES[vowel1 + tone]).capitalize(), tone
 			return pinyin.replace(vowel1, _TONES[vowel1 + tone]), tone
 
 	return pinyin, tone
