@@ -78,12 +78,12 @@ def render_syllables(
 		log.warning(f"unmatched tones: {syllables=}, {tones=}")
 		color = False
 
-	colors = _COLORS if color else defaultdict(lambda x: "")
+	colors = _COLORS if color else defaultdict(lambda: "")
 
 	with hf.element("div", style="display: inline-block"):
 		for index, syllable in enumerate(syllables):
-			with hf.element("font", color=colors[tones[index]]):
-				tone = tones[index] if len(syllables) == len(tones) else ""
+			tone = tones[index] if len(syllables) == len(tones) else ""
+			with hf.element("font", color=colors[tone]):
 				if index > 0:
 					if syllable[0].isupper() and tone != "":
 						# Add a space before a capitalized syllable.
