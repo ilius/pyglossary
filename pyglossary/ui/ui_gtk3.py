@@ -27,6 +27,7 @@ import gi
 
 from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.option import StrOption
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import urlToPath
 
@@ -316,7 +317,7 @@ class FormatOptionsDialog(gtk.Dialog):
 	def __init__(
 		self,
 		formatName: str,
-		options: list[str],
+		options: dict[str, Any],
 		optionsValues: dict[str, Any],
 		parent: gtk.Widget | None = None,
 	) -> None:
@@ -349,6 +350,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		treev.set_model(treeModel)
 		treev.connect("row-activated", self.rowActivated)
 		treev.connect("button-press-event", self.treeviewButtonPress)
+		treev.set_grid_lines(gtk.TreeViewGridLines.BOTH)  # often ignored by themes
 		###
 		self.treev = treev
 		#############
@@ -394,13 +396,13 @@ class FormatOptionsDialog(gtk.Dialog):
 		col.set_resizable(False)
 		treev.append_column(col)
 		#############
-		for name in options:
+		for name, default in options.items():
 			prop = optionsProp[name]
 			comment = prop.longComment
 			if len(comment) > self.commentLen:
 				comment = comment[: self.commentLen] + "..."
-			if prop.typ != "bool" and not prop.values:
-				comment += " (double-click to edit)"
+			if isinstance(prop, StrOption) and default:
+				comment += f"\nDefault: {default}"
 			treeModel.append(
 				[
 					name in optionsValues,  # enable
@@ -410,6 +412,11 @@ class FormatOptionsDialog(gtk.Dialog):
 				],
 			)
 		############
+		label = gtk.Label(
+			" Note: Double-click on Value cell to edit text/numeric values",
+		)
+		label.set_alignment(0, 0.5)
+		pack(self.vbox, label, padding=5)
 		pack(self.vbox, treev, 1, 1)
 		self.vbox.show_all()
 
@@ -627,7 +634,7 @@ class FormatBox(FormatButton):
 		"""Return 'r' or 'w'."""
 		raise NotImplementedError
 
-	def getActiveOptions(self) -> list[str] | None:
+	def getActiveOptions(self) -> dict[str, Any] | None:
 		raise NotImplementedError
 
 	def hasOptions(self) -> bool:
@@ -703,11 +710,11 @@ class InputFormatBox(FormatBox):
 		"""Return 'r' or 'w'."""
 		return "r"
 
-	def getActiveOptions(self) -> list[str] | None:
+	def getActiveOptions(self) -> dict[str, Any] | None:
 		formatName = self.getActive()
 		if not formatName:
 			return None
-		return list(Glossary.formatsReadOptions[formatName])
+		return Glossary.formatsReadOptions[formatName]
 
 
 class OutputFormatBox(FormatBox):
@@ -720,11 +727,11 @@ class OutputFormatBox(FormatBox):
 		"""Return 'r' or 'w'."""
 		return "w"
 
-	def getActiveOptions(self) -> list[str] | None:
+	def getActiveOptions(self) -> dict[str, Any] | None:
 		formatName = self.getActive()
 		if not formatName:
 			return None
-		return list(Glossary.formatsWriteOptions[formatName])
+		return Glossary.formatsWriteOptions[formatName]
 
 
 class GtkTextviewLogHandler(logging.Handler):
