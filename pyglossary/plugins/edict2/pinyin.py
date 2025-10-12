@@ -36,10 +36,13 @@ _VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "ü")
 
 
 def convert(word: str) -> tuple[str, str]:
+	upper = word[0].isupper()
 	tone = word[-1]
 	pinyin = word[:-1].lower()
 
 	if tone == "5":
+		if upper:
+			return pinyin.capitalize(), tone
 		return pinyin, tone
 	if tone not in {"1", "2", "3", "4"}:
 		return word, ""
@@ -47,6 +50,8 @@ def convert(word: str) -> tuple[str, str]:
 	for vowel in _VOWELS:
 		if vowel in pinyin:
 			vowel1 = vowel[-1]
+			if upper:
+				return pinyin.replace(vowel1, _TONES[vowel1 + tone]).capitalize(), tone
 			return pinyin.replace(vowel1, _TONES[vowel1 + tone]), tone
 
 	return pinyin, tone
