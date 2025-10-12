@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+import unicodedata
+from collections import defaultdict
 from io import BytesIO
 from typing import TYPE_CHECKING, NamedTuple, cast
 
@@ -69,15 +71,38 @@ class Article(NamedTuple):
 		return [self.first, self.second, self.pinyin] + list(map(summarize, self.eng))
 
 
+def render_syllables(
+	color: bool, hf: T_htmlfile, syllables: Sequence[str], tones: Sequence[str]
+):
+	if color and len(syllables) != len(tones):
+		log.warning(f"unmatched tones: {syllables=}, {tones=}")
+		color = False
+
+	colors = _COLORS if color else defaultdict(lambda x: "")
+
+	with hf.element("div", style="display: inline-block"):
+		for index, syllable in enumerate(syllables):
+			with hf.element("font", color=colors[tones[index]]):
+				tone = tones[index] if len(syllables) == len(tones) else ""
+				if index > 0:
+					if syllable[0].isupper() and tone != "":
+						# Add a space before a capitalized syllable.
+						hf.write(" ")
+					elif (
+						unicodedata.normalize("NFD", syllable[0])[0] in "aeiou"
+						and tone != ""
+					):
+						# Add an apostrophe before a vowel.
+						hf.write("'")
+				hf.write(syllable)
+
+
 def render_syllables_no_color(
 	hf: T_htmlfile,
 	syllables: Sequence[str],
 	_tones: Sequence[str],
 ) -> None:
-	with hf.element("div", style="display: inline-block"):
-		for syllable in syllables:
-			with hf.element("font", color=""):
-				hf.write(syllable)
+	render_syllables(False, hf, syllables, _tones)
 
 
 def render_syllables_color(
@@ -85,15 +110,7 @@ def render_syllables_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	if len(syllables) != len(tones):
-		log.warning(f"unmatched tones: {syllables=}, {tones=}")
-		render_syllables_no_color(hf, syllables, tones)
-		return
-
-	with hf.element("div", style="display: inline-block"):
-		for index, syllable in enumerate(syllables):
-			with hf.element("font", color=_COLORS[tones[index]]):
-				hf.write(syllable)
+	render_syllables(True, hf, syllables, tones)
 
 
 # @lru_cache(maxsize=128)
