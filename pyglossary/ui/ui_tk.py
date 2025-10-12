@@ -587,7 +587,7 @@ class FormatOptionsDialog(tk.Toplevel):
 			("Enable", 50, False),  # bool
 			("Name", 200, True),  # str
 			("Value", 200, True),  # str
-			("Comment", 300, False),  # str
+			("Comment", 300, True),  # str
 		]
 		treev = self.treev = ttk.Treeview(
 			master=self,
@@ -881,7 +881,7 @@ class FormatOptionsButton(ttk.Button):
 		# w and h are rough estimated width and height of `dialog`
 		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
 		dialog.update_idletasks()
-		width = dialog.winfo_width() + 200
+		width = dialog.winfo_width() + 400
 		height = dialog.winfo_height()
 		dialog.geometry(
 			f"{width}x{height}"
