@@ -1129,7 +1129,7 @@
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
-				"comment": "Filename format, default: {n:05d}.html"
+				"comment": "Filename format"
 			},
 			"escape_defi": {
 				"class": "BoolOption",

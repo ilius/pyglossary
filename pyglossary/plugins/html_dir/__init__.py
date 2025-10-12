@@ -49,7 +49,7 @@ optionsProp: dict[str, Option] = {
 		comment="Maximum file size in bytes",
 	),
 	"filename_format": StrOption(
-		comment="Filename format, default: {n:05d}.html",
+		comment="Filename format",
 	),
 	"escape_defi": BoolOption(
 		comment="Escape definitions",
