@@ -45,7 +45,7 @@ def parse_line_trad(line: str) -> tuple[str, str, str, list[str]] | None:
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
-	pinyin = pinyin.replace("u:", "v")
+	pinyin = pinyin.replace("u:", "ü")
 	return trad, simp, pinyin, eng.split("/")
 
 
@@ -55,7 +55,7 @@ def parse_line_simp(line: str) -> tuple[str, str, str, list[str]] | None:
 	if match is None:
 		return None
 	trad, simp, pinyin, eng = match.groups()
-	pinyin = pinyin.replace("u:", "v")
+	pinyin = pinyin.replace("u:", "ü")
 	return simp, trad, pinyin, eng.split("/")
 
 

@@ -26,14 +26,13 @@ _TONES = {
 	"u2": "ú",
 	"u3": "ǔ",
 	"u4": "ù",
-	"v1": "ǖ",
-	"v2": "ǘ",
-	"v3": "ǚ",
-	"v4": "ǜ",
+	"ü1": "ǖ",
+	"ü2": "ǘ",
+	"ü3": "ǚ",
+	"ü4": "ǜ",
 }
-# using v for the umlauted u
 
-_VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "v")
+_VOWELS = ("a", "e", "o", "iu", "ui", "i", "u", "ü")
 
 
 def convert(word: str) -> tuple[str, str]:
