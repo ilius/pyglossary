@@ -22,7 +22,7 @@
 | Kobo E-Reader Dictionary | Kobo | [kobo.md](./kobo.md) |
 | Kobo E-Reader Dictfile (.df) | Dictfile | [kobo_dictfile.md](./kobo_dictfile.md) |
 | Mobipocket (.mobi) E-Book | Mobi | [mobi.md](./mobi.md) |
-| EDICT2 (CEDICT) (.u8) | EDICT2 | [edict2.md](./edict2.md) |
+| EDICT2 (CEDICT) (.u8, .txt) | EDICT2 | [edict2.md](./edict2.md) |
 | EDLIN | Edlin | [edlin.md](./edlin.md) |
 | FreeDict (.tei) | FreeDict | [freedict.md](./freedict.md) |
 | Gettext Source (.po) | GettextPo | [gettext_po.md](./gettext_po.md) |

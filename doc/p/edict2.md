@@ -1,4 +1,4 @@
-## EDICT2 (CEDICT) (.u8)
+## EDICT2 (CEDICT) (.u8, .txt)
 
 ### General Information
 
@@ -6,8 +6,8 @@
 | --------------- | ---------------------------------------------- |
 | Name            | EDICT2                                         |
 | snake_case_name | edict2                                         |
-| Description     | EDICT2 (CEDICT) (.u8)                          |
-| Extensions      | `.u8`                                          |
+| Description     | EDICT2 (CEDICT) (.u8, .txt)                    |
+| Extensions      | `.u8`, `.txt`                                  |
 | Read support    | Yes                                            |
 | Write support   | No                                             |
 | Single-file     | Yes                                            |
@@ -22,6 +22,7 @@
 | encoding          | `utf-8` | str  | Encoding/charset                              |
 | traditional_title | `False` | bool | Use traditional Chinese for entry titles/keys |
 | colorize_tones    | `True`  | bool | Set to false to disable tones coloring        |
+| link_references   | `False` | bool | Create links to references to other entries   |
 
 ### Dependencies for reading
 

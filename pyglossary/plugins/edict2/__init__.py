@@ -30,8 +30,11 @@ __all__ = [
 enable = True
 lname = "edict2"
 name = "EDICT2"
-description = "EDICT2 (CEDICT) (.u8)"
-extensions = (".u8",)
+description = "EDICT2 (CEDICT) (.u8, .txt)"
+extensions = (
+	".u8",
+	".txt",
+)
 extensionCreate = ""
 singleFile = True
 kind = "text"
@@ -64,5 +67,8 @@ optionsProp: dict[str, Option] = {
 	),
 	"colorize_tones": BoolOption(
 		comment="Set to false to disable tones coloring",
+	),
+	"link_references": BoolOption(
+		comment="Create links to references to other entries",
 	),
 }
