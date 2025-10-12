@@ -77,7 +77,7 @@ def render_syllables(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 	color: bool = True,
-):
+) -> None:
 	if color and len(syllables) != len(tones):
 		log.warning(f"unmatched tones: {syllables=}, {tones=}")
 		color = False
@@ -89,12 +89,11 @@ def render_syllables(
 			tone = tones[index] if len(syllables) == len(tones) else ""
 			with hf.element("font", color=colors[tone]):
 				if index > 0:
-					if syllable[0].isupper() and tone != "":
+					if syllable[0].isupper() and tone:
 						# Add a space before a capitalized syllable.
 						hf.write(" ")
 					elif (
-						unicodedata.normalize("NFD", syllable[0])[0] in "aeiou"
-						and tone != ""
+						unicodedata.normalize("NFD", syllable[0])[0] in "aeiou" and tone
 					):
 						# Add an apostrophe before a vowel.
 						hf.write("'")
@@ -106,7 +105,7 @@ def render_syllables_no_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	render_syllables(False, hf, syllables, _tones)
+	render_syllables(False, hf, syllables, tones)
 
 
 def render_syllables_color(
