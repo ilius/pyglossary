@@ -105,7 +105,7 @@ def render_syllables_no_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	render_syllables(False, hf, syllables, tones)
+	render_syllables(hf, syllables, tones, False)
 
 
 def render_syllables_color(
@@ -113,7 +113,7 @@ def render_syllables_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	render_syllables(True, hf, syllables, tones)
+	render_syllables(hf, syllables, tones, True)
 
 
 # @lru_cache(maxsize=128)
