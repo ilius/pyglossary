@@ -24,6 +24,7 @@ __all__ = [
 	"parse_line_simp",
 	"parse_line_trad",
 	"render_article",
+	"render_syllables",
 	"render_syllables_color",
 	"render_syllables_no_color",
 ]
@@ -72,7 +73,10 @@ class Article(NamedTuple):
 
 
 def render_syllables(
-	color: bool, hf: T_htmlfile, syllables: Sequence[str], tones: Sequence[str]
+	hf: T_htmlfile,
+	syllables: Sequence[str],
+	tones: Sequence[str],
+	color: bool = True,
 ):
 	if color and len(syllables) != len(tones):
 		log.warning(f"unmatched tones: {syllables=}, {tones=}")
@@ -100,7 +104,7 @@ def render_syllables(
 def render_syllables_no_color(
 	hf: T_htmlfile,
 	syllables: Sequence[str],
-	_tones: Sequence[str],
+	tones: Sequence[str],
 ) -> None:
 	render_syllables(False, hf, syllables, _tones)
 

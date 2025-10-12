@@ -26,7 +26,7 @@ class PinyinTest(unittest.TestCase):
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as _hf:  # noqa: PLR1702
 			hf = cast("T_htmlfile", _hf)
-			render_syllables(True, hf, pinyin_list, tones)
+			render_syllables(hf, pinyin_list, tones)
 
 		result = f.getvalue().decode("utf-8")
 
