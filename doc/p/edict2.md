@@ -1,4 +1,4 @@
-## EDICT2 (CEDICT) (.u8, .txt)
+## EDICT2 (CEDICT) (.u8)
 
 ### General Information
 
@@ -6,7 +6,7 @@
 | --------------- | ---------------------------------------------- |
 | Name            | EDICT2                                         |
 | snake_case_name | edict2                                         |
-| Description     | EDICT2 (CEDICT) (.u8, .txt)                    |
+| Description     | EDICT2 (CEDICT) (.u8)                          |
 | Extensions      | `.u8`                                          |
 | Read support    | Yes                                            |
 | Write support   | No                                             |

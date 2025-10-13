@@ -918,7 +918,7 @@
 		"module": "edict2",
 		"lname": "edict2",
 		"name": "EDICT2",
-		"description": "EDICT2 (CEDICT) (.u8, .txt)",
+		"description": "EDICT2 (CEDICT) (.u8)",
 		"extensions": [
 			".u8"
 		],

@@ -35,5 +35,5 @@ pip3 install lxml python-romkan-ng
 
 ### Related Formats
 
-- [EDICT2 (CEDICT) (.u8, .txt)](./edict2.md)
+- [EDICT2 (CEDICT) (.u8)](./edict2.md)
 - [JMnedict](./jmnedict.md)
