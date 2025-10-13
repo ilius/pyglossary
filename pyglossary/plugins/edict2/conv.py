@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections import defaultdict
+from functools import partial
 from io import BytesIO
 from typing import TYPE_CHECKING, NamedTuple, cast
 
@@ -12,6 +13,7 @@ from pyglossary.core import log
 
 from .pinyin import convert
 from .summarize import summarize
+from .util import get_chinese_references
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Sequence
@@ -24,6 +26,8 @@ __all__ = [
 	"parse_line_simp",
 	"parse_line_trad",
 	"render_article",
+	"render_definition_no_links",
+	"render_definition_with_links",
 	"render_syllables",
 	"render_syllables_color",
 	"render_syllables_no_color",
@@ -116,13 +120,59 @@ def render_syllables_color(
 	render_syllables(hf, syllables, tones, True)
 
 
+def render_definition_no_links(definition: str, hf: T_htmlfile) -> None:
+	with hf.element("li"):
+		hf.write(definition)
+
+
+def render_definition_with_links(
+	traditional_title: bool, definition: str, hf: T_htmlfile
+) -> None:
+	chinese_refs = get_chinese_references(definition)
+	get_chinese = (
+		(lambda match: match.trad) if traditional_title else (lambda match: match.simp)
+	)
+
+	match = None
+	with hf.element("li"):
+		try:
+			match = next(chinese_refs)
+			hf.write(definition[0 : match.start])
+			with hf.element("a", href=f"bword://{get_chinese(match)}"):
+				hf.write(match.text)
+
+		except StopIteration:
+			hf.write(definition)
+			return
+
+		for next_match in chinese_refs:
+			hf.write(definition[match.end : next_match.start])
+			match = next_match
+			with hf.element(
+				"a",
+				href=f"bword://{get_chinese(match)}",
+			):
+				hf.write(match.text)
+
+		hf.write(definition[match.end :])
+
+
+def create_render_definition(
+	traditional_title: bool, create_links: bool
+) -> Callable[[str, T_htmlfile], None]:
+	if not create_links:
+		return render_definition_no_links
+	return partial(render_definition_with_links, traditional_title)
+
+
 # @lru_cache(maxsize=128)
 def _convert_pinyin(pinyin: str) -> tuple[Sequence[str], Sequence[str]]:
 	return tuple(zip(*map(convert, pinyin.split()), strict=False))  # type: ignore
 
 
 def render_article(
-	render_syllables: Callable,
+	render_syllables: Callable[[str, T_htmlfile], None],
+	render_definition: Callable[[str, T_htmlfile], None],
 	article: Article,
 ) -> tuple[list[str], str]:
 	names = article.names()
@@ -150,7 +200,6 @@ def render_article(
 			with hf.element("div"):
 				with hf.element("ul"):
 					for defn in article.eng:
-						with hf.element("li"):
-							hf.write(defn)
+						render_definition(defn, hf)
 
 	return names, f.getvalue().decode("utf-8")

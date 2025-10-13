@@ -939,6 +939,11 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Set to false to disable tones coloring"
+			},
+			"link_references": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Create links to references to other entries"
 			}
 		},
 		"canRead": true,
@@ -946,7 +951,8 @@
 		"readOptions": {
 			"encoding": "utf-8",
 			"traditional_title": false,
-			"colorize_tones": true
+			"colorize_tones": true,
+			"link_references": false
 		},
 		"readDepends": {
 			"lxml": "lxml"

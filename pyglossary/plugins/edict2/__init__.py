@@ -65,4 +65,7 @@ optionsProp: dict[str, Option] = {
 	"colorize_tones": BoolOption(
 		comment="Set to false to disable tones coloring",
 	),
+	"link_references": BoolOption(
+		comment="Create links to references to other entries",
+	),
 }

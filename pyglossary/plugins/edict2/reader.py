@@ -7,6 +7,7 @@ from pyglossary.io_utils import nullTextIO
 
 from .conv import (
 	Article,
+	create_render_definition,
 	parse_line_simp,
 	parse_line_trad,
 	render_article,
@@ -32,6 +33,7 @@ class Reader:
 	_encoding: str = "utf-8"
 	_traditional_title: bool = False
 	_colorize_tones: bool = True
+	_link_references: bool = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
@@ -70,6 +72,9 @@ class Reader:
 			else render_syllables_no_color
 		)
 		parse_line = parse_line_trad if self._traditional_title else parse_line_simp
+		render_definition = create_render_definition(
+			self._traditional_title, self._link_references
+		)
 
 		while True:
 			line = file.readline()
@@ -86,6 +91,7 @@ class Reader:
 				continue
 			names, article_text = render_article(
 				render_syllables,
+				render_definition,
 				Article(*parts),
 			)
 			entry = glos.newEntry(

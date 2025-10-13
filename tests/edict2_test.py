@@ -15,7 +15,11 @@ if TYPE_CHECKING:
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.plugins.edict2.conv import render_syllables
+from pyglossary.plugins.edict2.conv import (
+	render_definition_no_links,
+	render_definition_with_links,
+	render_syllables,
+)
 from pyglossary.plugins.edict2.pinyin import convert
 
 
@@ -48,6 +52,66 @@ class PinyinTest(unittest.TestCase):
 	def test_pinyin_umlaut_u(self):
 		self.assertEqual(self.render("gui1 nü"), "guīnü")
 		self.assertEqual(self.render("hu1 lüe4"), "hūlüè")
+
+
+class DefinitionLinkTest(unittest.TestCase):
+	@staticmethod
+	def render_no_links(definition: str) -> str:
+		f = BytesIO()
+		with ET.htmlfile(f, encoding="utf-8") as _hf:
+			hf = cast("T_htmlfile", _hf)
+			render_definition_no_links(definition, hf)
+
+		return f.getvalue().decode("utf-8")
+
+	@staticmethod
+	def render_with_links_simplified(definition: str) -> str:
+		f = BytesIO()
+		with ET.htmlfile(f, encoding="utf-8") as _hf:
+			hf = cast("T_htmlfile", _hf)
+			render_definition_with_links(False, definition, hf)
+
+		return f.getvalue().decode("utf-8")
+
+	@staticmethod
+	def render_with_links_traditional(definition: str) -> str:
+		f = BytesIO()
+		with ET.htmlfile(f, encoding="utf-8") as _hf:
+			hf = cast("T_htmlfile", _hf)
+			render_definition_with_links(True, definition, hf)
+
+		return f.getvalue().decode("utf-8")
+
+	def test_links_created_simplified(self):
+		self.assertEqual(
+			self.render_with_links_simplified("CL:個|个[ge4],隻|只[zhi1]/"),
+			'<li>CL:<a href="bword://个">個|个[ge4]</a>,<a href="bword://只">隻|只[zhi1]</a>/</li>',
+		)
+		self.assertEqual(
+			self.render_with_links_simplified(
+				"provincial 解元[jie4 yuan2], metropolitan 會元|会元[hui4 yuan2] and palace 狀元|状元[zhuang4 yuan2]"
+			),
+			'<li>provincial <a href="bword://解元">解元[jie4 yuan2]</a>, metropolitan <a href="bword://会元">會元|会元[hui4 yuan2]</a> and palace <a href="bword://状元">狀元|状元[zhuang4 yuan2]</a></li>',
+		)
+
+	def test_links_created_traditional(self):
+		self.assertEqual(
+			self.render_with_links_traditional("CL:個|个[ge4],隻|只[zhi1]/"),
+			'<li>CL:<a href="bword://個">個|个[ge4]</a>,<a href="bword://隻">隻|只[zhi1]</a>/</li>',
+		)
+		self.assertEqual(
+			self.render_with_links_traditional(
+				"provincial 解元[jie4 yuan2], metropolitan 會元|会元[hui4 yuan2] and palace 狀元|状元[zhuang4 yuan2]"
+			),
+			'<li>provincial <a href="bword://解元">解元[jie4 yuan2]</a>, metropolitan <a href="bword://會元">會元|会元[hui4 yuan2]</a> and palace <a href="bword://狀元">狀元|状元[zhuang4 yuan2]</a></li>',
+		)
+
+	def test_no_links(self):
+		for defn in (
+			"CL:個|个[ge4],隻|只[zhi1]/",
+			"provincial 解元[jie4 yuan2], metropolitan 會元|会元[hui4 yuan2] and palace 狀元|状元[zhuang4 yuan2]",
+		):
+			self.assertEqual(self.render_no_links(defn), f"<li>{defn}</li>")
 
 
 if __name__ == "__main__":
