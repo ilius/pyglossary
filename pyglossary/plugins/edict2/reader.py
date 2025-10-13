@@ -73,7 +73,8 @@ class Reader:
 		)
 		parse_line = parse_line_trad if self._traditional_title else parse_line_simp
 		render_definition = create_render_definition(
-			self._traditional_title, self._link_references
+			traditional_title=self._traditional_title,
+			link_references=self._link_references,
 		)
 
 		while True:

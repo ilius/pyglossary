@@ -60,7 +60,7 @@ class DefinitionLinkTest(unittest.TestCase):
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as _hf:
 			hf = cast("T_htmlfile", _hf)
-			render_definition_no_links(definition, hf)
+			render_definition_no_links(hf, definition=definition)
 
 		return f.getvalue().decode("utf-8")
 
@@ -69,7 +69,11 @@ class DefinitionLinkTest(unittest.TestCase):
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as _hf:
 			hf = cast("T_htmlfile", _hf)
-			render_definition_with_links(False, definition, hf)
+			render_definition_with_links(
+				hf,
+				definition=definition,
+				traditional_title=False,
+			)
 
 		return f.getvalue().decode("utf-8")
 
@@ -78,7 +82,11 @@ class DefinitionLinkTest(unittest.TestCase):
 		f = BytesIO()
 		with ET.htmlfile(f, encoding="utf-8") as _hf:
 			hf = cast("T_htmlfile", _hf)
-			render_definition_with_links(True, definition, hf)
+			render_definition_with_links(
+				hf,
+				definition=definition,
+				traditional_title=True,
+			)
 
 		return f.getvalue().decode("utf-8")
 

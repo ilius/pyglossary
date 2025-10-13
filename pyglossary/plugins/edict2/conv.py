@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections import defaultdict
-from functools import partial
 from io import BytesIO
 from typing import TYPE_CHECKING, NamedTuple, cast
 
@@ -109,7 +108,12 @@ def render_syllables_no_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	render_syllables(hf, syllables, tones, False)
+	render_syllables(
+		hf=hf,
+		syllables=syllables,
+		tones=tones,
+		color=False,
+	)
 
 
 def render_syllables_color(
@@ -117,16 +121,23 @@ def render_syllables_color(
 	syllables: Sequence[str],
 	tones: Sequence[str],
 ) -> None:
-	render_syllables(hf, syllables, tones, True)
+	render_syllables(
+		hf=hf,
+		syllables=syllables,
+		tones=tones,
+		color=True,
+	)
 
 
-def render_definition_no_links(definition: str, hf: T_htmlfile) -> None:
+def render_definition_no_links(hf: T_htmlfile, definition: str) -> None:
 	with hf.element("li"):
 		hf.write(definition)
 
 
 def render_definition_with_links(
-	traditional_title: bool, definition: str, hf: T_htmlfile
+	hf: T_htmlfile,
+	traditional_title: bool,
+	definition: str,
 ) -> None:
 	chinese_refs = get_chinese_references(definition)
 	get_chinese = (
@@ -158,11 +169,20 @@ def render_definition_with_links(
 
 
 def create_render_definition(
-	traditional_title: bool, create_links: bool
-) -> Callable[[str, T_htmlfile], None]:
-	if not create_links:
+	traditional_title: bool,
+	link_references: bool,
+) -> Callable[[T_htmlfile, str], None]:
+	if not link_references:
 		return render_definition_no_links
-	return partial(render_definition_with_links, traditional_title)
+
+	def func(hf: T_htmlfile, definition: str) -> None:
+		render_definition_with_links(
+			hf=hf,
+			definition=definition,
+			traditional_title=traditional_title,
+		)
+
+	return func
 
 
 # @lru_cache(maxsize=128)
@@ -171,8 +191,8 @@ def _convert_pinyin(pinyin: str) -> tuple[Sequence[str], Sequence[str]]:
 
 
 def render_article(
-	render_syllables: Callable[[str, T_htmlfile], None],
-	render_definition: Callable[[str, T_htmlfile], None],
+	render_syllables: Callable[[T_htmlfile, str], None],
+	render_definition: Callable[[T_htmlfile, str], None],
 	article: Article,
 ) -> tuple[list[str], str]:
 	names = article.names()
@@ -200,6 +220,6 @@ def render_article(
 			with hf.element("div"):
 				with hf.element("ul"):
 					for defn in article.eng:
-						render_definition(defn, hf)
+						render_definition(hf, defn)
 
 	return names, f.getvalue().decode("utf-8")
