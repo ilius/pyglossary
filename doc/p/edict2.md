@@ -7,7 +7,7 @@
 | Name            | EDICT2                                         |
 | snake_case_name | edict2                                         |
 | Description     | EDICT2 (CEDICT) (.u8, .txt)                    |
-| Extensions      | `.u8`, `.txt`                                  |
+| Extensions      | `.u8`                                          |
 | Read support    | Yes                                            |
 | Write support   | No                                             |
 | Single-file     | Yes                                            |

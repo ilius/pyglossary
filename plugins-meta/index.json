@@ -920,8 +920,7 @@
 		"name": "EDICT2",
 		"description": "EDICT2 (CEDICT) (.u8, .txt)",
 		"extensions": [
-			".u8",
-			".txt"
+			".u8"
 		],
 		"singleFile": true,
 		"optionsProp": {

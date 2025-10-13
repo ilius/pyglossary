@@ -31,10 +31,7 @@ enable = True
 lname = "edict2"
 name = "EDICT2"
 description = "EDICT2 (CEDICT) (.u8, .txt)"
-extensions = (
-	".u8",
-	".txt",
-)
+extensions = (".u8",)
 extensionCreate = ""
 singleFile = True
 kind = "text"
