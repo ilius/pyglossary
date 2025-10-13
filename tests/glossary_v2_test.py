@@ -252,11 +252,14 @@ class TestGlossaryBase(unittest.TestCase):
 		md5sum=None,
 		config=None,
 		showDiff=False,
+		name: str | None = None,
 		**convertKWArgs,
 	):
 		inputFilename = self.downloadFile(fname)
 		outputFilename = self.newTempFilePath(fname2)
 		glos = self.glos = Glossary()
+		if name is not None:
+			glos.setInfo("name", name)
 		if config is not None:
 			glos.config = config
 		res = glos.convert(
