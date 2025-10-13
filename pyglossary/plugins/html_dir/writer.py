@@ -199,8 +199,6 @@ class Writer:
 				targetNew = ""
 			else:
 				targetFilename, targetEntryIndex = fileByWord[target][0]
-				if targetFilename == filename:
-					continue
 				targetNew = f"{targetFilename}#entry{targetEntryIndex}"
 			file = getLinksByFile(int(fileIndexStr))
 			file.write(
