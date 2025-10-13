@@ -21,6 +21,9 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			{
 				"edict2/024-cedict.u8": "de30cdd3",
 				"edict2/024-cedict.txt": "34e2dc56",
+				"edict2/024-cedict-links.txt": "74c3446f",
+				"edict2/024-cedict-nocolor.txt": "dafb8cd8",
+				"edict2/024-cedict-trad.txt": "eec67f1e",
 			},
 		)
 
@@ -33,7 +36,42 @@ class TestGlossaryDictfile(TestGlossaryBase):
 		)
 
 	def test_convert_edict_txt_1(self):
-		self.convert_edict_txt(
-			"024-cedict",
-			"024-cedict",
+		self.convert(
+			"edict2/024-cedict.u8",
+			"024-cedict-2.txt",
+			compareText="edict2/024-cedict.txt",
+			name="024-cedict.u8",
+		)
+
+	def test_convert_edict_txt_2(self):
+		self.convert(
+			"edict2/024-cedict.u8",
+			"024-cedict-2.txt",
+			compareText="edict2/024-cedict-trad.txt",
+			name="024-cedict.u8",
+			readOptions={
+				"traditional_title": True,
+			},
+		)
+
+	def test_convert_edict_txt_3(self):
+		self.convert(
+			"edict2/024-cedict.u8",
+			"024-cedict-2.txt",
+			compareText="edict2/024-cedict-nocolor.txt",
+			name="024-cedict.u8",
+			readOptions={
+				"colorize_tones": False,
+			},
+		)
+
+	def test_convert_edict_txt_4(self):
+		self.convert(
+			"edict2/024-cedict.u8",
+			"024-cedict-2.txt",
+			compareText="edict2/024-cedict-links.txt",
+			name="024-cedict.u8",
+			readOptions={
+				"link_references": True,
+			},
 		)
