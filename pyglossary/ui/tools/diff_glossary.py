@@ -66,6 +66,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 	format2: str | None = None,
 	header: str = "",
 	pager: bool = True,
+	sameEntries: bool = False,
 ) -> None:
 	glos1 = Glossary(ui=None)
 	if not glos1.directRead(filename1, formatName=format1):
@@ -138,7 +139,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		formatted = f"{color}{prefix} Info: {key}\n{valueColor}" + entrySep
 		write(formatted)
 
-	def printChangedEntry(entry1: EntryType, entry2: EntryType) -> None:
+	def printChangedDefiEntry(entry1: EntryType, entry2: EntryType) -> None:
 		defiDiff = formatDiff(xmlDiff(entry1.defi, entry2.defi))
 		entry1._defi = defiDiff
 		if index1 < 0:
@@ -149,6 +150,38 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			ids = f"A#{index1} B#{index2}"
 		formatted = f"=== {yellow}{ids}{reset} " + formatEntry(entry1) + entrySep
 		write(formatted)
+
+	def printChangedEntry(entry1: EntryType, entry2: EntryType) -> None:
+		ids = f"#{index1}" if index1 == index2 else f"A#{index1} B#{index2}"
+
+		header = f"=== {yellow}{ids}{reset} "
+
+		altsDiff = difflib.ndiff(
+			[f"Alt: {alt}\n" for alt in entry1.l_term[1:]],
+			[f"Alt: {alt}\n" for alt in entry2.l_term[1:]],
+			linejunk=None,
+			charjunk=None,
+		)
+		if entry1.l_term[0] == entry2.l_term[0]:
+			firstWordLine = f">> {entry1.l_term[0]}\n"
+		else:
+			# firstWordLine = f">> {entry1.l_term[0]} (A)\n>> {entry2.l_term[0]} (B)"
+			firstWordLine = formatDiff(
+				difflib.ndiff(
+					[f">> {entry1.l_term[0]}\n"],
+					[f">> {entry2.l_term[0]}\n"],
+					linejunk=None,
+					charjunk=None,
+				)
+			)
+		entryFormatted = "\n".join(
+			[
+				header,
+				firstWordLine + formatDiff(altsDiff),
+				formatDiff(xmlDiff(entry1.defi, entry2.defi)),
+			],
+		)
+		write(entryFormatted + entrySep)
 
 	def printChangedInfo(key: str, value1: str, value2: str) -> str:
 		valueDiff = formatInfoValueDiff(xmlDiff(value1, value2))
@@ -227,12 +260,17 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			if entry1.defi == entry2.defi:
 				entry1, entry2 = None, None
 				return
-			printChangedEntry(entry1, entry2)
+			printChangedDefiEntry(entry1, entry2)
 			entry1, entry2 = None, None
 			return
 
 		if entry1.defi == entry2.defi and (words1[0] in words2 or words2[0] in words1):
 			printAltsChangedEntry(entry1, entry2)
+			entry1, entry2 = None, None
+			return
+
+		if sameEntries:
+			printChangedEntry(entry1, entry2)
 			entry1, entry2 = None, None
 			return
 
@@ -341,6 +379,8 @@ def main() -> None:
 	if os.getenv("GIT_DIFF_PATH_COUNTER"):
 		return gitDiffMain()
 
+	sameEntries = os.getenv("SAME_ENTRIES") == "1"
+
 	filename1 = sys.argv[1]
 	filename2 = sys.argv[2]
 	format1 = None
@@ -357,6 +397,7 @@ def main() -> None:
 		format1=format1,
 		format2=format2,
 		pager=True,
+		sameEntries=sameEntries,
 	)
 	return None
 
