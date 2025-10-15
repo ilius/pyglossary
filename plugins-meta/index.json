@@ -944,6 +944,11 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Create links to references to other entries"
+			},
+			"summary_alternatives": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Include definition summaries as alternative headwords"
 			}
 		},
 		"canRead": true,
@@ -952,7 +957,8 @@
 			"encoding": "utf-8",
 			"traditional_title": false,
 			"colorize_tones": true,
-			"link_references": false
+			"link_references": false,
+			"summary_alternatives": false
 		},
 		"readDepends": {
 			"lxml": "lxml"

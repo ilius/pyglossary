@@ -34,6 +34,7 @@ class Reader:
 	_traditional_title: bool = False
 	_colorize_tones: bool = True
 	_link_references: bool = False
+	_summary_alternatives: bool = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
@@ -90,11 +91,15 @@ class Reader:
 			if parts is None:
 				log.warning(f"bad line: {line!r}")
 				continue
+			article = Article(*parts)
 			names, article_text = render_article(
 				render_syllables,
 				render_definition,
-				Article(*parts),
+				article,
 			)
+			if self._summary_alternatives:
+				names += [article.pinyin]
+				names += article.definition_summaries()
 			entry = glos.newEntry(
 				names,
 				article_text,

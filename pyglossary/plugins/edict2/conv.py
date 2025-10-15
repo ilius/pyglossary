@@ -72,7 +72,12 @@ class Article(NamedTuple):
 	eng: list[str]
 
 	def names(self) -> list[str]:
-		return [self.first, self.second, self.pinyin] + list(map(summarize, self.eng))
+		if self.first == self.second:
+			return [self.first]
+		return [self.first, self.second]
+
+	def definition_summaries(self) -> list[str]:
+		return list(map(summarize, self.eng))
 
 
 def render_syllables(
@@ -208,7 +213,7 @@ def render_article(
 				with hf.element("big"):
 					render_syllables(hf, names[0], tones)
 
-				if names[1] != names[0]:
+				if len(names) > 1:
 					hf.write("\xa0/\xa0")  # "\xa0" --> "&#160;" == "&nbsp;"
 					render_syllables(hf, names[1], tones)
 
