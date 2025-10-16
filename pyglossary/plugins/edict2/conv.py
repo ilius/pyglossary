@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 __all__ = [
 	"Article",
+	"create_render_definition",
 	"parse_line_simp",
 	"parse_line_trad",
 	"render_article",

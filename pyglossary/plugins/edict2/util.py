@@ -2,6 +2,8 @@ import re
 from collections.abc import Generator
 from typing import NamedTuple
 
+__all__ = ["get_chinese_references"]
+
 
 class ChineseWordReference(NamedTuple):
 	text: str
