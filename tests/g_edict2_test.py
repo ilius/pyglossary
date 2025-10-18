@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import unittest
 from os.path import abspath, dirname
 from typing import TYPE_CHECKING
 
@@ -33,6 +34,9 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			f"{fname}-2.txt",
 			compareText=f"edict2/{fname2}.txt",
 			name=f"{fname}.u8",
+			readOptions={
+				"summary_alternatives": True,
+			},
 		)
 
 	def test_convert_edict_txt_1(self):
@@ -41,6 +45,9 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			"024-cedict-2.txt",
 			compareText="edict2/024-cedict.txt",
 			name="024-cedict.u8",
+			readOptions={
+				"summary_alternatives": True,
+			},
 		)
 
 	def test_convert_edict_txt_2(self):
@@ -51,6 +58,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			name="024-cedict.u8",
 			readOptions={
 				"traditional_title": True,
+				"summary_alternatives": True,
 			},
 		)
 
@@ -62,6 +70,7 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			name="024-cedict.u8",
 			readOptions={
 				"colorize_tones": False,
+				"summary_alternatives": True,
 			},
 		)
 
@@ -73,5 +82,10 @@ class TestGlossaryDictfile(TestGlossaryBase):
 			name="024-cedict.u8",
 			readOptions={
 				"link_references": True,
+				"summary_alternatives": True,
 			},
 		)
+
+
+if __name__ == "__main__":
+	unittest.main()
