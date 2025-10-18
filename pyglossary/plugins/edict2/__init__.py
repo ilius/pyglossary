@@ -68,4 +68,9 @@ optionsProp: dict[str, Option] = {
 	"link_references": BoolOption(
 		comment="Create links to references to other entries",
 	),
+	"summary_alternatives": BoolOption(
+		comment=(
+			"Include English definition summaries as alternative terms (old behavior)"
+		),
+	),
 }
