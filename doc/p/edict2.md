@@ -17,13 +17,13 @@
 
 ### Read options
 
-| Name                 | Default | Type | Comment                                                                                               |
-| -------------------- | ------- | ---- | ----------------------------------------------------------------------------------------------------- |
-| encoding             | `utf-8` | str  | Encoding/charset                                                                                      |
-| traditional_title    | `False` | bool | Use traditional Chinese for entry titles/keys                                                         |
-| colorize_tones       | `True`  | bool | Set to false to disable tones coloring                                                                |
-| link_references      | `False` | bool | Create links to references to other entries                                                           |
-| summary_alternatives | `False` | bool | Include English definition summaries as alternative headwords, allowing some English-Chinese lookups. |
+| Name                 | Default | Type | Comment                                                                  |
+| -------------------- | ------- | ---- | ------------------------------------------------------------------------ |
+| encoding             | `utf-8` | str  | Encoding/charset                                                         |
+| traditional_title    | `False` | bool | Use traditional Chinese for entry titles/keys                            |
+| colorize_tones       | `True`  | bool | Set to false to disable tones coloring                                   |
+| link_references      | `False` | bool | Create links to references to other entries                              |
+| summary_alternatives | `False` | bool | Include English definition summaries as alternative terms (old behavior) |
 
 ### Dependencies for reading
 
