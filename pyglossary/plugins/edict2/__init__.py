@@ -69,6 +69,7 @@ optionsProp: dict[str, Option] = {
 		comment="Create links to references to other entries",
 	),
 	"summary_alternatives": BoolOption(
-		comment="Include English definition summaries as alternative headwords, allowing some English-Chinese lookups.",
+		comment="Include English definition summaries as alternative headwords, "
+		"allowing some English-Chinese lookups.",
 	),
 }
