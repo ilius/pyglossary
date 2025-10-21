@@ -27,15 +27,16 @@
 
 ### Write options
 
-| Name             | Default | Type | Comment                                                                  |
-| ---------------- | ------- | ---- | ------------------------------------------------------------------------ |
-| large_file       | `False` | bool | Use idxoffsetbits=64 bits, for large files only                          |
-| dictzip          | `False` | bool | Compress .dict file to .dict.dz                                          |
-| sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf                           |
-| stardict_client  | `False` | bool | Modify html entries for StarDict 3.0                                     |
-| audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)                             |
-| audio_icon       | `True`  | bool | Add glossary's audio icon                                                |
-| sqlite           | `None`  | bool | Use SQLite to limit memory usage. Default depends on global SQLite mode. |
+| Name             | Default | Type | Comment                                                        |
+| ---------------- | ------- | ---- | -------------------------------------------------------------- |
+| large_file       | `False` | bool | Use idxoffsetbits=64 bits, for large files only                |
+| dictzip          | `False` | bool | Compress .dict file to .dict.dz                                |
+| sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf                 |
+| stardict_client  | `False` | bool | Modify html entries for StarDict 3.0                           |
+| audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)                   |
+| audio_icon       | `True`  | bool | Add glossary's audio icon                                      |
+| autosqlite       | `True`  | bool | Auto-enable/disable SQLite option based on global SQLite mode. |
+| sqlite           | `False` | bool | Use SQLite to limit memory usage.                              |
 
 ### Dictionary Applications/Tools
 

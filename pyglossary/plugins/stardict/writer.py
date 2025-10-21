@@ -60,7 +60,8 @@ class Writer:
 	_stardict_client: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
-	_sqlite: bool | None = None
+	_autosqlite: bool = True
+	_sqlite: bool = False
 
 	dictzipSynFile = True
 
@@ -89,7 +90,7 @@ class Writer:
 		self._targetLang = None
 
 	def open(self, filename: str) -> None:  # noqa: PLR0912
-		if self._sqlite is None:
+		if self._autosqlite:
 			self._sqlite = self._glos.sqlite
 		log.debug(f"open: {filename = }, {self._sqlite = }")
 		fileBasePath = filename
