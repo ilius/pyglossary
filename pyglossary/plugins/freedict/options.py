@@ -23,7 +23,6 @@ optionsProp: dict[str, Option] = {
 		comment="Find and show unsupported tags",
 	),
 	"auto_rtl": BoolOption(
-		allowNone=True,
 		comment="Auto-detect and mark Right-to-Left text",
 	),
 	"auto_comma": BoolOption(

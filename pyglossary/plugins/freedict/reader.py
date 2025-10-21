@@ -55,7 +55,7 @@ class Reader(ReaderUtils):
 	}
 
 	_discover: bool = False
-	_auto_rtl: bool | None = None
+	_auto_rtl: bool = True
 	_auto_comma: bool = True
 	_comma: str = ", "
 	_word_title: bool = False
@@ -896,14 +896,6 @@ class Reader(ReaderUtils):
 
 	def __iter__(self) -> Iterator[EntryType]:
 		from lxml import etree as ET
-
-		if self._auto_rtl is None:
-			glos = self._glos
-			if (glos.sourceLang and glos.sourceLang.rtl) or (
-				glos.targetLang and glos.targetLang.rtl
-			):
-				log.info("setting auto_rtl=True")
-				self._auto_rtl = True
 
 		self._file = compressionOpen(self._filename, mode="rb")
 		context = ET.iterparse(  # type: ignore # noqa: PGH003

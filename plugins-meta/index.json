@@ -1064,7 +1064,7 @@
 		"canWrite": false,
 		"readOptions": {
 			"discover": false,
-			"auto_rtl": null,
+			"auto_rtl": true,
 			"auto_comma": true,
 			"comma": ", ",
 			"word_title": false,
