@@ -623,28 +623,15 @@ class StrOptionTk:
 		self._frame = frame
 		self._entry = entry
 
-	@property
-	def value(self) -> Any:
-		return self._entry.get()
+		self.valuesVar = None
+		if opt.values:
+			var = self.valuesVar = tk.StringVar()
+			var.trace_add("write", self._optionMenuActivated)
+			optMenu = ttk.OptionMenu(frame, var, *tuple(opt.values))
+			optMenu.pack(side="left", fill="x")
 
-	@value.setter
-	def value(self, x: Any):
-		self._entry.insert(0, str(x))
-
-	@property
-	def widget(self) -> ttk.Widget:
-		return self._frame
-
-
-class EncodingOptionTk:
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
-		frame = ttk.Frame(master=parent)
-		frame.pack(side="top", fill="y", expand=True)
-		ttk.Label(master=frame, text=f"{name}: {opt.comment}: ").pack(side="left")
-		entry = ttk.Entry(master=frame)
-		entry.pack(side="left", fill="x", expand=True)
-		self._frame = frame
-		self._entry = entry
+	def _optionMenuActivated(self, *_args: Any) -> None:
+		self.value = self.valuesVar.get()
 
 	@property
 	def value(self) -> Any:
@@ -652,7 +639,11 @@ class EncodingOptionTk:
 
 	@value.setter
 	def value(self, x: Any):
-		self._entry.insert(0, str(x))
+		assert isinstance(x, str)
+		if self.valuesVar is not None:
+			self.valuesVar.set(x)
+		self._entry.delete(0, tk.END)
+		self._entry.insert(0, x)
 
 	@property
 	def widget(self) -> ttk.Widget:
@@ -660,10 +651,6 @@ class EncodingOptionTk:
 
 
 class FileSizeOptionTk(IntOptionTk):
-	pass
-
-
-class UnicodeErrorsOptionTk(StrOptionTk):
 	pass
 
 
@@ -676,7 +663,7 @@ class MultiLineStrOptionTk:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
 		ttk.Label(
-			master=frame, text=f"{name}: {opt.comment} (esacped \\n\\t\\b): "
+			master=frame, text=f"{name}: {opt.comment} (escaped \\n\\t\\b): "
 		).pack(side="left")
 		entry = ttk.Entry(master=frame)
 		entry.pack(side="left", fill="x", expand=True)
@@ -740,9 +727,9 @@ optionClassByName: dict[str, OptionTkType] = {
 	"BoolOption": BoolOptionTk,
 	"IntOption": IntOptionTk,
 	"StrOption": StrOptionTk,
-	"EncodingOption": EncodingOptionTk,
+	"EncodingOption": StrOptionTk,
 	"FileSizeOption": FileSizeOptionTk,
-	"UnicodeErrorsOption": UnicodeErrorsOptionTk,
+	"UnicodeErrorsOption": StrOptionTk,
 	"HtmlColorOption": HtmlColorOptionTk,
 	"NewlineOption": NewlineOptionTk,
 	"ListOption": ListOptionTk,
