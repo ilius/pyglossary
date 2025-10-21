@@ -151,6 +151,10 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"100-en-fa-sd-v2/100-en-fa.ifo": "bb916827",
 				"100-en-fa-sd-v2/100-en-fa.syn": "1160fa0b",
 				"100-en-fa-sd-v2.txt": "0b8b2ac0",
+				"100-en-fa-sd-nostt/100-en-fa.dict": "efdfaf68",
+				"100-en-fa-sd-nostt/100-en-fa.idx": "dbfbce1e",
+				"100-en-fa-sd-nostt/100-en-fa.ifo": "77d3b180",
+				"100-en-fa-sd-nostt/100-en-fa.syn": "1160fa0b",
 				# FIXME: remove empty description line from 100-en-fa.ifo
 				# stardict-mixed-types-1.ifo, "stardict-mixed-types-2.ifo
 				"100-ja-en.sd/100-ja-en.dict": "39715f01",
@@ -193,6 +197,15 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 				"100-en-fa-sd-v2",
 				sqlite=sqlite,
 			)
+
+	def test_convert_txt_stardict_0_sametypeseq1(self):
+		self.convert_txt_stardict(
+			"100-en-fa",
+			"100-en-fa-sd-nostt",
+			writeOptions={
+				"sametypesequence": None,
+			},
+		)
 
 	def test_convert_txt_stardict_1_zip(self):
 		sha1sumDict = {
