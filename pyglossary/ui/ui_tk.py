@@ -17,6 +17,7 @@
 # GNU General Public License for more details.
 from __future__ import annotations
 
+import ast
 import logging
 import os
 import tkinter as tk
@@ -24,11 +25,12 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, ttk
 from tkinter import font as tkFont
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any, Literal, Protocol
 
 from pyglossary.core import confDir, homeDir, homePage, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.text_utils import urlToPath
+from pyglossary.option import IntOption, Option
+from pyglossary.text_utils import escapeNTB, unescapeNTB, urlToPath
 
 from .base import (
 	UIBase,
@@ -539,6 +541,216 @@ class FormatButton(ttk.Button):
 		dialog.focus()
 
 
+class OptionTkType(Protocol):
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None: ...
+	@property
+	def value(self) -> Any: ...
+	@value.setter
+	def value(self, x: Any): ...
+	@property
+	def widget(self) -> ttk.Widget: ...
+
+
+class BoolOptionTk:
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+		frame = ttk.Frame(master=parent)
+		frame.pack(side="top", fill="y", expand=True)
+		var = tk.IntVar()
+		cb = ttk.Checkbutton(
+			master=frame,
+			variable=var,
+			text=f"{name}: {opt.comment}",
+		)
+		cb.pack(fill="x")
+		self._frame = frame
+		self._var = var
+
+	@property
+	def value(self) -> Any:
+		return bool(self._var.get())
+
+	@value.setter
+	def value(self, x: Any):
+		self._var.set(int(bool(x)))
+
+	@property
+	def widget(self) -> ttk.Widget:
+		return self._frame
+
+
+class IntOptionTk:
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+		assert isinstance(opt, IntOption)
+		frame = ttk.Frame(master=parent)
+		frame.pack(side="top", fill="y", expand=True)
+		ttk.Label(master=frame, text=f"{name}: ").pack(side="left", expand=False)
+		minim = opt.minim
+		if minim is None:
+			minim = 0
+		maxim = opt.maxim
+		if maxim is None:
+			maxim = 1_000_000_000
+		cb = ttk.Spinbox(master=frame, from_=minim, to=maxim, increment=1)
+		cb.pack(side="left", expand=False)
+		ttk.Label(master=frame, text=opt.comment).pack(
+			side="left",
+			fill="x",
+			expand=True,
+		)
+		self._frame = frame
+		self._cb = cb
+
+	@property
+	def value(self) -> Any:
+		return int(self._cb.get())
+
+	@value.setter
+	def value(self, x: Any):
+		self._cb.set(int(x))
+
+	@property
+	def widget(self) -> ttk.Widget:
+		return self._frame
+
+
+class StrOptionTk:
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+		frame = ttk.Frame(master=parent)
+		frame.pack(side="top", fill="y", expand=True)
+		ttk.Label(master=frame, text=f"{name}: {opt.comment}: ").pack(side="left")
+		entry = ttk.Entry(master=frame)
+		entry.pack(side="left", fill="x", expand=True)
+		self._frame = frame
+		self._entry = entry
+
+	@property
+	def value(self) -> Any:
+		return self._entry.get()
+
+	@value.setter
+	def value(self, x: Any):
+		self._entry.insert(0, str(x))
+
+	@property
+	def widget(self) -> ttk.Widget:
+		return self._frame
+
+
+class EncodingOptionTk:
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+		frame = ttk.Frame(master=parent)
+		frame.pack(side="top", fill="y", expand=True)
+		ttk.Label(master=frame, text=f"{name}: {opt.comment}: ").pack(side="left")
+		entry = ttk.Entry(master=frame)
+		entry.pack(side="left", fill="x", expand=True)
+		self._frame = frame
+		self._entry = entry
+
+	@property
+	def value(self) -> Any:
+		return self._entry.get()
+
+	@value.setter
+	def value(self, x: Any):
+		self._entry.insert(0, str(x))
+
+	@property
+	def widget(self) -> ttk.Widget:
+		return self._frame
+
+
+class FileSizeOptionTk(IntOptionTk):
+	pass
+
+
+class UnicodeErrorsOptionTk(StrOptionTk):
+	pass
+
+
+class HtmlColorOptionTk(StrOptionTk):
+	pass
+
+
+class MultiLineStrOptionTk:
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+		frame = ttk.Frame(master=parent)
+		frame.pack(side="top", fill="y", expand=True)
+		ttk.Label(
+			master=frame, text=f"{name}: {opt.comment} (esacped \\n\\t\\b): "
+		).pack(side="left")
+		entry = ttk.Entry(master=frame)
+		entry.pack(side="left", fill="x", expand=True)
+		self._frame = frame
+		self._entry = entry
+
+	@property
+	def value(self) -> Any:
+		return unescapeNTB(self._entry.get())
+
+	@value.setter
+	def value(self, x: Any):
+		self._entry.insert(0, escapeNTB(str(x)))
+
+	@property
+	def widget(self) -> ttk.Widget:
+		return self._frame
+
+
+class NewlineOptionTk(MultiLineStrOptionTk):
+	pass
+
+
+class LiteralEvalOptionTk:
+	typeHint = ""
+
+	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+		frame = ttk.Frame(master=parent)
+		frame.pack(side="top", fill="y", expand=True)
+		ttk.Label(
+			master=frame,
+			text=f"{name}: {opt.comment} ({self.typeHint}): ",
+		).pack(side="left")
+		entry = ttk.Entry(master=frame)
+		entry.pack(side="left", fill="x", expand=True)
+		self._frame = frame
+		self._entry = entry
+
+	@property
+	def value(self) -> Any:
+		return ast.literal_eval(self._entry.get())
+
+	@value.setter
+	def value(self, x: Any):
+		self._entry.insert(0, repr(x))
+
+	@property
+	def widget(self) -> ttk.Widget:
+		return self._frame
+
+
+class ListOptionTk(LiteralEvalOptionTk):
+	typeHint = "Python list"
+
+
+class DictOptionTk(LiteralEvalOptionTk):
+	typeHint = "Python dict"
+
+
+optionClassByName: dict[str, OptionTkType] = {
+	"BoolOption": BoolOptionTk,
+	"IntOption": IntOptionTk,
+	"StrOption": StrOptionTk,
+	"EncodingOption": EncodingOptionTk,
+	"FileSizeOption": FileSizeOptionTk,
+	"UnicodeErrorsOption": UnicodeErrorsOptionTk,
+	"HtmlColorOption": HtmlColorOptionTk,
+	"NewlineOption": NewlineOptionTk,
+	"ListOption": ListOptionTk,
+	"DictOption": DictOptionTk,
+	# "FloatOption": FloatOptionTk,  # not used so far!
+}
+
+
 class FormatOptionsDialog(tk.Toplevel):
 	commentLen = 60
 	kindFormatsOptions = {
@@ -548,9 +760,9 @@ class FormatOptionsDialog(tk.Toplevel):
 
 	def __init__(
 		self,
-		formatName,
-		kind,
-		values,
+		formatName: str,
+		kind: str,  # "Read" or "Write"
+		values: dict[str, Any],
 		master=None,  # noqa: ARG002
 	) -> None:
 		tk.Toplevel.__init__(self)
@@ -564,8 +776,9 @@ class FormatOptionsDialog(tk.Toplevel):
 		self.format = formatName
 		self.kind = kind
 		self.values = values
-		self.options = list(self.kindFormatsOptions[kind][formatName])
+		self.options = self.kindFormatsOptions[kind][formatName]
 		self.optionsProp = Glossary.plugins[formatName].optionsProp
+		self.widgets: dict[str, OptionTkType] = {}
 
 		self.createOptionsList()
 
@@ -582,263 +795,28 @@ class FormatOptionsDialog(tk.Toplevel):
 
 	def createOptionsList(self) -> None:
 		values = self.values
-		self.valueCol = "#3"
-		cols = [
-			("Enable", 50, False),  # bool
-			("Name", 200, True),  # str
-			("Value", 200, True),  # str
-			("Comment", 300, True),  # str
-		]
-		treev = self.treev = ttk.Treeview(
-			master=self,
-			columns=[item[0] for item in cols],
-			show="headings",
-		)
-		for title, minwidth, stretch in cols:
-			treev.heading(
-				title,
-				text=title,
-				# command=lambda c=col: sortby(treev, c, 0),
-			)
-			# adjust the column's width to the header string
-			treev.column(
-				title,
-				width=tkFont.Font().measure(title.title()),
-				stretch=stretch,
-				minwidth=minwidth,
-			)
-		###
-		treev.bind(
-			"<Button-1>",
-			# "<<TreeviewSelect>>", # event.x and event.y are zero
-			self.treeClicked,
-		)
-		treev.pack(fill="x", expand=True)
-		###
-		for optName in self.options:
+		frame = self.frame = ttk.Frame(master=self)
+		frame.pack(fill="x", expand=True)
+		for optName, default in self.options.items():
 			prop = self.optionsProp[optName]
 			comment = prop.longComment
 			if len(comment) > self.commentLen:
 				comment = comment[: self.commentLen] + "..."
-			row = [
-				int(optName in values),
-				optName,
-				str(values.get(optName, "")),
-				comment,
-			]
-			treev.insert("", "end", values=row, iid=optName)  # iid should be rowId
-			# adjust column's width if necessary to fit each value
-			for col_i, valueTmp in enumerate(row):
-				value = str(valueTmp)
-				if col_i == 3:
-					value = value.zfill(20)
-					# to reserve window width, because it's hard to resize it later
-				col_w = tkFont.Font().measure(value)
-				# treev.column: if you pass width=None, returns width as int!
-				# but with no arg, returns dict[str, Any] with "width" key!
-				current_width: int = treev.column(cols[col_i][0], width=None)
-				if current_width < col_w:
-					treev.column(cols[col_i][0], width=col_w)
-
-	def valueMenuItemCustomSelected(
-		self,
-		treev,
-		formatName: str,
-		optName: str,
-		menu=None,
-	) -> None:
-		if menu:
-			menu.destroy()
-			self.menu = None
-
-		value = treev.set(optName, self.valueCol)
-
-		dialog = tk.Toplevel(master=treev)  # bg="#0f0" does not work
-		dialog.resizable(width=True, height=True)
-		dialog.title(optName)
-		set_window_icon(dialog)
-		dialog.bind("<Escape>", lambda _e: dialog.destroy())
-
-		frame = ttk.Frame(master=dialog)
-
-		label = ttk.Label(master=frame, text="Value for " + optName)
-		label.pack()
-
-		entry = ttk.Entry(master=frame)
-		entry.insert(0, value)
-		entry.pack(fill="x")
-
-		prop = Glossary.plugins[formatName].optionsProp[optName]
-
-		def customOkClicked(_event=None) -> None:
-			rawValue = entry.get()
-			if not prop.validateRaw(rawValue):
-				log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
-				return
-			treev.set(optName, self.valueCol, rawValue)
-			treev.set(optName, "#1", "1")  # enable it
-			col_w = tkFont.Font().measure(rawValue)
-			if treev.column("Value", width=None) < col_w:
-				treev.column("Value", width=col_w)
-			dialog.destroy()
-
-		entry.bind("<Return>", customOkClicked)
-
-		label = ttk.Label(master=frame)
-		label.pack(fill="x")
-
-		customOkbutton = newButton(
-			frame,
-			text="  OK  ",
-			command=customOkClicked,
-			# bg="#ff0000",
-			# activebackground="#ff5050",
-		)
-		customOkbutton.pack(side="right")
-		###
-		frame.pack(fill="x")
-		dialog.focus()
-
-	def valueMenuItemSelected(self, optName, menu, value) -> None:
-		treev = self.treev
-		treev.set(optName, self.valueCol, value)
-		treev.set(optName, "#1", "1")  # enable it
-		col_w = tkFont.Font().measure(value)
-		if treev.column("Value", width=None) < col_w:
-			treev.column("Value", width=col_w)
-		menu.destroy()
-		self.menu = None
-
-	def valueCellClicked(self, event, optName) -> None:
-		if not optName:
-			return
-		treev = self.treev
-		prop = self.optionsProp[optName]
-		propValues = prop.values
-		if not propValues:
-			if prop.customValue:
-				self.valueMenuItemCustomSelected(treev, self.format, optName, None)
-			else:
-				log.error(
-					f"invalid option {optName}, values={propValues}"
-					f", customValue={prop.customValue}",
-				)
-			return
-		if prop.typ == "bool":
-			rawValue: str = treev.set(optName, self.valueCol)
-			value = False
-			if rawValue:
-				value, isValid = prop.evaluate(rawValue)
-				if not isValid:
-					log.error(f"invalid {optName} = {rawValue!r}")
-					value = False
-			treev.set(optName, self.valueCol, str(not value))
-			treev.set(optName, "#1", "1")  # enable it
-			return
-		value: Any = None
-		menu = tk.Menu(
-			master=treev,
-			title=optName,
-			tearoff=False,
-		)
-		self.menu = menu  # to destroy it later
-		if prop.customValue:
-			menu.add_command(
-				label="[Custom Value]",
-				command=lambda: self.valueMenuItemCustomSelected(
-					treev,
-					self.format,
-					optName,
-					menu,
-				),
-			)
-		groupedValues = None
-		if len(propValues) > 10:
-			groupedValues = prop.groupValues()
-		maxItemW = 0
-
-		def valueMenuItemSelectedCommand(value):
-			def callback() -> None:
-				self.valueMenuItemSelected(optName, menu, value)
-
-			return callback
-
-		if groupedValues:
-			for groupName, subValues in groupedValues.items():
-				if subValues is None:
-					menu.add_command(
-						label=str(value),
-						command=valueMenuItemSelectedCommand(value),
-					)
-					maxItemW = max(maxItemW, tkFont.Font().measure(str(value)))
-				else:
-					subMenu = tk.Menu(tearoff=False)
-					for subValue in subValues:
-						subMenu.add_command(
-							label=str(subValue),
-							command=valueMenuItemSelectedCommand(subValue),
-						)
-					menu.add_cascade(label=groupName, menu=subMenu)
-					maxItemW = max(maxItemW, tkFont.Font().measure(groupName))
-		else:
-			for valueTmp in propValues:
-				value = str(valueTmp)
-				menu.add_command(
-					label=value,
-					command=valueMenuItemSelectedCommand(value),
-				)
-
-		def close() -> None:
-			menu.destroy()
-			self.menu = None
-
-		menu.add_command(
-			label="[Close]",
-			command=close,
-		)
-		try:
-			menu.tk_popup(
-				event.x_root,
-				event.y_root,
-			)
-			# do not pass the third argument (entry), so that the menu
-			# appears where the pointer is on its top-left corner
-		finally:
-			# make sure to release the grab (Tk 8.0a1 only)
-			menu.grab_release()
-
-	def treeClicked(self, event) -> None:
-		treev = self.treev
-		if self.menu:
-			self.menu.destroy()
-			self.menu = None
-			return
-		optName = treev.identify_row(event.y)  # optName is rowId
-		if not optName:
-			return
-		col = treev.identify_column(event.x)  # "#1" to self.valueCol
-		if col == "#1":
-			value = treev.set(optName, col)
-			treev.set(optName, col, 1 - int(value))
-			return
-		if col == self.valueCol:
-			self.valueCellClicked(event, optName)
+			widgetClass = optionClassByName.get(prop.__class__.__name__)
+			if widgetClass is None:
+				log.warning(f"No widget class for option class {prop.__class__}")
+				continue
+			w = widgetClass(optName, prop, frame)
+			ww = w.widget
+			ww.parent = frame
+			ww.pack(fill="x")
+			w.value = values.get(optName, default)
+			self.widgets[optName] = w
 
 	def okClicked(self) -> None:
-		treev = self.treev
-		for optName in self.options:
-			enable = bool(int(treev.set(optName, "#1")))
-			if not enable:
-				if optName in self.values:
-					del self.values[optName]
-				continue
-			rawValue = treev.set(optName, self.valueCol)
-			prop = self.optionsProp[optName]
-			value, isValid = prop.evaluate(rawValue)
-			if not isValid:
-				log.error(f"invalid option value {optName} = {rawValue}")
-				continue
-			self.values[optName] = value
+		for optName, widget in self.widgets.items():
+			self.values[optName] = widget.value
+		print(f"{self.values=}")
 		self.destroy()
 
 
@@ -846,7 +824,7 @@ class FormatOptionsButton(ttk.Button):
 	def __init__(
 		self,
 		kind: Literal["Read", "Write"],
-		values: dict,
+		values: dict[str, Any],
 		formatInput: FormatButton,
 		master=None,
 	) -> None:
