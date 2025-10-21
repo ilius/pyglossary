@@ -1517,7 +1517,7 @@
 					"h",
 					"m",
 					"x",
-					null
+					"-"
 				],
 				"comment": "Definition format: h=html, m=plaintext, x=xdxf"
 			},
@@ -1605,7 +1605,7 @@
 					"h",
 					"m",
 					"x",
-					null
+					"-"
 				],
 				"comment": "Definition format: h=html, m=plaintext, x=xdxf"
 			},

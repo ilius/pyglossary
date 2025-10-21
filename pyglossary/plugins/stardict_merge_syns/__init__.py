@@ -62,7 +62,7 @@ optionsProp: dict[str, Option] = {
 		comment="Compress .dict file to .dict.dz",
 	),
 	"sametypesequence": StrOption(
-		values=["", "h", "m", "x", None],
+		values=["", "h", "m", "x", "-"],
 		comment="Definition format: h=html, m=plaintext, x=xdxf",
 	),
 	"xdxf_to_html": BoolOption(

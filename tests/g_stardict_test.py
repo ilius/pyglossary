@@ -203,7 +203,16 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"100-en-fa",
 			"100-en-fa-sd-nostt",
 			writeOptions={
-				"sametypesequence": None,
+				"sametypesequence": "-",
+			},
+		)
+
+	def test_convert_txt_stardict_0_sametypeseq2(self):
+		self.convert_txt_stardict(
+			"100-en-fa",
+			"100-en-fa-sd-v2",
+			writeOptions={
+				"sametypesequence": None,  # same as "" means auto
 			},
 		)
 

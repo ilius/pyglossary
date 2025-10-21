@@ -110,6 +110,8 @@ class Reader:
 		self._filename = realpath(self._filename)
 		self.readIfoFile()
 		sametypesequence = self._glos.getInfo("sametypesequence")
+		if sametypesequence == "-":
+			sametypesequence = ""
 		if not _verifySameTypeSequence(sametypesequence):
 			raise LookupError(f"Invalid {sametypesequence = }")
 		self._indexData = self.readIdxFile()

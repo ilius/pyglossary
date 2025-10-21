@@ -56,7 +56,7 @@ def _newlinesToBr(text: str) -> str:
 class Writer:
 	_large_file: bool = False
 	_dictzip: bool = False
-	_sametypesequence: Literal["", "h", "m", "x"] | None = ""
+	_sametypesequence: Literal["", "h", "m", "x", "-"] = ""
 	_stardict_client: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
@@ -88,7 +88,7 @@ class Writer:
 		self._sourceLang = None
 		self._targetLang = None
 
-	def open(self, filename: str) -> None:
+	def open(self, filename: str) -> None:  # noqa: PLR0912
 		if self._sqlite is None:
 			self._sqlite = self._glos.sqlite
 		log.debug(f"open: {filename = }, {self._sqlite = }")
@@ -116,7 +116,9 @@ class Writer:
 		self._targetLang = self._glos.targetLang
 		if self._sametypesequence:
 			log.debug(f"Using write option sametypesequence={self._sametypesequence}")
-		elif self._sametypesequence is not None:
+			if self._sametypesequence == "-":
+				self._sametypesequence = ""
+		else:
 			stat = self._glos.collectDefiFormat(100)
 			log.debug(f"defiFormat stat: {stat}")
 			if stat:
