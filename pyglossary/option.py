@@ -210,6 +210,8 @@ class StrOption(Option):
 class IntOption(Option):
 	def __init__(
 		self,
+		minim: int | None = None,
+		maxim: int | None = None,
 		**kwargs: Any,
 	) -> None:
 		Option.__init__(
@@ -217,6 +219,8 @@ class IntOption(Option):
 			typ="int",
 			**kwargs,
 		)
+		self.minim = minim
+		self.maxim = maxim
 
 	@classmethod
 	def evaluate(cls, raw: str | int) -> tuple[int | None, bool]:

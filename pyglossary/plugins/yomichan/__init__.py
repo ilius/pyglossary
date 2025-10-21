@@ -51,6 +51,8 @@ website = (
 optionsProp: dict[str, Option] = {
 	"term_bank_size": IntOption(
 		comment="The number of terms in each term bank json file.",
+		minim=0,
+		maxim=1_000_000,
 	),
 	"term_from_headword_only": BoolOption(
 		comment=(

@@ -50,6 +50,8 @@ website = None
 optionsProp: dict[str, Option] = {
 	"group_by_prefix_length": IntOption(
 		comment="Prefix length for grouping",
+		minim=1,
+		maxim=100,
 	),
 	# "group_by_prefix_merge_min_size": IntOption(),
 	# "group_by_prefix_merge_across_first": BoolOption(),

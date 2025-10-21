@@ -431,7 +431,7 @@
 				"comment": "Enable resources / data files"
 			},
 			"delimiter": {
-				"class": "Option",
+				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
 				"values": [

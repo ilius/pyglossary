@@ -64,6 +64,8 @@ optionsProp: dict[str, Option] = {
 	),
 	"file_size_approx_check_num_entries": IntOption(
 		comment="for file_size_approx, check every `[?]` entries",
+		minim=0,
+		maxim=1_000_0000,
 	),
 	"separate_alternates": BoolOption(
 		comment="add alternate headwords as separate entries to slob",

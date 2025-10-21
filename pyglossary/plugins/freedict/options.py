@@ -45,5 +45,7 @@ optionsProp: dict[str, Option] = {
 	),
 	"example_padding": IntOption(
 		comment="Padding for examples (in px)",
+		minim=0,
+		maxim=10000,
 	),
 }

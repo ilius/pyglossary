@@ -47,6 +47,8 @@ optionsProp: dict[str, Option] = {
 	),
 	"max_file_size": IntOption(
 		comment="Maximum file size in bytes",
+		minim=0,
+		maxim=1_000_0000_000,
 	),
 	"filename_format": StrOption(
 		comment="Filename format",

@@ -111,20 +111,38 @@ configDefDict: dict[str, Option] = {
 	"color.cmd.critical": IntOption(
 		hasFlag=False,
 		comment="Color code for critical errors in command line",
+		minim=0,
+		maxim=256,
 	),
 	"color.cmd.error": IntOption(
 		hasFlag=False,
 		comment="Color code for errors in command line",
+		minim=0,
+		maxim=256,
 	),
 	"color.cmd.warning": IntOption(
 		hasFlag=False,
 		comment="Color code for warnings in command line",
+		minim=0,
+		maxim=256,
 	),
 	# interactive command line interface:
 	"cmdi.prompt.indent.str": StrOption(hasFlag=False),
-	"cmdi.prompt.indent.color": IntOption(hasFlag=False),
-	"cmdi.prompt.msg.color": IntOption(hasFlag=False),
-	"cmdi.msg.color": IntOption(hasFlag=False),
+	"cmdi.prompt.indent.color": IntOption(
+		hasFlag=False,
+		minim=0,
+		maxim=256,
+	),
+	"cmdi.prompt.msg.color": IntOption(
+		hasFlag=False,
+		minim=0,
+		maxim=256,
+	),
+	"cmdi.msg.color": IntOption(
+		hasFlag=False,
+		minim=0,
+		maxim=256,
+	),
 	# general GUI options
 	"ui_autoSetFormat": BoolOption(hasFlag=False),
 	# Tkinter

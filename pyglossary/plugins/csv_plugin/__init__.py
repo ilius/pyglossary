@@ -26,6 +26,7 @@ from pyglossary.option import (
 	EncodingOption,
 	NewlineOption,
 	Option,
+	StrOption,
 )
 
 from .reader import Reader
@@ -65,8 +66,7 @@ optionsProp: dict[str, Option] = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",
 	),
-	"delimiter": Option(
-		typ="str",
+	"delimiter": StrOption(
 		customValue=True,
 		values=[",", ";", "@"],
 		comment="Column delimiter",
