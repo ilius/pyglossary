@@ -138,18 +138,14 @@ class Option:
 class BoolOption(Option):
 	def __init__(
 		self,
-		allowNone: bool = False,
 		**kwargs: Any,
 	) -> None:
-		values: list[bool | None] = [False, True]
-		if allowNone:
-			values.append(None)
 		Option.__init__(
 			self,
 			typ="bool",
 			customValue=False,
-			values=values,
-			allowNone=allowNone,
+			values=[False, True],
+			allowNone=False,
 			**kwargs,
 		)
 
