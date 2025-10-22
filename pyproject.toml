@@ -429,6 +429,9 @@ classifiers = [
 requires-python = ">= 3.11"
 dependencies = []
 
+[project.scripts]
+pyglossary = "pyglossary.ui.main:main"
+
 [project.optional-dependencies]
 all = ["PyICU", "lxml", "beautifulsoup4"]
 

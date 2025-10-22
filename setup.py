@@ -6,10 +6,9 @@ import os
 import re
 import sys
 from glob import glob
-from os.path import dirname, exists, isdir, join
+from os.path import dirname, isdir, join
 
-from setuptools import setup
-from setuptools.command.install import install
+from setuptools import find_packages, setup
 
 VERSION = "5.1.1"
 log = logging.getLogger("root")
@@ -44,29 +43,6 @@ def getPipSafeVersion() -> str:
 		if version:
 			return "-".join(version.split("-")[:2])
 	return VERSION
-
-
-class my_install(install):
-	def run(self) -> None:
-		install.run(self)
-		if os.sep == "/":
-			binPath = join(self.install_scripts, "pyglossary")
-			log.info(f"creating script file {binPath!r}")
-			if not exists(self.install_scripts):
-				os.makedirs(self.install_scripts)
-				# let it fail on wrong permissions.
-			elif not isdir(self.install_scripts):
-				raise OSError(
-					"installation path already exists "
-					f"but is not a directory: {self.install_scripts}",
-				)
-			open(binPath, "w", encoding="ascii").write("""#!/usr/bin/env -S python3 -O
-import sys
-from os.path import dirname
-sys.path.insert(0, dirname(__file__))
-from pyglossary.ui.main import main
-main()""")
-			os.chmod(binPath, 0o755)
 
 
 root_data_file_names = [
@@ -146,9 +122,6 @@ setup(
 	name="pyglossary",
 	version=getPipSafeVersion(),
 	python_requires=">=3.10.0",
-	cmdclass={
-		"install": my_install,
-	},
 	description="A tool for converting dictionary files aka glossaries.",
 	long_description_content_type="text/markdown",
 	long_description=long_description,
@@ -156,9 +129,7 @@ setup(
 	author_email="saeed.gnu@gmail.com",
 	license="GPL-3.0-or-later",
 	url="https://github.com/ilius/pyglossary",
-	packages=[
-		"pyglossary",
-	],
+	packages=find_packages(),
 	entry_points={
 		"console_scripts": [
 			"pyglossary = pyglossary.ui.main:main",
