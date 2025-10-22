@@ -25,7 +25,7 @@ import traceback
 from os.path import abspath, isfile, join, splitext
 from tkinter import filedialog, ttk
 from tkinter import font as tkFont
-from typing import TYPE_CHECKING, Any, Literal, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 from pyglossary.core import confDir, homeDir, homePage, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
@@ -747,15 +747,17 @@ class FormatOptionsDialog(tk.Toplevel):
 
 	def __init__(
 		self,
-		formatName: str,
+		formatDesc: str,
 		kind: str,  # "Read" or "Write"
 		values: dict[str, Any],
+		okFunc: Callable[[dict[str, Any]]],
 		master=None,  # noqa: ARG002
 	) -> None:
+		formatName = pluginByDesc[formatDesc].name
 		tk.Toplevel.__init__(self)
 		# bg="#0f0" does not work
 		self.resizable(width=True, height=True)
-		self.title(kind + " Options")
+		self.title(f"{formatDesc} {kind} Options")
 		set_window_icon(self)
 		self.bind("<Escape>", lambda _e: self.destroy())
 
@@ -763,6 +765,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		self.format = formatName
 		self.kind = kind
 		self.values = values
+		self.okFunc = okFunc
 		self.options = self.kindFormatsOptions[kind][formatName]
 		self.optionsProp = Glossary.plugins[formatName].optionsProp
 		self.widgets: dict[str, OptionTkType] = {}
@@ -803,59 +806,8 @@ class FormatOptionsDialog(tk.Toplevel):
 	def okClicked(self) -> None:
 		for optName, widget in self.widgets.items():
 			self.values[optName] = widget.value
-		print(f"{self.values=}")
+		self.okFunc(self.values)
 		self.destroy()
-
-
-class FormatOptionsButton(ttk.Button):
-	def __init__(
-		self,
-		kind: Literal["Read", "Write"],
-		values: dict[str, Any],
-		formatInput: FormatButton,
-		master=None,
-	) -> None:
-		ttk.Button.__init__(
-			self,
-			master=master,
-			text="Options",
-			command=self.buttonClicked,
-			# bg="#f0f000",
-			# activebackground="#f6f622",
-		)
-		self.kind = kind
-		self.values = values
-		self.formatInput = formatInput
-
-	def setOptionsValues(self, values) -> None:
-		self.values = values
-
-	def buttonClicked(self) -> None:
-		formatD = self.formatInput.get()
-		if not formatD:
-			return
-
-		dialog = FormatOptionsDialog(
-			pluginByDesc[formatD].name,
-			self.kind,
-			self.values,
-			master=self,
-		)
-
-		# x, y, w, h = decodeGeometry(dialog.geometry())
-		# w and h are rough estimated width and height of `dialog`
-		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
-		dialog.update_idletasks()
-		width = dialog.winfo_width() + 400
-		height = dialog.winfo_height()
-		dialog.geometry(
-			f"{width}x{height}"
-			+ encodeLocation(
-				px + pw // 2 - width // 2,
-				py + ph // 2 - height // 2,
-			),
-		)
-		dialog.focus()
 
 
 class VerticalNotebook(ttk.Frame):
@@ -1048,13 +1000,6 @@ class UI(tk.Frame, UIBase):
 		##
 		self.readOptions: dict[str, Any] = {}
 		self.writeOptions: dict[str, Any] = {}
-		##
-		self.readOptionsButton = FormatOptionsButton(
-			"Read",
-			self.readOptions,
-			self.formatButtonInputConvert,
-			master=convertFrame,
-		)
 		self.inputFormatRow = row
 		######################
 		row += 1
@@ -1088,12 +1033,6 @@ class UI(tk.Frame, UIBase):
 			padx=0,
 		)
 		##
-		self.writeOptionsButton = FormatOptionsButton(
-			"Write",
-			self.writeOptions,
-			self.formatButtonOutputConvert,
-			master=convertFrame,
-		)
 		self.outputFormatRow = row
 		###################
 		row += 1
@@ -1116,14 +1055,13 @@ class UI(tk.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryOutputConvert = entry
 		##
-		button = newButton(
+		newButton(
 			convertFrame,
 			text="Browse",
 			command=self.browseOutputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
-		)
-		button.grid(
+		).grid(
 			row=row,
 			column=3,
 			sticky=tk.W + tk.E,
@@ -1131,7 +1069,31 @@ class UI(tk.Frame, UIBase):
 		)
 		###################
 		row += 1
-		button = newButton(
+		optionsMenu = tk.Menu(tearoff=False)
+		optionsMenu.add_command(
+			label="Read Options",
+			command=self.readOptionsClicked,
+			font=defaultFont,
+		)
+		optionsMenu.add_command(
+			label="Write Options",
+			command=self.writeOptionsClicked,
+			font=defaultFont,
+		)
+		optionsButton = ttk.Menubutton(
+			convertFrame,
+			text="Options    ",
+			menu=optionsMenu,
+		)
+		optionsButton.grid(
+			row=row,
+			column=1,
+			columnspan=1,
+			sticky=tk.E + tk.S,
+			padx=5,
+			pady=5,
+		)
+		newButton(
 			convertFrame,
 			text="Convert",
 			command=self.convert,
@@ -1141,8 +1103,7 @@ class UI(tk.Frame, UIBase):
 			# font=self.biggerFont,
 			# padx=5,
 			# pady=5,
-		)
-		button.grid(
+		).grid(
 			row=row,
 			column=2,
 			columnspan=3,
@@ -1286,6 +1247,56 @@ class UI(tk.Frame, UIBase):
 
 		notebook.pack(fill="both", expand=True)
 
+	def openDialog(self, dialog: tk.Toplevel) -> None:
+		# x, y, w, h = decodeGeometry(dialog.geometry())
+		# w and h are rough estimated width and height of `dialog`
+		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
+		dialog.update_idletasks()
+		width = dialog.winfo_width() + 400
+		height = dialog.winfo_height()
+		dialog.geometry(
+			f"{width}x{height}"
+			+ encodeLocation(
+				px + pw // 2 - width // 2,
+				py + ph // 2 - height // 2,
+			),
+		)
+		dialog.focus()
+
+	def readOptionsClicked(self) -> None:
+		formatDesc = self.formatButtonInputConvert.get()
+		if not formatDesc:
+			return
+
+		def okFunc(values: dict[str, Any]):
+			self.readOptions = values
+
+		dialog = FormatOptionsDialog(
+			formatDesc,
+			"Read",
+			self.readOptions,
+			okFunc,
+			master=self,
+		)
+		self.openDialog(dialog)
+
+	def writeOptionsClicked(self) -> None:
+		formatDesc = self.formatButtonOutputConvert.get()
+		if not formatDesc:
+			return
+
+		def okFunc(values: dict[str, Any]):
+			self.writeOptions = values
+
+		dialog = FormatOptionsDialog(
+			formatDesc,
+			"Write",
+			self.writeOptions,
+			okFunc,
+			master=self,
+		)
+		self.openDialog(dialog)
+
 	def textSelectAll(self, tktext) -> None:
 		tktext.tag_add(tk.SEL, "1.0", tk.END)
 		tktext.mark_set(tk.INSERT, "1.0")
@@ -1325,16 +1336,6 @@ class UI(tk.Frame, UIBase):
 		if not formatDesc:
 			return
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
-		if Glossary.formatsReadOptions[pluginByDesc[formatDesc].name]:
-			self.readOptionsButton.grid(
-				row=self.inputFormatRow,
-				column=3,
-				sticky=tk.W + tk.E,
-				padx=5,
-				pady=0,
-			)
-		else:
-			self.readOptionsButton.grid_forget()
 
 	def outputFormatChanged(self, *_args) -> None:
 		formatDesc = self.formatButtonOutputConvert.get()
@@ -1348,16 +1349,6 @@ class UI(tk.Frame, UIBase):
 			return
 
 		self.writeOptions.clear()  # reset the options, DO NOT re-assign
-		if Glossary.formatsWriteOptions[formatName]:
-			self.writeOptionsButton.grid(
-				row=self.outputFormatRow,
-				column=3,
-				sticky=tk.W + tk.E,
-				padx=5,
-				pady=0,
-			)
-		else:
-			self.writeOptionsButton.grid_forget()
 
 		pathI = self.entryInputConvert.get()
 		if (
@@ -1561,11 +1552,9 @@ class UI(tk.Frame, UIBase):
 		self.anyEntryChanged()
 
 		if readOptions:
-			self.readOptionsButton.setOptionsValues(readOptions)
 			self.readOptions = readOptions
 
 		if writeOptions:
-			self.writeOptionsButton.setOptionsValues(writeOptions)
 			self.writeOptions = writeOptions
 
 		self._convertOptions: dict[str, Any] = convertOptions or {}
