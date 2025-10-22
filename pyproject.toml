@@ -416,11 +416,10 @@ version = "5.1.1"
 description = "A tool for converting dictionary files aka glossaries."
 readme = "README.md"
 authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
-license = { text = "GPLv3+" }
+license = "GPL-3.0-or-later"
 keywords = ["dictionary", "glossary"]
 classifiers = [
 	"Development Status :: 5 - Production/Stable",
-	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 	"Operating System :: OS Independent",
 	"Typing :: Typed",
 	"Programming Language :: Python :: 3.11",
@@ -429,6 +428,9 @@ classifiers = [
 ]
 requires-python = ">= 3.11"
 dependencies = []
+
+[project.scripts]
+pyglossary = "pyglossary.ui.main:main"
 
 [project.optional-dependencies]
 all = ["PyICU", "lxml", "beautifulsoup4"]
