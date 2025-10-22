@@ -154,7 +154,7 @@ setup(
 	long_description=long_description,
 	author="Saeed Rasooli",
 	author_email="saeed.gnu@gmail.com",
-	license="GPLv3+",
+	license="GPL-3.0-or-later",
 	url="https://github.com/ilius/pyglossary",
 	packages=[
 		"pyglossary",
