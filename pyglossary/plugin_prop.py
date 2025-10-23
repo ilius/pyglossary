@@ -150,6 +150,10 @@ class PluginProp:  # noqa: PLR0904
 		self._readDepends = attrs.get("readDepends", {})
 		self._writeDepends = attrs.get("writeDepends", {})
 
+		for name, opt in self._optionsProp.items():
+			assert opt.name in {"", name}
+			opt.name = name
+
 		return self
 
 	@classmethod
@@ -193,6 +197,10 @@ class PluginProp:  # noqa: PLR0904
 		self._readCompressions = None
 		self._readDepends = None
 		self._writeDepends = None
+
+		for name, opt in self._optionsProp.items():
+			assert opt.name in {"", name}
+			opt.name = name
 
 		if core.isDebug():
 			self.checkModule(mod)

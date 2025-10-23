@@ -542,7 +542,7 @@ class FormatButton(ttk.Button):
 
 
 class OptionTkType(Protocol):
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None: ...
+	def __init__(self, opt: Option, parent: ttk.Widget) -> None: ...
 	@property
 	def value(self) -> Any: ...
 	@value.setter
@@ -552,14 +552,14 @@ class OptionTkType(Protocol):
 
 
 class BoolOptionTk:
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
 		var = tk.IntVar()
 		cb = ttk.Checkbutton(
 			master=frame,
 			variable=var,
-			text=f"{name}: {opt.comment}",
+			text=f"{opt.displayName} ({opt.comment})",
 		)
 		cb.pack(fill="x")
 		self._frame = frame
@@ -579,11 +579,17 @@ class BoolOptionTk:
 
 
 class IntOptionTk:
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		assert isinstance(opt, IntOption)
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
-		ttk.Label(master=frame, text=f"{name}: ").pack(side="left", expand=False)
+		ttk.Label(
+			master=frame,
+			text=f"{opt.displayName}: ",
+		).pack(
+			side="left",
+			expand=False,
+		)
 		minim = opt.minim
 		if minim is None:
 			minim = 0
@@ -592,7 +598,10 @@ class IntOptionTk:
 			maxim = 1_000_000_000
 		cb = ttk.Spinbox(master=frame, from_=minim, to=maxim, increment=1)
 		cb.pack(side="left", expand=False)
-		ttk.Label(master=frame, text=opt.comment).pack(
+		ttk.Label(
+			master=frame,
+			text=opt.comment,
+		).pack(
 			side="left",
 			fill="x",
 			expand=True,
@@ -614,10 +623,13 @@ class IntOptionTk:
 
 
 class StrOptionTk:
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
-		ttk.Label(master=frame, text=f"{name}: {opt.comment}: ").pack(side="left")
+		ttk.Label(
+			master=frame,
+			text=f"{opt.displayName} ({opt.comment}): ",
+		).pack(side="left")
 		entry = ttk.Entry(master=frame)
 		entry.pack(side="left", fill="x", expand=True)
 		self._frame = frame
@@ -659,11 +671,11 @@ class HtmlColorOptionTk(StrOptionTk):
 
 
 class MultiLineStrOptionTk:
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
 		ttk.Label(
-			master=frame, text=f"{name}: {opt.comment} (escaped \\n\\t\\b): "
+			master=frame, text=f"{opt.displayName}: {opt.comment} (escaped \\n\\t\\b): "
 		).pack(side="left")
 		entry = ttk.Entry(master=frame)
 		entry.pack(side="left", fill="x", expand=True)
@@ -690,12 +702,12 @@ class NewlineOptionTk(MultiLineStrOptionTk):
 class LiteralEvalOptionTk:
 	typeHint = ""
 
-	def __init__(self, name: str, opt: Option, parent: ttk.Widget) -> None:
+	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
 		ttk.Label(
 			master=frame,
-			text=f"{name}: {opt.comment} ({self.typeHint}): ",
+			text=f"{opt.displayName} ({opt.comment}, {self.typeHint}): ",
 		).pack(side="left")
 		entry = ttk.Entry(master=frame)
 		entry.pack(side="left", fill="x", expand=True)
@@ -796,7 +808,7 @@ class FormatOptionsDialog(tk.Toplevel):
 			if widgetClass is None:
 				log.warning(f"No widget class for option class {prop.__class__}")
 				continue
-			w = widgetClass(optName, prop, frame)
+			w = widgetClass(prop, frame)
 			ww = w.widget
 			ww.parent = frame
 			ww.pack(fill="x")

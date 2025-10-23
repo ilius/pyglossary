@@ -59,6 +59,7 @@ class Option:
 		if values is None:
 			# otherwise there would not be any valid value
 			customValue = True
+		self.name = ""
 		self.typ = typ
 		self.values = values
 		self.allowNone = allowNone
@@ -69,6 +70,10 @@ class Option:
 		self.hasFlag = hasFlag
 		self.customFlag = customFlag
 		self.falseComment = falseComment
+
+	@property
+	def displayName(self) -> str:
+		return " ".join(p.capitalize() for p in self.name.split("_"))
 
 	@property
 	def typeDesc(self) -> str:
