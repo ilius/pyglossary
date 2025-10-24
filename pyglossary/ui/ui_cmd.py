@@ -214,7 +214,7 @@ class UI(UIBase):
 	def progressInit(self, title: str) -> None:
 		try:
 			from .pbar_tqdm import createProgressBar
-		except ModuleNotFoundError:
+		except (ModuleNotFoundError, ImportError):
 			from .pbar_legacy import createProgressBar
 		self.pbar = createProgressBar(title)
 		self.fixLogger()
