@@ -215,7 +215,7 @@ class ProgressBar:
 
         count = len(expanding)
         while count:
-            portion = max(int(math.ceil(width * 1. / count)), 0)
+            portion = max(math.ceil(width * 1. / count), 0)
             index = expanding.pop()
             count -= 1
 

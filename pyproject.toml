@@ -4,7 +4,12 @@ indent-style = "tab"
 skip-magic-trailing-comma = false
 line-ending = "lf"
 docstring-code-format = false
-exclude = ["pyglossary/plugin_lib/ripemd128.py"]
+exclude = [
+	"pyglossary/plugin_lib/ripemd128.py",
+	"pyglossary/ui/progressbar/__init__.py",
+	"pyglossary/ui/progressbar/progressbar.py",
+	"pyglossary/ui/progressbar/widgets.py",
+]
 
 [tool.ruff]
 line-length = 88
@@ -13,7 +18,6 @@ target-version = "py311"
 # Exclude a variety of commonly ignored directories.
 exclude = [
 	"whitelist.py", # for vulture
-	"pyglossary/ui/progressbar/",
 	"wcwidth*",
 	".direnv",
 	".eggs",
@@ -161,6 +165,20 @@ mccabe.max-complexity = 13
 
 
 [tool.ruff.lint.per-file-ignores]
+
+"pyglossary/ui/progressbar/*.py" = [
+	"PLW0244", # Slot `format_string` redefined from base class `Timer`
+	"PLW2901", # `for` loop variable `widget` overwritten by assignment target
+	"UP031", # Use format specifiers instead of percent format
+	"A002", # Function argument `format` is shadowing a Python builtin
+	"RUF059", # Unpacked variable `h` is never used
+	"E501", # Line too long
+	"D",
+	"ARG",
+	"PLR",
+	"Q000",
+	"ANN",
+]
 
 "doc/*/*.py" = [
 	"INP001", # File ... is part of an implicit namespace package. Add an `__init__.py`.
@@ -363,6 +381,7 @@ verbose = false
 
 [tool.import-analyzer]
 exclude = [
+	"pyglossary/ui/progressbar/",
 	"pyglossary/ui/wcwidth/",
 	"build/",
 	"pyglossary/slob.py",

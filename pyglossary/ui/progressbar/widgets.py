@@ -21,7 +21,6 @@
 """Default ProgressBar widgets."""
 
 from __future__ import annotations
-from __future__ import division
 
 import datetime
 import math
@@ -37,7 +36,6 @@ except ImportError:
 else:
     AbstractWidget = ABCMeta('AbstractWidget', (object,), {})
 
-__all__ = ['WidgetHFill', 'Percentage', 'UnknownLength', 'ljust', 'Bar', 'rjust']
 
 class UnknownLength:
     pass
@@ -207,7 +205,7 @@ class AnimatedMarker(Widget):
     it were rotating.
     """
 
-    __slots__ = ('markers', 'curmark')
+    __slots__ = ('curmark', 'markers')
 
     def __init__(self, markers='|/-\\') -> None:
         self.markers = markers
@@ -309,7 +307,7 @@ class Bar(WidgetHFill):
 
     """A progress bar which stretches to fill the line."""
 
-    __slots__ = ('marker', 'left', 'right', 'fill', 'fill_left')
+    __slots__ = ('fill', 'fill_left', 'left', 'marker', 'right')
 
     def __init__(self, marker='#', left='|', right='|', fill=' ',
                  fill_left=True) -> None:
