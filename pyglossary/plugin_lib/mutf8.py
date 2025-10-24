@@ -25,7 +25,7 @@
 # by @gentlegiantJGC (https://github.com/TkTech/mutf8/pull/7).
 
 __all__ = [
-	"decode_modified_utf8",
+	# "decode_modified_utf8",
 	"encode_modified_utf8",
 	"safe_decode_modified_utf8",
 ]
