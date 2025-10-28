@@ -2,6 +2,7 @@
 # mypy: ignore-errors
 from __future__ import annotations
 
+import argparse
 import atexit
 import difflib
 import os
@@ -379,18 +380,52 @@ def main() -> None:
 	if os.getenv("GIT_DIFF_PATH_COUNTER"):
 		return gitDiffMain()
 
+	parser = argparse.ArgumentParser(
+		prog=sys.argv[0],
+		add_help=True,
+		# allow_abbrev=False,
+	)
+	parser.add_argument(
+		"file1",
+		action="store",
+		nargs=1,
+	)
+	parser.add_argument(
+		"file2",
+		action="store",
+		nargs=1,
+	)
+	parser.add_argument(
+		"--format1",
+		action="append",
+		default=[],
+		help="Format name for file1 (optional)",
+	)
+	parser.add_argument(
+		"--format2",
+		action="append",
+		default=[],
+		help="Format name for file2 (optional)",
+	)
+
+	args = parser.parse_args(sys.argv[1:])
+
+	if len(args.format1) > 1:
+		parser.print_usage(sys.stderr)
+		print("multiple --format1 not allowed", file=sys.stderr)
+		sys.exit(1)
+	if len(args.format2) > 1:
+		parser.print_usage(sys.stderr)
+		print("multiple --format2 not allowed", file=sys.stderr)
+		sys.exit(1)
+
+	filename1 = os.path.expanduser(args.file1[0])
+	filename2 = os.path.expanduser(args.file2[0])
+	format1 = args.format1[0] if args.format1 else None
+	format2 = args.format2[0] if args.format2 else None
+
 	sameEntries = os.getenv("SAME_ENTRIES") == "1"
 
-	filename1 = sys.argv[1]
-	filename2 = sys.argv[2]
-	format1 = None
-	format2 = None
-	if len(sys.argv) > 3:
-		format1 = sys.argv[3]
-	if len(sys.argv) > 4:
-		format2 = sys.argv[4]
-	filename1 = os.path.expanduser(filename1)
-	filename2 = os.path.expanduser(filename2)
 	diffGlossary(
 		filename1,
 		filename2,
