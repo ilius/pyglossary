@@ -450,6 +450,7 @@ dependencies = []
 
 [project.scripts]
 pyglossary = "pyglossary.ui.main:main"
+pyglossary-diff = "pyglossary.ui.tools.diff_glossary:main"
 
 [project.optional-dependencies]
 all = ["PyICU", "lxml", "beautifulsoup4"]

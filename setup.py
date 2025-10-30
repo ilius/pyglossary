@@ -133,6 +133,7 @@ setup(
 	entry_points={
 		"console_scripts": [
 			"pyglossary = pyglossary.ui.main:main",
+			"pyglossary-diff = pyglossary.ui.tools.diff_glossary:main",
 		],
 	},
 	package_data=package_data,
