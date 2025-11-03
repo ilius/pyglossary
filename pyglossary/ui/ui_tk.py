@@ -51,7 +51,11 @@ if TYPE_CHECKING:
 log: Logger = logging.getLogger("pyglossary")
 
 # on Windows: make app DPI-aware, fix blurry fonts
-if os.sep == "\\":
+# this causes issues on tk 8.6.x with custom fonts or display scaling ≠ %100
+# because many widgets worked based on an assumed system font metric that
+# doesn’t always match your actual font
+# see https://github.com/ilius/pyglossary/issues/689
+if os.sep == "\\" and tk.TkVersion >= 8.7:
 	import ctypes
 
 	try:
@@ -934,6 +938,11 @@ class UI(tk.Frame, UIBase):
 		self.bigFont.configure(size=int(defaultFont.cget("size") * 1.6))
 		# self.biggerFont = defaultFont.copy()
 		# self.biggerFont.configure(size=int(defaultFont.cget("size") * 1.8))
+		####
+		style.configure(
+			"Treeview",
+			rowheight=int(defaultFont.metrics("linespace") * 1.5),
+		)
 		######################
 		self.glos = Glossary(ui=self)
 		self.glos.config = self.config
