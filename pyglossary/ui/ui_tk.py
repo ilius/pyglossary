@@ -307,6 +307,7 @@ class ProgressBar(ttk.Frame):
 class FormatDialog(tk.Toplevel):
 	def __init__(  # noqa: PLR0913
 		self,
+		rootWin,
 		descList: list[str],
 		title: str,
 		onOk: Callable,
@@ -378,6 +379,10 @@ class FormatDialog(tk.Toplevel):
 
 		treev.configure(yscrollcommand=vsb.set)
 
+		if rootWin.tk.call("tk", "windowingsystem") == "x11":
+			treev.bind("<Button-4>", self.onTreeviewMouseWheel)
+			treev.bind("<Button-5>", self.onTreeviewMouseWheel)
+
 		self.updateTree()
 
 		buttonBox = ttk.Frame(master=self)
@@ -407,6 +412,14 @@ class FormatDialog(tk.Toplevel):
 		self.bind("<Up>", self.onUpPress)
 
 		# self.bind("<KeyPress>", self.onKeyPress)
+
+	def onTreeviewMouseWheel(self, event):
+		# only register this on X11 (Linux / BSD)
+		if not hasattr(event, "num"):
+			return None
+
+		self.treev.yview_scroll(-1 if event.num == 4 else 1, "units")
+		return "break"
 
 	def setActiveRow(self, desc) -> None:
 		self.treev.selection_set(desc)
@@ -497,11 +510,13 @@ class FormatButton(ttk.Button):
 
 	def __init__(
 		self,
+		rootWin,
 		descList: list[str],
 		dialogTitle: str,
 		onChange: Callable,
 		master=None,
 	) -> None:
+		self.rootWin = rootWin
 		self.var = tk.StringVar()
 		self.var.set(self.noneLabel)
 		ttk.Button.__init__(
@@ -536,6 +551,7 @@ class FormatButton(ttk.Button):
 
 	def onClick(self) -> None:
 		dialog = FormatDialog(
+			self.rootWin,
 			descList=self.descList,
 			title=self.dialogTitle,
 			onOk=self.onChange,
@@ -1006,6 +1022,7 @@ class UI(tk.Frame, UIBase):
 		)
 		##
 		self.formatButtonInputConvert = FormatButton(
+			rootWin,
 			master=convertFrame,
 			descList=readDesc,
 			dialogTitle="Select Input Format",
@@ -1041,6 +1058,7 @@ class UI(tk.Frame, UIBase):
 		)
 		##
 		self.formatButtonOutputConvert = FormatButton(
+			rootWin,
 			master=convertFrame,
 			descList=writeDesc,
 			dialogTitle="Select Output Format",
