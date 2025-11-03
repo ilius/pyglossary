@@ -644,6 +644,7 @@ class IntOptionTk:
 
 class StrOptionTk:
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
+		self.opt = opt
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
 		ttk.Label(
@@ -667,11 +668,11 @@ class StrOptionTk:
 
 	@property
 	def value(self) -> Any:
-		return self._entry.get()
+		return self.opt.evaluate(self._entry.get())[0]
 
 	@value.setter
 	def value(self, x: Any):
-		assert isinstance(x, str)
+		x = str(x)
 		if self.valuesVar is not None:
 			self.valuesVar.set(x)
 		self._entry.delete(0, tk.END)
@@ -682,7 +683,7 @@ class StrOptionTk:
 		return self._frame
 
 
-class FileSizeOptionTk(IntOptionTk):
+class FileSizeOptionTk(StrOptionTk):
 	pass
 
 
