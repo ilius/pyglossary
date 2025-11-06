@@ -153,6 +153,24 @@ class CompressionModule(typing.Protocol):
 		raise NotImplementedError
 
 
+def _load_bz2() -> Callable[[], CompressionModule]:
+	import bz2
+
+	return bz2
+
+
+def _load_zlib() -> Callable[[], CompressionModule]:
+	import zlib
+
+	return zlib
+
+
+_basicCompressionModules = {
+	"bz2": _load_bz2,
+	"zlib": _load_zlib,
+}
+
+
 def init_compressions() -> dict[str, Compression]:
 	def ident(x: bytes) -> bytes:
 		return x
@@ -160,10 +178,10 @@ def init_compressions() -> dict[str, Compression]:
 	compressions: dict[str, Compression] = {
 		"": Compression(ident, ident),
 	}
-	for name in ("bz2", "zlib"):
+	for name, loader in _basicCompressionModules.items():
 		m: CompressionModule
 		try:
-			m = cast("CompressionModule", __import__(name))
+			m = loader()
 		except ImportError:
 			warnings.showwarning(
 				message=f"{name} is not available",
