@@ -14,7 +14,6 @@ from pyglossary.io_utils import nullBinaryIO
 from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
 
-from .options import optionsProp
 from .utils import XMLLANG, ReaderUtils
 
 if TYPE_CHECKING:
@@ -61,11 +60,19 @@ class Reader(ReaderUtils):
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
-
 	_example_padding: int = 10
 
-	gramClass = "grammar"
+	def _copyOptionsTo(self, other: Reader) -> None:
+		other._discover = self._discover
+		other._auto_rtl = self._auto_rtl
+		other._auto_comma = self._auto_comma
+		other._comma = self._comma
+		other._word_title = self._word_title
+		other._pron_color = self._pron_color
+		other._gram_color = self._gram_color
+		other._example_padding = self._example_padding
 
+	gramClass = "grammar"
 	supportedTags: set[str] = {
 		f"{_TEI}{tag}"
 		for tag in (
@@ -887,10 +894,7 @@ class Reader(ReaderUtils):
 			log.error(f"no such file {filename!r} from {elem}")
 			return None
 		reader = Reader(self._glos)
-		for optName in optionsProp:
-			attr = "_" + optName
-			if hasattr(self, attr):
-				setattr(reader, attr, getattr(self, attr))
+		self._copyOptionsTo(reader)
 		reader.open(filename)
 		return reader
 
