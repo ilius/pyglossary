@@ -18,8 +18,6 @@
 
 from __future__ import annotations
 
-import os
-import pkgutil
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -37,7 +35,5 @@ languages: dict[str, Callable[[Sequence[str], str], set[str]]] = {}
 # 	:param content: cleaned entry content
 # 	:return: iterable of indexes (str).
 
-here = os.path.dirname(os.path.abspath(__file__))
-
-for _, module, _ in pkgutil.iter_modules([here]):  # type: ignore # noqa: PGH003
-	__import__(f"{__name__}.{module}")
+import pyglossary.plugins.appledict.indexes.ru  # noqa: F401
+import pyglossary.plugins.appledict.indexes.zh  # noqa: F401
