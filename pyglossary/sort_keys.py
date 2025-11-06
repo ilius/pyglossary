@@ -18,7 +18,9 @@
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
+from types import ModuleType
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
@@ -48,20 +50,66 @@ class NamedSortKey(NamedTuple):
 	sqlite: SQLiteSortKeyMakerType | None
 
 
+def _load_dicformids() -> ModuleType:
+	from pyglossary.sort_modules import dicformids
+
+	return dicformids
+
+
+def _load_ebook_length3() -> ModuleType:
+	from pyglossary.sort_modules import ebook_length3
+
+	return ebook_length3
+
+
+def _load_ebook() -> ModuleType:
+	from pyglossary.sort_modules import ebook
+
+	return ebook
+
+
+def _load_headword_bytes_lower() -> ModuleType:
+	from pyglossary.sort_modules import headword_bytes_lower
+
+	return headword_bytes_lower
+
+
+def _load_headword_lower() -> ModuleType:
+	from pyglossary.sort_modules import headword_lower
+
+	return headword_lower
+
+
+def _load_headword() -> ModuleType:
+	from pyglossary.sort_modules import headword
+
+	return headword
+
+
+def _load_random() -> ModuleType:
+	from pyglossary.sort_modules import random
+
+	return random
+
+
+def _load_stardict() -> ModuleType:
+	from pyglossary.sort_modules import stardict
+
+	return stardict
+
+
 @dataclass(slots=True)  # not frozen because of mod
 class LocaleNamedSortKey:
 	name: str
 	desc: str
+	load: Callable
 	mod: Any = None
 
 	@property
 	def module(self) -> Any:
 		if self.mod is not None:
 			return self.mod
-		mod = __import__(
-			f"pyglossary.sort_modules.{self.name}",
-			fromlist=self.name,
-		)
+		mod = self.load()
 		self.mod = mod
 		return mod
 
@@ -86,34 +134,42 @@ namedSortKeyList = [
 	LocaleNamedSortKey(
 		name="headword",
 		desc="Headword",
+		load=_load_headword,
 	),
 	LocaleNamedSortKey(
 		name="headword_lower",
 		desc="Lowercase Headword",
+		load=_load_headword_lower,
 	),
 	LocaleNamedSortKey(
 		name="headword_bytes_lower",
 		desc="ASCII-Lowercase Headword",
+		load=_load_headword_bytes_lower,
 	),
 	LocaleNamedSortKey(
 		name="stardict",
 		desc="StarDict",
+		load=_load_stardict,
 	),
 	LocaleNamedSortKey(
 		name="ebook",
 		desc="E-Book (prefix length: 2)",
+		load=_load_ebook,
 	),
 	LocaleNamedSortKey(
 		name="ebook_length3",
 		desc="E-Book (prefix length: 3)",
+		load=_load_ebook_length3,
 	),
 	LocaleNamedSortKey(
 		name="dicformids",
 		desc="DictionaryForMIDs",
+		load=_load_dicformids,
 	),
 	LocaleNamedSortKey(
 		name="random",
 		desc="Random",
+		load=_load_random,
 	),
 ]
 
