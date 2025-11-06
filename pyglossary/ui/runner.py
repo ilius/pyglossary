@@ -26,6 +26,38 @@ if os.sep == "\\" or sysName == "darwin":  # windows or mac
 log: logging.Logger | None = None
 
 
+def load_ui_gtk3() -> Callable:
+	from pyglossary.ui.ui_gtk3 import UI
+
+	return UI
+
+
+def load_ui_gtk4() -> Callable:
+	from pyglossary.ui.ui_gtk4 import UI
+
+	return UI
+
+
+def load_ui_tk() -> Callable:
+	from pyglossary.ui.ui_tk import UI
+
+	return UI
+
+
+def load_ui_web() -> Callable:
+	from pyglossary.ui.ui_web import UI
+
+	return UI
+
+
+ui_loaders: dict[str, Callable] = {
+	"gtk3": load_ui_gtk3,
+	"gtk4": load_ui_gtk4,
+	"tk": load_ui_tk,
+	"web": load_ui_web,
+}
+
+
 def canRunGUI() -> bool:
 	if sysName == "linux":
 		return bool(os.getenv("DISPLAY"))
@@ -132,22 +164,15 @@ def getRunner(
 
 		for ui_type2 in ui_list:
 			try:
-				ui_module = __import__(
-					f"pyglossary.ui.ui_{ui_type2}",
-					fromlist=f"ui_{ui_type2}",
-				)
+				uiClass = ui_loaders[ui_type2]()
 			except ImportError as e:  # noqa: PERF203
 				log.error(str(e))
 			else:
-				return ui_module.UI(**uiArgs).run
+				return uiClass(**uiArgs).run
 		log.error(
 			"no user interface module found! "
 			f'try "{sys.argv[0]} -h" to see command line usage',
 		)
 		return None
 
-	ui_module = __import__(
-		f"pyglossary.ui.ui_{ui_type}",
-		fromlist=f"ui_{ui_type}",
-	)
-	return ui_module.UI(**uiArgs).run
+	return ui_loaders[ui_type]()(**uiArgs).run
