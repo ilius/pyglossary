@@ -616,8 +616,14 @@ class IntOptionTk:
 		maxim = opt.maxim
 		if maxim is None:
 			maxim = 1_000_000_000
-		cb = ttk.Spinbox(master=frame, from_=minim, to=maxim, increment=1)
-		cb.pack(side="left", expand=False)
+		spin = ttk.Spinbox(
+			master=frame,
+			from_=minim,
+			to=maxim,
+			increment=1,
+			width=max(len(str(minim)), len(str(maxim))) + 1,
+		)
+		spin.pack(side="left", expand=False)
 		ttk.Label(
 			master=frame,
 			text=opt.comment,
@@ -627,15 +633,15 @@ class IntOptionTk:
 			expand=True,
 		)
 		self._frame = frame
-		self._cb = cb
+		self._spin = spin
 
 	@property
 	def value(self) -> Any:
-		return int(self._cb.get())
+		return int(self._spin.get())
 
 	@value.setter
 	def value(self, x: Any):
-		self._cb.set(int(x))
+		self._spin.set(int(x))
 
 	@property
 	def widget(self) -> ttk.Widget:
