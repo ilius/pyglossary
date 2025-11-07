@@ -1555,6 +1555,14 @@ class UI(tk.Frame, UIBase):
 			self.entryOutputConvert.insert(0, abspath(outputFilename))
 			self.outputEntryChanged()
 
+		if inputFormat and inputFormat not in Glossary.readFormats:
+			log.error(f"invalid {inputFormat=}")
+			inputFormat = ""
+
+		if outputFormat and outputFormat not in Glossary.writeFormats:
+			log.error(f"invalid {outputFormat=}")
+			outputFormat = ""
+
 		if inputFormat:
 			self.formatButtonInputConvert.setValue(
 				Glossary.plugins[inputFormat].description,
