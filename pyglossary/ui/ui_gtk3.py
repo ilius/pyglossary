@@ -1431,6 +1431,14 @@ class MainWindow(gtk.Dialog):
 		if outputFilename:
 			self.convertOutputEntry.set_text(abspath(outputFilename))
 
+		if inputFormat and inputFormat not in Glossary.readFormats:
+			log.error(f"invalid {inputFormat=}")
+			inputFormat = ""
+
+		if outputFormat and outputFormat not in Glossary.writeFormats:
+			log.error(f"invalid {outputFormat=}")
+			outputFormat = ""
+
 		if inputFormat:
 			self.inputFormatBox.setActive(inputFormat)
 		if outputFormat:
