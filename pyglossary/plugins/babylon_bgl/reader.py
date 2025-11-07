@@ -493,17 +493,12 @@ class Reader:
 			if self.targetLang.name2:
 				glos.setInfo("targetLang2", self.targetLang.name2)
 		###
-		for attr in (
-			"defaultCharset",
-			"sourceCharset",
-			"targetCharset",
-			"defaultEncoding",
-			"sourceEncoding",
-			"targetEncoding",
-		):
-			value = getattr(self, attr, None)
-			if value:
-				glos.setInfo("bgl_" + attr, value)
+		glos.setInfo("bgl_defaultCharset", self.defaultCharset)
+		glos.setInfo("bgl_sourceCharset", self.sourceCharset)
+		glos.setInfo("bgl_targetCharset", self.targetCharset)
+		glos.setInfo("bgl_defaultEncoding", self.defaultEncoding)
+		glos.setInfo("bgl_sourceEncoding", self.sourceEncoding)
+		glos.setInfo("bgl_targetEncoding", self.targetEncoding)
 		###
 		glos.setInfo("sourceCharset", "UTF-8")
 		glos.setInfo("targetCharset", "UTF-8")
