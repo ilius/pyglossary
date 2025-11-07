@@ -329,38 +329,6 @@ class LanguageCleanup(EntryFilter):
 		return entry
 
 
-class TextListSymbolCleanup(EntryFilter):
-	"""
-	Symbols like ♦ (diamond) ● (black circle) or * (star) are used in some
-	plaintext or even html glossaries to represent items of a list
-	(like <li> in proper html).
-	This EntryFilter cleans up spaces/newlines issues around them.
-	"""
-
-	name = "text_list_symbol_cleanup"
-	desc = "Text List Symbol Cleanup"
-
-	winNewlinePattern = re.compile("[\r\n]+")
-	spacesNewlinePattern = re.compile(" *\n *")
-	blocksNewlinePattern = re.compile("♦\n+♦")
-
-	def cleanDefi(self, st: str) -> str:
-		st = st.replace("♦  ", "♦ ")
-		st = self.winNewlinePattern.sub("\n", st)
-		st = self.spacesNewlinePattern.sub("\n", st)
-
-		st = self.blocksNewlinePattern.sub("♦", st)
-		st = st.removesuffix("<p")
-		st = st.strip()
-		st = st.removesuffix(",")
-
-		return st  # noqa: RET504
-
-	def run(self, entry: EntryType) -> EntryType | None:
-		entry.editFuncDefi(self.cleanDefi)
-		return entry
-
-
 class PreventDuplicateTerms(EntryFilter):
 	name = "prevent_duplicate_terms"
 	desc = "Prevent duplicate terms"
@@ -490,9 +458,6 @@ entryFiltersRules = [
 	("normalize_html", False, NormalizeHtml),
 	("unescape_word_links", False, UnescapeTermLinks),
 	(None, True, LanguageCleanup),
-	# -------------------------------------
-	# TODO
-	# ("text_list_symbol_cleanup", False, TextListSymbolCleanup),
 	# -------------------------------------
 	(None, True, NonEmptyTermFilter),
 	(None, True, NonEmptyDefiFilter),
