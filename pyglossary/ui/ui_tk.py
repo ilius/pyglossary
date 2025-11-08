@@ -744,7 +744,7 @@ class LiteralEvalOptionTk:
 		return ast.literal_eval(self._entry.get())
 
 	@value.setter
-	def value(self, x: Any):
+	def value(self, x: Any) -> None:
 		self._entry.insert(0, repr(x))
 
 	@property

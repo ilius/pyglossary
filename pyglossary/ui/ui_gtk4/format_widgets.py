@@ -18,15 +18,15 @@
 
 from __future__ import annotations
 
+import ast
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Protocol
 
-from gi.repository import Gio as gio
 from gi.repository import Gtk as gtk
 
 from pyglossary.core import pip
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.option import StrOption
+from pyglossary.option import Option
 from pyglossary.ui.dependency import checkDepends
 
 from .utils import (
@@ -262,16 +262,195 @@ class FormatButton(gtk.Button):
 		self.onChanged()
 
 
+class OptionTkType(Protocol):
+	def __init__(self, opt: Option) -> None: ...
+	@property
+	def value(self) -> Any: ...
+	@value.setter
+	def value(self, x: Any) -> None: ...
+	@property
+	def widget(self) -> gtk.Widget: ...
+
+
+class BoolOptionGtk:
+	def __init__(self, opt: Option) -> None:
+		hbox = HBox()
+		cb = gtk.CheckButton(
+			label=f"{opt.displayName} ({opt.comment})",
+		)
+		pack(hbox, cb, expand=False, fill=False, padding=0)
+		self._hbox = hbox
+		self._cb = cb
+
+	@property
+	def value(self) -> Any:
+		return self._cb.get_active()
+
+	@value.setter
+	def value(self, x: Any) -> None:
+		self._cb.set_active(bool(x))
+
+	@property
+	def widget(self) -> gtk.Widget:
+		return self._hbox
+
+
+class IntOptionGtk:
+	def __init__(self, opt: Option) -> None:
+		hbox = HBox()
+		pack(
+			hbox,
+			gtk.Label(label=f"{opt.displayName}: "),
+			expand=False,
+			fill=False,
+			padding=0,
+		)
+		minim = opt.minim
+		if minim is None:
+			minim = 0
+		maxim = opt.maxim
+		if maxim is None:
+			maxim = 1_000_000_000
+		spin = gtk.SpinButton()
+		spin.set_digits(0)
+		spin.set_range(minim, maxim)
+		# spin.set_width_chars
+		pack(hbox, spin, expand=False, fill=False, padding=0)
+		self._hbox = hbox
+		self._spin = spin
+
+	@property
+	def value(self) -> Any:
+		return int(self._spin.get_value())
+
+	@value.setter
+	def value(self, x: Any) -> None:
+		self._spin.set_value(int(x))
+
+	@property
+	def widget(self) -> gtk.Widget:
+		return self._hbox
+
+
+class StrOptionGtk:
+	def __init__(self, opt: Option) -> None:
+		hbox = HBox()
+		pack(
+			hbox,
+			gtk.Label(label=f"{opt.displayName} ({opt.comment}): "),
+			expand=False,
+			fill=False,
+			padding=0,
+		)
+		entry = gtk.Entry()
+		pack(hbox, entry, expand=False, fill=False, padding=0)
+		self._hbox = hbox
+		self._entry = entry
+
+	@property
+	def value(self) -> Any:
+		return self._entry.get_text()
+
+	@value.setter
+	def value(self, x: Any) -> None:
+		self._entry.set_text(str(x))
+
+	@property
+	def widget(self) -> gtk.Widget:
+		return self._hbox
+
+
+class FileSizeOptionGtk(StrOptionGtk):
+	pass
+
+
+class HtmlColorOptionGtk(StrOptionGtk):
+	pass
+
+
+class MultiLineStrOptionGtk:
+	def __init__(self, opt: Option) -> None:
+		hbox = HBox()
+		pack(
+			hbox,
+			gtk.Label(label=f"{opt.displayName} ({opt.comment}): "),
+			expand=False,
+			fill=False,
+			padding=0,
+		)
+		tview = gtk.TextView()
+		pack(hbox, tview, expand=False, fill=False, padding=0)
+		self._hbox = hbox
+		self._buf = tview.get_buffer()
+
+	@property
+	def value(self) -> Any:
+		return self._buf.get_text(
+			start=self._buf.get_start_iter(),
+			end=self._buf.get_end_iter(),
+			include_hidden_chars=True,
+		)
+
+	@value.setter
+	def value(self, x: Any) -> None:
+		self._buf.set_text(str(x))
+
+	@property
+	def widget(self) -> gtk.Widget:
+		return self._hbox
+
+
+class NewlineOptionGtk(MultiLineStrOptionGtk):
+	pass
+
+
+class LiteralEvalOptionGtk(MultiLineStrOptionGtk):
+	@property
+	def value(self) -> Any:
+		return ast.literal_eval(self._buf.get_text())
+
+	@value.setter
+	def value(self, x: Any) -> None:
+		self._buf.set_text(repr(x))
+
+
+class ListOptionGtk(LiteralEvalOptionGtk):
+	typeHint = "Python list"
+
+
+class DictOptionGtk(LiteralEvalOptionGtk):
+	typeHint = "Python dict"
+
+
+optionClassByName: dict[str, OptionTkType] = {
+	"BoolOption": BoolOptionGtk,
+	"IntOption": IntOptionGtk,
+	"StrOption": StrOptionGtk,
+	"EncodingOption": StrOptionGtk,
+	"FileSizeOption": FileSizeOptionGtk,
+	"UnicodeErrorsOption": StrOptionGtk,
+	"HtmlColorOption": HtmlColorOptionGtk,
+	"NewlineOption": NewlineOptionGtk,
+	"ListOption": ListOptionGtk,
+	"DictOption": DictOptionGtk,
+	# "FloatOption": FloatOptionGtk,  # not used so far!
+}
+
+
 class FormatOptionsDialog(gtk.Dialog):
 	commentLen = 60
 	actionIds = set()
+	kindFormatsOptions = {
+		"r": Glossary.formatsReadOptions,
+		"w": Glossary.formatsWriteOptions,
+	}
 
 	def __init__(
 		self,
 		app: gtk.Application,
 		formatName: str,
-		options: dict[str, Any],
-		optionsValues: dict[str, Any],
+		kind: str,  # "Read" or "Write"
+		values: dict[str, Any],
 		**kwargs: Any,
 	) -> None:
 		self.app = app
@@ -296,339 +475,35 @@ class FormatOptionsDialog(gtk.Dialog):
 			gtk.ResponseType.OK,
 		)
 		###
-		treev = gtk.TreeView()
-		treeModel = gtk.ListStore(
-			bool,  # enable
-			str,  # name
-			str,  # comment
-			str,  # value
-		)
-		treev.set_headers_clickable(True)
-		treev.set_model(treeModel)
-		treev.connect("row-activated", self.rowActivated)
+		self.options = self.kindFormatsOptions[kind][formatName]
+		self.values = values
+		self.widgets: dict[str, OptionTkType] = {}
+		self.createOptionsList()
+		###
+		# self.treev REMOVED
+		############
+		self.vbox.show()
 
-		gesture = gtk.GestureClick.new()
-		gesture.connect("pressed", self.treeviewButtonPress)
-		treev.add_controller(gesture)
-		###
-		self.treev = treev
-		#############
-		cell = gtk.CellRendererToggle()
-		# cell.set_property("activatable", True)
-		cell.connect("toggled", self.enableToggled)
-		col = gtk.TreeViewColumn(title="Enable", cell_renderer=cell)
-		col.add_attribute(cell, "active", 0)
-		# cell.set_active(False)
-		col.set_property("expand", False)
-		col.set_resizable(True)
-		treev.append_column(col)
-		###
-		col = gtk.TreeViewColumn(
-			title="Name",
-			cell_renderer=gtk.CellRendererText(),
-			text=1,
-		)
-		col.set_property("expand", False)
-		col.set_resizable(True)
-		treev.append_column(col)
-		###
-		cell = gtk.CellRendererText(editable=True)
-		self.valueCell = cell
-		self.valueCol = 3
-		cell.connect("edited", self.valueEdited)
-		col = gtk.TreeViewColumn(
-			title="Value",
-			cell_renderer=cell,
-			text=self.valueCol,
-		)
-		col.set_property("expand", True)
-		col.set_resizable(True)
-		col.set_min_width(200)
-		treev.append_column(col)
-		###
-		col = gtk.TreeViewColumn(
-			title="Comment",
-			cell_renderer=gtk.CellRendererText(),
-			text=2,
-		)
-		col.set_property("expand", False)
-		col.set_resizable(False)
-		treev.append_column(col)
-		#############
-		for name, default in options.items():
-			prop = optionsProp[name]
+	def createOptionsList(self) -> None:
+		values = self.values
+		for optName, default in self.options.items():
+			prop = self.optionsProp[optName]
 			comment = prop.longComment
 			if len(comment) > self.commentLen:
 				comment = comment[: self.commentLen] + "..."
-			if isinstance(prop, StrOption) and default:
-				comment += f"\nDefault: {default}"
-			treeModel.append(
-				[
-					name in optionsValues,  # enable
-					name,  # name
-					comment,  # comment
-					str(optionsValues.get(name, "")),  # value
-				],
-			)
-		############
-		label = gtk.Label(
-			label=" Note: Double-click on Value cell to edit text/numeric values",
-		)
-		pack(self.vbox, label)
-		pack(self.vbox, treev, 1, 1)
-		self.vbox.show()
-
-	def enableToggled(self, cell: gtk.CellRenderer, path: gtk.TreePath) -> None:
-		# enable is column 0
-		model = self.treev.get_model()
-		active = not cell.get_active()
-		itr = model.get_iter(path)
-		model.set_value(itr, 0, active)
-
-	def valueEdited(self, _cell: object, path: gtk.TreePath, rawValue: str) -> None:
-		# value is column 3
-		model = self.treev.get_model()
-		itr = model.get_iter(path)
-		optName = model.get_value(itr, 1)
-		prop = self.optionsProp[optName]
-		if not prop.customValue:
-			return
-		enable = True
-		if rawValue == "" and prop.typ != "str":  # noqa: PLC1901
-			enable = False
-		elif not prop.validateRaw(rawValue):
-			log.error(f"invalid {prop.typ} value: {optName} = {rawValue!r}")
-			return
-		model.set_value(itr, self.valueCol, rawValue)
-		model.set_value(itr, 0, enable)
-
-	def rowActivated(self, _treev: gtk.Widget, path: gtk.TreePath, _col: object) -> bool:
-		# forceMenu=True because we can not enter edit mode
-		# if double-clicked on a cell other than Value
-		return self.valueCellClicked(path, forceMenu=True)
-
-	def treeviewButtonPress(
-		self, _gesture: object, _n_press: object, x: int, y: int
-	) -> bool:
-		# if gevent.button != 1:
-		# 	return False
-		x2, y2 = self.treev.convert_widget_to_bin_window_coords(int(x), int(y))
-		pos_t = self.treev.get_path_at_pos(x2, y2)
-		if not pos_t:
-			return False
-		# pos_t == path, col, xRel, yRel
-		path = pos_t[0]
-		col = pos_t[1]
-		# cell = col.get_cells()[0]
-		if col.get_title() == "Value":
-			return self.valueCellClicked(path)
-		return False
-
-	def valueItemActivate(self, item: gio.MenuItem, itr: gtk.TreeIter) -> None:
-		# value is column 3
-		value = item.get_label()
-		model = self.treev.get_model()
-		model.set_value(itr, self.valueCol, value)
-		model.set_value(itr, 0, True)  # enable it
-
-	def valueCustomOpenDialog(self, itr: gtk.TreeIter, optName: str) -> None:
-		model = self.treev.get_model()
-		prop = self.optionsProp[optName]
-		currentValue = model.get_value(itr, self.valueCol)
-		optDesc = optName
-		if prop.comment:
-			optDesc += f" ({prop.comment})"
-		label = gtk.Label(label=f"Value for {optDesc}")
-		dialog = gtk.Dialog(transient_for=self, title="Option Value")
-		dialog.connect("response", lambda _w, _e: dialog.hide())
-		dialog_add_button(
-			dialog,
-			"gtk-cancel",
-			"_Cancel",
-			gtk.ResponseType.CANCEL,
-		)
-		dialog_add_button(
-			dialog,
-			"gtk-ok",
-			"_OK",
-			gtk.ResponseType.OK,
-		)
-		pack(dialog.vbox, label)
-		entry = gtk.Entry()
-		entry.set_text(currentValue)
-		entry.connect("activate", lambda _w: dialog.response(gtk.ResponseType.OK))
-		pack(dialog.vbox, entry)
-		dialog.vbox.show()
-		dialog.connect("response", self.valueCustomDialogResponse, entry)
-		dialog.present()
-
-	def valueCustomDialogResponse(
-		self,
-		_dialog: gtk.Window,
-		response_id: int,
-		entry: gtk.Entry,
-	) -> None:
-		if response_id != gtk.ResponseType.OK:
-			return
-		model = self.treev.get_model()
-		value = entry.get_text()
-		print(model, value)
-		# FIXME
-		# model.set_value(itr, self.valueCol, value)
-		# model.set_value(itr, 0, True)  # enable it
-
-	def valueItemCustomActivate(
-		self,
-		_item: gtk.MenuItem,
-		itr: gtk.TreeIter,
-	) -> None:
-		model = self.treev.get_model()
-		optName = model.get_value(itr, 1)
-		self.valueCustomOpenDialog(itr, optName)
-
-	def addAction(
-		self,
-		path: gtk.TreePath,
-		name: str,
-		callback: Callable,
-		itr: gtk.TreeIter,  # noqa: ARG002
-		# *args,  # noqa: ANN002
-	) -> str:
-		name = name.strip()
-		actionId = self.formatName + "." + chr(97 + int(path[0])) + "." + name
-		print(actionId)
-		if actionId not in self.actionIds:
-			action = gio.SimpleAction(name=actionId)
-			action.set_enabled(True)
-			action.connect("activate", callback)  # itr
-			self.app.add_action(action)
-			# self.install_action(actionId, None, callback)
-			self.actionIds.add(actionId)
-
-		return "app." + actionId
-
-	def valueCellClicked(self, path: gtk.TreePath, forceMenu: bool = False) -> bool:
-		"""
-		Returns True if event is handled, False if not handled
-		(need to enter edit mode).
-		"""
-		model = self.treev.get_model()
-		itr = model.get_iter(path)
-		optName = model.get_value(itr, 1)
-		prop = self.optionsProp[optName]
-
-		if prop.typ == "bool":
-			rawValue = model.get_value(itr, self.valueCol)
-			if rawValue == "":  # noqa: PLC1901
-				value = False
-			else:
-				value, isValid = prop.evaluate(rawValue)
-				if not isValid:
-					log.error(f"invalid {optName} = {rawValue!r}")
-					value = False
-			model.set_value(itr, self.valueCol, str(not value))
-			model.set_value(itr, 0, True)  # enable it
-			return True
-
-		propValues = prop.values
-		if not propValues:
-			if forceMenu:
-				propValues = []
-			else:
-				return False
-
-		print("valueCellClicked: building menu")
-
-		menu = gtk.PopoverMenu()
-		menu.set_parent(self.treev)
-		# menu.get_menu_model() is None
-		menuM = gio.Menu()
-		menu.set_menu_model(menuM)  # gio.MenuModel
-
-		# menu.add_child(gtk.Label("Test child"), "test")
-		# menu.set_flags(gtk.PopoverMenuFlags.NESTED)
-
-		def setAction(item: gio.MenuItem, name: str, callback: Callable) -> None:
-			item.set_detailed_action(
-				self.addAction(path, name, callback, itr),
-			)
-
-		def newItem(
-			label: str,
-			name: str = "",
-			callback: Callable | None = None,
-		) -> gio.MenuItem:
-			item = gio.MenuItem()
-			item.set_label(label)
-			if name:
-				setAction(item, name, callback)
-			return item
-
-		def addItem(label: str, name: str, callback: Callable) -> None:
-			menuM.append_item(newItem(label, name, callback))
-
-		if prop.customValue:
-			addItem(
-				"[Custom Value]",
-				"__custom__",
-				self.valueItemCustomActivate,
-			)
-
-		# addItem(
-		# 	"Test test test",
-		# 	"test123",
-		# 	self.valueItemCustomActivate,
-		# )
-
-		groupedValues = None
-		if len(propValues) > 10:
-			groupedValues = prop.groupValues()
-		if groupedValues:
-			for groupName, values in groupedValues.items():
-				item = newItem(groupName)
-				if values is None:
-					setAction(item, groupName, self.valueItemActivate)
-				else:
-					subMenu = gio.Menu()
-					for subValue in values:
-						# FIXME: need to pass subValue as arg?
-						subMenu.append_item(
-							newItem(
-								str(subValue),
-								f"{groupName}-{subValue}",
-								self.valueItemActivate,
-							)
-						)
-					item.set_submenu(subMenu)
-				# item.show()
-				menuM.append_item(item)
-		else:
-			for value in propValues:
-				addItem(
-					value,
-					f"value-{value}",
-					self.valueItemActivate,
-				)
-
-		# menu.show()
-		# etime = gtk.get_current_event_time()
-		menu.popup()
-		return True
+			widgetClass = optionClassByName.get(prop.__class__.__name__)
+			if widgetClass is None:
+				log.warning(f"No widget class for option class {prop.__class__}")
+				continue
+			w = widgetClass(prop)
+			pack(self.vbox, w.widget, expand=False, fill=False, padding=0)
+			w.value = values.get(optName, default)
+			self.widgets[optName] = w
 
 	def getOptionsValues(self) -> dict[str, Any]:
-		model = self.treev.get_model()
 		optionsValues: dict[str, Any] = {}
-		for row in model:
-			if not row[0]:  # not enable
-				continue
-			optName = row[1]
-			rawValue = row[3]
-			prop = self.optionsProp[optName]
-			value, isValid = prop.evaluate(rawValue)
-			if not isValid:
-				log.error(f"invalid option value {optName} = {rawValue}")
-				continue
-			optionsValues[optName] = value
+		for optName, widget in self.widgets.items():
+			optionsValues[optName] = widget.value
 		return optionsValues
 
 
@@ -703,14 +578,11 @@ class FormatBox(gtk.Box):
 
 	def optionsButtonClicked(self, _button: gtk.Widget) -> None:
 		formatName = self.getActive()
-		options = self.getActiveOptions()
-		if options is None:
-			return
 		dialog = FormatOptionsDialog(
-			self.app,
-			formatName,
-			options,
-			self._optionsValues,
+			app=self.app,
+			formatName=formatName,
+			kind=self.kind(),
+			values=self._optionsValues,
 			transient_for=self._parent,
 		)
 		dialog.set_title("Options for " + formatName)
