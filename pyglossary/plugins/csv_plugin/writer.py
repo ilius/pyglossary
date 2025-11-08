@@ -19,6 +19,7 @@
 
 from __future__ import annotations
 
+import codecs
 import csv
 import os
 from os.path import isdir
@@ -28,6 +29,7 @@ from pyglossary.compression import (
 	compressionOpen,
 	stdCompressions,
 )
+from pyglossary.core import log
 from pyglossary.io_utils import nullTextIO
 
 if TYPE_CHECKING:
@@ -56,6 +58,11 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
+		encodingNorm = codecs.lookup(self._encoding).name
+		if encodingNorm == "future_typing":
+			log.error(f"encoding {self._encoding!r} is probably invalid and ignored")
+		elif encodingNorm != self._encoding:
+			log.warning(f"encoding {self._encoding!r} is normalized to {encodingNorm!r}")
 		self._file = cast(
 			"io.TextIOBase",
 			compressionOpen(
