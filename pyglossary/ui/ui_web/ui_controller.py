@@ -103,9 +103,7 @@ class WebUI(UIBase):
 	def start_convert_job(self, payload: dict[str, Any]) -> bool:
 		glos = Glossary(ui=self)
 
-		inputFilename = (
-			self.getPayloadStr(payload, "inputFilename") or self.inputFilename
-		)
+		inputFilename = self.getPayloadStr(payload, "inputFilename") or self.inputFilename
 		if not inputFilename:
 			raise ValueError("inputFilename is missing")
 		inputFormat = self.getPayloadStr(payload, "inputFormat") or self.inputFormat

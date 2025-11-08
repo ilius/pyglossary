@@ -13,8 +13,7 @@ if TYPE_CHECKING:
 	from typing import Any, TypeAlias
 
 	ExcInfoType: TypeAlias = (
-		tuple[type[BaseException], BaseException, TracebackType]
-		| tuple[None, None, None]
+		tuple[type[BaseException], BaseException, TracebackType] | tuple[None, None, None]
 	)
 
 
@@ -223,9 +222,7 @@ class StdLogHandler(logging.Handler):
 			fp.write(msg + "\n")
 		except UnicodeEncodeError:
 			fp.write(
-				(msg + "\n")
-				.encode(encoding, errors="xmlcharrefreplace")
-				.decode(encoding)
+				(msg + "\n").encode(encoding, errors="xmlcharrefreplace").decode(encoding)
 			)
 		fp.flush()
 

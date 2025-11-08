@@ -105,9 +105,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 			"dict": "0c9d125b39f8a674cee51c774d4f144fc452ab31",
 			"syn": "5349fa18cd1558ff04c18316b412b2692eb45ca2",
 		}
-		pathByExt = {
-			ext: self.newTempFilePath(f"{baseName}.{ext}") for ext in sha1ByExt
-		}
+		pathByExt = {ext: self.newTempFilePath(f"{baseName}.{ext}") for ext in sha1ByExt}
 
 		gloss.write(pathByExt["ifo"], formatName="Stardict", dictzip=False)
 

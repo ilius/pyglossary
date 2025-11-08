@@ -47,9 +47,7 @@ __all__ = ["InputFormatBox", "OutputFormatBox"]
 _ = str
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
-readDesc = [
-	plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
-]
+readDesc = [plugin.description for plugin in Glossary.plugins.values() if plugin.canRead]
 writeDesc = [
 	plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
 ]
@@ -404,9 +402,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		model.set_value(itr, self.valueCol, rawValue)
 		model.set_value(itr, 0, enable)
 
-	def rowActivated(
-		self, _treev: gtk.Widget, path: gtk.TreePath, _col: object
-	) -> bool:
+	def rowActivated(self, _treev: gtk.Widget, path: gtk.TreePath, _col: object) -> bool:
 		# forceMenu=True because we can not enter edit mode
 		# if double-clicked on a cell other than Value
 		return self.valueCellClicked(path, forceMenu=True)

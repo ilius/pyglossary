@@ -265,9 +265,7 @@ class EbookWriter:
 			title=group_label,
 			group_title=group_label,
 			previous_link=previous_link,
-			index_link=(
-				self.GROUP_XHTML_INDEX_LINK if self._include_index_page else ""
-			),
+			index_link=(self.GROUP_XHTML_INDEX_LINK if self._include_index_page else ""),
 			next_link=next_link,
 			group_contents=self.GROUP_XHTML_WORD_DEFINITION_JOINER.join(
 				state.group_contents,

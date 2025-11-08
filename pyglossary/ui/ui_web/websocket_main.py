@@ -67,9 +67,7 @@ Custom endpoints:
 def new_client(client: dict[str, Any], server: ServerType) -> None:
 	client_id = client.get("id", "n/a")
 	print(f"New client connected and was given id {client_id}")
-	server.send_message_to_all(
-		{"type": "info", "text": f"ws: client id 🔗: {client_id}"}
-	)
+	server.send_message_to_all({"type": "info", "text": f"ws: client id 🔗: {client_id}"})
 
 
 # Called on client disconnecting
@@ -173,9 +171,7 @@ def handle_browse_request(
 				}
 			)
 		except Exception as e:
-			server.send_message_to_all(
-				{"type": "browse", "error": f"exception: '{e!s}'"}
-			)
+			server.send_message_to_all({"type": "browse", "error": f"exception: '{e!s}'"})
 		finally:
 			server.send_message_to_all(
 				{

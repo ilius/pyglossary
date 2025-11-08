@@ -104,9 +104,7 @@ def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
 			romanSystem = [t for t in tags if t in PHON_SYSTEMS]
 			romanSystemText = romanSystem[0] if romanSystem else "Romanization"
 
-			writtingSystem = [
-				WRITTING_SYSTEMS[t] for t in tags if t in WRITTING_SYSTEMS
-			]
+			writtingSystem = [WRITTING_SYSTEMS[t] for t in tags if t in WRITTING_SYSTEMS]
 			writtingSystemText = writtingSystem[0] if writtingSystem else ""
 
 			romanText = example.get("roman", "")

@@ -137,8 +137,7 @@ class Writer:
 		delete_word_pattern = self.delete_word_pattern
 		if delete_word_pattern:
 			term_expressions = [
-				delete_word_pattern.sub("", expression)
-				for expression in term_expressions
+				delete_word_pattern.sub("", expression) for expression in term_expressions
 			]
 
 		ignore_word_with_pattern = self.ignore_word_with_pattern

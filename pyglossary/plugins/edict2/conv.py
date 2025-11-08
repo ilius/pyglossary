@@ -101,9 +101,7 @@ def render_syllables(
 					if syllable[0].isupper() and tone:
 						# Add a space before a capitalized syllable.
 						hf.write(" ")
-					elif (
-						unicodedata.normalize("NFD", syllable[0])[0] in "aeiou" and tone
-					):
+					elif unicodedata.normalize("NFD", syllable[0])[0] in "aeiou" and tone:
 						# Add an apostrophe before a vowel.
 						hf.write("'")
 				hf.write(syllable)

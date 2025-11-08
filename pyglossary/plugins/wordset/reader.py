@@ -25,13 +25,7 @@ class Reader:
 		self._glos = glos
 		self._clear()
 		self.defiTemplate = (
-			"<p>"
-			'<font color="green">{speech_part}</font>'
-			"<br>"
-			"{def}"
-			"<br>"
-			"<i>{example}</i>"
-			"</p>"
+			'<p><font color="green">{speech_part}</font><br>{def}<br><i>{example}</i></p>'
 		)
 		"""
 		{

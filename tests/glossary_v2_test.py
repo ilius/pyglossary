@@ -109,9 +109,7 @@ class TestGlossaryBase(unittest.TestCase):
 				return fpath
 			if not os.getenv("TEST_REDOWNLOAD_OUTDATED_CACHE"):
 				raise RuntimeError(f"CRC32 check failed for cached file: {fpath!r}")
-			log.warning(
-				f"CRC32 check failed for cached file (will download): {fpath!r}"
-			)
+			log.warning(f"CRC32 check failed for cached file (will download): {fpath!r}")
 
 		if "GITHUB_RUN_ID" in os.environ:
 			time.sleep(0.05)
@@ -848,7 +846,8 @@ class TestGlossary(TestGlossaryBase):
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
 		if tmpFpath:
 			self.assertTrue(
-				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
 			)
 
 		glos.config = {"cleanup": False}
@@ -856,7 +855,8 @@ class TestGlossary(TestGlossaryBase):
 
 		if tmpFpath:
 			self.assertTrue(
-				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
 			)
 
 	def addWordsList(

@@ -87,8 +87,7 @@ def decode_modified_utf8(s: bytes) -> str:
 					s,
 					s_ix - 1,
 					s_ix,
-					"3-byte or 6-byte codepoint started, but input too"
-					" short to finish.",
+					"3-byte or 6-byte codepoint started, but input too short to finish.",
 				)
 
 			b2 = s[s_ix]

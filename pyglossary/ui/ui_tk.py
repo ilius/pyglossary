@@ -66,9 +66,7 @@ if os.sep == "\\" and tk.TkVersion >= 8.7:
 
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
-readDesc = [
-	plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
-]
+readDesc = [plugin.description for plugin in Glossary.plugins.values() if plugin.canRead]
 writeDesc = [
 	plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
 ]

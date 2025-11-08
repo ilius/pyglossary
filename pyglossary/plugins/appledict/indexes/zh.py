@@ -82,9 +82,7 @@ def pinyin_indexes(content: str) -> set[str]:
 	# multiple pronunciations
 	for pinyinPart in pinyinPattern.split(pinyin):
 		# find all pinyin ranges, use them to rip pinyin out
-		py = [
-			r._slice(pinyinPart) for r in color.ranges_of_pinyin_in_string(pinyinPart)
-		]
+		py = [r._slice(pinyinPart) for r in color.ranges_of_pinyin_in_string(pinyinPart)]
 
 		# maybe no pinyin here
 		if not py:

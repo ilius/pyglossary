@@ -304,9 +304,7 @@ class Reader:
 	) -> str:
 		if not self._html:
 			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
-			return "".join(
-				self.tostring(child) for child in entryElem.iterdescendants()
-			)
+			return "".join(self.tostring(child) for child in entryElem.iterdescendants())
 
 		entryElem.tag = "div"
 		for attr in list(entryElem.attrib):

@@ -120,8 +120,7 @@ class SqEntryList:
 		self._cur.execute(  # type: ignore
 			f"insert into data({self._columnNames}, data)"
 			f" values (?{', ?' * len(self._sqliteSortKey)})",
-			[col[2](entry.l_term) for col in self._sqliteSortKey]
-			+ [self._encode(entry)],
+			[col[2](entry.l_term) for col in self._sqliteSortKey] + [self._encode(entry)],
 		)
 		self._len += 1
 

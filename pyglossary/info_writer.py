@@ -124,12 +124,10 @@ class InfoWriter:
 			for defiFormat, count in sorted(defiFormatCounter.items())
 		)
 		info["defi_tag"] = ", ".join(
-			f"{defiFormat}={count}"
-			for defiFormat, count in allTagsCounter.most_common()
+			f"{defiFormat}={count}" for defiFormat, count in allTagsCounter.most_common()
 		)
 		info["defi_first_tag"] = ", ".join(
-			f"{defiFormat}={count}"
-			for defiFormat, count in firstTagCounter.most_common()
+			f"{defiFormat}={count}" for defiFormat, count in firstTagCounter.most_common()
 		)
 		info["style"] = ", ".join(
 			f"{defiFormat}={count}"

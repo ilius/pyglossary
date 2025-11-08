@@ -131,8 +131,7 @@ def evaluateWriteOptions(
 		if not ok or not prop.validate(optValueNew):
 			return (
 				None,
-				f"Invalid option value {optName}={optValue!r} "
-				f"for format {outputFormat}",
+				f"Invalid option value {optName}={optValue!r} for format {outputFormat}",
 			)
 		options[optName] = optValueNew
 

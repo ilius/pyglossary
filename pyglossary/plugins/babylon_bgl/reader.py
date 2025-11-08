@@ -189,9 +189,7 @@ class Block:
 		self.offset = -1
 
 	def __str__(self) -> str:
-		return (
-			f"Block type={self.type}, length={self.length}, len(data)={len(self.data)}"
-		)
+		return f"Block type={self.type}, length={self.length}, len(data)={len(self.data)}"
 
 
 class FileOffS(file):

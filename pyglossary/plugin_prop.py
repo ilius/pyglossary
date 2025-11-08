@@ -423,9 +423,7 @@ class PluginProp:  # noqa: PLR0904
 
 		for name, opt in self.optionsProp.items():
 			if name.lower() != name:
-				suggestName = "".join(
-					"_" + x.lower() if x.isupper() else x for x in name
-				)
+				suggestName = "".join("_" + x.lower() if x.isupper() else x for x in name)
 				log.debug(
 					f"{self.name}: please rename option {name} to {suggestName}",
 				)

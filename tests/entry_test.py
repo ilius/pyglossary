@@ -167,8 +167,7 @@ class TestEntryStripFullHtml(unittest.TestCase):
 		self.case(
 			word="test3",
 			origDefi=(
-				"<!DOCTYPE html><html><head></head><body>simple "
-				"<i>html</i></body></html>"
+				"<!DOCTYPE html><html><head></head><body>simple <i>html</i></body></html>"
 			),
 			fixedDefi="simple <i>html</i>",
 			error=None,

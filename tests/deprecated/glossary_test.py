@@ -848,7 +848,8 @@ class TestGlossary(TestGlossaryBase):
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
 		if tmpFpath:
 			self.assertTrue(
-				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
 			)
 
 		glos.config = {"cleanup": False}
@@ -856,7 +857,8 @@ class TestGlossary(TestGlossaryBase):
 
 		if tmpFpath:
 			self.assertTrue(
-				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
 			)
 
 	def addWordsList(

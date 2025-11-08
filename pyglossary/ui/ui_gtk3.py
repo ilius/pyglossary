@@ -77,9 +77,7 @@ gtk.Window.set_default_icon_from_file(logo)
 _ = str  # later replace with translator function
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
-readDesc = [
-	plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
-]
+readDesc = [plugin.description for plugin in Glossary.plugins.values() if plugin.canRead]
 writeDesc = [
 	plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
 ]

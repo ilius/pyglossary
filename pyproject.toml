@@ -12,7 +12,7 @@ exclude = [
 ]
 
 [tool.ruff]
-line-length = 88
+line-length = 90
 target-version = "py311"
 
 # Exclude a variety of commonly ignored directories.
@@ -287,7 +287,7 @@ ignore = [
 #quiet = true
 
 [tool.pylint.messages_control]
-max-line-length = 88
+max-line-length = 90
 disable = [
 	"no-member",
 	"no-name-in-module",

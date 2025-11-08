@@ -220,7 +220,8 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertTrue(bool(tmpFpath), msg="entry tmpPath is empty")
 		if tmpFpath:
 			self.assertTrue(
-				isfile(tmpFpath), msg=f"tmp file does not exist: {tmpFpath}"
+				isfile(tmpFpath),
+				msg=f"tmp file does not exist: {tmpFpath}",
 			)
 
 		rmtree(appTmpDir)

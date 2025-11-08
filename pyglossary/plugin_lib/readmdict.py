@@ -223,9 +223,10 @@ class MDict:
 			# decrypt if needed
 			if self._encrypt & 0x02:
 				key = ripemd128(key_block_info_compressed[4:8] + pack(b"<L", 0x3695))
-				key_block_info_compressed = key_block_info_compressed[
-					:8
-				] + _fast_decrypt(key_block_info_compressed[8:], key)
+				key_block_info_compressed = key_block_info_compressed[:8] + _fast_decrypt(
+					key_block_info_compressed[8:],
+					key,
+				)
 			# decompress
 			key_block_info = zlib.decompress(key_block_info_compressed[8:])
 			# adler checksum
@@ -719,9 +720,7 @@ class MDX(MDict):
 
 	def _treat_record_data(self, data):
 		# convert to utf-8
-		data = (
-			data.decode(self._encoding, errors="ignore").strip("\x00").encode("utf-8")
-		)
+		data = data.decode(self._encoding, errors="ignore").strip("\x00").encode("utf-8")
 		# substitute styles
 		if self._substyle and self._stylesheet:
 			data = self._substitute_stylesheet(data)

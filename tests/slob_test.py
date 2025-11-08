@@ -341,8 +341,7 @@ class TestFind(BaseTest):
 		self.assertEqual(
 			self.get(d, "Äā"),
 			[
-				"LATIN CAPITAL LETTER A WITH DIAERESIS;"
-				"LATIN SMALL LETTER A WITH MACRON",
+				"LATIN CAPITAL LETTER A WITH DIAERESIS;LATIN SMALL LETTER A WITH MACRON",
 			],
 		)
 		self.assertEqual(

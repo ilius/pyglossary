@@ -68,9 +68,7 @@ class Reader:
 		glos = self._glos
 
 		render_syllables = (
-			render_syllables_color
-			if self._colorize_tones
-			else render_syllables_no_color
+			render_syllables_color if self._colorize_tones else render_syllables_no_color
 		)
 		parse_line = parse_line_trad if self._traditional_title else parse_line_simp
 		render_definition = create_render_definition(

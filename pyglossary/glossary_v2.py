@@ -395,10 +395,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	def __str__(self) -> str:
 		return (
-			"Glossary{"
-			f"filename: {self._filename!r}"
-			f", name: {self._info.get('name')!r}"
-			"}"
+			f"Glossary{{filename: {self._filename!r}, name: {self._info.get('name')!r}}}"
 		)
 
 	def _loadedEntryGen(self) -> Iterator[EntryType]:
