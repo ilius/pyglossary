@@ -343,10 +343,13 @@ class StrOptionGtk:
 		else:
 			combo = gtk.ComboBoxText.new()
 		self._combo = combo
-		for value in opt.values:
-			combo.append_text(value)
 		pack(hbox, combo)
-		self._width = max(len(x) for x in opt.values)
+		if opt.values:
+			for value in opt.values:
+				combo.append_text(value)
+			self._width = max(len(x) for x in opt.values)
+		else:
+			self._width = 10
 		combo.get_child().set_width_chars(self._width)
 
 	@property
@@ -356,8 +359,9 @@ class StrOptionGtk:
 	@value.setter
 	def value(self, x: Any) -> None:
 		st = str(x)
+		values = self.opt.values or []
 		try:
-			index = self.opt.values.index(st)
+			index = values.index(st)
 		except ValueError:
 			self._combo.append_text(st)
 			index = len(self._combo.get_model()) - 1
