@@ -278,7 +278,7 @@ class BoolOptionGtk:
 		cb = gtk.CheckButton(
 			label=f"{opt.displayName} ({opt.comment})",
 		)
-		pack(hbox, cb, expand=False, fill=False, padding=0)
+		pack(hbox, cb)
 		self._hbox = hbox
 		self._cb = cb
 
@@ -301,9 +301,6 @@ class IntOptionGtk:
 		pack(
 			hbox,
 			gtk.Label(label=f"{opt.displayName}: "),
-			expand=False,
-			fill=False,
-			padding=0,
 		)
 		minim = opt.minim
 		if minim is None:
@@ -315,7 +312,7 @@ class IntOptionGtk:
 		spin.set_digits(0)
 		spin.set_range(minim, maxim)
 		# spin.set_width_chars
-		pack(hbox, spin, expand=False, fill=False, padding=0)
+		pack(hbox, spin)
 		self._hbox = hbox
 		self._spin = spin
 
@@ -334,26 +331,40 @@ class IntOptionGtk:
 
 class StrOptionGtk:
 	def __init__(self, opt: Option) -> None:
+		self.opt = opt
 		hbox = HBox()
 		pack(
 			hbox,
 			gtk.Label(label=f"{opt.displayName} ({opt.comment}): "),
-			expand=False,
-			fill=False,
-			padding=0,
 		)
-		entry = gtk.Entry()
-		pack(hbox, entry, expand=False, fill=False, padding=0)
 		self._hbox = hbox
-		self._entry = entry
+		if opt.customValue:
+			combo = gtk.ComboBoxText.new_with_entry()
+		else:
+			combo = gtk.ComboBoxText.new()
+		self._combo = combo
+		for value in opt.values:
+			combo.append_text(value)
+		pack(hbox, combo)
+		self._width = max(len(x) for x in opt.values)
+		combo.get_child().set_width_chars(self._width)
 
 	@property
 	def value(self) -> Any:
-		return self._entry.get_text()
+		return self._combo.get_active_text()
 
 	@value.setter
 	def value(self, x: Any) -> None:
-		self._entry.set_text(str(x))
+		st = str(x)
+		try:
+			index = self.opt.values.index(st)
+		except ValueError:
+			self._combo.append_text(st)
+			index = len(self._combo.get_model()) - 1
+		self._combo.set_active(index)
+		if len(st) > self._width:
+			self._width = len(st)
+			self._combo.get_child().set_width_chars(len(st))
 
 	@property
 	def widget(self) -> gtk.Widget:
@@ -374,12 +385,11 @@ class MultiLineStrOptionGtk:
 		pack(
 			hbox,
 			gtk.Label(label=f"{opt.displayName} ({opt.comment}): "),
-			expand=False,
-			fill=False,
-			padding=0,
 		)
 		tview = gtk.TextView()
-		pack(hbox, tview, expand=False, fill=False, padding=0)
+		frame = gtk.Frame()
+		frame.set_child(tview)
+		pack(hbox, frame, expand=True)
 		self._hbox = hbox
 		self._buf = tview.get_buffer()
 
@@ -496,7 +506,7 @@ class FormatOptionsDialog(gtk.Dialog):
 				log.warning(f"No widget class for option class {prop.__class__}")
 				continue
 			w = widgetClass(prop)
-			pack(self.vbox, w.widget, expand=False, fill=False, padding=0)
+			pack(self.vbox, w.widget)
 			w.value = values.get(optName, default)
 			self.widgets[optName] = w
 
