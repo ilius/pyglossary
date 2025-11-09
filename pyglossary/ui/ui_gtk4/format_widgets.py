@@ -311,6 +311,7 @@ class IntOptionGtk:
 		spin = gtk.SpinButton()
 		spin.set_digits(0)
 		spin.set_range(minim, maxim)
+		spin.set_increments(1, 10)
 		# spin.set_width_chars
 		pack(hbox, spin)
 		self._hbox = hbox
