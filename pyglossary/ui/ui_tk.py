@@ -74,14 +74,14 @@ writeDesc = [
 ]
 
 
-def set_window_icon(window) -> None:
+def set_window_icon(window: tk.Toplevel) -> None:
 	window.iconphoto(
 		True,
 		tk.PhotoImage(file=logo),
 	)
 
 
-def decodeGeometry(gs):
+def decodeGeometry(gs: str) -> tuple[int, int, int, int]:
 	"""
 	Example for gs: "253x252+30+684"
 	returns (x, y, w, h).
@@ -91,15 +91,15 @@ def decodeGeometry(gs):
 	return (int(p[1]), int(p[2]), int(w), int(h))
 
 
-def encodeGeometry(x, y, w, h) -> str:
+def encodeGeometry(x: int, y: int, w: int, h: int) -> str:
 	return f"{w}x{h}+{x}+{y}"
 
 
-def encodeLocation(x, y) -> str:
+def encodeLocation(x: int, y: int) -> str:
 	return f"+{x}+{y}"
 
 
-def centerWindow(win) -> None:
+def centerWindow(win: tk.Tk) -> None:
 	"""
 	Centers a tkinter window
 	:param win: the root or Toplevel window to center.
@@ -117,10 +117,20 @@ def centerWindow(win) -> None:
 	win.deiconify()
 
 
-def newButton(*args, **kwargs):
-	button = ttk.Button(*args, **kwargs)
+def newButton(
+	master: tk.Widget,
+	text: str,
+	command: Callable,
+	**kwargs: Any,
+) -> ttk.Button:
+	button = ttk.Button(
+		master,
+		text=text,
+		command=command,
+		**kwargs,
+	)
 
-	def onEnter(_event) -> None:
+	def onEnter(_event: tk.Event) -> None:
 		button.invoke()
 
 	button.bind("<Return>", onEnter)
@@ -128,7 +138,7 @@ def newButton(*args, **kwargs):
 	return button
 
 
-def newLabelWithImage(parent, file=""):
+def newLabelWithImage(parent: tk.Widget, file: str = "") -> ttk.Label:
 	image = tk.PhotoImage(file=file)
 	label = ttk.Label(parent, image=image)
 	# keep a reference:
@@ -137,11 +147,11 @@ def newLabelWithImage(parent, file=""):
 
 
 def newReadOnlyText(
-	parent,
-	text="",
-	borderwidth=10,
+	parent: tk.Widget,
+	text: str = "",
+	borderwidth: int = 10,
 	font: tuple[str, int, str] = ("DejaVu Sans", 11, ""),
-):
+) -> tk.Text:
 	height = len(text.strip().split("\n"))
 	widget = tk.Text(
 		parent,
@@ -159,7 +169,7 @@ def newReadOnlyText(
 
 
 class TkTextLogHandler(logging.Handler):
-	def __init__(self, tktext) -> None:
+	def __init__(self, tktext: tk.Text) -> None:
 		logging.Handler.__init__(self)
 		#####
 		tktext.tag_config("CRITICAL", foreground="#ff0000")
@@ -171,7 +181,7 @@ class TkTextLogHandler(logging.Handler):
 		###
 		self.tktext = tktext
 
-	def emit(self, record) -> None:
+	def emit(self, record: logging.LogRecord) -> None:
 		msg = ""
 		if record.getMessage():
 			msg = self.format(record)
@@ -194,7 +204,7 @@ class TkTextLogHandler(logging.Handler):
 
 # Monkey-patch Tkinter
 # http://stackoverflow.com/questions/5191830/python-exception-logging
-def CallWrapper__call__(self, *args):
+def CallWrapper__call__(self: tk.CallWrapper, *args: str) -> Any:
 	"""Apply first function SUBST to arguments, than FUNC."""
 	if self.subst:
 		args = self.subst(*args)
@@ -210,7 +220,7 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 class ProgressBar(ttk.Frame):
 	def __init__(  # noqa: PLR0913
 		self,
-		rootWin,
+		rootWin: tk.Tk,
 		min_: float,
 		max_: float,
 		width: int,
@@ -259,13 +269,18 @@ class ProgressBar(ttk.Frame):
 		self.bind("<Configure>", self.update)
 		self.canvas.pack(side="top", fill="x", expand=False)
 
-	def updateProgress(self, value, max_=None, text="") -> None:
+	def updateProgress(
+		self,
+		value: float,
+		max_: float | None = None,
+		text: str = "",
+	) -> None:
 		if max_:
 			self.max = max_
 		self.value = value
 		self.update(None, text)
 
-	def update(self, event=None, labelText="") -> None:
+	def update(self, event: tk.Event | None = None, labelText: str = "") -> None:
 		if event:  # instance of tkinter.Event
 			width = getattr(event, "width", None) or int(self.winfo_width())
 			if width != self.width:  # window is resized
@@ -307,7 +322,7 @@ class ProgressBar(ttk.Frame):
 class FormatDialog(tk.Toplevel):
 	def __init__(  # noqa: PLR0913
 		self,
-		rootWin,
+		rootWin: tk.Tk,
 		descList: list[str],
 		title: str,
 		onOk: Callable,
@@ -413,7 +428,7 @@ class FormatDialog(tk.Toplevel):
 
 		# self.bind("<KeyPress>", self.onKeyPress)
 
-	def onTreeviewMouseWheel(self, event) -> str | None:
+	def onTreeviewMouseWheel(self, event: tk.Event) -> str | None:
 		# only register this on X11 (Linux / BSD)
 		if not hasattr(event, "num"):
 			return None
@@ -421,7 +436,7 @@ class FormatDialog(tk.Toplevel):
 		self.treev.yview_scroll(-1 if event.num == 4 else 1, "units")
 		return "break"
 
-	def setActiveRow(self, desc) -> None:
+	def setActiveRow(self, desc: str) -> None:
 		self.treev.selection_set(desc)
 		self.treev.see(desc)
 
@@ -436,7 +451,7 @@ class FormatDialog(tk.Toplevel):
 		if self.activeDesc in self.items:
 			self.setActiveRow(self.activeDesc)
 
-	def onEntryKeyRelease(self, _event) -> None:
+	def onEntryKeyRelease(self, _event: tk.Event) -> None:
 		text = self.entry.get().strip()
 		if text == self.lastSearch:
 			return
@@ -462,16 +477,16 @@ class FormatDialog(tk.Toplevel):
 		self.updateTree()
 		self.lastSearch = text
 
-	def onTreeDoubleClick(self, _event) -> None:
+	def onTreeDoubleClick(self, _event: tk.Event) -> None:
 		self.okClicked()
 
 	def cancelClicked(self) -> None:
 		self.destroy()
 
-	def onReturnPress(self, _event) -> None:
+	def onReturnPress(self, _event: tk.Event) -> None:
 		self.okClicked()
 
-	def onDownPress(self, _event) -> None:
+	def onDownPress(self, _event: tk.Event) -> None:
 		treev = self.treev
 		selection = treev.selection()
 		if selection:
@@ -482,7 +497,7 @@ class FormatDialog(tk.Toplevel):
 			self.setActiveRow(self.items[0])
 		treev.focus()
 
-	def onUpPress(self, _event) -> None:
+	def onUpPress(self, _event: tk.Event) -> None:
 		treev = self.treev
 		treev.focus()
 		selection = treev.selection()
@@ -494,7 +509,7 @@ class FormatDialog(tk.Toplevel):
 		if nextDesc:
 			self.setActiveRow(nextDesc)
 
-	def onKeyPress(self, event) -> None:
+	def onKeyPress(self, event: tk.Event) -> None:
 		print(f"FormatDialog: onKeyPress: {event}")
 
 	def okClicked(self) -> None:
@@ -510,11 +525,11 @@ class FormatButton(ttk.Button):
 
 	def __init__(
 		self,
-		rootWin,
+		rootWin: tk.Tk,
 		descList: list[str],
 		dialogTitle: str,
 		onChange: Callable,
-		master=None,
+		master: tk.Widget | None = None,
 	) -> None:
 		self.rootWin = rootWin
 		self.var = tk.StringVar()
@@ -532,17 +547,17 @@ class FormatButton(ttk.Button):
 		self.bind("<Return>", self.onEnter)
 		self.bind("<KP_Enter>", self.onEnter)
 
-	def onEnter(self, _event=None) -> None:
+	def onEnter(self, _event: tk.Event | None = None) -> None:
 		self.invoke()
 
-	def onChange(self, desc) -> None:
+	def onChange(self, desc: str) -> None:
 		self.setValue(desc)
 		self._onChange(desc)
 
-	def get(self):
+	def get(self) -> str:
 		return self.activeDesc
 
-	def setValue(self, desc) -> None:
+	def setValue(self, desc: str) -> None:
 		if desc:
 			self.var.set(desc)
 		else:
@@ -790,7 +805,7 @@ class FormatOptionsDialog(tk.Toplevel):
 		kind: str,  # "Read" or "Write"
 		values: dict[str, Any],
 		okFunc: Callable[[dict[str, Any]]],
-		master=None,  # noqa: ARG002
+		master: tk.Widget | None = None,  # noqa: ARG002
 	) -> None:
 		formatName = pluginByDesc[formatDesc].name
 		tk.Toplevel.__init__(self)
@@ -854,7 +869,7 @@ class VerticalNotebook(ttk.Frame):
 		self,
 		parent: tk.Widget,
 		font: Font,
-		**kwargs,
+		**kwargs: Any,
 	) -> None:
 		ttk.Frame.__init__(self, parent, **kwargs)
 		self.rowconfigure(0, weight=1)
@@ -905,7 +920,7 @@ class VerticalNotebook(ttk.Frame):
 		self._current_tab = widget
 		widget.grid(in_=self, column=2, row=0, sticky="ewns")
 
-	def _on_listbox_select(self, _event=None) -> None:
+	def _on_listbox_select(self, _event: tk.Event | None = None) -> None:
 		selection = self._listbox.curselection()
 		if not selection:
 			return
@@ -1343,24 +1358,24 @@ class UI(tk.Frame, UIBase):
 		)
 		self.openDialog(dialog)
 
-	def textSelectAll(self, tktext) -> None:
+	def textSelectAll(self, tktext: tk.Text) -> None:
 		tktext.tag_add(tk.SEL, "1.0", tk.END)
 		tktext.mark_set(tk.INSERT, "1.0")
 		tktext.see(tk.INSERT)
 
-	def consoleKeyPress(self, e) -> str | None:
+	def consoleKeyPress(self, event: tk.Event) -> str | None:
 		# print(e.state, e.keysym)
-		if e.state > 0:
-			if e.keysym == "c":
+		if event.state > 0:
+			if event.keysym == "c":
 				return None
-			if e.keysym == "a":
+			if event.keysym == "a":
 				self.textSelectAll(self.console)
 				return "break"
-		if e.keysym == "Escape":
+		if event.keysym == "Escape":
 			return None
 		return "break"
 
-	def verbosityChanged(self, _index, _value, _op) -> None:
+	def verbosityChanged(self, _index: str, _value: str, _op: str) -> None:
 		log.setVerbosity(
 			int(self.verbosityCombo.get()[0]),
 		)
@@ -1377,14 +1392,18 @@ class UI(tk.Frame, UIBase):
 	# 		if "info" in x:
 	# 			log.debug(x)
 
-	def inputFormatChanged(self, *_args) -> None:
-		formatDesc = self.formatButtonInputConvert.get()
+	def inputFormatChangedAuto(self) -> None:
+		self.inputFormatChanged(self.formatButtonInputConvert.get())
+
+	def outputFormatChangedAuto(self) -> None:
+		self.outputFormatChanged(self.formatButtonOutputConvert.get())
+
+	def inputFormatChanged(self, formatDesc: str) -> None:
 		if not formatDesc:
 			return
 		self.readOptions.clear()  # reset the options, DO NOT re-assign
 
-	def outputFormatChanged(self, *_args) -> None:
-		formatDesc = self.formatButtonOutputConvert.get()
+	def outputFormatChanged(self, formatDesc: str) -> None:
 		if not formatDesc:
 			return
 
@@ -1409,11 +1428,11 @@ class UI(tk.Frame, UIBase):
 				pathNoExt + plugin.extensionCreate,
 			)
 
-	def anyEntryChanged(self, _event=None) -> None:
+	def anyEntryChanged(self, _event: tk.Event | None = None) -> None:
 		self.inputEntryChanged()
 		self.outputEntryChanged()
 
-	def inputEntryChanged(self, _event=None) -> None:
+	def inputEntryChanged(self, _event: tk.Event | None = None) -> None:
 		# char = event.keysym
 		pathI = self.entryInputConvert.get()
 		if self.pathI == pathI:
@@ -1434,10 +1453,10 @@ class UI(tk.Frame, UIBase):
 					plugin = Glossary.plugins.get(inputArgs.formatName)
 					if plugin:
 						self.formatButtonInputConvert.setValue(plugin.description)
-						self.inputFormatChanged()
+						self.inputFormatChangedAuto()
 		self.pathI = pathI
 
-	def outputEntryChanged(self, _event=None) -> None:
+	def outputEntryChanged(self, _event: tk.Event | None = None) -> None:
 		pathO = self.entryOutputConvert.get()
 		if self.pathO == pathO:
 			return
@@ -1460,7 +1479,7 @@ class UI(tk.Frame, UIBase):
 					self.formatButtonOutputConvert.setValue(
 						Glossary.plugins[outputArgs.formatName].description,
 					)
-					self.outputFormatChanged()
+					self.outputFormatChangedAuto()
 		self.pathO = pathO
 
 	def save_fcd_dir(self) -> None:
@@ -1487,11 +1506,11 @@ class UI(tk.Frame, UIBase):
 			self.fcd_dir = os.path.dirname(path)
 			self.save_fcd_dir()
 
-	def convert(self):
+	def convert(self) -> None:
 		inPath = self.entryInputConvert.get()
 		if not inPath:
 			log.critical("Input file path is empty!")
-			return None
+			return
 		inFormatDesc = self.formatButtonInputConvert.get()
 		# if not inFormatDesc:
 		# 	log.critical("Input format is empty!");return
@@ -1500,18 +1519,18 @@ class UI(tk.Frame, UIBase):
 		outPath = self.entryOutputConvert.get()
 		if not outPath:
 			log.critical("Output file path is empty!")
-			return None
+			return
 		outFormatDesc = self.formatButtonOutputConvert.get()
 		if not outFormatDesc:
 			log.critical("Output format is empty!")
-			return None
+			return
 		outFormat = pluginByDesc[outFormatDesc].name
 
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(self.glos, attr, value)
 
 		try:
-			finalOutputFile = self.glos.convert(
+			self.glos.convert(
 				ConvertArgs(
 					inPath,
 					inputFormat=inFormat,
@@ -1525,12 +1544,9 @@ class UI(tk.Frame, UIBase):
 		except Error as e:
 			log.critical(str(e))
 			self.glos.cleanup()
-			return False
-		# if finalOutputFile:
-		# 	self.status("Convert finished")
-		# else:
-		# 	self.status("Convert failed")
-		return bool(finalOutputFile)
+			return
+
+		# self.status("Convert finished")
 
 	def run(  # noqa: PLR0913
 		self,
@@ -1567,12 +1583,12 @@ class UI(tk.Frame, UIBase):
 			self.formatButtonInputConvert.setValue(
 				Glossary.plugins[inputFormat].description,
 			)
-			self.inputFormatChanged()
+			self.inputFormatChangedAuto()
 		if outputFormat:
 			self.formatButtonOutputConvert.setValue(
 				Glossary.plugins[outputFormat].description,
 			)
-			self.outputFormatChanged()
+			self.outputFormatChangedAuto()
 
 		if reverse:
 			log.error("Tkinter interface does not support Reverse feature")
@@ -1621,10 +1637,10 @@ class UI(tk.Frame, UIBase):
 		# which is not implemented
 		self.mainloop()
 
-	def progressInit(self, title) -> None:
+	def progressInit(self, title: str) -> None:
 		self.progressTitle = title
 
-	def progress(self, ratio, text="") -> None:
+	def progress(self, ratio: float, text: str = "") -> None:
 		if not text:
 			text = "%" + str(int(ratio * 100))
 		text += " - " + self.progressTitle
@@ -1633,7 +1649,7 @@ class UI(tk.Frame, UIBase):
 		# self.pbar.update()
 		self.rootWin.update()
 
-	def console_clear(self, _event=None) -> None:
+	def console_clear(self, _event: tk.Event | None = None) -> None:
 		self.console.delete("1.0", "end")
 		self.console.insert("end", "Console:\n")
 
