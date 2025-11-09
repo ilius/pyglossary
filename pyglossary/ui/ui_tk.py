@@ -48,6 +48,8 @@ if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
 	from pyglossary.logger import Logger
 
+__all__ = ["UI"]
+
 log: Logger = logging.getLogger("pyglossary")
 
 # on Windows: make app DPI-aware, fix blurry fonts

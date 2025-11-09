@@ -68,6 +68,8 @@ if TYPE_CHECKING:
 
 # from gi.repository import GdkPixbuf
 
+__all__ = ["UI"]
+
 log = logging.getLogger("pyglossary")
 
 glib.set_prgname("PyGlossary (Gtk3)")
