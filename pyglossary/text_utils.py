@@ -67,6 +67,7 @@ def fixUtf8Str(st: str) -> str:
 
 pattern_n_us = re.compile(r"((?<!\\)(?:\\\\)*)\\n")
 pattern_t_us = re.compile(r"((?<!\\)(?:\\\\)*)\\t")
+pattern_r_us = re.compile(r"((?<!\\)(?:\\\\)*)\\r")
 pattern_bar_us = re.compile(r"((?<!\\)(?:\\\\)*)\\\|")
 pattern_bar_sp = re.compile(r"(?:(?<!\\)(?:\\\\)*)\|")
 
@@ -122,6 +123,22 @@ def splitByBar(st: str) -> list[str]:
 
 def joinByBar(parts: list[str]) -> str:
 	return "|".join(escapeBar(part) for part in parts)
+
+
+def escapeNRB(st: str) -> str:
+	r"""Scapes Newline, \\r, Baskslash."""
+	st = st.replace("\\", "\\\\")
+	st = st.replace("\r", r"\r")
+	st = st.replace("\n", r"\n")
+	return st  # noqa: RET504
+
+
+def unescapeNRB(st: str) -> str:
+	r"""Unscapes Newline, \r, Baskslash."""
+	st = pattern_n_us.sub("\\1\n", st)
+	st = pattern_r_us.sub("\\1\r", st)
+	st = st.replace("\\\\", "\\")  # probably faster than re.sub
+	return st  # noqa: RET504
 
 
 # return a message string describing the current exception

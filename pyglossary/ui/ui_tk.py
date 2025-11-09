@@ -702,7 +702,7 @@ class MultiLineStrOptionTk:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
 		ttk.Label(
-			master=frame, text=f"{opt.displayName}: {opt.comment} (escaped \\n\\t\\b): "
+			master=frame, text=f"{opt.displayName}: {opt.comment} (escaped \\n\\t): "
 		).pack(side="left")
 		entry = ttk.Entry(master=frame)
 		entry.pack(side="left", fill="x", expand=True)

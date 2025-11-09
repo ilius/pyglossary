@@ -55,6 +55,8 @@ def compressionOpen(
 
 	filenameNoExt, ext = splitext(filename)
 	ext = ext.lower().lstrip(".")
+	if "newline" in kwargs:
+		log.info(f"compressionOpen: {kwargs=}")
 	try:
 		int(ext)
 	except ValueError:

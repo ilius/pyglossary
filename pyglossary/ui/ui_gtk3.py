@@ -30,7 +30,11 @@ from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.option import Option
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
-from pyglossary.text_utils import urlToPath
+from pyglossary.text_utils import (
+	escapeNRB,
+	unescapeNRB,
+	urlToPath,
+)
 
 from .base import (
 	UIBase,
@@ -465,8 +469,42 @@ class MultiLineStrOptionGtk:
 		return self._hbox
 
 
-class NewlineOptionGtk(MultiLineStrOptionGtk):
-	pass
+class NewlineOptionGtk:
+	def __init__(self, opt: Option) -> None:
+		self.opt = opt
+		hbox = HBox()
+		pack(
+			hbox,
+			gtk.Label(
+				label=f"{opt.displayName} ({opt.comment}, escaped \\n\\r): ",
+			),
+		)
+		self._hbox = hbox
+		combo = gtk.ComboBoxText.new_with_entry()
+		for value in opt.values:
+			combo.append_text(escapeNRB(value))
+		self._combo = combo
+		pack(hbox, combo)
+		combo.get_child().set_width_chars(5)
+
+	@property
+	def value(self) -> Any:
+		return unescapeNRB(self._combo.get_active_text())
+
+	@value.setter
+	def value(self, x: Any) -> None:
+		st = escapeNRB(str(x))
+		values = self.opt.values or []
+		try:
+			index = values.index(st)
+		except ValueError:
+			self._combo.append_text(st)
+			index = len(self._combo.get_model()) - 1
+		self._combo.set_active(index)
+
+	@property
+	def widget(self) -> gtk.Widget:
+		return self._hbox
 
 
 class LiteralEvalOptionGtk(MultiLineStrOptionGtk):
