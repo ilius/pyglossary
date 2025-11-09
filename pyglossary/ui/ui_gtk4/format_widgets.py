@@ -454,7 +454,6 @@ optionClassByName: dict[str, OptionTkType] = {
 
 class FormatOptionsDialog(gtk.Dialog):
 	commentLen = 60
-	actionIds = set()
 	kindFormatsOptions = {
 		"r": Glossary.formatsReadOptions,
 		"w": Glossary.formatsWriteOptions,
@@ -464,7 +463,7 @@ class FormatOptionsDialog(gtk.Dialog):
 		self,
 		app: gtk.Application,
 		formatName: str,
-		kind: str,  # "Read" or "Write"
+		kind: str,  # "r" or "w"
 		values: dict[str, Any],
 		**kwargs: Any,
 	) -> None:
@@ -494,8 +493,6 @@ class FormatOptionsDialog(gtk.Dialog):
 		self.values = values
 		self.widgets: dict[str, OptionTkType] = {}
 		self.createOptionsList()
-		###
-		# self.treev REMOVED
 		############
 		self.vbox.show()
 

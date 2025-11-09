@@ -413,7 +413,7 @@ class FormatDialog(tk.Toplevel):
 
 		# self.bind("<KeyPress>", self.onKeyPress)
 
-	def onTreeviewMouseWheel(self, event):
+	def onTreeviewMouseWheel(self, event) -> str | None:
 		# only register this on X11 (Linux / BSD)
 		if not hasattr(event, "num"):
 			return None
@@ -566,7 +566,7 @@ class OptionTkType(Protocol):
 	@property
 	def value(self) -> Any: ...
 	@value.setter
-	def value(self, x: Any): ...
+	def value(self, x: Any) -> None: ...
 	@property
 	def widget(self) -> ttk.Widget: ...
 
@@ -590,7 +590,7 @@ class BoolOptionTk:
 		return bool(self._var.get())
 
 	@value.setter
-	def value(self, x: Any):
+	def value(self, x: Any) -> None:
 		self._var.set(int(bool(x)))
 
 	@property
@@ -640,7 +640,7 @@ class IntOptionTk:
 		return int(self._spin.get())
 
 	@value.setter
-	def value(self, x: Any):
+	def value(self, x: Any) -> None:
 		self._spin.set(int(x))
 
 	@property
@@ -677,7 +677,7 @@ class StrOptionTk:
 		return self.opt.evaluate(self._entry.get())[0]
 
 	@value.setter
-	def value(self, x: Any):
+	def value(self, x: Any) -> None:
 		x = str(x)
 		if self.valuesVar is not None:
 			self.valuesVar.set(x)
@@ -714,7 +714,7 @@ class MultiLineStrOptionTk:
 		return unescapeNTB(self._entry.get())
 
 	@value.setter
-	def value(self, x: Any):
+	def value(self, x: Any) -> None:
 		self._entry.insert(0, escapeNTB(str(x)))
 
 	@property
@@ -855,7 +855,7 @@ class VerticalNotebook(ttk.Frame):
 		parent: tk.Widget,
 		font: Font,
 		**kwargs,
-	):
+	) -> None:
 		ttk.Frame.__init__(self, parent, **kwargs)
 		self.rowconfigure(0, weight=1)
 		self.columnconfigure(2, weight=1)
@@ -880,7 +880,7 @@ class VerticalNotebook(ttk.Frame):
 		self._maxWidth = 0
 
 	# add tab
-	def add(self, widget: tk.Widget, text: str):
+	def add(self, widget: tk.Widget, text: str) -> None:
 		self._listbox.insert("end", text)
 		# resize listbox to be large enough to show all tab labels
 		self._maxWidth = max(self._maxWidth, len(text))
@@ -892,20 +892,20 @@ class VerticalNotebook(ttk.Frame):
 		if self._current_tab is None:
 			self.switch_tab(index)
 
-	def switch_tab(self, index: int):
+	def switch_tab(self, index: int) -> None:
 		self._show_tab_index(index)
 		self._listbox.selection_clear(0, "end")
 		self._listbox.selection_set(index)
 		self._listbox.see(index)
 
-	def _show_tab_index(self, index: int):
+	def _show_tab_index(self, index: int) -> None:
 		widget = self._tabs[index]
 		if self._current_tab is not None:
 			self._current_tab.grid_remove()
 		self._current_tab = widget
 		widget.grid(in_=self, column=2, row=0, sticky="ewns")
 
-	def _on_listbox_select(self, _event=None):
+	def _on_listbox_select(self, _event=None) -> None:
 		selection = self._listbox.curselection()
 		if not selection:
 			return
@@ -1314,7 +1314,7 @@ class UI(tk.Frame, UIBase):
 		if not formatDesc:
 			return
 
-		def okFunc(values: dict[str, Any]):
+		def okFunc(values: dict[str, Any]) -> None:
 			self.readOptions = values
 
 		dialog = FormatOptionsDialog(
@@ -1331,7 +1331,7 @@ class UI(tk.Frame, UIBase):
 		if not formatDesc:
 			return
 
-		def okFunc(values: dict[str, Any]):
+		def okFunc(values: dict[str, Any]) -> None:
 			self.writeOptions = values
 
 		dialog = FormatOptionsDialog(
