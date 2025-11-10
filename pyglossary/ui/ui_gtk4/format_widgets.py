@@ -377,7 +377,8 @@ class StrOptionGtk:
 		return self._hbox
 
 
-class FileSizeOptionGtk(StrOptionGtk):
+# should I use str input (Entry) to allow values like 1m and 1g?
+class FileSizeOptionGtk(IntOptionGtk):
 	pass
 
 
