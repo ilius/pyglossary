@@ -313,7 +313,7 @@ class IntOptionGtk:
 		spin.set_digits(0)
 		spin.set_range(minim, maxim)
 		spin.set_increments(1, 10)
-		# spin.set_width_chars
+		spin.set_width_chars(max(len(str(minim)), len(str(maxim))))
 		pack(hbox, spin)
 		self._hbox = hbox
 		self._spin = spin
