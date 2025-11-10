@@ -34,7 +34,7 @@ from .utils import (
 if TYPE_CHECKING:
 	from gi.repository import Gdk as gdk
 
-__all__ = ["GeneralOptionsButton"]
+__all__ = ["GeneralOptionsDialog"]
 
 
 class GeneralOptionsDialog(gtk.Dialog):
@@ -129,16 +129,3 @@ class GeneralOptionsDialog(gtk.Dialog):
 
 		for param, check in self.configCheckButtons.items():
 			config[param] = check.get_active()
-
-
-class GeneralOptionsButton(gtk.Button):
-	def __init__(self, mainWin: gtk.Window) -> None:
-		gtk.Button.__init__(self, label="General Options")
-		self.mainWin = mainWin
-		self.connect("clicked", self.onClick)
-		self.dialog = None
-
-	def onClick(self, _widget: gtk.Widget) -> None:
-		if self.dialog is None:
-			self.dialog = GeneralOptionsDialog(self.mainWin)
-		self.dialog.present()

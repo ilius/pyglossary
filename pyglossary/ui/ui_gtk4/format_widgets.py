@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.plugin_prop import PluginProp
 
-__all__ = ["InputFormatBox", "OutputFormatBox"]
+__all__ = ["FormatOptionsDialog", "InputFormatBox", "OutputFormatBox"]
 
 
 _ = str
@@ -562,7 +562,7 @@ class FormatBox(gtk.Box):
 		descList: list[str],
 		parent: gtk.Widget | None = None,
 		labelSizeGroup: gtk.SizeGroup = None,
-		buttonSizeGroup: gtk.SizeGroup = None,
+		buttonSizeGroup: gtk.SizeGroup = None,  # noqa: ARG002
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL, spacing=3)
 
@@ -574,16 +574,6 @@ class FormatBox(gtk.Box):
 			onChanged=self.onChanged,
 		)
 
-		self._optionsValues = {}
-
-		self.optionsButton = gtk.Button(label="Options")
-		# TODO: self.optionsButton.set_icon_name
-		# self.optionsButton.set_image(gtk.Image.new_from_icon_name(
-		# 	"gtk-preferences",
-		# 	gtk.IconSize.BUTTON,
-		# ))
-		self.optionsButton.connect("clicked", self.optionsButtonClicked)
-
 		self.dependsButton = gtk.Button(label="Install dependencies")
 		self.dependsButton.pkgNames = []
 		self.dependsButton.connect("clicked", self.dependsButtonClicked)
@@ -593,16 +583,12 @@ class FormatBox(gtk.Box):
 		pack(self, self.button)
 		pack(self, gtk.Label(), 1, 1)
 		pack(self, self.dependsButton)
-		pack(self, self.optionsButton)
 
 		self.show()
 		self.dependsButton.hide()
-		self.optionsButton.hide()
 
 		if labelSizeGroup:
 			labelSizeGroup.add_widget(label)
-		if buttonSizeGroup:
-			buttonSizeGroup.add_widget(self.optionsButton)
 
 	def getActive(self) -> str:
 		return self.button.getActive()
@@ -610,41 +596,9 @@ class FormatBox(gtk.Box):
 	def setActive(self, active: str) -> None:
 		self.button.setActive(active)
 
-	@property
-	def optionsValues(self) -> dict[str, Any]:
-		return self._optionsValues
-
-	def setOptionsValues(self, optionsValues: dict[str, Any]) -> None:
-		self._optionsValues = optionsValues
-
 	def kind(self) -> str:
 		"""Return 'r' or 'w'."""
 		raise NotImplementedError
-
-	def getActiveOptions(self) -> dict[str, Any] | None:
-		raise NotImplementedError
-
-	def optionsButtonClicked(self, _button: gtk.Widget) -> None:
-		formatName = self.getActive()
-		dialog = FormatOptionsDialog(
-			app=self.app,
-			formatName=formatName,
-			kind=self.kind(),
-			values=self._optionsValues,
-			transient_for=self._parent,
-		)
-		dialog.set_title("Options for " + formatName)
-		dialog.connect("response", self.optionsDialogResponse)
-		dialog.present()
-
-	def optionsDialogResponse(
-		self,
-		dialog: FormatOptionsDialog,
-		response_id: gtk.ResponseType,
-	) -> None:
-		if response_id == gtk.ResponseType.OK:
-			self._optionsValues = dialog.getOptionsValues()
-		dialog.destroy()
 
 	def dependsButtonClicked(self, button: gtk.Button) -> None:
 		formatName = self.getActive()
@@ -665,11 +619,7 @@ class FormatBox(gtk.Box):
 	def onChanged(self, _obj: gtk.Widget = None) -> None:
 		name = self.getActive()
 		if not name:
-			self.optionsButton.set_visible(False)
 			return
-		self._optionsValues.clear()
-
-		self.optionsButton.set_visible(bool(self.getActiveOptions()))
 
 		kind = self.kind()
 		plugin = Glossary.plugins[name]
@@ -695,12 +645,6 @@ class InputFormatBox(FormatBox):
 		"""Return 'r' or 'w'."""
 		return "r"
 
-	def getActiveOptions(self) -> dict[str, Any] | None:
-		formatName = self.getActive()
-		if not formatName:
-			return None
-		return Glossary.formatsReadOptions[formatName]
-
 
 class OutputFormatBox(FormatBox):
 	dialogTitle = "Select Output Format"
@@ -711,6 +655,3 @@ class OutputFormatBox(FormatBox):
 	def kind(self) -> str:
 		"""Return 'r' or 'w'."""
 		return "w"
-
-	def getActiveOptions(self) -> dict[str, Any] | None:
-		return Glossary.formatsWriteOptions[self.getActive()]

@@ -23,6 +23,7 @@ from os.path import abspath, isfile
 from typing import TYPE_CHECKING, Any
 
 from gi.repository import Gdk as gdk
+from gi.repository import Gio as gio
 from gi.repository import Gtk as gtk
 
 from pyglossary.core import homePage
@@ -34,13 +35,13 @@ from pyglossary.ui.base import (
 	licenseText,
 	logo,
 )
+from pyglossary.ui.ui_gtk4.general_options import GeneralOptionsDialog
 from pyglossary.ui.version import getVersion
 
 from .about import AboutWidget
 from .console import ConvertConsole
 from .file_widgets import InputFileBox, OutputFileBox
-from .format_widgets import InputFormatBox, OutputFormatBox
-from .general_options import GeneralOptionsButton
+from .format_widgets import FormatOptionsDialog, InputFormatBox, OutputFormatBox
 from .utils import (
 	HBox,
 	VBox,
@@ -191,6 +192,10 @@ progressbar progress, trough {min-height: 0.6em;}
 		####
 		self.connect("close-request", self.onCloseRequest)
 		####
+		self.readOptions = {}
+		self.writeOptions = {}
+		self.generalOptionsdialog: gtk.Dialog | None = None
+		####
 		self.pages = []
 		self.convertOptions = {}
 		#####
@@ -255,8 +260,25 @@ progressbar progress, trough {min-height: 0.6em;}
 		hbox.get_style_context().add_class("margin_03")
 		pack(hbox, gtk.Label(), expand=True)
 		##
-		button = GeneralOptionsButton(self)
+		action = gio.SimpleAction.new("readOptions", None)
+		action.connect("activate", self.readOptionsClicked)
+		app.add_action(action)
+		##
+		action = gio.SimpleAction.new("writeOptions", None)
+		action.connect("activate", self.writeOptionsClicked)
+		app.add_action(action)
+		##
+		action = gio.SimpleAction.new("generalOptions", None)
+		action.connect("activate", self.generalOptionsClicked)
+		app.add_action(action)
+		##
+		button = gtk.MenuButton(label=" Options ")
 		button.set_size_request(300, 40)
+		menu = gio.Menu()
+		menu.append("Read Options", "app.readOptions")
+		menu.append("Write Options", "app.writeOptions")
+		menu.append("General Options", "app.generalOptions")
+		button.set_menu_model(menu)
 		pack(hbox, button)
 		##
 		self.convertButton = gtk.Button()
@@ -289,6 +311,59 @@ progressbar progress, trough {min-height: 0.6em;}
 		######
 		self.vbox.show()
 		self.status("Select input file")
+
+	def readOptionsClicked(self, _action: gtk.Action, _param: Any) -> None:
+		formatName = self.inputFormatBox.getActive()
+		if not formatName:
+			return
+		dialog = FormatOptionsDialog(
+			app=self.app,
+			formatName=formatName,
+			kind="r",
+			values=self.readOptions,
+			transient_for=self,
+		)
+		dialog.set_title("Read Options for " + formatName)
+		dialog.connect("response", self.readOptionsResponse)
+		dialog.present()
+
+	def writeOptionsClicked(self, _action: gtk.Action, _param: Any) -> None:
+		formatName = self.outputFormatBox.getActive()
+		if not formatName:
+			return
+		dialog = FormatOptionsDialog(
+			app=self.app,
+			formatName=formatName,
+			kind="w",
+			values=self.writeOptions,
+			transient_for=self,
+		)
+		dialog.set_title("Write Options for " + formatName)
+		dialog.connect("response", self.writeOptionsResponse)
+		dialog.present()
+
+	def readOptionsResponse(
+		self,
+		dialog: FormatOptionsDialog,
+		response_id: gtk.ResponseType,
+	) -> None:
+		if response_id == gtk.ResponseType.OK:
+			self.readOptions = dialog.getOptionsValues()
+		dialog.destroy()
+
+	def writeOptionsResponse(
+		self,
+		dialog: FormatOptionsDialog,
+		response_id: gtk.ResponseType,
+	) -> None:
+		if response_id == gtk.ResponseType.OK:
+			self.writeOptions = dialog.getOptionsValues()
+		dialog.destroy()
+
+	def generalOptionsClicked(self, _action: gtk.Action, _param: Any) -> None:
+		if self.generalOptionsdialog is None:
+			self.generalOptionsdialog = GeneralOptionsDialog(self)
+		self.generalOptionsdialog.present()
 
 	def makeAboutWidget(self) -> gtk.Widget:
 		about = AboutWidget(
@@ -357,9 +432,9 @@ progressbar progress, trough {min-height: 0.6em;}
 			log.error("Gtk interface does not support Reverse feature")
 
 		if readOptions:
-			self.inputFormatBox.setOptionsValues(readOptions)
+			self.readOptions = readOptions
 		if writeOptions:
-			self.outputFormatBox.setOptionsValues(writeOptions)
+			self.writeOptions = writeOptions
 
 		self.convertOptions = convertOptions
 		if convertOptions:
@@ -419,8 +494,8 @@ progressbar progress, trough {min-height: 0.6em;}
 		gtk_event_iteration_loop()
 
 		self.progressTitle = "Converting"
-		readOptions = self.inputFormatBox.optionsValues
-		writeOptions = self.outputFormatBox.optionsValues
+		readOptions = self.readOptions
+		writeOptions = self.writeOptions
 		glos = Glossary(ui=self.ui)
 		glos.config = self.config
 		glos.progressbar = self.progressBar is not None
