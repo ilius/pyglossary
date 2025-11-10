@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING, Any
 from gi.repository import Gdk as gdk
 from gi.repository import Gio as gio
 from gi.repository import Gtk as gtk
+from gi.repository import Pango as pango
 
 from pyglossary.core import homePage
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
@@ -116,6 +117,23 @@ class ConvertStatusBox(gtk.Box):
 		verbosity = self.verbosityCombo.get_active()
 		# or int(self.verbosityCombo.get_active_text())
 		log.setVerbosity(verbosity)
+
+
+def getFontSizePixels(widget: gtk.Widget) -> int:
+	# Get default font description
+	pango_ctx = widget.get_pango_context()
+	font_desc = pango_ctx.get_font_description()
+
+	# Pango font size is in Pango units (1/1024 of a point)
+	font_size_points = font_desc.get_size() / pango.SCALE
+
+	# Get DPI from monitor (fallback = 96.0)
+	display = widget.get_display()
+	monitor = display.get_primary_monitor()
+	scale = monitor.get_scale_factor()
+	dpi = 96.0 * scale  # GTK doesn’t expose real DPI anymore — approximate
+
+	return font_size_points * dpi / 72.0
 
 
 class MainWindow(gtk.ApplicationWindow):
@@ -272,8 +290,10 @@ progressbar progress, trough {min-height: 0.6em;}
 		action.connect("activate", self.generalOptionsClicked)
 		app.add_action(action)
 		##
-		button = gtk.MenuButton(label=" Options ")
-		button.set_size_request(300, 40)
+		fontSize = getFontSizePixels(self)
+		##
+		button = gtk.MenuButton(label=" Options")
+		button.set_size_request(0, int(fontSize * 1.8))
 		menu = gio.Menu()
 		menu.append("Read Options", "app.readOptions")
 		menu.append("Write Options", "app.writeOptions")
@@ -281,11 +301,11 @@ progressbar progress, trough {min-height: 0.6em;}
 		button.set_menu_model(menu)
 		pack(hbox, button)
 		##
-		self.convertButton = gtk.Button()
-		self.convertButton.set_label("Convert")
-		self.convertButton.connect("clicked", self.convertClicked)
-		self.convertButton.set_size_request(300, 40)
-		pack(hbox, self.convertButton)
+		button = self.convertButton = gtk.Button()
+		button.set_size_request(0, int(fontSize * 1.8))
+		button.set_label("    Convert    ")
+		button.connect("clicked", self.convertClicked)
+		pack(hbox, button)
 		##
 		self.inOutBoxes.append(hbox)
 		pack(page, hbox)
