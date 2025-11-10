@@ -25,6 +25,7 @@ from typing import AnyStr
 
 __all__ = [
 	"crc32hex",
+	"escapeNRB",
 	"escapeNTB",
 	"excMessage",
 	"fixUtf8",
@@ -40,6 +41,7 @@ __all__ = [
 	"uint64ToBytes",
 	"uintFromBytes",
 	"unescapeBar",
+	"unescapeNRB",
 	"unescapeNTB",
 	"urlToPath",
 ]
