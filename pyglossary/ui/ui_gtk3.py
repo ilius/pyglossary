@@ -1052,19 +1052,19 @@ class OptionsButton(gtk.MenuButton):
 		###
 		menu = gtk.Menu()
 		##
-		itemGeneral = gtk.MenuItem("General Options")
-		itemGeneral.connect("activate", self._onGeneralOptionClick)
-		menu.append(itemGeneral)
-		##
-		self.itemRead = gtk.MenuItem("Input Options")
+		self.itemRead = gtk.MenuItem("Read Options")
 		self.itemRead.connect("activate", onReadOptionClick)
 		self.itemRead.set_sensitive(False)
 		menu.append(self.itemRead)
 		##
-		self.itemWrite = gtk.MenuItem("Output Options")
+		self.itemWrite = gtk.MenuItem("Write Options")
 		self.itemWrite.connect("activate", onWriteOptionClick)
 		self.itemWrite.set_sensitive(False)
 		menu.append(self.itemWrite)
+		##
+		itemGeneral = gtk.MenuItem("General Options")
+		itemGeneral.connect("activate", self._onGeneralOptionClick)
+		menu.append(itemGeneral)
 		##
 		menu.show_all()
 		self.set_popup(menu)
