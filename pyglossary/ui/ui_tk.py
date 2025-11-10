@@ -808,14 +808,13 @@ class FormatOptionsDialog(tk.Toplevel):
 		master: tk.Widget | None = None,  # noqa: ARG002
 	) -> None:
 		formatName = pluginByDesc[formatDesc].name
-		tk.Toplevel.__init__(self)
+		tk.Toplevel.__init__(self, master=master)
 		# bg="#0f0" does not work
 		self.resizable(width=True, height=True)
 		self.title(f"{formatDesc} {kind} Options")
 		set_window_icon(self)
 		self.bind("<Escape>", lambda _e: self.destroy())
 
-		self.menu = None
 		self.format = formatName
 		self.kind = kind
 		self.values = values
@@ -861,6 +860,92 @@ class FormatOptionsDialog(tk.Toplevel):
 		for optName, widget in self.widgets.items():
 			self.values[optName] = widget.value
 		self.okFunc(self.values)
+		self.destroy()
+
+
+class PreConvertInfoDialog(tk.Toplevel):
+	def __init__(
+		self,
+		info: dict[str, Any],
+		okFunc: Callable[[dict[str, Any]]],
+		master: tk.Widget,
+	) -> None:
+		tk.Toplevel.__init__(self, master=master)
+		self.resizable(width=True, height=True)
+		self.title("Set Info / Metedata")
+		set_window_icon(self)
+		self.bind("<Escape>", lambda _e: self.destroy())
+
+		self.info = info
+		self.okFunc = okFunc
+
+		mainFrame = self.frame = ttk.Frame(master=self)
+
+		frame = ttk.Frame(master=mainFrame)
+		ttk.Label(
+			text="Glossary Name",
+			master=frame,
+		).pack(side="left", expand=False)
+		nameEntry = ttk.Entry(master=frame, width=50)
+		nameEntry.pack(side="left", fill="x", expand=True)
+		nameEntry.insert(0, info.get("name", ""))
+		self.nameEntry = nameEntry
+		frame.pack(side="top", expand=True, fill="both")
+
+		frame = ttk.Frame(master=mainFrame)
+		ttk.Label(
+			text="Source Language",
+			master=frame,
+		).pack(side="left", expand=False)
+		sourceLangEntry = ttk.Entry(master=frame)
+		sourceLangEntry.pack(side="right", fill="x", expand=True)
+		sourceLangEntry.insert(0, info.get("sourceLang", ""))
+		self.sourceLangEntry = sourceLangEntry
+		frame.pack(side="top", expand=True, fill="both")
+
+		frame = ttk.Frame(master=mainFrame)
+		ttk.Label(
+			text="Target Language",
+			master=frame,
+		).pack(side="left", expand=False)
+		targetLangEntry = ttk.Entry(master=frame)
+		targetLangEntry.pack(side="right", fill="x", expand=True)
+		targetLangEntry.insert(0, info.get("targetLang", ""))
+		self.targetLangEntry = targetLangEntry
+		frame.pack(side="top", expand=True, fill="both")
+
+		mainFrame.pack(fill="both", expand=True)
+
+		buttonBox = ttk.Frame(self)
+		okButton = newButton(
+			buttonBox,
+			text="  OK  ",
+			command=self.okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		okButton.pack(side="right")
+		buttonBox.pack(fill="x")
+
+		px, py, pw, ph = decodeGeometry(master.winfo_toplevel().geometry())
+		self.geometry(
+			encodeLocation(
+				px + pw // 2 - 200,
+				py + ph // 2 - 100,
+			)
+		)
+
+	def okClicked(self) -> None:
+		name = self.nameEntry.get()
+		if name:
+			self.info["name"] = name
+		sourceLang = self.sourceLangEntry.get()
+		if sourceLang:
+			self.info["sourceLang"] = sourceLang
+		targetLang = self.targetLangEntry.get()
+		if targetLang:
+			self.info["targetLang"] = targetLang
+		self.okFunc(self.info)
 		self.destroy()
 
 
@@ -985,6 +1070,7 @@ class UI(tk.Frame, UIBase):
 		self.glos = Glossary(ui=self)
 		self.glos.config = self.config
 		self.glos.progressbar = progressbar
+		self.infoOverride = {}
 		self._convertOptions = {}
 		self.pathI = ""
 		self.pathO = ""
@@ -1139,6 +1225,11 @@ class UI(tk.Frame, UIBase):
 		optionsMenu.add_command(
 			label="Write Options",
 			command=self.writeOptionsClicked,
+			font=defaultFont,
+		)
+		optionsMenu.add_command(
+			label="Info / Metadata",
+			command=self.infoOptionClicked,
 			font=defaultFont,
 		)
 		optionsButton = ttk.Menubutton(
@@ -1350,13 +1441,24 @@ class UI(tk.Frame, UIBase):
 			self.writeOptions = values
 
 		dialog = FormatOptionsDialog(
-			formatDesc,
-			"Write",
-			self.writeOptions,
-			okFunc,
+			formatDesc=formatDesc,
+			kind="Write",
+			values=self.writeOptions,
+			okFunc=okFunc,
 			master=self,
 		)
 		self.openDialog(dialog)
+
+	def infoOptionClicked(self) -> None:
+		def okFunc(info: dict[str, Any]) -> None:
+			self.infoOverride = info
+
+		dialog = PreConvertInfoDialog(
+			info=self.infoOverride,
+			okFunc=okFunc,
+			master=self,
+		)
+		dialog.focus()
 
 	def textSelectAll(self, tktext: tk.Text) -> None:
 		tktext.tag_add(tk.SEL, "1.0", tk.END)
@@ -1529,6 +1631,9 @@ class UI(tk.Frame, UIBase):
 		for attr, value in self._glossarySetAttrs.items():
 			setattr(self.glos, attr, value)
 
+		if self.infoOverride:
+			log.info(f"infoOverride = {self.infoOverride}")
+
 		try:
 			self.glos.convert(
 				ConvertArgs(
@@ -1538,6 +1643,7 @@ class UI(tk.Frame, UIBase):
 					outputFormat=outFormat,
 					readOptions=self.readOptions,
 					writeOptions=self.writeOptions,
+					infoOverride=self.infoOverride or None,
 					**self._convertOptions,
 				),
 			)
