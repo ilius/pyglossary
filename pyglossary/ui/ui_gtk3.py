@@ -908,7 +908,7 @@ class SortOptionsBox(gtk.Box):
 
 	def updateWidgets(self) -> None:
 		convertOptions = self.ui.convertOptions
-		sort = convertOptions.get("sort")
+		sort = bool(convertOptions.get("sort", False))
 		self.sortCheck.set_active(sort)
 		self.sortKeyCombo.set_sensitive(sort)
 		self.encodingHBox.set_sensitive(sort)

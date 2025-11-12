@@ -30,6 +30,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 from pyglossary.core import confDir, homeDir, homePage, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.option import IntOption, Option
+from pyglossary.sort_keys import namedSortKeyList
 from pyglossary.text_utils import escapeNTB, unescapeNTB, urlToPath
 
 from .base import (
@@ -39,6 +40,7 @@ from .base import (
 	licenseText,
 	logo,
 )
+from .config import configDefDict
 from .version import getVersion
 
 if TYPE_CHECKING:
@@ -163,7 +165,7 @@ def newReadOnlyText(
 	widget.pack()
 
 	# widget.bind("<Key>", lambda e: break)
-	widget.configure(state="disabled")
+	widget.configure(state=tk.DISABLED)
 
 	return widget
 
@@ -863,6 +865,212 @@ class FormatOptionsDialog(tk.Toplevel):
 		self.destroy()
 
 
+sortKeyNames = [_sk.name for _sk in namedSortKeyList]
+sortKeyNameByDesc = {_sk.desc: _sk.name for _sk in namedSortKeyList}
+sortKeyDescByName = {_sk.name: _sk.desc for _sk in namedSortKeyList}
+
+
+class SortOptionsBox(ttk.Frame):
+	def __init__(
+		self,
+		ui: UI,
+		master: tk.Widget | None = None,
+	) -> None:
+		self.ui = ui
+		ttk.Frame.__init__(self, master=master)
+		hbox = ttk.Frame(master=self)
+		sortCheckVar = tk.IntVar()
+		sortCheck = ttk.Checkbutton(
+			master=hbox,
+			text="Sort entries by",
+			variable=sortCheckVar,
+			command=self.onSortCheckClicked,
+		)
+		sortKeyVar = tk.StringVar()
+		sortKeyDescList = [sk.desc for sk in namedSortKeyList]
+		sortKeyCombo = ttk.OptionMenu(
+			hbox,
+			sortKeyVar,
+			sortKeyDescList[0],
+			*sortKeyDescList,
+		)
+		self.sortCheckVar = sortCheckVar
+		self.sortKeyVar = sortKeyVar
+		self.sortKeyCombo = sortKeyCombo
+		sortCheck.pack(side="left")
+		sortKeyCombo.pack(side="left")
+		hbox.pack(side="top", expand=True, fill="both")
+		###
+		hbox = self.encodingHBox = ttk.Frame(master=self)
+		encodingCheckVar = self.encodingCheckVar = tk.IntVar()
+		encodingCheck = ttk.Checkbutton(
+			master=hbox,
+			text="Sort Encoding",
+			variable=encodingCheckVar,
+		)
+		encodingEntry = self.encodingEntry = ttk.Entry(hbox, width=15)
+		encodingEntry.delete(0, "end")
+		encodingEntry.insert(0, "utf-8")
+		ttk.Label(hbox, text="    ").pack(side="left")
+		encodingCheck.pack(side="left")
+		encodingEntry.pack(side="left")
+		hbox.pack(side="top", expand=True, fill="both")
+		###
+		hbox = self.localeHBox = ttk.Frame(master=self)
+		localeEntry = self.localeEntry = ttk.Entry(hbox, width=15)
+		ttk.Label(master=hbox, text="    ").pack(side="left")
+		ttk.Label(master=hbox, text="Sort Locale").pack(side="left")
+		localeEntry.pack(side="left", expand=True, fill="x")
+		hbox.pack(side="top", expand=True, fill="both")
+		###
+
+	def updateSortStates(self, sort: bool) -> None:
+		state = tk.NORMAL if sort else tk.DISABLED
+		self.sortKeyCombo.configure(state=state)
+		# self.encodingHBox.configure(state=state) # unknown option "-state"
+		# self.localeHBox.configure(state=state) # unknown option "-state"
+
+	def onSortCheckClicked(self) -> None:
+		sort = bool(self.sortCheckVar.get())
+		self.updateSortStates(sort)
+
+	def updateWidgets(self) -> None:
+		convertOptions = self.ui.convertOptions
+		sort = bool(convertOptions.get("sort", False))
+		self.sortCheckVar.set(int(sort))
+		self.updateSortStates(sort)
+
+		sortKeyName = convertOptions.get("sortKeyName")
+		if sortKeyName:
+			sortKeyName, _, localeName = sortKeyName.partition(":")
+			if sortKeyName:
+				self.sortKeyVar.set(sortKeyDescByName[sortKeyName])
+			self.localeEntry.delete(0, "end")
+			self.localeEntry.insert(0, localeName)
+
+		if "sortEncoding" in convertOptions:
+			self.encodingCheckVar.set(1)
+			self.encodingEntry.delete(0, "end")
+			self.encodingEntry.insert(0, convertOptions["sortEncoding"])
+
+	def applyChanges(self) -> None:
+		convertOptions = self.ui.convertOptions
+		sort = int(self.sortCheckVar.get())
+		if not sort:
+			for param in ("sort", "sortKeyName", "sortEncoding"):
+				if param in convertOptions:
+					del convertOptions[param]
+			return
+
+		sortKeyDesc = self.sortKeyVar.get()
+		sortKeyName = sortKeyNameByDesc[sortKeyDesc]
+		sortLocale = self.localeEntry.get()
+		if sortLocale:
+			sortKeyName = f"{sortKeyName}:{sortLocale}"
+
+		convertOptions["sort"] = True
+		convertOptions["sortKeyName"] = sortKeyName
+		if self.encodingCheckVar.get():
+			convertOptions["sortEncoding"] = self.encodingEntry.get()
+
+
+class GeneralOptionsDialog(tk.Toplevel):
+	def __init__(
+		self,
+		ui: UI,
+		master: tk.Widget | None = None,
+	) -> None:
+		self.ui = ui
+		tk.Toplevel.__init__(self, master=master)
+		self.resizable(width=True, height=True)
+		self.title("General Options")
+		set_window_icon(self)
+		self.bind("<Escape>", lambda _e: self.destroy())
+		####
+		padx = 0
+		pady = 0
+		##
+		self.sortOptionsBox = SortOptionsBox(ui, master=self)
+		self.sortOptionsBox.pack(side="top", pady=pady, expand=True, fill="both")
+		##
+		hbox = ttk.Frame(self)
+		self.sqliteCheckVar = tk.IntVar()
+		self.sqliteCheck = ttk.Checkbutton(
+			hbox,
+			text="SQLite mode",
+			variable=self.sqliteCheckVar,
+		)
+		self.sqliteCheck.pack(side="left", padx=padx, expand=True, fill="x")
+		hbox.pack(side="top", pady=pady, expand=True, fill="both")
+		##
+		self.configParams = {
+			"save_info_json": False,
+			"lower": False,
+			"skip_resources": False,
+			"rtl": False,
+			"enable_alts": True,
+			"cleanup": True,
+			"remove_html_all": True,
+		}
+		self.configCheckVars: dict[str, tk.IntVar] = {}
+		for param in self.configParams:
+			# hbox = ttk.Frame(self)
+			comment = configDefDict[param].comment
+			comment = comment.split("\n")[0]
+			checkVar = tk.IntVar()
+			checkButton = ttk.Checkbutton(
+				self,
+				text=comment,
+				variable=checkVar,
+			)
+			self.configCheckVars[param] = checkVar
+			checkButton.pack(side="top", padx=padx, expand=True, fill="both")
+			# hbox.pack(side="top", pady=pady)
+
+		###
+		buttonBox = ttk.Frame(self)
+		okButton = newButton(
+			buttonBox,
+			text="  OK  ",
+			command=self.okClicked,
+		)
+		okButton.pack(side="right")
+		buttonBox.pack(fill="x")
+		##
+		self.updateWidgets()
+
+	def getSQLite(self) -> bool:
+		convertOptions = self.ui.convertOptions
+		sqlite = convertOptions.get("sqlite")
+		if sqlite is not None:
+			return sqlite
+		return self.ui.config.get("auto_sqlite", True)
+
+	def updateWidgets(self) -> None:
+		config = self.ui.config
+		self.sortOptionsBox.updateWidgets()
+		self.sqliteCheck.configure(state=tk.NORMAL if self.getSQLite() else tk.DISABLED)
+		for param, checkVar in self.configCheckVars.items():
+			default = self.configParams[param]
+			checkVar.set(config.get(param, default))
+
+	def applyChanges(self) -> None:
+		# print("applyChanges")
+		self.sortOptionsBox.applyChanges()
+
+		convertOptions = self.ui.convertOptions
+		config = self.ui.config
+
+		convertOptions["sqlite"] = bool(self.sqliteCheckVar.get())
+
+		for param, checkVar in self.configCheckVars.items():
+			config[param] = bool(checkVar.get())
+
+	def okClicked(self) -> None:
+		self.applyChanges()
+		self.destroy()
+
+
 class PreConvertInfoDialog(tk.Toplevel):
 	def __init__(
 		self,
@@ -1067,11 +1275,9 @@ class UI(tk.Frame, UIBase):
 			rowheight=int(defaultFont.metrics("linespace") * 1.5),
 		)
 		######################
-		self.glos = Glossary(ui=self)
-		self.glos.config = self.config
-		self.glos.progressbar = progressbar
+		self.progressbar = progressbar
 		self.infoOverride = {}
-		self._convertOptions = {}
+		self.convertOptions = {}
 		self.pathI = ""
 		self.pathO = ""
 		fcd_dir = join(homeDir, "Desktop")
@@ -1225,6 +1431,11 @@ class UI(tk.Frame, UIBase):
 		optionsMenu.add_command(
 			label="Write Options",
 			command=self.writeOptionsClicked,
+			font=defaultFont,
+		)
+		optionsMenu.add_command(
+			label="General Options",
+			command=self.generalOptionsClicked,
 			font=defaultFont,
 		)
 		optionsMenu.add_command(
@@ -1449,6 +1660,10 @@ class UI(tk.Frame, UIBase):
 		)
 		self.openDialog(dialog)
 
+	def generalOptionsClicked(self) -> None:
+		dialog = GeneralOptionsDialog(self, master=self.winfo_toplevel())
+		self.openDialog(dialog)
+
 	def infoOptionClicked(self) -> None:
 		def okFunc(info: dict[str, Any]) -> None:
 			self.infoOverride = info
@@ -1628,14 +1843,23 @@ class UI(tk.Frame, UIBase):
 			return
 		outFormat = pluginByDesc[outFormatDesc].name
 
+		log.debug(f"config: {self.config}")
+
+		glos = Glossary(ui=self)
+		glos.config = self.config
+		glos.progressbar = self.progressbar
+
 		for attr, value in self._glossarySetAttrs.items():
-			setattr(self.glos, attr, value)
+			setattr(glos, attr, value)
 
 		if self.infoOverride:
 			log.info(f"infoOverride = {self.infoOverride}")
 
+		if self.convertOptions:
+			log.info(f"convertOptions: {self.convertOptions}")
+
 		try:
-			self.glos.convert(
+			glos.convert(
 				ConvertArgs(
 					inPath,
 					inputFormat=inFormat,
@@ -1644,12 +1868,12 @@ class UI(tk.Frame, UIBase):
 					readOptions=self.readOptions,
 					writeOptions=self.writeOptions,
 					infoOverride=self.infoOverride or None,
-					**self._convertOptions,
+					**self.convertOptions,
 				),
 			)
 		except Error as e:
 			log.critical(str(e))
-			self.glos.cleanup()
+			glos.cleanup()
 			return
 
 		# self.status("Convert finished")
@@ -1733,7 +1957,7 @@ class UI(tk.Frame, UIBase):
 		if writeOptions:
 			self.writeOptions = writeOptions
 
-		self._convertOptions: dict[str, Any] = convertOptions or {}
+		self.convertOptions: dict[str, Any] = convertOptions or {}
 		if convertOptions:
 			log.info(f"Using {convertOptions=}")
 
