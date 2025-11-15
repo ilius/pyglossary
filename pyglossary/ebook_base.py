@@ -500,4 +500,5 @@ class EbookWriter:
 				self._glos.addCleanupPath(self._tmpDir)
 				return
 
+			log.debug(f"EbookWriter: moving {self._tmpDir} to {filename}")
 			shutil.move(self._tmpDir, filename)

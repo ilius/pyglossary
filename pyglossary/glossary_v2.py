@@ -220,13 +220,13 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		self._data.close()
 		for cleanupPath in self._cleanupPathList:
 			if isfile(cleanupPath):
-				log.debug(f"Removing file {cleanupPath}")
+				log.debug(f"cleanup: removing file {cleanupPath}")
 				try:
 					os.remove(cleanupPath)
 				except Exception:
 					log.exception(f"error removing {cleanupPath}")
 			elif isdir(cleanupPath):
-				log.debug(f"Removing directory {cleanupPath}")
+				log.debug(f"cleanup: removing directory {cleanupPath}")
 				rmtree(cleanupPath)
 			else:
 				log.error(f"no such file or directory: {cleanupPath}")

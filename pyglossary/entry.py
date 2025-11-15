@@ -84,6 +84,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 		try:
 			os.makedirs(fdir, mode=0o755, exist_ok=True)
 			if self._tmpPath:
+				log.debug(f"DataEntry: moving {self._tmpPath} to {fpath}")
 				shutil.move(self._tmpPath, fpath)
 				self._tmpPath = fpath
 			else:

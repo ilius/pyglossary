@@ -101,6 +101,7 @@ def zipFileOrDir(filename: str) -> None:
 				for subFname in os.listdir(filename):
 					_zipFileAdd(zf, subFname)
 
+			log.debug(f"zipFileOrDir: removing {filename}")
 			shutil.rmtree(filename)
 			return
 

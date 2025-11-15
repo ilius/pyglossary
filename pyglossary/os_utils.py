@@ -52,6 +52,7 @@ class indir:
 		self.old_pwd = os.getcwd()
 		if os.path.exists(self.dir):
 			if self.clear:
+				log.debug(f"indir: removing {self.dir}")
 				shutil.rmtree(self.dir)
 				os.makedirs(self.dir)
 		elif self.create:
@@ -151,6 +152,7 @@ def _rmtreeException(
 def _rmtree(direc: str) -> None:
 	# in Python 3.12, onexc is added and onerror is deprecated
 	# https://github.com/python/cpython/blob/main/Lib/shutil.py
+	log.debug(f"_rmtree: removing {direc}")
 	if sys.version_info < (3, 12):
 		shutil.rmtree(direc, onerror=_rmtreeError)
 		return
