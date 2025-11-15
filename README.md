@@ -19,7 +19,7 @@ languages is taken into account. Pull requests are welcome.
 
 ## Screenshots
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/44-gtk-txt-stardict-aryanpur-dark.png" width="50%" height="50%"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/52-gtk3-txt-stardict-aryanpur-dark2.png" width="50%" height="50%"/>
 
 Linux - Gtk3-based interface
 
