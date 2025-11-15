@@ -1496,6 +1496,7 @@ class MainWindow(gtk.Dialog):
 			gtk.main_iteration_do(False)
 
 		self.convertButton.set_sensitive(False)
+		self.optionsButton.set_sensitive(False)
 		self.progressTitle = "Converting"
 		readOptions = self.inputFormatBox.optionsValues
 		writeOptions = self.outputFormatBox.optionsValues
@@ -1532,6 +1533,7 @@ class MainWindow(gtk.Dialog):
 
 		finally:
 			self.convertButton.set_sensitive(True)
+			self.optionsButton.set_sensitive(True)
 			self.assert_quit = False
 			self.progressTitle = ""
 
