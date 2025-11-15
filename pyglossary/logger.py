@@ -227,6 +227,18 @@ class StdLogHandler(logging.Handler):
 		fp.flush()
 
 
+# https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-messageboxw
+def _windowsShowErrorDialog(msg: str) -> None:
+	import ctypes
+
+	ctypes.windll.user32.MessageBoxW(  # type: ignore
+		0,  # handle to the owner window of the message box
+		msg,  # message to be displayed
+		"PyGlossary Error",  # dialog box title
+		0,  # uType: flags for contents and behavior of the dialog box
+	)
+
+
 def setupLogging() -> Logger:
 	logging.setLoggerClass(Logger)
 	log = cast("Logger", logging.getLogger("pyglossary"))
@@ -240,7 +252,6 @@ def setupLogging() -> Logger:
 		) -> None:
 			if not (type_ and exc and tback):
 				return
-			import ctypes
 
 			msg = format_exception(
 				exc_info=(type_, exc, tback),
@@ -248,7 +259,7 @@ def setupLogging() -> Logger:
 				add_globals=False,
 			)
 			log.critical(msg)
-			ctypes.windll.user32.MessageBoxW(0, msg, "PyGlossary Error", 0)  # type: ignore
+			_windowsShowErrorDialog(msg)
 
 		sys.excepthook = _windows_show_exception
 
