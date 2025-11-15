@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING
+from xml.sax.saxutils import quoteattr
 
 from pyglossary.core import cacheDir, exc_note, log, pip
 
@@ -103,9 +104,10 @@ class Reader:
 			if zEntry.is_redirect:
 				redirectCount += 1
 				targetWord = zEntry.get_redirect_entry().title
+				hrefQuoted = quoteattr("bword://" + targetWord)
 				yield glos.newEntry(
 					term,
-					f'Redirect: <a href="bword://{targetWord}">{targetWord}</a>',
+					f"Redirect: <a href={hrefQuoted}>{targetWord}</a>",
 					defiFormat="h",
 				)
 				continue
