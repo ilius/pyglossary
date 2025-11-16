@@ -25,7 +25,7 @@ Linux - Gtk3-based interface
 
 ______________________________________________________________________
 
-<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/40b-tk-bgl-epub-es-en-2.png" width="50%" height="50%"/>
+<img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/52-tk-dsl-stardict-windows-greek.png" width="50%" height="50%"/>
 
 Windows - Tkinter-based interface
 
