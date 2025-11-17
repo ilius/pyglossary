@@ -870,7 +870,7 @@ class SortOptionsBox(gtk.Box):
 		pack(self, hbox, 0, 0, padding=5)
 		###
 		hbox = self.encodingHBox = gtk.HBox()
-		encodingCheck = self.encodingCheck = gtk.CheckButton(label="Sort Encoding")
+		encodingCheck = self.encodingCheck = gtk.RadioButton(label="Sort Encoding")
 		encodingEntry = self.encodingEntry = gtk.Entry()
 		encodingEntry.set_text("utf-8")
 		encodingEntry.set_width_chars(15)
@@ -879,22 +879,16 @@ class SortOptionsBox(gtk.Box):
 		pack(hbox, encodingEntry, 0, 0, padding=5)
 		pack(self, hbox, 0, 0, padding=5)
 		###
-		# RadioButton in Gtk3 is very unstable,
-		# I could not make set_group work at all!
-		# encodingRadio.get_group() == [encodingRadio]
-		# localeRadio.set_group(encodingRadio) says:
-		#     TypeError: Must be sequence, not RadioButton
-		# localeRadio.set_group([encodingRadio]) causes a crash!!
-		# but localeRadio.join_group(encodingRadio) works,
-		#     so does group= argument to RadioButton()
-		# Note: RadioButton does not exist in Gtk 4.0,
-		# you have to use CheckButton with its new set_group() method
-
 		hbox = self.localeHBox = gtk.HBox()
 		localeEntry = self.localeEntry = gtk.Entry()
 		localeEntry.set_width_chars(15)
+		localeEntry.set_text("latin")
 		pack(hbox, gtk.Label(label="    "))
-		pack(hbox, gtk.Label(label="Sort Locale"), 0, 0)
+		self.localeCheck = gtk.RadioButton(
+			label="Sort Locale",
+			group=self.encodingCheck,
+		)
+		pack(hbox, self.localeCheck, 0, 0)
 		pack(hbox, localeEntry, 0, 0, padding=5)
 		pack(self, hbox, 0, 0, padding=5)
 		###
@@ -914,16 +908,18 @@ class SortOptionsBox(gtk.Box):
 		self.encodingHBox.set_sensitive(sort)
 		self.localeHBox.set_sensitive(sort)
 
+		if "sortEncoding" in convertOptions:
+			self.encodingCheck.set_active(True)
+			self.encodingEntry.set_text(convertOptions["sortEncoding"])
+
 		sortKeyName = convertOptions.get("sortKeyName")
 		if sortKeyName:
 			sortKeyName, _, localeName = sortKeyName.partition(":")
 			if sortKeyName:
 				self.sortKeyCombo.set_active(sortKeyNames.index(sortKeyName))
 			self.localeEntry.set_text(localeName)
-
-		if "sortEncoding" in convertOptions:
-			self.encodingCheck.set_active(True)
-			self.encodingEntry.set_text(convertOptions["sortEncoding"])
+			if localeName:
+				self.localeCheck.set_active(True)
 
 	def applyChanges(self) -> None:
 		convertOptions = self.ui.convertOptions
@@ -934,16 +930,20 @@ class SortOptionsBox(gtk.Box):
 					del convertOptions[param]
 			return
 
+		convertOptions["sort"] = True
+
 		sortKeyDesc = self.sortKeyCombo.get_active_text()
 		sortKeyName = sortKeyNameByDesc[sortKeyDesc]
-		sortLocale = self.localeEntry.get_text()
-		if sortLocale:
-			sortKeyName = f"{sortKeyName}:{sortLocale}"
-
-		convertOptions["sort"] = True
-		convertOptions["sortKeyName"] = sortKeyName
-		if self.encodingCheck.get_active():
+		if self.localeCheck.get_active():
+			sortLocale = self.localeEntry.get_text()
+			if sortLocale:
+				sortKeyName = f"{sortKeyName}:{sortLocale}"
+				if "sortEncoding" in convertOptions:
+					del convertOptions["sortEncoding"]
+		elif self.encodingCheck.get_active():
 			convertOptions["sortEncoding"] = self.encodingEntry.get_text()
+
+		convertOptions["sortKeyName"] = sortKeyName
 
 
 class GeneralOptionsDialog(gtk.Dialog):
