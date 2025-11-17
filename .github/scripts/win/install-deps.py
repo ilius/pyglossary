@@ -1,7 +1,8 @@
 import subprocess
 import sys
 
-icuVer = "2.15"
+icuTag = "v2.16.0"
+icuFileVersion = "2.16"
 lzoVer = "1.16"
 
 icuDownload = "https://github.com/cgohlke/pyicu-build/releases/download"
@@ -19,7 +20,7 @@ def install(*args: str) -> None:
 
 
 install(
-	f"{icuDownload}/v{icuVer}/PyICU-{icuVer}-{pyVerSuffix}-win_amd64.whl",
+	f"{icuDownload}/{icuTag}/PyICU-{icuFileVersion}-{pyVerSuffix}-win_amd64.whl",
 )
 
 install(
