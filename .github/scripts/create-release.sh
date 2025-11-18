@@ -5,4 +5,9 @@ if pip index versions pyglossary --pre --ignore-requires-python | grep "$VERSION
 	exit 0
 fi
 sudo rm -rf dist/* build/* || true
+
+python3 -m pip install -U setuptools packaging
+
+export NO_GIT_VERSION=1
+
 python3 setup.py sdist bdist_wheel

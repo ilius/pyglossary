@@ -37,6 +37,8 @@ def getGitVersion(gitDir: str) -> str:
 
 
 def getPipSafeVersion() -> str:
+	if os.getenv("NO_GIT_VERSION"):
+		return VERSION
 	gitDir = ".git"
 	if isdir(gitDir):
 		version = getGitVersion(gitDir)

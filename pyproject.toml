@@ -421,7 +421,7 @@ exclude_toplevel_module = [
 
 [build-system]
 requires = [
-	"setuptools", # min version?
+	"setuptools >= 77.0.3",
 	# "setuptools_scm[toml] >= 4, <6",
 	# "setuptools_scm_git_archive",
 	# "wheel >= 0.29.0",
