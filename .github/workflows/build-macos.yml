@@ -41,8 +41,7 @@ jobs:
           # ref: build-release
 
       - name: Update brew
-        run: |
-          brew update
+        run: brew update
 
       - name: Install brew dependencies
         run: |
@@ -91,8 +90,7 @@ jobs:
 
       - name: Set pip build vars
         id: envpip
-        run: |
-          bash .github/scripts/mac/prepare-env-vars.sh
+        run: bash .github/scripts/mac/prepare-env-vars.sh
 
       - name: Print env vars
         run: |
@@ -106,13 +104,10 @@ jobs:
           echo "DYLD_LIBRARY_PATH: $DYLD_LIBRARY_PATH"
 
       - name: Install pyglossary dependencies
-        run: |
-          scripts/ci/mac/prepare-deps.sh
+        run: bash scripts/ci/mac/prepare-deps.sh
 
       - name: Patch sources for nuitka build
-        shell: bash
-        run: |
-          python3 scripts/ci/mac/patch_sources.py
+        run: python3 scripts/ci/mac/patch_sources.py
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PREFIX_ICU4C/lib:$PREFIX_LZO/lib:$PREFIX_LZO/lib:$PREFIX_LIBFFI/lib:$PYTHONPATH" >> $GITHUB_ENV
@@ -120,13 +115,10 @@ jobs:
       - name: nuitka Build
         env:
           PYTHONWARNDEFAULTENCODING: 0
-        run: |
-          bash scripts/ci/mac/nuitka-build.sh
+        run: bash scripts/ci/mac/nuitka-build.sh
 
       - name: Copy assets
-        shell: bash
-        run: |
-          python3 scripts/ci/mac/copy_assets.py
+        run: python3 scripts/ci/mac/copy_assets.py
 
       # - name: Upload Artifacts zip
       #   uses: actions/upload-artifact@v4
@@ -138,9 +130,7 @@ jobs:
       #       ${{ env.DIST_DIR }}/${{ env.APPNAME }}.app
 
       - name: Create DMG
-        shell: bash
-        run: |
-          bash scripts/ci/mac/make-dmg.sh ${{ env.APPNAME }} ${{ env.DIST_DIR }} ${{ matrix.os }} ${{ env.VERSION }} ${{ env.VERSION_WITH_HASH }}
+        run: bash scripts/ci/mac/make-dmg.sh ${{ matrix.os }}
       
       - name: Upload Artifacts DMG
         if: true
