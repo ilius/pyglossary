@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-rootDir=$(dirname $(dirname "$0"))
+rootDir=$(dirname $(realpath $(dirname "$0")))
 
 mkdir -p "$HOME/.cache/pyglossary/tmp"
 cd "$HOME/.cache/pyglossary/tmp"
