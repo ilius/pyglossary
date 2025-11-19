@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: sh ./scripts/test-deps.sh
       - name: Run tests
-        run: bash ./.github/scripts/test-deprecated.sh
+        run: bash scripts/ci/test-deprecated.sh
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4

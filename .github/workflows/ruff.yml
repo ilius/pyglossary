@@ -22,4 +22,4 @@ jobs:
       - name: Format and check code with ruff
         run: ./ruff format; ./ruff check --fix --preview
       - name: Check for changes
-        run: ./.github/scripts/no-diff.sh
+        run: bash scripts/ci/no-diff.sh

@@ -26,4 +26,4 @@ jobs:
       - name: Format .md files
         run: find . -name '*.md' | grep -v '/__' | xargs mdformat
       - name: Check for changes
-        run: ./.github/scripts/no-diff.sh
+        run: bash scripts/ci/no-diff.sh
