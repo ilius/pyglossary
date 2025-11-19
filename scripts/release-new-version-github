@@ -34,11 +34,20 @@ fi
 
 set -x
 
-$(dirname "$0")/version-set.py "$VERSION"
+if git cat-file tag $VERSION 2>/dev/null ; then
+	CUR_VERSION=$(git describe --abbrev=0 --tags "$VERSION^")
+	# CUR_VERSION=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+	echo CUR_VERSION=$CUR_VERSION
+	TAG_EXISTS=1
+else
+	$(dirname "$0")/version-set.py "$VERSION"
+	git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
+	git commit -m "version $VERSION" || echo "------ Already committed"
+	git -p show || true
+	TAG_EXISTS=
+fi
 
-git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
-git commit -m "version $VERSION" || echo "------ Already committed"
-git -p show || true
+
 git -p log || true
 
 echo "Press Enter to continue"
@@ -58,10 +67,9 @@ echo "-------------- Check version in GUI: --------------"
 
 yes_or_no "Continue creating the release?" || exit 1
 
-echo "Creating tag $VERSION"
-if ! git tag -a -m "version $VERSION" "$VERSION"; then
-	echo "------ Already tagged"
-	CUR_VERSION=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+if [ -z $TAG_EXISTS ] ; then
+	echo "Creating tag $VERSION"
+	git tag -a -m "version $VERSION" "$VERSION"
 fi
 
 echo "Pushing tag to origin..."
