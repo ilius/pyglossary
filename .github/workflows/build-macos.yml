@@ -107,12 +107,12 @@ jobs:
 
       - name: Install pyglossary dependencies
         run: |
-          .github/scripts/mac/prepare-deps.sh
+          scripts/ci/mac/prepare-deps.sh
 
       - name: Patch sources for nuitka build
         shell: bash
         run: |
-          python3 .github/scripts/mac/patch_sources.py
+          python3 scripts/ci/mac/patch_sources.py
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PREFIX_ICU4C/lib:$PREFIX_LZO/lib:$PREFIX_LZO/lib:$PREFIX_LIBFFI/lib:$PYTHONPATH" >> $GITHUB_ENV
@@ -121,12 +121,12 @@ jobs:
         env:
           PYTHONWARNDEFAULTENCODING: 0
         run: |
-          bash .github/scripts/mac/nuitka-build.sh
+          bash scripts/ci/mac/nuitka-build.sh
 
       - name: Copy assets
         shell: bash
         run: |
-          python3 .github/scripts/mac/copy_assets.py
+          python3 scripts/ci/mac/copy_assets.py
 
       # - name: Upload Artifacts zip
       #   uses: actions/upload-artifact@v4
@@ -140,7 +140,7 @@ jobs:
       - name: Create DMG
         shell: bash
         run: |
-          bash .github/scripts/mac/make-dmg.sh ${{ env.APPNAME }} ${{ env.DIST_DIR }} ${{ matrix.os }} ${{ env.VERSION }} ${{ env.VERSION_WITH_HASH }}
+          bash scripts/ci/mac/make-dmg.sh ${{ env.APPNAME }} ${{ env.DIST_DIR }} ${{ matrix.os }} ${{ env.VERSION }} ${{ env.VERSION_WITH_HASH }}
       
       - name: Upload Artifacts DMG
         if: true
