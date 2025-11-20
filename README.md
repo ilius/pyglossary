@@ -288,7 +288,7 @@ See [doc/lib-usage.md](./doc/lib-usage.md) for how to use PyGlossary as a Python
 
 To learn how to develop plugins, see [test plugin](./pyglossary/plugins/testformat/) as a basic example, or [CSV plugin](./pyglossary/plugins/csv_plugin) for example.
 
-Whenever you add a new plugin, or change options/metedata of an existing plugin, make sure to run [`./scripts/gen.sh`](./scripts/gen.sh) script to update generated files (index and documentation) that we keep.
+Whenever you add a new plugin, or change options/metedata of an existing plugin, make sure to run [`./scripts/gen`](./scripts/gen) script to update generated files (index and documentation) that we keep.
 
 ## Internals
 

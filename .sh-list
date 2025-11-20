@@ -2,7 +2,7 @@ run-with-docker.sh
 scripts/docker-deb-setup.sh
 scripts/doc-pypi-links.sh
 scripts/format-code
-scripts/gen.sh
+scripts/gen
 scripts/get-unlisted-formats.sh
 scripts/mypy-deps.sh
 scripts/test-cover-html-plugin.sh

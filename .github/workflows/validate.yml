@@ -31,6 +31,6 @@ jobs:
       - name: Generate auto-generated files
         run: |
           python -m pip install mako
-          ./scripts/gen.sh
+          ./scripts/gen
       - name: Check for changes
         run: bash scripts/ci/no-diff.sh
