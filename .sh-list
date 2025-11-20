@@ -1,8 +1,4 @@
 run-with-docker.sh
-scripts/autofix-plugin-types
-scripts/check-missing-types
-scripts/check-style
-scripts/check-style-slow
 scripts/docker-deb-setup.sh
 scripts/doc-pypi-links.sh
 scripts/format-code
@@ -15,4 +11,12 @@ scripts/test-deps.sh
 scripts/test-glossary.sh
 scripts/test.sh
 scripts/version
-scripts/release-new-version.sh
+scripts/ci/no-diff.sh
+scripts/ci/test.sh
+scripts/ci/test-deprecated.sh
+scripts/ci/mac/nuitka-build.sh
+scripts/ci/mac/copy_assets.py
+scripts/ci/mac/make-dmg.sh
+scripts/ci/mac/Makefile
+scripts/ci/mac/patch_sources.py
+scripts/ci/mac/prepare-deps.sh
