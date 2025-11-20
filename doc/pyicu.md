@@ -7,7 +7,7 @@
 - openSUSE: `sudo zypper install python3-PyICU`
 - Fedora: `sudo dnf install python3-pyicu`
 - Other distros:
-  - Install [ICU](https://icu.unicode.org/) >= 4.8
+  - Install [ICU](https://icu.unicode.org/)
   - Run `sudo pip3 install PyICU` or `pip3 install PyICU --user`
 
 ## Installation on Android with Termux
@@ -33,13 +33,12 @@ python3 -m pip install PyICU
 
 - Download latest file that matches your system:
 
-  - `cp39` for Python 3.9, `cp38` for Python 3.8, etc.
+  - `cp313` for Python 3.13, `cp312` for Python 3.12, etc.
   - `win_amd64` for Windows 64-bit, `win32` for Windows 32-bit.
 
   For example:
 
-  - `PyICU‑2.6‑cp39‑cp39‑win_amd64.whl` for 64-bit with Python 3.9
-  - `PyICU‑2.6‑cp39‑cp39‑win32.whl` for 32-bit with Python 3.9
+  - `pyicu-2.16-cp313-cp313-win_amd64.whl` for 64-bit with Python 3.13
 
 - Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
 
