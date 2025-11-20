@@ -8,9 +8,9 @@ rm $myDir1/../doc/p/*.md || true
 
 set -x
 
-python "$myDir1/plugin-index.py"
-python "$myDir1/plugin-doc.py"
+python "$myDir1/gen.d/plugin-index.py"
+python "$myDir1/gen.d/plugin-doc.py"
 
-python "$myDir1/config-doc.py"
-python "$myDir1/entry-filters-doc.py"
-python "$myDir1/requirements-gen.py"
+python "$myDir1/gen.d/config-doc.py"
+python "$myDir1/gen.d/entry-filters-doc.py"
+python "$myDir1/gen.d/requirements.py"

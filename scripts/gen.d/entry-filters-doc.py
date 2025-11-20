@@ -5,7 +5,7 @@ from os.path import abspath, dirname, join
 
 from mako.template import Template
 
-rootDir = dirname(dirname(abspath(__file__)))
+rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from pyglossary.entry_filters import entryFiltersRules

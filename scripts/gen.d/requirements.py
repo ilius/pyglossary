@@ -4,7 +4,7 @@ import sys
 from os.path import abspath, dirname
 from pathlib import Path
 
-rootDir = dirname(dirname(abspath(__file__)))
+rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from pyglossary.core import userPluginsDir
