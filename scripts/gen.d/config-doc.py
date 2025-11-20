@@ -7,7 +7,8 @@ from os.path import abspath, dirname, join
 
 from mako.template import Template
 
-rootDir = dirname(dirname(dirname(abspath(__file__))))
+myDir = dirname(abspath(__file__))
+rootDir = dirname(dirname(myDir))
 sys.path.insert(0, rootDir)
 
 from pyglossary.ui.base import UIBase
@@ -51,7 +52,7 @@ For example:
 """,
 )
 
-with open(join(rootDir, "scripts/term-colors.json"), encoding="utf-8") as _file:
+with open(join(myDir, "term-colors.json"), encoding="utf-8") as _file:
 	termColors = json.load(_file)
 
 
