@@ -1,7 +1,5 @@
 run-with-docker.sh
 scripts/docker-deb-setup.sh
-scripts/doc-pypi-links.sh
-scripts/format-code
 scripts/gen
 scripts/get-unlisted-formats.sh
 scripts/mypy-deps.sh
