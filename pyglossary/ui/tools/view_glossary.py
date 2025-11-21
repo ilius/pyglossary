@@ -123,8 +123,8 @@ def main() -> None:
 	)
 	parser.add_argument(
 		"--format",
-		dest="formatName",
-		default=None,
+		action="append",
+		default=[],
 		help="format name",
 	)
 	parser.add_argument(
@@ -142,9 +142,15 @@ def main() -> None:
 	)
 	args = parser.parse_args()
 
+	if len(args.format) > 1:
+		parser.print_usage(sys.stderr)
+		print("multiple --format not allowed", file=sys.stderr)
+		sys.exit(1)
+	formatName = args.format[0] if args.format else None
+
 	viewGlossary(
 		os.path.expanduser(args.filename[0]),
-		formatName=args.formatName,
+		formatName=formatName,
 		noRes=args.noRes,
 	)
 
