@@ -1363,32 +1363,6 @@ class UI(tk.Frame, UIBase):
 		)
 		######################
 		row += 1
-		label = ttk.Label(convertFrame, text="Output Format: ")
-		label.grid(
-			row=row,
-			column=0,
-			sticky=tk.W,
-			padx=5,
-		)
-		##
-		self.formatButtonOutputConvert = FormatButton(
-			rootWin,
-			master=convertFrame,
-			descList=writeDesc,
-			dialogTitle="Select Output Format",
-			onChange=self.outputFormatChanged,
-		)
-		self.formatButtonOutputConvert.grid(
-			row=row,
-			column=1,
-			columnspan=2,
-			sticky=tk.W,
-			padx=0,
-		)
-		##
-		self.outputFormatRow = row
-		###################
-		row += 1
 		label = ttk.Label(convertFrame, text="Output File: ")
 		label.grid(
 			row=row,
@@ -1420,6 +1394,32 @@ class UI(tk.Frame, UIBase):
 			sticky=tk.W + tk.E,
 			padx=5,
 		)
+		###################
+		row += 1
+		label = ttk.Label(convertFrame, text="Output Format: ")
+		label.grid(
+			row=row,
+			column=0,
+			sticky=tk.W,
+			padx=5,
+		)
+		##
+		self.formatButtonOutputConvert = FormatButton(
+			rootWin,
+			master=convertFrame,
+			descList=writeDesc,
+			dialogTitle="Select Output Format",
+			onChange=self.outputFormatChanged,
+		)
+		self.formatButtonOutputConvert.grid(
+			row=row,
+			column=1,
+			columnspan=2,
+			sticky=tk.W,
+			padx=0,
+		)
+		##
+		self.outputFormatRow = row
 		###################
 		row += 1
 		optionsMenu = tk.Menu(tearoff=False)
