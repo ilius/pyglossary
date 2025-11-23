@@ -357,8 +357,7 @@ class FormatDialog(tk.Toplevel):
 		)
 
 		entryBox = ttk.Frame(master=self)
-		label = ttk.Label(master=entryBox, text="Search: ")
-		label.pack(side="left")
+		ttk.Label(master=entryBox, text="Search: ").pack(side="left")
 		entry = self.entry = ttk.Entry(master=entryBox)
 		entry.pack(fill="x", expand=True, side="left")
 		entryBox.pack(fill="x", padx=5, pady=5)
@@ -1293,8 +1292,7 @@ class UI(tk.Frame, UIBase):
 		convertFrame = ttk.Frame(notebook, height=200)
 		###################
 		row = 0
-		label = ttk.Label(convertFrame, text="Input File: ")
-		label.grid(
+		ttk.Label(convertFrame, text="Input File: ").grid(
 			row=row,
 			column=0,
 			sticky=tk.W,
@@ -1327,8 +1325,7 @@ class UI(tk.Frame, UIBase):
 		)
 		######################
 		row += 1
-		label = ttk.Label(convertFrame, text="Input Format: ")
-		label.grid(
+		ttk.Label(convertFrame, text="Input Format: ").grid(
 			row=row,
 			column=0,
 			sticky=tk.W,
@@ -1352,19 +1349,16 @@ class UI(tk.Frame, UIBase):
 		##
 		self.readOptions: dict[str, Any] = {}
 		self.writeOptions: dict[str, Any] = {}
-		self.inputFormatRow = row
 		######################
 		row += 1
-		label = ttk.Label(convertFrame)
-		label.grid(
+		ttk.Label(convertFrame).grid(
 			row=row,
 			column=0,
 			sticky=tk.W,
 		)
 		######################
 		row += 1
-		label = ttk.Label(convertFrame, text="Output File: ")
-		label.grid(
+		ttk.Label(convertFrame, text="Output File: ").grid(
 			row=row,
 			column=0,
 			sticky=tk.W,
@@ -1396,8 +1390,7 @@ class UI(tk.Frame, UIBase):
 		)
 		###################
 		row += 1
-		label = ttk.Label(convertFrame, text="Output Format: ")
-		label.grid(
+		ttk.Label(convertFrame, text="Output Format: ").grid(
 			row=row,
 			column=0,
 			sticky=tk.W,
@@ -1418,8 +1411,6 @@ class UI(tk.Frame, UIBase):
 			sticky=tk.W,
 			padx=0,
 		)
-		##
-		self.outputFormatRow = row
 		###################
 		row += 1
 		optionsMenu = tk.Menu(tearoff=False)
@@ -1573,8 +1564,7 @@ class UI(tk.Frame, UIBase):
 		)
 		clearB.pack(side="left")
 		####
-		label = ttk.Label(statusBarFrame, text="Verbosity")
-		label.pack(side="left")
+		ttk.Label(statusBarFrame, text="Verbosity").pack(side="left")
 		##
 		comboVar = tk.StringVar()
 		verbosity = log.getVerbosity()
