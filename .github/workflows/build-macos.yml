@@ -7,6 +7,10 @@ on:
       - 'build-release'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   UV_SYSTEM_PYTHON: 0
   PYTHONWARNINGS: ignore::EncodingWarning
