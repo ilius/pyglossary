@@ -248,7 +248,6 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.app,
 			parent=self,
 			labelSizeGroup=labelSizeGroup,
-			buttonSizeGroup=buttonSizeGroup,
 		)
 		self.inOutBoxes.append(self.inputFormatBox)
 		pack(page, self.inputFormatBox)
@@ -269,7 +268,6 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.app,
 			parent=self,
 			labelSizeGroup=labelSizeGroup,
-			buttonSizeGroup=buttonSizeGroup,
 		)
 		self.inOutBoxes.append(self.outputFormatBox)
 		pack(page, self.outputFormatBox)
@@ -335,6 +333,10 @@ progressbar progress, trough {min-height: 0.6em;}
 	def readOptionsClicked(self, _action: gtk.Action, _param: Any) -> None:
 		formatName = self.inputFormatBox.getActive()
 		if not formatName:
+			log.error("Read Options: input format is not selected")
+			return
+		if not Glossary.formatsReadOptions[formatName]:
+			log.warning(f"Read Options: there is none for {formatName}")
 			return
 		dialog = FormatOptionsDialog(
 			app=self.app,
@@ -350,6 +352,10 @@ progressbar progress, trough {min-height: 0.6em;}
 	def writeOptionsClicked(self, _action: gtk.Action, _param: Any) -> None:
 		formatName = self.outputFormatBox.getActive()
 		if not formatName:
+			log.error("Write Options: output format is not selected")
+			return
+		if not Glossary.formatsWriteOptions[formatName]:
+			log.warning(f"Write Options: there is none for {formatName}")
 			return
 		dialog = FormatOptionsDialog(
 			app=self.app,

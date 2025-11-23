@@ -570,7 +570,6 @@ class FormatBox(gtk.Box):
 		descList: list[str],
 		parent: gtk.Widget | None = None,
 		labelSizeGroup: gtk.SizeGroup = None,
-		buttonSizeGroup: gtk.SizeGroup = None,  # noqa: ARG002
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL, spacing=3)
 
