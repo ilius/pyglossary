@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           # TODO: !!! comment out before merging to master
-          # ref: build-release
+          ref: build-release
 
       - name: Update brew
         run: brew update
@@ -61,12 +61,13 @@ jobs:
 
       - name: Cache uv
         uses: actions/cache@v4
+        env:
+          BASE_KEY: ${{ runner.os }}-uv-${{ matrix.python-version }}-
+          UV_HASH: ${{ hashFiles('pyproject.toml', 'uv.lock') }}
         with:
           path: ~/.cache/uv
-          key: >-
-            ${{ runner.os }}-uv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-${{ matrix.python-version }}-
+          key: ${{ env.BASE_KEY }}${{ env.UV_HASH }}
+          restore-keys: ${{ env.BASE_KEY }}
 
       - name: Create venv
         run: |
