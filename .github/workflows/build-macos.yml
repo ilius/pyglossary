@@ -34,6 +34,7 @@ jobs:
       matrix:
         python-version: ['3.13']
         os:
+          - macos-13  # will be dropped soon
           - macos-14
           - macos-15
       fail-fast: true
