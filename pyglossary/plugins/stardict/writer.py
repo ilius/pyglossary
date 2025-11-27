@@ -56,14 +56,13 @@ def _newlinesToBr(text: str) -> str:
 class Writer:
 	_large_file: bool = False
 	_dictzip: bool = False
+	_dictzip_syn: bool = False
 	_sametypesequence: Literal["", "h", "m", "x", "-"] = ""
 	_stardict_client: bool = False
 	_audio_goldendict: bool = False
 	_audio_icon: bool = True
 	_autosqlite: bool = True
 	_sqlite: bool = False
-
-	dictzipSynFile = True
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
@@ -148,8 +147,9 @@ class Writer:
 
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
+		if self._dictzip_syn:
 			syn_file = f"{self._filename}.syn"
-			if os.path.exists(syn_file) and self.dictzipSynFile:
+			if os.path.exists(syn_file):
 				runDictzip(syn_file)
 
 	def fixDefi(self, defi: str, defiFormat: str) -> bytes:

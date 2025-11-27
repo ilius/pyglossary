@@ -1508,6 +1508,11 @@
 				"type": "bool",
 				"comment": "Compress .dict file to .dict.dz"
 			},
+			"dictzip_syn": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Compress .syn file to .syn.dz"
+			},
 			"sametypesequence": {
 				"class": "StrOption",
 				"type": "str",
@@ -1576,6 +1581,7 @@
 		"writeOptions": {
 			"large_file": false,
 			"dictzip": false,
+			"dictzip_syn": false,
 			"sametypesequence": "",
 			"stardict_client": false,
 			"audio_goldendict": false,

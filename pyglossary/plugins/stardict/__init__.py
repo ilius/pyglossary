@@ -63,6 +63,9 @@ optionsProp: dict[str, Option] = {
 	"dictzip": BoolOption(
 		comment="Compress .dict file to .dict.dz",
 	),
+	"dictzip_syn": BoolOption(
+		comment="Compress .syn file to .syn.dz",
+	),
 	"sametypesequence": StrOption(
 		values=["", "h", "m", "x", "-"],
 		comment="Definition format: h=html, m=plaintext, x=xdxf",

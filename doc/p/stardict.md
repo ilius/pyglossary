@@ -31,6 +31,7 @@
 | ---------------- | ------- | ---- | -------------------------------------------------------------- |
 | large_file       | `False` | bool | Use idxoffsetbits=64 bits, for large files only                |
 | dictzip          | `False` | bool | Compress .dict file to .dict.dz                                |
+| dictzip_syn      | `False` | bool | Compress .syn file to .syn.dz                                  |
 | sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf                 |
 | stardict_client  | `False` | bool | Modify html entries for StarDict 3.0                           |
 | audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop)                   |
