@@ -122,10 +122,10 @@ if __name__ == "__main__":
 
 pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values()}
 readFormatDescList = [
-	Glossary.plugins[_format].description for _format in Glossary.readFormats
+	Glossary.plugins[format_].description for format_ in Glossary.readFormats
 ]
 writeFormatDescList = [
-	Glossary.plugins[_format].description for _format in Glossary.writeFormats
+	Glossary.plugins[format_].description for format_ in Glossary.writeFormats
 ]
 
 convertOptionsFlags = {
@@ -358,7 +358,7 @@ class UI(ui_cmd.UI):
 				continue
 
 			contents = os.listdir(arg)
-			statList = [os.lstat(join(arg, _path)) for _path in contents]
+			statList = [os.lstat(join(arg, relPath)) for relPath in contents]
 			maxFileSize = max(st.st_size for st in statList)
 			sizeWidth = len(str(maxFileSize))
 			for pathI, path_ in enumerate(contents):
@@ -880,7 +880,7 @@ class UI(ui_cmd.UI):
 
 	def setSortKey(self) -> None:
 		completer = WordCompleter(
-			[_sk.name for _sk in namedSortKeyList],
+			[sk.name for sk in namedSortKeyList],
 			ignore_case=False,
 			match_middle=True,
 			sentence=True,

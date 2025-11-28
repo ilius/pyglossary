@@ -70,8 +70,8 @@ class TestGlossaryBase(unittest.TestCase):
 		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def addDirCRC32(self, dirPath: str, files: dict[str, str]) -> None:
-		for fpath, _hash in files.items():
-			self.dataFileCRC32[f"{dirPath}/{fpath}"] = _hash
+		for fpath, hash_ in files.items():
+			self.dataFileCRC32[f"{dirPath}/{fpath}"] = hash_
 
 	# The setUp() and tearDown() methods allow you to define instructions that
 	# will be executed before and after each test method.
@@ -103,8 +103,8 @@ class TestGlossaryBase(unittest.TestCase):
 		crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(testCacheDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
-			with open(fpath, mode="rb") as _file:
-				data = _file.read()
+			with open(fpath, mode="rb") as file:
+				data = file.read()
 			if crc32hex(data) == crc32:
 				return fpath
 			if not os.getenv("TEST_REDOWNLOAD_OUTDATED_CACHE"):
@@ -130,8 +130,8 @@ class TestGlossaryBase(unittest.TestCase):
 			raise RuntimeError(
 				f"CRC32 check failed for downloaded file: {filename!r}: {actual_crc32}",
 			)
-		with open(fpath, mode="wb") as _file:
-			_file.write(data)
+		with open(fpath, mode="wb") as file:
+			file.write(data)
 		return fpath
 
 	def downloadDir(self, dirName: str, files: list[str]) -> str:
@@ -284,14 +284,14 @@ class TestGlossaryBase(unittest.TestCase):
 		msg = f"{outputFilename=}"
 
 		if sha1sum:
-			with open(outputFilename, mode="rb") as _file:
-				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
+			with open(outputFilename, mode="rb") as file:
+				actualSha1 = hashlib.sha1(file.read()).hexdigest()
 			self.assertEqual(sha1sum, actualSha1, msg)
 			return
 
 		if md5sum:
-			with open(outputFilename, mode="rb") as _file:
-				actualMd5 = hashlib.md5(_file.read()).hexdigest()
+			with open(outputFilename, mode="rb") as file:
+				actualMd5 = hashlib.md5(file.read()).hexdigest()
 			self.assertEqual(md5sum, actualMd5, msg)
 			return
 
@@ -734,10 +734,10 @@ class TestGlossary(TestGlossaryBase):
 			config={"save_info_json": True},
 			infoOverride={"input_file_size": None},
 		)
-		with open(infoPath, encoding="utf8") as _file:
-			infoDict = json.load(_file)
-		with open(self.downloadFile(f"{fname}-v2.info"), encoding="utf8") as _file:
-			infoDictExpected = json.load(_file)
+		with open(infoPath, encoding="utf8") as file:
+			infoDict = json.load(file)
+		with open(self.downloadFile(f"{fname}-v2.info"), encoding="utf8") as file:
+			infoDictExpected = json.load(file)
 		for key, value in infoDictExpected.items():
 			self.assertIn(key, infoDict)
 			self.assertEqual(value, infoDict.get(key))

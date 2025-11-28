@@ -327,8 +327,8 @@ class TestGlossaryErrorsStarDict(TestGlossaryErrorsBase):
 		inputFilename = self.newTempFilePath(f"{fname}.ifo")
 		outputFilename = self.newTempFilePath(f"{fname}.txt")
 
-		with open(inputFilename, mode="w", encoding="utf-8") as _file:
-			_file.write(
+		with open(inputFilename, mode="w", encoding="utf-8") as file:
+			file.write(
 				"""StarDict's dict ifo file
 version=3.0.0
 bookname=Test

@@ -28,7 +28,7 @@ class TestGlossaryKobo(TestGlossaryBase):
 			**convertArgs,
 		)
 		dataReplaceFuncs = {
-			_zfname: gzip.decompress for _zfname in sha1sumDict if _zfname != "words"
+			zfname: gzip.decompress for zfname in sha1sumDict if zfname != "words"
 		}
 		self.checkZipFileSha1sum(
 			outputFpath,

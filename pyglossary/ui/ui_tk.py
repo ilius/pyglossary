@@ -864,9 +864,9 @@ class FormatOptionsDialog(tk.Toplevel):
 		self.destroy()
 
 
-sortKeyNames = [_sk.name for _sk in namedSortKeyList]
-sortKeyNameByDesc = {_sk.desc: _sk.name for _sk in namedSortKeyList}
-sortKeyDescByName = {_sk.name: _sk.desc for _sk in namedSortKeyList}
+sortKeyNames = [sk.name for sk in namedSortKeyList]
+sortKeyNameByDesc = {sk.desc: sk.name for sk in namedSortKeyList}
+sortKeyDescByName = {sk.name: sk.desc for sk in namedSortKeyList}
 
 
 class SortOptionsBox(ttk.Frame):

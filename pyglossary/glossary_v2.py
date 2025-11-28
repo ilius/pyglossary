@@ -413,8 +413,8 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			return
 
 		self.progressInit("Writing")
-		for _entry in iterable:
-			entry = _entry
+		for entry_ in iterable:
+			entry = entry_
 			for f in filters:
 				entry = f.run(entry)  # type: ignore
 				# assert entry  # TODO: measure running time in non-optimized mode

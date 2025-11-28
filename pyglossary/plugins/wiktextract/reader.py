@@ -106,8 +106,8 @@ class Reader:
 			if not line:
 				continue
 			yield self.makeEntry(json_loads(line))
-		for _msg, count in self._warnings.most_common():
-			msg = _msg
+		for msg_, count in self._warnings.most_common():
+			msg = msg_
 			if count > 1:
 				msg = f"[{count} times] {msg}"
 			log.warning(msg)
@@ -280,15 +280,15 @@ class Reader:
 		if text:
 			hf.write(f"{text}: ")
 		with hf.element("audio", attrib={"controls": ""}):
-			for _format in self._audio_formats:
-				url = sound.get(f"{_format}_url")
+			for format_ in self._audio_formats:
+				url = sound.get(f"{format_}_url")
 				if not url:
 					continue
 				with hf.element(
 					"source",
 					attrib={
 						"src": url,
-						"type": f"audio/{_format}",
+						"type": f"audio/{format_}",
 					},
 				):
 					pass

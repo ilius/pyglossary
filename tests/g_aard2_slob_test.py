@@ -53,8 +53,8 @@ class TestGlossarySlob(TestGlossaryBase):
 			# slob file is different each time (and so its sha1sum and md5sum)
 		)
 		for size, fpath in files:
-			with open(fpath, mode="rb") as _file:
-				actualSize = len(_file.read())
+			with open(fpath, mode="rb") as file:
+				actualSize = len(file.read())
 			delta = actualSize - size
 			self.assertLess(
 				delta,

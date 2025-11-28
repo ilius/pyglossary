@@ -174,8 +174,8 @@ class Reader:
 			with gzip.open(self._filename + ".idx.gz") as g_file:
 				idxBytes = g_file.read()
 		else:
-			with open(self._filename + ".idx", "rb") as _file:
-				idxBytes = _file.read()
+			with open(self._filename + ".idx", "rb") as file:
+				idxBytes = file.read()
 
 		indexData: list[tuple[bytes, int, int]] = []
 		pos = 0
@@ -389,10 +389,10 @@ class Reader:
 		if isdir(self._resDir):
 			for fname in listFilesRecursiveRelPath(self._resDir):
 				fpath = join(self._resDir, fname)
-				with open(fpath, "rb") as _file:
+				with open(fpath, "rb") as file:
 					yield self._glos.newDataEntry(
 						fname,
-						_file.read(),
+						file.read(),
 					)
 
 	def readSynFile(self) -> dict[int, list[str]]:
@@ -404,11 +404,11 @@ class Reader:
 
 		synBytes = b""
 		if isfile(self._filename + ".syn"):
-			with open(self._filename + ".syn", mode="rb") as _file:
-				synBytes = _file.read()
+			with open(self._filename + ".syn", mode="rb") as file:
+				synBytes = file.read()
 		elif isfile(self._filename + ".syn.dz"):
-			with gzip.open(self._filename + ".syn.dz", mode="rb") as _zfile:
-				synBytes = _zfile.read()
+			with gzip.open(self._filename + ".syn.dz", mode="rb") as zfile:
+				synBytes = zfile.read()
 		else:
 			return {}
 

@@ -30,8 +30,8 @@ __all__ = ["SortOptionsBox"]
 # log = logging.getLogger("pyglossary")
 
 
-sortKeyNameByDesc = {_sk.desc: _sk.name for _sk in namedSortKeyList}
-sortKeyNames = [_sk.name for _sk in namedSortKeyList]
+sortKeyNameByDesc = {sk.desc: sk.name for sk in namedSortKeyList}
+sortKeyNames = [sk.name for sk in namedSortKeyList]
 
 
 # Note: RadioButton does not exist in Gtk 4.0,
@@ -50,8 +50,8 @@ class SortOptionsBox(gtk.Box):
 		hbox = HBox(spacing=5)
 		sortCheck = gtk.CheckButton(label="Sort entries by")
 		sortKeyCombo = gtk.ComboBoxText()
-		for _sk in namedSortKeyList:
-			sortKeyCombo.append_text(_sk.desc)
+		for sk in namedSortKeyList:
+			sortKeyCombo.append_text(sk.desc)
 		sortKeyCombo.set_active(sortKeyNames.index(defaultSortKeyName))
 		sortKeyCombo.set_sensitive(False)
 		# sortKeyCombo.connect("changed", self.sortKeyComboChanged)

@@ -178,8 +178,8 @@ class Reader:
 
 		resDir = self._resDir
 		for fname in self._resFileNames:
-			with open(join(resDir, fname), "rb") as _file:
+			with open(join(resDir, fname), "rb") as file:
 				yield self._glos.newDataEntry(
 					fname,
-					_file.read(),
+					file.read(),
 				)

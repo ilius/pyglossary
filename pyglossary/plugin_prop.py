@@ -326,11 +326,11 @@ class PluginProp:  # noqa: PLR0904
 		nameList = []
 
 		for cls in (*rwclass.__bases__, rwclass):
-			for _name in cls.__dict__:
-				if not _name.startswith("_") or _name.startswith("__"):
+			for name in cls.__dict__:
+				if not name.startswith("_") or name.startswith("__"):
 					# and _name not in ("_open",)
 					continue
-				nameList.append(_name)
+				nameList.append(name)
 
 		# rwclass.__dict__ does not include attributes of parent/base class
 		# and dir(rwclass) is sorted by attribute name alphabetically

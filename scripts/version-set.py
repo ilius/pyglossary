@@ -30,14 +30,14 @@ def main():
 def replaceVar(fname: str, name: str, value: str) -> None:
 	prefix = name + " = "
 	lines = []
-	with open(fname, encoding="utf-8") as _file:
-		for _line in _file:
-			line = _line
+	with open(fname, encoding="utf-8") as file:
+		for line_ in file:
+			line = line_
 			if line.startswith(prefix):
 				line = f"{name} = {value}\n"
 			lines.append(line)
-	with open(fname, mode="w", encoding="utf-8") as _file:
-		_file.writelines(lines)
+	with open(fname, mode="w", encoding="utf-8") as file:
+		file.writelines(lines)
 
 
 if __name__ == "__main__":

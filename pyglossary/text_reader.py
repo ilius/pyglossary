@@ -285,10 +285,10 @@ class TextGlossaryReader:
 			if not isfile(fpath):
 				log.error(f"No such file: {fpath}")
 				continue
-			with open(fpath, "rb") as _file:
+			with open(fpath, "rb") as file:
 				yield self._glos.newDataEntry(
 					fname,
-					_file.read(),
+					file.read(),
 				)
 
 	def __len__(self) -> int:

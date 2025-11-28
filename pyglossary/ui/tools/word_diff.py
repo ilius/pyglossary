@@ -73,10 +73,10 @@ def main_word_split() -> None:
 def main() -> None:
 	filename1 = sys.argv[1]
 	filename2 = sys.argv[2]
-	with open(filename1, encoding="utf-8") as _file:
-		text1 = _file.read()
-	with open(filename2, encoding="utf-8") as _file:
-		text2 = _file.read()
+	with open(filename1, encoding="utf-8") as file:
+		text1 = file.read()
+	with open(filename2, encoding="utf-8") as file:
+		text2 = file.read()
 	print(formatDiff(xmlDiff(text1, text2)))
 
 

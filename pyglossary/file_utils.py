@@ -10,10 +10,10 @@ __all__ = ["fileCountLines"]
 
 
 def fileCountLines(filename: str, newline: bytes = b"\n") -> int:
-	with open(filename, "rb") as _file:
+	with open(filename, "rb") as file:
 		bufgen = takewhile(
 			lambda x: x,  # predicate
-			(_file.read(1024 * 1024) for _ in repeat(None)),  # iterable
+			(file.read(1024 * 1024) for _ in repeat(None)),  # iterable
 		)
 		return sum(buf.count(newline) for buf in bufgen if buf)
 

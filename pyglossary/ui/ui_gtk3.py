@@ -844,8 +844,8 @@ class BrowseButton(gtk.Button):
 		fcd.destroy()
 
 
-sortKeyNameByDesc = {_sk.desc: _sk.name for _sk in namedSortKeyList}
-sortKeyNames = [_sk.name for _sk in namedSortKeyList]
+sortKeyNameByDesc = {sk.desc: sk.name for sk in namedSortKeyList}
+sortKeyNames = [sk.name for sk in namedSortKeyList]
 
 
 class SortOptionsBox(gtk.Box):
@@ -856,8 +856,8 @@ class SortOptionsBox(gtk.Box):
 		hbox = gtk.HBox()
 		sortCheck = gtk.CheckButton("Sort entries by")
 		sortKeyCombo = gtk.ComboBoxText()
-		for _sk in namedSortKeyList:
-			sortKeyCombo.append_text(_sk.desc)
+		for sk in namedSortKeyList:
+			sortKeyCombo.append_text(sk.desc)
 		sortKeyCombo.set_active(sortKeyNames.index(defaultSortKeyName))
 		sortKeyCombo.set_border_width(0)
 		sortKeyCombo.set_sensitive(False)

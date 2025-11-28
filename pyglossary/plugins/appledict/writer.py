@@ -92,8 +92,8 @@ def _write_header(
 		with open(
 			front_back_matter,
 			encoding="utf-8",
-		) as _file:
-			toFile.write(_file.read())
+		) as file:
+			toFile.write(file.read())
 
 
 def _format_default_prefs(default_prefs: dict[str, Any] | None) -> str:

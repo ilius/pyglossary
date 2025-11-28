@@ -77,8 +77,8 @@ class PluginLoader:
 	) -> list[PluginProp]:
 		import json
 
-		with open(jsonPath, encoding="utf-8") as _file:
-			data = json.load(_file)
+		with open(jsonPath, encoding="utf-8") as file:
+			data = json.load(file)
 
 		plugins: list[PluginProp] = []
 		for attrs in data:

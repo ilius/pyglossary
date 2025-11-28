@@ -28,8 +28,8 @@ class PinyinTest(unittest.TestCase):
 	def render(pinyin: str) -> str:
 		pinyin_list, tones = zip(*map(convert, pinyin.split()), strict=False)
 		f = BytesIO()
-		with ET.htmlfile(f, encoding="utf-8") as _hf:  # noqa: PLR1702
-			hf = cast("T_htmlfile", _hf)
+		with ET.htmlfile(f, encoding="utf-8") as hf_:  # noqa: PLR1702
+			hf = cast("T_htmlfile", hf_)
 			render_syllables(hf, pinyin_list, tones)
 
 		result = f.getvalue().decode("utf-8")
@@ -58,8 +58,8 @@ class DefinitionLinkTest(unittest.TestCase):
 	@staticmethod
 	def render_no_links(definition: str) -> str:
 		f = BytesIO()
-		with ET.htmlfile(f, encoding="utf-8") as _hf:
-			hf = cast("T_htmlfile", _hf)
+		with ET.htmlfile(f, encoding="utf-8") as hf_:
+			hf = cast("T_htmlfile", hf_)
 			render_definition_no_links(hf, definition=definition)
 
 		return f.getvalue().decode("utf-8")
@@ -67,8 +67,8 @@ class DefinitionLinkTest(unittest.TestCase):
 	@staticmethod
 	def render_with_links_simplified(definition: str) -> str:
 		f = BytesIO()
-		with ET.htmlfile(f, encoding="utf-8") as _hf:
-			hf = cast("T_htmlfile", _hf)
+		with ET.htmlfile(f, encoding="utf-8") as hf_:
+			hf = cast("T_htmlfile", hf_)
 			render_definition_with_links(
 				hf,
 				definition=definition,
@@ -80,8 +80,8 @@ class DefinitionLinkTest(unittest.TestCase):
 	@staticmethod
 	def render_with_links_traditional(definition: str) -> str:
 		f = BytesIO()
-		with ET.htmlfile(f, encoding="utf-8") as _hf:
-			hf = cast("T_htmlfile", _hf)
+		with ET.htmlfile(f, encoding="utf-8") as hf_:
+			hf = cast("T_htmlfile", hf_)
 			render_definition_with_links(
 				hf,
 				definition=definition,

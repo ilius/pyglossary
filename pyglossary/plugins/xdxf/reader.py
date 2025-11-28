@@ -109,8 +109,8 @@ class Reader:
 			cfile,
 			events=("end",),
 		)
-		for _, _elem in context:
-			elem = cast("Element", _elem)
+		for _, elem_ in context:
+			elem = cast("Element", elem_)
 			if elem.tag in {"meta_info", "ar", "k", "abr", "dtrn"}:
 				break
 			# every other tag before </meta_info> or </ar> is considered info
@@ -160,8 +160,8 @@ class Reader:
 			events=("end",),
 			tag="ar",
 		)
-		for _, _article in context:
-			article = cast("Element", _article)
+		for _, article_ in context:
+			article = cast("Element", article_)
 			article.tail = None
 			terms = [toStr(w) for w in self.titles(article)]
 			if self._htmlTr:

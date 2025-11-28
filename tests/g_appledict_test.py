@@ -25,10 +25,10 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 		self.dataFileCRC32.update(hashDict)
 
 	def comparePlist(self, fpath1, fpath2):
-		with open(fpath1, "rb") as _file:
-			data1 = plistlib.loads(_file.read())
-		with open(fpath2, "rb") as _file:
-			data2 = plistlib.loads(_file.read())
+		with open(fpath1, "rb") as file:
+			data1 = plistlib.loads(file.read())
+		with open(fpath2, "rb") as file:
+			data2 = plistlib.loads(file.read())
 		self.assertEqual(data1, data2)
 
 	def test_tabfile_without_morpho_to_appledict_source(self):

@@ -907,8 +907,8 @@ class Reader(ReaderUtils):
 			events=("end",),
 			tag=(_ENTRY, _INCLUDE),
 		)
-		for _, _elem in context:
-			elem = cast("Element", _elem)
+		for _, elem_ in context:
+			elem = cast("Element", elem_)
 
 			if elem.tag == _INCLUDE:
 				reader = self.loadInclude(elem)

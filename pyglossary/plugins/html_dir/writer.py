@@ -254,19 +254,19 @@ class Writer:
 			join(filename, "info.html"),
 			mode="w",
 			encoding=self._encoding,
-		) as _file:
-			_file.write(
+		) as file:
+			file.write(
 				infoHeader + "<table>"
 				"<tr>"
 				'<th width="%10">Key</th>'
 				'<th width="%90">Value</th>'
 				"</tr>\n",
 			)
-			_file.writelines(
+			file.writelines(
 				f"<tr><td>{key}</td><td>{value}</td></tr>\n"
 				for key, value in glos.iterInfo()
 			)
-			_file.write("</table></body></html>")
+			file.write("</table></body></html>")
 
 	@staticmethod
 	def _subResSrc(m: re.Match) -> str:

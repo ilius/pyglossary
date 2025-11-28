@@ -42,8 +42,8 @@ def extractInlineHtmlImages(
 	images: list[tuple[str, str]] = []
 	for imgFname, imgData in imageDataDict.items():
 		imgPath = join(outDir, imgFname)
-		with open(imgPath, mode="wb") as _file:
-			_file.write(imgData)
+		with open(imgPath, mode="wb") as file:
+			file.write(imgData)
 		del imgData
 		images.append((imgFname, imgPath))
 

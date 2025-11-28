@@ -79,8 +79,8 @@ class LangDict(dict):
 			return
 		t0 = now()
 		filename = join(rootDir, "pyglossary", "langs", "langs.json")
-		with open(filename, encoding="utf-8") as _file:
-			data = json.load(_file)
+		with open(filename, encoding="utf-8") as file:
+			data = json.load(file)
 			for row in data:
 				self._addLang(
 					Lang(

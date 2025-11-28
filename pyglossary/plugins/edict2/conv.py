@@ -205,8 +205,8 @@ def render_article(
 	pinyin_list, tones = _convert_pinyin(article.pinyin)
 
 	f = BytesIO()
-	with ET.htmlfile(f, encoding="utf-8") as _hf:  # noqa: PLR1702
-		hf = cast("T_htmlfile", _hf)
+	with ET.htmlfile(f, encoding="utf-8") as hf_:  # noqa: PLR1702
+		hf = cast("T_htmlfile", hf_)
 		with hf.element("div", style="border: 1px solid; padding: 5px"):
 			with hf.element("div"):
 				with hf.element("big"):

@@ -1495,17 +1495,17 @@ class Writer:
 		return cast("Slob", self)
 
 	def close(self) -> None:
-		for _file in (
+		for file in (
 			self.f_ref_positions,
 			self.f_refs,
 			self.f_store_positions,
 			self.f_store,
 		):
-			if _file is None:
+			if file is None:
 				continue
 			self._fire_event("WARNING: closing without finalize()")
 			try:
-				_file.close()
+				file.close()
 			except Exception:
 				pass
 		if self.tmpdir and isdir(self.tmpdir.name):

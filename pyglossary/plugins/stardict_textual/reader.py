@@ -133,7 +133,7 @@ class Reader:
 			return defisWithFormat[0]
 
 		defiFormatSet: set[str] = set()
-		defiFormatSet.update(_type for _, _type in defisWithFormat)
+		defiFormatSet.update(type_ for _, type_ in defisWithFormat)
 
 		if len(defiFormatSet) == 1:
 			format_ = defiFormatSet.pop()
@@ -163,8 +163,8 @@ class Reader:
 			events=("end",),
 			tag="article",
 		)
-		for _, _elem in context:
-			elem = cast("Element", _elem)
+		for _, elem_ in context:
+			elem = cast("Element", elem_)
 			terms: list[str] = []
 			defisWithFormat: list[tuple[str, str]] = []
 			for child in elem.iterchildren():

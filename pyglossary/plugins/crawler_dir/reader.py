@@ -48,9 +48,9 @@ class Reader:
 		if not c_open:
 			log.error(f"invalid extension {ext}")
 			c_open = open
-		with c_open(fpath, "rt", encoding="utf-8") as _file:
-			terms = splitByBarUnescapeNTB(_file.readline().rstrip("\n"))
-			defi = _file.read()
+		with c_open(fpath, "rt", encoding="utf-8") as file:
+			terms = splitByBarUnescapeNTB(file.readline().rstrip("\n"))
+			defi = file.read()
 			return self._glos.newEntry(terms, defi)
 
 	@staticmethod

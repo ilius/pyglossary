@@ -103,8 +103,8 @@ class Reader:
 			events=("end",),
 		)
 		abbr_defs: list[Element] = []
-		for _, _elem in context:
-			elem = cast("Element", _elem)
+		for _, elem_ in context:
+			elem = cast("Element", elem_)
 			if elem.tag in {"meta_info", "ar", "k", "abr", "dtrn"}:
 				break
 			# every other tag before </meta_info> or </ar> is considered info
@@ -166,8 +166,8 @@ class Reader:
 			self._has_added_js = True
 			yield self._glos.newDataEntry("js/xdxf.js", self._abbr_defs_js)
 
-		for _, _article in context:
-			article = cast("Element", _article)
+		for _, article_ in context:
+			article = cast("Element", article_)
 			article.tail = None
 			terms = [toStr(w) for w in self.titles(article)]
 

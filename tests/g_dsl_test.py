@@ -41,8 +41,8 @@ class TestGlossaryDSL(TestGlossaryBase):
 		prefix = join(self.tempDir, "")
 		dsl_fname = tempfile.mktemp(suffix=".dsl", prefix=prefix)
 		txt_fname = tempfile.mktemp(suffix=".txt", prefix=prefix)
-		with open(dsl_fname, "w", encoding="utf-8") as _file:
-			_file.write(dsl)
+		with open(dsl_fname, "w", encoding="utf-8") as file:
+			file.write(dsl)
 
 		glos = self.glos = Glossary()
 		# glos.config = config
@@ -55,8 +55,8 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		self.assertEqual(txt_fname, res)
 
-		with open(txt_fname, encoding="utf-8") as _file:
-			txtActual = _file.read()
+		with open(txt_fname, encoding="utf-8") as file:
+			txtActual = file.read()
 
 		if removeInfo:
 			txtActual = "\n".join(

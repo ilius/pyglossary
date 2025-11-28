@@ -67,8 +67,8 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 	@property
 	def data(self) -> bytes:
 		if self._tmpPath:
-			with open(self._tmpPath, "rb") as _file:
-				return _file.read()
+			with open(self._tmpPath, "rb") as file:
+				return file.read()
 		else:
 			return self._data
 

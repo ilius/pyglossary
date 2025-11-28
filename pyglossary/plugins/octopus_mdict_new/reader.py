@@ -207,8 +207,8 @@ class Reader:
 				fpath = join(dirPath, fname)
 				if not isfile(fpath):
 					continue
-				with open(fpath, mode="rb") as _file:
-					b_data = _file.read()
+				with open(fpath, mode="rb") as file:
+					b_data = file.read()
 				yield glos.newDataEntry(fname, b_data)
 
 		for mdd in self._mdd:

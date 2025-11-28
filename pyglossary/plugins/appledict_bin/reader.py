@@ -602,8 +602,8 @@ class Reader:
 		self._keyTextData = keyTextData
 
 	def readResFile(self, fname: str, fpath: str, ext: str) -> EntryType:
-		with open(fpath, "rb") as _file:
-			data = _file.read()
+		with open(fpath, "rb") as file:
+			data = file.read()
 		if ext == ".css":
 			log.debug(f"substituting apple css: {fname}: {fpath}")
 			data = substituteAppleCSS(data)

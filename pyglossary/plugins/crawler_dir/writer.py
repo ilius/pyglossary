@@ -72,8 +72,8 @@ class Writer:
 			if isfile(fpath):
 				log.warning(f"file exists: {fpath}")
 				fpath += f"-{sha1(entry.b_defi).hexdigest()[:4]}"  # noqa: S324
-			with c_open(fpath, "wt", encoding="utf-8") as _file:
-				_file.write(
+			with c_open(fpath, "wt", encoding="utf-8") as file:
+				file.write(
 					f"{escapeNTB(entry.s_term)}\n{entry.defi}",
 				)
 			entryCount += 1

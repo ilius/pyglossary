@@ -88,10 +88,10 @@ def processSenses(senseList: dict[str, Any]) -> list[dict[str, Any]] | None:
 			translationText = ""
 
 			# Only English for now, but other languages should use different keys
-			for _lang in ["english"]:
-				if _lang in example:
-					translationText = example[_lang]
-					targetLang = _lang.capitalize()
+			for lang_ in ["english"]:
+				if lang_ in example:
+					translationText = example[lang_]
+					targetLang = lang_.capitalize()
 
 			if not tags and not translationText:
 				# Nothing to process, simply copy this example

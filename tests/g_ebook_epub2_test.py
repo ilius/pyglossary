@@ -93,8 +93,8 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				},
 			)
 		if sha1sum:
-			with open(outputFilename, mode="rb") as _file:
-				actualSha1 = hashlib.sha1(_file.read()).hexdigest()
+			with open(outputFilename, mode="rb") as file:
+				actualSha1 = hashlib.sha1(file.read()).hexdigest()
 			self.assertEqual(sha1sum, actualSha1, f"{outputFilename=}")
 
 	# sha1sum still depends on current date (but not time)

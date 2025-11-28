@@ -228,8 +228,8 @@ class Writer:
 				join(direc, f"term_bank_{termBankIndex + 1}.json"),
 				mode="w",
 				encoding="utf-8",
-			) as _file:
-				json.dump(terms, _file, ensure_ascii=False)
+			) as file:
+				json.dump(terms, file, ensure_ascii=False)
 			terms.clear()
 			termBankIndex += 1
 
