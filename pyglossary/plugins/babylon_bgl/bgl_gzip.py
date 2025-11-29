@@ -7,7 +7,13 @@ but random access is not allowed.
 
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
 
-import _compression  # noqa: PLC2701
+try:
+	# Python < 3.14
+	from _compression import BaseStream, DecompressReader  # noqa: PLC2701
+except ModuleNotFoundError:
+	# Python 3.14
+	from compression._common._streams import BaseStream, DecompressReader  # noqa: PLC2701
+
 import builtins
 import io
 import logging
@@ -85,7 +91,7 @@ class BadGzipFile(OSError):
 	"""Exception raised in some cases for invalid gzip files."""
 
 
-class GzipFile(_compression.BaseStream):
+class GzipFile(BaseStream):
 	"""
 	The GzipFile class simulates most of the methods of a file object with
 	the exception of the truncate() method.
@@ -438,7 +444,7 @@ def _read_gzip_header(fp: IO[bytes]) -> bytes:
 	return last_mtime
 
 
-class _GzipReader(_compression.DecompressReader):
+class _GzipReader(DecompressReader):
 	def __init__(self, fp: IO[bytes]) -> None:
 		super().__init__(_PaddedFile(fp), zlib.decompressobj, wbits=-zlib.MAX_WBITS)
 		# Set flag indicating start of a new member
