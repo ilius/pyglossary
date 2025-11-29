@@ -36,7 +36,7 @@ jobs:
         run: sh ./scripts/test-deps.sh
       - name: Run tests
         env:
-          SKIP_SLOB_WRITE_TEST: 1
+          SKIP_TEST_SLOB_WRITE_FILE_SIZE_APPROX: 1
         run: bash scripts/ci/test.sh
       - name: Upload test artifacts
         if: always()

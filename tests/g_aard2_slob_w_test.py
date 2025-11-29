@@ -15,10 +15,6 @@ class TestGlossarySlobWrite(TestGlossaryBase):
 		)
 
 	def setUp(self):
-		if os.getenv("SKIP_SLOB_WRITE_TEST"):
-			self.skipTest(
-				"skipping aard2 slob write test because of env var SKIP_SLOB_WRITE_TEST"
-			)
 		TestGlossaryBase.setUp(self)
 
 	def test_convert_txt_slob_1(self):
@@ -35,6 +31,9 @@ class TestGlossarySlobWrite(TestGlossaryBase):
 		)
 
 	def test_convert_txt_slob_2_file_size_approx(self):
+		if os.getenv("SKIP_TEST_SLOB_WRITE_FILE_SIZE_APPROX"):
+			print("skipping test_convert_txt_slob_2_file_size_approx")
+			return
 		fname = "300-ru-en"
 		file_size_approx = 25000
 		files = [

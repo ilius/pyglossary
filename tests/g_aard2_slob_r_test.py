@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from glossary_v2_test import TestGlossaryBase
@@ -17,10 +16,6 @@ class TestGlossarySlobRead(TestGlossaryBase):
 		)
 
 	def setUp(self):
-		if os.getenv("SKIP_SLOB_READ_TEST"):
-			self.skipTest(
-				"skipping aard2 slob read test because of env var SKIP_SLOB_READ_TEST"
-			)
 		TestGlossaryBase.setUp(self)
 
 	def convert_slob_txt(self, fname, fname2, resFiles, **convertArgs):
