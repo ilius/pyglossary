@@ -18,6 +18,8 @@ class TestGlossarySlob(TestGlossaryBase):
 		)
 
 	def setUp(self):
+		if os.getenv("SKIP_SLOB_TEST"):
+			self.skipTest("skipping aard2 slob test because of env var SKIP_SLOB_TEST")
 		TestGlossaryBase.setUp(self)
 
 	def test_convert_txt_slob_1(self):
