@@ -7,7 +7,7 @@ from glossary_v2_test import TestGlossaryBase
 
 class TestGlossaryKobo(TestGlossaryBase):
 	def setUp(self):
-		if os.getenv("SKIP_MISSING"):
+		if os.getenv("SKIP_TEST_MISSING_DEP"):
 			try:
 				import marisa_trie  # noqa: F401
 			except ImportError:

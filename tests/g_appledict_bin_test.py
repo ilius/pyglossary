@@ -15,7 +15,7 @@ from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 class TestGlossaryAppleDictBin(TestGlossaryBase):
 	def setUp(self):
-		if os.getenv("SKIP_MISSING"):
+		if os.getenv("SKIP_TEST_MISSING_DEP"):
 			try:
 				import biplist  # noqa: F401
 			except ImportError:
