@@ -7,7 +7,7 @@ on:
 jobs:
   pip-git-url:
     name: pip install git+...
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -19,7 +19,7 @@ jobs:
 
   pip-local:
     name: pip install .
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
