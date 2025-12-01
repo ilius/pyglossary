@@ -953,7 +953,10 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		sort: bool = False,
 		**options: Any,
 	) -> str:
+		filenameOrig = filename
 		filename = os.path.abspath(filename)
+		if filenameOrig.endswith(os.sep):
+			filename += os.sep
 
 		if formatName not in PluginHandler.plugins:
 			raise WriteError(f"No plugin {formatName!r} was found")
