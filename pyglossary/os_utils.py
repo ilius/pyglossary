@@ -4,7 +4,7 @@ import logging
 import os
 import shutil
 import sys
-from os.path import join, normpath
+from os.path import isabs, join, normpath
 from pathlib import Path
 from typing import TYPE_CHECKING, Self
 
@@ -23,6 +23,17 @@ __all__ = [
 ]
 
 log = logging.getLogger("pyglossary")
+
+
+def abspath2(path: str) -> str:
+	"""
+	Return an absolute path, but without normalization.
+	Because os.path.abspath does normalize.
+	"""
+	path = os.fspath(path)
+	if not isabs(path):
+		path = join(os.getcwd(), path)
+	return path
 
 
 class indir:

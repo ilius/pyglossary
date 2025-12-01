@@ -19,7 +19,7 @@
 from __future__ import annotations
 
 import logging
-from os.path import abspath, isfile
+from os.path import isfile
 from typing import TYPE_CHECKING, Any
 
 from gi.repository import Gdk as gdk
@@ -29,6 +29,7 @@ from gi.repository import Pango as pango
 
 from pyglossary.core import homePage
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.os_utils import abspath2
 from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import (
 	aboutText,
@@ -437,9 +438,9 @@ progressbar progress, trough {min-height: 0.6em;}
 		self.config = config or {}
 
 		if inputFilename:
-			self.inputFileBox.set_text(abspath(inputFilename))
+			self.inputFileBox.set_text(abspath2(inputFilename))
 		if outputFilename:
-			self.outputFileBox.set_text(abspath(outputFilename))
+			self.outputFileBox.set_text(abspath2(outputFilename))
 
 		if inputFormat and inputFormat not in Glossary.readFormats:
 			log.error(f"invalid {inputFormat=}")

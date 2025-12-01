@@ -21,7 +21,7 @@ from __future__ import annotations
 import ast
 import logging
 import traceback
-from os.path import abspath, isfile
+from os.path import isfile
 from typing import TYPE_CHECKING, Any, Protocol
 
 import gi
@@ -29,6 +29,7 @@ import gi
 from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.option import Option
+from pyglossary.os_utils import abspath2
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import (
 	escapeNRB,
@@ -1427,9 +1428,9 @@ class MainWindow(gtk.Dialog):
 		self.config = config
 
 		if inputFilename:
-			self.convertInputEntry.set_text(abspath(inputFilename))
+			self.convertInputEntry.set_text(abspath2(inputFilename))
 		if outputFilename:
-			self.convertOutputEntry.set_text(abspath(outputFilename))
+			self.convertOutputEntry.set_text(abspath2(outputFilename))
 
 		if inputFormat and inputFormat not in Glossary.readFormats:
 			log.error(f"invalid {inputFormat=}")

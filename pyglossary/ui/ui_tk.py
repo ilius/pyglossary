@@ -22,7 +22,7 @@ import logging
 import os
 import tkinter as tk
 import traceback
-from os.path import abspath, isfile, join, splitext
+from os.path import isfile, join, splitext
 from tkinter import filedialog, ttk
 from tkinter import font as tkFont
 from typing import TYPE_CHECKING, Any, Protocol
@@ -30,6 +30,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 from pyglossary.core import confDir, homeDir, homePage, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.option import IntOption, Option
+from pyglossary.os_utils import abspath2
 from pyglossary.sort_keys import namedSortKeyList
 from pyglossary.text_utils import escapeNTB, unescapeNTB, urlToPath
 
@@ -1885,10 +1886,10 @@ class UI(tk.Frame, UIBase):
 		self.config = config
 
 		if inputFilename:
-			self.entryInputConvert.insert(0, abspath(inputFilename))
+			self.entryInputConvert.insert(0, abspath2(inputFilename))
 			self.inputEntryChanged()
 		if outputFilename:
-			self.entryOutputConvert.insert(0, abspath(outputFilename))
+			self.entryOutputConvert.insert(0, abspath2(outputFilename))
 			self.outputEntryChanged()
 
 		if inputFormat and inputFormat not in Glossary.readFormats:
