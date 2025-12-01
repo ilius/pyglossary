@@ -7,6 +7,7 @@ from os.path import (
 	dirname,
 	getsize,
 	isdir,
+	isfile,
 	join,
 	realpath,
 	split,
@@ -144,6 +145,13 @@ class Writer:
 			os.rmdir(self._resDir)
 		except OSError:
 			pass  # "Directory not empty" or "Permission denied"
+
+		if isfile(f"{self._filename}.dict.dz"):
+			log.info(f"removing file {self._filename}.dict.dz")
+			os.remove(f"{self._filename}.dict.dz")
+		if isfile(f"{self._filename}.syn.dz"):
+			log.info(f"removing file {self._filename}.syn.dz")
+			os.remove(f"{self._filename}.syn.dz")
 
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
