@@ -50,13 +50,14 @@ license = "GPLv2"
 plang = "C++"
 
 [QDict]
-web = "https://play.google.com/store/apps/details?id=com.annie.dictionary"
+web = "https://f-droid.org/packages/com.annie.dictionary.fork/"
 source = "https://github.com/namndev/QDict"
 platforms = [ "Android",]
 license = "Apache 2.0"
 plang = "Java"
 # last release: 2017/04/16 (keeps crashing on my device, unusable)
 # last commit: 2020/06/24, 2021 (readme)
+# removed from Google Play (in 2025)
 
 ["GoldenDict Mobile (Free)"]
 web = "http://goldendict.mobi/"
