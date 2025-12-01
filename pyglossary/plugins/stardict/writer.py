@@ -136,6 +136,19 @@ class Writer:
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
+		syn_file = f"{self._filename}.syn"
+
+		for fpath in [
+			syn_file,
+			f"{self._filename}.idx.oft",
+			f"{self._filename}.syn.oft",
+			f"{self._filename}.dict.dz",
+			f"{self._filename}.syn.dz",
+		]:
+			if isfile(fpath):
+				log.info(f"removing file {fpath}")
+				os.remove(fpath)
+
 		if self._sametypesequence:
 			yield from self.writeCompact(self._sametypesequence)
 		else:
@@ -146,19 +159,10 @@ class Writer:
 		except OSError:
 			pass  # "Directory not empty" or "Permission denied"
 
-		if isfile(f"{self._filename}.dict.dz"):
-			log.info(f"removing file {self._filename}.dict.dz")
-			os.remove(f"{self._filename}.dict.dz")
-		if isfile(f"{self._filename}.syn.dz"):
-			log.info(f"removing file {self._filename}.syn.dz")
-			os.remove(f"{self._filename}.syn.dz")
-
 		if self._dictzip:
 			runDictzip(f"{self._filename}.dict")
-		if self._dictzip_syn:
-			syn_file = f"{self._filename}.syn"
-			if os.path.exists(syn_file):
-				runDictzip(syn_file)
+		if self._dictzip_syn and os.path.exists(syn_file):
+			runDictzip(syn_file)
 
 	def fixDefi(self, defi: str, defiFormat: str) -> bytes:
 		# for StarDict 3.0:
