@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 	from types import TracebackType
 
 __all__ = [
+	"abspath2",
 	"indir",
 	"listFilesRecursiveRelPath",
 	"rmtree",

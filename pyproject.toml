@@ -384,6 +384,7 @@ exclude = [
 	"pyglossary/ui/wcwidth/",
 	"build/",
 	"pyglossary/slob.py",
+	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
 ]
 exclude_toplevel_module = [
 	"BeautifulSoup",
