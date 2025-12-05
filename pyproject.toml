@@ -430,7 +430,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyglossary"
-version = "5.2.0"
+version = "5.2.1"
 description = "A tool for converting dictionary files aka glossaries."
 readme = "README.md"
 authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
