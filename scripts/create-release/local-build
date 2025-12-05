@@ -14,7 +14,9 @@ function yes_or_no {
 	done
 }
 
-CUR_VERSION=$($(dirname $0)/version-core)
+myDir=$(dirname "$0")
+scriptsDir=$(dirname "$myDir")
+CUR_VERSION=$($scriptsDir/version-core)
 
 VERSION=$1
 if [ -z $VERSION ]; then
@@ -25,7 +27,7 @@ fi
 
 set -x
 
-$(dirname $0)/version-set.py $VERSION
+$scriptsDir/version-set.py $VERSION
 
 sudo rm -rf dist build
 mkdir dist build
