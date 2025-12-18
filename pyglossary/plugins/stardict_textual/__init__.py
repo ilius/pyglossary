@@ -41,8 +41,10 @@ singleFile = True
 kind = "text"
 wiki = ""
 website = (
-	"https://github.com/huzheng001/stardict-3"
-	"/blob/master/dict/doc/TextualDictionaryFileFormat",
+	(
+		"https://github.com/huzheng001/stardict-3"
+		"/blob/master/dict/doc/TextualDictionaryFileFormat"
+	),
 	"TextualDictionaryFileFormat",
 )
 relatedFormats: list[str] = ["Stardict", "StardictMergeSyns"]
