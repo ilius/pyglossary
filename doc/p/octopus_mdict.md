@@ -41,6 +41,9 @@ then try to install [LZO library and Python binding](../lzo.md).
 
 ### Dictionary Applications/Tools
 
-| Name & Website                 | Source code | License     | Platforms                  | Language |
-| ------------------------------ | ----------- | ----------- | -------------------------- | -------- |
-| [MDict](https://www.mdict.cn/) | ―           | Proprietary | Android, iOS, Windows, Mac |          |
+| Name & Website                                                              | Source code                                                              | License     | Platforms                  | Language |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- | -------------------------- | -------- |
+| [MDict](https://www.mdict.cn/)                                              | ―                                                                        | Proprietary | Android, iOS, Windows, Mac |          |
+| [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL         | Linux, Windows, Mac        | C++      |
+| [GoldenDict](http://goldendict.org/)                                        | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL         | Linux, Windows, Mac        | C++      |
+| [SilverDict](https://silverdict.lecoteauverdoyant.co.uk/)                   | [@Crissium/SilverDict](https://github.com/Crissium/SilverDict)           | GPL         | Web                        | Python   |

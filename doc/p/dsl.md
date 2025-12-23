@@ -26,6 +26,9 @@
 
 ### Dictionary Applications/Tools
 
-| Name & Website                         | Source code | License     | Platforms                                           | Language |
-| -------------------------------------- | ----------- | ----------- | --------------------------------------------------- | -------- |
-| [ABBYY Lingvo](https://www.lingvo.ru/) | ―           | Proprietary | Windows, Mac, Android, iOS, Windows Mobile, Symbian |          |
+| Name & Website                                                              | Source code                                                              | License     | Platforms                                           | Language |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- | --------------------------------------------------- | -------- |
+| [ABBYY Lingvo](https://www.lingvo.ru/)                                      | ―                                                                        | Proprietary | Windows, Mac, Android, iOS, Windows Mobile, Symbian |          |
+| [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL         | Linux, Windows, Mac                                 | C++      |
+| [GoldenDict](http://goldendict.org/)                                        | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL         | Linux, Windows, Mac                                 | C++      |
+| [SilverDict](https://silverdict.lecoteauverdoyant.co.uk/)                   | [@Crissium/SilverDict](https://github.com/Crissium/SilverDict)           | GPL         | Web                                                 | Python   |

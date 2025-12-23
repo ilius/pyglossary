@@ -2,3 +2,26 @@
 web = "https://www.mdict.cn/"
 platforms = [ "Android", "iOS", "Windows", "Mac",]
 license = "Proprietary"
+
+["GoldenDict-NG by @xiaoyifang"]
+web = "https://xiaoyifang.github.io/goldendict-ng/"
+source = "https://github.com/xiaoyifang/goldendict-ng"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "C++"
+
+[GoldenDict]
+web = "http://goldendict.org/"
+source = "https://github.com/goldendict/goldendict"
+wiki = "https://github.com/goldendict/goldendict/wiki"
+platforms = [ "Linux", "Windows", "Mac",]
+license = "GPL"
+plang = "C++"
+
+[SilverDict]
+web = "https://silverdict.lecoteauverdoyant.co.uk/"
+source = "https://github.com/Crissium/SilverDict"
+wiki = "https://github.com/Crissium/SilverDict/wiki"
+platforms = [ "Web",]
+license = "GPL"
+plang = "Python"

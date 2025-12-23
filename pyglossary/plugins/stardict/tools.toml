@@ -20,6 +20,14 @@ platforms = [ "Linux", "Windows", "Mac",]
 license = "GPL"
 plang = "C++"
 
+[SilverDict]
+web = "https://silverdict.lecoteauverdoyant.co.uk/"
+source = "https://github.com/Crissium/SilverDict"
+wiki = "https://github.com/Crissium/SilverDict/wiki"
+platforms = [ "Web",]
+license = "GPL"
+plang = "Python"
+
 [StarDict]
 web = "http://huzheng.org/stardict/"
 source = "https://github.com/huzheng001/stardict-3"
