@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 rm /etc/apt/apt.conf.d/docker-clean
 
