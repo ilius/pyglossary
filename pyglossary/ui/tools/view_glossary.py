@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os.path
 import shlex
 import sys
@@ -69,7 +70,10 @@ def viewGlossary(
 	if glos is None:
 		glos = Glossary(ui=None)
 
-	if not glos.directRead(filename, formatName=formatName):
+	options = {}
+	if os.getenv("READ_OPTIONS"):
+		options = json.loads(os.getenv("READ_OPTIONS"))
+	if not glos.directRead(filename, formatName=formatName, **options):
 		return
 
 	pagerCmd = ["less", "-R"]
