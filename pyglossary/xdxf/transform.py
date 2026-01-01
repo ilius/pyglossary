@@ -450,6 +450,10 @@ class XdxfTransformer:
 	def transformByInnerString(self, articleInnerStr: str) -> str:
 		from lxml import etree as ET
 
-		return self.transform(
-			ET.fromstring(f"<ar>{articleInnerStr}</ar>"),
-		)
+		try:
+			article = ET.fromstring(f"<ar>{articleInnerStr}</ar>")
+		except Exception as e:
+			log.error(f"ignoring bad xdxf: {articleInnerStr}\n{e}")
+			return articleInnerStr
+
+		return self.transform(article)
