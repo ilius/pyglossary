@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,6 +14,8 @@ def formatEntry(entry: EntryType) -> str:
 	headword = ""
 	if terms:
 		headword = terms[0]
+	if os.getenv("SHOW_DEFI_FORMAT") and entry.defiFormat:
+		headword = f"{headword} (format: {entry.defiFormat})"
 	lines = [
 		f">> {headword}",
 	]
