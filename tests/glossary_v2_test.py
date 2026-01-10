@@ -584,6 +584,25 @@ class TestGlossary(TestGlossaryBase):
 			("English", "German"),
 		)
 
+	def test_lang_detect_6(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Church Slavonic-deu.index")
+		glos.detectLangsFromName()
+		print(glos.sourceLangName)
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("Church Slavonic", "German"),
+		)
+	def test_lang_detect_7(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Na vosa vaka-Viti-deu.index")
+		glos.detectLangsFromName()
+		print(glos.sourceLangName)
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("Fijian", "German"),
+		)
+
 	def convert_to_txtZip(
 		self,
 		fname,  # input file with extension
