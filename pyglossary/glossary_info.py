@@ -195,15 +195,33 @@ class GlossaryInfo:
 		langNames = []
 
 		def checkPart(part: str) -> None:
-			for match in re.findall(r"\w\w\w*", part):
-				# print(f"{match = }")
-				lang = langDict[match]
-				if lang is None:
-					continue
+			lang = langDict[part]
+			if lang is not None:
 				langNames.append(lang.name)
+			else:
+				for match in re.findall(r"\w\w\w*", part):
+					# print(f"{match = }")
+					lang = langDict[match]
+					if lang is None:
+						continue
+					langNames.append(lang.name)
 
-		for part in re.split("-| to ", name):
-			# print(f"{part = }")
+
+		def split_once_last(name):
+			# we assume that the last occurrence of - or to, separates the languages.
+			# Note: This way we prevent errors that occur for example with "Neo-Persian to English.."
+			# However, we still get wrong results when it is something like "en - Neo-Persian"
+			# We cannot uniquely identify the users will when resorting to this function anyway.
+			# This way however improves results to a great extent
+
+			# reverse string and splitter patterns, perform at most one split, then reverse parts back
+			rev = name[::-1]
+			# pattern reversed: '-' stays '-', ' to ' becomes ' ot '
+			parts = re.split(r'-| ot ', rev, maxsplit=1)
+			return [p[::-1] for p in parts[::-1]]
+
+		for part in split_once_last( name):
+			#print(f"{part = }")
 			checkPart(part)
 			if len(langNames) >= 2:  # noqa: PLR2004
 				break
