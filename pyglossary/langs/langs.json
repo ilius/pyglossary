@@ -73,7 +73,7 @@
 		"title_tag": "big"
 	},
 	{
-		"codes": ["arg"],
+		"codes": ["arg", "an"],
 		"name": "Aragonese",
 		"alt_names": ["Aragonés"],
 		"script": ["Latin"],
@@ -1204,7 +1204,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["ori", "ory"],
+		"codes": ["ori", "ory", "or"],
 		"name": "Odia",
 		"alt_names": ["Oriya", "ଓଡ଼ିଆ", "Oṛiā"],
 		"script": ["Odia"],

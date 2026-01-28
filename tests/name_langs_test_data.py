@@ -10,6 +10,9 @@ nameLangsTestData = [
 	# 	"French",
 	# 	"Persian",
 	# ),
+	# lang codes that are English words (and not language name)
+	("an arabic dictionary", None, None),
+	("english cities or towns", None, None),
 	("Castellano >Turko Diccionario", None, None),
 	("LeXiCoN castelán-galego", None, None),
 	("Aragonés-Castellán", None, None),
@@ -269,3 +272,15 @@ nameLangsTestData = [
 	("Turkish-English FreeDict Dictionary", "Turkish", "English"),  # tur-eng
 	("Wolof - French FreeDict dictionary", "Wolof", "French"),  # wol-fra
 ]
+
+# lang codes that are also in /usr/share/dict/words
+# {'kea', 'as', 'mao', 'arn', 'pa', 'sag', 'tha', 'be', 'fro', 'my', 'haw', 'so', 'is', 'en', 'ae', 'fa', 'te',
+# 'li', 'div', 'tur', 'urd', 'ak', 'arm', 'mi', 'os', 'ar', 'sh', 'run', 'hat', 'pi', 'geo', 'ben', 'bis', 'za',
+# 'ave', 'bel', 'got', 'de', 'an', 'bam', 'kor', 'pus', 'cor', 'mac', 'her', 'mal', 'se', 'pan', 'fra', 'ca',
+# 'ay', 'alb', 'bo', 'lat', 'spa', 'ka', 'ger', 'san', 'che', 'per', 'may', 'ga', 'bod', 'hi', 'swa', 'mar',
+# 'or', 'vie', 'id', 'ton', 'no', 'ell', 'ta', 'cha', 'nep', 'lim', 'ie', 'ewe', 'mon', 'yor', 'mo', 'eu',
+# 'hau', 'arc', 'lin', 'es', 'nob', 'ava', 'sin', 'aka', 'ady', 'tib', 'ce', 'ho', 'kan', 'pol', 'wo', 'sot',
+# 'ti', 'da', 'yo', 'ne', 'aa', 'st', 'ha', 'el', 'lo', 'cos', 'om', 'non', 'bur', 'wa', 'sa', 'io', 'vol',
+# 'am', 'to', 'sun', 'ory', 'hin', 'fi', 'ko', 'kon', 'ice', 'dan', 'kin', 'kat', 'ba', 'tat', 'th', 'ast',
+# 'chi', 'nor', 'na', 'ug', 'fin', 'mas', 'ara', 'cat', 'lug', 'he', 'la', 'rum', 'it', 'ur', 'lit', 'tam',
+# 'fry', 'si'}

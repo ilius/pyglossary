@@ -182,6 +182,8 @@ class GlossaryInfo:
 			return sourceLang.titleTag
 		return "b"
 
+	langCodeBlockDetection = {"an", "or", "no", "as", "to"}
+
 	def detectLangsFromName(self) -> None:
 		"""Extract sourceLang and targetLang from glossary name/title."""
 		import re
@@ -198,6 +200,8 @@ class GlossaryInfo:
 
 		def checkPart(part: str) -> None:
 			for match in re.findall(r"\w\w\w*", part):
+				if match in self.langCodeBlockDetection:
+					continue
 				lang = langDict[match]
 				if lang is None:
 					continue
