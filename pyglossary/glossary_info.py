@@ -202,7 +202,7 @@ class GlossaryInfo:
 					continue
 				langNames.append(lang.name)
 
-		for part in re.split("-| to ", name):
+		for part in re.split("-|_| to ", name):
 			# print(f"{part = }")
 			checkPart(part)
 			if len(langNames) >= 2:  # noqa: PLR2004
