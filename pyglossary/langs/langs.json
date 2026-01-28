@@ -237,7 +237,7 @@
 	{
 		"codes": ["ca", "cat"],
 		"name": "Catalan",
-		"alt_names": ["Català"],
+		"alt_names": ["Català", "Catalán"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Catalan_language",
 		"title_tag": "b"
@@ -430,7 +430,7 @@
 	{
 		"codes": ["fa", "per", "fas", "prp"],
 		"name": "Persian",
-		"alt_names": ["Farsi", "فارسی", "Parsi", "Fārsī", "форсӣ", "Forsī", "Porsī", "Persisch"],
+		"alt_names": ["Farsi", "فارسی", "Parsi", "Fārsī", "форсӣ", "Forsī", "Porsī", "Persisch", "Pârsi"],
 		"rtl": 1,
 		"script": ["Arabic"],
 		"wiki": "https://en.wikipedia.org/wiki/Persian_language",
@@ -918,7 +918,7 @@
 	{
 		"codes": ["la", "lat"],
 		"name": "Latin",
-		"alt_names": ["latine", "latīne"],
+		"alt_names": ["latine", "latīne", "Lateinisch"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Latin",
 		"title_tag": "b"
@@ -1204,7 +1204,7 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["or", "ori", "ory"],
+		"codes": ["ori", "ory"],
 		"name": "Odia",
 		"alt_names": ["Oriya", "ଓଡ଼ିଆ", "Oṛiā"],
 		"script": ["Odia"],
