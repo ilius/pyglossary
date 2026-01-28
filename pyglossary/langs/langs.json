@@ -73,7 +73,7 @@
 		"title_tag": "big"
 	},
 	{
-		"codes": ["an", "arg"],
+		"codes": ["arg"],
 		"name": "Aragonese",
 		"alt_names": ["Aragonés"],
 		"script": ["Latin"],
@@ -237,7 +237,7 @@
 	{
 		"codes": ["ca", "cat"],
 		"name": "Catalan",
-		"alt_names": [],
+		"alt_names": ["Català"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Catalan_language",
 		"title_tag": "b"
@@ -325,7 +325,7 @@
 	{
 		"codes": ["de", "ger", "deu"],
 		"name": "German",
-		"alt_names": ["Deutsch"],
+		"alt_names": ["Deutsch", "Duits"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/German_language",
 		"title_tag": "b"
@@ -382,7 +382,7 @@
 	{
 		"codes": ["en", "eng"],
 		"name": "English",
-		"alt_names": [],
+		"alt_names": ["Englisch"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/English_language",
 		"title_tag": "b"
@@ -404,9 +404,9 @@
 		"title_tag": "b"
 	},
 	{
-		"codes": ["es", "spa"],
+		"codes": ["es", "spa", "esp"],
 		"name": "Spanish",
-		"alt_names": ["español", "española"],
+		"alt_names": ["español", "española", "spanisch", "Castellà", "Castella", "Castilian", "castellano", "Spanskt"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Spanish_language",
 		"title_tag": "b"
@@ -422,7 +422,7 @@
 	{
 		"codes": ["eu", "baq", "eus"],
 		"name": "Basque",
-		"alt_names": ["Euskara"],
+		"alt_names": ["Euskara", "Euskera"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Basque_language",
 		"title_tag": "b"
@@ -430,7 +430,7 @@
 	{
 		"codes": ["fa", "per", "fas", "prp"],
 		"name": "Persian",
-		"alt_names": ["Farsi", "فارسی", "Parsi", "Fārsī", "форсӣ", "Forsī", "Porsī"],
+		"alt_names": ["Farsi", "فارسی", "Parsi", "Fārsī", "форсӣ", "Forsī", "Porsī", "Persisch"],
 		"rtl": 1,
 		"script": ["Arabic"],
 		"wiki": "https://en.wikipedia.org/wiki/Persian_language",
@@ -638,7 +638,7 @@
 	{
 		"codes": ["hr", "hrv", "scr"],
 		"name": "Croatian",
-		"alt_names": ["hrvatski"],
+		"alt_names": ["hrvatski", "Kroatisch"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Croatian_language",
 		"title_tag": "b"
@@ -686,7 +686,7 @@
 	{
 		"codes": ["id", "ind"],
 		"name": "Indonesian",
-		"alt_names": ["bahasa Indonesia"],
+		"alt_names": ["bahasa Indonesia", "Indonesia"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Indonesian_language",
 		"title_tag": "b"
@@ -1134,7 +1134,7 @@
 	{
 		"codes": ["nl", "dut", "nld"],
 		"name": "Dutch",
-		"alt_names": ["Flemish", "Nederlands"],
+		"alt_names": ["Flemish", "Nederlands", "Niederländisch", "Holländisch", "Néerlandais"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Dutch_language",
 		"title_tag": "b"
@@ -1254,7 +1254,7 @@
 	{
 		"codes": ["pt", "por"],
 		"name": "Portuguese",
-		"alt_names": ["português", "língua portuguesa"],
+		"alt_names": ["português", "língua portuguesa", "Portugees"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Portuguese_language",
 		"title_tag": "b"
@@ -1294,7 +1294,7 @@
 	{
 		"codes": ["ru", "rus"],
 		"name": "Russian",
-		"alt_names": ["русский", "русский язык"],
+		"alt_names": ["русский", "русский язык", "Russisch"],
 		"script": ["Cyrillic"],
 		"wiki": "https://en.wikipedia.org/wiki/Russian_language",
 		"title_tag": "b"
@@ -1446,7 +1446,7 @@
 	{
 		"codes": ["sv", "swe"],
 		"name": "Swedish",
-		"alt_names": ["svenska"],
+		"alt_names": ["svenska", "Svensk"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Swedish_language",
 		"title_tag": "b"
@@ -1534,7 +1534,7 @@
 	{
 		"codes": ["tr", "tur"],
 		"name": "Turkish",
-		"alt_names": ["Türkçe", "Türk dili", "Istanbul Turkish", "Turkey Turkish"],
+		"alt_names": ["Türkçe", "Türk dili", "Istanbul Turkish", "Turkey Turkish", "Turks"],
 		"script": ["Latin"],
 		"wiki": "https://en.wikipedia.org/wiki/Turkish_language",
 		"title_tag": "b"
