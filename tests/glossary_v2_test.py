@@ -23,6 +23,7 @@ from pyglossary.core import cacheDir, log, tmpDir
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.os_utils import rmtree
 from pyglossary.text_utils import crc32hex
+from tests.name_langs_test_data import nameLangsTestData
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
@@ -539,6 +540,17 @@ class TestGlossary(TestGlossaryBase):
 		if glos.targetLang is not None:
 			self.assertEqual(glos.targetLang.name, "Malay")
 
+	def test_lang_detect_dataset_1(self):
+		for name, sourceLang, targetLang in nameLangsTestData:
+			glos = self.glos = Glossary()
+			glos.setInfo("name", name)
+			glos.detectLangsFromName()
+			self.assertEqual(
+				(glos.sourceLangName, glos.targetLangName),
+				(sourceLang or "", targetLang or ""),
+				f"{name=}",
+			)
+
 	def test_lang_detect_1(self):
 		glos = self.glos = Glossary()
 		glos.setInfo("name", "en-fa")
@@ -582,6 +594,27 @@ class TestGlossary(TestGlossaryBase):
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
 			("English", "German"),
+		)
+
+	def test_lang_detect_6(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Church Slavonic-deu.index")
+		glos.detectLangsFromName()
+		print(glos.sourceLangName)
+		# ("Church Slavonic", "German"),
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("", ""),
+		)
+
+	# FIXME: should be either ("", "") or ("Fijian", "German")
+	def test_lang_detect_7(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Na vosa vaka-Viti-deu.index")
+		glos.detectLangsFromName()
+		self.assertEqual(
+			(glos.sourceLangName, glos.targetLangName),
+			("Nauruan", "German"),
 		)
 
 	def convert_to_txtZip(

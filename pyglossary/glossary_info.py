@@ -192,18 +192,18 @@ class GlossaryInfo:
 		if self._info.get(c_sourceLang):
 			return
 
+		name = name.lower().replace("_", " ")
+
 		langNames = []
 
 		def checkPart(part: str) -> None:
 			for match in re.findall(r"\w\w\w*", part):
-				# print(f"{match = }")
 				lang = langDict[match]
 				if lang is None:
 					continue
 				langNames.append(lang.name)
 
-		for part in re.split("-|_| to ", name):
-			# print(f"{part = }")
+		for part in re.split("-| to ", name):
 			checkPart(part)
 			if len(langNames) >= 2:  # noqa: PLR2004
 				break
