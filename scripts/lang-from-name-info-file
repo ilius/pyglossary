@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+DIR=$(dirname "$0")
+
+LINE=$(python "$DIR/lang-from-name.py" "$(jq -r .name $1)")
+echo -e "$1\t$LINE"
