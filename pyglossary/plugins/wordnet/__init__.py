@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from pyglossary.option import StrOption
+
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -38,4 +40,8 @@ website = (
 )
 
 # key is option/argument name, value is instance of Option
-optionsProp: dict[str, Option] = {}
+optionsProp: dict[str, Option] = {
+	"gram_color": StrOption(
+		comment="Grammar color",
+	),
+}

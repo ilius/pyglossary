@@ -184,8 +184,9 @@ class WordNet:
 		"data.verb": ["v"],
 	}
 
-	def __init__(self, wordnetdir: str) -> None:
+	def __init__(self, wordnetdir: str, gram_color: str) -> None:
 		self.wordnetdir = wordnetdir
+		self.gram_color = gram_color
 		self.collector: dict[str, list[str]] = defaultdict(list)
 
 	@staticmethod
@@ -204,6 +205,7 @@ class WordNet:
 		file2pos = self.file2pos
 
 		dict_dir = self.wordnetdir
+		gram_color = self.gram_color
 
 		files: dict[str, io.TextIOWrapper] = {}
 		for name in os.listdir(dict_dir):
@@ -232,6 +234,11 @@ class WordNet:
 			)
 
 			words = synset.words
+
+			gram = synSetTypes[synset.ss_type]
+			gram_html = f'<font class="pos grammar" color="{gram_color}">{gram}</font>'
+			gloss_with_examples = gram_html + gloss_with_examples
+
 			for wordIndex, word in enumerate(words):
 				# TODO: move this block to a func
 				synonyms_links = ", ".join(href(w) for w in words if w != word)
@@ -277,10 +284,10 @@ class WordNet:
 					for symbol_desc, referenced_words in pointers.items()
 					if referenced_words
 				)
-				self.collector[word].append(
-					f'<i class="pos grammar">{synSetTypes[synset.ss_type]}</i>'
-					f" {gloss_with_examples}{synonyms_str}{pointers_str}",
-				)
+
+				text = gloss_with_examples + synonyms_str + pointers_str
+				self.collector[word].append(text)
+
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
@@ -308,6 +315,7 @@ class WordNet:
 
 class Reader:
 	useByteProgress = False
+	_gram_color: str = "green"
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
@@ -319,7 +327,7 @@ class Reader:
 		return self._entryCount
 
 	def open(self, filename: str) -> None:
-		self.wordnet = WordNet(filename)
+		self.wordnet = WordNet(filename, gram_color=self._gram_color)
 		log.info("Running wordnet.prepare()")
 		self.wordnet.prepare()
 

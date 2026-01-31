@@ -14,3 +14,9 @@
 | Kind            | 📁 directory                                                                |
 | Wiki            | [WordNet](https://en.wikipedia.org/wiki/WordNet)                           |
 | Website         | [WordNet - A Lexical Database for English](https://wordnet.princeton.edu/) |
+
+### Read options
+
+| Name       | Default | Type | Comment       |
+| ---------- | ------- | ---- | ------------- |
+| gram_color | `green` | str  | Grammar color |

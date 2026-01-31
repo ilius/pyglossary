@@ -1872,10 +1872,19 @@
 		"description": "WordNet",
 		"extensions": [],
 		"singleFile": false,
-		"optionsProp": {},
+		"optionsProp": {
+			"gram_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Grammar color"
+			}
+		},
 		"canRead": true,
 		"canWrite": false,
-		"readOptions": {}
+		"readOptions": {
+			"gram_color": "green"
+		}
 	},
 	{
 		"module": "wordset",
