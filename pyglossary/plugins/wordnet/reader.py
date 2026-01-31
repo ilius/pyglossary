@@ -212,15 +212,12 @@ class WordNet:
 				for key in file2pos[name]:
 					files[key] = f
 
-		def a(word: str) -> str:
+		def href(word: str) -> str:
 			return f'<a href="{word}">{word}</a>'
 
-		for index, line in enumerate(self.iterlines(dict_dir)):
-			if index % 100 == 0 and index > 0:
+		for lineIndex, line in enumerate(self.iterlines(dict_dir)):
+			if lineIndex % 100 == 0 and lineIndex > 0:
 				sys.stdout.write(".")
-				sys.stdout.flush()
-			if index % 5000 == 0 and index > 0:
-				sys.stdout.write("\n")
 				sys.stdout.flush()
 			if not line or not line.strip():
 				continue
@@ -230,22 +227,26 @@ class WordNet:
 				synset.gloss,
 			)
 			gloss_with_examples, _ = _re_ref.subn(
-				lambda x: a(x.group(1)),
+				lambda x: href(x.group(1)),
 				gloss_with_examples,
 			)
 
 			words = synset.words
-			for index2, word in enumerate(words):
+			for wordIndex, word in enumerate(words):
 				# TODO: move this block to a func
-				synonyms = ", ".join(a(w) for w in words if w != word)
+				synonyms_links = ", ".join(href(w) for w in words if w != word)
 				synonyms_str = (
-					f'<br/><small class="co">Synonyms:</small> {synonyms}'
-					if synonyms
+					f'<br/><small class="co">Synonyms:</small> {synonyms_links}'
+					if synonyms_links
 					else ""
 				)
 				pointers = defaultdict(list)
 				for pointer in synset.pointers:
-					if pointer.source and pointer.target and pointer.source - 1 != index2:
+					if (
+						pointer.source
+						and pointer.target
+						and pointer.source - 1 != wordIndex
+					):
 						continue
 					symbol = pointer.symbol
 					if symbol and symbol[:1] in {";", "-"}:
@@ -271,12 +272,10 @@ class WordNet:
 							pointers[symbol_desc].append(referenced_word)
 
 				pointers_str = "".join(
-					[
-						f'<br/><small class="co">{symbol_desc}:</small> '
-						+ ", ".join(a(w) for w in referenced_words)
-						for symbol_desc, referenced_words in pointers.items()
-						if referenced_words
-					],
+					f'<br/><small class="co">{symbol_desc}:</small> '
+					+ ", ".join(href(w) for w in referenced_words)
+					for symbol_desc, referenced_words in pointers.items()
+					if referenced_words
 				)
 				self.collector[word].append(
 					f'<i class="pos grammar">{synSetTypes[synset.ss_type]}</i>'
@@ -288,18 +287,23 @@ class WordNet:
 	def process(self) -> Iterator[tuple[str, str]]:
 		article_template = self.article_template
 
-		for title in self.collector:
-			article_pieces = self.collector[title]
-			article_pieces_count = len(article_pieces)
-			text = None
-			if article_pieces_count > 1:
-				ol = ["<ol>"] + [f"<li>{ap}</li>" for ap in article_pieces] + ["</ol>"]
-				text = article_template % (title, "".join(ol))
-			elif article_pieces_count == 1:
-				text = article_template % (title, article_pieces[0])
+		for title, articles in self.collector.items():
+			if not articles:
+				log.warning(f"empty articles: {title=}")
+				continue
 
-			if text:
-				yield title, text
+			if len(articles) == 1:
+				yield title, article_template % (title, articles[0])
+				continue
+
+			yield (
+				title,
+				article_template
+				% (
+					title,
+					"<ol>" + "".join(f"<li>{ap}</li>" for ap in articles) + "</ol>",
+				),
+			)
 
 
 class Reader:
