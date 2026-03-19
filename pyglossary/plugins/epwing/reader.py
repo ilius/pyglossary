@@ -45,7 +45,7 @@ class Reader:
         
         log.info(f"EPWING: Converting {filename} to temporary Yomichan format...")
         
-        # Pure Python EPWING to Yomichan conversion
+        # EPWING to Yomichan conversion
         from .converter import convert_epwing_to_yomichan
         
         try:

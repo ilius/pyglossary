@@ -211,7 +211,6 @@ class DaijirinExtractor(KoujienExtractor):
         return "daijirin2"
 
     def get_font_narrow(self) -> Dict[int, str]:
-        # Considerably expanded Gaiji mapping for Daijirin (Ported from Go base)
         return {
             49441: "á", 49442: "à", 49443: "â", 49444: "ä", 49445: "ã", 49446: "ā",
             49447: "é", 49448: "è", 49449: "ê", 49450: "ë", 49451: "ē",
@@ -228,7 +227,6 @@ class DaijirinExtractor(KoujienExtractor):
 class DaijisenExtractor(KoujienExtractor):
     def __init__(self):
         super().__init__()
-        # Specialized regex for Daijisen matching daijisen.go
         self.parts_exp = re.compile(r'([^【]+)(?:【(.*)】)?')
         self.exp_shapes_exp = re.compile(r'[×△＝‐]+')
         self.exp_multi_exp = re.compile(r'】[^【】]*【')
@@ -247,9 +245,7 @@ class DaijisenExtractor(KoujienExtractor):
         expressions = []
         expression_raw = match.group(2)
         if expression_raw:
-            # Replaced multi-bracket links with separator
             expression = self.exp_multi_exp.sub('・', expression_raw)
-            # Remove shapes and special hyphens
             expression = self.exp_shapes_exp.sub('', expression)
             
             for split in expression.split('・'):
@@ -286,7 +282,6 @@ class DaijisenExtractor(KoujienExtractor):
     def get_revision(self) -> str:
         return "daijisen2"
 
-# Simplified EPWING Reader in Pure Python
 # This handles the basic uncompressed HONMON reading.
 class EpwingBook:
     def __init__(self, path: str):
@@ -655,7 +650,7 @@ class KotowazaExtractor(EpwingExtractor):
         return "kotowaza1"
 
 def convert_epwing_to_yomichan(input_path: str, output_path: str, title: str = "", stride: int = 10000, pretty: bool = False):
-    log.info(f"EPWING (Pure Python): Converting {input_path}...")
+    log.info(f"EPWING: Converting {input_path}...")
     book = EpwingBook(input_path)
     
     # Expanded extractors map matching Go version titles exactly
@@ -694,8 +689,6 @@ def convert_epwing_to_yomichan(input_path: str, output_path: str, title: str = "
         
         for entry in subbook.entries():
             # Translate font markers in entry["heading"] and entry["text"]
-            # This is a bit laborious, but we can do it if needed.
-            # For now, let's just pass them as is, the extractor handles text.
             
             terms = extractor.extract_terms(entry["heading"], entry["text"], sequence)
             all_terms.extend(terms)
