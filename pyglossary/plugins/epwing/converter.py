@@ -120,7 +120,7 @@ class EpwingExtractor:
 class KoujienExtractor(EpwingExtractor):
     def __init__(self):
         self.parts_exp = re.compile(r'([^（【〖]+)(?:【(.*)】)?(?:〖(.*)〗)?(?:（(.*)）)?')
-        self.read_group_exp = re.compile(r'[‐・]+')
+        self.read_group_exp = re.compile(r'[-‐・]+')
         self.exp_var_exp = re.compile(r'\(([^\)]*)\)')
         self.meta_exp = re.compile(r'（([^）]*)）')
         self.v5_exp = re.compile(r'(動.[四五](［[^］]+］)?)|(動..二)')
@@ -185,6 +185,7 @@ class KoujienExtractor(EpwingExtractor):
                 term.add_rules("v5")
             elif self.v1_exp.search(tag):
                 term.add_rules("v1")
+
     def get_revision(self) -> str:
         return "koujien"
 
@@ -210,6 +211,7 @@ class DaijirinExtractor(KoujienExtractor):
         return "daijirin2"
 
     def get_font_narrow(self) -> Dict[int, str]:
+        # Considerably expanded Gaiji mapping for Daijirin (Ported from Go base)
         return {
             49441: "á", 49442: "à", 49443: "â", 49444: "ä", 49445: "ã", 49446: "ā",
             49447: "é", 49448: "è", 49449: "ê", 49450: "ë", 49451: "ē",
@@ -217,11 +219,72 @@ class DaijirinExtractor(KoujienExtractor):
             49456: "ó", 49457: "ò", 49458: "ô", 49459: "ö", 49460: "ř",
             49461: "ú", 49462: "ü", 49463: "~", 49464: "ç", 49465: "ˇ",
             49466: "ɡ", 49467: "ŋ", 49468: "ʒ", 49469: "ʃ", 49470: "ɔ", 49471: "ð",
+            49472: "Á", 49473: "Í", 49474: "Ú", 49475: "É", 49476: "Ó",
+            49477: "À", 49478: "È", 49479: "Ò", 49480: "ì", 49481: "ù",
+            49482: "ý", 49484: "ɑ", 49485: "ə", 49487: "ɛ", 49488: "θ",
+            49489: "ʌ", 49490: "ɒ", 49500: "æ", 50037: "ヰ", 50038: "ヱ",
         }
 
 class DaijisenExtractor(KoujienExtractor):
+    def __init__(self):
+        super().__init__()
+        # Specialized regex for Daijisen matching daijisen.go
+        self.parts_exp = re.compile(r'([^【]+)(?:【(.*)】)?')
+        self.exp_shapes_exp = re.compile(r'[×△＝‐]+')
+        self.exp_multi_exp = re.compile(r'】[^【】]*【')
+        self.exp_var_exp = re.compile(r'（([^）]*)）')
+        self.read_group_exp = re.compile(r'[-‐・]+')
+        self.meta_exp = re.compile(r'［([^］]*)］')
+
+    def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+        heading = self.translate(heading)
+        text = self.translate(text)
+        
+        match = self.parts_exp.match(heading)
+        if not match:
+            return []
+
+        expressions = []
+        expression_raw = match.group(2)
+        if expression_raw:
+            # Replaced multi-bracket links with separator
+            expression = self.exp_multi_exp.sub('・', expression_raw)
+            # Remove shapes and special hyphens
+            expression = self.exp_shapes_exp.sub('', expression)
+            
+            for split in expression.split('・'):
+                split_inc = self.exp_var_exp.sub(r'\1', split)
+                expressions.append(split_inc)
+                if split != split_inc:
+                    split_exc = self.exp_var_exp.sub('', split)
+                    expressions.append(split_exc)
+
+        reading = match.group(1)
+        if reading:
+            reading = self.read_group_exp.sub('', reading)
+            reading = self.exp_var_exp.sub('', reading)
+
+        tags = []
+        for line in text.split('\n'):
+            m = self.meta_exp.search(line)
+            if m:
+                for tag in m.group(1).split('・'):
+                    tags.append(tag)
+
+        terms = []
+        if not expressions:
+            term = dbTerm(expression=reading, glossary=[text], sequence=sequence)
+            self.export_rules(term, tags)
+            terms.append(term)
+        else:
+            for e in expressions:
+                term = dbTerm(expression=e, reading=reading, glossary=[text], sequence=sequence)
+                self.export_rules(term, tags)
+                terms.append(term)
+        return terms
+
     def get_revision(self) -> str:
-        return "daijisen"
+        return "daijisen2"
 
 # Simplified EPWING Reader in Pure Python
 # This handles the basic uncompressed HONMON reading.
@@ -333,15 +396,281 @@ class EpwingSubbook:
                 
                 pos = end
 
+class MeikyouExtractor(KoujienExtractor):
+    def __init__(self):
+        super().__init__()
+        self.parts_exp = re.compile(r'([^（【〖\[]+)(?:【(.*)】)?(?:\[(.*)\])?(?:（(.*)）)?')
+        self.exp_shapes_exp = re.compile(r'[▼▽]+')
+        self.exp_bracketed_exp = re.compile(r'(?:[〈《])([^〉》]*)(?:[〉》])')
+        self.exp_terms_exp = re.compile(r'([^（]*)?(?:（(.*)）)?')
+        self.read_group_exp = re.compile(r'[-‐・]+')
+        self.meta_exp = re.compile(r'〘([^〙]*)〙')
+
+    def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+        heading = self.translate(heading)
+        text = self.translate(text)
+        
+        match = self.parts_exp.match(heading)
+        if not match:
+            return []
+
+        expressions = []
+        readings = []
+
+        # Expression from 【...】
+        exp_match = match.group(2)
+        if exp_match:
+            exp_match = self.exp_shapes_exp.sub('', exp_match)
+            exp_match = self.exp_bracketed_exp.sub(r'\1', exp_match)
+            terms_match = self.exp_terms_exp.match(exp_match)
+            if terms_match:
+                for group in terms_match.groups():
+                    if group:
+                        for split in group.split('・'):
+                            expressions.append(split)
+
+        # Expression from [...] (foreign/meta)
+        foreign_match = match.group(3)
+        if foreign_match:
+            # Simplified foreign meta removal (Go version has a long list, we just split)
+            foreign_match = foreign_match.replace("＋", " ")
+            for split in foreign_match.split('・'):
+                expressions.append(split)
+
+        reading = match.group(1)
+        if reading:
+            reading = self.read_group_exp.sub('', reading)
+            readings.append(reading)
+
+        tags = []
+        for line in text.split('\n'):
+            m = self.meta_exp.search(line)
+            if m:
+                for tag in m.group(1).split('・'):
+                    tags.append(tag)
+
+        terms = []
+        if not expressions:
+            for r in readings:
+                term = dbTerm(expression=r, glossary=[text], sequence=sequence)
+                self.export_rules(term, tags)
+                terms.append(term)
+        else:
+            for e in expressions:
+                for r in readings:
+                    term = dbTerm(expression=e, reading=r, glossary=[text], sequence=sequence)
+                    self.export_rules(term, tags)
+                    terms.append(term)
+        return terms
+
+    def get_revision(self) -> str:
+        return "meikyou1"
+
+    def get_font_narrow(self) -> Dict[int, str]:
+        # Basic mapping for Meikyou
+        return {41550: "ī"}
+
+class GakkenExtractor(KoujienExtractor):
+    def __init__(self):
+        super().__init__()
+        self.parts_exp = re.compile(r'([ぁ-んァ-ヶー‐・]*)(?:【(.*)】)?')
+        self.read_group_exp = re.compile(r'[-‐・]+')
+        # Ported from gakken.go cosmetics replacer
+        self.cosmetics = {
+            "(1)": "①", "(2)": "②", "(3)": "③", "(4)": "④", "(5)": "⑤",
+            "カ゛": "ガ", "キ゛": "ギ", "ク゛": "グ", "ケ゛": "ゲ", "コ゛": "ゴ",
+            "タ゛": "ダ", "チ゛": "ヂ", "ツ゛": "ヅ", "テ゛": "デ", "ト゛": "ド",
+            "ハ゛": "バ", "ヒ゛": "ビ", "フ゛": "ブ", "ヘ゛": "ベ", "ホ゛": "ボ",
+            "サ゛": "ザ", "シ゛": "ジ", "ス゛": "ズ", "セ゛": "ゼ", "ソ゛": "ゾ"
+        }
+
+    def _apply_cosmetics(self, text: str) -> str:
+        for k, v in self.cosmetics.items():
+            text = text.replace(k, v)
+        return text
+
+    def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+        heading = self.translate(heading)
+        text = self.translate(text)
+        text = self._apply_cosmetics(text)
+        
+        match = self.parts_exp.match(heading)
+        if not match:
+            return []
+
+        expressions = []
+        readings = []
+
+        expression_raw = match.group(2)
+        if expression_raw:
+            expression = self.meta_exp.sub('', expression_raw)
+            for split in re.split(r'・|】【', expression):
+                split_inc = self.exp_var_exp.sub(r'\1', split)
+                expressions.append(split_inc)
+                if split != split_inc:
+                    split_exc = self.exp_var_exp.sub('', split)
+                    expressions.append(split_exc)
+
+        reading = match.group(1)
+        if reading:
+            reading = self.read_group_exp.sub('', reading)
+            readings.append(reading)
+
+        tags = []
+        for line in text.split('\n'):
+            m = self.meta_exp.search(line)
+            if m:
+                for tag in m.group(1).split('・'):
+                    tags.append(tag)
+
+        if not readings:
+            readings = [""]
+
+        terms = []
+        if not expressions:
+            for r in readings:
+                if not r: continue
+                term = dbTerm(expression=r, glossary=[text], sequence=sequence)
+                self.export_rules(term, tags)
+                terms.append(term)
+        else:
+            for e in expressions:
+                for r in readings:
+                    term = dbTerm(expression=e, reading=r, glossary=[text], sequence=sequence)
+                    self.export_rules(term, tags)
+                    terms.append(term)
+        return terms
+
+    def get_revision(self) -> str:
+        return "gakken"
+
+class WadaiExtractor(KoujienExtractor):
+    def __init__(self):
+        super().__init__()
+        self.parts_exp = re.compile(r'([^＜]+)(?:＜([^＞【]+)(?:【([^】]+)】)?＞)?')
+        self.literal_parts_exp = re.compile(r'(¶)?(.*)')
+        self.read_parts_exp = re.compile(r'([^１２３４５６７８９０]+)(.*)')
+        self.quoted_exp = re.compile(r'「?([^」]+)')
+        self.alpha_exp = re.compile(r'[a-z]+')
+
+    def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+        heading = self.translate(heading)
+        text = self.translate(text)
+        
+        match = self.parts_exp.match(heading)
+        if not match:
+            return []
+
+        preset = False
+        literal = match.group(1)
+        lit_match = self.literal_parts_exp.match(literal)
+        if lit_match:
+            preset = bool(lit_match.group(1))
+            literal = lit_match.group(2)
+
+        reading = match.group(2) or ""
+        read_match = self.read_parts_exp.match(reading)
+        if read_match:
+            reading = read_match.group(1)
+
+        expressions = (match.group(3) or "").split('・')
+        if not expressions or expressions == [""]:
+            expressions = [""]
+
+        terms = []
+        for expression in expressions:
+            if preset:
+                expression = literal
+                reading = ""
+            elif not expression:
+                expression = literal
+
+            quoted_match = self.quoted_exp.match(reading)
+            if quoted_match:
+                reading = quoted_match.group(1)
+
+            if self.alpha_exp.match(expression) and reading:
+                expression = reading
+                reading = ""
+
+            expression = expression.strip()
+            if not expression:
+                continue
+
+            term = dbTerm(expression=expression, reading=reading, glossary=[text], sequence=sequence)
+            terms.append(term)
+        return terms
+
+    def get_revision(self) -> str:
+        return "wadai1"
+
+class KotowazaExtractor(EpwingExtractor):
+    def __init__(self):
+        self.read_group_exp = re.compile(r'([^ぁ-ゖァ-ヺ]*)(\([^)]*\))')
+        self.read_group_alts_exp = re.compile(r'\(([^)]*)\)')
+        self.read_group_no_alts_exp = re.compile(r'\(([^・)]*)\)')
+        self.word_group_exp = re.compile(r'＝([^〔＝]*)〔＝([^〕]*)〕')
+
+    def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+        heading = self.translate(heading)
+        text = self.translate(text)
+        
+        queue = [heading]
+        reduced_expressions = []
+
+        while queue:
+            expression = queue.pop(0)
+            match = self.word_group_exp.search(expression)
+            if not match:
+                reduced_expressions.append(expression)
+            else:
+                replacements = [match.group(1)]
+                replacements.extend(match.group(2).split('・'))
+                for repl in replacements:
+                    queue.append(expression.replace(match.group(0), repl))
+
+        terms = []
+        for red_exp in reduced_expressions:
+            expression = self.read_group_exp.sub(r'\1', red_exp)
+            read_alts_exp = self.read_group_exp.sub(r'\2', red_exp)
+            read_alts_exp = self.read_group_no_alts_exp.sub(r'\1', read_alts_exp)
+
+            readings = []
+            read_queue = [read_alts_exp]
+            while read_queue:
+                read_item = read_queue.pop(0)
+                match = self.read_group_alts_exp.search(read_item)
+                if not match:
+                    readings.append(read_item)
+                else:
+                    for repl in match.group(1).split('・'):
+                        read_queue.append(read_item.replace(match.group(0), repl))
+
+            for r in readings:
+                term = dbTerm(expression=expression, reading=r, glossary=[text], sequence=sequence)
+                terms.append(term)
+        return terms
+
+    def get_revision(self) -> str:
+        return "kotowaza1"
+
 def convert_epwing_to_yomichan(input_path: str, output_path: str, title: str = "", stride: int = 10000, pretty: bool = False):
     log.info(f"EPWING (Pure Python): Converting {input_path}...")
     book = EpwingBook(input_path)
     
+    # Expanded extractors map matching Go version titles exactly
     extractors_map = {
         "大辞林": DaijirinExtractor(),
         "大辞泉": DaijisenExtractor(),
         "広辞苑": KoujienExtractor(),
         "KOUJIEN": KoujienExtractor(),
+        "明鏡国語辞典": MeikyouExtractor(),
+        "学研": GakkenExtractor(),
+        "古語辞典": GakkenExtractor(),
+        "故事ことわざ辞典": GakkenExtractor(),
+        "故事ことわざの辞典": KotowazaExtractor(),
+        "研究社": WadaiExtractor(),
+        "付属資料": KoujienExtractor(),
     }
 
     all_terms = []

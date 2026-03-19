@@ -2116,7 +2116,7 @@
 		"module": "epwing",
 		"lname": "epwing",
 		"name": "EPWING",
-		"description": "EPWING (via yomichan-import)",
+		"description": "EPWING",
 		"extensions": [],
 		"singleFile": false,
 		"optionsProp": {},
