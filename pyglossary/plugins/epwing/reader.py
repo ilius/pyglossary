@@ -1,9 +1,8 @@
 from __future__ import annotations
 import os
-import subprocess
 import tempfile
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 # Import the Yomichan reader from the existing plugin
 try:
@@ -44,27 +43,18 @@ class Reader:
         temp_dir = tempfile.gettempdir()
         self._temp_zip_path = os.path.join(temp_dir, f"pyglossary_epwing_{os.path.basename(filename)}.zip")
         
-        # Path to the yomichan binary (relative to this plugin)
-        # Assuming yomichan.exe is in bin/ subdirectory of this plugin
-        bin_dir = os.path.join(os.path.dirname(__file__), "bin")
-        bin_path = os.path.join(bin_dir, "yomichan.exe")
-        
-        if not os.path.exists(bin_path):
-             raise FileNotFoundError(f"EPWING: yomichan binary not found at {bin_path}")
-
         log.info(f"EPWING: Converting {filename} to temporary Yomichan format...")
         
-        # Run the converter
+        # Pure Python EPWING to Yomichan conversion
+        from .converter import convert_epwing_to_yomichan
+        
         try:
-            # We use the built binary from yomichan-import
-            subprocess.run([
-                bin_path,
-                filename,
-                self._temp_zip_path
-            ], check=True, capture_output=True, text=True)
-        except subprocess.CalledProcessError as e:
-            log.error(f"EPWING: Conversion failed: {e.stderr}")
-            raise RuntimeError(f"EPWING conversion failed: {e.stderr}") from e
+            convert_epwing_to_yomichan(filename, self._temp_zip_path)
+        except Exception as e:
+            log.error(f"EPWING: Conversion failed: {e}")
+            import traceback
+            log.error(traceback.format_exc())
+            raise RuntimeError(f"EPWING conversion failed: {e}") from e
         
         log.info("EPWING: Conversion to Yomichan format successful.")
         
