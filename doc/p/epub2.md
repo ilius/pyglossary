@@ -1,5 +1,10 @@
 ## EPUB-2 E-Book
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/epub2/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                      |

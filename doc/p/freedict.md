@@ -1,5 +1,10 @@
 ## FreeDict (.tei)
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/freedict/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                                                              |

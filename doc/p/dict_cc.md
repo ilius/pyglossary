@@ -1,5 +1,10 @@
 ## Dict.cc (SQLite3)
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/dict_cc/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                                                                            |
