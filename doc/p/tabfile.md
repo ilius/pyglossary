@@ -1,5 +1,10 @@
 ## Tabfile (.txt, .dic)
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/tabfile/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                                                      |

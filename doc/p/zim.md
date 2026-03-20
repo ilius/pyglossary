@@ -1,5 +1,10 @@
 ## Zim (.zim, for Kiwix)
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                                                  |

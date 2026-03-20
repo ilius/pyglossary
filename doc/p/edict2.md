@@ -1,5 +1,10 @@
 ## EDICT2 (CEDICT) (.u8)
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/edict2/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                          |

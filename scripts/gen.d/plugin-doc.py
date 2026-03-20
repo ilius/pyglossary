@@ -30,6 +30,11 @@ Mako template engine:
 template = Template(
 	"""${"##"} ${description}
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/${plugin_lname}/__init__.py file, then run ./scripts/gen
+-->
+
 ${topTables}
 
 % if readDependsLinks and readDependsLinks == writeDependsLinks:
@@ -336,6 +341,7 @@ for p in plugins:
 
 	text = template.render(
 		description=p.description,
+		plugin_lname=p.lname,
 		codeValue=codeValue,
 		yesNo=yesNo,
 		topTables=topTables,

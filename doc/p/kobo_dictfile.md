@@ -1,5 +1,10 @@
 ## Kobo E-Reader Dictfile (.df)
 
+<!--
+This document is generated from source code. Do NOT edit.
+To update, modify plugins/kobo_dictfile/__init__.py file, then run ./scripts/gen
+-->
+
 ### General Information
 
 | Attribute       | Value                                                                       |
