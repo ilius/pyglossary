@@ -185,7 +185,7 @@ infoType3ByCode = {
 	# 0: browsing disabled, 1: browsing enabled
 	0x0A: InfoItem(
 		"bgl_browsingEnabled",
-		decode=lambda b_value: (b_value[0] != 0),
+		decode=lambda b_value: b_value[0] != 0,
 	),
 	0x0B: InfoItem("icon1.ico"),
 	0x0C: InfoItem(
@@ -219,7 +219,7 @@ infoType3ByCode = {
 	# so if lastUpdated is not there, we use bgl_firstUpdated as lastUpdated
 	0x20: InfoItem(
 		"bgl_caseSensitive2",
-		decode=lambda b_value: (b_value[0] == 0x31),
+		decode=lambda b_value: b_value[0] == 0x31,
 		# 0x30 - case sensitive search is disabled
 		# 0x31 - case sensitive search is enabled
 	),
