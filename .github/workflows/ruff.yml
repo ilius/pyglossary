@@ -20,6 +20,6 @@ jobs:
       - name: Download ruff
         run: ./.github/scripts/get-ruff.sh
       - name: Format and check code with ruff
-        run: ./ruff format; ./ruff check --fix --preview
+        run: ./ruff format; ./ruff check --fix
       - name: Check for changes
         run: bash scripts/ci/no-diff.sh
