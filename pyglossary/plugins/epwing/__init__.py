@@ -28,6 +28,7 @@ description = "EPWING"
 extensions = ()
 singleFile = False
 kind = "directory"
+wiki = ""
 sortOnWrite = ALWAYS
 sortKeyName = "headword"
 
