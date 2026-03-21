@@ -19,6 +19,7 @@ import os
 import re
 import sys
 from collections import defaultdict
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
@@ -331,6 +332,10 @@ class Reader:
 		log.info("Running wordnet.prepare()")
 		self.wordnet.prepare()
 
+		self._glos.setInfo(
+			"creationTime",
+			datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+		)
 		# TODO: metadata
 
 	def close(self) -> None:
