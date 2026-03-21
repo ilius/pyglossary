@@ -27,7 +27,7 @@ infoKeysAliasDict = {
 	"outputlang": c_targetLang,
 	"destlang": c_targetLang,
 	##
-	"license": c_copyright,
+	# "license": c_copyright,
 	##
 	# do not map "publisher" to "author"
 	##
