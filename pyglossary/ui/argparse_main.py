@@ -266,6 +266,13 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		default=None,
 		help="glossary license",
 	)
+	parser.add_argument(
+		"--copyright",
+		action="store",
+		dest="copyright",
+		default=None,
+		help="glossary's copyright message",
+	)
 
 	# _______________________________
 

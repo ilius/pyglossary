@@ -102,6 +102,7 @@ infoOverrideSpec = (
 	("targetLang", validateLangStr),
 	("name", str),
 	("license", str),
+	("copyright", str),
 )
 
 
