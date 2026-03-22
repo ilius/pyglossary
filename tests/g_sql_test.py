@@ -11,7 +11,7 @@ class TestGlossarySQL(TestGlossaryBase):
 		self.dataFileCRC32.update(
 			{
 				"100-en-fa.txt": "f5c53133",
-				"100-en-fa.txt-v2.sql": "70cd0514",
+				"100-en-fa.txt-v3.sql": "e8116afc",
 			},
 		)
 		os.environ["CALC_FILE_SIZE"] = "1"
@@ -27,7 +27,7 @@ class TestGlossarySQL(TestGlossaryBase):
 	def test_convert_txt_sql_1(self):
 		self.convert_txt_sql(
 			"100-en-fa",
-			"100-en-fa.txt-v2",
+			"100-en-fa.txt-v3",
 		)
 
 

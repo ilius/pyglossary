@@ -93,14 +93,13 @@ class Writer:
 		if info_keys:
 			return info_keys
 		return [
-			"dbname",
+			"name",
 			"author",
 			"version",
-			"direction",
-			"origLang",
-			"destLang",
-			"license",
-			"category",
+			"date",
+			"sourcelang",
+			"targetlang",
+			"copyright",
 			"description",
 		]
 
