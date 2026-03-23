@@ -71,6 +71,7 @@ Web interface
 | [Lingoes Source](./doc/p/lingoes_ldf.md)                | 📝  |      .ldf       | ✅ | ✅ |
 | [Mobipocket E-Book](./doc/p/mobi.md)                    | 🔢  |      .mobi      | ❌ | ✅ |
 | [Octopus MDict](./doc/p/octopus_mdict.md)               | 🔢  |      .mdx       | ✅ | ❌ |
+| [PocketBook SDIC](./doc/p/pocketbook_sdic.md)           | 🔢  |      .dic       | ❌ | ✅ |
 | [QuickDic version 6](./doc/p/quickdic6.md)              | 🔢  |     .quickdic   | ✅ | ✅ |
 | [SQL](./doc/p/sql.md)                                   | 📝  |      .sql       | ❌ | ✅ |
 | [StarDict](./doc/p/stardict.md)                         | 📁  |     (📝.ifo)    | ✅ | ✅ |
