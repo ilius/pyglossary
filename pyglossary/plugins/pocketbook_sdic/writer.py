@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import re
 import struct
 import zlib
 from typing import TYPE_CHECKING
@@ -72,10 +73,13 @@ def encode_body(text: str) -> bytes:
 	Encode a definition body for SDIC.
 
 	Strips leading whitespace from each line, removes literal newlines,
+	removes class attributes from HTML tags,
 	and preserves HTML tags and entities verbatim.
 	"""
 	parts = [line.lstrip(" \t") for line in text.split("\n")]
-	return "".join(parts).encode("utf-8")
+	text = "".join(parts)
+	text = re.sub(r' class="[^"]*"', "", text)
+	return text.encode("utf-8")
 
 
 def _encode_entry(word: str, body_bytes: bytes) -> bytes:

@@ -186,6 +186,12 @@ class TestEncodeBody(unittest.TestCase):
 			b"<b>bold</b><i>italic</i>",
 		)
 
+	def test_class_attributes_stripped(self):
+		self.assertEqual(
+			encode_body('<p class="ex" style="padding-left:1em;margin:0">example</p>'),
+			b'<p style="padding-left:1em;margin:0">example</p>',
+		)
+
 
 class TestEncodeEntry(unittest.TestCase):
 	"""Test SDIC entry payload encoding."""
