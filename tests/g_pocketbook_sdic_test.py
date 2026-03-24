@@ -47,13 +47,13 @@ def _parse_sdic(path: str) -> SdicInfo:
 	collate_offset: int = struct.unpack_from("<I", data, offset=0x24)[0]
 	morphems_offset: int = struct.unpack_from("<I", data, offset=0x28)[0]
 	keyboard_offset: int = struct.unpack_from("<I", data, offset=0x2C)[0]
-	sparse_offet: int = struct.unpack_from("<I", data, offset=0x38)[0]
+	sparse_offset: int = struct.unpack_from("<I", data, offset=0x38)[0]
 	data_offset: int = struct.unpack_from("<I", data, offset=0x3C)[0]
 	name: str = data[0x40:0x80].split(b"\x00")[0].decode("utf-8")
 	file_size = len(data)
 
 	# Parse sparse index
-	si_data = data[sparse_offet:data_offset]
+	si_data = data[sparse_offset:data_offset]
 	si_raw = zlib.decompress(si_data[4:])
 	block_info: list[tuple[int, str]] = []
 	offset = 0
@@ -62,9 +62,9 @@ def _parse_sdic(path: str) -> SdicInfo:
 		if csize == 0:
 			break
 		offset += 2
-		nul = si_raw.index(0, offset)
-		word = si_raw[offset:nul].decode("utf-8")
-		offset = nul + 1
+		null_terminator_pos = si_raw.index(0, offset)
+		word = si_raw[offset:null_terminator_pos].decode("utf-8")
+		offset = null_terminator_pos + 1
 		block_info.append((csize, word))
 
 	# Parse all entries from data blocks
@@ -98,7 +98,7 @@ def _parse_sdic(path: str) -> SdicInfo:
 		collate_offset=collate_offset,
 		morphems_offset=morphems_offset,
 		keyboard_offset=keyboard_offset,
-		sparse_offset=sparse_offet,
+		sparse_offset=sparse_offset,
 		data_offset=data_offset,
 		name=name,
 		file_size=file_size,
