@@ -24,11 +24,11 @@ class SdicInfo:
 	version: int
 	entry_count: int
 	max_entry_size: int
-	collate_off: int
-	morphems_off: int
-	keyboard_off: int
-	sparse_off: int
-	data_off: int
+	collate_offset: int
+	morphems_offset: int
+	keyboard_offset: int
+	sparse_offset: int
+	data_offset: int
 	name: str
 	file_size: int
 	blocks: list[tuple[int, str]]
@@ -40,55 +40,54 @@ def _parse_sdic(path: str) -> SdicInfo:
 	with open(path, "rb") as f:
 		data = f.read()
 
-	# reading from data buffer one in this specific order
 	signature = data[:4]
-	version = struct.unpack_from("<I", data, 4)[0]
-	entry_count = struct.unpack_from("<I", data, 8)[0]
-	max_entry_size = struct.unpack_from("<I", data, 0x0C)[0]
-	collate_off = struct.unpack_from("<I", data, 0x24)[0]
-	morphems_off = struct.unpack_from("<I", data, 0x28)[0]
-	keyboard_off = struct.unpack_from("<I", data, 0x2C)[0]
-	sparse_off = struct.unpack_from("<I", data, 0x38)[0]
-	data_off = struct.unpack_from("<I", data, 0x3C)[0]
-	name = data[0x40:0x80].split(b"\x00")[0].decode("utf-8")
+	version: int = struct.unpack_from("<I", data, offset=4)[0]
+	entry_count: int = struct.unpack_from("<I", data, offset=8)[0]
+	max_entry_size: int = struct.unpack_from("<I", data, offset=0x0C)[0]
+	collate_offset: int = struct.unpack_from("<I", data, offset=0x24)[0]
+	morphems_offset: int = struct.unpack_from("<I", data, offset=0x28)[0]
+	keyboard_offset: int = struct.unpack_from("<I", data, offset=0x2C)[0]
+	sparse_offet: int = struct.unpack_from("<I", data, offset=0x38)[0]
+	data_offset: int = struct.unpack_from("<I", data, offset=0x3C)[0]
+	name: str = data[0x40:0x80].split(b"\x00")[0].decode("utf-8")
 	file_size = len(data)
 
 	# Parse sparse index
-	si_data = data[sparse_off:data_off]
+	si_data = data[sparse_offet:data_offset]
 	si_raw = zlib.decompress(si_data[4:])
 	block_info: list[tuple[int, str]] = []
-	off = 0
-	while off < len(si_raw) - 1:
-		csize = struct.unpack_from("<H", si_raw, off)[0]
+	offset = 0
+	while offset < len(si_raw) - 1:
+		csize = struct.unpack_from("<H", si_raw, offset)[0]
 		if csize == 0:
 			break
-		off += 2
-		nul = si_raw.index(0, off)
-		word = si_raw[off:nul].decode("utf-8")
-		off = nul + 1
+		offset += 2
+		nul = si_raw.index(0, offset)
+		word = si_raw[offset:nul].decode("utf-8")
+		offset = nul + 1
 		block_info.append((csize, word))
 
 	# Parse all entries from data blocks
 	entries: list[tuple[str, str]] = []
-	file_offset = data_off
+	file_offset = data_offset
 	for bsize, _first_word in block_info:
 		block_raw = zlib.decompress(data[file_offset : file_offset + bsize])
-		entry_off = 0
-		while entry_off < len(block_raw):
-			entry_start = entry_off
-			entry_size = struct.unpack_from("<H", block_raw, entry_off)[0]
+		entry_offset = 0
+		while entry_offset < len(block_raw):
+			entry_start = entry_offset
+			entry_size = struct.unpack_from("<H", block_raw, entry_offset)[0]
 			if entry_size == 0:
 				break
-			entry_off += 2
-			nul = block_raw.index(0, entry_off)
-			word = block_raw[entry_off:nul].decode("utf-8")
-			entry_off = nul + 1
+			entry_offset += 2
+			nul = block_raw.index(0, entry_offset)
+			word = block_raw[entry_offset:nul].decode("utf-8")
+			entry_offset = nul + 1
 			body_end = entry_start + entry_size
-			body = block_raw[entry_off:body_end]
+			body = block_raw[entry_offset:body_end]
 			# Strip body markers: 0x20 prefix, 0x20 0x0A 0x00 suffix
 			body_text = body[1:-3].decode("utf-8") if len(body) > 4 else ""
 			entries.append((word, body_text))
-			entry_off = body_end
+			entry_offset = body_end
 		file_offset += bsize
 
 	return SdicInfo(
@@ -96,11 +95,11 @@ def _parse_sdic(path: str) -> SdicInfo:
 		version=version,
 		entry_count=entry_count,
 		max_entry_size=max_entry_size,
-		collate_off=collate_off,
-		morphems_off=morphems_off,
-		keyboard_off=keyboard_off,
-		sparse_off=sparse_off,
-		data_off=data_off,
+		collate_offset=collate_offset,
+		morphems_offset=morphems_offset,
+		keyboard_offset=keyboard_offset,
+		sparse_offset=sparse_offet,
+		data_offset=data_offset,
 		name=name,
 		file_size=file_size,
 		blocks=block_info,
@@ -269,7 +268,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 		result = _parse_sdic(outpath)
 		self.assertEqual(result.entry_count, 1)
 		# Collate section should be present (non-zero size)
-		collate_size = result.morphems_off - result.collate_off
+		collate_size = result.morphems_offset - result.collate_offset
 		self.assertGreater(collate_size, 0)
 
 	def test_section_offsets_consistent(self):
@@ -282,14 +281,14 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result.collate_off, 128)
-		self.assertGreater(result.morphems_off, result.collate_off)
-		self.assertGreater(result.keyboard_off, result.morphems_off)
-		self.assertGreater(result.sparse_off, result.keyboard_off)
-		self.assertGreater(result.data_off, result.sparse_off)
+		self.assertEqual(result.collate_offset, 128)
+		self.assertGreater(result.morphems_offset, result.collate_offset)
+		self.assertGreater(result.keyboard_offset, result.morphems_offset)
+		self.assertGreater(result.sparse_offset, result.keyboard_offset)
+		self.assertGreater(result.data_offset, result.sparse_offset)
 		self.assertGreaterEqual(
 			result.file_size,
-			result.data_off,
+			result.data_offset,
 		)
 
 	def test_bookname_in_header(self):
