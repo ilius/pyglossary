@@ -237,6 +237,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 
 	# _______________________________
 
+	# to add new info flags, also update infoOverrideSpec in main.py
 	parser.add_argument(
 		"--source-lang",
 		action="store",
