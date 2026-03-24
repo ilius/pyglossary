@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Unit tests for PocketBook SDIC writer helpers."""
 
@@ -288,7 +287,7 @@ class TestPackBlocks(unittest.TestCase):
 		payloads = [b"x" * 700 for _ in range(100)]
 		blocks, _counts, _max_size, _widened = _pack_blocks(payloads)
 		self.assertGreater(len(blocks), 1)
-		for _i, block in enumerate(blocks):
+		for block in blocks:
 			raw = zlib.decompress(block)
 			self.assertLess(len(raw), MAX_RAW_BLOCK_SIZE)
 
@@ -408,14 +407,12 @@ class TestPrepareSections(unittest.TestCase):
 		morphems = ";this is a comment\n\n%1=aeiou"
 		collate: dict[int, int] = {}
 		section = _prepare_morphems_section(morphems, collate)
-		size = struct.unpack_from("<I", section, 0)[0]
+		_size = struct.unpack_from("<I", section, 0)[0]
 		decompressed = zlib.decompress(section[4:])
 		# Only "%1=AEIOU" should remain (uppercased by GetCollatedKey)
 		# Each char as uint16 LE + NUL separator + final NUL
 		# The output should have only 1 non-empty line processed
-		runes = []
-		for i in range(0, len(decompressed), 2):
-			runes.append(struct.unpack_from("<H", decompressed, i)[0])
+		runes = [struct.unpack_from("<H", decompressed, i)[0] for i in range(0, len(decompressed), 2)]
 		# Find the content between NUL separators
 		content = "".join(chr(r) for r in runes if r != 0)
 		self.assertIn("%1=AEIOU", content)

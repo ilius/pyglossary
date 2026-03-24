@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Integration tests for PocketBook SDIC writer plugin."""
 
@@ -102,9 +101,8 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 		"""Helper: create a glossary, add entries, write to SDIC."""
 		self.glos = glos = Glossary()
 		glos.setInfo("bookname", bookname)
-		for terms, defi in entries:
-			if isinstance(terms, str):
-				terms = [terms]
+		for terms_, defi in entries:
+			terms = [terms_] if isinstance(terms_, str) else terms_
 			glos.addEntry(glos.newEntry(terms, defi))
 		outpath = os.path.join(self.tmpdir, "test.dic")
 		glos.write(outpath, formatName="PocketBookSdic", **write_options)

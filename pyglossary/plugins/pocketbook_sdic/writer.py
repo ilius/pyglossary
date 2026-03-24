@@ -43,8 +43,8 @@ def load_collates(path: str) -> dict[int, int]:
 	"""
 	collate: dict[int, int] = {}
 	with open(path, encoding="utf-8") as f:
-		for line in f:
-			line = line.rstrip("\r\n")
+		for line_ in f:
+			line = line_.rstrip("\r\n")
 			if not line:
 				continue
 			eq_idx = line.rfind("=")
@@ -121,9 +121,7 @@ def encode_body(text: str) -> bytes:
 	Strips leading whitespace from each line, removes literal newlines,
 	and preserves HTML tags and entities verbatim.
 	"""
-	parts: list[str] = []
-	for line in text.split("\n"):
-		parts.append(line.lstrip(" \t"))
+	parts: list[str] = [line.lstrip(" \t") for line in text.split("\n")]
 	return "".join(parts).encode("utf-8")
 
 
@@ -246,13 +244,12 @@ def _prepare_morphems_section(
 ) -> bytes:
 	"""Build the morphems section (UTF-16LE, zlib-compressed)."""
 	output: list[int] = []
-	for line in morphems.split("\n"):
-		line = line.strip()
+	for line_ in morphems.split("\n"):
+		line = line_.strip()
 		if not line or line.startswith(";"):
 			continue
 		processed = get_collated_key(line, collate)
-		for ch in processed:
-			output.append(ord(ch))
+		output.extend(ord(ch) for ch in processed)
 		output.append(0)  # NUL terminator
 	output.append(0)  # final sentinel
 
