@@ -98,10 +98,9 @@ class Reader:
 			if self._summary_alternatives:
 				names += [article.pinyin]
 				names += article.definition_summaries()
-			entry = glos.newEntry(
+			yield glos.newEntry(
 				names,
 				article_text,
 				defiFormat="h",
 				byteProgress=(file.tell(), fileSize) if fileSize else None,
 			)
-			yield entry
