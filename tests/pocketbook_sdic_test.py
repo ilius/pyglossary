@@ -431,17 +431,17 @@ class TestBuildHeader(unittest.TestCase):
 	def test_header_section_offsets(self):
 		section_sizes = [100, 200, 300, 400]
 		header = _build_header(0, 0, "", section_sizes)
-		collate_off = struct.unpack_from("<I", header, 0x24)[0]
-		morphems_off = struct.unpack_from("<I", header, 0x28)[0]
-		keyboard_off = struct.unpack_from("<I", header, 0x2C)[0]
-		sparse_off = struct.unpack_from("<I", header, 0x38)[0]
-		data_off = struct.unpack_from("<I", header, 0x3C)[0]
+		collate_offset = struct.unpack_from("<I", header, 0x24)[0]
+		morphems_offset = struct.unpack_from("<I", header, 0x28)[0]
+		keyboard_offset = struct.unpack_from("<I", header, 0x2C)[0]
+		sparse_offset = struct.unpack_from("<I", header, 0x38)[0]
+		data_offset = struct.unpack_from("<I", header, 0x3C)[0]
 
-		self.assertEqual(collate_off, HEADER_SIZE)
-		self.assertEqual(morphems_off, HEADER_SIZE + 100)
-		self.assertEqual(keyboard_off, HEADER_SIZE + 300)
-		self.assertEqual(sparse_off, HEADER_SIZE + 600)
-		self.assertEqual(data_off, HEADER_SIZE + 1000)
+		self.assertEqual(collate_offset, HEADER_SIZE)
+		self.assertEqual(morphems_offset, HEADER_SIZE + 100)
+		self.assertEqual(keyboard_offset, HEADER_SIZE + 300)
+		self.assertEqual(sparse_offset, HEADER_SIZE + 600)
+		self.assertEqual(data_offset, HEADER_SIZE + 1000)
 
 	def test_header_name(self):
 		header = _build_header(0, 0, "My Dictionary", [0, 0, 0, 0])
