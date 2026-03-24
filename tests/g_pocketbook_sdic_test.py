@@ -79,9 +79,9 @@ def _parse_sdic(path: str) -> SdicInfo:
 			if entry_size == 0:
 				break
 			entry_offset += 2
-			nul = block_raw.index(0, entry_offset)
-			word = block_raw[entry_offset:nul].decode("utf-8")
-			entry_offset = nul + 1
+			null_terminator_pos = block_raw.index(0, entry_offset)
+			word = block_raw[entry_offset:null_terminator_pos].decode("utf-8")
+			entry_offset = null_terminator_pos + 1
 			body_end = entry_start + entry_size
 			body = block_raw[entry_offset:body_end]
 			# Strip body markers: 0x20 prefix, 0x20 0x0A 0x00 suffix

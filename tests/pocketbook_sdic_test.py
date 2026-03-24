@@ -201,18 +201,18 @@ class TestEncodeEntry(unittest.TestCase):
 		size = struct.unpack_from("<H", payload, 0)[0]
 		self.assertEqual(size, len(payload))
 		# word + NUL
-		nul = payload.index(0, 2)
-		word = payload[2:nul].decode("utf-8")
+		null_terminator_pos = payload.index(0, 2)
+		word = payload[2:null_terminator_pos].decode("utf-8")
 		self.assertEqual(word, "hello")
 		# body markers
-		body_start = nul + 1
+		body_start = null_terminator_pos + 1
 		self.assertEqual(payload[body_start : body_start + 1], BODY_PREFIX)
 		self.assertEqual(payload[-3:], BODY_SUFFIX)
 
 	def test_utf8_word(self):
 		payload = _encode_entry("café", b"definition")
-		nul = payload.index(0, 2)
-		word = payload[2:nul].decode("utf-8")
+		null_terminator_pos = payload.index(0, 2)
+		word = payload[2:null_terminator_pos].decode("utf-8")
 		self.assertEqual(word, "café")
 
 
@@ -291,8 +291,8 @@ class TestBuildSparseIndex(unittest.TestCase):
 		# Should be: uint16(10) + "alpha\0"
 		size = struct.unpack_from("<H", raw, 0)[0]
 		self.assertEqual(size, len(blocks[0]))
-		nul = raw.index(0, 2)
-		first_word = raw[2:nul].decode("utf-8")
+		null_terminator_pos = raw.index(0, 2)
+		first_word = raw[2:null_terminator_pos].decode("utf-8")
 		self.assertEqual(first_word, "alpha")
 
 	def test_multiple_blocks(self):
@@ -305,15 +305,15 @@ class TestBuildSparseIndex(unittest.TestCase):
 		s1 = struct.unpack_from("<H", raw, off)[0]
 		self.assertEqual(s1, len(blocks[0]))
 		off += 2
-		nul = raw.index(0, off)
-		self.assertEqual(raw[off:nul].decode("utf-8"), "alpha")
-		off = nul + 1
+		null_terminator_pos = raw.index(0, off)
+		self.assertEqual(raw[off:null_terminator_pos].decode("utf-8"), "alpha")
+		off = null_terminator_pos + 1
 		# Second entry: block1, first word = "gamma"
 		s2 = struct.unpack_from("<H", raw, off)[0]
 		self.assertEqual(s2, len(blocks[1]))
 		off += 2
-		nul = raw.index(0, off)
-		self.assertEqual(raw[off:nul].decode("utf-8"), "gamma")
+		null_terminator_pos = raw.index(0, off)
+		self.assertEqual(raw[off:null_terminator_pos].decode("utf-8"), "gamma")
 
 
 class TestPrepareSections(unittest.TestCase):
