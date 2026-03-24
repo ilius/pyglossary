@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 import zlib
+from dataclasses import dataclass
 from os.path import abspath, dirname
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -17,26 +18,43 @@ sys.path.insert(0, rootDir)
 from pyglossary.glossary_v2 import Glossary
 
 
-def _parse_sdic(path: str) -> dict:
+@dataclass
+class SdicInfo:
+	signature: bytes
+	version: int
+	entry_count: int
+	max_entry_size: int
+	collate_off: int
+	morphems_off: int
+	keyboard_off: int
+	sparse_off: int
+	data_off: int
+	name: str
+	file_size: int
+	blocks: list[tuple[int, str]]
+	entries: list[tuple[str, str]]
+
+
+def _parse_sdic(path: str) -> SdicInfo:
 	"""Parse an SDIC file and return its structure for verification."""
 	with open(path, "rb") as f:
 		data = f.read()
 
-	result: dict = {}
-	result["signature"] = data[:4]
-	result["version"] = struct.unpack_from("<I", data, 4)[0]
-	result["entry_count"] = struct.unpack_from("<I", data, 8)[0]
-	result["max_entry_size"] = struct.unpack_from("<I", data, 0x0C)[0]
-	result["collate_off"] = struct.unpack_from("<I", data, 0x24)[0]
-	result["morphems_off"] = struct.unpack_from("<I", data, 0x28)[0]
-	result["keyboard_off"] = struct.unpack_from("<I", data, 0x2C)[0]
-	result["sparse_off"] = struct.unpack_from("<I", data, 0x38)[0]
-	result["data_off"] = struct.unpack_from("<I", data, 0x3C)[0]
-	result["name"] = data[0x40:0x80].split(b"\x00")[0].decode("utf-8")
-	result["file_size"] = len(data)
+	# reading from data buffer one in this specific order
+	signature = data[:4]
+	version = struct.unpack_from("<I", data, 4)[0]
+	entry_count = struct.unpack_from("<I", data, 8)[0]
+	max_entry_size = struct.unpack_from("<I", data, 0x0C)[0]
+	collate_off = struct.unpack_from("<I", data, 0x24)[0]
+	morphems_off = struct.unpack_from("<I", data, 0x28)[0]
+	keyboard_off = struct.unpack_from("<I", data, 0x2C)[0]
+	sparse_off = struct.unpack_from("<I", data, 0x38)[0]
+	data_off = struct.unpack_from("<I", data, 0x3C)[0]
+	name = data[0x40:0x80].split(b"\x00")[0].decode("utf-8")
+	file_size = len(data)
 
 	# Parse sparse index
-	si_data = data[result["sparse_off"] : result["data_off"]]
+	si_data = data[sparse_off:data_off]
 	si_raw = zlib.decompress(si_data[4:])
 	block_info: list[tuple[int, str]] = []
 	off = 0
@@ -49,11 +67,10 @@ def _parse_sdic(path: str) -> dict:
 		word = si_raw[off:nul].decode("utf-8")
 		off = nul + 1
 		block_info.append((csize, word))
-	result["blocks"] = block_info
 
 	# Parse all entries from data blocks
 	entries: list[tuple[str, str]] = []
-	file_offset = result["data_off"]
+	file_offset = data_off
 	for bsize, _first_word in block_info:
 		block_raw = zlib.decompress(data[file_offset : file_offset + bsize])
 		entry_off = 0
@@ -74,8 +91,21 @@ def _parse_sdic(path: str) -> dict:
 			entry_off = body_end
 		file_offset += bsize
 
-	result["entries"] = entries
-	return result
+	return SdicInfo(
+		signature=signature,
+		version=version,
+		entry_count=entry_count,
+		max_entry_size=max_entry_size,
+		collate_off=collate_off,
+		morphems_off=morphems_off,
+		keyboard_off=keyboard_off,
+		sparse_off=sparse_off,
+		data_off=data_off,
+		name=name,
+		file_size=file_size,
+		blocks=block_info,
+		entries=entries,
+	)
 
 
 class TestPocketBookSdicWriter(unittest.TestCase):
@@ -118,12 +148,12 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["signature"], b"SDIC")
-		self.assertEqual(result["version"], 0x101)
-		self.assertEqual(result["entry_count"], 3)
-		self.assertEqual(result["name"], "Test")
+		self.assertEqual(result.signature, b"SDIC")
+		self.assertEqual(result.version, 0x101)
+		self.assertEqual(result.entry_count, 3)
+		self.assertEqual(result.name, "Test")
 		# Entries should be sorted by collated key
-		words = [e[0] for e in result["entries"]]
+		words = [e[0] for e in result.entries]
 		self.assertEqual(words, ["apple", "hello", "test"])
 
 	def test_html_definitions(self):
@@ -136,7 +166,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		entries = dict(result["entries"])
+		entries = dict(result.entries)
 		self.assertEqual(entries["bold"], "<b>strong text</b>")
 		self.assertEqual(entries["italic"], "<i>emphasis</i>")
 		self.assertIn("<b>bold</b>", entries["mixed"])
@@ -150,7 +180,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		entries = dict(result["entries"])
+		entries = dict(result.entries)
 		self.assertEqual(entries["entities"], "&amp; &lt; &gt; &quot;")
 
 	def test_newlines_stripped(self):
@@ -161,7 +191,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		entries = dict(result["entries"])
+		entries = dict(result.entries)
 		self.assertEqual(entries["multiline"], "line1line2line3")
 
 	def test_non_ascii_headwords(self):
@@ -174,7 +204,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		words = [e[0] for e in result["entries"]]
+		words = [e[0] for e in result.entries]
 		# All three words should be present
 		self.assertEqual(len(words), 3)
 		self.assertIn("café", words)
@@ -194,8 +224,8 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["entry_count"], 1)
-		entries = dict(result["entries"])
+		self.assertEqual(result.entry_count, 1)
+		entries = dict(result.entries)
 		self.assertIn("definition 1", entries["word"])
 		self.assertIn("definition 2", entries["word"])
 		self.assertIn("definition 3", entries["word"])
@@ -209,8 +239,8 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["entry_count"], 2)
-		words = [e[0] for e in result["entries"]]
+		self.assertEqual(result.entry_count, 2)
+		words = [e[0] for e in result.entries]
 		self.assertIn("color", words)
 		self.assertIn("hello", words)
 		self.assertNotIn("colour", words)
@@ -226,7 +256,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		words = [e[0] for e in result["entries"]]
+		words = [e[0] for e in result.entries]
 		self.assertEqual(words, ["apple", "mango", "zebra"])
 
 	def test_default_metadata_no_options(self):
@@ -237,9 +267,9 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["entry_count"], 1)
+		self.assertEqual(result.entry_count, 1)
 		# Collate section should be present (non-zero size)
-		collate_size = result["morphems_off"] - result["collate_off"]
+		collate_size = result.morphems_off - result.collate_off
 		self.assertGreater(collate_size, 0)
 
 	def test_section_offsets_consistent(self):
@@ -252,14 +282,14 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			]
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["collate_off"], 128)
-		self.assertGreater(result["morphems_off"], result["collate_off"])
-		self.assertGreater(result["keyboard_off"], result["morphems_off"])
-		self.assertGreater(result["sparse_off"], result["keyboard_off"])
-		self.assertGreater(result["data_off"], result["sparse_off"])
+		self.assertEqual(result.collate_off, 128)
+		self.assertGreater(result.morphems_off, result.collate_off)
+		self.assertGreater(result.keyboard_off, result.morphems_off)
+		self.assertGreater(result.sparse_off, result.keyboard_off)
+		self.assertGreater(result.data_off, result.sparse_off)
 		self.assertGreaterEqual(
-			result["file_size"],
-			result["data_off"],
+			result.file_size,
+			result.data_off,
 		)
 
 	def test_bookname_in_header(self):
@@ -269,7 +299,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			bookname="My Amazing Dictionary",
 		)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["name"], "My Amazing Dictionary")
+		self.assertEqual(result.name, "My Amazing Dictionary")
 
 	def test_custom_merge_separator(self):
 		"""Custom merge separator is used for duplicates."""
@@ -278,7 +308,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			merge_separator=" | ",
 		)
 		result = _parse_sdic(outpath)
-		entries = dict(result["entries"])
+		entries = dict(result.entries)
 		self.assertEqual(entries["word"], "def1 | def2")
 
 	def test_many_entries_multiple_blocks(self):
@@ -287,10 +317,10 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 		input_entries = [(f"word{i:04d}", f"definition number {i}") for i in range(n)]
 		outpath = self._write_sdic(input_entries)
 		result = _parse_sdic(outpath)
-		self.assertEqual(result["entry_count"], n)
-		self.assertGreater(len(result["blocks"]), 1)
+		self.assertEqual(result.entry_count, n)
+		self.assertGreater(len(result.blocks), 1)
 		# All entries should be present
-		self.assertEqual(len(result["entries"]), n)
+		self.assertEqual(len(result.entries), n)
 
 
 if __name__ == "__main__":

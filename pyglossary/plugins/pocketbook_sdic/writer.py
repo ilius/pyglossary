@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 __all__ = ["Writer"]
 
+
 # SDIC format constants
 SIGNATURE = b"SDIC"
 FORMAT_VERSION = 0x101
@@ -43,8 +44,8 @@ def load_collates(path: str) -> dict[int, int]:
 	"""
 	collate: dict[int, int] = {}
 	with open(path, encoding="utf-8") as f:
-		for line_ in f:
-			line = line_.rstrip("\r\n")
+		for raw_line in f:
+			line = raw_line.rstrip("\r\n")
 			if not line:
 				continue
 			eq_idx = line.rfind("=")
@@ -121,7 +122,7 @@ def encode_body(text: str) -> bytes:
 	Strips leading whitespace from each line, removes literal newlines,
 	and preserves HTML tags and entities verbatim.
 	"""
-	parts: list[str] = [line.lstrip(" \t") for line in text.split("\n")]
+	parts = [line.lstrip(" \t") for line in text.split("\n")]
 	return "".join(parts).encode("utf-8")
 
 
@@ -243,21 +244,18 @@ def _prepare_morphems_section(
 	collate: dict[int, int],
 ) -> bytes:
 	"""Build the morphems section (UTF-16LE, zlib-compressed)."""
-	output: list[int] = []
-	for line_ in morphems.split("\n"):
-		line = line_.strip()
+	body = bytearray()
+	for raw_line in morphems.split("\n"):
+		line = raw_line.strip()
 		if not line or line.startswith(";"):
 			continue
 		processed = get_collated_key(line, collate)
-		output.extend(ord(ch) for ch in processed)
-		output.append(0)  # NUL terminator
-	output.append(0)  # final sentinel
+		for ch in processed:
+			body += struct.pack("<H", ord(ch))
+		body += struct.pack("<H", 0)  # NUL terminator
+	body += struct.pack("<H", 0)  # final sentinel
 
-	body = b""
-	for cp in output:
-		body += struct.pack("<H", cp)
-
-	return _prepare_section_compressed(body)
+	return _prepare_section_compressed(bytes(body))
 
 
 def _prepare_keyboard_section(keyboard: str) -> bytes:
@@ -403,7 +401,7 @@ class Writer:
 			if entry.isData():
 				data_count += 1
 				continue
-			word = entry.l_term[0] if entry.l_term else entry.s_term
+			word = entry.l_word[0] if entry.l_word else entry.s_word
 			defi = entry.defi
 			entries.append((word, defi))
 
