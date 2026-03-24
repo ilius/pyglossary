@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Unit tests for PocketBook SDIC writer helpers."""
+
 from __future__ import annotations
 
 import os
@@ -35,7 +36,6 @@ from pyglossary.plugins.pocketbook_sdic.writer import (
 	_prepare_morphems_section,
 	_prepare_section_compressed,
 	_prepare_sparse_index_section,
-	_zlib_compress,
 	encode_body,
 	get_collated_key,
 	load_collates,
@@ -96,7 +96,10 @@ class TestLoadCollates(unittest.TestCase):
 		"""Built-in defaults/collates.txt loads without error."""
 		defaults_dir = os.path.join(
 			dirname(dirname(abspath(__file__))),
-			"pyglossary", "plugins", "pocketbook_sdic", "defaults",
+			"pyglossary",
+			"plugins",
+			"pocketbook_sdic",
+			"defaults",
 		)
 		path = os.path.join(defaults_dir, "collates.txt")
 		collate = load_collates(path)
@@ -127,10 +130,12 @@ class TestGetCollatedKey(unittest.TestCase):
 
 	def test_strip_characters(self):
 		self.assertEqual(
-			get_collated_key("ice-cream", self.collate), "ICECREAM",
+			get_collated_key("ice-cream", self.collate),
+			"ICECREAM",
 		)
 		self.assertEqual(
-			get_collated_key("hello world", self.collate), "HELLOWORLD",
+			get_collated_key("hello world", self.collate),
+			"HELLOWORLD",
 		)
 
 	def test_unmapped_characters_pass_through(self):
@@ -155,27 +160,32 @@ class TestCompareCollated(unittest.TestCase):
 
 	def test_equal(self):
 		self.assertEqual(
-			_compare_collated("abc", "abc", self.collate), 0,
+			_compare_collated("abc", "abc", self.collate),
+			0,
 		)
 
 	def test_accent_equal(self):
 		self.assertEqual(
-			_compare_collated("café", "cafe", self.collate), 0,
+			_compare_collated("café", "cafe", self.collate),
+			0,
 		)
 
 	def test_less_than(self):
 		self.assertLess(
-			_compare_collated("abc", "def", self.collate), 0,
+			_compare_collated("abc", "def", self.collate),
+			0,
 		)
 
 	def test_greater_than(self):
 		self.assertGreater(
-			_compare_collated("def", "abc", self.collate), 0,
+			_compare_collated("def", "abc", self.collate),
+			0,
 		)
 
 	def test_stripped_characters_ignored(self):
 		self.assertEqual(
-			_compare_collated("a b", "ab", self.collate), 0,
+			_compare_collated("a b", "ab", self.collate),
+			0,
 		)
 
 
@@ -235,7 +245,7 @@ class TestEncodeEntry(unittest.TestCase):
 		self.assertEqual(word, "hello")
 		# body markers
 		body_start = nul + 1
-		self.assertEqual(payload[body_start:body_start + 1], BODY_PREFIX)
+		self.assertEqual(payload[body_start : body_start + 1], BODY_PREFIX)
 		self.assertEqual(payload[-3:], BODY_SUFFIX)
 
 	def test_utf8_word(self):
@@ -268,7 +278,7 @@ class TestPackBlocks(unittest.TestCase):
 
 	def test_max_100_entries_per_block(self):
 		payloads = [b"x" for _ in range(150)]
-		blocks, counts, _max_size, widened = _pack_blocks(payloads)
+		_blocks, counts, _max_size, _widened = _pack_blocks(payloads)
 		self.assertEqual(sum(counts), 150)
 		for c in counts:
 			self.assertLessEqual(c, MAX_WORDS_PER_BLOCK)
@@ -276,9 +286,9 @@ class TestPackBlocks(unittest.TestCase):
 	def test_raw_size_limit_enforced(self):
 		# Each entry is ~700 bytes; 100 of them > 65531
 		payloads = [b"x" * 700 for _ in range(100)]
-		blocks, counts, _max_size, widened = _pack_blocks(payloads)
+		blocks, _counts, _max_size, _widened = _pack_blocks(payloads)
 		self.assertGreater(len(blocks), 1)
-		for i, block in enumerate(blocks):
+		for _i, block in enumerate(blocks):
 			raw = zlib.decompress(block)
 			self.assertLess(len(raw), MAX_RAW_BLOCK_SIZE)
 
@@ -286,6 +296,7 @@ class TestPackBlocks(unittest.TestCase):
 		# A single large entry that compresses to > 4097 but < 65535.
 		# Use pseudo-random data that doesn't compress well.
 		import random
+
 		rng = random.Random(42)
 		big = bytes(rng.getrandbits(8) for _ in range(30000))
 		payloads = [big]
@@ -300,6 +311,7 @@ class TestPackBlocks(unittest.TestCase):
 	def test_oversized_entry_raises(self):
 		# An entry so large even compression won't bring it under 65535.
 		import random
+
 		rng = random.Random(99)
 		huge = bytes(rng.getrandbits(8) for _ in range(200000))
 		payloads = [huge]
@@ -486,13 +498,15 @@ class TestBuildHeader(unittest.TestCase):
 		# Reserved1 at 0x10-0x23 (encryption seed, metadata offset)
 		for i in range(0x10, 0x24):
 			self.assertEqual(
-				header[i], 0,
+				header[i],
+				0,
 				f"byte at offset {i:#x} should be 0",
 			)
 		# Reserved2 at 0x30-0x37 (DRM)
 		for i in range(0x30, 0x38):
 			self.assertEqual(
-				header[i], 0,
+				header[i],
+				0,
 				f"byte at offset {i:#x} should be 0",
 			)
 

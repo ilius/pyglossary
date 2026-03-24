@@ -34,7 +34,8 @@ BLOCK_TRAILER = b"\x00\x00"
 
 
 def load_collates(path: str) -> dict[int, int]:
-	"""Parse collates.txt into a mapping of codepoint -> canonical codepoint.
+	"""
+	Parse collates.txt into a mapping of codepoint -> canonical codepoint.
 
 	Each line has the form ``chars=C`` where every character before the
 	last ``=`` maps to the first character after ``=``.  An empty
@@ -49,7 +50,7 @@ def load_collates(path: str) -> dict[int, int]:
 			eq_idx = line.rfind("=")
 			if eq_idx < 0:
 				continue
-			right = line[eq_idx + 1:]
+			right = line[eq_idx + 1 :]
 			canonical = ord(right[0]) if right else 0
 			for ch in line[:eq_idx]:
 				collate[ord(ch)] = canonical
@@ -114,7 +115,8 @@ def _compare_collated(
 
 
 def encode_body(text: str) -> bytes:
-	"""Encode a definition body for SDIC.
+	"""
+	Encode a definition body for SDIC.
 
 	Strips leading whitespace from each line, removes literal newlines,
 	and preserves HTML tags and entities verbatim.
@@ -126,7 +128,8 @@ def encode_body(text: str) -> bytes:
 
 
 def _encode_entry(word: str, body_bytes: bytes) -> bytes:
-	"""Encode a single SDIC entry payload.
+	r"""
+	Encode a single SDIC entry payload.
 
 	Returns: [uint16 total_size][word\\0][0x20][body][0x20 0x0A 0x00]
 	"""
@@ -147,7 +150,8 @@ def _zlib_compress(data: bytes) -> bytes:
 def _pack_blocks(
 	payloads: list[bytes],
 ) -> tuple[list[bytes], list[int], int, int]:
-	"""Pack entry payloads into compressed blocks using binary search.
+	"""
+	Pack entry payloads into compressed blocks using binary search.
 
 	Returns (blocks, counts, max_block_size, widened_count).
 	"""
@@ -167,7 +171,7 @@ def _pack_blocks(
 		while lo <= hi:
 			mid = (lo + hi) // 2
 
-			raw = b"".join(payloads[start:start + mid]) + BLOCK_TRAILER
+			raw = b"".join(payloads[start : start + mid]) + BLOCK_TRAILER
 			if len(raw) >= MAX_RAW_BLOCK_SIZE:
 				hi = mid - 1
 				continue
@@ -195,8 +199,7 @@ def _pack_blocks(
 			best_count = 1
 			widened_count += 1
 
-		if len(best_block) > max_block_size:
-			max_block_size = len(best_block)
+		max_block_size = max(max_block_size, len(best_block))
 
 		blocks.append(best_block)
 		counts.append(best_count)
@@ -210,7 +213,7 @@ def _build_sparse_index(
 	blocks: list[bytes],
 	counts: list[int],
 ) -> bytes:
-	"""Build the raw sparse index: [uint16 size][first_word\\0] per block."""
+	r"""Build the raw sparse index: [uint16 size][first_word\\0] per block."""
 	parts: list[bytes] = []
 	entry_start = 0
 	for i, block in enumerate(blocks):
@@ -268,7 +271,8 @@ def _prepare_keyboard_section(keyboard: str) -> bytes:
 
 
 def _prepare_sparse_index_section(sparse_index: bytes) -> bytes:
-	"""Build the sparse index section (zlib-compressed).
+	"""
+	Build the sparse index section (zlib-compressed).
 
 	The uncompressed size includes the 2-byte trailer.
 	"""
@@ -315,7 +319,7 @@ def _build_header(
 
 	# Name (0x40, 64 bytes, null-padded)
 	name_bytes = name.encode("utf-8")[:MAX_NAME_SIZE]
-	header[0x40:0x40 + len(name_bytes)] = name_bytes
+	header[0x40 : 0x40 + len(name_bytes)] = name_bytes
 
 	return bytes(header)
 
@@ -363,7 +367,8 @@ class Writer:
 
 	def write(self) -> Generator[None, EntryType, None]:
 		defaults_dir = os.path.join(
-			os.path.dirname(__file__), "defaults",
+			os.path.dirname(__file__),
+			"defaults",
 		)
 		metadata_dir = self._metadata_dir or None
 		collates_path = _resolve_metadata_file(
@@ -439,8 +444,7 @@ class Writer:
 		for word, defi in entries:
 			body_bytes = encode_body(defi)
 			payload = _encode_entry(word, body_bytes)
-			if len(payload) > max_entry_size:
-				max_entry_size = len(payload)
+			max_entry_size = max(max_entry_size, len(payload))
 			words.append(word)
 			payloads.append(payload)
 
@@ -450,8 +454,7 @@ class Writer:
 		)
 		if widened_count > 0:
 			log.info(
-				f"SDIC: {widened_count} block(s) exceeded"
-				f" default compressed size limit",
+				f"SDIC: {widened_count} block(s) exceeded default compressed size limit",
 			)
 
 		# Build sections
@@ -492,8 +495,7 @@ class Writer:
 			f.write(morphems_section)
 			f.write(keyboard_section)
 			f.write(sparse_index_section)
-			for block in blocks:
-				f.write(block)
+			f.writelines(blocks)
 
 		log.info(
 			f"SDIC: wrote {len(entries)} entries"

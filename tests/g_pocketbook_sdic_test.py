@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Integration tests for PocketBook SDIC writer plugin."""
+
 from __future__ import annotations
 
 import os
@@ -36,7 +37,7 @@ def _parse_sdic(path: str) -> dict:
 	result["file_size"] = len(data)
 
 	# Parse sparse index
-	si_data = data[result["sparse_off"]:result["data_off"]]
+	si_data = data[result["sparse_off"] : result["data_off"]]
 	si_raw = zlib.decompress(si_data[4:])
 	block_info: list[tuple[int, str]] = []
 	off = 0
@@ -55,7 +56,7 @@ def _parse_sdic(path: str) -> dict:
 	entries: list[tuple[str, str]] = []
 	file_offset = result["data_off"]
 	for bsize, _first_word in block_info:
-		block_raw = zlib.decompress(data[file_offset:file_offset + bsize])
+		block_raw = zlib.decompress(data[file_offset : file_offset + bsize])
 		entry_off = 0
 		while entry_off < len(block_raw):
 			entry_start = entry_off
@@ -94,6 +95,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 			self.glos.cleanup()
 			self.glos.clear()
 		import shutil
+
 		shutil.rmtree(self.tmpdir, ignore_errors=True)
 
 	def _write_sdic(self, entries, bookname="Test", **write_options):
@@ -110,11 +112,13 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_basic_conversion(self):
 		"""Basic TXT-like entries convert to valid SDIC."""
-		outpath = self._write_sdic([
-			("hello", "world"),
-			("test", "definition"),
-			("apple", "a fruit"),
-		])
+		outpath = self._write_sdic(
+			[
+				("hello", "world"),
+				("test", "definition"),
+				("apple", "a fruit"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		self.assertEqual(result["signature"], b"SDIC")
 		self.assertEqual(result["version"], 0x101)
@@ -126,11 +130,13 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_html_definitions(self):
 		"""HTML markup is preserved verbatim."""
-		outpath = self._write_sdic([
-			("bold", "<b>strong text</b>"),
-			("italic", "<i>emphasis</i>"),
-			("mixed", "<b>bold</b> and <i>italic</i> with <br>break"),
-		])
+		outpath = self._write_sdic(
+			[
+				("bold", "<b>strong text</b>"),
+				("italic", "<i>emphasis</i>"),
+				("mixed", "<b>bold</b> and <i>italic</i> with <br>break"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		entries = dict(result["entries"])
 		self.assertEqual(entries["bold"], "<b>strong text</b>")
@@ -140,29 +146,35 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_html_entities_preserved(self):
 		"""HTML entities are preserved as-is."""
-		outpath = self._write_sdic([
-			("entities", "&amp; &lt; &gt; &quot;"),
-		])
+		outpath = self._write_sdic(
+			[
+				("entities", "&amp; &lt; &gt; &quot;"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		entries = dict(result["entries"])
 		self.assertEqual(entries["entities"], "&amp; &lt; &gt; &quot;")
 
 	def test_newlines_stripped(self):
 		"""Literal newlines in definitions are removed."""
-		outpath = self._write_sdic([
-			("multiline", "line1\nline2\nline3"),
-		])
+		outpath = self._write_sdic(
+			[
+				("multiline", "line1\nline2\nline3"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		entries = dict(result["entries"])
 		self.assertEqual(entries["multiline"], "line1line2line3")
 
 	def test_non_ascii_headwords(self):
 		"""Non-ASCII headwords are handled correctly."""
-		outpath = self._write_sdic([
-			("café", "a coffee shop"),
-			("naïve", "innocent"),
-			("über", "over"),
-		])
+		outpath = self._write_sdic(
+			[
+				("café", "a coffee shop"),
+				("naïve", "innocent"),
+				("über", "over"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		words = [e[0] for e in result["entries"]]
 		# All three words should be present
@@ -176,11 +188,13 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_duplicate_headwords_merged(self):
 		"""Duplicate headwords are merged with separator."""
-		outpath = self._write_sdic([
-			("word", "definition 1"),
-			("word", "definition 2"),
-			("word", "definition 3"),
-		])
+		outpath = self._write_sdic(
+			[
+				("word", "definition 1"),
+				("word", "definition 2"),
+				("word", "definition 3"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		self.assertEqual(result["entry_count"], 1)
 		entries = dict(result["entries"])
@@ -190,10 +204,12 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_alternates_ignored(self):
 		"""Alternate terms (synonyms) are ignored; only primary used."""
-		outpath = self._write_sdic([
-			(["color", "colour"], "a visual property"),
-			(["hello", "hi", "hey"], "a greeting"),
-		])
+		outpath = self._write_sdic(
+			[
+				(["color", "colour"], "a visual property"),
+				(["hello", "hi", "hey"], "a greeting"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		self.assertEqual(result["entry_count"], 2)
 		words = [e[0] for e in result["entries"]]
@@ -204,20 +220,24 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_collate_sorting(self):
 		"""Entries are sorted by collated key (accent-folded, uppercase)."""
-		outpath = self._write_sdic([
-			("zebra", "an animal"),
-			("apple", "a fruit"),
-			("mango", "a tropical fruit"),
-		])
+		outpath = self._write_sdic(
+			[
+				("zebra", "an animal"),
+				("apple", "a fruit"),
+				("mango", "a tropical fruit"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		words = [e[0] for e in result["entries"]]
 		self.assertEqual(words, ["apple", "mango", "zebra"])
 
 	def test_default_metadata_no_options(self):
 		"""Writer works with zero configuration using built-in defaults."""
-		outpath = self._write_sdic([
-			("test", "works without options"),
-		])
+		outpath = self._write_sdic(
+			[
+				("test", "works without options"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		self.assertEqual(result["entry_count"], 1)
 		# Collate section should be present (non-zero size)
@@ -226,9 +246,13 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 
 	def test_section_offsets_consistent(self):
 		"""Section offsets are sequential and consistent."""
-		outpath = self._write_sdic([
-			("a", "1"), ("b", "2"), ("c", "3"),
-		])
+		outpath = self._write_sdic(
+			[
+				("a", "1"),
+				("b", "2"),
+				("c", "3"),
+			]
+		)
 		result = _parse_sdic(outpath)
 		self.assertEqual(result["collate_off"], 128)
 		self.assertGreater(result["morphems_off"], result["collate_off"])
@@ -236,7 +260,8 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 		self.assertGreater(result["sparse_off"], result["keyboard_off"])
 		self.assertGreater(result["data_off"], result["sparse_off"])
 		self.assertGreaterEqual(
-			result["file_size"], result["data_off"],
+			result["file_size"],
+			result["data_off"],
 		)
 
 	def test_bookname_in_header(self):
@@ -261,9 +286,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 	def test_many_entries_multiple_blocks(self):
 		"""Enough entries to span multiple blocks."""
 		n = 200
-		input_entries = [
-			(f"word{i:04d}", f"definition number {i}") for i in range(n)
-		]
+		input_entries = [(f"word{i:04d}", f"definition number {i}") for i in range(n)]
 		outpath = self._write_sdic(input_entries)
 		result = _parse_sdic(outpath)
 		self.assertEqual(result["entry_count"], n)
