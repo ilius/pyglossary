@@ -412,7 +412,10 @@ class TestPrepareSections(unittest.TestCase):
 		# Only "%1=AEIOU" should remain (uppercased by GetCollatedKey)
 		# Each char as uint16 LE + NUL separator + final NUL
 		# The output should have only 1 non-empty line processed
-		runes = [struct.unpack_from("<H", decompressed, i)[0] for i in range(0, len(decompressed), 2)]
+		runes = [
+			struct.unpack_from("<H", decompressed, i)[0]
+			for i in range(0, len(decompressed), 2)
+		]
 		# Find the content between NUL separators
 		content = "".join(chr(r) for r in runes if r != 0)
 		self.assertIn("%1=AEIOU", content)
