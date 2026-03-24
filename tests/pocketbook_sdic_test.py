@@ -27,7 +27,6 @@ from pyglossary.plugins.pocketbook_sdic.writer import (
 	SIGNATURE,
 	_build_header,
 	_build_sparse_index,
-	_compare_collated,
 	_encode_entry,
 	_pack_blocks,
 	_prepare_collate_section,
@@ -63,17 +62,17 @@ class TestLoadCollates(unittest.TestCase):
 		self.assertEqual(collate[ord("è")], ord("E"))
 
 	def test_strip_behavior(self):
-		"""Empty right-hand side maps to 0 (strip)."""
+		"""Empty right-hand side maps to None (strip/delete)."""
 		path = self._write_collates(".,-_ =\n")
 		try:
 			collate = load_collates(path)
 		finally:
 			os.unlink(path)
-		self.assertEqual(collate[ord(".")], 0)
-		self.assertEqual(collate[ord(",")], 0)
-		self.assertEqual(collate[ord("-")], 0)
-		self.assertEqual(collate[ord("_")], 0)
-		self.assertEqual(collate[ord(" ")], 0)
+		self.assertIsNone(collate[ord(".")])
+		self.assertIsNone(collate[ord(",")])
+		self.assertIsNone(collate[ord("-")])
+		self.assertIsNone(collate[ord("_")])
+		self.assertIsNone(collate[ord(" ")])
 
 	def test_empty_lines_ignored(self):
 		path = self._write_collates("\n\naà=A\n\n")
@@ -111,14 +110,14 @@ class TestGetCollatedKey(unittest.TestCase):
 	"""Test collated key generation."""
 
 	def setUp(self):
-		self.collate: dict[int, int] = {
+		self.collate: dict[int, int | None] = {
 			ord("a"): ord("A"),
 			ord("à"): ord("A"),
 			ord("á"): ord("A"),
 			ord("e"): ord("E"),
 			ord("é"): ord("E"),
-			ord(" "): 0,  # strip
-			ord("-"): 0,  # strip
+			ord(" "): None,  # strip
+			ord("-"): None,  # strip
 		}
 
 	def test_basic_uppercase(self):
@@ -143,49 +142,6 @@ class TestGetCollatedKey(unittest.TestCase):
 
 	def test_empty_string(self):
 		self.assertEqual(get_collated_key("", self.collate), "")
-
-
-class TestCompareCollated(unittest.TestCase):
-	"""Test collated comparison."""
-
-	def setUp(self):
-		self.collate: dict[int, int] = {
-			ord("a"): ord("A"),
-			ord("à"): ord("A"),
-			ord("e"): ord("E"),
-			ord("é"): ord("E"),
-			ord(" "): 0,
-		}
-
-	def test_equal(self):
-		self.assertEqual(
-			_compare_collated("abc", "abc", self.collate),
-			0,
-		)
-
-	def test_accent_equal(self):
-		self.assertEqual(
-			_compare_collated("café", "cafe", self.collate),
-			0,
-		)
-
-	def test_less_than(self):
-		self.assertLess(
-			_compare_collated("abc", "def", self.collate),
-			0,
-		)
-
-	def test_greater_than(self):
-		self.assertGreater(
-			_compare_collated("def", "abc", self.collate),
-			0,
-		)
-
-	def test_stripped_characters_ignored(self):
-		self.assertEqual(
-			_compare_collated("a b", "ab", self.collate),
-			0,
-		)
 
 
 class TestEncodeBody(unittest.TestCase):

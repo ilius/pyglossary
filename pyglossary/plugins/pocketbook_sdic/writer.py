@@ -33,8 +33,12 @@ BODY_PREFIX = b"\x20"
 BODY_SUFFIX = b"\x20\x0a\x00"
 BLOCK_TRAILER = b"\x00\x00"
 
+# Mapping of codepoint -> replacement codepoint, or None to delete the character.
+# Compatible with str.translate().
+CollateTable = dict[int, int | None]
 
-def load_collates(path: str) -> dict[int, int]:
+
+def load_collates(path: str) -> CollateTable:
 	"""
 	Parse collates.txt into a mapping of codepoint -> canonical codepoint.
 
@@ -42,7 +46,7 @@ def load_collates(path: str) -> dict[int, int]:
 	last ``=`` maps to the first character after ``=``.  An empty
 	right-hand side means *strip* (map to 0).
 	"""
-	collate: dict[int, int] = {}
+	collate: CollateTable = {}
 	with open(path, encoding="utf-8") as f:
 		for raw_line in f:
 			line = raw_line.rstrip("\r\n")
@@ -52,67 +56,15 @@ def load_collates(path: str) -> dict[int, int]:
 			if eq_idx < 0:
 				continue
 			right = line[eq_idx + 1 :]
-			canonical = ord(right[0]) if right else 0
+			canonical: int | None = ord(right[0]) if right else None
 			for ch in line[:eq_idx]:
 				collate[ord(ch)] = canonical
 	return collate
 
 
-def get_collated_key(word: str, collate: dict[int, int]) -> str:
+def get_collated_key(word: str, collate: CollateTable) -> str:
 	"""Return the collated, uppercased form of *word*."""
-	buf: list[str] = []
-	for ch in word:
-		cp = ord(ch)
-		replacement = collate.get(cp)
-		if replacement is not None:
-			if replacement != 0:
-				buf.append(chr(replacement))
-			# else: strip
-		else:
-			buf.append(ch)
-	return "".join(buf).upper()
-
-
-def _compare_collated(
-	a: str,
-	b: str,
-	collate: dict[int, int],
-) -> int:
-	"""Compare two words under collation, with raw tiebreak."""
-	ia = 0
-	ib = 0
-	la = len(a)
-	lb = len(b)
-	while True:
-		# advance a past stripped runes
-		ra = 0
-		while ia < la:
-			cp = ord(a[ia])
-			ia += 1
-			repl = collate.get(cp)
-			if repl is not None:
-				cp = repl
-			if cp != 0:
-				ra = cp
-				break
-		# advance b past stripped runes
-		rb = 0
-		while ib < lb:
-			cp = ord(b[ib])
-			ib += 1
-			repl = collate.get(cp)
-			if repl is not None:
-				cp = repl
-			if cp != 0:
-				rb = cp
-				break
-		# uppercase
-		chra = chr(ra).upper() if ra else ""
-		chrb = chr(rb).upper() if rb else ""
-		if chra != chrb:
-			return (chra > chrb) - (chra < chrb)
-		if ra == 0:
-			return 0
+	return word.translate(collate).upper()
 
 
 def encode_body(text: str) -> bytes:
@@ -136,14 +88,6 @@ def _encode_entry(word: str, body_bytes: bytes) -> bytes:
 	payload = key + BODY_PREFIX + body_bytes + BODY_SUFFIX
 	total_size = 2 + len(payload)
 	return struct.pack("<H", total_size) + payload
-
-
-def _zlib_compress(data: bytes) -> bytes:
-	"""Compress data with zlib at best compression level."""
-	compress = zlib.compressobj(9, zlib.DEFLATED, zlib.MAX_WBITS)
-	result = compress.compress(data)
-	result += compress.flush()
-	return result
 
 
 def _pack_blocks(
@@ -175,7 +119,7 @@ def _pack_blocks(
 				hi = mid - 1
 				continue
 
-			blob = _zlib_compress(raw)
+			blob = zlib.compress(raw, 9)
 			if len(blob) < MAX_COMPRESSED_BLOCK_SIZE:
 				best_block = blob
 				best_count = mid
@@ -186,7 +130,7 @@ def _pack_blocks(
 		if best_block is None:
 			# Single-entry fallback with relaxed ceiling
 			raw = payloads[start] + BLOCK_TRAILER
-			blob = _zlib_compress(raw)
+			blob = zlib.compress(raw, 9)
 			if len(blob) > 0xFFFF:
 				raise ValueError(
 					f"entry at index {start} is too large: "
@@ -213,35 +157,34 @@ def _build_sparse_index(
 	counts: list[int],
 ) -> bytes:
 	r"""Build the raw sparse index: [uint16 size][first_word\\0] per block."""
-	parts: list[bytes] = []
+	buf = bytearray()
 	entry_start = 0
-	for i, block in enumerate(blocks):
-		first_word = words[entry_start].encode("utf-8") + b"\x00"
-		entry = struct.pack("<H", len(block)) + first_word
-		parts.append(entry)
-		entry_start += counts[i]
-	return b"".join(parts)
+	for block, count in zip(blocks, counts, strict=True):
+		buf += struct.pack("<H", len(block))
+		buf += words[entry_start].encode("utf-8")
+		buf += b"\x00"
+		entry_start += count
+	return bytes(buf)
 
 
 def _prepare_section_compressed(data: bytes) -> bytes:
 	"""Wrap *data* in a compressed section: [uint32 size][zlib data]."""
 	size_prefix = struct.pack("<I", len(data))
-	return size_prefix + _zlib_compress(data)
+	return size_prefix + zlib.compress(data, 9)
 
 
-def _prepare_collate_section(collate: dict[int, int]) -> bytes:
+def _prepare_collate_section(collate: CollateTable) -> bytes:
 	"""Build the collate section: [uint32 byte-length][pairs...]."""
 	pairs = sorted(collate.items())
-	num_bytes = len(pairs) * 4
-	buf = struct.pack("<I", num_bytes)
+	body = bytearray()
 	for k, v in pairs:
-		buf += struct.pack("<HH", k, v)
-	return buf
+		body += struct.pack("<HH", k, v if v is not None else 0)
+	return struct.pack("<I", len(body)) + bytes(body)
 
 
 def _prepare_morphems_section(
 	morphems: str,
-	collate: dict[int, int],
+	collate: CollateTable,
 ) -> bytes:
 	"""Build the morphems section (UTF-16LE, zlib-compressed)."""
 	body = bytearray()
@@ -250,10 +193,9 @@ def _prepare_morphems_section(
 		if not line or line.startswith(";"):
 			continue
 		processed = get_collated_key(line, collate)
-		for ch in processed:
-			body += struct.pack("<H", ord(ch))
-		body += struct.pack("<H", 0)  # NUL terminator
-	body += struct.pack("<H", 0)  # final sentinel
+		body += processed.encode("utf-16-le")
+		body += b"\x00\x00"  # NUL terminator
+	body += b"\x00\x00"  # final sentinel
 
 	return _prepare_section_compressed(bytes(body))
 
@@ -273,7 +215,7 @@ def _prepare_sparse_index_section(sparse_index: bytes) -> bytes:
 	"""
 	uncompressed_size = len(sparse_index) + 2
 	size_prefix = struct.pack("<I", uncompressed_size)
-	return size_prefix + _zlib_compress(sparse_index + b"\x00\x00")
+	return size_prefix + zlib.compress(sparse_index + b"\x00\x00", 9)
 
 
 def _build_header(
@@ -401,7 +343,7 @@ class Writer:
 			if entry.isData():
 				data_count += 1
 				continue
-			word = entry.l_word[0] if entry.l_word else entry.s_word
+			word = entry.l_term[0] if entry.l_term else entry.s_term
 			defi = entry.defi
 			entries.append((word, defi))
 
@@ -424,8 +366,7 @@ class Writer:
 		# Merge duplicate headwords
 		merged: list[tuple[str, str]] = [entries[0]]
 		sep = self._merge_separator
-		for i in range(1, len(entries)):
-			word, defi = entries[i]
+		for word, defi in entries[1:]:
 			if word == merged[-1][0]:
 				merged[-1] = (word, merged[-1][1] + sep + defi)
 			else:
