@@ -1,8 +1,10 @@
 from __future__ import annotations
+
+import logging
 import os
 import tempfile
-import logging
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 # Import the Yomichan reader from the existing plugin
 try:

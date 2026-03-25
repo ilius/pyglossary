@@ -1,12 +1,13 @@
 # Convert EPWING dictionaries to Yomichan format.
 # Based on yomichan-import (https://github.com/FooSoft/yomichan-import) under the MIT License
 
-import re
-import os
 import json
-import zipfile
 import logging
-from typing import List, Dict, Any, Optional, Iterator
+import os
+import re
+import zipfile
+from collections.abc import Iterator
+from typing import Any
 
 log = logging.getLogger("pyglossary")
 
@@ -16,12 +17,12 @@ class dbTerm:
 		self,
 		expression: str,
 		reading: str = "",
-		definition_tags: List[str] = None,
-		rules: List[str] = None,
+		definition_tags: list[str] = None,
+		rules: list[str] = None,
 		score: int = 0,
-		glossary: List[Any] = None,
+		glossary: list[Any] = None,
 		sequence: int = 0,
-		term_tags: List[str] = None,
+		term_tags: list[str] = None,
 	):
 		self.expression = expression
 		self.reading = reading
@@ -47,7 +48,7 @@ class dbTerm:
 			if rule not in self.rules:
 				self.rules.append(rule)
 
-	def crush(self) -> List[Any]:
+	def crush(self) -> list[Any]:
 		return [
 			self.expression,
 			self.reading,
@@ -64,11 +65,11 @@ class dbKanji:
 	def __init__(
 		self,
 		character: str,
-		onyomi: List[str] = None,
-		kunyomi: List[str] = None,
-		tags: List[str] = None,
-		meanings: List[str] = None,
-		stats: Dict[str, str] = None,
+		onyomi: list[str] = None,
+		kunyomi: list[str] = None,
+		tags: list[str] = None,
+		meanings: list[str] = None,
+		stats: dict[str, str] = None,
 	):
 		self.character = character
 		self.onyomi = onyomi or []
@@ -77,7 +78,7 @@ class dbKanji:
 		self.meanings = meanings or []
 		self.stats = stats or {}
 
-	def crush(self) -> List[Any]:
+	def crush(self) -> list[Any]:
 		return [
 			self.character,
 			" ".join(self.onyomi),
@@ -89,18 +90,18 @@ class dbKanji:
 
 
 class EpwingExtractor:
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		raise NotImplementedError
 
-	def extract_kanji(self, heading: str, text: str) -> List[dbKanji]:
+	def extract_kanji(self, heading: str, text: str) -> list[dbKanji]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 		return []
 
-	def get_font_narrow(self) -> Dict[int, str]:
+	def get_font_narrow(self) -> dict[int, str]:
 		return {}
 
-	def get_font_wide(self) -> Dict[int, str]:
+	def get_font_wide(self) -> dict[int, str]:
 		return {}
 
 	def get_revision(self) -> str:
@@ -132,7 +133,7 @@ class KoujienExtractor(EpwingExtractor):
 		self.v5_exp = re.compile(r"(動.[四五](［[^］]+］)?)|(動..二)")
 		self.v1_exp = re.compile(r"(動..一)")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 
@@ -181,7 +182,7 @@ class KoujienExtractor(EpwingExtractor):
 					terms.append(term)
 		return terms
 
-	def export_rules(self, term: dbTerm, tags: List[str]):
+	def export_rules(self, term: dbTerm, tags: list[str]):
 		for tag in tags:
 			if tag == "形":
 				term.add_rules("adj-i")
@@ -199,7 +200,7 @@ class KoujienExtractor(EpwingExtractor):
 	def get_revision(self) -> str:
 		return "koujien"
 
-	def get_font_wide(self) -> Dict[int, str]:
+	def get_font_wide(self) -> dict[int, str]:
 		return {
 			41531: "⟨",
 			41532: "⟩",
@@ -273,7 +274,7 @@ class DaijirinExtractor(KoujienExtractor):
 	def get_revision(self) -> str:
 		return "daijirin2"
 
-	def get_font_narrow(self) -> Dict[int, str]:
+	def get_font_narrow(self) -> dict[int, str]:
 		return {
 			49441: "á",
 			49442: "à",
@@ -339,7 +340,7 @@ class DaijisenExtractor(KoujienExtractor):
 		self.read_group_exp = re.compile(r"[-‐・]+")
 		self.meta_exp = re.compile(r"［([^］]*)］")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 
@@ -431,7 +432,7 @@ class EpwingSubbook:
 		self.path = path
 		self.title = title
 
-	def entries(self) -> Iterator[Dict[str, str]]:
+	def entries(self) -> Iterator[dict[str, str]]:
 		honmon_path = os.path.join(self.path, "DATA", "HONMON")
 		if not os.path.exists(honmon_path):
 			return
@@ -520,7 +521,7 @@ class MeikyouExtractor(KoujienExtractor):
 		self.read_group_exp = re.compile(r"[-‐・]+")
 		self.meta_exp = re.compile(r"〘([^〙]*)〙")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 
@@ -582,7 +583,7 @@ class MeikyouExtractor(KoujienExtractor):
 	def get_revision(self) -> str:
 		return "meikyou1"
 
-	def get_font_narrow(self) -> Dict[int, str]:
+	def get_font_narrow(self) -> dict[int, str]:
 		# Basic mapping for Meikyou
 		return {41550: "ī"}
 
@@ -626,7 +627,7 @@ class GakkenExtractor(KoujienExtractor):
 			text = text.replace(k, v)
 		return text
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 		text = self._apply_cosmetics(text)
@@ -694,7 +695,7 @@ class WadaiExtractor(KoujienExtractor):
 		self.quoted_exp = re.compile(r"「?([^」]+)")
 		self.alpha_exp = re.compile(r"[a-z]+")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 
@@ -755,7 +756,7 @@ class KotowazaExtractor(EpwingExtractor):
 		self.read_group_no_alts_exp = re.compile(r"\(([^・)]*)\)")
 		self.word_group_exp = re.compile(r"＝([^〔＝]*)〔＝([^〕]*)〕")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> List[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 
