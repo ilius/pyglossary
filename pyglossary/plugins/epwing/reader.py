@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 # Import the Yomichan reader from the existing plugin
 try:
-	from ..yomichan.reader import Reader as YomichanReader
+	from pyglossary.pyglossary.plugins.yomichan.reader import Reader as YomichanReader
 except ImportError:
 	# Fallback for different import contexts
 	from pyglossary.plugins.yomichan.reader import Reader as YomichanReader

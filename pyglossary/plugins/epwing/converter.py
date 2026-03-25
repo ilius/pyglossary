@@ -17,13 +17,13 @@ class dbTerm:
 		self,
 		expression: str,
 		reading: str = "",
-		definition_tags: list[str] = None,
-		rules: list[str] = None,
+		definition_tags: list[str] | None = None,
+		rules: list[str] | None = None,
 		score: int = 0,
-		glossary: list[Any] = None,
+		glossary: list[Any] | None = None,
 		sequence: int = 0,
-		term_tags: list[str] = None,
-	):
+		term_tags: list[str] | None = None,
+	) -> None:
 		self.expression = expression
 		self.reading = reading
 		self.definition_tags = definition_tags or []
@@ -33,17 +33,17 @@ class dbTerm:
 		self.sequence = sequence
 		self.term_tags = term_tags or []
 
-	def add_definition_tags(self, *tags: str):
+	def add_definition_tags(self, *tags: str) -> None:
 		for tag in tags:
 			if tag not in self.definition_tags:
 				self.definition_tags.append(tag)
 
-	def add_term_tags(self, *tags: str):
+	def add_term_tags(self, *tags: str) -> None:
 		for tag in tags:
 			if tag not in self.term_tags:
 				self.term_tags.append(tag)
 
-	def add_rules(self, *rules: str):
+	def add_rules(self, *rules: str) -> None:
 		for rule in rules:
 			if rule not in self.rules:
 				self.rules.append(rule)
@@ -65,12 +65,12 @@ class dbKanji:
 	def __init__(
 		self,
 		character: str,
-		onyomi: list[str] = None,
-		kunyomi: list[str] = None,
-		tags: list[str] = None,
-		meanings: list[str] = None,
-		stats: dict[str, str] = None,
-	):
+		onyomi: list[str] | None = None,
+		kunyomi: list[str] | None = None,
+		tags: list[str] | None = None,
+		meanings: list[str] | None = None,
+		stats: dict[str, str] | None = None,
+	) -> None:
 		self.character = character
 		self.onyomi = onyomi or []
 		self.kunyomi = kunyomi or []
@@ -118,12 +118,11 @@ class EpwingExtractor:
 			return font.get(code, "")
 
 		text = re.sub(r"{{([nw])_(\d+)}}", repl, text)
-		text = re.sub(r"\n+", "\n", text)
-		return text
+		return re.sub(r"\n+", "\n", text)
 
 
 class KoujienExtractor(EpwingExtractor):
-	def __init__(self):
+	def __init__(self) -> None:
 		self.parts_exp = re.compile(
 			r"([^（【〖]+)(?:【(.*)】)?(?:〖(.*)〗)?(?:（(.*)）)?"
 		)
@@ -182,7 +181,7 @@ class KoujienExtractor(EpwingExtractor):
 					terms.append(term)
 		return terms
 
-	def export_rules(self, term: dbTerm, tags: list[str]):
+	def export_rules(self, term: dbTerm, tags: list[str]) -> None:
 		for tag in tags:
 			if tag == "形":
 				term.add_rules("adj-i")
@@ -331,7 +330,7 @@ class DaijirinExtractor(KoujienExtractor):
 
 
 class DaijisenExtractor(KoujienExtractor):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(r"([^【]+)(?:【(.*)】)?")
 		self.exp_shapes_exp = re.compile(r"[×△＝‐]+")
@@ -393,12 +392,12 @@ class DaijisenExtractor(KoujienExtractor):
 
 # This handles the basic uncompressed HONMON reading.
 class EpwingBook:
-	def __init__(self, path: str):
+	def __init__(self, path: str) -> None:
 		self.path = path
 		self.subbooks = []
 		self._load()
 
-	def _load(self):
+	def _load(self) -> None:
 		# Read CATALOGS
 		catalogs_path = os.path.join(self.path, "CATALOGS")
 		if not os.path.exists(catalogs_path):
@@ -428,7 +427,7 @@ class EpwingBook:
 
 
 class EpwingSubbook:
-	def __init__(self, path: str, title: str):
+	def __init__(self, path: str, title: str) -> None:
 		self.path = path
 		self.title = title
 
@@ -460,10 +459,7 @@ class EpwingSubbook:
 				# Usually it's either the next 1F 09 or end of 2KB block?
 				# For simplified scanner, find the next 1F 09.
 				next_entry = data.find(b"\x1f\x09", text_start)
-				if next_entry == -1:
-					end = len(data)
-				else:
-					end = next_entry
+				end = len(data) if next_entry == -1 else next_entry
 
 				heading_raw = data[start + 2 : text_start]
 				text_raw = data[text_start + 2 : end]
@@ -510,7 +506,7 @@ class EpwingSubbook:
 
 
 class MeikyouExtractor(KoujienExtractor):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(
 			r"([^（【〖\[]+)(?:【(.*)】)?(?:\[(.*)\])?(?:（(.*)）)?"
@@ -589,7 +585,7 @@ class MeikyouExtractor(KoujienExtractor):
 
 
 class GakkenExtractor(KoujienExtractor):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(r"([ぁ-んァ-ヶー‐・]*)(?:【(.*)】)?")
 		self.read_group_exp = re.compile(r"[-‐・]+")
@@ -687,7 +683,7 @@ class GakkenExtractor(KoujienExtractor):
 
 
 class WadaiExtractor(KoujienExtractor):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(r"([^＜]+)(?:＜([^＞【]+)(?:【([^】]+)】)?＞)?")
 		self.literal_parts_exp = re.compile(r"(¶)?(.*)")
@@ -750,7 +746,7 @@ class WadaiExtractor(KoujienExtractor):
 
 
 class KotowazaExtractor(EpwingExtractor):
-	def __init__(self):
+	def __init__(self) -> None:
 		self.read_group_exp = re.compile(r"([^ぁ-ゖァ-ヺ]*)(\([^)]*\))")
 		self.read_group_alts_exp = re.compile(r"\(([^)]*)\)")
 		self.read_group_no_alts_exp = re.compile(r"\(([^・)]*)\)")
@@ -808,7 +804,7 @@ def convert_epwing_to_yomichan(
 	title: str = "",
 	stride: int = 10000,
 	pretty: bool = False,
-):
+) -> None:
 	log.info(f"EPWING: Converting {input_path}...")
 	book = EpwingBook(input_path)
 
