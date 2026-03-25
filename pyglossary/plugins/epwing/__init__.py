@@ -34,7 +34,7 @@ sortKeyName = "headword"
 wiki = "https://en.wikipedia.org/wiki/EPWING"
 website = (
 	"https://web.archive.org/web/20060430114516/http://www.epwing.or.jp/",
-	"EPWING Consortium (2006)",
+	"EPWING Consortium - 2006",
 )
 optionsProp: dict[str, Option] = {}
 
