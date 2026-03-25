@@ -237,6 +237,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 
 	# _______________________________
 
+	# to add new info flags, also update infoOverrideSpec in main.py
 	parser.add_argument(
 		"--source-lang",
 		action="store",
@@ -257,6 +258,13 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		dest="name",
 		default=None,
 		help="glossary name/title",
+	)
+	parser.add_argument(
+		"--license",
+		action="store",
+		dest="license",
+		default=None,
+		help="glossary license",
 	)
 
 	# _______________________________

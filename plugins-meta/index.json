@@ -1416,6 +1416,58 @@
 		}
 	},
 	{
+		"module": "pocketbook_sdic",
+		"lname": "pocketbook_sdic",
+		"name": "PocketBookSdic",
+		"description": "PocketBook SDIC (.dic)",
+		"extensions": [
+			".dic"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"metadata_dir": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Path to a directory containing collates.txt, morphems.txt, and keyboard.txt"
+			},
+			"collates_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Path to collates.txt (overrides metadata_dir)"
+			},
+			"keyboard_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Path to keyboard.txt (overrides metadata_dir)"
+			},
+			"morphems_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Path to morphems.txt (overrides metadata_dir)"
+			},
+			"merge_separator": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Separator for merging duplicate headwords"
+			}
+		},
+		"canRead": false,
+		"canWrite": true,
+		"sortOnWrite": "never",
+		"writeOptions": {
+			"metadata_dir": "",
+			"collates_path": "",
+			"keyboard_path": "",
+			"morphems_path": "",
+			"merge_separator": "<br>"
+		}
+	},
+	{
 		"module": "quickdic6",
 		"lname": "quickdic6",
 		"name": "QuickDic6",

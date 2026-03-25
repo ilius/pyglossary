@@ -13,6 +13,7 @@ from pyglossary.plugins.aard2_slob.tags import (
 	t_created_at,
 	t_created_by,
 	t_label,
+	t_license_name,
 	t_uri,
 )
 
@@ -107,6 +108,10 @@ class Writer:
 		createdBy = self._glos.getInfo("author")
 		if createdBy is not None:
 			slobWriter.tag(t_created_by, createdBy)
+
+		licenseName = self._glos.getInfo("license")
+		if licenseName is not None:
+			slobWriter.tag(t_license_name, licenseName)
 
 		filename = os.path.basename(filepath)
 		dic_uri = re.sub(r"[^A-Za-z0-9_-]+", "_", filename)

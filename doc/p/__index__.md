@@ -35,6 +35,7 @@
 | Lingoes Source (.ldf) | LingoesLDF | [lingoes_ldf.md](./lingoes_ldf.md) |
 | Makindo Medical Reference (SQLite3) | MakindoMedical | [makindo_medical.md](./makindo_medical.md) |
 | Octopus MDict (.mdx) | OctopusMdict | [octopus_mdict.md](./octopus_mdict.md) |
+| PocketBook SDIC (.dic) | PocketBookSdic | [pocketbook_sdic.md](./pocketbook_sdic.md) |
 | QuickDic version 6 (.quickdic) | QuickDic6 | [quickdic6.md](./quickdic6.md) |
 | SQL (.sql) | Sql | [sql.md](./sql.md) |
 | StarDict (.ifo) | Stardict | [stardict.md](./stardict.md) |

@@ -1,0 +1,15 @@
+%1=aeiouy
+%2=bcdfghjklmnpqrstvwxyz
+^?es=.e/.
+^2s=.
+^ies=y
+^?ed=.e/.
+^22ed=.
+^2d=.
+^ied=y
+^?ing=.e/.
+^22ing=.
+^2est=.e/.
+^iest=y
+^22est=.
+^?ly=.
