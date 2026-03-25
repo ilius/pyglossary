@@ -1,5 +1,26 @@
 # Convert EPWING dictionaries to Yomichan format.
-# Based on yomichan-import (https://github.com/FooSoft/yomichan-import) under the MIT License
+#
+# Based on yomichan-import (https://github.com/FooSoft/yomichan-import)
+#    under the MIT License
+#
+# Copyright 2016-2023  Yomichan-Import Authors
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import json
 import logging
@@ -13,7 +34,7 @@ log = logging.getLogger("pyglossary")
 
 
 class dbTerm:
-	def __init__(
+	def __init__(# noqa: PLR0913
 		self,
 		expression: str,
 		reading: str = "",
@@ -62,7 +83,7 @@ class dbTerm:
 
 
 class dbKanji:
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		character: str,
 		onyomi: list[str] | None = None,
@@ -111,7 +132,7 @@ class EpwingExtractor:
 		font_narrow = self.get_font_narrow()
 		font_wide = self.get_font_wide()
 
-		def repl(match):
+		def repl(match: re.Pattern) -> str:
 			mode = match.group(1)
 			code = int(match.group(2))
 			font = font_narrow if mode == "n" else font_wide
@@ -132,7 +153,7 @@ class KoujienExtractor(EpwingExtractor):
 		self.v5_exp = re.compile(r"(動.[四五](［[^］]+］)?)|(動..二)")
 		self.v1_exp = re.compile(r"(動..一)")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
+	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:  # noqa: PLR0912
 		heading = self.translate(heading)
 		text = self.translate(text)
 
@@ -162,6 +183,7 @@ class KoujienExtractor(EpwingExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
+				# tags.extend(m.group(1).split("・"))
 				for tag in m.group(1).split("・"):
 					tags.append(tag)
 
