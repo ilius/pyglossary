@@ -997,6 +997,20 @@
 		}
 	},
 	{
+		"module": "epwing",
+		"lname": "epwing",
+		"name": "EPWING",
+		"description": "EPWING",
+		"extensions": [],
+		"singleFile": false,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"sortOnWrite": "always",
+		"sortKeyName": "headword",
+		"readOptions": {}
+	},
+	{
 		"module": "freedict",
 		"lname": "freedict",
 		"name": "FreeDict",
@@ -2111,18 +2125,6 @@
 		"readCompressions": [
 			"zip"
 		]
-	},
-	{
-		"module": "epwing",
-		"lname": "epwing",
-		"name": "EPWING",
-		"description": "EPWING",
-		"extensions": [],
-		"singleFile": false,
-		"optionsProp": {},
-		"canRead": true,
-		"canWrite": false,
-		"readOptions": {}
 	},
 	{
 		"module": "zimfile",
