@@ -62,7 +62,6 @@ python -m nuitka \
   --include-data-dir=res=. \
   --include-data-files=_license-dialog=license-dialog \
   --nofollow-import-to=unittest \
-  --noinclude-custom-mode=unittest:nofollow \
   --output-dir="$DIST_DIR" \
   --output-filename=$APPNAME \
   $APPNAME.py
