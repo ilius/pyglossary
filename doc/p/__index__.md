@@ -24,6 +24,7 @@
 | Mobipocket (.mobi) E-Book | Mobi | [mobi.md](./mobi.md) |
 | EDICT2 (CEDICT) (.u8) | EDICT2 | [edict2.md](./edict2.md) |
 | EDLIN | Edlin | [edlin.md](./edlin.md) |
+| EPWING | EPWING | [epwing.md](./epwing.md) |
 | FreeDict (.tei) | FreeDict | [freedict.md](./freedict.md) |
 | Gettext Source (.po) | GettextPo | [gettext_po.md](./gettext_po.md) |
 | HTML Directory | HtmlDir | [html_dir.md](./html_dir.md) |

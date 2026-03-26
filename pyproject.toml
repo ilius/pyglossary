@@ -219,6 +219,9 @@ mccabe.max-complexity = 13
 "pyglossary/plugins/babylon_bgl/*.py" = [
 	"C901", # `...` is too complex
 ]
+"pyglossary/plugins/epwing/converter.py" = [
+	"RUF001",
+]
 
 "pyglossary/plugin_lib/*.py" = [
 	"ANN",
