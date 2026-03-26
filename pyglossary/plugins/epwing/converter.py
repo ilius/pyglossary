@@ -34,7 +34,7 @@ log = logging.getLogger("pyglossary")
 
 
 class dbTerm:
-	def __init__(# noqa: PLR0913
+	def __init__(  # noqa: PLR0913
 		self,
 		expression: str,
 		reading: str = "",
@@ -183,9 +183,7 @@ class KoujienExtractor(EpwingExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				# tags.extend(m.group(1).split("・"))
-				for tag in m.group(1).split("・"):
-					tags.append(tag)
+				tags.extend(m.group(1).split("・"))
 
 		terms = []
 		if not expressions:
@@ -391,8 +389,7 @@ class DaijisenExtractor(KoujienExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				for tag in m.group(1).split("・"):
-					tags.append(tag)
+				tags.extend(m.group(1).split("・"))
 
 		terms = []
 		if not expressions:
@@ -432,14 +429,15 @@ class EpwingBook:
 			data = f.read()
 			# Find subdirectories that exist in the book path
 			# EPWING 4 and 6 have different CATALOGS layouts.
-			# A simple approach: find any 8-char or shorter strings that match directory names.
+			# A simple approach: find any 8-char or shorter strings that matches
+			# directory names.
 			possible_dirs = [
 				d
 				for d in os.listdir(self.path)
 				if os.path.isdir(os.path.join(self.path, d))
 			]
 			for d in possible_dirs:
-				if d in ("DATA", "GAIJI", "MOVIE", "STREAM"):
+				if d in {"DATA", "GAIJI", "MOVIE", "STREAM"}:
 					continue  # Skip common ones
 				if d.encode("ascii") in data:
 					subbook_path = os.path.join(self.path, d)
@@ -459,8 +457,9 @@ class EpwingSubbook:
 			return
 
 		with open(honmon_path, "rb") as f:
-			# We will read in 2KB blocks (standard EPWING page size) or just the whole file if small.
-			# For 500MB, reading the whole file into RAM is fine on modern machines (like users).
+			# We will read in 2KB blocks (standard EPWING page size) or just the
+			# whole file if small.
+			# For 500MB, reading the whole file into RAM is fine on modern machines
 			data = f.read()
 
 			# Simple scanner for heading and text
@@ -486,16 +485,16 @@ class EpwingSubbook:
 				heading_raw = data[start + 2 : text_start]
 				text_raw = data[text_start + 2 : end]
 
-				def clean(raw):
+				def clean(raw: bytes) -> str:
 					processed = bytearray()
 					i = 0
 					while i < len(raw):
 						if raw[i] == 0x1F:
 							# Font markers
-							if i + 3 < len(raw) and raw[i + 1] in (
+							if i + 3 < len(raw) and raw[i + 1] in {
 								0x61,
 								0x62,
-							):  # 1F 61 (narrow), 1F 62 (wide)
+							}:  # 1F 61 (narrow), 1F 62 (wide)
 								code = int.from_bytes(raw[i + 2 : i + 4], "big")
 								marker = (
 									f"{{{{{'n' if raw[i + 1] == 0x61 else 'w'}_{code}}}}}"
@@ -518,7 +517,7 @@ class EpwingSubbook:
 						try:
 							# Use errors="replace" for the last fallback or just ignore
 							return processed.decode(enc)
-						except:
+						except Exception:
 							continue
 					return processed.decode("ascii", errors="ignore")
 
@@ -539,7 +538,12 @@ class MeikyouExtractor(KoujienExtractor):
 		self.read_group_exp = re.compile(r"[-‐・]+")
 		self.meta_exp = re.compile(r"〘([^〙]*)〙")
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
+	def extract_terms(  # noqa: PLR0912
+		self,
+		heading: str,
+		text: str,
+		sequence: int,
+	) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 
@@ -559,16 +563,14 @@ class MeikyouExtractor(KoujienExtractor):
 			if terms_match:
 				for group in terms_match.groups():
 					if group:
-						for split in group.split("・"):
-							expressions.append(split)
+						expressions.extend(group.split("・"))
 
 		# Expression from [...] (foreign/meta)
 		foreign_match = match.group(3)
 		if foreign_match:
 			# Simplified foreign meta removal (Go version has a long list, we just split)
 			foreign_match = foreign_match.replace("＋", " ")
-			for split in foreign_match.split("・"):
-				expressions.append(split)
+			expressions.extend(foreign_match.split("・"))
 
 		reading = match.group(1)
 		if reading:
@@ -579,8 +581,7 @@ class MeikyouExtractor(KoujienExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				for tag in m.group(1).split("・"):
-					tags.append(tag)
+				tags.extend(m.group(1).split("・"))
 
 		terms = []
 		if not expressions:
@@ -645,7 +646,12 @@ class GakkenExtractor(KoujienExtractor):
 			text = text.replace(k, v)
 		return text
 
-	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
+	def extract_terms(  # noqa: PLR0912
+		self,
+		heading: str,
+		text: str,
+		sequence: int,
+	) -> list[dbTerm]:
 		heading = self.translate(heading)
 		text = self.translate(text)
 		text = self._apply_cosmetics(text)
@@ -676,8 +682,7 @@ class GakkenExtractor(KoujienExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				for tag in m.group(1).split("・"):
-					tags.append(tag)
+				tags.append(m.group(1).split("・"))
 
 		if not readings:
 			readings = [""]
@@ -738,7 +743,8 @@ class WadaiExtractor(KoujienExtractor):
 			expressions = [""]
 
 		terms = []
-		for expression in expressions:
+		for expression_ in expressions:
+			expression = expression_
 			if preset:
 				expression = literal
 				reading = ""
@@ -790,7 +796,7 @@ class KotowazaExtractor(EpwingExtractor):
 				replacements = [match.group(1)]
 				replacements.extend(match.group(2).split("・"))
 				for repl in replacements:
-					queue.append(expression.replace(match.group(0), repl))
+					queue.append(expression.replace(match.group(0), repl))  # noqa: PERF401
 
 		terms = []
 		for red_exp in reduced_expressions:
@@ -807,7 +813,7 @@ class KotowazaExtractor(EpwingExtractor):
 					readings.append(read_item)
 				else:
 					for repl in match.group(1).split("・"):
-						read_queue.append(read_item.replace(match.group(0), repl))
+						read_queue.append(read_item.replace(match.group(0), repl))  # noqa: PERF401
 
 			for r in readings:
 				term = dbTerm(
