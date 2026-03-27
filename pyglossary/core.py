@@ -51,7 +51,7 @@ __all__ = [
 ]
 
 
-VERSION = "5.2.1"
+VERSION = "5.3.0"
 
 homePage = "https://github.com/ilius/pyglossary"
 
