@@ -52,6 +52,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 			"gtk3",
 			"gtk4",
 			"tk",
+			"tk_wizard",
 			"web",
 			# "qt",
 			"auto",
