@@ -1,0 +1,8 @@
+##name	006-empty.txt
+##input_file_size	329
+quilting bee|quilting party	A social event in which people get together to make a quilt.
+sclerous	(anatomy) hard; indurated; sclerotic
+void	
+aerothermodynamics	The scientific study of the thermodynamic properties of gases...
+pseudosalt	a compound (as stannic chloride or mercuric cyanide) analogous in formula to a salt...
+	none

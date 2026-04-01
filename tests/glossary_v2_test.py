@@ -44,6 +44,8 @@ dataURL = f"https://raw.githubusercontent.com/{repo}/{{filename}}"
 testCacheDir = realpath(join(cacheDir, "test"))
 appTmpDir = join(cacheDir, "tmp")
 
+testLocalDataDir = join(rootDir, "tests", "data")
+
 os.makedirs(testCacheDir, exist_ok=True)
 os.chdir(testCacheDir)
 
@@ -54,16 +56,18 @@ class TestGlossaryBase(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		unittest.TestCase.__init__(self, *args, **kwargs)
 		self.maxDiff = None
+		self.dataFile = {
+			"004-bar.txt",
+			"004-bar-sort.txt",
+			"006-empty.txt",
+			"006-empty-filtered.txt",
+			"100-en-de-v4.txt",
+			"100-en-fa.txt",
+			"100-ja-en.txt",
+			"100-en-fa-v2.info",
+		}
 		self.dataFileCRC32 = {
-			"004-bar.txt": "6775e590",
-			"004-bar-sort.txt": "fe861123",
-			"006-empty.txt": "07ff224b",
-			"006-empty-filtered.txt": "2b3c1c0f",
-			"100-en-de-v4.txt": "d420a669",
-			"100-en-fa.txt": "f5c53133",
-			"100-ja-en.txt": "93542e89",
 			"100-en-de-v4-remove_font_b.txt": "a3144e2f",
-			"100-en-fa-v2.info": "7c0f646b",
 			"300-rand-en-fa.txt": "586617c8",
 			"res/stardict.png": "7e1447fa",
 			"res/test.json": "41f8cf31",
@@ -97,10 +101,17 @@ class TestGlossaryBase(unittest.TestCase):
 	def fixDownloadFilename(self, filename):
 		return filename.replace("/", "__").replace("\\", "__")
 
-	def downloadFile(self, filename):
+	def downloadFile(self, filename: str) -> str:
 		from urllib.error import HTTPError
 
 		unixFilename = filename.replace("\\", "/")
+
+		if filename in self.dataFile:
+			fpath = join(testLocalDataDir, unixFilename)
+			with open(fpath, mode="rb") as file:
+				data = file.read()
+			return fpath
+
 		crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(testCacheDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
@@ -993,7 +1004,7 @@ Japonica"""
 	def test_read_filename(self):
 		glos = self.glos = Glossary()
 		glos.directRead(self.downloadFile("004-bar.txt"))
-		self.assertEqual(glos.filename, join(testCacheDir, "004-bar"))
+		self.assertEqual(glos.filename, join(testLocalDataDir, "004-bar"))
 
 	def test_wordTitleStr_em1(self):
 		glos = self.glos = Glossary()

@@ -1,0 +1,19 @@
+{
+	"name": "Sample: Aryanpour (2021) (en-fa, fa-en)",
+	"edition": "2021.01.02",
+	"copyright": "Licensed under the <a href=\"https://creativecommons.org/licenses/by-sa/3.0/legalcode\">Creative Commons Attribution-ShareAlike 3.0 Unported</a> license",
+	"publisher": "Saeed Rasooli",
+	"creationTime": "2020-12-07",
+	"sourceLang": "English",
+	"targetLang": "Persian",
+	"word_count": 100,
+	"bword_count": 3,
+	"non_lowercase_word_count": 41,
+	"data_entry_count": 0,
+	"data_entry_extension_count": "",
+	"defi_format": "h=100",
+	"defi_tag": "div=200, font=163, br=156, li=128, ol=45, a=3",
+	"defi_first_tag": "div=100",
+	"style": "",
+	"source_script": "Latin=100"
+}
