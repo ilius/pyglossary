@@ -14,7 +14,31 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 
-__all__ = ["Writer"]
+__all__ = [
+	"BLOCK_TRAILER",
+	"BODY_PREFIX",
+	"BODY_SUFFIX",
+	"DEFAULT_MAX_ENTRY_SIZE",
+	"FORMAT_VERSION",
+	"HEADER_SIZE",
+	"MAX_COMPRESSED_BLOCK_SIZE",
+	"MAX_RAW_BLOCK_SIZE",
+	"MAX_WORDS_PER_BLOCK",
+	"SIGNATURE",
+	"Writer",
+	"_build_header",
+	"_build_sparse_index",
+	"_encode_entry",
+	"_pack_blocks",
+	"_prepare_collate_section",
+	"_prepare_keyboard_section",
+	"_prepare_morphems_section",
+	"_prepare_section_compressed",
+	"_prepare_sparse_index_section",
+	"encode_body",
+	"get_collated_key",
+	"load_collates",
+]
 
 
 # SDIC format constants
