@@ -104,14 +104,13 @@ class TestGlossaryBase(unittest.TestCase):
 	def downloadFile(self, filename: str) -> str:
 		from urllib.error import HTTPError
 
-		unixFilename = filename.replace("\\", "/")
-
 		if filename in self.dataFile:
-			fpath = join(testLocalDataDir, unixFilename)
+			fpath = join(testLocalDataDir, filename)
 			with open(fpath, mode="rb") as file:
 				data = file.read()
 			return fpath
 
+		unixFilename = filename.replace("\\", "/")
 		crc32 = self.dataFileCRC32[unixFilename]
 		fpath = join(testCacheDir, self.fixDownloadFilename(filename))
 		if isfile(fpath):
