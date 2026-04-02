@@ -273,6 +273,8 @@ nameLangsTestData = [
 	("Wolof - French FreeDict dictionary", "Wolof", "French"),  # wol-fra
 ]
 
+__all__ = ["nameLangsTestData"]
+
 # lang codes that are also in /usr/share/dict/words
 # {'kea', 'as', 'mao', 'arn', 'pa', 'sag', 'tha', 'be', 'fro', 'my', 'haw', 'so', 'is', 'en', 'ae', 'fa', 'te',
 # 'li', 'div', 'tur', 'urd', 'ak', 'arm', 'mi', 'os', 'ar', 'sh', 'run', 'hat', 'pi', 'geo', 'ben', 'bis', 'za',
