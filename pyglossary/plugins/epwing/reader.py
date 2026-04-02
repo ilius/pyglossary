@@ -6,11 +6,7 @@ import tempfile
 from typing import TYPE_CHECKING
 
 # Import the Yomichan reader from the existing plugin
-try:
-	from pyglossary.pyglossary.plugins.yomichan.reader import Reader as YomichanReader
-except ImportError:
-	# Fallback for different import contexts
-	from pyglossary.plugins.yomichan.reader import Reader as YomichanReader
+from pyglossary.plugins.yomichan.reader import Reader as YomichanReader
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -18,6 +14,8 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 log = logging.getLogger("pyglossary")
+
+__all__ = ["Reader"]
 
 
 class Reader:
