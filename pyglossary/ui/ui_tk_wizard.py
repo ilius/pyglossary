@@ -8,15 +8,13 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
-# FIXME: bug: in page 1, the Next buttons moves out of view
-# when I chnage the file
-
 
 from __future__ import annotations
 
 import os
 import tkinter as tk
 from os.path import isfile, join
+from pathlib import Path
 from tkinter import font as tkFont
 from tkinter import ttk
 from typing import Any
@@ -38,6 +36,10 @@ __all__ = ["UI"]
 log = ui_tk.log
 readDesc = ui_tk.readDesc
 writeDesc = ui_tk.writeDesc
+
+# Compact file-picker buttons:
+_PATH_BUTTON_PLACEHOLDER = "[Select...]"
+_PATH_BUTTON_WIDTH = 20  # characters
 
 
 class UI(ui_tk.UI):
@@ -93,9 +95,11 @@ class UI(ui_tk.UI):
 
 		mainFrame = ttk.Frame(self)
 		mainFrame.pack(fill="both", expand=True, padx=8, pady=8)
+		mainFrame.rowconfigure(0, weight=1)
+		mainFrame.columnconfigure(0, weight=1)
 
 		pageContainer = ttk.Frame(mainFrame)
-		pageContainer.pack(fill="both", expand=True)
+		pageContainer.grid(row=0, column=0, sticky="nsew")
 		self.pageContainer = pageContainer
 
 		self.pages = [
@@ -110,10 +114,19 @@ class UI(ui_tk.UI):
 		pageContainer.columnconfigure(0, weight=1)
 
 		nav = ttk.Frame(mainFrame)
-		nav.pack(fill="x", pady=(8, 0))
-		self.clearButton = newButton(nav, text="Clear", command=self.console_clear)
-		self.prevButton = newButton(nav, text="Previous", command=self.prevPage)
-		self.nextButton = newButton(nav, text="Next", command=self.nextPage)
+		nav.grid(row=1, column=0, sticky="ew", pady=(8, 0))
+		# Keep controls in view:
+		# cluster at bottom-right with margin (not flush to corner).
+		navButtonFrame = ttk.Frame(nav)
+		navButtonFrame.pack(side="right", padx=(8, 4), pady=2)
+		self._navButtonFrame = navButtonFrame
+		self.clearButton = newButton(
+			navButtonFrame, text="Clear", command=self.console_clear
+		)
+		self.prevButton = newButton(
+			navButtonFrame, text="Previous", command=self.prevPage
+		)
+		self.nextButton = newButton(navButtonFrame, text="Next", command=self.nextPage)
 
 		self._showPage(0)
 
@@ -142,6 +155,16 @@ class UI(ui_tk.UI):
 		inner.grid(row=row, column=1, sticky=sticky)
 		return inner
 
+	def _path_label_wraplength(self) -> int:
+		"""Pixels; keeps format-review path labels from forcing an over-wide window."""
+		try:
+			sw = self.rootWin.winfo_screenwidth()
+		except tk.TclError:
+			sw = 1024
+		# Comfortable margin from screen edges; cap like the convert-page summary.
+		inner = max(280, sw - 160)
+		return min(520, inner)
+
 	def _truncate_for_button_label(self, text: str, max_chars: int = 48) -> str:
 		if len(text) <= max_chars:
 			return text
@@ -157,7 +180,10 @@ class UI(ui_tk.UI):
 		p = path.rstrip(os.sep)
 		name = os.path.basename(p)
 		display = name or p
-		return self._truncate_for_button_label(display)
+		return self._truncate_for_button_label(
+			display,
+			max_chars=_PATH_BUTTON_WIDTH,
+		)
 
 	def _file_name_for_summary(self, path: str) -> str:
 		path = path.strip()
@@ -171,13 +197,13 @@ class UI(ui_tk.UI):
 		self.inputPathButton.configure(
 			text=self._path_button_text(
 				self.entryInputConvert.get(),
-				"[Select...]",
+				_PATH_BUTTON_PLACEHOLDER,
 			),
 		)
 		self.outputPathButton.configure(
 			text=self._path_button_text(
 				self.entryOutputConvert.get(),
-				"[Select...]",
+				_PATH_BUTTON_PLACEHOLDER,
 			),
 		)
 
@@ -218,8 +244,9 @@ class UI(ui_tk.UI):
 			content,
 			text="Select input file...",
 			command=self.browseInputConvert,
+			width=_PATH_BUTTON_WIDTH,
 		)
-		self.inputPathButton.grid(row=1, column=0, sticky="ew", padx=5, pady=4)
+		self.inputPathButton.grid(row=1, column=0, sticky="w", padx=5, pady=4)
 		return page
 
 	def _makePageOutput(self, parent: ttk.Frame) -> ttk.Frame:
@@ -235,8 +262,9 @@ class UI(ui_tk.UI):
 			content,
 			text="Select output file...",
 			command=self.browseOutputConvert,
+			width=_PATH_BUTTON_WIDTH,
 		)
-		self.outputPathButton.grid(row=1, column=0, sticky="ew", padx=5, pady=4)
+		self.outputPathButton.grid(row=1, column=0, sticky="w", padx=5, pady=4)
 		return page
 
 	def _makePageFormats(self, parent: ttk.Frame) -> ttk.Frame:
@@ -248,17 +276,24 @@ class UI(ui_tk.UI):
 			row=0, column=0, sticky="e", padx=5, pady=(5, 2)
 		)
 		self.page3InputPathVar = tk.StringVar()
-		ttk.Label(content, textvariable=self.page3InputPathVar).grid(
-			row=0, column=1, sticky="w", padx=5, pady=(5, 2)
-		)
+		wrap = self._path_label_wraplength()
+		ttk.Label(
+			content,
+			textvariable=self.page3InputPathVar,
+			wraplength=wrap,
+			justify="left",
+		).grid(row=0, column=1, sticky="nw", padx=5, pady=(5, 2))
 
 		ttk.Label(content, text="Output File:").grid(
 			row=1, column=0, sticky="e", padx=5, pady=2
 		)
 		self.page3OutputPathVar = tk.StringVar()
-		ttk.Label(content, textvariable=self.page3OutputPathVar).grid(
-			row=1, column=1, sticky="w", padx=5, pady=2
-		)
+		ttk.Label(
+			content,
+			textvariable=self.page3OutputPathVar,
+			wraplength=wrap,
+			justify="left",
+		).grid(row=1, column=1, sticky="nw", padx=5, pady=2)
 
 		ttk.Label(content, text="Input Format:").grid(
 			row=2, column=0, sticky="e", padx=5, pady=(12, 5)
@@ -298,7 +333,7 @@ class UI(ui_tk.UI):
 		ttk.Label(
 			content,
 			textvariable=self.page4SummaryVar,
-			wraplength=520,
+			wraplength=self._path_label_wraplength(),
 			justify="left",
 		).grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=(5, 10))
 
@@ -350,7 +385,7 @@ class UI(ui_tk.UI):
 		self.clearButton.pack_forget()
 		self.nextButton.pack_forget()
 		self.prevButton.pack_forget()
-		self.nextButton.pack(side="right", padx=(6, 8))
+		self.nextButton.pack(side="right", padx=(6, 4))
 		if self.currentPage != 0:
 			self.prevButton.pack(side="right", padx=6)
 		if self.currentPage == len(self.pages) - 1:
@@ -363,8 +398,8 @@ class UI(ui_tk.UI):
 		inFormat = self.formatButtonInputConvert.get() or "-"
 		outFormat = self.formatButtonOutputConvert.get() or "-"
 
-		self.page3InputPathVar.set(inPath or "-")
-		self.page3OutputPathVar.set(outPath or "-")
+		self.page3InputPathVar.set(Path(inPath or "-").name)
+		self.page3OutputPathVar.set(Path(outPath or "-").name)
 		self.page4SummaryVar.set(
 			'Converting {} at "{}" to {} at "{}"'.format(
 				inFormat,
@@ -425,6 +460,12 @@ class UI(ui_tk.UI):
 		)
 		dialog.focus()
 
+	def before_mainloop(self) -> None:
+		# After layout, lock size so button label changes do not resize the window.
+		self.rootWin.update_idletasks()
+		self.rootWin.geometry("800x400")
+		# self.rootWin.resizable(False, False)
+
 	def progress(self, ratio: float, text: str = "") -> None:
 		if not text:
 			text = "%" + str(int(ratio * 100))
@@ -433,4 +474,7 @@ class UI(ui_tk.UI):
 			title = "Done"
 		text += " - " + title
 		self.pbar.updateProgress(ratio * 100, None, text)
-		self.rootWin.update()
+		try:
+			self.rootWin.update()
+		except tk.TclError:
+			pass
