@@ -34,17 +34,12 @@ from pyglossary.os_utils import abspath2
 from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import UIBase
 
-from .ui_tk import (
-	FormatButton,
-	FormatOptionsDialog,
-	GeneralOptionsDialog,
-	PreConvertInfoDialog,
-	ProgressBar,
-	TkTextLogHandler,
-	centerWindow,
-	newButton,
-	set_window_icon,
-)
+from .ui_tk.format_widgets import FormatButton, FormatOptionsDialog
+from .ui_tk.general_options import GeneralOptionsDialog
+from .ui_tk.info import PreConvertInfoDialog
+from .ui_tk.log_handler import TkTextLogHandler
+from .ui_tk.progressbar import ProgressBar
+from .ui_tk.utils import centerWindow, newButton, set_window_icon
 
 if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
