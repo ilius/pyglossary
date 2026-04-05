@@ -140,12 +140,20 @@ class UI(tk.Frame, UIBase):
 		navButtonFrame.pack(side="right", padx=(8, 4), pady=2)
 		self._navButtonFrame = navButtonFrame
 		self.clearButton = newButton(
-			navButtonFrame, text="Clear", command=self.console_clear
+			navButtonFrame,
+			text="Clear",
+			command=self.console_clear,
 		)
 		self.prevButton = newButton(
-			navButtonFrame, text="Previous", command=self.prevPage
+			navButtonFrame,
+			text="Previous",
+			command=self.prevPage,
 		)
-		self.nextButton = newButton(navButtonFrame, text="Next", command=self.nextPage)
+		self.nextButton = newButton(
+			navButtonFrame,
+			text="Next",
+			command=self.nextPage,
+		)
 
 		self._showPage(0)
 
@@ -479,10 +487,20 @@ class UI(tk.Frame, UIBase):
 			textvariable=self.page3InputPathVar,
 			wraplength=wrap,
 			justify="left",
-		).grid(row=0, column=1, sticky="nw", padx=5, pady=(5, 2))
+		).grid(
+			row=0,
+			column=1,
+			sticky="nw",
+			padx=5,
+			pady=(5, 2),
+		)
 
 		ttk.Label(content, text="Output File:").grid(
-			row=1, column=0, sticky="e", padx=5, pady=2
+			row=1,
+			column=0,
+			sticky="e",
+			padx=5,
+			pady=2,
 		)
 		self.page3OutputPathVar = tk.StringVar()
 		ttk.Label(
@@ -490,10 +508,20 @@ class UI(tk.Frame, UIBase):
 			textvariable=self.page3OutputPathVar,
 			wraplength=wrap,
 			justify="left",
-		).grid(row=1, column=1, sticky="nw", padx=5, pady=2)
+		).grid(
+			row=1,
+			column=1,
+			sticky="nw",
+			padx=5,
+			pady=2,
+		)
 
 		ttk.Label(content, text="Input Format:").grid(
-			row=2, column=0, sticky="e", padx=5, pady=(12, 5)
+			row=2,
+			column=0,
+			sticky="e",
+			padx=5,
+			pady=(12, 5),
 		)
 		self.formatButtonInputConvert = FormatButton(
 			self.rootWin,
@@ -503,11 +531,19 @@ class UI(tk.Frame, UIBase):
 			onChange=self.inputFormatChanged,
 		)
 		self.formatButtonInputConvert.grid(
-			row=2, column=1, sticky="w", padx=5, pady=(12, 5)
+			row=2,
+			column=1,
+			sticky="w",
+			padx=5,
+			pady=(12, 5),
 		)
 
 		ttk.Label(content, text="Output Format:").grid(
-			row=3, column=0, sticky="e", padx=5, pady=5
+			row=3,
+			column=0,
+			sticky="e",
+			padx=5,
+			pady=5,
 		)
 		self.formatButtonOutputConvert = FormatButton(
 			self.rootWin,
@@ -516,7 +552,13 @@ class UI(tk.Frame, UIBase):
 			dialogTitle="Select Output Format",
 			onChange=self.outputFormatChanged,
 		)
-		self.formatButtonOutputConvert.grid(row=3, column=1, sticky="w", padx=5, pady=5)
+		self.formatButtonOutputConvert.grid(
+			row=3,
+			column=1,
+			sticky="w",
+			padx=5,
+			pady=5,
+		)
 
 		return page
 
@@ -538,19 +580,31 @@ class UI(tk.Frame, UIBase):
 		buttonRow.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=(0, 5))
 		btnInner = ttk.Frame(buttonRow)
 		btnInner.pack(anchor="center")
-		newButton(btnInner, text="Read Options", command=self.readOptionsClicked).pack(
-			side="left", padx=4
-		)
-		newButton(btnInner, text="Write Options", command=self.writeOptionsClicked).pack(
-			side="left", padx=4
-		)
+		newButton(
+			btnInner,
+			text="Read Options",
+			command=self.readOptionsClicked,
+		).pack(side="left", padx=4)
+		newButton(
+			btnInner,
+			text="Write Options",
+			command=self.writeOptionsClicked,
+		).pack(side="left", padx=4)
 
 		optionsMenu = tk.Menu(tearoff=False)
 		optionsMenu.add_command(
-			label="General Options", command=self.generalOptionsClicked
+			label="General Options",
+			command=self.generalOptionsClicked,
 		)
-		optionsMenu.add_command(label="Info / Metadata", command=self.infoOptionClicked)
-		optionsButton = ttk.Menubutton(btnInner, text="General Options", menu=optionsMenu)
+		optionsMenu.add_command(
+			label="Info / Metadata",
+			command=self.infoOptionClicked,
+		)
+		optionsButton = ttk.Menubutton(
+			btnInner,
+			text="General Options",
+			menu=optionsMenu,
+		)
 		optionsButton.pack(side="left", padx=4)
 
 		console = tk.Text(content, height=12, background="#000", foreground="#fff")
@@ -562,7 +616,12 @@ class UI(tk.Frame, UIBase):
 
 		self.statusBarFrame = ttk.Frame(content)
 		self.statusBarFrame.grid(
-			row=3, column=0, columnspan=2, sticky="ew", padx=5, pady=(4, 0)
+			row=3,
+			column=0,
+			columnspan=2,
+			sticky="ew",
+			padx=5,
+			pady=(4, 0),
 		)
 
 		return page
