@@ -33,6 +33,7 @@ from pyglossary.glossary_v2 import ConvertArgs, Glossary
 from pyglossary.os_utils import abspath2
 from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import UIBase
+from pyglossary.ui.ui_tk.about import createAboutFrame
 
 from .ui_tk.format_widgets import FormatButton, FormatOptionsDialog
 from .ui_tk.general_options import GeneralOptionsDialog
@@ -137,8 +138,16 @@ class UI(tk.Frame, UIBase):
 		# Keep controls in view:
 		# cluster at bottom-right with margin (not flush to corner).
 		navButtonFrame = ttk.Frame(nav)
-		navButtonFrame.pack(side="right", padx=(8, 4), pady=2)
+		navButtonFrame.pack(side="bottom", fill="x", padx=(8, 4), pady=2)
 		self._navButtonFrame = navButtonFrame
+
+		self.aboutButton = newButton(
+			navButtonFrame,
+			text="About",
+			command=self.aboutClicked,
+		)
+		self.aboutButton.pack(side="left", padx=(6, 4))
+
 		self.clearButton = newButton(
 			navButtonFrame,
 			text="Clear",
@@ -156,6 +165,36 @@ class UI(tk.Frame, UIBase):
 		)
 
 		self._showPage(0)
+
+	def aboutClicked(self) -> None:
+		print("aboutClicked")
+		dialog = tk.Toplevel()
+		defaultFont = tkFont.nametofont("TkDefaultFont")
+		# if sysName in {"linux", "freebsd"}:
+		# 	defaultFont.configure(size=int(defaultFont.cget("size") * 1.4))
+		####
+		bigFont = defaultFont.copy()
+		# bigFont.configure(size=int(defaultFont.cget("size") * 1.6))
+		frame = createAboutFrame(dialog, bigFont)
+		frame.pack(fill="x")
+		set_window_icon(dialog)
+		dialog.bind("<Escape>", lambda _e: dialog.destroy())
+		dialog.resizable(width=True, height=True)
+		dialog.title("Set Info / Metedata")
+		buttonBox = ttk.Frame(master=dialog)
+
+		def okClicked() -> None:
+			dialog.destroy()
+
+		okButton = newButton(
+			buttonBox,
+			text="  OK  ",
+			command=okClicked,
+			# bg="#ff0000",
+			# activebackground="#ff5050",
+		)
+		okButton.pack(side="right")
+		buttonBox.pack(fill="x")
 
 	def run(  # noqa: PLR0913
 		self,
