@@ -128,16 +128,15 @@ def createAboutFrame(parent: ttk.Widget, bigFont: Font) -> ttk.Frame:
 
 	aboutNotebook = VerticalNotebook(aboutFrame, font=bigFont)
 
-	aboutAboutFrame = ttk.Frame()
+	aboutAboutFrame = ttk.Frame(aboutNotebook)
 	newReadOnlyText(
 		aboutAboutFrame,
 		text=f"{aboutText}\nHome page: {homePage}",
 		font=("DejaVu Sans", 11, ""),
 	).pack(fill="both", expand=True)
-	aboutAboutFrame.pack(side="top", fill="x")
 	aboutNotebook.add(aboutAboutFrame, "About")
 
-	authorsFrame = ttk.Frame()
+	authorsFrame = ttk.Frame(aboutNotebook)
 	authorsText = "\n".join(authors).replace("\t", "    ")
 	newReadOnlyText(
 		authorsFrame,
@@ -146,7 +145,7 @@ def createAboutFrame(parent: ttk.Widget, bigFont: Font) -> ttk.Frame:
 	).pack(fill="both", expand=True)
 	aboutNotebook.add(authorsFrame, "Authors")
 
-	licenseFrame = ttk.Frame()
+	licenseFrame = ttk.Frame(aboutNotebook)
 	newReadOnlyText(
 		licenseFrame,
 		text=licenseText,
