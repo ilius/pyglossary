@@ -13,6 +13,12 @@ A clear and concise description of what the problem is.
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 
-**Provide links and sample file(s)**
-Provide links to the official website and/or download page of the related software or format.
-Provide sample file(s) for the format/feature you want to be supported. Attach the file(s) if you can. If no sample file is publicly downloadable due to copyright, please mention and explain.
+**Official website / documentation**
+Link to the **official** site for the file format (specification, format description, SDK, or developer docs) **or** the **official dictionary / application** that creates or reads this format. Try to avoid relying only on unofficial blogs or forum posts.
+
+**Sample file(s)**
+Provide sample file(s) for the format you want supported. Attach them to this issue when they are small enough for GitHub.
+
+If a file is **too large** to attach, upload it to **Google Drive**, **OneDrive**, **Dropbox**, **[MEGA](https://mega.io)** or another file hosting service and paste the **download link** here. Prefer hosts whose sharing/download flow is available in **English** when possible, so maintainers can access the file without navigating an unfamiliar language.
+
+If you **cannot** share samples (copyright, license, privacy), explain why and describe the on-disk layout as precisely as you can (structure, encoding, compression, version).
