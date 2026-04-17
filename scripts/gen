@@ -1,16 +1,31 @@
-#!/usr/bin/env bash
-set -e
+#!/usr/bin/env python3
+"""Regenerate plugin index, format docs, and related generated files."""
 
-myDir1=$(dirname "$0")
+from __future__ import annotations
 
-# to handle rename of a plugin:
-rm $myDir1/../doc/p/*.md || true
+from pathlib import Path
+import runpy
 
-set -x
 
-python "$myDir1/gen.d/plugin-index.py"
-python "$myDir1/gen.d/plugin-doc.py"
+def main() -> int:
+	script_dir = Path(__file__).resolve().parent
+	doc_p = (script_dir / ".." / "doc" / "p").resolve()
+	if doc_p.is_dir():
+		for md in doc_p.glob("*.md"):
+			md.unlink()
 
-python "$myDir1/gen.d/config-doc.py"
-python "$myDir1/gen.d/entry-filters-doc.py"
-python "$myDir1/gen.d/requirements.py"
+	gen_d = script_dir / "gen.d"
+	for name in (
+		"plugin-index.py",
+		"plugin-doc.py",
+		"config-doc.py",
+		"entry-filters-doc.py",
+		"requirements.py",
+	):
+		print(name)
+		runpy.run_path(str(gen_d / name))
+	return 0
+
+
+if __name__ == "__main__":
+	raise SystemExit(main())
