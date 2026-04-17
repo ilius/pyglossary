@@ -40,7 +40,11 @@ from prompt_toolkit.keys import Keys
 from prompt_toolkit.shortcuts import PromptSession
 
 from pyglossary.core import noColor
-from pyglossary.ui.termcolors import colors
+from pyglossary.ui.terminal_theme import (
+	ansi_fg_open_for_palette_code,
+	hex_fg_for_palette_code,
+	is_light_terminal_background,
+)
 
 from .checkbox import MiniCheckBoxPrompt
 from .prompt import prompt
@@ -231,11 +235,19 @@ class InteractivePrompt:
 		if noColor:
 			return f"{indent_} {msg}{colon} ", False
 
+		light_bg = is_light_terminal_background()
+
 		if self.promptIndentColor >= 0:
-			indent_ = f"\x1b[38;5;{self.promptIndentColor}m{indent_}{endFormat}"
+			indent_ = (
+				f"{ansi_fg_open_for_palette_code(self.promptIndentColor, light_bg)}"
+				f"{indent_}{endFormat}"
+			)
 
 		if self.promptMsgColor >= 0:
-			msg = f"\x1b[38;5;{self.promptMsgColor}m{msg}{endFormat}"
+			msg = (
+				f"{ansi_fg_open_for_palette_code(self.promptMsgColor, light_bg)}"
+				f"{msg}{endFormat}"
+			)
 
 		return f"{indent_} {msg}{colon} ", True
 
@@ -250,13 +262,18 @@ class InteractivePrompt:
 		if noColor:
 			return [("", f"{indent_} {msg}{colon} ")]
 
+		light_bg = is_light_terminal_background()
+
 		indentStyle = ""
 		if self.promptIndentColor >= 0:
-			indentStyle = "fg:" + colors[self.promptIndentColor].hex
+			indentStyle = "fg:" + hex_fg_for_palette_code(
+				self.promptIndentColor,
+				light_bg,
+			)
 
 		msgStyle = ""
 		if self.promptMsgColor >= 0:
-			msgStyle = "fg:" + colors[self.promptMsgColor].hex
+			msgStyle = "fg:" + hex_fg_for_palette_code(self.promptMsgColor, light_bg)
 
 		return [
 			(indentStyle, f"{indent_} "),

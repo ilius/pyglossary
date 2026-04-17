@@ -93,6 +93,47 @@ class TestInteractivePrompt(unittest.TestCase):
 		self.assertTrue(text.rstrip().endswith("Hello:"))
 		self.assertIn(">>", text)
 
+	def test_colored_prompt_uses_256_on_dark_terminal(self) -> None:
+		p = InteractivePrompt()
+		p.apply_config(
+			{
+				"cmdi.prompt.indent.color": 10,
+				"cmdi.prompt.msg.color": 3,
+			},
+		)
+		with patch(
+			"pyglossary.ui.ui_cmd_interactive.interactive_prompt.noColor",
+			False,
+		):
+			with patch(
+				"pyglossary.ui.ui_cmd_interactive.interactive_prompt.is_light_terminal_background",
+				return_value=False,
+			):
+				text, colored = p.formatPromptMsg(1, "Path", ":")
+		self.assertTrue(colored)
+		self.assertIn("\x1b[38;5;10m", text)
+		self.assertIn("\x1b[38;5;3m", text)
+
+	def test_colored_prompt_uses_truecolor_on_light_terminal(self) -> None:
+		p = InteractivePrompt()
+		p.apply_config(
+			{
+				"cmdi.prompt.indent.color": 10,
+				"cmdi.prompt.msg.color": 3,
+			},
+		)
+		with patch(
+			"pyglossary.ui.ui_cmd_interactive.interactive_prompt.noColor",
+			False,
+		):
+			with patch(
+				"pyglossary.ui.ui_cmd_interactive.interactive_prompt.is_light_terminal_background",
+				return_value=True,
+			):
+				text, colored = p.formatPromptMsg(1, "Path", ":")
+		self.assertTrue(colored)
+		self.assertIn("\x1b[38;2;", text)
+
 
 class TestUICmdInteractive(unittest.TestCase):
 	@classmethod
