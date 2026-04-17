@@ -296,6 +296,8 @@ class UI(UIBase):
 			# inputFormat = inputFormat.capitalize()
 			if inputFormat not in Glossary.readFormats:
 				log.error(f"invalid read format {inputFormat}")
+				log.error(f"try: {COMMAND} --help")
+				return False
 		if outputFormat:  # noqa: SIM102
 			# outputFormat = outputFormat.capitalize()
 			if outputFormat not in Glossary.writeFormats:
