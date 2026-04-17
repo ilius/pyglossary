@@ -174,10 +174,10 @@ The README [Plugin development](README.md#plugin-development) section points to 
 Before you open or update a PR:
 
 1. **Tests**: `bash scripts/test.sh` or `bash scripts/test-ui.sh`
-2. **Ruff**: `ruff format` and `ruff check --fix` with a clean `git diff`.
-3. **Plugins / metadata**: if applicable, `./scripts/gen` and commit the generated changes.
-4. **Description**: explain the motivation, what changed, and any trade-offs or limitations. Link related issues when they exist.
-5. **Scope**: keep changes focused; unrelated refactors make review harder.
+1. **Ruff**: `ruff format` and `ruff check --fix` with a clean `git diff`.
+1. **Plugins / metadata**: if applicable, `./scripts/gen` and commit the generated changes.
+1. **Description**: explain the motivation, what changed, and any trade-offs or limitations. Link related issues when they exist.
+1. **Scope**: keep changes focused; unrelated refactors make review harder.
 
 CI overview: [Test](.github/workflows/test.yml), [Ruff](.github/workflows/ruff.yml), [Validate](.github/workflows/validate.yml), and related workflows under [.github/workflows/](.github/workflows/).
 
