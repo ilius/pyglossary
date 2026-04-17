@@ -1,0 +1,22 @@
+name: "Max blob size"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  max-blob-size:
+    name: "No blobs over 100 KiB introduced"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for blobs over 100 KiB
+        env:
+          GITHUB_PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GITHUB_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+          GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: bash .github/scripts/check-max-blob-size.sh
