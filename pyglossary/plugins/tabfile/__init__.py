@@ -59,3 +59,7 @@ optionsProp: dict[str, Option] = {
 		comment="Add headwords title to beginning of definition",
 	),
 }
+
+docTail = """### File format specification
+
+See [doc/tabfile-spec.md](./doc/tabfile-spec.md)."""

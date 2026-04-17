@@ -38,6 +38,10 @@ To update, modify plugins/tabfile/__init__.py file, then run ./scripts/gen
 | file_size_approx | `0`     | int  | Split up by given approximate file size<br />examples: 100m, 1g |
 | word_title       | `False` | bool | Add headwords title to beginning of definition                  |
 
+### File format specification
+
+See [doc/tabfile-spec.md](../tabfile-spec.md).
+
 ### Dictionary Applications/Tools
 
 | Name & Website                                                                               | Source code                                                        | License | Platforms           | Language |
