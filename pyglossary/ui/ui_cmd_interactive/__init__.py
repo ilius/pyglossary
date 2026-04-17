@@ -18,8 +18,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 """
-To use this user interface:
-sudo pip3 install prompt_toolkit.
+Interactive command-line UI for PyGlossary (``--ui=cmd`` interactive mode).
+
+Requires `prompt_toolkit` (``pip install prompt_toolkit``). Import :class:`UI`
+from this package and call :meth:`UI.run` with the same keyword arguments as
+the non-interactive command-line UI; the user is then guided through paths,
+formats, options, and conversion in a prompt-driven session.
 """
 
 from __future__ import annotations

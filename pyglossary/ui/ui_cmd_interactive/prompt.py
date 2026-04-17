@@ -18,6 +18,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""Wrappers around ``prompt_toolkit.prompt`` for the interactive cmd UI."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -35,6 +37,13 @@ def prompt(
 	multiline: bool = False,
 	**kwargs: Any,
 ) -> str:
+	"""
+	Thin wrapper around ``prompt_toolkit.prompt`` for this package.
+
+	Normalizes ``default=None`` to an empty string. If ``multiline`` is true and
+	the user types ``!m``, switches to a multi-line prompt (Alt+Enter to finish).
+	Other ``kwargs`` are passed through (history, completer, etc.).
+	"""
 	if kwargs.get("default", "") is None:
 		kwargs["default"] = ""
 	text = promptLow(message=message, **kwargs)

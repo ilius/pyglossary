@@ -7,4 +7,5 @@ lxml==5.3
 marisa-trie
 mistune
 polib
+prompt_toolkit
 python-idzip

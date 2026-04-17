@@ -18,6 +18,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""Input history helpers for path prompts."""
+
 from __future__ import annotations
 
 from os.path import abspath, relpath
@@ -32,10 +34,14 @@ __all__ = ["AbsolutePathHistory"]
 
 
 class AbsolutePathHistory(FileHistory):
+	"""File-backed input history that stores absolute paths but displays relative ones."""
+
 	def load_history_strings(self) -> Iterable[str]:
+		"""Return history entries as paths relative to the current working directory."""
 		# pwd = os.getcwd()
 		pathList = FileHistory.load_history_strings(self)
 		return [relpath(p) for p in pathList]
 
 	def store_string(self, string: str) -> None:
+		"""Persist ``string`` as an absolute path so history stays valid across ``cd``."""
 		FileHistory.store_string(self, abspath(string))

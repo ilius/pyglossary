@@ -18,53 +18,45 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Interactive terminal UI: prompts for paths, formats, plugin options, then converts.
+
+State is split between :class:`ConversionSession` (conversion parameters) and
+:class:`InteractivePrompt` (prompting and ``!`` shell helpers). Global settings
+use ``self.config`` from :class:`~pyglossary.ui.base.UIBase` (load/save).
+"""
+
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import os
 import shlex
-from os.path import (
-	abspath,
-	dirname,
-	isabs,
-	isdir,
-	join,
-)
+from os.path import join
 from typing import TYPE_CHECKING, Any
 
-from prompt_toolkit import ANSI
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.keys import Keys
-from prompt_toolkit.shortcuts import PromptSession, confirm
+from prompt_toolkit.shortcuts import confirm
 
-from pyglossary.core import confDir, noColor
+from pyglossary.core import confDir
 from pyglossary.glossary_v2 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 from pyglossary.ui.config import configDefDict
-from pyglossary.ui.termcolors import colors
 
-from .checkbox import MiniCheckBoxPrompt
+from .conversion_session import ConversionSession
 from .history import AbsolutePathHistory
+from .interactive_prompt import InteractivePrompt
 from .path_comp import MyPathCompleter
-from .prompt import prompt
 
 if TYPE_CHECKING:
-	from prompt_toolkit.formatted_text import StyleAndTextTuples
-	from prompt_toolkit.key_binding.key_processor import KeyPressEvent
-
 	from pyglossary.config_type import ConfigType
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
 
 __all__ = ["UI"]
-
-endFormat = "\x1b[0;0;0m"
 
 # GitHub repo for prompt_toolkit
 # https://github.com/prompt-toolkit/python-prompt-toolkit
@@ -117,50 +109,29 @@ back = "back"
 
 
 class UI(ui_cmd.UI):
+	"""
+	prompt_toolkit-based interactive front-end to glossary conversion.
+
+	Extends :class:`pyglossary.ui.ui_cmd.UI` with a multi-step flow: choose input
+	and output paths, detect or choose formats, optionally adjust read/write
+	options and conversion flags, then run :meth:`pyglossary.ui.ui_cmd.UI.run`.
+	After a successful conversion, prints an equivalent non-interactive shell
+	command for replay.
+	"""
+
 	def __init__(
 		self,
 		progressbar: bool = True,
 	) -> None:
-		self._inputFilename = ""
-		self._outputFilename = ""
-		self._inputFormat = ""
-		self._outputFormat = ""
+		"""Create session and prompt helpers and register post-conversion menu actions."""
+		self._session = ConversionSession()
+		self._prompt = InteractivePrompt()
 		self.config: ConfigType = {}
-		self._readOptions = {}
-		self._writeOptions = {}
-		self._convertOptions = {}
 		ui_cmd.UI.__init__(
 			self,
 			progressbar=progressbar,
 		)
 
-		self.ls_parser = argparse.ArgumentParser(add_help=False)
-		self.ls_parser.add_argument(
-			"-l",
-			"--long",
-			action="store_true",
-			dest="long",
-			help="use a long listing format",
-		)
-		self.ls_parser.add_argument(
-			"--help",
-			action="store_true",
-			dest="help",
-			help="display help",
-		)
-		self.ls_usage = (
-			"Usage: !ls [--help] [-l] [FILE/DIRECTORY]...\n\n"
-			"optional arguments:\n"
-			"    --help      show this help message and exit\n"
-			"    -l, --long  use a long listing format\n"
-		)
-
-		self._fsActions = {
-			"!pwd": (self.fs_pwd, ""),
-			"!ls": (self.fs_ls, self.ls_usage),
-			"!..": (self.fs_cd_parent, ""),
-			"!cd": (self.fs_cd, ""),
-		}
 		self._finalActions = {
 			"formats": self.askFormats,
 			"read-options": self.askReadOptions,
@@ -177,200 +148,21 @@ class UI(ui_cmd.UI):
 			"back": None,
 		}
 
-	@staticmethod
-	def fs_pwd(args: list[str]) -> None:
-		if args:
-			print(f"extra arguments: {args}")
-		print(os.getcwd())
-
-	@staticmethod
-	def get_ls_l(
-		arg: str,
-		st: os.stat_result | None = None,
-		parentDir: str = "",
-		sizeWidth: int = 0,
-	) -> str:
-		import grp
-		import pwd
-		import stat
-		import time
-
-		argPath = arg
-		if parentDir:
-			argPath = join(parentDir, arg)
-		if st is None:
-			st = os.lstat(argPath)
-		# os.lstat does not follow sym links, like "ls" command
-		details = [
-			stat.filemode(st.st_mode),
-			pwd.getpwuid(st.st_uid).pw_name,
-			grp.getgrgid(st.st_gid).gr_name,
-			str(st.st_size).rjust(sizeWidth),
-			time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_mtime)),
-			arg,
-		]
-		if stat.S_ISLNK(st.st_mode):
-			details.append(f"-> {os.readlink(argPath)}")
-		return "  ".join(details)
-
-	def fs_ls(self, args: list[str]) -> None:
-		opts, args = self.ls_parser.parse_known_args(args=args)
-
-		if opts.help:
-			print(self.ls_usage)
-			return
-
-		if not args:
-			args = [os.getcwd()]
-
-		showTitle = len(args) > 1
-		# Note: isdir and isfile funcs follow sym links, so no worry about links
-
-		for argI, arg in enumerate(args):
-			if argI > 0:
-				print()
-
-			if not isdir(arg):
-				print(self.get_ls_l(arg))
-				continue
-
-			if showTitle:
-				print(f"> List of directory {arg!r}:")
-
-			if not opts.long:
-				for path in os.listdir(arg):
-					if isdir(path):
-						print(f"{path}/")
-					else:
-						print(f"{path}")
-				continue
-
-			contents = os.listdir(arg)
-			statList = [os.lstat(join(arg, relPath)) for relPath in contents]
-			maxFileSize = max(st.st_size for st in statList)
-			sizeWidth = len(str(maxFileSize))
-			for pathI, path_ in enumerate(contents):
-				print(
-					self.get_ls_l(
-						path_,
-						parentDir=arg,
-						st=statList[pathI],
-						sizeWidth=sizeWidth,
-					),
-				)
-
-	@staticmethod
-	def fs_cd_parent(args: list[str]) -> None:
-		if args:
-			log.error("This command does not take arguments")
-			return
-		newDir = dirname(os.getcwd())
-		os.chdir(newDir)
-		print(f"Changed current directory to: {newDir}")
-
-	@staticmethod
-	def fs_cd(args: list[str]) -> None:
-		if len(args) != 1:
-			log.error("This command takes exactly one argument")
-			return
-		newDir = args[0]
-		if not isabs(newDir):
-			newDir = abspath(newDir)
-		os.chdir(newDir)
-		print(f"Changed current directory to: {newDir}")
-
-	def formatPromptMsg(
-		self,
-		level: int,
-		msg: str,
-		colon: str = ":",
-	) -> tuple[str, bool]:
-		indent_ = self.promptIndentStr * level
-
-		if noColor:
-			return f"{indent_} {msg}{colon} ", False
-
-		if self.promptIndentColor >= 0:
-			indent_ = f"\x1b[38;5;{self.promptIndentColor}m{indent_}{endFormat}"
-
-		if self.promptMsgColor >= 0:
-			msg = f"\x1b[38;5;{self.promptMsgColor}m{msg}{endFormat}"
-
-		return f"{indent_} {msg}{colon} ", True
-
-	def formatPromptMsgStyleList(
-		self,
-		level: int,
-		msg: str,
-		colon: str = ":",
-	) -> StyleAndTextTuples:
-		indent_ = self.promptIndentStr * level
-		if noColor:
-			return [("", f"{indent_} {msg}{colon} ")]
-
-		indentStyle = ""
-		if self.promptIndentColor >= 0:
-			indentStyle = "fg:" + colors[self.promptIndentColor].hex
-
-		msgStyle = ""
-		if self.promptMsgColor >= 0:
-			msgStyle = "fg:" + colors[self.promptMsgColor].hex
-
-		return [
-			(indentStyle, f"{indent_} "),
-			(msgStyle, msg),
-			("", f"{colon} "),
-		]
-
-	def prompt(self, level: int, msg: str, colon: str = ":", **kwargs: Any) -> str:
-		msg2, colored = self.formatPromptMsg(level, msg, colon)
-		if colored:
-			msg2 = ANSI(msg2)
-		return prompt(msg2, **kwargs)
-
-	def checkbox_prompt(
-		self,
-		level: int,
-		msg: str,
-		default: bool,
-		colon: str = ":",
-	) -> bool:
-		"""Create a `PromptSession` object for the 'confirm' function."""
-		# msg, colored = self.formatPromptMsg(level, msg, colon)
-		bindings = KeyBindings()
-
-		check = MiniCheckBoxPrompt(
-			formatted=self.formatPromptMsgStyleList(level, msg, colon=colon),
-			value=default,
-		)
-
-		@bindings.add(" ")
-		def _space(_event: KeyPressEvent) -> None:
-			check.value = not check.value
-			# cursor_pos = check.formatMessage().find("[") + 1
-			# cur_cursor_pos = session.default_buffer.cursor_position
-			# print(f"{cur_cursor_pos=}, {cursor_pos=}")
-			# session.default_buffer.cursor_position = cursor_pos
-
-		@bindings.add(Keys.Any)
-		def _(_event: KeyPressEvent) -> None:
-			"""Disallow inserting other text."""
-
-		complete_message = check
-		session: PromptSession[bool] = PromptSession(
-			complete_message,
-			key_bindings=bindings,
-		)
-		session.prompt()
-		return check.value
-
 	def askFile(
 		self,
 		kind: str,
 		histName: str,
-		varName: str,
+		session_attr: str,
 		reading: bool,
 	) -> str:
+		"""
+		Prompt for a path; run ``!`` shell actions or store the path on ``_session``.
+
+		``session_attr`` names a :class:`ConversionSession` field (e.g.
+		``inputFilename``). ``histName`` selects the history file under
+		``cmdi/history``. Re-prompts until a non-empty path is chosen or a shell
+		command completes.
+		"""
 		from shlex import split as shlex_split
 
 		history = AbsolutePathHistory(join(histDir, histName))
@@ -378,11 +170,11 @@ class UI(ui_cmd.UI):
 		# Note: isdir and isfile funcs follow sym links, so no worry about links
 		completer = MyPathCompleter(
 			reading=reading,
-			fs_action_names=list(self._fsActions),
+			fs_action_names=list(self._prompt.fs_actions),
 		)
-		default = getattr(self, varName)
+		default = getattr(self._session, session_attr)
 		while True:
-			filename = self.prompt(
+			filename = self._prompt.prompt(
 				1,
 				kind,
 				history=history,
@@ -396,10 +188,10 @@ class UI(ui_cmd.UI):
 				parts = shlex_split(filename)
 			except ValueError:
 				# file name can have single/double quote
-				setattr(self, varName, filename)
+				setattr(self._session, session_attr, filename)
 				return filename
-			if parts[0] in self._fsActions:
-				actionFunc, usage = self._fsActions[parts[0]]
+			if parts[0] in self._prompt.fs_actions:
+				actionFunc, usage = self._prompt.fs_actions[parts[0]]
 				try:
 					actionFunc(parts[1:])
 				except Exception:
@@ -407,28 +199,31 @@ class UI(ui_cmd.UI):
 					if usage:
 						print("\n" + usage)
 				continue
-			setattr(self, varName, filename)
+			setattr(self._session, session_attr, filename)
 			return filename
 		raise ValueError(f"{kind} is not given")
 
 	def askInputFile(self) -> str:
+		"""Prompt for the glossary input path (with read-oriented completion)."""
 		return self.askFile(
 			"Input file",
 			"filename-input",
-			"_inputFilename",
+			"inputFilename",
 			True,
 		)
 
 	def askOutputFile(self) -> str:
+		"""Prompt for the glossary output path."""
 		return self.askFile(
 			"Output file",
 			"filename-output",
-			"_outputFilename",
+			"outputFilename",
 			False,
 		)
 
 	@staticmethod
 	def pluginByNameOrDesc(value: str) -> PluginProp | None:
+		"""Resolve a plugin by user-visible description or internal format name."""
 		plugin = pluginByDesc.get(value)
 		if plugin:
 			return plugin
@@ -439,6 +234,7 @@ class UI(ui_cmd.UI):
 		return None
 
 	def askInputFormat(self) -> str:
+		"""Prompt until a valid read format name or description is entered."""
 		history = FileHistory(join(histDir, "format-input"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -448,13 +244,13 @@ class UI(ui_cmd.UI):
 			sentence=True,
 		)
 		while True:
-			value = self.prompt(
+			value = self._prompt.prompt(
 				1,
 				"Input format",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
-				default=self._inputFormat,
+				default=self._session.inputFormat,
 			)
 			if not value:
 				continue
@@ -464,6 +260,7 @@ class UI(ui_cmd.UI):
 		raise ValueError("input format is not given")
 
 	def askOutputFormat(self) -> str:
+		"""Prompt until a valid write format name or description is entered."""
 		history = FileHistory(join(histDir, "format-output"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -473,13 +270,13 @@ class UI(ui_cmd.UI):
 			sentence=True,
 		)
 		while True:
-			value = self.prompt(
+			value = self._prompt.prompt(
 				1,
 				"Output format",
 				history=history,
 				auto_suggest=auto_suggest,
 				completer=completer,
-				default=self._outputFormat,
+				default=self._session.outputFormat,
 			)
 			if not value:
 				continue
@@ -489,12 +286,13 @@ class UI(ui_cmd.UI):
 		raise ValueError("output format is not given")
 
 	def finish(self) -> None:
-		pass
+		"""Hook for end-of-flow; unused in this UI."""
 
 	# TODO: how to handle \r and \n in NewlineOption.values?
 
 	@staticmethod
 	def getOptionValueSuggestValues(option: Option) -> list[str] | None:
+		"""Return discrete choices for tab-completion, or None for free text."""
 		if option.values:
 			return [str(x) for x in option.values]
 		if option.typ == "bool":
@@ -502,6 +300,7 @@ class UI(ui_cmd.UI):
 		return None
 
 	def getOptionValueCompleter(self, option: Option) -> WordCompleter | None:
+		"""Build a ``WordCompleter`` when the option has a bounded value set."""
 		values = self.getOptionValueSuggestValues(option)
 		if values:
 			return WordCompleter(
@@ -514,12 +313,17 @@ class UI(ui_cmd.UI):
 
 	# PLR0912 Too many branches (15 > 12)
 	def askReadOptions(self) -> None:  # noqa: PLR0912
-		options = Glossary.formatsReadOptions.get(self._inputFormat)
+		"""
+		Interactively edit read options for the current input format.
+
+		Updates :attr:`ConversionSession.readOptions`.
+		"""
+		options = Glossary.formatsReadOptions.get(self._session.inputFormat)
 		if options is None:
-			log.error(f"internal error: invalid format {self._inputFormat!r}")
+			log.error(f"internal error: invalid format {self._session.inputFormat!r}")
 			return
-		optionsProp = Glossary.plugins[self._inputFormat].optionsProp
-		history = FileHistory(join(histDir, f"read-options-{self._inputFormat}"))
+		optionsProp = Glossary.plugins[self._session.inputFormat].optionsProp
+		history = FileHistory(join(histDir, f"read-options-{self._session.inputFormat}"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
 			list(options),
@@ -529,7 +333,7 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			try:
-				optName = self.prompt(
+				optName = self._prompt.prompt(
 					2,
 					"ReadOption: Name (ENTER if done)",
 					history=history,
@@ -542,14 +346,14 @@ class UI(ui_cmd.UI):
 				return
 			option = optionsProp[optName]
 			valueCompleter = self.getOptionValueCompleter(option)
-			default = self._readOptions.get(optName)
+			default = self._session.readOptions.get(optName)
 			if default is None:
 				default = options[optName]
 			print(f"Comment: {option.longComment}")
 			while True:
 				if option.typ == "bool":
 					try:
-						valueNew = self.checkbox_prompt(
+						valueNew = self._prompt.checkbox_prompt(
 							3,
 							f"ReadOption: {optName}",
 							default=default,
@@ -557,10 +361,10 @@ class UI(ui_cmd.UI):
 					except (KeyboardInterrupt, EOFError):
 						break
 					print(f"Set read-option: {optName} = {valueNew!r}")
-					self._readOptions[optName] = valueNew
+					self._session.readOptions[optName] = valueNew
 					break
 				try:
-					value = self.prompt(
+					value = self._prompt.prompt(
 						3,
 						f"ReadOption: {optName}",
 						colon=" =",
@@ -572,29 +376,36 @@ class UI(ui_cmd.UI):
 				except (KeyboardInterrupt, EOFError):
 					break
 				if value == "" and option.typ != "str":  # noqa: PLC1901
-					if optName in self._readOptions:
+					if optName in self._session.readOptions:
 						print(f"Unset read-option {optName!r}")
-						del self._readOptions[optName]
+						del self._session.readOptions[optName]
 					break
 				valueNew, ok = option.evaluate(value)
 				if not ok or not option.validate(valueNew):
 					log.error(
 						f"Invalid read option value {optName}={value!r}"
-						f" for format {self._inputFormat}",
+						f" for format {self._session.inputFormat}",
 					)
 					continue
 				print(f"Set read-option: {optName} = {valueNew!r}")
-				self._readOptions[optName] = valueNew
+				self._session.readOptions[optName] = valueNew
 				break
 
 	# PLR0912 Too many branches (15 > 12)
 	def askWriteOptions(self) -> None:  # noqa: PLR0912
-		options = Glossary.formatsWriteOptions.get(self._outputFormat)
+		"""
+		Interactively edit write options for the current output format.
+
+		Updates :attr:`ConversionSession.writeOptions`.
+		"""
+		options = Glossary.formatsWriteOptions.get(self._session.outputFormat)
 		if options is None:
-			log.error(f"internal error: invalid format {self._outputFormat!r}")
+			log.error(f"internal error: invalid format {self._session.outputFormat!r}")
 			return
-		optionsProp = Glossary.plugins[self._outputFormat].optionsProp
-		history = FileHistory(join(histDir, f"write-options-{self._outputFormat}"))
+		optionsProp = Glossary.plugins[self._session.outputFormat].optionsProp
+		history = FileHistory(
+			join(histDir, f"write-options-{self._session.outputFormat}")
+		)
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
 			list(options),
@@ -604,7 +415,7 @@ class UI(ui_cmd.UI):
 		)
 		while True:
 			try:
-				optName = self.prompt(
+				optName = self._prompt.prompt(
 					2,
 					"WriteOption: Name (ENTER if done)",
 					history=history,
@@ -618,13 +429,13 @@ class UI(ui_cmd.UI):
 			option = optionsProp[optName]
 			print(f"Comment: {option.longComment}")
 			valueCompleter = self.getOptionValueCompleter(option)
-			default = self._writeOptions.get(optName)
+			default = self._session.writeOptions.get(optName)
 			if default is None:
 				default = options[optName]
 			while True:
 				if option.typ == "bool":
 					try:
-						valueNew = self.checkbox_prompt(
+						valueNew = self._prompt.checkbox_prompt(
 							3,
 							f"WriteOption: {optName}",
 							default=default,
@@ -632,10 +443,10 @@ class UI(ui_cmd.UI):
 					except (KeyboardInterrupt, EOFError):
 						break
 					print(f"Set write-option: {optName} = {valueNew!r}")
-					self._writeOptions[optName] = valueNew
+					self._session.writeOptions[optName] = valueNew
 					break
 				try:
-					value = self.prompt(
+					value = self._prompt.prompt(
 						3,
 						f"WriteOption: {optName}",
 						colon=" =",
@@ -647,38 +458,41 @@ class UI(ui_cmd.UI):
 				except (KeyboardInterrupt, EOFError):
 					break
 				if value == "" and option.typ != "str":  # noqa: PLC1901
-					if optName in self._writeOptions:
+					if optName in self._session.writeOptions:
 						print(f"Unset write-option {optName!r}")
-						del self._writeOptions[optName]
+						del self._session.writeOptions[optName]
 					break
 				valueNew, ok = option.evaluate(value)
 				if not ok or not option.validate(valueNew):
 					log.error(
 						f"Invalid write option value {optName}={value!r}"
-						f" for format {self._outputFormat}",
+						f" for format {self._session.outputFormat}",
 					)
 					continue
 				print(f"Set write-option: {optName} = {valueNew!r}")
-				self._writeOptions[optName] = valueNew
+				self._session.writeOptions[optName] = valueNew
 				break
 
 	def resetReadOptions(self) -> None:
-		self._readOptions = {}
+		"""Clear all read plugin options for the current session."""
+		self._session.readOptions = {}
 
 	def resetWriteOptions(self) -> None:
-		self._writeOptions = {}
+		"""Clear all write plugin options for the current session."""
+		self._session.writeOptions = {}
 
 	def askConfigValue(self, configKey: str, option: Option) -> str:
+		"""Prompt for one global config key (checkbox for bool, line input otherwise)."""
 		default = self.config.get(configKey, "")
 		if option.typ == "bool":
 			return str(
-				self.checkbox_prompt(
+				self._prompt.checkbox_prompt(
 					3,
 					f"Config: {configKey}",
 					default=bool(default),
 				),
 			)
-		return self.prompt(
+		return self._prompt.prompt(
 			3,
 			f"Config: {configKey}",
 			colon=" =",
@@ -689,6 +503,7 @@ class UI(ui_cmd.UI):
 		)
 
 	def askConfig(self) -> None:
+		"""Loop: pick a config key, then set or unset its value in ``self.config``."""
 		configKeys = sorted(configDefDict)
 		history = FileHistory(join(histDir, "config-key"))
 		auto_suggest = AutoSuggestFromHistory()
@@ -701,7 +516,7 @@ class UI(ui_cmd.UI):
 
 		while True:
 			try:
-				configKey = self.prompt(
+				configKey = self._prompt.prompt(
 					2,
 					"Config: Key (ENTER if done)",
 					history=history,
@@ -731,50 +546,55 @@ class UI(ui_cmd.UI):
 					continue
 				print(f"Set config: {configKey} = {valueNew!r}")
 				self.config[configKey] = valueNew
-				self.config[configKey] = valueNew
 				break
 
 	def showOptions(self) -> None:
-		print(f"readOptions = {self._readOptions}")
-		print(f"writeOptions = {self._writeOptions}")
-		print(f"convertOptions = {self._convertOptions}")
+		"""Print current read/write/convert options and ``self.config`` to stdout."""
+		print(f"readOptions = {self._session.readOptions}")
+		print(f"writeOptions = {self._session.writeOptions}")
+		print(f"convertOptions = {self._session.convertOptions}")
 		print(f"config = {self.config}")
 		print()
 
 	def setIndirect(self) -> None:
-		self._convertOptions["direct"] = False
-		self._convertOptions["sqlite"] = None
+		"""Force indirect conversion mode (disable direct and sqlite flags)."""
+		self._session.convertOptions["direct"] = False
+		self._session.convertOptions["sqlite"] = None
 		print("Switched to indirect mode")
 
 	def setSQLite(self) -> None:
-		self._convertOptions["direct"] = None
-		self._convertOptions["sqlite"] = True
+		"""Use SQLite-backed conversion path (clears direct mode)."""
+		self._session.convertOptions["direct"] = None
+		self._session.convertOptions["sqlite"] = True
 		print("Switched to SQLite mode")
 
 	def setNoProgressbar(self) -> None:
-		self._glossarySetAttrs["progressbar"] = False
+		"""Disable the tqdm (or legacy) progress bar for the next conversion."""
+		self._session.glossarySetAttrs["progressbar"] = False
 		print("Disabled progress bar")
 
 	def setSort(self) -> None:
+		"""Toggle whether entries are sorted during conversion."""
 		try:
-			value = self.checkbox_prompt(
+			value = self._prompt.checkbox_prompt(
 				2,
 				"Enable Sort",
-				default=self._convertOptions.get("sort", False),
+				default=self._session.convertOptions.get("sort", False),
 			)
 		except (KeyboardInterrupt, EOFError):
 			return
-		self._convertOptions["sort"] = value
+		self._session.convertOptions["sort"] = value
 
 	def setSortKey(self) -> None:
+		"""Set or clear the named sort key; may prompt to enable sorting if off."""
 		completer = WordCompleter(
 			[sk.name for sk in namedSortKeyList],
 			ignore_case=False,
 			match_middle=True,
 			sentence=True,
 		)
-		default = self._convertOptions.get("sortKeyName", "")
-		sortKeyName = self.prompt(
+		default = self._session.convertOptions.get("sortKeyName", "")
+		sortKeyName = self._prompt.prompt(
 			2,
 			"SortKey",
 			history=FileHistory(join(histDir, "sort-key")),
@@ -783,20 +603,21 @@ class UI(ui_cmd.UI):
 			completer=completer,
 		)
 		if not sortKeyName:
-			if "sortKeyName" in self._convertOptions:
-				del self._convertOptions["sortKeyName"]
+			if "sortKeyName" in self._session.convertOptions:
+				del self._session.convertOptions["sortKeyName"]
 			return
 
 		if not lookupSortKey(sortKeyName):
 			log.error(f"invalid {sortKeyName = }")
 			return
 
-		self._convertOptions["sortKeyName"] = sortKeyName
+		self._session.convertOptions["sortKeyName"] = sortKeyName
 
-		if not self._convertOptions.get("sort"):
+		if not self._session.convertOptions.get("sort"):
 			self.setSort()
 
 	def askFinalAction(self) -> str | None:
+		"""Read one menu token: empty means convert now; unknown tokens are rejected."""
 		history = FileHistory(join(histDir, "action"))
 		auto_suggest = AutoSuggestFromHistory()
 		completer = WordCompleter(
@@ -806,7 +627,7 @@ class UI(ui_cmd.UI):
 			sentence=True,
 		)
 		while True:
-			action = self.prompt(
+			action = self._prompt.prompt(
 				1,
 				"Select action (ENTER to convert)",
 				history=history,
@@ -821,6 +642,12 @@ class UI(ui_cmd.UI):
 			return action
 
 	def askFinalOptions(self) -> bool | str:
+		"""
+		Dispatch pre-conversion menu actions until user chooses to convert or quit.
+
+		Returns ``True`` to run conversion, ``False`` on interrupt/error, or
+		:const:`back` to re-enter paths and formats.
+		"""
 		while True:
 			try:
 				action = self.askFinalAction()
@@ -841,69 +668,74 @@ class UI(ui_cmd.UI):
 		return True  # convert
 
 	def getRunKeywordArgs(self) -> dict:
-		return {
-			"inputFilename": self._inputFilename,
-			"outputFilename": self._outputFilename,
-			"inputFormat": self._inputFormat,
-			"outputFormat": self._outputFormat,
-			"config": self.config,
-			"readOptions": self._readOptions,
-			"writeOptions": self._writeOptions,
-			"convertOptions": self._convertOptions,
-			"glossarySetAttrs": self._glossarySetAttrs,
-		}
+		"""
+		Keyword arguments for :meth:`pyglossary.ui.ui_cmd.UI.run`.
+
+		Merges the session with ``self.config``.
+		"""
+		return self._session.get_run_kwargs(self.config)
 
 	def checkInputFormat(self, forceAsk: bool = False) -> None:
+		"""Set ``session.inputFormat`` from detection or by prompting if needed."""
 		if not forceAsk:
 			try:
-				inputArgs = Glossary.detectInputFormat(self._inputFilename)
+				inputArgs = Glossary.detectInputFormat(self._session.inputFilename)
 			except Error:
 				pass
 			else:
 				inputFormat = inputArgs.formatName
-				self._inputFormat = inputFormat
+				self._session.inputFormat = inputFormat
 				return
-		self._inputFormat = self.askInputFormat()
+		self._session.inputFormat = self.askInputFormat()
 
 	def checkOutputFormat(self, forceAsk: bool = False) -> None:
+		"""Set ``session.outputFormat`` from detection or by prompting if needed."""
 		if not forceAsk:
 			try:
 				outputArgs = Glossary.detectOutputFormat(
-					filename=self._outputFilename,
-					inputFilename=self._inputFilename,
+					filename=self._session.outputFilename,
+					inputFilename=self._session.inputFilename,
 				)
 			except Error:
 				pass
 			else:
-				self._outputFormat = outputArgs.formatName
+				self._session.outputFormat = outputArgs.formatName
 				return
-		self._outputFormat = self.askOutputFormat()
+		self._session.outputFormat = self.askOutputFormat()
 
 	def askFormats(self) -> None:
+		"""Re-prompt for both input and output formats (menu action)."""
 		self.checkInputFormat(forceAsk=True)
 		self.checkOutputFormat(forceAsk=True)
 
 	def askInputOutputAgain(self) -> None:
+		"""Re-ask for all four: input path, input format, output path, output format."""
 		self.askInputFile()
 		self.checkInputFormat(forceAsk=True)
 		self.askOutputFile()
 		self.checkOutputFormat(forceAsk=True)
 
 	def printNonInteractiveCommand(self) -> None:  # noqa: PLR0912
+		"""
+		Print a ``pyglossary`` CLI invocation equivalent to the current session.
+
+		May mutate ``session.convertOptions`` (e.g. pop ``infoOverride``) like the
+		original implementation when building flags.
+		"""
 		cmd = [
 			ui_cmd.COMMAND,
-			self._inputFilename,
-			self._outputFilename,
-			f"--read-format={self._inputFormat}",
-			f"--write-format={self._outputFormat}",
+			self._session.inputFilename,
+			self._session.outputFilename,
+			f"--read-format={self._session.inputFormat}",
+			f"--write-format={self._session.outputFormat}",
 		]
 
-		if self._readOptions:
-			optionsJson = json.dumps(self._readOptions, ensure_ascii=True)
+		if self._session.readOptions:
+			optionsJson = json.dumps(self._session.readOptions, ensure_ascii=True)
 			cmd += ["--json-read-options", optionsJson]
 
-		if self._writeOptions:
-			optionsJson = json.dumps(self._writeOptions, ensure_ascii=True)
+		if self._session.writeOptions:
+			optionsJson = json.dumps(self._session.writeOptions, ensure_ascii=True)
 			cmd += ["--json-write-options", optionsJson]
 
 		if self.config:
@@ -927,9 +759,9 @@ class UI(ui_cmd.UI):
 				else:
 					cmd.append(f"--{flag}={value}")
 
-		if self._convertOptions:
-			if "infoOverride" in self._convertOptions:
-				infoOverride = self._convertOptions.pop("infoOverride")
+		if self._session.convertOptions:
+			if "infoOverride" in self._session.convertOptions:
+				infoOverride = self._session.convertOptions.pop("infoOverride")
 				for key, value in infoOverride.items():
 					flag = infoOverrideFlags.get(key)
 					if not flag:
@@ -937,11 +769,11 @@ class UI(ui_cmd.UI):
 						continue
 					cmd.append(f"--{flag}={value}")
 
-			if "sortKeyName" in self._convertOptions:
-				value = self._convertOptions.pop("sortKeyName")
+			if "sortKeyName" in self._session.convertOptions:
+				value = self._session.convertOptions.pop("sortKeyName")
 				cmd.append(f"--sort-key={value}")
 
-			for key, value in self._convertOptions.items():
+			for key, value in self._session.convertOptions.items():
 				if value is None:
 					continue
 				if key not in convertOptionsFlags:
@@ -959,8 +791,8 @@ class UI(ui_cmd.UI):
 					cmd.append(f"--{flag}={value}")
 
 		if (
-			"progressbar" in self._glossarySetAttrs
-			and not self._glossarySetAttrs["progressbar"]
+			"progressbar" in self._session.glossarySetAttrs
+			and not self._session.glossarySetAttrs["progressbar"]
 		):
 			cmd.append("--no-progress-bar")
 
@@ -972,30 +804,34 @@ class UI(ui_cmd.UI):
 		print(shlex.join(cmd))
 
 	def setConfigAttrs(self) -> None:
-		config = self.config
-		self.promptIndentStr = config.get("cmdi.prompt.indent.str", ">")
-		self.promptIndentColor = config.get("cmdi.prompt.indent.color", 2)
-		self.promptMsgColor = config.get("cmdi.prompt.msg.color", -1)
-		self.msgColor = config.get("cmdi.msg.color", -1)
+		"""Refresh prompt appearance from ``self.config`` (``cmdi.*`` keys)."""
+		self._prompt.apply_config(self.config)
 
 	# PLR0912 Too many branches (19 > 12)
 	def main(self, again: bool = False) -> None:  # noqa: PLR0912
-		if again or not self._inputFilename:
+		"""
+		Collect missing paths and formats, then loop: menu, convert, repeat until
+		success or quit.
+
+		Returns ``True``/falsy from the base ``run`` on success, or ``None`` if the
+		user aborts during prompts.
+		"""
+		if again or not self._session.inputFilename:
 			try:
 				self.askInputFile()
 			except (KeyboardInterrupt, EOFError):
 				return None
-		if again or not self._inputFormat:
+		if again or not self._session.inputFormat:
 			try:
 				self.checkInputFormat()
 			except (KeyboardInterrupt, EOFError):
 				return None
-		if again or not self._outputFilename:
+		if again or not self._session.outputFilename:
 			try:
 				self.askOutputFile()
 			except (KeyboardInterrupt, EOFError):
 				return None
-		if again or not self._outputFormat:
+		if again or not self._session.outputFormat:
 			try:
 				self.checkOutputFormat()
 			except (KeyboardInterrupt, EOFError):
@@ -1031,20 +867,27 @@ class UI(ui_cmd.UI):
 		convertOptions: dict[str, Any] | None = None,
 		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> bool:
+		"""
+		Load config, fill the session from arguments, run :meth:`main`, then exit loop.
+
+		Unlike the base :meth:`pyglossary.ui.ui_cmd.UI.run`, this implementation
+		keeps the process alive: user may convert again or save edited config.
+		``reverse`` is not supported here.
+		"""
 		if reverse:
 			raise NotImplementedError("Reverse is not implemented in this UI")
 
-		self._inputFilename = inputFilename
-		self._outputFilename = outputFilename
-		self._inputFormat = inputFormat
-		self._outputFormat = outputFormat
-		self._readOptions = readOptions or {}
-		self._writeOptions = writeOptions or {}
-		self._convertOptions = convertOptions or {}
-		self._glossarySetAttrs = glossarySetAttrs or {}
+		self._session.inputFilename = inputFilename
+		self._session.outputFilename = outputFilename
+		self._session.inputFormat = inputFormat
+		self._session.outputFormat = outputFormat
+		self._session.readOptions = readOptions or {}
+		self._session.writeOptions = writeOptions or {}
+		self._session.convertOptions = convertOptions or {}
+		self._session.glossarySetAttrs = glossarySetAttrs or {}
 
 		if not self._progressbar:
-			self._glossarySetAttrs["progressbar"] = False
+			self._session.glossarySetAttrs["progressbar"] = False
 
 		self.loadConfig()
 		self.savedConfig = self.config.copy()
@@ -1059,7 +902,7 @@ class UI(ui_cmd.UI):
 
 		try:
 			while (
-				self.prompt(
+				self._prompt.prompt(
 					level=1,
 					msg="Press enter to exit, 'a' to convert again",
 					default="",

@@ -18,6 +18,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""Tab-completion for paths and ``!`` shell tokens in file prompts."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -34,12 +36,19 @@ __all__ = ["MyPathCompleter"]
 
 
 class MyPathCompleter(PathCompleter):
+	"""Path completion plus shell-style tokens (``!ls``, ``!cd``, …) as completions."""
+
 	def __init__(
 		self,
 		reading: bool,  # noqa: ARG002
 		fs_action_names: list[str] | None = None,
 		**kwargs: Any,
 	) -> None:
+		"""
+		``reading`` is reserved for future filtering.
+
+		``fs_action_names`` are suggested before path completions.
+		"""
 		PathCompleter.__init__(
 			self,
 			file_filter=self.file_filter,
@@ -49,6 +58,7 @@ class MyPathCompleter(PathCompleter):
 
 	@staticmethod
 	def file_filter(_filename: str) -> bool:
+		"""Accept every path (no extension-based filtering)."""
 		# filename is full/absolute file path
 		return True
 
@@ -60,6 +70,7 @@ class MyPathCompleter(PathCompleter):
 		document: Document,
 		complete_event: CompleteEvent,
 	) -> Iterable[Completion]:
+		"""Yield matching ``!`` commands first, then delegate to ``PathCompleter``."""
 		text = document.text_before_cursor
 
 		for action in self.fs_action_names:
