@@ -1041,12 +1041,79 @@ class GeneralOptionsDialog(gtk.Dialog):
 			config[param] = check.get_active()
 
 
+class PreConvertInfoDialog(gtk.Dialog):
+	"""Set glossary name and language metadata before conversion (see ui_tk.info)."""
+
+	def __init__(
+		self,
+		parent: gtk.Window,
+		info: dict[str, str],
+		**kwargs: Any,
+	) -> None:
+		gtk.Dialog.__init__(self, transient_for=parent, **kwargs)
+		self.set_title("Set Info / Metadata")
+		self._info = info
+		self.connect("response", lambda _w, _e: self.hide())
+		dialog_add_button(
+			self,
+			"gtk-cancel",
+			"_Cancel",
+			gtk.ResponseType.CANCEL,
+		)
+		dialog_add_button(
+			self,
+			"gtk-ok",
+			"_OK",
+			gtk.ResponseType.OK,
+		)
+		vpad = 5
+		hbox = gtk.HBox(spacing=8)
+		label = gtk.Label(label="Glossary Name")
+		label.set_property("xalign", 0)
+		pack(hbox, label, 0, 0)
+		self._name_entry = gtk.Entry()
+		self._name_entry.set_text(info.get("name", ""))
+		pack(hbox, self._name_entry, 1, 1)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox(spacing=8)
+		label = gtk.Label(label="Source Language")
+		label.set_property("xalign", 0)
+		pack(hbox, label, 0, 0)
+		self._source_lang_entry = gtk.Entry()
+		self._source_lang_entry.set_text(info.get("sourceLang", ""))
+		pack(hbox, self._source_lang_entry, 1, 1)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		##
+		hbox = gtk.HBox(spacing=8)
+		label = gtk.Label(label="Target Language")
+		label.set_property("xalign", 0)
+		pack(hbox, label, 0, 0)
+		self._target_lang_entry = gtk.Entry()
+		self._target_lang_entry.set_text(info.get("targetLang", ""))
+		pack(hbox, self._target_lang_entry, 1, 1)
+		pack(self.vbox, hbox, 0, 0, padding=vpad)
+		self.vbox.show_all()
+
+	def apply_values(self) -> None:
+		name = self._name_entry.get_text()
+		if name:
+			self._info["name"] = name
+		source_lang = self._source_lang_entry.get_text()
+		if source_lang:
+			self._info["sourceLang"] = source_lang
+		target_lang = self._target_lang_entry.get_text()
+		if target_lang:
+			self._info["targetLang"] = target_lang
+
+
 class OptionsButton(gtk.MenuButton):
 	def __init__(
 		self,
 		ui: UI,
 		onReadOptionClick: Callable,
 		onWriteOptionClick: Callable,
+		onInfoMetadataClick: Callable,
 	) -> None:
 		gtk.MenuButton.__init__(self, label=" Options ")
 		self.ui = ui
@@ -1067,6 +1134,10 @@ class OptionsButton(gtk.MenuButton):
 		itemGeneral = gtk.MenuItem("General Options")
 		itemGeneral.connect("activate", self._onGeneralOptionClick)
 		menu.append(itemGeneral)
+		##
+		itemInfo = gtk.MenuItem("Info / Metadata")
+		itemInfo.connect("activate", onInfoMetadataClick)
+		menu.append(itemInfo)
 		##
 		menu.show_all()
 		self.set_popup(menu)
@@ -1180,6 +1251,7 @@ class MainWindow(gtk.Dialog):
 		#####
 		self.assert_quit = False
 		self.path = ""
+		self.infoOverride: dict[str, str] = {}
 		# ____________________ Tab 1 - Convert ____________________ #
 		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
@@ -1277,6 +1349,7 @@ class MainWindow(gtk.Dialog):
 			self,
 			onReadOptionClick=self.inputFormatBox.openOptions,
 			onWriteOptionClick=self.outputFormatBox.openOptions,
+			onInfoMetadataClick=self.infoMetadataClicked,
 		)
 		# self.optionsButton.set_size_request(300, 40)
 		pack(hbox, self.optionsButton, 0, 0, 0)
@@ -1413,6 +1486,12 @@ class MainWindow(gtk.Dialog):
 	def onOutputFormatChange(self) -> None:
 		self.optionsButton.setEnableWriteOptions(self.outputFormatBox.hasOptions())
 
+	def infoMetadataClicked(self, _widget: gtk.Widget | None = None) -> None:
+		dialog = PreConvertInfoDialog(self, self.infoOverride)
+		if dialog.run() == gtk.ResponseType.OK:
+			dialog.apply_values()
+		dialog.destroy()
+
 	def run(  # noqa: PLR0913
 		self,
 		inputFilename: str = "",
@@ -1453,6 +1532,8 @@ class MainWindow(gtk.Dialog):
 			self.inputFormatBox.setOptionsValues(readOptions)
 		if writeOptions:
 			self.outputFormatBox.setOptionsValues(writeOptions)
+
+		self.infoOverride = convertOptions.pop("infoOverride", None) or {}
 
 		self.convertOptions = convertOptions
 		if convertOptions:
@@ -1524,6 +1605,7 @@ class MainWindow(gtk.Dialog):
 					outputFormat=outFormat,
 					readOptions=readOptions,
 					writeOptions=writeOptions,
+					infoOverride=self.infoOverride or None,
 					**self.convertOptions,
 				),
 			)

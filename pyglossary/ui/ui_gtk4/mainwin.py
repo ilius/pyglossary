@@ -38,6 +38,7 @@ from pyglossary.ui.base import (
 	logo,
 )
 from pyglossary.ui.ui_gtk4.general_options import GeneralOptionsDialog
+from pyglossary.ui.ui_gtk4.info import PreConvertInfoDialog
 from pyglossary.ui.version import getVersion
 
 from .about import AboutWidget
@@ -213,6 +214,7 @@ progressbar progress, trough {min-height: 0.6em;}
 		####
 		self.readOptions = {}
 		self.writeOptions = {}
+		self.infoOverride: dict[str, str] = {}
 		self.generalOptionsdialog: gtk.Dialog | None = None
 		####
 		self.pages = []
@@ -289,6 +291,10 @@ progressbar progress, trough {min-height: 0.6em;}
 		action.connect("activate", self.generalOptionsClicked)
 		app.add_action(action)
 		##
+		action = gio.SimpleAction.new("infoMetadata", None)
+		action.connect("activate", self.infoMetadataClicked)
+		app.add_action(action)
+		##
 		fontSize = getFontSizePixels(self)
 		##
 		button = gtk.MenuButton(label=" Options")
@@ -297,6 +303,7 @@ progressbar progress, trough {min-height: 0.6em;}
 		menu.append("Read Options", "app.readOptions")
 		menu.append("Write Options", "app.writeOptions")
 		menu.append("General Options", "app.generalOptions")
+		menu.append("Info / Metadata", "app.infoMetadata")
 		button.set_menu_model(menu)
 		pack(hbox, button)
 		##
@@ -392,6 +399,10 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.generalOptionsdialog = GeneralOptionsDialog(self)
 		self.generalOptionsdialog.present()
 
+	def infoMetadataClicked(self, _action: gtk.Action, _param: Any) -> None:
+		dialog = PreConvertInfoDialog(self, self.infoOverride)
+		dialog.present()
+
 	def makeAboutWidget(self) -> gtk.Widget:
 		about = AboutWidget(
 			logo=logo,
@@ -462,6 +473,8 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.readOptions = readOptions
 		if writeOptions:
 			self.writeOptions = writeOptions
+
+		self.infoOverride = convertOptions.pop("infoOverride", None) or {}
 
 		self.convertOptions = convertOptions
 		if convertOptions:
@@ -544,6 +557,7 @@ progressbar progress, trough {min-height: 0.6em;}
 					outputFormat=outFormat,
 					readOptions=readOptions,
 					writeOptions=writeOptions,
+					infoOverride=self.infoOverride or None,
 					**self.convertOptions,
 				),
 			)
