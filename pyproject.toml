@@ -270,6 +270,9 @@ mccabe.max-complexity = 13
 	"PLR6301", # Method `...` could be a function, class method, or static method
 	"E501",    # Line too long
 ]
+"pyglossary/ui/tests/*.py" = [
+	"ANN",
+]
 "*_test.py" = [
 	"ANN",
 	"T201",
