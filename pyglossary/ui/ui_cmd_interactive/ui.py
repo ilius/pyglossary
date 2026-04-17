@@ -17,12 +17,54 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
-"""
-To use this user interface:
-sudo pip3 install prompt_toolkit.
-"""
 
 from __future__ import annotations
+
+import argparse
+import json
+import logging
+import os
+import shlex
+from os.path import (
+	abspath,
+	dirname,
+	isabs,
+	isdir,
+	join,
+)
+from typing import TYPE_CHECKING, Any
+
+from prompt_toolkit import ANSI
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.keys import Keys
+from prompt_toolkit.shortcuts import PromptSession, confirm
+
+from pyglossary.core import confDir, noColor
+from pyglossary.glossary_v2 import Error, Glossary
+from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
+from pyglossary.ui import ui_cmd
+from pyglossary.ui.config import configDefDict
+from pyglossary.ui.termcolors import colors
+
+from .checkbox import MiniCheckBoxPrompt
+from .history import AbsolutePathHistory
+from .path_comp import MyPathCompleter
+from .prompt import prompt
+
+if TYPE_CHECKING:
+	from prompt_toolkit.formatted_text import StyleAndTextTuples
+	from prompt_toolkit.key_binding.key_processor import KeyPressEvent
+
+	from pyglossary.config_type import ConfigType
+	from pyglossary.option import Option
+	from pyglossary.plugin_prop import PluginProp
+
+__all__ = ["UI"]
+
+endFormat = "\x1b[0;0;0m"
 
 # GitHub repo for prompt_toolkit
 # https://github.com/prompt-toolkit/python-prompt-toolkit
@@ -36,70 +78,6 @@ from __future__ import annotations
 # and sys.stderr.
 # prompt_toolkit also supports ncurses-like dialogs with buttons and widgets,
 # but I prefer this kind of UI with auto-completion and history
-import argparse
-import json
-import logging
-import os
-import shlex
-from os.path import (
-	abspath,
-	dirname,
-	isabs,
-	isdir,
-	join,
-	relpath,
-)
-from typing import TYPE_CHECKING, Any
-
-from prompt_toolkit import ANSI
-from prompt_toolkit import prompt as promptLow
-from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.completion import (
-	Completion,
-	PathCompleter,
-	WordCompleter,
-)
-from prompt_toolkit.history import FileHistory
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.keys import Keys
-from prompt_toolkit.shortcuts import PromptSession, confirm
-
-from pyglossary.core import confDir, noColor
-from pyglossary.glossary_v2 import Error, Glossary
-from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
-
-from . import ui_cmd
-from .config import configDefDict
-from .termcolors import colors
-
-if TYPE_CHECKING:
-	from collections.abc import Iterable
-
-	from prompt_toolkit.completion import CompleteEvent
-	from prompt_toolkit.document import Document
-	from prompt_toolkit.formatted_text import StyleAndTextTuples
-	from prompt_toolkit.key_binding.key_processor import KeyPressEvent
-
-	from pyglossary.config_type import ConfigType
-	from pyglossary.option import Option
-	from pyglossary.plugin_prop import PluginProp
-
-__all__ = ["UI"]
-
-endFormat = "\x1b[0;0;0m"
-
-
-class MiniCheckBoxPrompt:
-	def __init__(
-		self,
-		formatted: StyleAndTextTuples,
-		value: bool = False,
-	) -> None:
-		self.formatted = formatted
-		self.value = value
-
-	def __pt_formatted_text__(self) -> StyleAndTextTuples:  # noqa: PLW3201
-		return self.formatted + [("", "[x]" if self.value else "[ ]")]
 
 
 log = logging.getLogger("pyglossary")
@@ -135,92 +113,7 @@ infoOverrideFlags = {
 }
 
 
-def dataToPrettyJson(
-	data: dict[str, Any] | list[Any],
-	ensure_ascii: bool = False,
-	sort_keys: bool = False,
-) -> str:
-	return json.dumps(
-		data,
-		sort_keys=sort_keys,
-		indent=2,
-		ensure_ascii=ensure_ascii,
-	)
-
-
-def prompt(
-	message: ANSI | str,
-	multiline: bool = False,
-	**kwargs: Any,
-) -> str:
-	if kwargs.get("default", "") is None:
-		kwargs["default"] = ""
-	text = promptLow(message=message, **kwargs)
-	if multiline and text == "!m":
-		print("Entering Multi-line mode, press Alt+ENTER to end")
-		text = promptLow(
-			message="",
-			multiline=True,
-			**kwargs,
-		)
-	return text  # noqa: RET504
-
-
 back = "back"
-
-
-class MyPathCompleter(PathCompleter):
-	def __init__(
-		self,
-		reading: bool,  # noqa: ARG002
-		fs_action_names: list[str] | None = None,
-		**kwargs: Any,
-	) -> None:
-		PathCompleter.__init__(
-			self,
-			file_filter=self.file_filter,
-			**kwargs,
-		)
-		self.fs_action_names = fs_action_names or []
-
-	@staticmethod
-	def file_filter(_filename: str) -> bool:
-		# filename is full/absolute file path
-		return True
-
-	# def get_completions_exception(document, complete_event, e):
-	# 	log.error(f"Exception in get_completions: {e}")
-
-	def get_completions(
-		self,
-		document: Document,
-		complete_event: CompleteEvent,
-	) -> Iterable[Completion]:
-		text = document.text_before_cursor
-
-		for action in self.fs_action_names:
-			if action.startswith(text):
-				yield Completion(
-					text=action,
-					start_position=-len(text),
-					display=action,
-				)
-
-		yield from PathCompleter.get_completions(
-			self,
-			document=document,
-			complete_event=complete_event,
-		)
-
-
-class AbsolutePathHistory(FileHistory):
-	def load_history_strings(self) -> Iterable[str]:
-		# pwd = os.getcwd()
-		pathList = FileHistory.load_history_strings(self)
-		return [relpath(p) for p in pathList]
-
-	def store_string(self, string: str) -> None:
-		FileHistory.store_string(self, abspath(string))
 
 
 class UI(ui_cmd.UI):
