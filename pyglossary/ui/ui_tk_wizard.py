@@ -40,7 +40,13 @@ from .ui_tk.general_options import GeneralOptionsDialog
 from .ui_tk.info import PreConvertInfoDialog
 from .ui_tk.log_handler import TkTextLogHandler
 from .ui_tk.progressbar import ProgressBar
-from .ui_tk.utils import centerWindow, newButton, set_window_icon
+from .ui_tk.utils import (
+	centerWindow,
+	decodeGeometry,
+	encodeLocation,
+	newButton,
+	set_window_icon,
+)
 
 if TYPE_CHECKING:
 	from pyglossary.config_type import ConfigType
@@ -629,22 +635,16 @@ class UI(tk.Frame, UIBase):
 			text="Write Options",
 			command=self.writeOptionsClicked,
 		).pack(side="left", padx=4)
-
-		optionsMenu = tk.Menu(tearoff=False)
-		optionsMenu.add_command(
-			label="General Options",
-			command=self.generalOptionsClicked,
-		)
-		optionsMenu.add_command(
-			label="Info / Metadata",
-			command=self.infoOptionClicked,
-		)
-		optionsButton = ttk.Menubutton(
+		newButton(
 			btnInner,
 			text="General Options",
-			menu=optionsMenu,
-		)
-		optionsButton.pack(side="left", padx=4)
+			command=self.generalOptionsClicked,
+		).pack(side="left", padx=4)
+		newButton(
+			btnInner,
+			text="Info / Metadata",
+			command=self.infoOptionClicked,
+		).pack(side="left", padx=4)
 
 		console = tk.Text(content, height=12, background="#000", foreground="#fff")
 		console.bind("<Key>", self.consoleKeyPress)
@@ -886,3 +886,19 @@ class UI(tk.Frame, UIBase):
 	def anyEntryChanged(self, _event: tk.Event | None = None) -> None:
 		self.inputEntryChanged()
 		self.outputEntryChanged()
+
+	def openDialog(self, dialog: tk.Toplevel) -> None:
+		# x, y, w, h = decodeGeometry(dialog.geometry())
+		# w and h are rough estimated width and height of `dialog`
+		px, py, pw, ph = decodeGeometry(self.winfo_toplevel().geometry())
+		dialog.update_idletasks()
+		width = dialog.winfo_width() + 400
+		height = dialog.winfo_height()
+		dialog.geometry(
+			f"{width}x{height}"
+			+ encodeLocation(
+				px + pw // 2 - width // 2,
+				py + ph // 2 - height // 2,
+			),
+		)
+		dialog.focus()
