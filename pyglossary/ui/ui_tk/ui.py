@@ -774,9 +774,11 @@ class UI(tk.Frame, UIBase):
 		if writeOptions:
 			self.writeOptions = writeOptions
 
-		self.convertOptions: dict[str, Any] = convertOptions or {}
 		if convertOptions:
 			log.info(f"Using {convertOptions=}")
+			self.infoOverride = convertOptions.pop("infoOverride", None) or {}
+
+		self.convertOptions: dict[str, Any] = convertOptions or {}
 
 		self._glossarySetAttrs = glossarySetAttrs or {}
 
