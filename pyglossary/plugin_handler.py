@@ -153,6 +153,8 @@ class PluginHandler:
 		):
 			cls._addPlugin(prop)
 
+		PluginLoader.loadedModules |= {mod.moduleName for mod in cls.plugins.values()}
+
 	@classmethod
 	def loadPlugins(
 		cls: type[PluginHandler],
