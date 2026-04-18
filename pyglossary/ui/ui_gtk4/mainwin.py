@@ -474,11 +474,11 @@ progressbar progress, trough {min-height: 0.6em;}
 		if writeOptions:
 			self.writeOptions = writeOptions
 
-		self.infoOverride = convertOptions.pop("infoOverride", None) or {}
-
-		self.convertOptions = convertOptions
 		if convertOptions:
 			log.debug(f"Using {convertOptions=}")
+			self.infoOverride = convertOptions.pop("infoOverride", None) or {}
+
+		self.convertOptions = convertOptions
 
 		self._glossarySetAttrs = glossarySetAttrs or {}
 		self.present()

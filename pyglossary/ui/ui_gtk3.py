@@ -1533,11 +1533,11 @@ class MainWindow(gtk.Dialog):
 		if writeOptions:
 			self.outputFormatBox.setOptionsValues(writeOptions)
 
-		self.infoOverride = convertOptions.pop("infoOverride", None) or {}
-
-		self.convertOptions = convertOptions
 		if convertOptions:
 			log.debug(f"Using {convertOptions=}")
+			self.infoOverride = convertOptions.pop("infoOverride", None) or {}
+
+		self.convertOptions = convertOptions
 
 		self._glossarySetAttrs = glossarySetAttrs or {}
 
