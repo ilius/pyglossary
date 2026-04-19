@@ -60,9 +60,17 @@ ui_loaders: dict[str, Callable] = {
 
 def canRunGUI() -> bool:
 	if sysName == "linux":
-		return bool(os.getenv("DISPLAY"))
+		if not os.getenv("DISPLAY"):
+			return False
+		try:
+			import gi  # noqa: F401
+		except ImportError:
+			try:
+				import tkinter  # noqa: F401
+			except ModuleNotFoundError:
+				return False
 
-	if sysName == "darwin":
+	elif sysName == "darwin":
 		try:
 			import tkinter  # noqa: F401
 		except ModuleNotFoundError:
