@@ -24,3 +24,4 @@ venv
 vulture.*
 .dmypy.json
 .vscode
+uv.lock
