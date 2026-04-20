@@ -65,7 +65,7 @@ class Writer(EbookWriter):
 	_hide_word_index: bool = False
 	_spellcheck: bool = True
 	_exact: bool = False
-	CSS_CONTENTS = b""""@charset "UTF-8";"""
+	CSS_CONTENTS = b"""@charset "UTF-8";"""
 	GROUP_XHTML_TEMPLATE = """<?xml version="1.0" encoding="utf-8" \
 standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" \
