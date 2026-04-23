@@ -21,7 +21,7 @@ __all__ = ["getRunner"]
 
 ui_list = ["gtk3", "gtk4", "tk", "tk_wizard", "web"]
 if os.sep == "\\" or sysName == "darwin":  # windows or mac
-	ui_list = ["tk", "tk_wizard", "gtk3", "gtk4", "web"]
+	ui_list = ["tk_wizard", "tk", "gtk3", "gtk4", "web"]
 
 log: logging.Logger | None = None
 
