@@ -6,6 +6,8 @@ export TEST_REDOWNLOAD_OUTDATED_CACHE=1
 
 # rm -rf $HOME/.cache/pyglossary/test || true
 
+export TEST_VERBOSE=1
+
 set -o pipefail
 bash ./scripts/test.sh 2>&1 | tee test.out
 STATUS=$?
