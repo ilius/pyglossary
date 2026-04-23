@@ -100,6 +100,14 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		help="use Tkinter-based user interface",
 	)
 	parser.add_argument(
+		"--tkw",
+		dest="ui_type",
+		action="store_const",
+		const="tk_wizard",
+		default=None,
+		help="use Tkinter-based user interface",
+	)
+	parser.add_argument(
 		"--web",
 		dest="ui_type",
 		action="store_const",
