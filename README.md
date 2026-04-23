@@ -166,6 +166,7 @@ You can explicitly select user interface type using `--ui`
 - `./main.py --ui=gtk4`
 - `./main.py --ui=gtk` which currently selects `gtk3`
 - `./main.py --ui=tk`
+- `./main.py --ui=tk_wizard` or `./main.py --tkw`: new Wizared-based Tkinter interface
 - `./main.py --ui=web`
 - `./main.py --ui=cmd`
 
