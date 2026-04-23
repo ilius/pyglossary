@@ -3,7 +3,7 @@ beautifulsoup4
 biplist
 freezegun
 html5lib
-lxml==5.3
+lxml>=6.1.0
 marisa-trie
 mistune
 polib
