@@ -165,20 +165,20 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 	def test_detectOutputFormat_err4_1(self):
 		res = Glossary.detectOutputFormat(
 			filename="",
-			formatName="BabylonBgl",
-			inputFilename="test3.txt",
+			formatName="Xdxf",
+			inputFilename="test3.xdxf",
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical("plugin BabylonBgl does not support writing")
+		self.assertLogCritical("plugin Xdxf does not support writing")
 
 	def test_detectOutputFormat_err4_2(self):
 		res = Glossary.detectOutputFormat(
-			filename="test.bgl",
+			filename="test.xdxf",
 			formatName="",
 			inputFilename="",
 		)
 		self.assertIsNone(res)
-		self.assertLogCritical("plugin BabylonBgl does not support writing")
+		self.assertLogCritical("plugin Xdxf does not support writing")
 
 	def test_detectOutputFormat_err5(self):
 		res = Glossary.detectOutputFormat(

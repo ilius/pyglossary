@@ -191,24 +191,24 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		try:
 			Glossary.detectOutputFormat(
 				filename="",
-				formatName="BabylonBgl",
-				inputFilename="test3.txt",
+				formatName="Xdxf",
+				inputFilename="test3.xdxf",
 			)
 		except Error as e:
 			err = str(e)
-		self.assertEqual(err, "plugin BabylonBgl does not support writing")
+		self.assertEqual(err, "plugin Xdxf does not support writing")
 
 	def test_detectOutputFormat_err4_2(self):
 		err = None
 		try:
 			Glossary.detectOutputFormat(
-				filename="test.bgl",
+				filename="test.Xdxf",
 				formatName="",
 				inputFilename="",
 			)
 		except Error as e:
 			err = str(e)
-		self.assertEqual(err, "plugin BabylonBgl does not support writing")
+		self.assertEqual(err, "plugin Xdxf does not support writing")
 
 	def test_detectOutputFormat_err5(self):
 		err = None
