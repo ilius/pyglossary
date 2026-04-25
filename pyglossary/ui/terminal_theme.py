@@ -171,7 +171,7 @@ def _colorfgbg_suggests_light_bg() -> bool | None:
 		bg = int(parts[1])
 	except ValueError:
 		return None
-	if bg in (7, 15):
+	if bg in {7, 15}:
 		return True
 	if bg <= 6 or bg == 8:
 		return False
