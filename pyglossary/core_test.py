@@ -51,6 +51,13 @@ class MockLogHandler(logging.Handler):
 	def printRemainingwWarnings(self, method: str = "") -> int:
 		return self.printRemainingLogs(logging.WARNING, method)
 
+	def getRemainingErrors(self) -> list[str]:
+		return [
+			self.format(record)
+			for level in [logging.CRITICAL, logging.ERROR]
+			for record in self.recordsByLevel.get(level, [])
+		]
+
 
 mockLog = None
 

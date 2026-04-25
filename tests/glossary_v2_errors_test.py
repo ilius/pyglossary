@@ -35,7 +35,7 @@ class TestGlossaryErrorsBase(TestGlossaryBase):
 	def tearDown(self):
 		TestGlossaryBase.tearDown(self)
 		method = self._testMethodName
-		self.assertEqual(0, self.mockLog.printRemainingErrors(method))
+		self.assertEqual([], self.mockLog.getRemainingErrors())
 		warnCount = self.mockLog.printRemainingwWarnings(method)
 		if warnCount > 0:
 			print(
