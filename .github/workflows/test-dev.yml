@@ -33,7 +33,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install libxml2-dev libxslt1-dev
       - name: Install dependencies
-        run: sh ./scripts/test-deps.sh
+        run: |
+          sudo apt-get install dictzip --yes
+          sh ./scripts/test-deps.sh
       - name: Run tests
         env:
           SKIP_TEST_SLOB_WRITE_FILE_SIZE_APPROX: 1
