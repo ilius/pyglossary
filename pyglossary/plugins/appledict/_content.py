@@ -124,6 +124,7 @@ def prepare_content_without_soup(
 
 def _prepare_href(tag: bs4.element.Tag) -> None:
 	href = tag["href"]
+	assert isinstance(href, str)
 	href = _cleanup_link_target(href)
 
 	if href.startswith("sound:"):
@@ -134,7 +135,9 @@ def _prepare_href(tag: bs4.element.Tag) -> None:
 		log.debug(f"phonetics: {tag=}")
 		if tag.audio and "name" in tag.audio.attrs:
 			tag["onmousedown"] = "this.lastChild.play(); return false;"
-			src_name = tag.audio["name"].replace("#", "_")
+			src_name = tag.audio["name"]
+			assert isinstance(src_name, str)
+			src_name = src_name.replace("#", "_")
 			tag.audio["src"] = f"{src_name}.mp3"
 
 	elif not _link_is_url(href):
@@ -174,9 +177,9 @@ def _prepare_onclick(soup: BeautifulSoup.BeautifulSoup) -> None:
 def prepare_content_with_soup(  # noqa: PLR0912
 	title: str | None,
 	body: str,
-	BeautifulSoup: BeautifulSoup,
+	BeautifulSoup: BeautifulSoup,  # type: ignore[valid-type]
 ) -> str:
-	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")
+	soup = BeautifulSoup.BeautifulSoup(body, features="lxml")  # type: ignore[attr-defined]
 	# difference between "lxml" and "html.parser"
 	if soup.body:
 		soup = soup.body
@@ -267,7 +270,7 @@ def _remove_style(tag: dict, line: str) -> None:
 		del tag["style"]
 
 
-def _fix_sound_link(href: str, tag: dict[str, Any]) -> None:
+def _fix_sound_link(href: str, tag: bs4.element.Tag) -> None:
 	tag["href"] = f'javascript:new Audio("{href[len("sound://") :]}").play();'
 
 

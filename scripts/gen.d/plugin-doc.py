@@ -4,6 +4,7 @@ import sys
 import tomllib as toml
 from os.path import abspath, dirname, join
 from pathlib import Path
+from typing import Any
 
 from mako.template import Template
 
@@ -251,6 +252,7 @@ for p in plugins:
 	docTail = getattr(module, "docTail", [])
 
 	toolsFile = join(pluginsDir, p.moduleName, "tools.toml")
+	tools: list[dict[str, Any]]
 	try:
 		with open(toolsFile, "rb") as _file:
 			tools_toml = toml.load(_file)
@@ -262,7 +264,7 @@ for p in plugins:
 	else:
 		for toolName, tool in tools_toml.items():
 			tool.update({"name": toolName})
-		tools = tools_toml.values()
+		tools = tools_toml.values()  # type: ignore[assignment]
 
 	table = [
 		("Attribute", "Value"),

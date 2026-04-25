@@ -55,6 +55,8 @@ class Reader:
 
 		with open(infoFname, encoding=self._encoding) as infoFp:
 			info = jsonToData(infoFp.read())
+		if not isinstance(info, dict):
+			raise TypeError(f"expected dict in info.json, got {type(info).__name__}")
 		self._entryCount = info.pop("wordCount")
 		self._prev_link = info.pop("prev_link")
 		self._rootPath = info.pop("root")

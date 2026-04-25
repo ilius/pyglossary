@@ -107,7 +107,7 @@ class Transformer:
 	def closeLabel(self) -> None:
 		# print(f"Label: {self.label!r}")
 		desc = None
-		if self.abbrev:
+		if self.abbrev and self.abbrevDict is not None:
 			desc = self.abbrevDict.get(self.label)
 		if desc:
 			self.output += (

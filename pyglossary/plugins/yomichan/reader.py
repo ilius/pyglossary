@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+# mypy: ignore-errors
 import re
 from operator import itemgetter
 from typing import TYPE_CHECKING

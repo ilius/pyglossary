@@ -176,7 +176,6 @@ mccabe.max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 
-
 "pyglossary/plugins/*/__init__.py" = [
 	"RUF067", # `__init__` module should only contain docstrings and re-exports
 ]
@@ -252,7 +251,9 @@ mccabe.max-complexity = 13
 ]
 
 "scripts/wiki-formats.py" = ["E501"]
-"pyglossary/io_utils.py" = []
+"pyglossary/io_utils.py" = ["TC003"]
+"pyglossary/ui/config.py" = ["TC001"]
+"pyglossary/ui/runner.py" = ["TC001", "TC003"]
 "pyglossary/plugins/babylon_bgl/reader_debug.py" = ["ANN", "FURB"]
 "pyglossary/ui/**/*.py" = [
 	"T201",
@@ -289,6 +290,8 @@ mccabe.max-complexity = 13
 unresolved-import = "ignore"
 
 [tool.mypy]
+python_version = "3.12"
+explicit_package_bases = true
 exclude = [
 	# '.*/plugin_lib/.*',
 ]
@@ -492,6 +495,7 @@ pyglossary-view = "pyglossary.ui.tools.view_glossary:main"
 
 [project.optional-dependencies]
 all = ["PyICU", "lxml", "beautifulsoup4"]
+dev = ["mypy", "ruff", "types-polib"]
 
 [project.urls]
 Homepage = "https://github.com/ilius/pyglossary"

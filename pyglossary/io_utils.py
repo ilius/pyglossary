@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+from collections.abc import Buffer
 from typing import TYPE_CHECKING, Never, Self
 
 if TYPE_CHECKING:
@@ -55,10 +56,10 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 	def read1(self, n: int | None = None) -> bytes:
 		raise NotImplementedError
 
-	def readinto(self, buffer: bytes | bytearray) -> int:
+	def readinto(self, buffer: Buffer) -> int:
 		raise NotImplementedError
 
-	def readinto1(self, buffer: bytes | bytearray) -> int:
+	def readinto1(self, buffer: Buffer) -> int:
 		raise NotImplementedError
 
 	# data: "bytearray|memoryview|array[Any]|io.mmap|io._CData|io.PickleBuffer"

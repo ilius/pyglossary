@@ -19,18 +19,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from pyglossary.entry_filters import entryFiltersRules
+from pyglossary.entry_filters import EntryFilter, entryFiltersRules
 from pyglossary.option import (
 	BoolOption,
 	FloatOption,
 	IntOption,
+	Option,
 	StrOption,
 )
-
-if TYPE_CHECKING:
-	from pyglossary.option import Option
 
 __all__ = ["configDefDict"]
 
@@ -42,7 +38,9 @@ _entryFilterConfigDict = {
 
 
 def getEntryFilterOption(name: str) -> Option:
+	filterClass: type[EntryFilter]
 	filterClass, default = _entryFilterConfigDict[name]
+	optClass: type[Option]
 	if isinstance(default, bool):
 		optClass = BoolOption
 	elif isinstance(default, str):

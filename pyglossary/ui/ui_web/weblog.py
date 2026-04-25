@@ -26,14 +26,14 @@ from __future__ import annotations
 
 import logging
 import traceback
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 __all__ = ["WebLogHandler"]
 
 if TYPE_CHECKING:
 
 	class ServerType(Protocol):
-		def send_message_to_all(self, msg: str | dict) -> None: ...
+		def send_message_to_all(self, msg: str | dict[str, Any]) -> None: ...
 
 
 class WebLogHandler(logging.Handler):

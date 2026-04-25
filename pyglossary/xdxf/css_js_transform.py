@@ -226,7 +226,11 @@ class XdxfTransformer:
 		hf.write(ET.Element("br"))
 
 	def _write_k(self, hf: T_htmlfile, child: Element) -> None:
-		index = child.getparent().index(child)
+		parent = child.getparent()
+		if parent is None:
+			log.warning(f"No parent for {child.tag=}")
+			return
+		index = parent.index(child)
 		if index == 0:
 			with hf.element("div", attrib={"class": child.tag}):
 				self.writeChildrenOf(hf, child)
@@ -303,6 +307,8 @@ class XdxfTransformer:
 			return
 
 	def _write_def(self, hf: T_htmlfile, elem: Element) -> None:
+		assert elem is not None
+
 		has_nested_def = False
 		has_deftext = False
 		for child in elem.iterchildren():
@@ -311,7 +317,9 @@ class XdxfTransformer:
 			if child.tag == "deftext":
 				has_deftext = True
 
-		if elem.getparent().tag == "ar":  # this is a root <def>
+		parent = elem.getparent()
+		assert parent is not None
+		if parent.tag == "ar":  # this is a root <def>
 			if has_nested_def:
 				with hf.element("ol"):
 					self.writeChildrenOf(hf, elem)
@@ -352,7 +360,7 @@ class XdxfTransformer:
 			hf.write(")")
 
 	def _write_img(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
-		with hf.element("img", attrib=dict(child.attrib)):
+		with hf.element("img", attrib=dict(child.attrib)):  # type: ignore[arg-type]
 			pass
 
 	def _write_etm(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
@@ -430,10 +438,10 @@ class XdxfTransformer:
 		stringSep: str | None = None,
 	) -> None:
 		prev = None
-		for child in elem.xpath("child::node()"):
-			if sep and prev is not None and self.shouldAddSep(child, prev):
+		for child in elem.xpath("child::node()"):  # type: ignore[union-attr]
+			if sep and prev is not None and self.shouldAddSep(child, prev):  # type: ignore[arg-type]
 				hf.write(sep)
-			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
+			self.writeChild(hf, child, elem, prev, stringSep=stringSep)  # type: ignore[arg-type]
 			prev = child
 
 	@staticmethod
@@ -448,7 +456,7 @@ class XdxfTransformer:
 				(elem.text,),
 				chain.from_iterable(
 					(tostring(child, with_tail=False), child.tail)
-					for child in elem.getchildren()
+					for child in elem.getchildren()  # type: ignore[attr-defined]
 				),
 				(elem.tail,),
 			)

@@ -344,7 +344,7 @@ def configFromArgs(
 	args: argparse.Namespace,
 	log: logging.Logger,
 ) -> dict[str, Any]:
-	config: ConfigType = {}
+	result: dict[str, Any] = {}
 	for key, option in configDefDict.items():
 		if not option.hasFlag:
 			continue
@@ -355,5 +355,5 @@ def configFromArgs(
 		if not option.validate(value):
 			log.error(f"invalid config value: {key} = {value!r}")
 			continue
-		config[key] = value
-	return config
+		result[key] = value
+	return result

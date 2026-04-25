@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+# mypy: ignore-errors
 import collections
 from io import BytesIO
 from json import loads as json_loads

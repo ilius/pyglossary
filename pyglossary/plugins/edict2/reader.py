@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# mypy: ignore-errors
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log

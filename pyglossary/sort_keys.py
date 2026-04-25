@@ -103,7 +103,7 @@ def _load_stardict() -> ModuleType:
 class LocaleNamedSortKey:
 	name: str
 	desc: str
-	load: Callable
+	load: Callable[[], Any]
 	mod: Any = None
 
 	@property

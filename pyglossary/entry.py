@@ -70,12 +70,12 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 			with open(self._tmpPath, "rb") as file:
 				return file.read()
 		else:
-			return self._data
+			return self._data if self._data is not None else b""
 
 	def size(self) -> int:
 		if self._tmpPath:
 			return getsize(self._tmpPath)
-		return len(self._data)
+		return len(self._data or b"")
 
 	def save(self, directory: str) -> str:
 		fname = self._fname
@@ -89,7 +89,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 				self._tmpPath = fpath
 			else:
 				with open(fpath, "wb") as toFile:
-					toFile.write(self._data)  # NESTED 4
+					toFile.write(self._data or b"")  # NESTED 4
 		except FileNotFoundError as e:
 			log.error(f"error in DataEntry.save: {e}")
 		except Exception:

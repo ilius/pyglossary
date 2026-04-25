@@ -69,6 +69,7 @@ class indir:
 		elif self.create:
 			os.makedirs(self.dir)
 		os.chdir(self.dir)
+		return self
 
 	def __exit__(
 		self,
@@ -102,6 +103,7 @@ def _idzip(filename: str | Path) -> bool:
 		filename.unlink()
 	except OSError as error:
 		log.error(str(error))
+		return False
 	return True
 
 

@@ -35,7 +35,7 @@ for source in sources:
 	src = Path(source)
 	try:
 		if src.is_dir():
-			copied_to = shutil.copytree(
+			shutil.copytree(
 				src,
 				target_path / src.name,
 				dirs_exist_ok=True,
@@ -43,7 +43,7 @@ for source in sources:
 				ignore_dangling_symlinks=True,
 			)
 		else:
-			copied_to = shutil.copy(src, target_path, follow_symlinks=False)
+			shutil.copy(src, target_path, follow_symlinks=False)
 	except FileNotFoundError as e:
 		sys.stderr.write(f"source not found {src.absolute()}: {e!s}\n")
 	except PermissionError as e:

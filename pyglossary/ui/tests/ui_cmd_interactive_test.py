@@ -144,6 +144,7 @@ class TestUICmdInteractive(unittest.TestCase):
 		name = Glossary.readFormats[0]
 		plugin = UI.pluginByNameOrDesc(name)
 		self.assertIsNotNone(plugin)
+		assert plugin is not None
 		self.assertEqual(plugin.name, name)
 
 	def test_unknown_format_returns_none(self) -> None:

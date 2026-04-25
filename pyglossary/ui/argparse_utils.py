@@ -12,7 +12,7 @@ __all__ = ["StoreConstAction"]
 class StoreConstAction(argparse.Action):
 	def __init__(
 		self,
-		option_strings: list[str],
+		option_strings: str | list[str],
 		same_dest: str = "",
 		const_value: bool | None = None,
 		nargs: int = 0,

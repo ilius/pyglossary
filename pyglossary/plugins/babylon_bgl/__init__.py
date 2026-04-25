@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 #
 # Copyright © 2008-2021 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #

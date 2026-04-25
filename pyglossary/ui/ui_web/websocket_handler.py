@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+# mypy: ignore-errors
 import errno
 import json
 import logging

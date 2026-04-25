@@ -7,10 +7,9 @@ from pathlib import Path
 
 from mako.template import Template
 
-rootDir = join(
-	os.getenv("HOME"),
-	"pyglossary",
-)
+homeDir = os.getenv("HOME")
+assert isinstance(homeDir, str)
+rootDir = join(homeDir, "pyglossary")
 sys.path.insert(0, rootDir)
 
 from pyglossary.core import userPluginsDir

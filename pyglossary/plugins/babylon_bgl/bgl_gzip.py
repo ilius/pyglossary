@@ -5,6 +5,8 @@ The user of the file doesn't have to worry about the compression,
 but random access is not allowed.
 """
 
+# mypy: ignore-errors
+
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
 
 try:

@@ -29,7 +29,9 @@ def listFilesRecursive(direc: str, exclude: set[str]) -> Iterable[str]:
 	inside given directory.
 	"""
 	for root, dirs, files in os.walk(direc, topdown=True):
-		[dirs.remove(d) for d in list(dirs) if d in exclude]
+		for d in list(dirs):
+			if d in exclude:
+				dirs.remove(d)
 		for fname in files:
 			yield join(root, fname)
 

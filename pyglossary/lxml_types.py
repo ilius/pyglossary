@@ -46,7 +46,7 @@ _OutputMethodArg = Literal[
 # And now pyright complains at every usage of it:
 # error: Variable not allowed in type expression (reportInvalidTypeForm)
 
-Element = _Element
+type Element = _Element
 
 
 class IncrementalFileWriter(typing.Protocol):

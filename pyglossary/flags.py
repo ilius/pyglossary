@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Self, cast
 
 __all__ = [
 	"ALWAYS",
@@ -12,18 +12,18 @@ __all__ = [
 	"flagsByName",
 ]
 
-flagsByName = {}
+flagsByName: dict[str, StrWithDesc] = {}
 
 
 class StrWithDesc(str):
 	desc: str
 	__slots__ = ["desc"]
 
-	def __new__(cls: type, name: str, desc: str) -> Self:
+	def __new__(cls: type[Self], name: str, desc: str) -> Self:
 		s: StrWithDesc = str.__new__(cls, name)
 		s.desc = desc
 		flagsByName[name] = s
-		return s
+		return cast("Self", s)
 
 
 ALWAYS = StrWithDesc("always", "Always")

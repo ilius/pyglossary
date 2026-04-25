@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import queue
 import threading
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -10,14 +10,14 @@ if TYPE_CHECKING:
 __all__ = ["QueuedIterator"]
 
 
-class QueuedIterator:
+class QueuedIterator[T]:
 	def __init__(
 		self,
-		iterator: Iterator,
+		iterator: Iterator[T],
 		max_size: int,
 	) -> None:
 		self.iterator = iterator
-		self.queue = queue.Queue(max_size)
+		self.queue: queue.Queue[T | type[StopIteration]] = queue.Queue(max_size)
 		self.thread = threading.Thread(target=self._background_job)
 		self.thread.start()
 
@@ -26,11 +26,11 @@ class QueuedIterator:
 			self.queue.put(item)
 		self.queue.put(StopIteration)
 
-	def __iter__(self) -> Iterator:
+	def __iter__(self) -> Iterator[T]:
 		return self
 
-	def __next__(self) -> Any:
+	def __next__(self) -> T:
 		item = self.queue.get()
 		if item is StopIteration:
 			raise StopIteration
-		return item
+		return item  # type: ignore[return-value]

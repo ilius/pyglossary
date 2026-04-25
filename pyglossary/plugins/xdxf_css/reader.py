@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+# mypy: ignore-errors
 import re
 import typing
 from os.path import join

@@ -45,6 +45,7 @@ def mergeHtmlEntriesWithSameHeadword(
 		last: EntryType | None = next(entryIter)
 	except StopIteration:
 		return
+	assert last is not None
 	last.detectDefiFormat()
 	for entry in entryIter:
 		if entry.isData():

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# mypy: ignore-errors
 import re
 import unicodedata
 from collections import defaultdict

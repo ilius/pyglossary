@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import logging
 import os
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
+from pyglossary.config_type import ConfigType
 from pyglossary.core import sysName
 from pyglossary.glossary_v2 import Error
 
@@ -11,11 +13,7 @@ from .base import UIBase
 
 if TYPE_CHECKING:
 	import argparse
-	import logging
 	from collections.abc import Callable
-	from typing import Any
-
-	from pyglossary.config_type import ConfigType
 
 __all__ = ["getRunner"]
 
@@ -113,9 +111,9 @@ def base_ui_run(  # noqa: PLR0913
 		log.error("--reverse does not work with --ui=none")
 		return False
 	ui = UIBase(progressbar=False)
-	ui.loadConfig(**config)
+	ui.loadConfig(**cast("dict[str, Any]", config if config is not None else {}))
 	glos = Glossary(ui=ui)
-	glos.config = ui.config
+	glos.config = cast("ConfigType", ui.config)
 	glos.progressbar = False
 	if glossarySetAttrs:
 		for attr, value in glossarySetAttrs.items():
@@ -129,7 +127,7 @@ def base_ui_run(  # noqa: PLR0913
 				outputFormat=outputFormat,
 				readOptions=readOptions,
 				writeOptions=writeOptions,
-				**convertOptions,
+				**(convertOptions or {}),
 			),
 		)
 	except Error as e:
@@ -159,15 +157,19 @@ def getRunner(
 
 	if ui_type == "cmd":
 		if args.interactive:
-			from .ui_cmd_interactive import UI
-		elif args.inputFilename and args.outputFilename:
-			from .ui_cmd import UI
-		elif not args.no_interactive:
-			from .ui_cmd_interactive import UI
-		else:
-			log.error("no input file given, try --help")
-			return None
-		return UI(**uiArgs).run
+			from .ui_cmd_interactive import UI as _UICmdInteractive
+
+			return _UICmdInteractive(**uiArgs).run
+		if args.inputFilename and args.outputFilename:
+			from .ui_cmd import UI as _UICmd
+
+			return _UICmd(**uiArgs).run
+		if not args.no_interactive:
+			from .ui_cmd_interactive import UI as _UICmdInteractive2
+
+			return _UICmdInteractive2(**uiArgs).run
+		log.error("no input file given, try --help")
+		return None
 
 	if ui_type == "gtk":
 		ui_type = "gtk3"

@@ -76,12 +76,16 @@ def indexes_generator(
 	str,
 ]:
 	"""Generate indexes according to glossary language."""
-	indexer: Callable[[Sequence[str], str], Sequence[str]] = None
+	indexer: (
+		Callable[[Sequence[str], str], Sequence[str]]
+		| Callable[[Sequence[str], str], set[str]]
+		| None
+	) = None
 	if indexes_lang:
 		from .indexes import languages
 
 		indexer = languages.get(indexes_lang, None)
-		if not indexer:
+		if indexer is None:
 			keys_str = ", ".join(languages)
 			msg = (
 				"extended indexes not supported for the"
@@ -102,7 +106,7 @@ def indexes_generator(
 
 		quoted_title = quote_string(title, BeautifulSoup)
 
-		if indexer:
+		if indexer is not None:
 			indexes = list(set(indexer(indexes, content)))
 
 		normal_indexes = set()

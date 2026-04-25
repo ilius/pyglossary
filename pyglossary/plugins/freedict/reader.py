@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+# mypy: ignore-errors
 import re
 from dataclasses import dataclass
 from io import BytesIO

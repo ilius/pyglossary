@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 #
 # Copyright © 2025 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary
@@ -23,11 +22,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-	from pyglossary.config_type import ConfigType
-
+from typing import Any
 
 __all__ = ["ConversionSession"]
 
@@ -52,7 +47,7 @@ class ConversionSession:
 	convertOptions: dict[str, Any] = field(default_factory=dict)
 	glossarySetAttrs: dict[str, Any] = field(default_factory=dict)
 
-	def get_run_kwargs(self, config: ConfigType) -> dict[str, Any]:
+	def get_run_kwargs(self, config: dict[str, Any]) -> dict[str, Any]:
 		"""
 		Build kwargs for :meth:`pyglossary.ui.ui_cmd.UI.run` from this session.
 

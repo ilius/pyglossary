@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: ignore-errors
 #
 # Copyright © 2025 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # This file is part of PyGlossary project, https://github.com/ilius/pyglossary
@@ -53,8 +52,6 @@ if TYPE_CHECKING:
 	from prompt_toolkit.formatted_text import StyleAndTextTuples
 	from prompt_toolkit.key_binding.key_processor import KeyPressEvent
 
-	from pyglossary.config_type import ConfigType
-
 __all__ = ["InteractivePrompt"]
 
 log = logging.getLogger("pyglossary")
@@ -107,7 +104,7 @@ class InteractivePrompt:
 			"!cd": (self.fs_cd, ""),
 		}
 
-	def apply_config(self, config: ConfigType) -> None:
+	def apply_config(self, config: dict[str, Any]) -> None:
 		"""Apply ``cmdi.prompt.*`` and ``cmdi.msg.color`` from the active config dict."""
 		self.promptIndentStr = config.get("cmdi.prompt.indent.str", ">")
 		self.promptIndentColor = config.get("cmdi.prompt.indent.color", 2)

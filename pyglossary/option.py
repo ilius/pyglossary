@@ -345,8 +345,8 @@ class DictOption(Option):
 	@classmethod
 	def evaluate(
 		cls,
-		raw: str | dict,
-	) -> tuple[dict | None, bool]:
+		raw: str | dict[str, Any],
+	) -> tuple[dict[str, Any] | None, bool]:
 		import ast
 
 		if isinstance(raw, dict):
@@ -380,7 +380,7 @@ class ListOption(Option):
 		return data
 
 	@classmethod
-	def evaluate(cls, raw: str) -> tuple[list | None, bool]:
+	def evaluate(cls, raw: str) -> tuple[list[Any] | None, bool]:
 		import ast
 
 		if raw == "":  # noqa: PLC1901

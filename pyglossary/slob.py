@@ -30,6 +30,7 @@ import warnings
 from abc import abstractmethod
 from bisect import bisect_left
 from builtins import open as fopen
+from collections.abc import Callable
 from datetime import UTC, datetime
 from functools import cache, lru_cache
 from io import BufferedIOBase
@@ -159,19 +160,19 @@ class CompressionModule(typing.Protocol):
 		raise NotImplementedError
 
 
-def _load_bz2() -> Callable[[], CompressionModule]:
+def _load_bz2() -> CompressionModule:
 	import bz2
 
-	return bz2
+	return cast("CompressionModule", bz2)
 
 
-def _load_zlib() -> Callable[[], CompressionModule]:
+def _load_zlib() -> CompressionModule:
 	import zlib
 
-	return zlib
+	return cast("CompressionModule", zlib)
 
 
-_basicCompressionModules = {
+_basicCompressionModules: dict[str, Callable[[], CompressionModule]] = {
 	"bz2": _load_bz2,
 	"zlib": _load_zlib,
 }
