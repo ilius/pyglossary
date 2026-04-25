@@ -18,9 +18,11 @@
 
 from .options import optionsProp
 from .reader import Reader
+from .writer import Writer
 
 __all__ = [
 	"Reader",
+	"Writer",
 	"description",
 	"enable",
 	"extensionCreate",
@@ -39,7 +41,7 @@ lname = "babylon_bgl"
 name = "BabylonBgl"
 description = "Babylon (.BGL)"
 extensions = (".bgl",)
-extensionCreate = ""
+extensionCreate = ".bgl"
 singleFile = True
 kind = "binary"
 wiki = ""
