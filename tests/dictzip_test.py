@@ -60,13 +60,13 @@ class TestDictzip(TestGlossaryErrorsBase):
 		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
 		self.assertIsNotNone(err)
 
-	# def test_idzip_missing_target(self) -> None:
-	# 	method = "dictzip"
-	# 	filename = "/NOT_EXISTED_PATH/boilerplate.txt"
-	# 	expected = f'Cannot open "{filename}"'
-	# 	runDictzip(filename, method)
-	# 	err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
-	# 	self.assertIsNotNone(err)
+	def test_idzip_missing_target(self) -> None:
+		method = "dictzip"
+		filename = "/NOT_EXISTED_PATH/boilerplate.txt"
+		expected = f'Cannot open "{filename}"'
+		runDictzip(filename, method)
+		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
+		self.assertIsNotNone(err)
 
 
 if __name__ == "__main__":
