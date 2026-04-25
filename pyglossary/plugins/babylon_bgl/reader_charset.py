@@ -35,6 +35,8 @@ from .bgl_text import (
 )
 from .reader_data import re_b_reference, re_charset_decode
 
+__all__ = ["_BglReaderCharset"]
+
 
 class _BglReaderCharset:
 	"""Headword / charset-tag decoding."""

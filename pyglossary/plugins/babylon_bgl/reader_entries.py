@@ -34,6 +34,8 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType
 
+__all__ = ["_BglReaderEntries"]
+
 
 class _BglReaderEntries:
 	"""Entry iteration and per-block entry parsing."""

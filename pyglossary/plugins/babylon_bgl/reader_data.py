@@ -24,10 +24,15 @@ from __future__ import annotations
 
 import io
 import re
-from typing import Any, NamedTuple
+from typing import NamedTuple
 
-from .bgl_gzip import GzipFile
-
+__all__ = [
+	"Block",
+	"DefinitionFields",
+	"EntryWordData",
+	"re_b_reference",
+	"re_charset_decode",
+]
 file = io.BufferedReader
 
 re_charset_decode = re.compile(
@@ -44,29 +49,6 @@ class EntryWordData(NamedTuple):
 	u_word_html: str
 
 
-class BGLGzipFile(GzipFile):
-	"""
-	gzip_no_crc.py contains GzipFile class without CRC check.
-
-	It prints a warning when CRC code does not match.
-	The original method raises an exception in this case.
-	Some dictionaries do not use CRC code, it is set to 0.
-	"""
-
-	def __init__(
-		self,
-		fileobj: io.IOBase | None = None,
-		closeFileobj: bool = False,
-		**kwargs: Any,
-	) -> None:
-		GzipFile.__init__(self, fileobj=fileobj, **kwargs)
-		self.closeFileobj = closeFileobj
-
-	def close(self) -> None:
-		if self.closeFileobj:
-			self.fileobj.close()
-
-
 class Block:
 	def __init__(self) -> None:
 		self.data = b""
@@ -76,51 +58,6 @@ class Block:
 
 	def __str__(self) -> str:
 		return f"Block type={self.type}, length={self.length}, len(data)={len(self.data)}"
-
-
-class FileOffS(file):
-	"""
-	A file class with an offset.
-
-	This class provides an interface to a part of a file starting at specified
-	offset and ending at the end of the file, making it appear an independent
-	file. offset parameter of the constructor specifies the offset of the first
-	byte of the modeled file.
-	"""
-
-	def __init__(self, filename: str, offset: int = 0) -> None:
-		fileObj = open(filename, "rb")  # noqa: SIM115
-		file.__init__(self, fileObj)
-		self._fileObj = fileObj
-		self.offset = offset
-		file.seek(self, offset)  # OR self.seek(0)
-
-	def close(self) -> None:
-		self._fileObj.close()
-
-	def seek(self, pos: int, whence: int = 0) -> None:
-		if whence == 0:  # relative to start of file
-			file.seek(
-				self,
-				max(0, pos) + self.offset,
-				0,
-			)
-		elif whence == 1:  # relative to current position
-			file.seek(
-				self,
-				max(
-					self.offset,
-					self.tell() + pos,
-				),
-				0,
-			)
-		elif whence == 2:  # relative to end of file
-			file.seek(self, pos, 2)
-		else:
-			raise ValueError(f"FileOffS.seek: bad whence={whence}")
-
-	def tell(self) -> int:
-		return file.tell(self) - self.offset
 
 
 class DefinitionFields:

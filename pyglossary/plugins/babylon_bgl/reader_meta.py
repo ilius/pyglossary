@@ -31,6 +31,8 @@ from .bgl_info import (
 )
 from .reader_data import Block
 
+__all__ = ["_BglReaderMeta"]
+
 
 class _BglReaderMeta:
 	"""Dictionary metadata (first pass) and glossary info."""

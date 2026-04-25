@@ -35,6 +35,8 @@ from .bgl_text import (
 )
 from .reader_data import DefinitionFields
 
+__all__ = ["_BglReaderDefi"]
+
 
 class _BglReaderDefi:
 	"""Definition body parsing and HTML assembly."""

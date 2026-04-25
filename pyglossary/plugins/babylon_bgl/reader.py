@@ -28,14 +28,11 @@ from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 
-from .options import debugReadOptions, optionsProp
 from .reader_charset import _BglReaderCharset
 from .reader_data import (
-	BGLGzipFile,
 	Block,
 	DefinitionFields,
 	EntryWordData,
-	FileOffS,
 )
 from .reader_defi import _BglReaderDefi
 from .reader_entries import _BglReaderEntries
@@ -46,14 +43,10 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import ReaderGlossaryType
 
 __all__ = [
-	"BGLGzipFile",
 	"Block",
 	"DefinitionFields",
 	"EntryWordData",
-	"FileOffS",
 	"Reader",
-	"debugReadOptions",
-	"optionsProp",
 	"tmpDir",
 ]
 
