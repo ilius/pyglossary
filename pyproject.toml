@@ -252,6 +252,7 @@ mccabe.max-complexity = 13
 
 "scripts/wiki-formats.py" = ["E501"]
 "pyglossary/io_utils.py" = ["TC003"]
+"pyglossary/slob/*.py" = ["TC001", "TC003"]
 "pyglossary/ui/config.py" = ["TC001"]
 "pyglossary/ui/runner.py" = ["TC001", "TC003"]
 "pyglossary/plugins/babylon_bgl/reader_debug.py" = ["ANN", "FURB"]
