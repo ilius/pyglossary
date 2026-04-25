@@ -17,7 +17,7 @@ set +o pipefail
 
 mkdir artifacts
 cp test.out artifacts
-grep -o "'/tmp/pyglossary/[^']*'" test.out | sed "s/'//g" | xargs '-I{}' cp '{}' artifacts
+grep -v FileNotFoundError test.out | grep -o "'/tmp/pyglossary/[^']*'" | sed "s/'//g" | xargs '-I{}' cp '{}' artifacts
 ls -l artifacts
 set -e
 if [ "$STATUS" -ne 0 ] || [ "$UI_STATUS" -ne 0 ]; then
