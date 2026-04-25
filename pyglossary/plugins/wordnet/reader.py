@@ -19,7 +19,7 @@ import os
 import re
 import sys
 from collections import defaultdict
-from datetime import UTC, datetime
+from os.path import join
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
@@ -327,15 +327,34 @@ class Reader:
 	def __len__(self) -> int:
 		return self._entryCount
 
+	def _readCopyrightLine(self) -> str | None:
+		with open(join(self._filename, "index.noun")) as file_:
+			for index, line in enumerate(file_):
+				if index > 30:
+					break
+				if " Copyright " in line:
+					return line
+		return None
+
 	def open(self, filename: str) -> None:
+		self._filename = filename
+
+		copyrightLine = self._readCopyrightLine()
+		if copyrightLine:
+			words = copyrightLine.strip().split(" ")
+			self._glos.setInfo("copyright", " ".join(words[1:]))
+			pos = words.index("Copyright")
+			try:
+				year = int(words[pos + 1])
+			except ValueError:
+				log.warning(f"unexpected line: {copyrightLine}")
+			else:
+				self._glos.setInfo("creationTime", f"{year}-01-01")
+
 		self.wordnet = WordNet(filename, gram_color=self._gram_color)
 		log.info("Running wordnet.prepare()")
 		self.wordnet.prepare()
 
-		self._glos.setInfo(
-			"creationTime",
-			datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-		)
 		# TODO: metadata
 
 	def close(self) -> None:
