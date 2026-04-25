@@ -15,7 +15,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.
 """
-MISSING_DEP_MARK = "Dictzip compression requires idzip module or dictzip utility,"
 
 
 class TestDictzip(TestGlossaryErrorsBase):
@@ -27,22 +26,15 @@ class TestDictzip(TestGlossaryErrorsBase):
 		with open(self.test_file_path, "a", encoding="utf-8") as tmp_file:
 			tmp_file.write(TEXT)
 
-	def skip_on_dep(self, method: str) -> None:
-		warn = self.mockLog.popLog(logging.WARNING, MISSING_DEP_MARK, partial=True)
-		if warn:
-			self.skipTest(f"Missing {method} dependency")
-
 	def test_idzip_compressed_exists(self) -> None:
 		method = "idzip"
 		runDictzip(self.test_file_path, method)
-		self.skip_on_dep(method)
 		self.assertTrue(self.result_file_path.exists())
 		self.assertTrue(self.result_file_path.is_file())
 
 	def test_idzip_compressed_matches(self) -> None:
 		method = "idzip"
 		runDictzip(self.test_file_path, method)
-		self.skip_on_dep(method)
 		with gzip.open(self.result_file_path, "r") as file:
 			result = file.read().decode()
 		self.assertEqual(result, TEXT)
@@ -50,14 +42,12 @@ class TestDictzip(TestGlossaryErrorsBase):
 	def test_dictzip_compressed_exists(self) -> None:
 		method = "dictzip"
 		runDictzip(self.test_file_path, method)
-		self.skip_on_dep(method)
 		self.assertTrue(self.result_file_path.exists())
 		self.assertTrue(self.result_file_path.is_file())
 
 	def test_dictzip_compressed_matches(self) -> None:
 		method = "dictzip"
 		runDictzip(self.test_file_path, method)
-		self.skip_on_dep(method)
 		with gzip.open(self.result_file_path, "r") as file:
 			result = file.read().decode()
 		self.assertEqual(result, TEXT)
@@ -67,7 +57,6 @@ class TestDictzip(TestGlossaryErrorsBase):
 		filename = "/NOT_EXISTED_PATH/file.txt"
 		expected = f"No such file or directory: '{filename}'"
 		runDictzip(filename, method)
-		self.skip_on_dep(method)
 		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
 		self.assertIsNotNone(err)
 
@@ -76,7 +65,6 @@ class TestDictzip(TestGlossaryErrorsBase):
 		filename = "/NOT_EXISTED_PATH/boilerplate.txt"
 		expected = f'Cannot open "{filename}"'
 		runDictzip(filename, method)
-		self.skip_on_dep(method)
 		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
 		self.assertIsNotNone(err)
 
