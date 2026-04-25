@@ -8,6 +8,10 @@ class TestGlossaryBGL(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
+		self.dataFile |= {
+			"004-bar.txt.bgl",
+			"100-en-fa.txt.bgl",
+		}
 		self.dataFileCRC32.update(
 			{
 				"Flavours_of_Malaysia.bgl": "46ef154b",
@@ -72,6 +76,18 @@ class TestGlossaryBGL(TestGlossaryBase):
 			readOptions={
 				"process_html_in_key": True,
 			},
+		)
+
+	def test_convert_bgl_txt_5(self):
+		self.convert_bgl_txt(
+			"004-bar.txt",
+			sha1sum="40525745c2f82241e72f2f39d073078459c30eb8",
+		)
+
+	def test_convert_bgl_txt_6(self):
+		self.convert_bgl_txt(
+			"100-en-fa.txt",
+			sha1sum="3a479a6de968e25f8ba7ee717f8cfe94fdf0e3b0",
 		)
 
 
