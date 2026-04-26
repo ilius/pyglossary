@@ -16,7 +16,8 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-from .reader import Reader, optionsProp
+from .options import optionsProp
+from .reader import Reader
 
 __all__ = [
 	"Reader",

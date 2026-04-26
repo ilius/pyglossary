@@ -33,12 +33,11 @@ from pyglossary.text_utils import (
 )
 
 from .reader import (
-	BGLGzipFile,
 	Block,
-	FileOffS,
 	Reader,
 	tmpDir,
 )
+from .reader_io import BGLGzipFile, FileOffS
 
 if TYPE_CHECKING:
 	from .reader import (
