@@ -7,6 +7,7 @@ from operator import itemgetter
 from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
+from pyglossary.core import log
 from pyglossary.json_utils import jsonToData
 
 if TYPE_CHECKING:
@@ -78,8 +79,7 @@ class Reader:
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
-		for termBankFile in self._termBankFiles:
-			yield from self._readTermBank(termBankFile.filename)
+		yield from self._readTermBanks()
 		yield from self._readUsedResources()
 
 	def _readIndex(self) -> None:
@@ -100,7 +100,51 @@ class Reader:
 				self._glos.setInfo(c_field, value)
 		self._isSequenced = index.get("isSequenced", False)
 
-	def _readTermBank(self, termBankName: str) -> Generator[EntryType, None, None]:
+	def _readTermBanks(self) -> Generator[EntryType, None, None]:
+		termToAlts = self._readTermBanksAlts()
+		orphanedTerms: set[str] = {*termToAlts.keys()}
+		log.info("Finished extracting alts")
+		for termBankFile in self._termBankFiles:
+			yield from self._readTermBank(
+				termBankFile.filename, termToAlts, orphanedTerms
+			)
+		for term in orphanedTerms:
+			# SAFETY: orphanedTerms is made from keys of termToAlts
+			altInfo = termToAlts[term]
+			for alt, causalChain in altInfo:
+				yield self._glos.newEntry(
+					alt, " < ".join(causalChain) + f" of {term}", defiFormat="m"
+				)
+
+	def _readTermBanksAlts(self) -> dict[str, list[tuple[str, list[str]]]]:
+		"""
+		Read all TermBanks to extract alts.
+
+		We will do the same that Yomitan does, which is to redirect to every lemma.
+		For instance, if we hover curas in Yomitan, we will see "curar" (verb) and "cura"
+		(noun). In the same vein, we will add this alt to curar and cura: "curar|curas",
+		"cura|curas". And this, even if curar had multiple readings (it doesn't, just bear
+		with me, for the sake of the example): "curar|read1|curas", "curar|read2|curas".
+		"""
+		termToAlts: dict[str, list[tuple[str, list[str]]]] = {}
+		for termBankFile in self._termBankFiles:
+			if self._dictFile is None:
+				raise RuntimeError(
+					"Yomichan: resources were read while reader is not open"
+				)
+			with self._dictFile.open(termBankFile.filename) as tf:
+				termBank = jsonToData(tf.read())
+			# {form_of => [(lemma, [causal chain])]}
+			for item in termBank:
+				alt = item[0]
+				if _isDeinflection(item[5]):
+					for term, causalChain in item[5]:
+						termToAlts.setdefault(term, []).append((alt, causalChain))
+		return termToAlts
+
+	def _readTermBank(
+		self, termBankName: str, termToAlts, orphanedTerms
+	) -> Generator[EntryType, None, None]:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
 		with self._dictFile.open(termBankName) as termBankFile:
@@ -109,7 +153,13 @@ class Reader:
 			term = item[0]
 			if reading := item[1]:
 				term = [term, reading]
+			if _isDeinflection(item[5]):
+				continue  # ignore alts, we already extracted them
 			definition = _readDefinition(item[5])
+			if altInfo := termToAlts.get(item[0], None):
+				orphanedTerms.discard(item[0])
+				alts = [elt[0] for elt in altInfo]
+				term = [term, *alts] if isinstance(term, str) else [*term, *alts]
 			yield self._glos.newEntry(term, definition, defiFormat="h")
 
 	def _readUsedResources(self) -> Generator[EntryType, None, None]:
@@ -119,6 +169,16 @@ class Reader:
 			with self._dictFile.open(file.filename) as rawFile:
 				data = rawFile.read()
 			yield self._glos.newDataEntry(file.filename, data)
+
+
+def _isDeinflection(item) -> bool:
+	return isinstance(item, list) and all(
+		isinstance(e, list)
+		and len(e) == 2
+		and isinstance(e[0], str)
+		and isinstance(e[1], list)
+		for e in item
+	)
 
 
 def _readSubStructuredContent(elem: StructuredContent) -> str:
