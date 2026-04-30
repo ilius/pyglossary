@@ -143,7 +143,10 @@ class Reader:
 		return termToAlts
 
 	def _readTermBank(
-		self, termBankName: str, termToAlts, orphanedTerms
+		self,
+		termBankName: str,
+		termToAlts: dict[str, list[tuple[str, list[str]]]],
+		orphanedTerms: set[str],
 	) -> Generator[EntryType, None, None]:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")
@@ -156,7 +159,7 @@ class Reader:
 			if _isDeinflection(item[5]):
 				continue  # ignore alts, we already extracted them
 			definition = _readDefinition(item[5])
-			if altInfo := termToAlts.get(item[0], None):
+			if altInfo := termToAlts.get(item[0]):
 				orphanedTerms.discard(item[0])
 				alts = [elt[0] for elt in altInfo]
 				term = [term, *alts] if isinstance(term, str) else [*term, *alts]
@@ -171,7 +174,7 @@ class Reader:
 			yield self._glos.newDataEntry(file.filename, data)
 
 
-def _isDeinflection(item) -> bool:
+def _isDeinflection(item) -> bool:  # noqa: ANN001
 	return isinstance(item, list) and all(
 		isinstance(e, list)
 		and len(e) == 2
