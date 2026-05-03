@@ -25,7 +25,7 @@ To update, modify plugins/xdxf/__init__.py file, then run ./scripts/gen
 | Name | Default | Type | Comment                |
 | ---- | ------- | ---- | ---------------------- |
 | html | `True`  | bool | Entries are HTML       |
-| xsl  | `False` | bool | Use XSL transformation |
+| xsl  | `True`  | bool | Use XSL transformation |
 
 ### Dependencies for reading
 

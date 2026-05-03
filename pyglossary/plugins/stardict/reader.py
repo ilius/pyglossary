@@ -45,7 +45,7 @@ def _verifySameTypeSequence(s: str) -> bool:
 class Reader:
 	useByteProgress = False
 	_xdxf_to_html: bool = True
-	_xsl: bool = False
+	_xsl: bool = True
 	_unicode_errors: str = "strict"
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

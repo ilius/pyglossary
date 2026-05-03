@@ -48,7 +48,7 @@
   </xsl:template>
 
   <xsl:template match="k">
-    <span class="k"><b><xsl:apply-templates/></b></span>
+    <div class="k"><b><xsl:apply-templates/></b></div>
   </xsl:template>
 
   <xsl:template match="sr">

@@ -47,6 +47,7 @@ class XslXdxfTransformer:
 		return (
 			ET.tostring(
 				elem,
+				encoding="utf-8",
 				method="html",
 				pretty_print=True,
 			)
@@ -57,7 +58,8 @@ class XslXdxfTransformer:
 	def transform(self, article: Element) -> str:
 		result_tree = self._transform(article)
 		text = self.tostring(result_tree)
-		text = text.replace("<br/> ", "<br/>")
+		text = text.replace("<br> ", "<br/>")
+		text = text.replace("</div>\n<br/>", "</div>\n")
 		return text  # noqa: RET504
 
 	def transformByInnerString(self, articleInnerStr: str) -> str:

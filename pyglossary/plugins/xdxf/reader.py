@@ -59,7 +59,7 @@ class Reader:
 	}
 
 	_html: bool = True
-	_xsl: bool = False
+	_xsl: bool = True
 
 	infoKeyMap = {
 		"full_name": "name",
