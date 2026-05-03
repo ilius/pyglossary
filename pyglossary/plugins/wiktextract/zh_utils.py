@@ -116,9 +116,14 @@ def processSenses(senseList: list[dict[str, Any]]) -> list[dict[str, Any]] | Non
 			romanText = example.get("roman", "")
 
 			text = example.get("text", "")
-			if langText or writtingSystemText:
-				separator = ", " if langText and writtingSystemText else ""
-				text += f" ({langText}{separator}{writtingSystemText})"
+			# Dialect & script: reader renders in <small>, not on main line (#650).
+			context_small: str = ""
+			if langText and writtingSystemText:
+				context_small = f"{langText}, {writtingSystemText}"
+			elif langText:
+				context_small = langText
+			elif writtingSystemText:
+				context_small = writtingSystemText
 
 			key = (translationText, romanText)
 
@@ -128,7 +133,12 @@ def processSenses(senseList: list[dict[str, Any]]) -> list[dict[str, Any]] | Non
 					"text": [],
 					targetLang: translationText,
 				}
-			tempExamples[key]["text"].append(text)
+			line: dict[str, str] | str
+			if context_small:
+				line = {"text": text, "context_small": context_small}
+			else:
+				line = text
+			tempExamples[key]["text"].append(line)
 			if romanText:
 				tempExamples[key][romanSystemText] = romanText
 
@@ -224,7 +234,12 @@ def processSoundList(soundList: list[dict[str, Any]]) -> dict[str, Any]:
 		if phonSystemText not in processedSounds[langText][dialectText]:
 			processedSounds[langText][dialectText][phonSystemText] = [phonText]
 			continue
-		processedSounds[langText][dialectText][phonSystemText].append(phonText)
+		phonList = processedSounds[langText][dialectText][phonSystemText]
+		phonList.append(phonText)
+		# De-duplicate Wiktionary zh-prn template duplicates (issue #650).
+		ordered = list(dict.fromkeys(phonList))
+		phonList.clear()
+		phonList.extend(ordered)
 
 	return processedSounds
 

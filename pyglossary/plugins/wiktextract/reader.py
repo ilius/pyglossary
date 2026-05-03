@@ -62,6 +62,8 @@ class Reader:
 		self._fileSize = 0
 		self._entryCount = 0
 		self._badExampleKeys = set()
+		self._entry_lang: str = ""
+		self._entry_lang_code: str = ""
 
 	def open(
 		self,
@@ -145,6 +147,8 @@ class Reader:
 		# Check if the entry is need preprocessing
 		lang = data.get("lang")
 		langCode = data.get("lang_code")
+		self._entry_lang = lang or ""
+		self._entry_lang_code = langCode or ""
 		if lang == "Chinese" or langCode == "zh":
 			from .zh_utils import processChinese
 
@@ -202,6 +206,8 @@ class Reader:
 					hf.write(br())
 					with hf.element("div"):
 						hf.write(f"Etymology: {etymology}")
+
+				self.writeDescendants(hf_, data.get("descendants"))  # type: ignore
 
 				if self._categories:
 					categories = []
@@ -407,82 +413,228 @@ class Reader:
 			hf.write("Categories: ")
 			self.makeList(hf, categories, self.writeSenseCategory)
 
-	def writeSenseExample(  # noqa: PLR6301, PLR0912
+	def _buildJaRubyReadingLine(self, text: str, ruby: list | tuple) -> str:  # noqa: PLR6301
+		s = text
+		if not s:
+			return ""
+		for pair in ruby:
+			if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+				continue
+			word, phon = pair[0], pair[1]
+			if not word or word not in s:
+				continue
+			s = s.replace(str(word), f"[{phon}]", 1)
+		return s
+
+	@staticmethod
+	def _iterExampleKeys(ex: dict[str, Any]) -> list[str]:
+		priority = (
+			"text",
+			"example",
+			"roman",
+			"english",
+			"English",
+			"translation",
+			"Translation",
+		)
+		seen: set[str] = set()
+		ordered: list[str] = []
+		for k in priority:
+			if k in ex and ex[k] not in (None, ""):
+				ordered.append(k)
+				seen.add(k)
+		ordered.extend(k for k in sorted(ex) if k not in seen and ex[k] not in (None, ""))
+		return ordered
+
+	def _appendTextKeyToLines(
+		self,
+		lines: list[dict[str, Any]],
+		prefix: str | None,
+		value: str | list,
+	) -> None:
+		if isinstance(value, str):
+			lines.append(
+				{"prefix": prefix, "text": value, "context": None, "style": None},
+			)
+			return
+		if not isinstance(value, list):
+			return
+		for el in value:
+			if isinstance(el, str):
+				lines.append(
+					{"prefix": prefix, "text": el, "context": None, "style": None},
+				)
+			elif isinstance(el, dict):
+				lines.append(
+					{
+						"prefix": prefix,
+						"text": el.get("text", ""),
+						"context": el.get("context_small") or el.get("context") or None,
+						"style": None,
+					},
+				)
+			else:
+				log.warning(f"writeSenseExample: unexpected text list item {el!r}")
+				lines.append(
+					{
+						"prefix": prefix,
+						"text": str(el),
+						"context": None,
+						"style": None,
+					},
+				)
+
+	def writeSenseExample(  # noqa: PLR0912, PLR0915
 		self,
 		hf: T_htmlfile,
 		example: dict[str, str | list],
 	) -> None:
 		# example keys: text, "english", "ref", "type"
 
-		example.pop("ref", "")
-		example.pop("type", "")
-		example.pop("bold_text_offsets", "")
-		example.pop("bold_roman_offsets", "")
-		example.pop("bold_translation_offsets", "")
+		ex: dict[str, Any] = dict(example)
 
-		# Implement rudimentary ruby text handler by simply put them in "()"
-		# TODO: implement correctly formatted ruby text (i.e., as small script on top)
+		ex.pop("ref", None)
+		ex.pop("type", None)
+		ex.pop("bold_text_offsets", None)
+		ex.pop("bold_roman_offsets", None)
+		ex.pop("bold_translation_offsets", None)
 
-		textList: list[tuple[str | None, str]] = []
-		exampleValue: str | list = example.pop("example", "")
-		textValue: str = example.get("text", "")
-		ruby = example.pop("ruby", None)
+		ruby = ex.pop("ruby", None)
+		exampleValue = ex.pop("example", "")
+		textValue = ex.get("text", "")
+		ja = self._entry_lang_code == "ja"
+		ja_reading_line: str | None = None
+		if ja and ruby and textValue and isinstance(ruby, (list, tuple)):
+			if isinstance(textValue, str):
+				ja_reading_line = self._buildJaRubyReadingLine(textValue, ruby)
+			ex["text"] = textValue
+		elif (
+			not ja
+			and ruby
+			and isinstance(textValue, str)
+			and isinstance(ruby, (list, tuple))
+		):
+			for pair in ruby:
+				if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+					continue
+				word, phon = pair[0], pair[1]
+				textValue = textValue.replace(str(word), f"{word}({phon})")
+			ex["text"] = textValue
+
+		lines: list[dict[str, Any]] = []
 		if exampleValue:
 			assert isinstance(exampleValue, str), f"{exampleValue=}"
-			textList.append((None, exampleValue))
-		if textValue and ruby:
-			for word, phon in ruby:
-				textValue = textValue.replace(word, f"{word}({phon})")
-			example["text"] = textValue
+			lines.append(
+				{
+					"prefix": None,
+					"text": exampleValue,
+					"context": None,
+					"style": None,
+				},
+			)
 
 		def addList(key: str, prefix: str | None, value: list) -> None:
 			if key in self._badExampleKeys:
 				return
 			for item in value:
 				if isinstance(item, str):
-					textList.append((prefix, item))
+					lines.append(
+						{
+							"prefix": prefix,
+							"text": item,
+							"context": None,
+							"style": None,
+						},
+					)
 					continue
 				if isinstance(item, list):
 					addList(key, prefix, item)
+					continue
+				if isinstance(item, dict) and "text" in item:
+					lines.append(
+						{
+							"prefix": prefix,
+							"text": str(item.get("text", "")),
+							"context": item.get("context_small") or item.get("context"),
+							"style": None,
+						},
+					)
 					continue
 
 				log.warning(f"writeSenseExample: bad item {item=} in {key=}")
 				self._badExampleKeys.add(key)
 				return
 
-		for key, value in example.items():
-			if not value:
+		keys_order = self._iterExampleKeys(ex)
+		for key in keys_order:
+			if key not in ex:
 				continue
-
-			prefix: str | None = key
-			if prefix in ("text",):  # noqa: PLR6201, FURB171
-				prefix = None
+			value = ex[key]
+			if not value and value != 0:  # noqa: PLR1714
+				continue
+			if key == "text":
+				t_start = len(lines)
+				self._appendTextKeyToLines(lines, None, value)
+				t_end = len(lines)
+				if ja and ja_reading_line and t_end > t_start:
+					lines.insert(
+						t_end,
+						{
+							"prefix": None,
+							"text": ja_reading_line,
+							"context": None,
+							"style": "ja_ruby",
+						},
+					)
+				continue
+			prefix = key
 			if isinstance(value, str):
-				textList.append((prefix, value))
+				lines.append(
+					{
+						"prefix": prefix,
+						"text": value,
+						"context": None,
+						"style": None,
+					},
+				)
 			elif isinstance(value, list):
 				addList(key, prefix, value)
 			else:
-				log.error(f"writeSenseExample: invalid type for {value=}")
+				log.error(f"writeSenseExample: invalid type for {key=} {value=}")
 
-		if not textList:
+		if not lines:
 			return
 
-		def writePair(prefix: str | None, text: str) -> None:
-			if prefix:
+		def writeLine(line: dict[str, Any]) -> None:
+			pref = line.get("prefix")
+			text = line.get("text", "")
+			ctx = line.get("context")
+			style = line.get("style")
+			if pref:
 				with hf.element("b"):
-					hf.write(prefix)
+					hf.write(str(pref))
 				hf.write(": ")
-			hf.write(text)
+			if style == "ja_ruby":
+				with hf.element(
+					"span",
+					attrib={"class": "ja-ruby", "style": "color:#555;font-size:0.95em"},
+				):
+					hf.write(str(text))
+			else:
+				hf.write(str(text))
+				if ctx:
+					hf.write(" ")
+					with hf.element("small"):
+						hf.write(f"({ctx})")
 
-		if len(textList) == 1:
-			prefix, text = textList[0]
-			writePair(prefix, text)
+		if len(lines) == 1:
+			writeLine(lines[0])
 			return
 
 		with hf.element("ul"):
-			for prefix, text in textList:
+			for line in lines:
 				with hf.element("li"):
-					writePair(prefix, text)
+					writeLine(line)
 
 	def writeSenseExamples(
 		self,
@@ -593,7 +745,7 @@ class Reader:
 		):
 			hf.write(term)
 
-	def writeSynonyms(
+	def writeSynonyms(  # noqa: PLR0912
 		self,
 		hf: T_htmlfile,
 		synonyms: list[dict[str, Any]] | None,
@@ -608,15 +760,49 @@ class Reader:
 		#   "extra": "str",
 		#   "english": "str"
 
-		with hf.element("div"):
+		def tag_key(syn: dict[str, Any]) -> tuple[str, ...]:
+			t = syn.get("tags")
+			if not t:
+				return ()
+			if isinstance(t, (list, tuple)):
+				return tuple(str(x) for x in t)
+			return (str(t),)
+
+		grouped: dict[tuple[str, ...], list[dict[str, Any]]] = {}
+		for item in synonyms:
+			tk = tag_key(item)
+			if tk not in grouped:
+				grouped[tk] = []
+			grouped[tk].append(item)
+
+		with hf.element("div", attrib={"class": "synonyms"}):
 			hf.write("Synonyms: ")
-			for i, item in enumerate(synonyms):
-				if i > 0:
-					hf.write(", ")
-				term = item.get("word")
-				if not term:
+			gi = 0
+			for ttags in sorted(grouped.keys(), key=lambda x: (len(x), x)):
+				gr = grouped[ttags]
+				terms: list[str] = []
+				for item in gr:
+					tw = item.get("word")
+					if not tw or not str(tw).strip():
+						continue
+					terms.append(str(tw))
+				if not terms:
 					continue
-				self.addBwordLink(hf, term)
+				if gi:
+					hf.write(" · ")
+				gi += 1
+				if ttags:
+					hf.write("(")
+					with hf.element("small"):
+						for i, tg in enumerate(ttags):
+							if i:
+								hf.write(", ")
+							hf.write(tg)
+					hf.write(") ")
+				for i, term in enumerate(terms):
+					if i:
+						hf.write(", ")
+					self.addBwordLink(hf, term)
 
 	def writeAntonyms(
 		self,
@@ -635,6 +821,50 @@ class Reader:
 				if not term:
 					continue
 				self.addBwordLink(hf, term, wordClass="antonym")
+
+	def writeDescendants(
+		self,
+		hf: T_htmlfile,
+		descendants: list[dict[str, Any]] | None,
+	) -> None:
+		if not descendants:
+			return
+		from lxml import etree as ET
+
+		hf.write(ET.Element("br"))
+		with hf.element("div", attrib={"class": "descendants"}):
+			hf.write("Descendants:")
+			with hf.element("ul", attrib={"class": "descendants_tree"}):
+				for item in descendants:
+					if not isinstance(item, dict):
+						self.warning(f"descendants: expected dict, got {type(item)}")
+						continue
+					self._writeDescendantItem(hf, item)
+
+	def _writeDescendantItem(
+		self,
+		hf: T_htmlfile,
+		item: dict[str, Any],
+	) -> None:
+		with hf.element("li"):
+			lang = item.get("lang") or item.get("lang_code", "")
+			word = item.get("word", "")
+			roman = item.get("roman", "")
+			if lang:
+				with hf.element("small"):
+					hf.write(f"{lang}: ")
+			if word:
+				self.addBwordLink(hf, str(word), wordClass="descendant")
+			if roman and word:
+				hf.write(f" ({roman})")
+			elif roman and not word:
+				hf.write(str(roman))
+			sub = item.get("descendants")
+			if sub and isinstance(sub, list):
+				with hf.element("ul"):
+					for ch in sub:
+						if isinstance(ch, dict):
+							self._writeDescendantItem(hf, ch)
 
 	def writeRelated(
 		self,
