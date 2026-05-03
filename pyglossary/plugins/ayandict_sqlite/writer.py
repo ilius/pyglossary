@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
-	from pyglossary.xdxf.transform import XdxfTransformer
+	from pyglossary.xdxf.py_transform import XdxfTransformer
 
 
 __all__ = ["Writer"]
@@ -82,7 +82,7 @@ class Writer:
 		self._cur = None
 
 	def xdxf_setup(self) -> None:
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		# if self._xsl:
 		# 	self._xdxfTr = XslXdxfTransformer(encoding="utf-8")

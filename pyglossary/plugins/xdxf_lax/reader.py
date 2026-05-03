@@ -42,7 +42,7 @@ from pyglossary.compression import (
 from pyglossary.core import log
 from pyglossary.io_utils import nullBinaryIO
 from pyglossary.text_utils import toStr
-from pyglossary.xdxf.transform import XdxfTransformer
+from pyglossary.xdxf.py_transform import XdxfTransformer
 from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
 __all__ = ["Reader"]

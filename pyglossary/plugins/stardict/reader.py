@@ -77,7 +77,7 @@ class Reader:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
 			return XslXdxfTransformer(encoding="utf-8")
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		return XdxfTransformer(encoding="utf-8")
 

@@ -167,7 +167,7 @@ class Writer:
 	# TODO: PLR0915 Too many statements (74 > 50)
 	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, PLR0915
 		global BeautifulSoup
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		glos = self._glos
 		clean_html = self._clean_html

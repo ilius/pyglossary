@@ -83,7 +83,7 @@ class Reader:
 			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
 			return
 
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
