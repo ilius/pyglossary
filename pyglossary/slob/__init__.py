@@ -132,5 +132,5 @@ __all__ = [
 ]
 
 
-def open(*filenames: str) -> Slob:  # noqa: A001
+def open(*filenames: str) -> Slob:  # noqa: A001, RUF067
 	return Slob(*filenames)
