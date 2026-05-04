@@ -102,7 +102,7 @@ class Reader:
 
 	def _readTermBanks(self) -> Generator[EntryType, None, None]:
 		termToAlts = self._readTermBanksAlts()
-		orphanedTerms: set[str] = {*termToAlts.keys()}
+		orphanedTerms = set(termToAlts)
 		log.info("Finished extracting alts")
 		for termBankFile in self._termBankFiles:
 			yield from self._readTermBank(
@@ -113,7 +113,7 @@ class Reader:
 			altInfo = termToAlts[term]
 			for alt, causalChain in altInfo:
 				yield self._glos.newEntry(
-					alt, " < ".join(causalChain) + f" of {term}", defiFormat="m"
+					alt, " « ".join(causalChain) + f" ««« {term}", defiFormat="m"
 				)
 
 	def _readTermBanksAlts(self) -> dict[str, list[tuple[str, list[str]]]]:
