@@ -328,7 +328,7 @@ class Reader:
 		return self._entryCount
 
 	def _readCopyrightLine(self) -> str | None:
-		with open(join(self._filename, "index.noun")) as file_:
+		with open(join(self._filename, "index.noun"), encoding="utf-8") as file_:
 			for index, line in enumerate(file_):
 				if index > 30:
 					break
