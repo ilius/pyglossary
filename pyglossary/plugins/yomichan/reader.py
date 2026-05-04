@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 	from zipfile import ZipInfo
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.glossary_types import EntryType, MultiStr, ReaderGlossaryType
 
 	from .types import (
 		DefinitionObj,
@@ -153,9 +153,11 @@ class Reader:
 		with self._dictFile.open(termBankName) as termBankFile:
 			termBank = jsonToData(termBankFile.read())
 		for item in termBank:
-			term = item[0]
-			if reading := item[1]:
-				term = [term, reading]
+			_term: str = item[0]
+			_reading: str = item[1]
+			term: MultiStr = _term
+			if _reading:
+				term = [term, _reading]
 			if _isDeinflection(item[5]):
 				continue  # ignore alts, we already extracted them
 			definition = _readDefinition(item[5])
