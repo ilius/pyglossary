@@ -33,7 +33,7 @@ def f(j, x, y, z):
 	return (x & z) | (y & ~z)
 
 
-def K(j):
+def K(j) -> int:
 	assert 0 <= j < 64
 	if j < 16:
 		return 0x00000000
@@ -44,7 +44,7 @@ def K(j):
 	return 0x8F1BBCDC
 
 
-def Kp(j):
+def Kp(j) -> int:
 	assert 0 <= j < 64
 	if j < 16:
 		return 0x50A28BE6

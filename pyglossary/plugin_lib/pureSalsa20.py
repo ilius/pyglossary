@@ -201,7 +201,7 @@ class Salsa20:
 
 		self.setRounds(rounds)
 
-	def setKey(self, key):
+	def setKey(self, key) -> None:
 		assert isinstance(key, bytes), f"{key=}"
 		ctx = self.ctx
 		if len(key) == 32:  # recommended
@@ -216,7 +216,7 @@ class Salsa20:
 			raise ValueError("key length isn't 32 or 16 bytes.")
 		ctx[0], ctx[5], ctx[10], ctx[15] = little4_i32.unpack(constants)
 
-	def setIV(self, IV):
+	def setIV(self, IV) -> None:
 		assert isinstance(IV, bytes), f"{IV=}"
 		assert len(IV) * 8 == 64, "nonce (IV) not 64 bits"
 		self.IV = IV
@@ -224,7 +224,7 @@ class Salsa20:
 		ctx[6], ctx[7] = little2_i32.unpack(IV)
 		ctx[8], ctx[9] = 0, 0  # Reset the block counter.
 
-	def setCounter(self, counter):
+	def setCounter(self, counter) -> None:
 		assert isinstance(counter, int), f"{counter=}"
 		assert 0 <= counter < 1 << 64, "counter < 0 or >= 2**64"
 		ctx = self.ctx
@@ -233,7 +233,7 @@ class Salsa20:
 	def getCounter(self):
 		return little_u64.unpack(little2_i32.pack(*self.ctx[8:10]))[0]
 
-	def setRounds(self, rounds, testing=False):
+	def setRounds(self, rounds, testing=False) -> None:
 		assert testing or rounds in {8, 12, 20}, "rounds must be 8, 12, 20"
 		self.rounds = rounds
 

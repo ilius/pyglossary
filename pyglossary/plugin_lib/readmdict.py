@@ -125,7 +125,7 @@ class MDict:
 
 		self._key_list = self._read_keys()
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return (
 			f"MDict({self._fname!r}, "
 			f"encoding={self._encoding!r}, "
@@ -136,7 +136,7 @@ class MDict:
 	def filename(self):
 		return self._fname
 
-	def __len__(self):
+	def __len__(self) -> int:
 		return self._num_entries
 
 	def __iter__(self):
