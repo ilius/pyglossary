@@ -1,5 +1,7 @@
 __all__ = [
 	"c_author",
+	"c_copyright",
+	"c_creationTime",
 	"c_name",
 	"c_publisher",
 	"c_sourceLang",
@@ -8,11 +10,13 @@ __all__ = [
 ]
 
 c_name = "name"
+c_description = "description"
 c_sourceLang = "sourceLang"
 c_targetLang = "targetLang"
 c_copyright = "copyright"
 c_author = "author"
 c_publisher = "publisher"
+c_creationTime = "creationTime"
 
 infoKeysAliasDict = {
 	"title": c_name,
@@ -31,6 +35,6 @@ infoKeysAliasDict = {
 	##
 	# do not map "publisher" to "author"
 	##
-	"date": "creationTime",
+	"date": c_creationTime,
 	# are there alternatives to "lastUpdated"?
 }

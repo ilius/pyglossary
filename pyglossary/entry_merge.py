@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .entry import Entry
-from .xdxf.transform import XdxfTransformer
+from .xdxf.py_transform import XdxfTransformer
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator

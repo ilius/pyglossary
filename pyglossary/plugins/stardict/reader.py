@@ -45,7 +45,7 @@ def _verifySameTypeSequence(s: str) -> bool:
 class Reader:
 	useByteProgress = False
 	_xdxf_to_html: bool = True
-	_xsl: bool = False
+	_xsl: bool = True
 	_unicode_errors: str = "strict"
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
@@ -77,7 +77,7 @@ class Reader:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
 			return XslXdxfTransformer(encoding="utf-8")
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		return XdxfTransformer(encoding="utf-8")
 

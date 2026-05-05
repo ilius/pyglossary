@@ -59,7 +59,7 @@ class Reader:
 	}
 
 	_html: bool = True
-	_xsl: bool = False
+	_xsl: bool = True
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -83,7 +83,7 @@ class Reader:
 			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
 			return
 
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 

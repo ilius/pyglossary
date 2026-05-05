@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 	from pyglossary.lxml_types import Element
-	from pyglossary.xdxf.transform import XdxfTransformer
+	from pyglossary.xdxf.py_transform import XdxfTransformer
 
 
 __all__ = ["Reader"]
@@ -41,7 +41,7 @@ class Reader:
 		self._xdxfTr: XdxfTransformer | None = None
 
 	def xdxf_setup(self) -> XdxfTransformer:
-		from pyglossary.xdxf.transform import XdxfTransformer
+		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		self._xdxfTr = tr = XdxfTransformer(encoding="utf-8")
 		return tr

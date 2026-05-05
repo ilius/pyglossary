@@ -27,7 +27,7 @@ To update, modify plugins/stardict/__init__.py file, then run ./scripts/gen
 | Name           | Default  | Type | Comment                                 |
 | -------------- | -------- | ---- | --------------------------------------- |
 | xdxf_to_html   | `True`   | bool | Convert XDXF entries to HTML            |
-| xsl            | `False`  | bool | Use XSL transformation                  |
+| xsl            | `True`   | bool | Use XSL transformation                  |
 | unicode_errors | `strict` | str  | What to do with Unicode decoding errors |
 
 ### Write options
