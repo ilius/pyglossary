@@ -21,6 +21,9 @@ class TestGlossaryYomichan(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
+		self.dataFile |= {
+			"02-yomichan-deinflection.zip",
+		}
 		self.dataFileCRC32.update(
 			{
 				"050-JMdict-English-v3.txt": "6068b9a7",
@@ -72,6 +75,14 @@ class TestGlossaryYomichan(TestGlossaryBase):
 			"100-ja-en.txt",
 			testId="2",
 			# sha1sum="02bf6195eba15d0e76b3b119fa9c57d3f17eb169",  # FIXME
+		)
+
+	def test_convert_yomichan_txt_1(self):
+		self.convert(
+			"02-yomichan-deinflection.zip",
+			"02-yomichan-deinflection.txt",
+			sha1sum="2d4ca22a2bb93ba1830478dd68f0c75b8309f56f",
+			inputFormat="Yomichan",
 		)
 
 
