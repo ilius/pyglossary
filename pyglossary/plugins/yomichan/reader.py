@@ -153,19 +153,19 @@ class Reader:
 		with self._dictFile.open(termBankName) as termBankFile:
 			termBank = jsonToData(termBankFile.read())
 		for item in termBank:
-			_term: str = item[0]
-			_reading: str = item[1]
-			term: MultiStr = _term
-			if _reading:
-				term = [term, _reading]
+			term: str = item[0]
+			reading: str = item[1]
+			terms: MultiStr = term
+			if reading:
+				terms = [terms, reading]
 			if _isDeinflection(item[5]):
 				continue  # ignore alts, we already extracted them
 			definition = _readDefinition(item[5])
 			if altInfo := termToAlts.get(item[0]):
 				orphanedTerms.discard(item[0])
 				alts = [elt[0] for elt in altInfo]
-				term = [term, *alts] if isinstance(term, str) else [*term, *alts]
-			yield self._glos.newEntry(term, definition, defiFormat="h")
+				terms = [terms, *alts] if isinstance(terms, str) else [*terms, *alts]
+			yield self._glos.newEntry(terms, definition, defiFormat="h")
 
 	def _readUsedResources(self) -> Generator[EntryType, None, None]:
 		if self._dictFile is None:
