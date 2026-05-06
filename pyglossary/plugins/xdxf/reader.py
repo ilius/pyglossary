@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
 from lxml import etree as ET
 
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )

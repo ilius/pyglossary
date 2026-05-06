@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )

@@ -7,7 +7,7 @@ import unicodedata
 from io import BytesIO
 from typing import TYPE_CHECKING, cast
 
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )

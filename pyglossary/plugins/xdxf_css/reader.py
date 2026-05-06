@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, cast
 
 from lxml import etree as ET
 
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )

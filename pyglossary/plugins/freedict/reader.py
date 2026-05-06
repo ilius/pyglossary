@@ -8,7 +8,7 @@ from io import BytesIO
 from os.path import dirname, isfile, join
 from typing import TYPE_CHECKING, cast
 
-from pyglossary.compression import compressionOpen, stdCompressions
+from pyglossary.compress import compressionOpen, stdCompressions
 from pyglossary.core import exc_note, log, pip
 from pyglossary.html_utils import unescape_unicode
 from pyglossary.io_utils import nullBinaryIO

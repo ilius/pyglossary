@@ -22,7 +22,7 @@ from __future__ import annotations
 import logging
 from os.path import splitext
 
-from .compression import stdCompressions
+from .compress import stdCompressions
 
 __all__ = ["Error", "ReadError", "WriteError", "splitFilenameExt"]
 

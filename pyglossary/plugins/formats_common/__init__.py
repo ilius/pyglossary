@@ -20,7 +20,7 @@ sys.path.insert(0, rootDir)  # noqa: E402
 
 
 from pyglossary import core
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )

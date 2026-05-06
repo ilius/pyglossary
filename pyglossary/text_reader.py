@@ -6,7 +6,7 @@ import os
 from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
-from .compression import (
+from .compress import (
 	compressionOpen,
 	stdCompressions,
 )

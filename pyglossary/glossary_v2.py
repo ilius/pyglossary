@@ -758,7 +758,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		# filenameUC is the uncompressed file's absolute path
 
 		if compression:
-			from .compression import uncompress
+			from .compress import uncompress
 
 			uncompress(filenameAbs, filenameUC, compression)
 
@@ -1009,7 +1009,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 
 	@staticmethod
 	def _compressOutput(filename: str, compression: str) -> str:
-		from .compression import compress
+		from .compress import compress
 
 		return compress(filename, compression)
 

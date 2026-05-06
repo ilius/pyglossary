@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.compression import stdCompressions
+from pyglossary.compress import stdCompressions
 
 if TYPE_CHECKING:
 	from collections.abc import Generator

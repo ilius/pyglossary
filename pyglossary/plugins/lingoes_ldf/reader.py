@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.compression import stdCompressions
+from pyglossary.compress import stdCompressions
 from pyglossary.core import log
 from pyglossary.file_utils import fileCountLines
 from pyglossary.text_reader import TextGlossaryReader

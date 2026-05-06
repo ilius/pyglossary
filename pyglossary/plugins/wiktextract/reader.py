@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element, T_htmlfile
 
 
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )

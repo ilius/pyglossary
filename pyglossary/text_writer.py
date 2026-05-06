@@ -5,7 +5,7 @@ import os
 from os.path import isdir
 from typing import TYPE_CHECKING, cast
 
-from .compression import compressionOpen as c_open
+from .compress import compressionOpen as c_open
 from .io_utils import nullTextIO
 
 if TYPE_CHECKING:

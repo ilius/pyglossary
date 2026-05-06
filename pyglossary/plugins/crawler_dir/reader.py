@@ -5,7 +5,7 @@ from os import listdir
 from os.path import isdir, isfile, join, splitext
 from typing import TYPE_CHECKING
 
-from pyglossary.compression import compressionOpenFunc
+from pyglossary.compress import compressionOpenFunc
 from pyglossary.core import log
 from pyglossary.text_utils import splitByBarUnescapeNTB
 

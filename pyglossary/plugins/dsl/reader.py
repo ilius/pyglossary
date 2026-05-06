@@ -25,7 +25,7 @@ import zipfile
 from os.path import abspath, dirname, isfile, join, splitext
 from typing import TYPE_CHECKING, cast
 
-from pyglossary.compression import (
+from pyglossary.compress import (
 	compressionOpen,
 	stdCompressions,
 )
