@@ -36,7 +36,16 @@ if TYPE_CHECKING:
 
 	from pyglossary.config_type import ConfigType
 
-__all__ = ["COMMAND", "UI", "parseFormatOptionsStr", "printHelp"]
+__all__ = [
+	"COMMAND",
+	"UI",
+	"NullObj",
+	"getColWidth",
+	"getFormatsTable",
+	"parseFormatOptionsStr",
+	"printHelp",
+	"wc_ljust",
+]
 
 
 def wc_ljust(text: str, length: int, padding: str = " ") -> str:

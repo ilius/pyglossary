@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 
 __all__ = [
+	"EntryFilter",
 	"EntryFilterType",
 	"PreventDuplicateTerms",
 	"RemoveHtmlTagsAll",

@@ -6,6 +6,8 @@ from __future__ import annotations
 import contextlib
 import logging
 
+__all__ = ["silence_pyglossary_log"]
+
 
 @contextlib.contextmanager
 def silence_pyglossary_log():
