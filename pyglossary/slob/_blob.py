@@ -15,6 +15,9 @@ if TYPE_CHECKING:
 		def __len__(self) -> int: ...
 
 
+__all__ = ["Blob", "KeydItemDict"]
+
+
 class Blob:
 	def __init__(  # noqa: PLR0913
 		self,

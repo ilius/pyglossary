@@ -6,6 +6,8 @@ from types import MappingProxyType
 from typing import NamedTuple
 from uuid import UUID
 
+__all__ = ["Header", "Ref"]
+
 
 class Ref(NamedTuple):
 	key: str

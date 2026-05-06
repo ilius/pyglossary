@@ -19,6 +19,8 @@ if TYPE_CHECKING:
 	from collections.abc import Iterator
 	from types import TracebackType
 
+__all__ = ["Slob"]
+
 
 class Slob:
 	def __init__(

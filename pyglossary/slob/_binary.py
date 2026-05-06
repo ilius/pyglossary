@@ -1,6 +1,8 @@
 # Packed bin/item index helpers for slob (pyglossary)
 from __future__ import annotations
 
+__all__ = ["meld_ints", "unmeld_ints"]
+
 
 def meld_ints(a: int, b: int) -> int:
 	return (a << 16) | b

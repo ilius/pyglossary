@@ -13,6 +13,8 @@ from ._multifile import MultiFileReader
 from ._struct import StructReader, read_byte_string
 from ._types import Header
 
+__all__ = ["read_header"]
+
 
 def read_header(file: MultiFileReader) -> Header:
 	file.seek(0)

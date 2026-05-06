@@ -6,6 +6,8 @@ import warnings
 from collections.abc import Callable, Mapping
 from typing import Any, NamedTuple, cast
 
+__all__ = ["COMPRESSIONS", "Compression"]
+
 
 class Compression(NamedTuple):
 	compress: Callable[..., bytes]  # first arg: bytes

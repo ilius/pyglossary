@@ -43,6 +43,8 @@ from ._multifile import MultiFileReader
 from ._struct import StructWriter
 from ._types import Ref
 
+__all__ = ["Writer", "WriterEvent"]
+
 
 class WriterEvent(NamedTuple):
 	name: str

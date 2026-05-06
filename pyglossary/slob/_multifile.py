@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING, Self
 if TYPE_CHECKING:
 	from types import TracebackType
 
+__all__ = ["MultiFileReader"]
+
 
 class MultiFileReader(BufferedIOBase):
 	def __init__(

@@ -3,6 +3,27 @@ from __future__ import annotations
 
 from struct import calcsize
 
+__all__ = [
+	"DEFAULT_COMPRESSION",
+	"MAGIC",
+	"MAX_BIN_ITEM_COUNT",
+	"MAX_LARGE_BYTE_STRING_LEN",
+	"MAX_TEXT_LEN",
+	"MAX_TINY_TEXT_LEN",
+	"MIME_HTML",
+	"MIME_TEXT",
+	"UTF8",
+	"U_CHAR",
+	"U_CHAR_SIZE",
+	"U_INT",
+	"U_INT_SIZE",
+	"U_LONG_LONG",
+	"U_LONG_LONG_SIZE",
+	"U_SHORT",
+	"U_SHORT_SIZE",
+	"calcmax",
+]
+
 DEFAULT_COMPRESSION = "lzma2"
 
 UTF8 = "utf-8"

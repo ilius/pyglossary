@@ -1,6 +1,14 @@
 # slob format exceptions (pyglossary)
 from __future__ import annotations
 
+__all__ = [
+	"FileFormatException",
+	"IncorrectFileSize",
+	"UnknownCompression",
+	"UnknownEncoding",
+	"UnknownFileFormat",
+]
+
 
 class FileFormatException(Exception):
 	pass

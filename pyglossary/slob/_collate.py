@@ -10,6 +10,8 @@ from icu import Collator, Locale, UCollAttribute, UCollAttributeValue
 if TYPE_CHECKING:
 	from pyglossary.icu_types import T_Collator
 
+__all__ = ["IDENTICAL", "PRIMARY", "QUATERNARY", "SECONDARY", "TERTIARY", "sortkey"]
+
 PRIMARY: int = Collator.PRIMARY
 SECONDARY: int = Collator.SECONDARY
 TERTIARY: int = Collator.TERTIARY
