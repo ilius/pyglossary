@@ -242,7 +242,7 @@ class Writer:
 			if entry.isData():
 				continue
 
-			terms.extend(self._getTermsFromEntry(entry, entryCount))
+			terms += self._getTermsFromEntry(entry, entryCount)
 			entryCount += 1
 			if len(terms) >= self._term_bank_size:
 				flushTerms()

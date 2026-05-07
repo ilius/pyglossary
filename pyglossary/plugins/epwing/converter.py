@@ -190,7 +190,7 @@ class KoujienExtractor(EpwingExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				tags.extend(m.group(1).split("・"))
+				tags += m.group(1).split("・")
 
 		terms = []
 		if not expressions:
@@ -396,7 +396,7 @@ class DaijisenExtractor(KoujienExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				tags.extend(m.group(1).split("・"))
+				tags += m.group(1).split("・")
 
 		terms = []
 		if not expressions:
@@ -570,14 +570,14 @@ class MeikyouExtractor(KoujienExtractor):
 			if terms_match:
 				for group in terms_match.groups():
 					if group:
-						expressions.extend(group.split("・"))
+						expressions += group.split("・")
 
 		# Expression from [...] (foreign/meta)
 		foreign_match = match.group(3)
 		if foreign_match:
 			# Simplified foreign meta removal (Go version has a long list, we just split)
 			foreign_match = foreign_match.replace("＋", " ")
-			expressions.extend(foreign_match.split("・"))
+			expressions += foreign_match.split("・")
 
 		reading = match.group(1)
 		if reading:
@@ -588,7 +588,7 @@ class MeikyouExtractor(KoujienExtractor):
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
-				tags.extend(m.group(1).split("・"))
+				tags += m.group(1).split("・")
 
 		terms = []
 		if not expressions:
@@ -801,7 +801,7 @@ class KotowazaExtractor(EpwingExtractor):
 				reduced_expressions.append(expression)
 			else:
 				replacements = [match.group(1)]
-				replacements.extend(match.group(2).split("・"))
+				replacements += match.group(2).split("・")
 				for repl in replacements:
 					queue.append(expression.replace(match.group(0), repl))  # noqa: PERF401
 
@@ -881,8 +881,8 @@ def convert_epwing_to_yomichan(
 			# Translate font markers in entry["heading"] and entry["text"]
 
 			terms = extractor.extract_terms(entry["heading"], entry["text"], sequence)
-			all_terms.extend(terms)
-			all_kanji.extend(extractor.extract_kanji(entry["heading"], entry["text"]))
+			all_terms += terms
+			all_kanji += extractor.extract_kanji(entry["heading"], entry["text"])
 			sequence += 1
 
 		revisions.append(extractor.get_revision())

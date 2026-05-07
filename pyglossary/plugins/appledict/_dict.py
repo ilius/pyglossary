@@ -102,7 +102,7 @@ def indexes_generator(
 		BeautifulSoup: Any,
 	) -> str:
 		indexes = [title]
-		indexes.extend(alts)
+		indexes += alts
 
 		quoted_title = quote_string(title, BeautifulSoup)
 

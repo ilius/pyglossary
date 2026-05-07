@@ -81,7 +81,7 @@ class Writer:
 
 			terms = entry.l_term
 			if terms[0] in synonyms:
-				synonyms[terms[0]].extend(terms[1:])
+				synonyms[terms[0]] += terms[1:]
 			else:
 				synonyms[terms[0]] = terms[1:]
 
