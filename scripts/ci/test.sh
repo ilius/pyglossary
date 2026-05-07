@@ -20,7 +20,12 @@ cp test.out artifacts
 grep -v FileNotFoundError test.out | grep -o "'/tmp/pyglossary/[^']*'" | sed "s/'//g" | xargs '-I{}' cp '{}' artifacts
 ls -l artifacts
 set -e
-if [ "$STATUS" -ne 0 ] || [ "$UI_STATUS" -ne 0 ]; then
+if [ "$STATUS" -ne 0 ]; then
+	echo "./scripts/test.sh failed with exit status $STATUS"
+	exit 1
+fi
+if [ "$UI_STATUS" -ne 0 ]; then
+	echo "./scripts/test-ui.sh failed with exit status $UI_STATUS"
 	exit 1
 fi
 exit 0
