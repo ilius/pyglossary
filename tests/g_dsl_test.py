@@ -15,21 +15,19 @@ class TestGlossaryDSL(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"dsl/100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
-				"dsl/100-RussianAmericanEnglish-ru-en-v3.txt": "43b6d58e",
-				"dsl/001-empty-lines-br.dsl": "6f2fca1a",
-				"dsl/001-empty-lines-br.txt": "74e578ff",
-				"dsl/002-m-tag_multiline-paragraph.dsl": "334079e3",
-				"dsl/002-m-tag_multiline-paragraph-v2.txt": "d5001afd",
-				"dsl/003-ref-target-c.dsl": "9c1396c4",
-				"dsl/003-ref-target-c.txt": "ab41cedf",
-				"dsl/006-include/included.dsl": "10ef1018",
-				"dsl/006-include/main.dsl": "8325d538",
-				"dsl/006-include/main.txt": "d7ed9f2b",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"dsl/100-RussianAmericanEnglish-ru-en.dsl": "c24491e0",
+			"dsl/100-RussianAmericanEnglish-ru-en-v3.txt": "43b6d58e",
+			"dsl/001-empty-lines-br.dsl": "6f2fca1a",
+			"dsl/001-empty-lines-br.txt": "74e578ff",
+			"dsl/002-m-tag_multiline-paragraph.dsl": "334079e3",
+			"dsl/002-m-tag_multiline-paragraph-v2.txt": "d5001afd",
+			"dsl/003-ref-target-c.dsl": "9c1396c4",
+			"dsl/003-ref-target-c.txt": "ab41cedf",
+			"dsl/006-include/included.dsl": "10ef1018",
+			"dsl/006-include/main.dsl": "8325d538",
+			"dsl/006-include/main.txt": "d7ed9f2b",
+		}
 
 	def convert_string_dsl_txt(
 		self,

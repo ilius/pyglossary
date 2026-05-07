@@ -24,11 +24,9 @@ class TestGlossaryYomichan(TestGlossaryBase):
 		self.dataFile |= {
 			"02-yomichan-deinflection.zip",
 		}
-		self.dataFileCRC32.update(
-			{
-				"050-JMdict-English-v3.txt": "6068b9a7",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"050-JMdict-English-v3.txt": "6068b9a7",
+		}
 
 	@freeze_time(testTime)
 	def convert_to_yomichan(

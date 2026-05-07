@@ -7,13 +7,11 @@ class TestGlossarySlobRead(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa-res.slob": "0216d006",
-				"100-en-fa-res-slob.txt": "c73100b3",
-				"100-en-fa-res-slob-sort.txt": "8253fe96",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-fa-res.slob": "0216d006",
+			"100-en-fa-res-slob.txt": "c73100b3",
+			"100-en-fa-res-slob-sort.txt": "8253fe96",
+		}
 
 	def setUp(self):
 		TestGlossaryBase.setUp(self)

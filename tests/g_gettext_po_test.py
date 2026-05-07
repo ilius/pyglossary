@@ -13,12 +13,11 @@ class TestGlossaryGetttestPo(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa.po": "694de186",
-				"100-en-fa.po.txt": "f0c3ea53",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-fa.po": "694de186",
+			"100-en-fa.po.txt": "f0c3ea53",
+		}
+
 		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_po(self, fname, fname2, **convertArgs):

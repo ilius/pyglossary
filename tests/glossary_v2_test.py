@@ -82,6 +82,8 @@ class TestGlossaryBase(unittest.TestCase):
 	# will be executed before and after each test method.
 
 	def setUp(self):
+		for fname in self.dataFileCRC32:
+			assert fname not in self.dataFile, f"{fname=}"
 		self.glos = None
 		self.tempDir = tempfile.mkdtemp(dir=join(tmpDir, "pyglossary"))
 
@@ -337,26 +339,24 @@ class TestGlossary(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa-sort.txt": "d7a82dc8",
-				"100-en-fa-sort-headword.txt": "4067a29f",
-				"100-en-fa-sort-headword-fa.txt": "d01fcee1",
-				"100-en-fa-sort-ebook.txt": "aa620d07",
-				"100-en-fa-sort-ebook3.txt": "5a20f140",
-				"100-en-fa-lower.txt": "62178940",
-				"100-en-fa-remove_html_all-v3.txt": "d611c978",
-				"100-en-fa-rtl.txt": "25ede1e8",
-				"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
-				"300-rand-en-fa-sort-headword.txt": "df0f8020",
-				"300-rand-en-fa-sort-w1256.txt": "9594aab3",
-				"sort-locale/092-en-fa-alphabet-sample.txt": "b4856532",
-				"sort-locale/092-en-fa-alphabet-sample-sorted-default.txt": "e7b70589",
-				"sort-locale/092-en-fa-alphabet-sample-sorted-en.txt": "3d2bdf73",
-				"sort-locale/092-en-fa-alphabet-sample-sorted-fa.txt": "245419db",
-				"sort-locale/092-en-fa-alphabet-sample-sorted-latin-fa.txt": "261c03c0",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-fa-sort.txt": "d7a82dc8",
+			"100-en-fa-sort-headword.txt": "4067a29f",
+			"100-en-fa-sort-headword-fa.txt": "d01fcee1",
+			"100-en-fa-sort-ebook.txt": "aa620d07",
+			"100-en-fa-sort-ebook3.txt": "5a20f140",
+			"100-en-fa-lower.txt": "62178940",
+			"100-en-fa-remove_html_all-v3.txt": "d611c978",
+			"100-en-fa-rtl.txt": "25ede1e8",
+			"300-rand-en-fa-sort-headword-w1256.txt": "06d83bac",
+			"300-rand-en-fa-sort-headword.txt": "df0f8020",
+			"300-rand-en-fa-sort-w1256.txt": "9594aab3",
+			"sort-locale/092-en-fa-alphabet-sample.txt": "b4856532",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-default.txt": "e7b70589",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-en.txt": "3d2bdf73",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-fa.txt": "245419db",
+			"sort-locale/092-en-fa-alphabet-sample-sorted-latin-fa.txt": "261c03c0",
+		}
 
 	def setUp(self):
 		TestGlossaryBase.setUp(self)

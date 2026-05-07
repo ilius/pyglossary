@@ -16,7 +16,7 @@ class TestGlossaryKobo(TestGlossaryBase):
 
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
-		# self.dataFileCRC32.update({})
+		# self.dataFileCRC32 |= {{})
 
 	def convert_txt_kobo(self, fname, sha1sumDict, **convertArgs):
 		outputFname = f"{fname}-2.kobo.zip"

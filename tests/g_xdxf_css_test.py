@@ -7,14 +7,12 @@ class TestGlossaryXDXF(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
-				"100-cyber_lexicon_en-es-css.txt": "be892c84",
-				# "100-cyber_lexicon_en-es-css.txt_res/css/xdxf.css": "206ae89d",
-				# "100-cyber_lexicon_en-es-css.txt_res/js/xdxf.js": "938842f0",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
+			"100-cyber_lexicon_en-es-css.txt": "be892c84",
+			# "100-cyber_lexicon_en-es-css.txt_res/css/xdxf.css": "206ae89d",
+			# "100-cyber_lexicon_en-es-css.txt_res/js/xdxf.js": "938842f0",
+		}
 
 	def convert_xdxf_txt(self, fname, fname2, **convertArgs):
 		self.convert(

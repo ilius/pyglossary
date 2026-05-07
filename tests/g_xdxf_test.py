@@ -10,11 +10,9 @@ class TestGlossaryXDXF(TestGlossaryBase):
 		self.dataFile |= {
 			"100-cyber_lexicon_en-es-v4.txt",
 		}
-		self.dataFileCRC32.update(
-			{
-				"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
+		}
 
 	def convert_xdxf_txt(self, fname, fname2, **convertArgs):
 		self.convert(

@@ -8,11 +8,10 @@ class TestGlossaryDictOrg(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa.dtxt": "05d6e939",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-fa.dtxt": "05d6e939",
+		}
+
 		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_dict_org_source(self, fname, fname2, **convertArgs):

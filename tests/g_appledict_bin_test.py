@@ -31,7 +31,7 @@ class TestGlossaryAppleDictBin(TestGlossaryBase):
 			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt": "2d3844bf",
 			"appledict-bin/006-en-oxfjord_v10.11_c2_t3.txt_res/style.css": "14c3cf2c",
 		}
-		self.dataFileCRC32.update(hashDict)
+		self.dataFileCRC32 |= hashDict
 
 		self.addDirCRC32(
 			"appledict-bin/002-simple.dictionary",

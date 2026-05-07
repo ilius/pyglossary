@@ -8,12 +8,9 @@ class TestGlossarySQL(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa.txt": "f5c53133",
-				"100-en-fa.txt-v3.sql": "e8116afc",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-fa.txt-v3.sql": "e8116afc",
+		}
 		os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_txt_sql(self, fname, fname2, **convertArgs):

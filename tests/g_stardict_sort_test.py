@@ -11,15 +11,13 @@ from pyglossary.glossary_v2 import Glossary
 class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryErrorsBase.__init__(self, *args, **kwargs)
-		self.dataFileCRC32.update(
-			{
-				"100-en-fa-sd-v2/100-en-fa.dict": "223a0d1d",
-				"100-en-fa-sd-v2/100-en-fa.idx": "6df43378",
-				"100-en-fa-sd-v2/100-en-fa.ifo": "bb916827",
-				"100-en-fa-sd-v2/100-en-fa.syn": "1160fa0b",
-				"100-en-fa-sd-v2.txt": "0b8b2ac0",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-fa-sd-v2/100-en-fa.dict": "223a0d1d",
+			"100-en-fa-sd-v2/100-en-fa.idx": "6df43378",
+			"100-en-fa-sd-v2/100-en-fa.ifo": "bb916827",
+			"100-en-fa-sd-v2/100-en-fa.syn": "1160fa0b",
+			"100-en-fa-sd-v2.txt": "0b8b2ac0",
+		}
 
 	def convert_txt_stardict_enfa(
 		self,

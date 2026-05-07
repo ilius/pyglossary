@@ -22,7 +22,7 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			"appledict-src/002-no-morphology-v3a/002-no-morphology-v3a.xml": "707994d6",
 			"appledict-src/002-no-morphology-v3a/Makefile": "ecd42350",
 		}
-		self.dataFileCRC32.update(hashDict)
+		self.dataFileCRC32 |= hashDict
 
 	def comparePlist(self, fpath1, fpath2):
 		with open(fpath1, "rb") as file:

@@ -8,15 +8,12 @@ class TestGlossaryQuickDic6(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"100-en-de-v4.txt": "d420a669",
-				"100-en-de-v4.txt.quickdic": "9d4ccc13",
-				"100-en-de-v4.txt.quickdic.txt": "2dc4fc17",
-				"100-en-fa.txt.quickdic": "2bd483df",
-				"100-en-fa.txt.quickdic.txt": "50994fb5",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"100-en-de-v4.txt.quickdic": "9d4ccc13",
+			"100-en-de-v4.txt.quickdic.txt": "2dc4fc17",
+			"100-en-fa.txt.quickdic": "2bd483df",
+			"100-en-fa.txt.quickdic.txt": "50994fb5",
+		}
 
 		os.environ["QUICKDIC_CREATION_TIME"] = "1730579400"
 

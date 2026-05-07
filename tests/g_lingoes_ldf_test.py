@@ -7,12 +7,10 @@ class TestGlossaryLingoesLDF(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"004-bar.ldf": "b1aa776d",
-				"100-en-fa.ldf": "503d1a9b",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"004-bar.ldf": "b1aa776d",
+			"100-en-fa.ldf": "503d1a9b",
+		}
 
 	def convert_txt_ldf(self, fname, fname2, **convertArgs):
 		self.convert(

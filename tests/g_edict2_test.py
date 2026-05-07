@@ -14,19 +14,17 @@ class TestGlossaryDictfile(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"edict2/024-cedict.u8": "de30cdd3",
-				"edict2/024-cedict.txt": "34e2dc56",
-				"edict2/024-cedict-links.txt": "74c3446f",
-				"edict2/024-cedict-nocolor.txt": "dafb8cd8",
-				"edict2/024-cedict-trad.txt": "eec67f1e",
-				"edict2/024-cedict-v2.txt": "1c203fa2",
-				"edict2/024-cedict-v2-links.txt": "89d9376a",
-				"edict2/024-cedict-v2-nocolor.txt": "9710ebd7",
-				"edict2/024-cedict-v2-trad.txt": "5798f4cc",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"edict2/024-cedict.u8": "de30cdd3",
+			"edict2/024-cedict.txt": "34e2dc56",
+			"edict2/024-cedict-links.txt": "74c3446f",
+			"edict2/024-cedict-nocolor.txt": "dafb8cd8",
+			"edict2/024-cedict-trad.txt": "eec67f1e",
+			"edict2/024-cedict-v2.txt": "1c203fa2",
+			"edict2/024-cedict-v2-links.txt": "89d9376a",
+			"edict2/024-cedict-v2-nocolor.txt": "9710ebd7",
+			"edict2/024-cedict-v2-trad.txt": "5798f4cc",
+		}
 
 	def convert_edict_txt(self, fname, fname2):
 		self.convert(

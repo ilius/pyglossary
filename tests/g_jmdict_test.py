@@ -7,12 +7,11 @@ class TestGlossaryJMdict(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"050-JMdict-English": "aec9ad8c",
-				"050-JMdict-English-v3.txt": "6068b9a7",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"050-JMdict-English": "aec9ad8c",
+			"050-JMdict-English-v3.txt": "6068b9a7",
+		}
+
 		# os.environ["CALC_FILE_SIZE"] = "1"
 
 	def convert_jmdict_txt(self, fname, fname2, **convertArgs):

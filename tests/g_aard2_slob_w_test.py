@@ -8,11 +8,9 @@ class TestGlossarySlobWrite(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32.update(
-			{
-				"300-ru-en.txt": "77cfee2f",
-			},
-		)
+		self.dataFileCRC32 |= {
+			"300-ru-en.txt": "77cfee2f",
+		}
 
 	def setUp(self):
 		TestGlossaryBase.setUp(self)
