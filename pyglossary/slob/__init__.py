@@ -124,13 +124,8 @@ __all__ = [
 	"encodings",
 	"fopen",
 	"meld_ints",
-	"open",
 	"read_byte_string",
 	"read_header",
 	"sortkey",
 	"unmeld_ints",
 ]
-
-
-def open(*filenames: str) -> Slob:  # noqa: A001, RUF067
-	return Slob(*filenames)

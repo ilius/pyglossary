@@ -165,7 +165,7 @@ class TestReadWrite(BaseTest):
 		self.assertEqual(header.blob_count, len(self.data))
 
 	def test_content(self):
-		with slob.open(self.path) as r:
+		with slob.Slob(self.path) as r:
 			self.assertEqual(len(r), len(self.all_keys))
 			self.assertRaises(IndexError, r.__getitem__, len(self.all_keys))
 			for i, item in enumerate(r):
@@ -214,7 +214,7 @@ class TestSort(BaseTest):
 
 		writer.finalize()
 
-		self.r = slob.open(self.path)
+		self.r = slob.Slob(self.path)
 
 	def test_sort_order(self):
 		for i, x in enumerate(self.r):
@@ -319,7 +319,7 @@ class TestFind(BaseTest):
 
 		writer.finalize()
 
-		self.r = slob.open(self.path)
+		self.r = slob.Slob(self.path)
 
 	def get(self, d, key):
 		return [item.content.decode("ascii") for item in d[key]]
@@ -433,7 +433,7 @@ class TestPrefixFind(BaseTest):
 		writer.finalize()
 
 	def test(self):
-		with slob.open(self.path) as r:
+		with slob.Slob(self.path) as r:
 			for i, k in enumerate(self.data):
 				d = r.as_dict(slob.IDENTICAL, len(k))
 				self.assertEqual(
@@ -490,7 +490,7 @@ class TestAlias(BaseTest):
 		self.assertEqual(too_many_redirects, ["l1", "l2", "l3"])
 		self.assertEqual(target_not_found, ["l2", "l3", "l1", "YYY"])
 
-		with slob.open(self.path) as r:
+		with slob.Slob(self.path) as r:
 			d = r.as_dict()
 
 			def get(key):
@@ -582,7 +582,7 @@ class TestFormatErrors(BaseTest):
 		name = os.path.join(self.tmpdir.name, "1")
 		with slob.fopen(name, "wb") as f:
 			f.write(b"123")
-		self.assertRaises(slob.UnknownFileFormat, slob.open, name)
+		self.assertRaises(slob.UnknownFileFormat, slob.Slob, name)
 
 	def test_truncated_file(self):
 		name = os.path.join(self.tmpdir.name, "1")
@@ -598,13 +598,13 @@ class TestFormatErrors(BaseTest):
 		with slob.fopen(name, "wb") as f:
 			f.write(all_bytes[:-1])
 
-		self.assertRaises(slob.IncorrectFileSize, slob.open, name)
+		self.assertRaises(slob.IncorrectFileSize, slob.Slob, name)
 
 		with slob.fopen(name, "wb") as f:
 			f.write(all_bytes)
 			f.write(b"\n")
 
-		self.assertRaises(slob.IncorrectFileSize, slob.open, name)
+		self.assertRaises(slob.IncorrectFileSize, slob.Slob, name)
 
 
 class TestTooLongText(BaseTest):
@@ -685,7 +685,7 @@ class TestTooLongText(BaseTest):
 			[long_content_type],
 		)
 
-		with slob.open(self.path) as r:
+		with slob.Slob(self.path) as r:
 			self.assertEqual(r.tags["t2"], "t2 value")
 			self.assertNotIn(tag_with_long_name[0], r.tags)
 			self.assertIn(tag_with_long_value[0], r.tags)
@@ -718,12 +718,12 @@ class TestEditTag(BaseTest):
 		writer.finalize()
 
 	def test_edit_existing_tag(self):
-		with slob.open(self.path) as f:
+		with slob.Slob(self.path) as f:
 			self.assertEqual(f.tags["a"], "123456")
 			self.assertEqual(f.tags["b"], "654321")
 		set_tag_value(self.path, "b", "efg")
 		set_tag_value(self.path, "a", "xyz")
-		with slob.open(self.path) as f:
+		with slob.Slob(self.path) as f:
 			self.assertEqual(f.tags["a"], "xyz")
 			self.assertEqual(f.tags["b"], "efg")
 

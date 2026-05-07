@@ -60,7 +60,7 @@ class Reader:
 		from pyglossary import slob
 
 		self._filename = filename
-		self._slobObj = slob.open(filename)
+		self._slobObj = slob.Slob(filename)
 		tags = dict(self._slobObj.tags.items())
 
 		if t_label in tags:
