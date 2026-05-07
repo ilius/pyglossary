@@ -263,7 +263,7 @@ for p in plugins:
 		raise
 	else:
 		for toolName, tool in tools_toml.items():
-			tool.update({"name": toolName})
+			tool["name"] = toolName
 		tools = tools_toml.values()  # type: ignore[assignment]
 
 	table = [

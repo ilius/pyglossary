@@ -122,13 +122,12 @@ class Writer:
 			"created.at": created_at,
 		}
 		if version_info:
-			self._tags.update(
-				{
-					"version.python": sys.version.replace("\n", " "),
-					"version.pyicu": icu.VERSION,
-					"version.icu": icu.ICU_VERSION,
-				},
-			)
+			self._tags |= {
+				"version.python": sys.version.replace("\n", " "),
+				"version.pyicu": icu.VERSION,
+				"version.icu": icu.ICU_VERSION,
+			}
+
 		self.tags = MappingProxyType(self._tags)
 
 	def _wbfopen(self, name: str) -> StructWriter:

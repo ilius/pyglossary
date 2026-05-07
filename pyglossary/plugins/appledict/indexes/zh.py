@@ -60,7 +60,7 @@ def zh(titles: Sequence[str], content: str) -> set[str]:
 
 	for title in titles:
 		# feature: put dot at the end to match only this word
-		indexes.update({title, title + "。"})
+		indexes |= {title, title + "。"}
 
 		# remove all non hieroglyph
 		indexes.add(nonHieroglyphPattern.sub("", title))
