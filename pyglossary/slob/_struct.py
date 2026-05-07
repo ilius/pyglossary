@@ -20,6 +20,8 @@ from ._constants import (
 if TYPE_CHECKING:
 	from io import IOBase
 
+__all__ = ["StructReader", "read_byte_string"]
+
 
 def read_byte_string(f: IOBase, len_spec: str) -> bytes:
 	length = unpack(len_spec, f.read(calcsize(len_spec)))[0]

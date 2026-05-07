@@ -275,10 +275,11 @@ mccabe.max-complexity = 13
 "pyglossary/ui/tests/*.py" = [
 	"ANN",
 ]
-"*_test.py" = [
+"*test.py" = [
 	"ANN",
 	"T201",
 	"RUF001",  # String contains ambiguous ... (ARABIC LETTER ...). Did you mean `l` ...
+	"PLR6301", # Method `...` could be a function, class method, or static method
 	"PLR0904", # Too many public methods
 ]
 "test.py" = ["ANN", "T201"]
@@ -426,6 +427,7 @@ exclude = [
 	"pyglossary/ui/wcwidth/",
 	"build/",
 	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
+	"pyglossary/slob/__init__.py",
 ]
 exclude_toplevel_module = [
 	"BeautifulSoup",

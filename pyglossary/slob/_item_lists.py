@@ -19,7 +19,7 @@ from ._types import Ref
 if TYPE_CHECKING:
 	from io import IOBase
 
-__all__ = ["Bin", "BinMemWriter", "ItemList", "RefList", "Store", "StoreItem"]
+__all__ = ["BinMemWriter", "RefList", "Store"]
 
 
 class BinMemWriter:

@@ -14,3 +14,6 @@ for F in *_test.py; do
 	echo "$F"
 	python -m unittest "$F"
 done
+
+cd "$rootDirAbs/pyglossary"
+python -m unittest slob.test
