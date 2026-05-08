@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 from os.path import isfile
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import log
 
@@ -65,7 +65,7 @@ class _BaseSqList:
 	def __len__(self) -> int:
 		return self._len
 
-	def append(self, item: Sequence) -> None:
+	def append(self, item: Sequence[Any]) -> None:
 		if self._cur is None or self._con is None:
 			raise RuntimeError("db is closed")
 		self._len += 1

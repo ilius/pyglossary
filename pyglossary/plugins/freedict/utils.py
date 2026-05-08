@@ -39,7 +39,7 @@ class ReaderUtils:
 	def makeList(  # noqa: PLR0913
 		hf: T_htmlfile,
 		input_objects: list[Any],
-		processor: Callable,
+		processor: Callable[[T_htmlfile, Element], None],
 		single_prefix: str = "",
 		skip_single: bool = True,
 		ordered: bool = True,

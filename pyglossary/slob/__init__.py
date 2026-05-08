@@ -45,7 +45,7 @@ from ._exceptions import (
 )
 from ._multifile import MultiFileReader
 from ._slob_obj import Slob
-from ._writer import Writer
+from ._writer import Writer, WriterEvent
 
 __all__ = [
 	"COMPRESSIONS",
@@ -68,6 +68,7 @@ __all__ = [
 	"UnknownEncoding",
 	"UnknownFileFormat",
 	"Writer",
+	"WriterEvent",
 	"encodings",
 	"sortkey",
 ]

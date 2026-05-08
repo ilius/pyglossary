@@ -100,7 +100,7 @@ cssParamPattern = re.compile(
 )
 
 
-def _subCSS(m: re.Match) -> bytes:
+def _subCSS(m: re.Match[bytes]) -> bytes:
 	b_key = m.group(0)
 	value = cssMapping.get(b_key.decode("ascii"))
 	if value is None:

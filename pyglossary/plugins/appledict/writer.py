@@ -146,7 +146,7 @@ class Writer:
 	_clean_html: bool = True
 	_css: str = ""
 	_xsl: str = ""
-	_default_prefs: dict | None = None
+	_default_prefs: dict[str, Any] | None = None
 	_prefs_html: str = ""
 	_front_back_matter: str = ""
 	_jing: bool = False

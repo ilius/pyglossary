@@ -42,7 +42,7 @@ class QuickDic:
 		long_name: str,
 		iso: str,
 		normalizer_rules: str,
-		synonyms: dict | None = None,
+		synonyms: dict[str, str] | None = None,
 	) -> None:
 		swap_flag = False
 		comparator = Comparator(iso, normalizer_rules, self.version)

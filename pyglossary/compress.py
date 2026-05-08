@@ -24,7 +24,7 @@ __all__ = [
 ]
 
 
-def compressionOpenFunc(c: str) -> Callable | None:
+def compressionOpenFunc(c: str) -> Callable | None:  # type: ignore[type-arg]
 	if not c:
 		return open
 	if c == "gz":

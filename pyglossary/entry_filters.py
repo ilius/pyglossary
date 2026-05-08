@@ -278,7 +278,7 @@ class NormalizeHtml(EntryFilter):
 		)
 
 	@staticmethod
-	def _subLower(m: re.Match) -> str:
+	def _subLower(m: re.Match[str]) -> str:
 		return m.group(0).lower()
 
 	def _fixDefi(self, st: str) -> str:
@@ -410,7 +410,7 @@ class UnescapeTermLinks(EntryFilter):
 		)
 		self._unescape = unescape_unicode
 
-	def _sub(self, m: re.Match) -> str:
+	def _sub(self, m: re.Match[str]) -> str:
 		return self._unescape(m.group(0))
 
 	def run(self, entry: EntryType) -> EntryType | None:

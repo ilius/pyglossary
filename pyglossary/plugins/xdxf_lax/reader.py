@@ -229,7 +229,7 @@ class Reader:
 	def _mktitle(  # noqa: PLR6301
 		self,
 		title_element: Element,
-		include_opts: Sequence | None = None,
+		include_opts: Sequence[int] | None = None,
 	) -> str:
 		if include_opts is None:
 			include_opts = ()

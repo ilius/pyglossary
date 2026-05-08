@@ -52,7 +52,7 @@ log.addHandler(mockLog)
 class StructReaderWriter(StructWriter):
 	def __init__(
 		self,
-		file: io.BufferedWriter,
+		file: io.BufferedRandom,
 		reader: StructReader,
 		encoding: str | None = None,
 	) -> None:
@@ -112,7 +112,10 @@ class BaseTest(unittest.TestCase):
 		self.tmpdir.cleanup()
 
 	def _observer(self, event: WriterEvent):
-		log.info(f"slob: {event.name}{': ' + event.data if event.data else ''}")
+		if event.data:
+			log.info(f"slob: {event.name}: {event.data}")
+		else:
+			log.info(f"slob: {event.name}")
 
 	def create(self, *args, observer=None, **kwargs):
 		if observer is None:

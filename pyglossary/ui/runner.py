@@ -24,37 +24,37 @@ if os.sep == "\\" or sysName == "darwin":  # windows or mac
 log: logging.Logger | None = None
 
 
-def load_ui_gtk3() -> Callable:
+def load_ui_gtk3() -> Callable:  # type: ignore[type-arg]
 	from pyglossary.ui.ui_gtk3 import UI
 
 	return UI
 
 
-def load_ui_gtk4() -> Callable:
+def load_ui_gtk4() -> Callable:  # type: ignore[type-arg]
 	from pyglossary.ui.ui_gtk4 import UI
 
 	return UI
 
 
-def load_ui_tk() -> Callable:
+def load_ui_tk() -> Callable:  # type: ignore[type-arg]
 	from pyglossary.ui.ui_tk import UI
 
 	return UI
 
 
-def load_ui_tk_wizard() -> Callable:
+def load_ui_tk_wizard() -> Callable:  # type: ignore[type-arg]
 	from pyglossary.ui.ui_tk_wizard import UI
 
 	return UI
 
 
-def load_ui_web() -> Callable:
+def load_ui_web() -> Callable:  # type: ignore[type-arg]
 	from pyglossary.ui.ui_web import UI
 
 	return UI
 
 
-ui_loaders: dict[str, Callable] = {
+ui_loaders: dict[str, Callable] = {  # type: ignore[type-arg]
 	"gtk3": load_ui_gtk3,
 	"gtk4": load_ui_gtk4,
 	"tk": load_ui_tk,
@@ -141,7 +141,7 @@ def getRunner(
 	args: argparse.Namespace,
 	ui_type: str,
 	logArg: logging.Logger,
-) -> Callable | None:
+) -> Callable | None:  # type: ignore[type-arg]
 	global log
 	log = logArg
 

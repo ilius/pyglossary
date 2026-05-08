@@ -91,7 +91,7 @@ class StructReader:
 class StructWriter:
 	def __init__(
 		self,
-		file: io.BufferedWriter,
+		file: io.BufferedRandom | io.BufferedWriter,
 		encoding: str | None = None,
 	) -> None:
 		self._file = file

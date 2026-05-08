@@ -14,7 +14,7 @@ __all__ = ["Writer"]
 
 class Writer:
 	_encoding: str = "utf-8"
-	_info_keys: list | None = None
+	_info_keys: list[str] | None = None
 	_add_extra_info: bool = True
 	_newline: str = "<br>"
 	_transaction: bool = False

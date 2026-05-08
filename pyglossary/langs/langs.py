@@ -61,7 +61,7 @@ class Lang:
 		return self._rtl
 
 
-class LangDict(dict):
+class LangDict(dict[str, Lang | None]):
 	def _addLang(self, lang: Lang) -> None:
 		for key in lang.codes:
 			if key in self:

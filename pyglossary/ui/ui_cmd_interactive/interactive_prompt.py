@@ -284,6 +284,7 @@ class InteractivePrompt:
 
 		Extra ``kwargs`` are forwarded to ``prompt_toolkit``.
 		"""
+		msg2: str | ANSI
 		msg2, colored = self.formatPromptMsg(level, msg, colon)
 		if colored:
 			msg2 = ANSI(msg2)

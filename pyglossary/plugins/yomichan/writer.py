@@ -50,7 +50,7 @@ def _uniqueList(lst: Sequence[str]) -> list[str]:
 	return result
 
 
-def _compilePat(pattern: str) -> re.Pattern | None:
+def _compilePat(pattern: str) -> re.Pattern[str] | None:
 	if not pattern:
 		return None
 	return re.compile(pattern)

@@ -551,7 +551,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		return self._tmpDataDir
 
 	@property
-	def readOptions(self) -> dict | None:
+	def readOptions(self) -> dict[str, Any] | None:
 		return self._readOptions
 
 	@property

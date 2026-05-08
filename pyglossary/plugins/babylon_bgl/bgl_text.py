@@ -49,10 +49,10 @@ u_pat_strip_tags = re.compile("(?:<[/a-zA-Z].*?(?:>|$))+")
 u_pat_control_chars = re.compile("[\x00-\x08\x0c\x0e-\x1f]")
 u_pat_newline = re.compile("[\r\n]+")
 
-unknownHtmlEntries = set()
+unknownHtmlEntries: set[str] = set()
 
 
-def replaceHtmlEntryNoEscapeCB(u_match: re.Match) -> str:
+def replaceHtmlEntryNoEscapeCB(u_match: re.Match[str]) -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	Replace character entity with the corresponding character.
@@ -98,7 +98,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: re.Match) -> str:
 	raise ValueError(f"{u_text[0] =}")
 
 
-def replaceHtmlEntryCB(u_match: re.Match) -> str:
+def replaceHtmlEntryCB(u_match: re.Match[str]) -> str:
 	"""
 	u_match: instance of _sre.SRE_Match
 	Same as replaceHtmlEntryNoEscapeCB, but escapes result string.

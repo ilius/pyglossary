@@ -54,7 +54,7 @@ def registerConfigOption(
 
 	parser.add_argument(
 		dest=key,
-		action=StoreConstAction(
+		action=StoreConstAction(  # type: ignore[arg-type]
 			f"--{flag}",
 			same_dest=f"--no-{flag}",
 			const_value=True,
@@ -65,7 +65,7 @@ def registerConfigOption(
 	)
 	parser.add_argument(
 		dest=key,
-		action=StoreConstAction(
+		action=StoreConstAction(  # type: ignore[arg-type]
 			f"--no-{flag}",
 			same_dest=f"--{flag}",
 			const_value=False,

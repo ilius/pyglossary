@@ -144,7 +144,7 @@ def runDictzip(filename: str | Path, method: str = "") -> None:
 
 
 def _rmtreeError(
-	_func: Callable,
+	_func: Callable,  # type: ignore[type-arg]
 	_direc: str,
 	exc_info: tuple[type[BaseException], BaseException, TracebackType],
 ) -> None:
@@ -155,7 +155,7 @@ def _rmtreeError(
 
 
 def _rmtreeException(
-	_func: Callable,
+	_func: Callable,  # type: ignore[type-arg]
 	_direc: str,
 	exc_val: BaseException,
 ) -> None:

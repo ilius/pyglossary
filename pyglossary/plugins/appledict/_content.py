@@ -242,7 +242,7 @@ def _cleanup_link_target(href: str) -> str:
 	return href.removeprefix("bword://")
 
 
-def _href_sub(x: re.Match) -> str:
+def _href_sub(x: re.Match[str]) -> str:
 	href = x.groups()[1]
 	if href.startswith("http"):
 		return x.group()
@@ -258,11 +258,11 @@ def _href_sub(x: re.Match) -> str:
 	)
 
 
-def _is_green(x: dict) -> bool:
+def _is_green(x: dict[str, Any]) -> bool:
 	return "color:green" in x.get("style", "")
 
 
-def _remove_style(tag: dict, line: str) -> None:
+def _remove_style(tag: dict[str, Any], line: str) -> None:
 	s = "".join(tag["style"].replace(line, "").split(";"))
 	if s:
 		tag["style"] = s

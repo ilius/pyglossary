@@ -49,7 +49,7 @@ class Reader:
 	def makeList(
 		hf: T_htmlfile,
 		input_elements: list[Element],
-		processor: Callable,
+		processor: Callable[[T_htmlfile, Element], None],
 		single_prefix: str = "",
 		skip_single: bool = True,
 	) -> None:

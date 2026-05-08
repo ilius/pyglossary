@@ -50,7 +50,7 @@ htmlEntityPattern = re.compile(r"&#?\w+;")
 
 
 def _unescape(text: str) -> str:
-	def fixup(m: re.Match) -> str:
+	def fixup(m: re.Match[str]) -> str:
 		text = m.group(0)
 		if text[:2] == "&#":
 			# character reference
