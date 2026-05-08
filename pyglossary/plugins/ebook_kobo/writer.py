@@ -214,7 +214,7 @@ class Writer:
 
 	def open(self, filename: str) -> None:
 		try:
-			import marisa_trie  # type: ignore # noqa: F401
+			import marisa_trie  # noqa: F401
 		except ModuleNotFoundError as e:
 			exc_note(e, f"Run `{pip} install marisa-trie` to install")
 			raise

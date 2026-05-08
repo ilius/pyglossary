@@ -53,7 +53,7 @@ class Reader:
 	# TODO: PLR0912 Too many branches (13 > 12)
 	def open(self, filename: str) -> None:  # noqa: PLR0912
 		try:
-			import icu  # type: ignore # noqa: F401
+			import icu  # noqa: F401
 		except ModuleNotFoundError as e:
 			exc_note(e, f"Run `{pip} install pyicu` to install")
 			raise

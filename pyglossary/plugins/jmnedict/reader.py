@@ -284,7 +284,7 @@ class Reader:
 	def __iter__(self) -> Iterator[EntryType]:
 		from lxml import etree as ET
 
-		context = ET.iterparse(  # type: ignore # noqa: PGH003
+		context = ET.iterparse(  # noqa: PGH003
 			self._file,
 			events=("end",),
 			tag="entry",

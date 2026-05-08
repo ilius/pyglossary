@@ -145,7 +145,7 @@ class XdxfTransformer:
 			"div",
 			attrib={"class": elem.tag},
 		):
-			for child in elem.xpath("child::node()"):  # type: ignore[union-attr]
+			for child in elem.xpath("child::node()"):
 				if isinstance(child, str):
 					# if not child.strip():
 					# 	continue
@@ -164,7 +164,7 @@ class XdxfTransformer:
 						self.writeChildrenOf(hf, child, stringSep=stringSep)
 					continue
 				if child.tag == "ex_tran":
-					ex_tran_list: list[Element] = elem.xpath("./ex_tran")  # type: ignore[assignment]
+					ex_tran_list: list[Element] = elem.xpath("./ex_tran")
 					# assert isinstance(ex_tran_list, list)
 					if ex_tran_list.index(child) == 0:
 						# when several translations, make HTML unordered list of them
@@ -360,7 +360,7 @@ class XdxfTransformer:
 			hf.write(")")
 
 	def _write_img(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
-		with hf.element("img", attrib=dict(child.attrib)):  # type: ignore[arg-type]
+		with hf.element("img", attrib=dict(child.attrib)):
 			pass
 
 	def _write_etm(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
@@ -438,10 +438,10 @@ class XdxfTransformer:
 		stringSep: str | None = None,
 	) -> None:
 		prev = None
-		for child in elem.xpath("child::node()"):  # type: ignore[union-attr]
-			if sep and prev is not None and self.shouldAddSep(child, prev):  # type: ignore[arg-type]
+		for child in elem.xpath("child::node()"):
+			if sep and prev is not None and self.shouldAddSep(child, prev):
 				hf.write(sep)
-			self.writeChild(hf, child, elem, prev, stringSep=stringSep)  # type: ignore[arg-type]
+			self.writeChild(hf, child, elem, prev, stringSep=stringSep)
 			prev = child
 
 	@staticmethod
@@ -456,7 +456,7 @@ class XdxfTransformer:
 				(elem.text,),
 				chain.from_iterable(
 					(tostring(child, with_tail=False), child.tail)
-					for child in elem.getchildren()  # type: ignore[attr-defined]
+					for child in elem.getchildren()
 				),
 				(elem.tail,),
 			)

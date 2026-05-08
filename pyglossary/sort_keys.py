@@ -203,7 +203,7 @@ def lookupSortKey(sortKeyId: str) -> NamedSortKey | None:
 			sqlite=localeSK.sqlite,
 		)
 
-	from icu import Collator, Locale  # type: ignore
+	from icu import Collator, Locale
 
 	localeObj: T_Locale = Locale(localeName)
 	localeNameFull = localeObj.getName()

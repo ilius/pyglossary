@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from lxml.html import (  # type: ignore
+	from lxml.html import (
 		HtmlComment,
 		HtmlElement,
 		HtmlEntity,
@@ -142,7 +142,7 @@ class Reader:
 			exc_note(e, f"Run `{pip} install lxml` to install")
 			raise
 		try:
-			import biplist  # type: ignore # noqa: F401
+			import biplist  # noqa: F401
 		except ModuleNotFoundError as e:
 			exc_note(e, f"Run `{pip} install biplist` to install")
 			raise

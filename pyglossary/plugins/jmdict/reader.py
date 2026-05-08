@@ -241,7 +241,7 @@ class Reader:
 					kebList.append(keb_text)
 					keb_display = keb_text
 					if translit:
-						import romkan  # type: ignore
+						import romkan
 
 						t_keb = romkan.to_roma(keb_text)
 						if t_keb and t_keb.isascii():
@@ -403,7 +403,7 @@ class Reader:
 	def __iter__(self) -> Iterator[EntryType]:
 		from lxml import etree as ET
 
-		context = ET.iterparse(  # type: ignore # noqa: PGH003
+		context = ET.iterparse(  # noqa: PGH003
 			self._file,
 			events=("end",),
 			tag="entry",

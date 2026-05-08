@@ -23,7 +23,7 @@ class T_Collator(typing.Protocol):
 	# mypy: error: Self argument missing for a non-static method
 	# (or an invalid type for self)  [misc]
 	@classmethod
-	def createInstance(cls: T_Locale) -> T_Collator: ...  # type: ignore
+	def createInstance(cls: T_Locale) -> T_Collator: ...
 
 	@property
 	def getSortKey(self) -> Callable[[AnyStr], bytes]: ...

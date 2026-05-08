@@ -105,7 +105,7 @@ class Reader:
 			),
 		)
 
-		context = ET.iterparse(  # type: ignore
+		context = ET.iterparse(
 			cfile,
 			events=("end",),
 		)
@@ -155,7 +155,7 @@ class Reader:
 		return 0
 
 	def __iter__(self) -> Iterator[EntryType]:
-		context = ET.iterparse(  # type: ignore
+		context = ET.iterparse(
 			self._file,
 			events=("end",),
 			tag="ar",

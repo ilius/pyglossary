@@ -11,7 +11,7 @@ from pyglossary.core import cacheDir, exc_note, log, pip
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from libzim.reader import Archive  # type: ignore
+	from libzim.reader import Archive
 
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
@@ -85,7 +85,7 @@ class Reader:
 		windows = os.sep == "\\"
 
 		try:
-			f_namemax = os.statvfs(cacheDir).f_namemax  # type: ignore
+			f_namemax = os.statvfs(cacheDir).f_namemax
 		except AttributeError:
 			log.warning("Unsupported operating system (no os.statvfs)")
 			# Windows: CreateFileA has a limit of 260 characters.

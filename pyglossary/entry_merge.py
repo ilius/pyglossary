@@ -23,7 +23,7 @@ def xdxf_transform(text: str) -> str:
 		# 	return
 		_xdxfTr = XdxfTransformer(encoding="utf-8")
 
-	return _xdxfTr.transformByInnerString(text)  # type: ignore
+	return _xdxfTr.transformByInnerString(text)
 
 
 def getHtmlDefi(entry: EntryType) -> str:

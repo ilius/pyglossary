@@ -273,11 +273,11 @@ class PluginHandler:
 		if not filename:
 			# FIXME: not covered in tests
 			if not inputFilename:
-				raise Error(f"Invalid filename {filename!r}")  # type: ignore
+				raise Error(f"Invalid filename {filename!r}")
 			if not plugin:
 				raise Error(
 					"No filename nor format is given for output file",
-				)  # type: ignore
+				)
 			filename = splitext(inputFilename)[0] + plugin.ext
 			return DetectedFormat(filename, plugin.name, "")
 
@@ -290,12 +290,12 @@ class PluginHandler:
 				plugin = cls._findPlugin(filename)
 
 		if not plugin:
-			raise Error("Unable to detect output format!")  # type: ignore
+			raise Error("Unable to detect output format!")
 
 		if not plugin.canWrite:
 			raise Error(
 				f"plugin {plugin.name} does not support writing",
-			)  # type: ignore
+			)
 
 		if compression in getattr(plugin.writerClass, "compressions", []):
 			compression = ""

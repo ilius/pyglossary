@@ -338,7 +338,7 @@ class XdxfTransformer:
 	def _write_img(self, hf: T_htmlfile, child: Element) -> None:  # noqa: PLR6301
 		with hf.element(
 			"img",
-			attrib=dict(child.attrib),  # type: ignore[arg-type]
+			attrib=dict(child.attrib),
 		):
 			pass
 

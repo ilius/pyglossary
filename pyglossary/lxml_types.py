@@ -127,7 +127,7 @@ class IncrementalFileWriter(typing.Protocol):
 # 	) -> AsyncContextManager[None]: ...
 
 
-class T_htmlfile(  # type: ignore # noqa: PGH003
+class T_htmlfile(  # noqa: PGH003
 	IncrementalFileWriter,
 	ContextManager[IncrementalFileWriter],
 	# AsyncIncrementalFileWriter,

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 	from collections.abc import Sequence
 
 try:
-	import pymorphy3  # type: ignore
+	import pymorphy3
 except ImportError:
 	log.error(
 		f"""module pymorphy3 is required to build extended Russian indexes.

@@ -31,7 +31,7 @@ class StoreConstAction(argparse.Action):
 
 	# if you want to follow mypy about the signature of this function,
 	# it will break runtime. Do not touch the signature
-	def __call__(  # type: ignore[return, override]
+	def __call__(
 		self,
 		*_args: Any,  # DO NOT REMOVE
 		parser: ArgumentParser | None = None,

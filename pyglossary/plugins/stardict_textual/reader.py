@@ -79,13 +79,13 @@ class Reader:
 		else:
 			log.warning("StarDict Textual File Reader: file is not seekable")
 
-		context = ET.iterparse(  # type: ignore # noqa: PGH003
+		context = ET.iterparse(  # noqa: PGH003
 			cfile,
 			events=("end",),
 			tag="info",
 		)
 		for _, elem in context:
-			self.setMetadata(elem)  # type: ignore
+			self.setMetadata(elem)
 			break
 
 		cfile.close()
@@ -158,7 +158,7 @@ class Reader:
 		glos = self._glos
 		fileSize = self._fileSize
 		self._file = file = compressionOpen(self._filename, mode="rb")
-		context = ET.iterparse(  # type: ignore # noqa: PGH003
+		context = ET.iterparse(  # noqa: PGH003
 			self._file,
 			events=("end",),
 			tag="article",

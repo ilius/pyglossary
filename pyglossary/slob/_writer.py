@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 from uuid import uuid4
 
-import icu  # type: ignore
+import icu
 
 from ._blob import Blob
 from ._collate import IDENTICAL, sortkey
