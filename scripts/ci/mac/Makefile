@@ -1,4 +1,4 @@
-.PHONY: all
+.PHONY: all uv venv deps-brew deps-python patch nuitka-build copy-assets dmg
 
 APPNAME ?= PyGlossaryTk
 DIST_DIR ?= dist-nuitka
@@ -9,7 +9,7 @@ OS := macos-$(ARCH)-$(MACOS_VERSION)
 VERSION := $(shell git describe --abbrev=1)
 VERSION_WITH_HASH := $(shell git describe)
 
-export APPNAME DIST_DIR MAIN_SCRIPT
+export APPNAME DIST_DIR MAIN_SCRIPT VERSION VERSION_WITH_HASH OS
 
 all: uv venv deps-brew deps-python patch nuitka-build copy-assets dmg
 
@@ -20,7 +20,7 @@ venv:
 	cd ../../.. && test -d .venv || uv venv
 
 deps-brew:
-	brew install libffi gettext cmake ccache pkg-config icu4c lzo
+	brew install python python-tk libffi gettext cmake ccache pkg-config icu4c lzo
 
 deps-python:
 	cd ../../.. && source .venv/bin/activate && $(CURDIR)/prepare-deps.sh
@@ -35,4 +35,4 @@ copy-assets:
 	cd ../../.. && python3 $(CURDIR)/copy_assets.py
 
 dmg:
-	cd ../../.. &&  $(CURDIR)/make-dmg.sh $(APPNAME) $(DIST_DIR) $(OS) $(VERSION) $(VERSION_WITH_HASH)
+	cd ../../.. && $(CURDIR)/make-dmg.sh $(OS)
