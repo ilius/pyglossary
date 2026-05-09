@@ -1856,6 +1856,28 @@
 		"enable": false
 	},
 	{
+		"module": "tmx_plugin",
+		"lname": "tmx",
+		"name": "TMX",
+		"description": "TMX (.tmx)",
+		"extensions": [
+			".tmx"
+		],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "wiktextract",
 		"lname": "wiktextract",
 		"name": "Wiktextract",
@@ -2062,6 +2084,29 @@
 			"html": true,
 			"xsl": true
 		},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
+		"module": "xliff_plugin",
+		"lname": "xliff",
+		"name": "XLIFF",
+		"description": "XLIFF (.xlf, .xliff)",
+		"extensions": [
+			".xlf",
+			".xliff"
+		],
+		"singleFile": true,
+		"optionsProp": {},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {},
 		"readDepends": {
 			"lxml": "lxml"
 		},

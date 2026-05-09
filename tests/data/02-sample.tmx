@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tmx version="1.4">
+  <header
+    creationtool="SampleTool"
+    creationtoolversion="1.0"
+    segtype="sentence"
+    adminlang="en-us"
+    srclang="en"
+    datatype="PlainText"/>
+  
+  <body>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Hello</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Hola</seg>
+      </tuv>
+    </tu>
+
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Goodbye</seg>
+      </tuv>
+      <tuv xml:lang="fr">
+        <seg>Adiós</seg>
+      </tuv>
+    </tu>
+  </body>
+</tmx>

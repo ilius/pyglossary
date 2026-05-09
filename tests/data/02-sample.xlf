@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2">
+  <file source-language="en" target-language="fr" datatype="plaintext" original="sample.txt">
+    
+    <body>
+      <trans-unit id="1">
+        <source>Hello</source>
+        <target>Hola</target>
+      </trans-unit>
+
+      <trans-unit id="2">
+        <source>Goodbye</source>
+        <target>Adiós</target>
+      </trans-unit>
+    </body>
+
+  </file>
+</xliff>

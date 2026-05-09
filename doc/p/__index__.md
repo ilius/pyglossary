@@ -42,11 +42,13 @@
 | StarDict (Merge Syns) | StardictMergeSyns | [stardict_merge_syns.md](./stardict_merge_syns.md) |
 | StarDict Textual File (.xml) | StardictTextual | [stardict_textual.md](./stardict_textual.md) |
 | Tabfile (.txt, .dic) | Tabfile | [tabfile.md](./tabfile.md) |
+| TMX (.tmx) | TMX | [tmx.md](./tmx.md) |
 | Wiktextract (.jsonl) | Wiktextract | [wiktextract.md](./wiktextract.md) |
 | WordNet | Wordnet | [wordnet.md](./wordnet.md) |
 | Wordset.org JSON directory | Wordset | [wordset.md](./wordset.md) |
 | XDXF (.xdxf) | Xdxf | [xdxf.md](./xdxf.md) |
 | XDXF with CSS and JS | XdxfCss | [xdxf_css.md](./xdxf_css.md) |
 | XDXF Lax (.xdxf) | XdxfLax | [xdxf_lax.md](./xdxf_lax.md) |
+| XLIFF (.xlf, .xliff) | XLIFF | [xliff.md](./xliff.md) |
 | Yomichan (.zip) | Yomichan | [yomichan.md](./yomichan.md) |
 | Zim (.zim, for Kiwix) | Zim | [zim.md](./zim.md) |
