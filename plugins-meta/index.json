@@ -340,7 +340,7 @@
 			}
 		},
 		"canRead": true,
-		"canWrite": false,
+		"canWrite": true,
 		"readOptions": {
 			"default_encoding_overwrite": "",
 			"source_encoding_overwrite": "",
@@ -350,7 +350,8 @@
 			"strict_string_conversion": false,
 			"process_html_in_key": true,
 			"key_rstrip_chars": ""
-		}
+		},
+		"writeOptions": {}
 	},
 	{
 		"module": "cc_kedict",

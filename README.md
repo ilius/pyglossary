@@ -54,7 +54,7 @@ Web interface
 | [Aard 2 (slob)](./doc/p/aard2_slob.md)                  | 🔢  |      .slob      | ✅ | ✅ |
 | [AppleDict Binary](./doc/p/appledict_bin.md)            | 📁  |   .dictionary   | ✅ | ❌ |
 | [AppleDict Source](./doc/p/appledict.md)                | 📁  |                 |    | ✅ |
-| [Babylon BGL](./doc/p/babylon_bgl.md)                   | 🔢  |      .bgl       | ✅ | ❌ |
+| [Babylon BGL](./doc/p/babylon_bgl.md)                   | 🔢  |      .bgl       | ✅ | ✅ |
 | [CSV](./doc/p/csv.md)                                   | 📝  |      .csv       | ✅ | ✅ |
 | [DICT.org / Dictd server](./doc/p/dict_org.md)          | 📁  |    (📝.index)   | ✅ | ✅ |
 | [DICT.org / dictfmt source](./doc/p/dict_org_source.md) | 📝  |     (.dtxt)     |    | ✅ |
