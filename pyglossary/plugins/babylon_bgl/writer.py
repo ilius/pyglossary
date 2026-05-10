@@ -43,10 +43,12 @@ def _pack_type3(code: int, value: bytes) -> bytes:
 
 
 def _pack_entry_type1(b_word: bytes, b_defi: bytes, b_alts: list[bytes]) -> bytes:
-	if len(b_word) > 255 or any(len(a) > 255 for a in b_alts):
-		return _pack_entry_type11(b_word, b_defi, b_alts)
-	parts = [bytes([len(b_word)]), b_word]
-	parts += (len(b_defi).to_bytes(2, "big"), b_defi)
+	parts = [
+		bytes([len(b_word)]),
+		b_word,
+		len(b_defi).to_bytes(2, "big"),
+		b_defi,
+	]
 	for b_alt in b_alts:
 		parts += (bytes([len(b_alt)]), b_alt)
 	return b"".join(parts)
@@ -110,8 +112,10 @@ def _build_payload(
 		b_word = terms[0].encode("utf-8")
 		b_defi = entry.defi.encode("utf-8")
 		b_alts = [t.encode("utf-8") for t in terms[1:]]
-		entry_payload = _pack_entry_type1(b_word, b_defi, b_alts)
-		chunks.append(_pack_block(1, entry_payload))
+		if len(b_word) > 255 or any(len(a) > 255 for a in b_alts) or len(b_defi) > 65535:
+			chunks.append(_pack_block(11, _pack_entry_type11(b_word, b_defi, b_alts)))
+		else:
+			chunks.append(_pack_block(1, _pack_entry_type1(b_word, b_defi, b_alts)))
 
 	for entry in data_entries:
 		fname = entry.getFileName()
