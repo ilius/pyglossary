@@ -69,7 +69,7 @@ def _pack_type2(filename: str, data: bytes) -> bytes:
 	return bytes([len(b_name)]) + b_name + data
 
 
-def add_t3(gz: gzip.GzipFile, code: int, value: bytes) -> None:
+def writeBlockType3(gz: gzip.GzipFile, code: int, value: bytes) -> None:
 	gz.write(_pack_block(3, _pack_type3(code, value)))
 
 
@@ -80,25 +80,25 @@ def writeHeader(
 	gz.write(_pack_block(0, b"\x08\x42"))
 
 	title = (glos.getInfo("name") or "Glossary").strip() or "Glossary"
-	add_t3(gz, 0x01, title.encode("utf-8"))
+	writeBlockType3(gz, 0x01, title.encode("utf-8"))
 
-	add_t3(gz, 0x11, (0x8000).to_bytes(4, "big"))
+	writeBlockType3(gz, 0x11, (0x8000).to_bytes(4, "big"))
 
-	add_t3(gz, 0x07, b"\x00\x00\x00\x00")
-	add_t3(gz, 0x08, b"\x00\x00\x00\x00")
+	writeBlockType3(gz, 0x07, b"\x00\x00\x00\x00")
+	writeBlockType3(gz, 0x08, b"\x00\x00\x00\x00")
 
-	add_t3(gz, 0x1A, bytes([0x42]))
-	add_t3(gz, 0x1B, bytes([0x42]))
+	writeBlockType3(gz, 0x1A, bytes([0x42]))
+	writeBlockType3(gz, 0x1B, bytes([0x42]))
 
 	if glos.getInfo("author"):
-		add_t3(gz, 0x02, glos.getInfo("author").encode("utf-8"))
+		writeBlockType3(gz, 0x02, glos.getInfo("author").encode("utf-8"))
 	if glos.getInfo("email"):
-		add_t3(gz, 0x03, glos.getInfo("email").encode("utf-8"))
+		writeBlockType3(gz, 0x03, glos.getInfo("email").encode("utf-8"))
 	if glos.getInfo("copyright"):
-		add_t3(gz, 0x04, glos.getInfo("copyright").encode("utf-8"))
+		writeBlockType3(gz, 0x04, glos.getInfo("copyright").encode("utf-8"))
 	desc = glos.getInfo("description")
 	if desc:
-		add_t3(gz, 0x09, desc.encode("utf-8"))
+		writeBlockType3(gz, 0x09, desc.encode("utf-8"))
 
 
 def writePayload(
@@ -107,7 +107,7 @@ def writePayload(
 	data_entries: list[EntryType],
 ) -> None:
 
-	add_t3(gz, 0x0C, len(word_entries).to_bytes(4, "big"))
+	writeBlockType3(gz, 0x0C, len(word_entries).to_bytes(4, "big"))
 
 	for entry in word_entries:
 		terms = entry.l_term
@@ -125,9 +125,11 @@ def writePayload(
 		gz.write(_pack_block(2, _pack_type2(entry.getFileName(), entry.data)))
 
 
+GZIP_OFFSET = 64
+
+
 class Writer:
 	compressions = stdCompressions
-	_gzip_offset: int = 64
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
@@ -140,29 +142,24 @@ class Writer:
 		self._filename = ""
 
 	def write(self) -> Generator[None, EntryType | None, None]:
-		word_entries: list[EntryType] = []
-		data_entries: list[EntryType] = []
+		wordEntries: list[EntryType] = []
+		dataEntries: list[EntryType] = []
 		while True:
 			entry = yield
 			if entry is None:
 				break
 			if entry.isData():
-				data_entries.append(entry)
+				dataEntries.append(entry)
 				continue
-			terms = entry.l_term
-			if not terms or not str(terms[0]).strip():
-				continue
-			word_entries.append(entry)
+			wordEntries.append(entry)
 
-		gzip_offset = self._gzip_offset
-		if gzip_offset < 6:
-			raise ValueError("gzip_offset must be at least 6")
+		gzipOffset = GZIP_OFFSET
 		glos = self._glos
 
 		with open(self._filename, "wb") as out:
 			out.write(b"\x12\x34\x00\x01")
-			out.write(gzip_offset.to_bytes(2, "big"))
-			padding_len = gzip_offset - 6
+			out.write(gzipOffset.to_bytes(2, "big"))
+			padding_len = gzipOffset - 6
 			if padding_len:
 				out.write(b"\x00" * padding_len)
 
@@ -170,6 +167,6 @@ class Writer:
 				writeHeader(gz, glos)
 				writePayload(
 					gz,
-					word_entries,
-					data_entries,
+					wordEntries,
+					dataEntries,
 				)
