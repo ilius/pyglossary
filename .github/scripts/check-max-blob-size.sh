@@ -48,6 +48,6 @@ while IFS= read -r path || [[ -n "${path}" ]]; do
 		printf 'Blob too large (%d bytes > %d): %s at %s\n' "${size}" "${MAX_BYTES}" "${path}" "${HEAD_SHA}" >&2
 		fail=1
 	fi
-done < <(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" 2>/dev/null || true)
+done < <(GIT_PAGER= git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" 2>/dev/null || true)
 
 exit "${fail}"
