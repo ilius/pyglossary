@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import logging
 import os
+import subprocess
 import tkinter as tk
 from os.path import isfile, join, splitext
 from pathlib import Path
@@ -355,14 +356,199 @@ class UI(tk.Frame, UIBase):
 			self.fcd_dir = os.path.dirname(path)
 			self.save_fcd_dir()
 
-	def browseOutputConvert(self) -> None:
-		path = filedialog.asksaveasfilename()
-		if path:
-			self.entryOutputConvert.delete(0, "end")
-			self.entryOutputConvert.insert(0, path)
-			self.outputEntryChanged()
-			self.fcd_dir = os.path.dirname(path)
-			self.save_fcd_dir()
+	def _default_output_dir_for_output_step(self) -> str:
+		inp = self.entryInputConvert.get().strip()
+		if inp:
+			return os.path.normpath(os.path.dirname(os.path.abspath(inp)))
+		if self.fcd_dir:
+			return os.path.normpath(os.path.abspath(self.fcd_dir))
+		return os.path.normpath(os.path.abspath(homeDir))
+
+	def _xdg_user_dir(self, xdg_kind: str) -> str | None:
+		"""Resolve e.g. DOWNLOAD / DOCUMENTS via xdg-user-dir (Linux/FreeBSD)."""
+		if sysName not in {"linux", "freebsd"}:
+			return None
+		try:
+			completed = subprocess.run(
+				["xdg-user-dir", xdg_kind],
+				capture_output=True,
+				text=True,
+				check=False,
+				timeout=3,
+			)
+		except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+			return None
+		path = (completed.stdout or "").strip()
+		if not path or os.path.normpath(path) == os.path.normpath(homeDir):
+			return None
+		return os.path.normpath(os.path.abspath(path))
+
+	def _downloads_dir(self) -> str:
+		if sysName in {"linux", "freebsd"}:
+			xdg = self._xdg_user_dir("DOWNLOAD")
+			if xdg:
+				return xdg
+		return os.path.normpath(os.path.abspath(join(homeDir, "Downloads")))
+
+	def _documents_dir(self) -> str:
+		if sysName in {"linux", "freebsd"}:
+			xdg = self._xdg_user_dir("DOCUMENTS")
+			if xdg:
+				return xdg
+		return os.path.normpath(os.path.abspath(join(homeDir, "Documents")))
+
+	def _norm_abs_path(self, path: str) -> str:
+		return os.path.normpath(os.path.abspath(path))
+
+	def _output_dir_menu_label(self, abs_path: str) -> str:
+		"""Shorter label: basename on Windows; ~/… under home elsewhere."""
+		path = self._norm_abs_path(abs_path)
+		if sysName == "windows":
+			stripped = path.rstrip("\\/")
+			name = os.path.basename(stripped)
+			return name or path
+		home = self._norm_abs_path(homeDir)
+		if path == home:
+			return "~"
+		try:
+			rel = os.path.relpath(path, home)
+		except ValueError:
+			return path
+		if rel.startswith(".."):
+			return path
+		if rel == ".":
+			return "~"
+		return "~/" + rel.replace(os.sep, "/")
+
+	def _output_dir_abs_from_menu_label(self, label: str) -> str:
+		"""Map menu label back to an absolute directory path."""
+		label = label.strip()
+		if not label:
+			return ""
+		mapping = getattr(self, "_output_dir_label_to_abs", None)
+		if mapping is not None and label in mapping:
+			return self._norm_abs_path(mapping[label])
+		if label == "~":
+			return self._norm_abs_path(homeDir)
+		if label.startswith("~/"):
+			rest = label[2:].replace("/", os.sep)
+			return self._norm_abs_path(join(homeDir, rest))
+		return self._norm_abs_path(label)
+
+	def _menu_labels_for_abs_dirs(self, choices_abs: list[str]) -> list[str]:
+		"""
+		Build unique menu labels
+		Fall back to full path if short label would clash).
+		"""
+		seen: set[str] = set()
+		labels: list[str] = []
+		for p in choices_abs:
+			lbl = self._output_dir_menu_label(p)
+			if lbl in seen:
+				lbl = self._norm_abs_path(p)
+			seen.add(lbl)
+			labels.append(lbl)
+		return labels
+
+	def _build_output_dir_choices(self) -> list[str]:
+		seen: set[str] = set()
+		out: list[str] = []
+		for cand in (
+			self._default_output_dir_for_output_step(),
+			self.fcd_dir,
+			homeDir,
+			join(homeDir, "Desktop"),
+			self._downloads_dir(),
+			self._documents_dir(),
+			os.getcwd(),
+		):
+			if not cand:
+				continue
+			norm = os.path.normpath(os.path.abspath(cand))
+			if norm not in seen:
+				seen.add(norm)
+				out.append(norm)
+		return out
+
+	def _mount_output_dir_menu(
+		self,
+		choices_abs: list[str],
+		labels: list[str] | None = None,
+	) -> None:
+		if labels is None:
+			labels = self._menu_labels_for_abs_dirs(choices_abs)
+		self._output_dir_label_to_abs = dict(zip(labels, choices_abs, strict=True))
+		for w in self._outputDirMenuHost.winfo_children():
+			w.destroy()
+		self.outputDirMenu = ttk.OptionMenu(
+			self._outputDirMenuHost,
+			self.outputDirVar,
+			self.outputDirVar.get(),
+			*labels,
+			command=lambda *_: self._on_output_dir_selected(),
+		)
+		self.outputDirMenu.grid(row=0, column=0, sticky="ew")
+
+	def _apply_full_output_path_to_step_widgets(self) -> None:
+		if not hasattr(self, "entryOutputBasename"):
+			return
+		self._output_step_syncing = True
+		try:
+			full = self.entryOutputConvert.get().strip()
+			choices = self._build_output_dir_choices()
+			if not choices:
+				choices = [os.path.normpath(os.path.abspath(os.getcwd()))]
+			if full:
+				dir_abs = os.path.normpath(os.path.dirname(os.path.abspath(full)))
+				base = os.path.basename(os.path.normpath(full))
+				if dir_abs not in choices:
+					choices = [dir_abs] + choices
+				labels = self._menu_labels_for_abs_dirs(choices)
+				self.outputDirVar.set(labels[choices.index(dir_abs)])
+				self._mount_output_dir_menu(choices, labels)
+				self.entryOutputBasename.delete(0, "end")
+				self.entryOutputBasename.insert(0, base)
+			else:
+				labels = self._menu_labels_for_abs_dirs(choices)
+				self.outputDirVar.set(labels[0])
+				self._mount_output_dir_menu(choices, labels)
+				self.entryOutputBasename.delete(0, "end")
+		finally:
+			self._output_step_syncing = False
+
+	def _compose_and_apply_output_path(self) -> None:
+		if getattr(self, "_output_step_syncing", False):
+			return
+		if not hasattr(self, "entryOutputBasename"):
+			return
+		d_abs = self._output_dir_abs_from_menu_label(self.outputDirVar.get())
+		b = self.entryOutputBasename.get().strip()
+		if d_abs and b:
+			full = os.path.normpath(os.path.join(d_abs, b))
+		elif b:
+			full = os.path.normpath(b)
+		else:
+			full = ""
+		cur = (
+			self._norm_abs_path(self.entryOutputConvert.get())
+			if self.entryOutputConvert.get().strip()
+			else ""
+		)
+		if full:
+			full = self._norm_abs_path(full)
+		if cur == full:
+			self._updateSummaryLabels()
+			return
+		self.entryOutputConvert.delete(0, "end")
+		if full:
+			self.entryOutputConvert.insert(0, full)
+		self.outputEntryChanged()
+
+	def _on_output_dir_selected(self, *_args: Any) -> None:
+		self._compose_and_apply_output_path()
+
+	def _on_output_basename_changed(self, _event: tk.Event | None = None) -> None:
+		self._compose_and_apply_output_path()
 
 	def consoleKeyPress(self, event: tk.Event) -> str | None:
 		# print(e.state, e.keysym)
@@ -450,12 +636,6 @@ class UI(tk.Frame, UIBase):
 				_PATH_BUTTON_PLACEHOLDER,
 			),
 		)
-		self.outputPathButton.configure(
-			text=self._path_button_text(
-				self.entryOutputConvert.get(),
-				_PATH_BUTTON_PLACEHOLDER,
-			),
-		)
 
 	def _page_inputs_complete(self, page_index: int | None = None) -> bool:
 		idx = self.currentPage if page_index is None else page_index
@@ -502,19 +682,28 @@ class UI(tk.Frame, UIBase):
 	def _makePageOutput(self, parent: ttk.Frame) -> ttk.Frame:
 		page = ttk.Frame(parent)
 		content = self._centerBlock(page)
-		content.columnconfigure(0, weight=1)
+		content.columnconfigure(1, weight=1)
 		ttk.Label(content, text="Output File", anchor="center").grid(
-			row=0, column=0, sticky="ew", padx=5, pady=(5, 2)
+			row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=(5, 2)
 		)
 		entry = ttk.Entry(content)
 		self.entryOutputConvert = entry
-		self.outputPathButton = newButton(
-			content,
-			text="Select output file...",
-			command=self.browseOutputConvert,
-			width=_PATH_BUTTON_WIDTH,
+		self.outputDirVar = tk.StringVar(
+			value=self._output_dir_menu_label(self._default_output_dir_for_output_step()),
 		)
-		self.outputPathButton.grid(row=1, column=0, sticky="w", padx=5, pady=4)
+		ttk.Label(content, text="Directory:").grid(
+			row=1, column=0, sticky="e", padx=5, pady=4
+		)
+		self._outputDirMenuHost = ttk.Frame(content)
+		self._outputDirMenuHost.grid(row=1, column=1, sticky="ew", padx=5, pady=4)
+		self._outputDirMenuHost.columnconfigure(0, weight=1)
+		ttk.Label(content, text="File name:").grid(
+			row=2, column=0, sticky="e", padx=5, pady=4
+		)
+		self.entryOutputBasename = ttk.Entry(content)
+		self.entryOutputBasename.grid(row=2, column=1, sticky="ew", padx=5, pady=4)
+		self.entryOutputBasename.bind("<KeyRelease>", self._on_output_basename_changed)
+		self._apply_full_output_path_to_step_widgets()
 		return page
 
 	def _makePageFormats(self, parent: ttk.Frame) -> ttk.Frame:
@@ -668,6 +857,8 @@ class UI(tk.Frame, UIBase):
 	def _showPage(self, index: int) -> None:
 		self.currentPage = index
 		self.pages[index].tkraise()
+		if index == 1 and hasattr(self, "entryOutputBasename"):
+			self._apply_full_output_path_to_step_widgets()
 		self._updateSummaryLabels()
 		self._updateNavigationButtons()
 
@@ -746,6 +937,11 @@ class UI(tk.Frame, UIBase):
 						self.inputFormatChangedAuto()
 		self.pathI = pathI
 		self._updateSummaryLabels()
+		if (
+			hasattr(self, "entryOutputBasename")
+			and not self.entryOutputConvert.get().strip()
+		):
+			self._apply_full_output_path_to_step_widgets()
 
 	def outputEntryChanged(self, _event: tk.Event | None = None) -> None:
 		pathO = self.entryOutputConvert.get()
@@ -771,7 +967,8 @@ class UI(tk.Frame, UIBase):
 						Glossary.plugins[outputArgs.formatName].description,
 					)
 					self.outputFormatChangedAuto()
-		self.pathO = pathO
+		self.pathO = self.entryOutputConvert.get()
+		self._apply_full_output_path_to_step_widgets()
 		self._updateSummaryLabels()
 
 	def inputFormatChanged(self, formatDesc: str) -> None:
@@ -805,7 +1002,7 @@ class UI(tk.Frame, UIBase):
 				pathNoExt + plugin.extensionCreate,
 			)
 
-		self._updateSummaryLabels()
+		self.outputEntryChanged()
 
 	def save_fcd_dir(self) -> None:
 		if not self.fcd_dir:
