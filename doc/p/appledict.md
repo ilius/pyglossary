@@ -13,7 +13,7 @@ To update, modify plugins/appledict/__init__.py file, then run ./scripts/gen
 | snake_case_name | appledict                                                                                     |
 | Description     | AppleDict Source                                                                              |
 | Extensions      | `.apple`                                                                                      |
-| Read support    | No                                                                                            |
+| Read support    | Yes                                                                                           |
 | Write support   | Yes                                                                                           |
 | Single-file     | No                                                                                            |
 | Kind            | 📁 directory                                                                                   |
@@ -34,6 +34,16 @@ To update, modify plugins/appledict/__init__.py file, then run ./scripts/gen
 | front_back_matter |         | str  | XML file path with top-level tag         |
 | jing              | `False` | bool | run Jing check on generated XML          |
 | indexes           |         | str  | Additional indexes to dictionary entries |
+
+### Dependencies for reading
+
+PyPI Links: [lxml](https://pypi.org/project/lxml)
+
+To install, run:
+
+```sh
+pip3 install lxml
+```
 
 ### Dependencies for writing
 

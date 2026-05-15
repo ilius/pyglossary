@@ -70,6 +70,32 @@ class TestGlossaryAppleDict(TestGlossaryBase):
 			self.downloadFile(f"appledict-src/{outputName}/{outputName}.plist"),
 		)
 
+	def test_appledict_source_read_entry_count_matches_tabfile(self):
+		inputName = "002-no-morphology-v3"
+		inputFilepath = self.downloadFile(f"appledict-src/{inputName}.txt")
+
+		gl_tab = Glossary()
+		gl_tab.directRead(inputFilepath, formatName="Tabfile")
+		n_tab = sum(1 for e in gl_tab if not e.isData())
+		gl_tab.cleanup()
+
+		outputDirPath = self.newTempFilePath("appledict_roundtrip.apple")
+		self.glos = Glossary()
+		self.glos.convert(
+			ConvertArgs(
+				inputFilename=inputFilepath,
+				outputFilename=outputDirPath,
+				inputFormat="Tabfile",
+				outputFormat="AppleDict",
+			)
+		)
+
+		gl_rd = Glossary()
+		self.glos = gl_rd
+		gl_rd.directRead(outputDirPath)
+		n_rd = sum(1 for e in gl_rd if not e.isData())
+		self.assertEqual(n_rd, n_tab)
+
 
 if __name__ == "__main__":
 	unittest.main()

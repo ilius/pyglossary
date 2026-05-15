@@ -157,8 +157,9 @@
 				"comment": "Additional indexes to dictionary entries"
 			}
 		},
-		"canRead": false,
+		"canRead": true,
 		"canWrite": true,
+		"readOptions": {},
 		"writeOptions": {
 			"clean_html": true,
 			"css": "",
@@ -168,6 +169,9 @@
 			"front_back_matter": "",
 			"jing": false,
 			"indexes": ""
+		},
+		"readDepends": {
+			"lxml": "lxml"
 		},
 		"writeDepends": {
 			"lxml": "lxml",
