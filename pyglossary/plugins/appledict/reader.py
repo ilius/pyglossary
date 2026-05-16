@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import operator
 import os
 import plistlib
 from os.path import basename, dirname, isdir, isfile, join, relpath, splitext
@@ -154,7 +155,7 @@ class Reader:
 				rel = relpath(absPath, root)
 				results.append((rel, absPath))
 
-		results.sort(key=lambda pair: pair[0])
+		results.sort(key=operator.itemgetter(0))
 		return results
 
 	def _load_plist_info(self) -> None:
@@ -185,7 +186,8 @@ class Reader:
 			if isinstance(val, str) and val.strip():
 				self._glos.setInfo(glossaryKey, val.strip())
 
-	def _resolve_dictionary_xml(self, dirname: str) -> str:
+	@staticmethod
+	def _resolve_dictionary_xml(dirname: str) -> str:
 		dirname_base = basename(dirname).replace(".", "_")
 		preferred = join(dirname, f"{dirname_base}.xml")
 		if isfile(preferred):
