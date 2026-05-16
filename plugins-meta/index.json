@@ -97,6 +97,36 @@
 		"readOptions": {}
 	},
 	{
+		"module": "anki_apkg",
+		"lname": "anki_apkg",
+		"name": "AnkiApkg",
+		"description": "Anki deck package (.apkg, .colpkg)",
+		"extensions": [
+			".apkg",
+			".colpkg"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"word_field": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "0-based index of the note field to use as headword"
+			},
+			"include_tags": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Prepend Anki tags to the definition (HTML)"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"word_field": 0,
+			"include_tags": false
+		}
+	},
+	{
 		"module": "appledict",
 		"lname": "appledict",
 		"name": "AppleDict",
