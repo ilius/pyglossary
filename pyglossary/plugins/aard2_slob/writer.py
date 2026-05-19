@@ -201,7 +201,7 @@ class Writer:
 					b"""onclick="new Audio(this.href).play(); return false;" href='""",
 				)
 				b_defi = b_defi.replace(b"""<img src="/""", b'''<img src="''')
-				b_defi = b_defi.replace(b"""<img src='""", b"""<img src='""")
+				b_defi = b_defi.replace(b"""<img src='/""", b"""<img src='""")
 				b_defi = b_defi.replace(b"""<img src="file:///""", b'''<img src="''')
 				b_defi = b_defi.replace(b"""<img src='file:///""", b"""<img src='""")
 
