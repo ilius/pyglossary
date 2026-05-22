@@ -31,5 +31,3 @@ To update, modify plugins/wordfrequency/__init__.py file, then run ./scripts/gen
 
 Tab-separated lemma frequency lists from [WordFrequency.info](https://www.wordfrequency.info/)
 (COCA corpus), e.g. `lemmas_60k.txt`.
-
-Use the `.wordfrequency` extension, or pass `formatName=WordFrequencyInfo` for `.txt` files.
