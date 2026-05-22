@@ -514,6 +514,37 @@
 		"readOptions": {}
 	},
 	{
+		"module": "dict_cc_source",
+		"lname": "dict_cc_source",
+		"name": "Dictcc_source",
+		"description": "Dict.cc translation export (tab-separated source file)",
+		"extensions": [
+			".txt"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"source_lang": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Source column language code (must match the export header), e.g. en or de"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"source_lang": ""
+		},
+		"readDepends": {
+			"pyparsing": "pyparsing"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "dict_cc_split",
 		"lname": "dict_cc_split",
 		"name": "Dictcc_split",

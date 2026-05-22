@@ -11,6 +11,7 @@
 | CSV (.csv) | Csv | [csv.md](./csv.md) |
 | DictionaryForMIDs | Dicformids | [dicformids.md](./dicformids.md) |
 | Dict.cc (SQLite3) | Dictcc | [dict_cc.md](./dict_cc.md) |
+| Dict.cc translation export (tab-separated source file) | Dictcc_source | [dict_cc_source.md](./dict_cc_source.md) |
 | Dict.cc (SQLite3) - Split | Dictcc_split | [dict_cc_split.md](./dict_cc_split.md) |
 | DICT.org file format (.index) | DictOrg | [dict_org.md](./dict_org.md) |
 | DICT.org dictfmt source file | DictOrgSource | [dict_org_source.md](./dict_org_source.md) |

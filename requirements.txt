@@ -11,5 +11,6 @@ polib
 prompt_toolkit
 pyicu
 pymorphy3
+pyparsing
 python-romkan-ng
 xxhash
