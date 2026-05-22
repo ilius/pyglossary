@@ -1101,6 +1101,89 @@
 		]
 	},
 	{
+		"module": "freedict_md",
+		"lname": "freedict_md",
+		"name": "FreeDictMarkdown",
+		"description": "FreeDict Markdown (.tei) (text output)",
+		"extensions": [],
+		"singleFile": true,
+		"optionsProp": {
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable resources / data files"
+			},
+			"discover": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Find and show unsupported tags"
+			},
+			"auto_rtl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Auto-detect and mark Right-to-Left text"
+			},
+			"auto_comma": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Auto-detect comma sign based on text"
+			},
+			"comma": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"values": [
+					", ",
+					"\u060c "
+				],
+				"comment": "Comma sign (following space) to use as separator"
+			},
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add headwords title to beginning of definition"
+			},
+			"pron_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Pronunciation color"
+			},
+			"gram_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Grammar color"
+			},
+			"example_padding": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Padding for examples (in px)"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"discover": false,
+			"auto_rtl": true,
+			"auto_comma": true,
+			"comma": ", ",
+			"word_title": false,
+			"pron_color": "gray",
+			"gram_color": "green",
+			"example_padding": 10
+		},
+		"readDepends": {
+			"lxml": "lxml"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "gettext_po",
 		"lname": "gettext_po",
 		"name": "GettextPo",

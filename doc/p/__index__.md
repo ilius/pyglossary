@@ -26,6 +26,7 @@
 | EDLIN | Edlin | [edlin.md](./edlin.md) |
 | EPWING | EPWING | [epwing.md](./epwing.md) |
 | FreeDict (.tei) | FreeDict | [freedict.md](./freedict.md) |
+| FreeDict Markdown (.tei) (text output) | FreeDictMarkdown | [freedict_md.md](./freedict_md.md) |
 | Gettext Source (.po) | GettextPo | [gettext_po.md](./gettext_po.md) |
 | HTML Directory | HtmlDir | [html_dir.md](./html_dir.md) |
 | Glossary Info (.info) | Info | [info.md](./info.md) |
