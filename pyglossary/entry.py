@@ -6,7 +6,7 @@ import os
 import re
 import shutil
 import warnings
-from os.path import dirname, getsize, join
+from os.path import dirname, getsize
 from typing import TYPE_CHECKING
 
 from .entry_base import BaseEntry
@@ -79,7 +79,19 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 
 	def save(self, directory: str) -> str:
 		fname = self._fname
-		fpath = join(directory, fname)
+		# Refuse absolute paths, `..` traversal, and any path that resolves
+		# outside the target directory (covers symlink + drive-letter cases
+		# in addition to literal `..`).
+
+		base = os.path.realpath(directory)
+		# Reject suspicious filenames before joining.
+		if os.path.isabs(fname) or fname.startswith(("/", "\\")):
+			log.error(f"DataEntry.save: refusing absolute filename {fname!r}")
+			return ""
+		fpath = os.path.realpath(os.path.join(base, fname))
+		if not (fpath == base or fpath.startswith(base + os.sep)):
+			log.error(f"DataEntry.save: refusing path outside directory: {fname!r}")
+			return ""
 		fdir = dirname(fpath)
 		try:
 			os.makedirs(fdir, mode=0o755, exist_ok=True)
