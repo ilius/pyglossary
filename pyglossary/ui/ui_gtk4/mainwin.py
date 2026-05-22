@@ -131,8 +131,14 @@ def getFontSizePixels(widget: gtk.Widget) -> int:
 
 	# Get DPI from monitor (fallback = 96.0)
 	display = widget.get_display()
-	monitor = display.get_primary_monitor()
-	scale = monitor.get_scale_factor()
+	monitor = None
+	try:
+		monitor = display.get_primary_monitor()
+	except AttributeError:
+		monitors = display.get_monitors()
+		if monitors and len(monitors) > 0:
+			monitor = monitors[0]
+	scale = monitor.get_scale_factor() if monitor else 1
 	dpi = 96.0 * scale  # GTK doesn’t expose real DPI anymore — approximate
 
 	return font_size_points * dpi / 72.0

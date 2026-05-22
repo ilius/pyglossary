@@ -45,11 +45,17 @@ __all__ = [
 
 def getWorkAreaSize(_w: object) -> tuple[int, int]:
 	display = gdk.Display.get_default()
-	# monitor = display.get_monitor_at_surface(w.get_surface())
-	# if monitor is None:
-	monitor = display.get_primary_monitor()
-	rect = monitor.get_workarea()
-	return rect.width, rect.height
+	monitor = None
+	try:
+		monitor = display.get_primary_monitor()
+	except AttributeError:
+		monitors = display.get_monitors()
+		if monitors and len(monitors) > 0:
+			monitor = monitors[0]
+	if monitor is None:
+		return 1024, 768
+	geometry = monitor.get_geometry()
+	return geometry.width, geometry.height
 
 
 def gtk_event_iteration_loop() -> None:
