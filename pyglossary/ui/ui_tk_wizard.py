@@ -62,6 +62,9 @@ log: Logger = logging.getLogger("pyglossary")
 _PATH_BUTTON_PLACEHOLDER = "[Select...]"
 _PATH_BUTTON_WIDTH = 20  # characters
 
+# Step 2 output directory OptionMenu: opens a folder dialog when chosen.
+_OUTPUT_DIR_MENU_CUSTOM = "Custom directory…"
+
 readDesc = [plugin.description for plugin in Glossary.plugins.values() if plugin.canRead]
 writeDesc = [
 	plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
@@ -425,6 +428,8 @@ class UI(tk.Frame, UIBase):
 		label = label.strip()
 		if not label:
 			return ""
+		if label == _OUTPUT_DIR_MENU_CUSTOM:
+			return ""
 		mapping = getattr(self, "_output_dir_label_to_abs", None)
 		if mapping is not None and label in mapping:
 			return self._norm_abs_path(mapping[label])
@@ -449,6 +454,10 @@ class UI(tk.Frame, UIBase):
 			seen.add(lbl)
 			labels.append(lbl)
 		return labels
+
+	def _output_dir_menu_labels(self, choices_abs: list[str]) -> list[str]:
+		"""Directory shortcut labels plus the custom-folder entry."""
+		return [*self._menu_labels_for_abs_dirs(choices_abs), _OUTPUT_DIR_MENU_CUSTOM]
 
 	def _build_output_dir_choices(self) -> list[str]:
 		seen: set[str] = set()
@@ -476,8 +485,22 @@ class UI(tk.Frame, UIBase):
 		labels: list[str] | None = None,
 	) -> None:
 		if labels is None:
-			labels = self._menu_labels_for_abs_dirs(choices_abs)
-		self._output_dir_label_to_abs = dict(zip(labels, choices_abs, strict=True))
+			labels = self._output_dir_menu_labels(choices_abs)
+		else:
+			labels = list(labels)
+			if (
+				len(labels) == len(choices_abs) + 1
+				and labels[-1] == _OUTPUT_DIR_MENU_CUSTOM
+			):
+				pass
+			elif len(labels) == len(choices_abs):
+				labels.append(_OUTPUT_DIR_MENU_CUSTOM)
+			else:
+				labels = self._output_dir_menu_labels(choices_abs)
+		n = len(choices_abs)
+		self._output_dir_label_to_abs = dict(
+			zip(labels[:n], choices_abs, strict=True),
+		)
 		for w in self._outputDirMenuHost.winfo_children():
 			w.destroy()
 		self.outputDirMenu = ttk.OptionMenu(
@@ -515,11 +538,16 @@ class UI(tk.Frame, UIBase):
 				self.entryOutputBasename.delete(0, "end")
 		finally:
 			self._output_step_syncing = False
+			lbl = self.outputDirVar.get()
+			if lbl and lbl != _OUTPUT_DIR_MENU_CUSTOM:
+				self._last_valid_output_dir_label = lbl
 
 	def _compose_and_apply_output_path(self) -> None:
 		if getattr(self, "_output_step_syncing", False):
 			return
 		if not hasattr(self, "entryOutputBasename"):
+			return
+		if self.outputDirVar.get() == _OUTPUT_DIR_MENU_CUSTOM:
 			return
 		d_abs = self._output_dir_abs_from_menu_label(self.outputDirVar.get())
 		b = self.entryOutputBasename.get().strip()
@@ -544,7 +572,51 @@ class UI(tk.Frame, UIBase):
 			self.entryOutputConvert.insert(0, full)
 		self.outputEntryChanged()
 
+	def _browse_output_custom_directory(self) -> None:
+		prev = getattr(self, "_last_valid_output_dir_label", "")
+		cur_dir = ""
+		if prev:
+			cur_dir = self._output_dir_abs_from_menu_label(prev)
+		out_full = self.entryOutputConvert.get().strip()
+		if not cur_dir and out_full:
+			cur_dir = os.path.normpath(os.path.dirname(os.path.abspath(out_full)))
+		if not cur_dir:
+			cur_dir = self.fcd_dir or self._default_output_dir_for_output_step()
+		path = filedialog.askdirectory(initialdir=cur_dir or homeDir)
+		if not path:
+			self._output_step_syncing = True
+			try:
+				if prev:
+					self.outputDirVar.set(prev)
+				else:
+					self._apply_full_output_path_to_step_widgets()
+			finally:
+				self._output_step_syncing = False
+			return
+		norm = self._norm_abs_path(path)
+		self.fcd_dir = norm
+		self.save_fcd_dir()
+		choices = self._build_output_dir_choices()
+		if norm not in choices:
+			choices = [norm] + choices
+		dir_labels = self._menu_labels_for_abs_dirs(choices)
+		idx = choices.index(norm)
+		self._output_step_syncing = True
+		try:
+			self.outputDirVar.set(dir_labels[idx])
+			self._mount_output_dir_menu(choices, dir_labels)
+		finally:
+			self._output_step_syncing = False
+		self._last_valid_output_dir_label = dir_labels[idx]
+		self._compose_and_apply_output_path()
+
 	def _on_output_dir_selected(self, *_args: Any) -> None:
+		if self.outputDirVar.get() == _OUTPUT_DIR_MENU_CUSTOM:
+			self._browse_output_custom_directory()
+			return
+		lbl = self.outputDirVar.get()
+		if lbl:
+			self._last_valid_output_dir_label = lbl
 		self._compose_and_apply_output_path()
 
 	def _on_output_basename_changed(self, _event: tk.Event | None = None) -> None:
@@ -688,6 +760,7 @@ class UI(tk.Frame, UIBase):
 		)
 		entry = ttk.Entry(content)
 		self.entryOutputConvert = entry
+		self._last_valid_output_dir_label = ""
 		self.outputDirVar = tk.StringVar(
 			value=self._output_dir_menu_label(self._default_output_dir_for_output_step()),
 		)
