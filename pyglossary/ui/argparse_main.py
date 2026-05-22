@@ -51,10 +51,11 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 			"gtk",
 			"gtk3",
 			"gtk4",
+			"qt",
+			"qt6",
 			"tk",
 			"tk_wizard",
 			"web",
-			# "qt",
 			"auto",
 			"none",
 		),
@@ -90,6 +91,22 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		const="gtk4",
 		default=None,
 		help="use Gtk4-based user interface",
+	)
+	parser.add_argument(
+		"--qt",
+		dest="ui_type",
+		action="store_const",
+		const="qt",
+		default=None,
+		help="use Qt 6 wizard user interface (same as --ui=qt)",
+	)
+	parser.add_argument(
+		"--qt6",
+		dest="ui_type",
+		action="store_const",
+		const="qt6",
+		default=None,
+		help="use Qt 6 wizard user interface (same as --ui=qt6)",
 	)
 	parser.add_argument(
 		"--tk",

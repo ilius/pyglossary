@@ -11,6 +11,12 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         Or
             <b>${CMD} --ui=tk</b>
         Usually good for Windows and Mac OS X
+    <b>Tk Wizard</b> (Tkinter wizard):
+            <b>${CMD} --ui=tk_wizard</b> or <b>${CMD} --tkw</b>
+    <b>Qt 6 wizard</b> Interface (needs PySide6 or PyQt6):
+            <b>${CMD} --ui=qt6</b> or <b>${CMD} --ui=qt</b>
+        Or shortcuts:
+            <b>${CMD} --qt6</b> or <b>${CMD} --qt</b>
     <b>Web</b> Interface:
         To open PyGlossary window:
             <b>${CMD} --web</b>

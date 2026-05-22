@@ -116,13 +116,16 @@ As shown in screenshots, there are multiple User Interface types (multiple
 ways to use the program).
 
 - **Gtk3-based interface**, uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html)+Gtk3.
+  Best option for most Linux users.
   See [doc/gtk3.md](./doc/gtk3.md) for how to install it on Linux and Mac OS X.
 
 - **Gtk4-based interface**, uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html)+Gtk4.
   See [doc/gtk4.md](./doc/gtk4.md).
-  This is still not as complete as Gtk3 interface.
 
-- **Tkinter-based interface**, meant to be used in the lack of Gtk. Specially on
+- **Qt6-based interface**, good native-looking interface for all operating systems.
+  Requires either PySide6 or PyQt6. Uses a wizard-based UI flow for simplicity of use.
+
+- **Tkinter-based interface**, meant to be used in the lack of more modern UI. Specially on
   Windows where Tkinter library is installed with Python itself.
   You can [install Tkinter](./doc/tkinter.md) on Linux or Mac OS X.
 
@@ -154,21 +157,24 @@ When you run PyGlossary without any command-line arguments or options/flags, PyG
 
 - It tries to find PyGI+Gtk3 and open **Gtk3-based** interface.
 - It tries to find PyGI+Gtk4 and open **Gtk4-based** interface.
+- It tries to find PySide6 or PyQt6 and open **Qt 6** interface.
 - It tries to find Tkinter and open **Tkinter-based** interface.
 - If it's run in command line (with stdin connected to a terminal) it tries to find `prompt_toolkit` and run **interactive command-line** interface.
 - It runs a HTTP server and opens the **web interface** in your browser.
 
-The order depends on operating system. Currently on Mac OS and Windows, Tkinter is checked before Gtk.
+The order depends on operating system. Currently on Mac OS and Windows, Tkinter and the Qt are checked before Gtk.
 
 You can explicitly select user interface type using `--ui`
 
 - `./main.py --ui=gtk3`
 - `./main.py --ui=gtk4`
 - `./main.py --ui=gtk` which currently selects `gtk3`
+- `./main.py --ui=qt6` or `./main.py --ui=qt`: Qt 6 wizard-based interface
 - `./main.py --ui=tk`
-- `./main.py --ui=tk_wizard` or `./main.py --tkw`: new Wizared-based Tkinter interface
+- `./main.py --ui=tk_wizard`: new wizard-based Tkinter interface
+  - Shortcut: `./main.py --tkw`
 - `./main.py --ui=web`
-- `./main.py --ui=cmd`
+- `./main.py --ui=cmd` with no extra arguments opens interactive command-line interface
 
 ## Installation on Windows
 
@@ -202,6 +208,8 @@ Now you should be able to open the app by **right-clicking** on **/Applications/
 
 Some formats have additional requirements.
 If you have trouble with any format, please check the [link given for that format](#supported-formats) to see its documentations.
+
+The **Qt 6 wizard** GUI (`--ui=qt`, `--ui=qt6`, `--qt`, or `--qt6`) needs PySide6 or PyQt6: `pip install pyglossary[qt6]` (or install `PySide6` separately). On macOS, that extra also installs **`pyobjc-framework-Cocoa`** so the Dock and app switcher can show PyGlossary’s icon (standalone `python`/CLI runs do not ship an `.app` bundle icon otherwise).
 
 **Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
 
