@@ -465,6 +465,7 @@ exclude_toplevel_module = [
 	"typing_extensions",
 	"xxhash",
 	"yaml",
+	"rich",
 ]
 
 [build-system]
