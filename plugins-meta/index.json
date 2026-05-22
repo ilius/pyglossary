@@ -2042,6 +2042,41 @@
 		]
 	},
 	{
+		"module": "wordfrequency_info",
+		"lname": "wordfrequency",
+		"name": "WordFrequency",
+		"description": "WordFrequency.info COCA lemma list (.wordfrequency)",
+		"extensions": [
+			".wordfrequency"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"encoding": {
+				"class": "EncodingOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Encoding/charset"
+			},
+			"gram_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Grammar color"
+			}
+		},
+		"canRead": true,
+		"canWrite": false,
+		"readOptions": {
+			"encoding": "utf-8",
+			"gram_color": "green"
+		},
+		"readCompressions": [
+			"gz",
+			"bz2",
+			"lzma"
+		]
+	},
+	{
 		"module": "wordnet",
 		"lname": "wordnet",
 		"name": "Wordnet",

@@ -176,6 +176,10 @@ mccabe.max-complexity = 13
 
 [tool.ruff.lint.per-file-ignores]
 
+"pyglossary/plugins/wordfrequency_info/reader.py" = [
+	"E501", # Line too long (161 > 90)
+]
+
 "pyglossary/plugins/*/__init__.py" = [
 	"RUF067", # `__init__` module should only contain docstrings and re-exports
 ]

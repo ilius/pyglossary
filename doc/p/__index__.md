@@ -45,6 +45,7 @@
 | Tabfile (.txt, .dic) | Tabfile | [tabfile.md](./tabfile.md) |
 | TMX (.tmx) | TMX | [tmx.md](./tmx.md) |
 | Wiktextract (.jsonl) | Wiktextract | [wiktextract.md](./wiktextract.md) |
+| WordFrequency.info COCA lemma list (.wordfrequency) | WordFrequency | [wordfrequency.md](./wordfrequency.md) |
 | WordNet | Wordnet | [wordnet.md](./wordnet.md) |
 | Wordset.org JSON directory | Wordset | [wordset.md](./wordset.md) |
 | XDXF (.xdxf) | Xdxf | [xdxf.md](./xdxf.md) |
