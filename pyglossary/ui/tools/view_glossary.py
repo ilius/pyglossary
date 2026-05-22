@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # mypy: ignore-errors
+
+"""
+To render markdown: pip install rich
+To enable html/xdxf highlighting: pip install pygments
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -7,6 +13,7 @@ import json
 import os.path
 import shlex
 import sys
+from io import StringIO
 from subprocess import PIPE, Popen
 from typing import TYPE_CHECKING
 
@@ -34,27 +41,60 @@ if noColor:
 def getEntryHighlighter() -> Callable[[EntryType], None] | None:
 	if noColor:
 		return None
+
+	renderMarkdown: Callable[[EntryType], None] | None = None
+	try:
+		from rich.console import Console
+		from rich.markdown import Markdown
+
+		def _renderMarkdown(entry: EntryType) -> None:
+			if entry.defiFormat != "m":
+				return
+			buf = StringIO()
+			console = Console(
+				file=buf,
+				force_terminal=True,
+				color_system="256",
+			)
+			console.print(Markdown(entry.defi))
+			entry._defi = buf.getvalue().rstrip("\n")
+
+		renderMarkdown = _renderMarkdown
+
+	except ModuleNotFoundError:
+		pass
+
+	highlightHtmlOrXdxf: Callable[[EntryType], None] | None = None
 	try:
 		import pygments  # noqa: F401
+		from pygments import highlight
+		from pygments.formatters import Terminal256Formatter as Formatter
+		from pygments.lexers import HtmlLexer, XmlLexer
+
+		formatter = Formatter()
+		h_lexer = HtmlLexer()
+		x_lexer = XmlLexer()
+
+		def _highlightHtmlOrXdxf(entry: EntryType) -> None:
+			if entry.defiFormat == "h":
+				entry._defi = highlight(entry.defi, h_lexer, formatter)
+			elif entry.defiFormat == "x":
+				entry._defi = highlight(entry.defi, x_lexer, formatter)
+
+		highlightHtmlOrXdxf = _highlightHtmlOrXdxf
+
 	except ModuleNotFoundError:
+		pass
+
+	if renderMarkdown is None and highlightHtmlOrXdxf is None:
 		return None
-
-	from pygments import highlight
-	from pygments.formatters import Terminal256Formatter as Formatter
-	from pygments.lexers import HtmlLexer, XmlLexer
-
-	formatter = Formatter()
-	h_lexer = HtmlLexer()
-	x_lexer = XmlLexer()
 
 	def highlightEntry(entry: EntryType) -> None:
 		entry.detectDefiFormat()
-		if entry.defiFormat == "h":
-			entry._defi = highlight(entry.defi, h_lexer, formatter)
-			return
-		if entry.defiFormat == "x":
-			entry._defi = highlight(entry.defi, x_lexer, formatter)
-			return
+		if renderMarkdown:
+			renderMarkdown(entry)
+		if highlightHtmlOrXdxf:
+			highlightHtmlOrXdxf(entry)
 
 	return highlightEntry
 
