@@ -32,6 +32,7 @@ requirements = set()
 for p in plugins:
 	module = p.module
 	# print(module.__file__)
+	assert " " not in p.name, f"plugin name {p.name!r} contains space"
 	p.checkModule(module)
 	p.checkModuleMore(module)
 	requirements |= set(p.readDepends.values())
