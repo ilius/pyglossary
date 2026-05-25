@@ -35,6 +35,7 @@ __all__ = [
 	"QLineEdit",
 	"QListWidget",
 	"QMainWindow",
+	"QPixmap",
 	"QPlainTextEdit",
 	"QProgressBar",
 	"QPushButton",
@@ -43,6 +44,7 @@ __all__ = [
 	"QSizePolicy",
 	"QSpinBox",
 	"QStackedWidget",
+	"QTabWidget",
 	"QTextBrowser",
 	"QVBoxLayout",
 	"QWidget",
@@ -51,7 +53,7 @@ __all__ = [
 
 try:
 	from PySide6.QtCore import Qt
-	from PySide6.QtGui import QIcon, QKeySequence, QShortcut
+	from PySide6.QtGui import QIcon, QKeySequence, QPixmap, QShortcut
 	from PySide6.QtWidgets import (
 		QAbstractItemView,
 		QApplication,
@@ -74,6 +76,7 @@ try:
 		QSizePolicy,
 		QSpinBox,
 		QStackedWidget,
+		QTabWidget,
 		QTextBrowser,
 		QVBoxLayout,
 		QWidget,
@@ -82,7 +85,7 @@ try:
 except ImportError:
 	try:
 		from PyQt6.QtCore import Qt
-		from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
+		from PyQt6.QtGui import QIcon, QKeySequence, QPixmap, QShortcut
 		from PyQt6.QtWidgets import (
 			QAbstractItemView,
 			QApplication,
@@ -105,6 +108,7 @@ except ImportError:
 			QSizePolicy,
 			QSpinBox,
 			QStackedWidget,
+			QTabWidget,
 			QTextBrowser,
 			QVBoxLayout,
 			QWidget,
