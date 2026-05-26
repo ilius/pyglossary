@@ -1,3 +1,42 @@
+[project]
+name = "pyglossary"
+version = "5.4.0"
+description = "A tool for converting dictionary files aka glossaries."
+readme = "README.md"
+authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
+license = "GPL-3.0-or-later"
+keywords = ["dictionary", "glossary"]
+classifiers = [
+	"Development Status :: 5 - Production/Stable",
+	"Operating System :: OS Independent",
+	"Typing :: Typed",
+	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3.13",
+	"Programming Language :: Python :: 3.14",
+]
+requires-python = ">= 3.12"
+dependencies = []
+
+[project.scripts]
+pyglossary = "pyglossary.ui.main:main"
+pyglossary-diff = "pyglossary.ui.tools.diff_glossary:main"
+pyglossary-view = "pyglossary.ui.tools.view_glossary:main"
+
+[project.optional-dependencies]
+all = ["PyICU", "lxml", "beautifulsoup4"]
+qt6 = [
+	"PySide6",
+	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
+]
+dict-cc-source = ["pyparsing"]
+dev = ["mypy", "ruff", "types-polib"]
+
+[project.urls]
+Homepage = "https://github.com/ilius/pyglossary"
+Issues = "https://github.com/ilius/pyglossary/issues"
+Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
+
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "tab"
@@ -480,41 +519,3 @@ requires = [
 	# "wheel >= 0.29.0",
 ]
 build-backend = "setuptools.build_meta"
-
-[project]
-name = "pyglossary"
-version = "5.4.0"
-description = "A tool for converting dictionary files aka glossaries."
-readme = "README.md"
-authors = [{ name = "Saeed Rasooli", email = "saeed.gnu@gmail.com" }]
-license = "GPL-3.0-or-later"
-keywords = ["dictionary", "glossary"]
-classifiers = [
-	"Development Status :: 5 - Production/Stable",
-	"Operating System :: OS Independent",
-	"Typing :: Typed",
-	"Programming Language :: Python :: 3.12",
-	"Programming Language :: Python :: 3.13",
-	"Programming Language :: Python :: 3.14",
-]
-requires-python = ">= 3.12"
-dependencies = []
-
-[project.scripts]
-pyglossary = "pyglossary.ui.main:main"
-pyglossary-diff = "pyglossary.ui.tools.diff_glossary:main"
-pyglossary-view = "pyglossary.ui.tools.view_glossary:main"
-
-[project.optional-dependencies]
-all = ["PyICU", "lxml", "beautifulsoup4"]
-qt6 = [
-	"PySide6",
-	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
-]
-dict-cc-source = ["pyparsing"]
-dev = ["mypy", "ruff", "types-polib"]
-
-[project.urls]
-Homepage = "https://github.com/ilius/pyglossary"
-Issues = "https://github.com/ilius/pyglossary/issues"
-Changelog = "https://github.com/ilius/pyglossary/tree/master/doc/releases"
