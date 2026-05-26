@@ -63,6 +63,7 @@ Web interface
 | [DIKT JSON](./doc/p/dikt_json.md)                       | 📝  |     (.json)     |    | ✅ |
 | [EPUB-2 E-Book](./doc/p/epub2.md)                       | 📦  |      .epub      | ❌ | ✅ |
 | [FreeDict](./doc/p/freedict.md)                         | 📝  |      .tei       | ✅ | ❌ |
+| [FreeDict Markdown](./doc/p/freedict_md.md)             | 📝  |      .tei       | ✅ | ❌ |
 | [Gettext Source](./doc/p/gettext_po.md)                 | 📝  |       .po       | ✅ | ✅ |
 | [HTML Directory (by file size)](./doc/p/html_dir.md)    | 📁  |                 | ❌ | ✅ |
 | [JSON](./doc/p/json.md)                                 | 📝  |      .json      |    | ✅ |
@@ -77,8 +78,10 @@ Web interface
 | [StarDict](./doc/p/stardict.md)                         | 📁  |     (📝.ifo)    | ✅ | ✅ |
 | [StarDict Textual File](./doc/p/stardict_textual.md)    | 📝  |     (.xml)      | ✅ | ✅ |
 | [Tabfile](./doc/p/tabfile.md)                           | 📝  |   .txt, .tab    | ✅ | ✅ |
+| [TMX](./doc/p/tmx.md)                                   | 📝  |      .tmx       | ✅ |    |
 | [Wiktextract](./doc/p/wiktextract.md)                   | 📝  |     .jsonl      | ✅ | ❌ |
 | [XDXF](./doc/p/xdxf.md)                                 | 📝  |      .xdxf      | ✅ | ❌ |
+| [XLIFF](./doc/p/xliff.md)                               | 📝  | .xlf, .xliff    | ✅ |    |
 | [Zim (Kiwix)](./doc/p/zim.md)                           | 🔢  |      .zim       | ✅ |    |
 | [ABBYY Lingvo DSL](./doc/p/dsl.md)                   🇷🇺 | 📝  |      .dsl       | ✅ | ❌ |
 | [Almaany.com](./doc/p/almaany.md)              (Arabic) | 🛢️  |      .db        | ✅ | ❌ |
@@ -89,6 +92,7 @@ Web interface
 | [JMDict](./doc/p/jmdict.md)                          🇯🇵 | 📝  |                 | ✅ | ❌ |
 | [JMnedict](./doc/p/jmnedict.md)                      🇯🇵 | 📝  |                 | ✅ | ❌ |
 | [WordNet](./doc/p/wordnet.md)                        🇬🇧 | 📁  |                 | ✅ | ❌ |
+| [WordFrequency.info](./doc/p/wordfrequency.md)       🇬🇧 | 📝  | .wordfrequency  | ✅ | ❌ |
 | [@wordset dictionary](./doc/p/wordset.md)            🇬🇧 | 📁  |                 | ✅ |    |
 | [Yomichan / Yomitan](./doc/p/yomichan.md)            🇯🇵 | 📦  |     (.zip)      | ✅ | ✅ |
 
