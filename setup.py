@@ -123,7 +123,7 @@ with open("README.md", encoding="utf-8") as fh:
 setup(
 	name="pyglossary",
 	version=getPipSafeVersion(),
-	python_requires=">=3.10.0",
+	python_requires=">=3.12.0",
 	description="A tool for converting dictionary files aka glossaries.",
 	long_description_content_type="text/markdown",
 	long_description=long_description,
