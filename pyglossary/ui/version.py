@@ -5,7 +5,7 @@ from os.path import isdir, join
 
 from pyglossary import core
 
-__all__ = ["getVersion"]
+__all__ = ["getAboutHeader", "getVersion"]
 
 
 def getGitVersion(gitDir: str) -> str:
@@ -38,6 +38,13 @@ def getVersion() -> str:
 		if version:
 			return version
 	return core.VERSION
+
+
+def getAboutHeader(toolkit: str, toolkit_version: str) -> str:
+	return (
+		f"PyGlossary {getVersion()}\n"
+		f"Using Python {sys.version.split()[0]} and {toolkit} {toolkit_version}"
+	)
 
 
 def getPipSafeVersion() -> str:

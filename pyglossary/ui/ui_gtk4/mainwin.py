@@ -39,7 +39,7 @@ from pyglossary.ui.base import (
 )
 from pyglossary.ui.ui_gtk4.general_options import GeneralOptionsDialog
 from pyglossary.ui.ui_gtk4.info import PreConvertInfoDialog
-from pyglossary.ui.version import getVersion
+from pyglossary.ui.version import getAboutHeader
 
 from .about import AboutWidget
 from .console import ConvertConsole
@@ -412,7 +412,10 @@ progressbar progress, trough {min-height: 0.6em;}
 	def makeAboutWidget(self) -> gtk.Widget:
 		about = AboutWidget(
 			logo=logo,
-			header=f"PyGlossary\nVersion {getVersion()}",
+			header=getAboutHeader(
+				"GTK",
+				f"{gtk.get_major_version()}.{gtk.get_minor_version()}.{gtk.get_micro_version()}",
+			),
 			# about=summary,
 			about=f'{aboutText}\n<a href="{homePage}">{homePage}</a>',
 			authors="\n".join(authors),

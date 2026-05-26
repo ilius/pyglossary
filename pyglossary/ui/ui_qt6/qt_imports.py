@@ -49,10 +49,11 @@ __all__ = [
 	"QVBoxLayout",
 	"QWidget",
 	"Qt",
+	"qVersion",
 ]
 
 try:
-	from PySide6.QtCore import Qt
+	from PySide6.QtCore import Qt, qVersion
 	from PySide6.QtGui import QIcon, QKeySequence, QPixmap, QShortcut
 	from PySide6.QtWidgets import (
 		QAbstractItemView,
@@ -84,7 +85,7 @@ try:
 
 except ImportError:
 	try:
-		from PyQt6.QtCore import Qt
+		from PyQt6.QtCore import Qt, qVersion
 		from PyQt6.QtGui import QIcon, QKeySequence, QPixmap, QShortcut
 		from PyQt6.QtWidgets import (
 			QAbstractItemView,

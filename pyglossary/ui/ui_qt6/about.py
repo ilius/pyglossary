@@ -10,7 +10,7 @@ from os.path import isabs, join
 
 from pyglossary.core import appResDir, homePage
 from pyglossary.ui.base import aboutText, authors, licenseText, logo
-from pyglossary.ui.version import getVersion
+from pyglossary.ui.version import getAboutHeader
 
 from .qt_imports import (
 	QDialog,
@@ -25,6 +25,7 @@ from .qt_imports import (
 	QTextBrowser,
 	QVBoxLayout,
 	QWidget,
+	qVersion,
 )
 
 __all__ = ["exec_about_dialog"]
@@ -72,7 +73,7 @@ class AboutQtDialog(QDialog):
 		header.setSpacing(20)
 		logo_label = QLabel()
 		logo_label.setPixmap(QPixmap(_res_path(logo)))
-		header_label = QLabel(f"PyGlossary\nVersion {getVersion()}")
+		header_label = QLabel(getAboutHeader("Qt", qVersion()))
 		header_label.setTextInteractionFlags(
 			Qt.TextInteractionFlag.TextSelectableByMouse,
 		)

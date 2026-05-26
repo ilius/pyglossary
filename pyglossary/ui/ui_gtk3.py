@@ -46,7 +46,7 @@ from .base import (
 )
 from .config import configDefDict
 from .dependency import checkDepends
-from .version import getVersion
+from .version import getAboutHeader
 
 gi.require_version("Gtk", "3.0")
 
@@ -1371,7 +1371,10 @@ class MainWindow(gtk.Dialog):
 		# ____________________________________________________________ #
 		about = AboutWidget(
 			logo=logo,
-			header=f"PyGlossary\nVersion {getVersion()}",
+			header=getAboutHeader(
+				"GTK",
+				f"{gtk.get_major_version()}.{gtk.get_minor_version()}.{gtk.get_micro_version()}",
+			),
 			# about=summary,
 			about=f'{aboutText}\n<a href="{homePage}">{homePage}</a>',
 			authors="\n".join(authors),

@@ -29,7 +29,7 @@ from pyglossary.ui.base import (
 	licenseText,
 	logo,
 )
-from pyglossary.ui.version import getVersion
+from pyglossary.ui.version import getAboutHeader
 
 from .utils import (
 	newLabelWithImage,
@@ -118,7 +118,10 @@ def createAboutFrame(parent: ttk.Widget, bigFont: Font) -> ttk.Frame:
 		fill="both",
 		expand=False,
 	)
-	ttk.Label(versionFrame, text=f"PyGlossary\nVersion {getVersion()}").pack(
+	ttk.Label(
+		versionFrame,
+		text=getAboutHeader("Tk", parent.tk.call("info", "patchlevel")),
+	).pack(
 		side="left",
 		fill="both",
 		expand=False,
