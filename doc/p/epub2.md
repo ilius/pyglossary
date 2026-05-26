@@ -43,3 +43,8 @@ To update, modify plugins/epub2/__init__.py file, then run ./scripts/gen
 | [Kobo eReader](https://www.kobo.com)                                       | ―           | Proprietary | Kobo eReader        |          |
 | [Icecream Ebook Reader](https://icecreamapps.com/Ebook-Reader/)            | ―           | Proprietary | Windows             |          |
 | [Aldiko](https://www.demarque.com/aldiko)                                  | ―           | Proprietary | Android, iOS        |          |
+
+### Related Formats
+
+- [Mobipocket (.mobi) E-Book](./mobi.md)
+- [Kobo E-Reader Dictionary](./kobo.md)

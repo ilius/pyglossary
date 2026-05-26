@@ -56,3 +56,7 @@ to install pyicu.
 | ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- | -------- |
 | [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL     | Android   | Java     |
 | [Aard2 for Web](http://aarddict.org/)      | [@itkach/aard2-web](https://github.com/itkach/aard2-web)         | MPL     | Web       | Java     |
+
+### Related Formats
+
+- [Zim (.zim, for Kiwix)](./zim.md)

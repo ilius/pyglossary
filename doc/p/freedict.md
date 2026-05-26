@@ -42,3 +42,7 @@ To install, run:
 ```sh
 pip3 install lxml
 ```
+
+### Related Formats
+
+- [FreeDict Markdown (.tei) (text output)](./freedict_md.md)

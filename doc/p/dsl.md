@@ -37,3 +37,7 @@ To update, modify plugins/dsl/__init__.py file, then run ./scripts/gen
 | [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL         | Linux, Windows, Mac                                 | C++      |
 | [GoldenDict](http://goldendict.org/)                                        | [@goldendict/goldendict](https://github.com/goldendict/goldendict)       | GPL         | Linux, Windows, Mac                                 | C++      |
 | [SilverDict](https://silverdict.lecoteauverdoyant.co.uk/)                   | [@Crissium/SilverDict](https://github.com/Crissium/SilverDict)           | GPL         | Web                                                 | Python   |
+
+### Related Formats
+
+- [Lingoes Source (.ldf)](./lingoes_ldf.md)

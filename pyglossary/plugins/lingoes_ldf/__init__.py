@@ -44,6 +44,7 @@ website = (
 	"http://www.lingoes.net/en/dictionary/dict_format.php",
 	"Lingoes.net",
 )
+relatedFormats: list[str] = ["ABBYYLingvoDSL"]
 optionsProp: dict[str, Option] = {
 	"newline": NewlineOption(),
 	"resources": BoolOption(comment="Enable resources / data files"),

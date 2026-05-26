@@ -29,3 +29,7 @@ To install, run:
 ```sh
 pip3 install lxml
 ```
+
+### Related Formats
+
+- [TMX (.tmx)](./tmx.md)

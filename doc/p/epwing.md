@@ -37,3 +37,8 @@ The reader includes specialized extractors for various common EPWING dictionarie
 | Name & Website                                            | Source code | License  | Platforms | Language |
 | --------------------------------------------------------- | ----------- | -------- | --------- | -------- |
 | [EBWin4](https://ebstudio.info/manual/EBWin4/EBWin4.html) | ―           | Freeware | Windows   | Unknown  |
+
+### Related Formats
+
+- [Yomichan (.zip)](./yomichan.md)
+- [JMDict (xml)](./jmdict.md)

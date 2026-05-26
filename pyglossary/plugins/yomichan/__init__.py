@@ -48,6 +48,7 @@ website = (
 	"https://foosoft.net/projects/yomichan/",
 	"foosoft.net",
 )
+relatedFormats: list[str] = ["JMDict", "EDICT2", "EPWING"]
 optionsProp: dict[str, Option] = {
 	"term_bank_size": IntOption(
 		comment="The number of terms in each term bank json file.",

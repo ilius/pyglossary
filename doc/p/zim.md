@@ -46,3 +46,7 @@ pip3 install libzim>=1.0
 | [Kiwix Serve](https://github.com/kiwix/kiwix-tools)         | ―           | GPL     | Linux, Windows |          |
 | [Kiwix for Apple Mac OS X](macos.kiwix.org)                 | ―           |         | Mac            |          |
 | [Kiwix for Android](https://github.com/kiwix/kiwix-android) | ―           | GPL     | Android        |          |
+
+### Related Formats
+
+- [Aard 2 (.slob)](./aard2_slob.md)

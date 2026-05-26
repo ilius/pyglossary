@@ -45,6 +45,7 @@ website = (
 	"http://aarddict.org/",
 	"aarddict.org",
 )
+relatedFormats: list[str] = ["Zim"]
 optionsProp: dict[str, Option] = {
 	"compression": StrOption(
 		values=["", "bz2", "zlib", "lzma2"],

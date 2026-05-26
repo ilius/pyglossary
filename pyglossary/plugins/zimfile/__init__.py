@@ -38,6 +38,7 @@ website = (
 	"https://wiki.openzim.org/wiki/OpenZIM",
 	"OpenZIM",
 )
+relatedFormats: list[str] = ["Aard2Slob"]
 optionsProp: dict[str, Option] = {
 	"text_unicode_errors": UnicodeErrorsOption(
 		comment="Unicode Errors for plaintext, values: `strict`, `ignore`, `replace`",

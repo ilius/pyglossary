@@ -38,4 +38,5 @@ website = (
 	"https://github.com/mhagiwara/cc-kedict",
 	"@mhagiwara/cc-kedict",
 )
+relatedFormats: list[str] = ["EDICT2", "JMDict", "JMnedict"]
 optionsProp: dict[str, Option] = {}

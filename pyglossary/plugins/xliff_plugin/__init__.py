@@ -35,5 +35,6 @@ website = (
 	"XLIFF Version 1.2",
 )
 optionsProp: dict[str, Option] = {}
+relatedFormats: list[str] = ["TMX"]
 
 # XLIFF Version 2.2: https://docs.oasis-open.org/xliff/xliff-core/v2.2/

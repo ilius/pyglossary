@@ -36,6 +36,7 @@ website = (
 	"https://web.archive.org/web/20060430114516/http://www.epwing.or.jp/",
 	"EPWING Consortium - 2006",
 )
+relatedFormats: list[str] = ["Yomichan", "JMDict"]
 optionsProp: dict[str, Option] = {}
 
 docTail = """### Supported Dictionaries (Subbooks)

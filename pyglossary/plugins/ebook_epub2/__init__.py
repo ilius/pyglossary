@@ -44,6 +44,7 @@ sortKeyName = "ebook"
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/EPUB"
 website = None
+relatedFormats: list[str] = ["Mobi", "Kobo"]
 
 # EPUB-3: https://www.w3.org/community/epub3/
 

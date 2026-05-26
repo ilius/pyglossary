@@ -32,3 +32,4 @@ website = (
 	"https://freedict.org/",
 	"FreeDict.org",
 )
+relatedFormats: list[str] = ["FreeDict"]

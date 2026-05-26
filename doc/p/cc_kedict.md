@@ -29,3 +29,9 @@ To install, run:
 ```sh
 pip3 install PyYAML lxml
 ```
+
+### Related Formats
+
+- [EDICT2 (CEDICT) (.u8)](./edict2.md)
+- [JMDict (xml)](./jmdict.md)
+- [JMnedict](./jmnedict.md)

@@ -35,3 +35,4 @@ website = (
 	"TMX 1.4b Specification",
 )
 optionsProp: dict[str, Option] = {}
+relatedFormats: list[str] = ["XLIFF"]

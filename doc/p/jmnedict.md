@@ -29,3 +29,8 @@ To install, run:
 ```sh
 pip3 install lxml
 ```
+
+### Related Formats
+
+- [JMDict (xml)](./jmdict.md)
+- [EDICT2 (CEDICT) (.u8)](./edict2.md)

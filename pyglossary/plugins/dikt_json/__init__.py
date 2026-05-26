@@ -41,6 +41,7 @@ singleFile = True
 kind = "text"
 wiki = ""
 website = "https://github.com/maxim-saplin/dikt"
+relatedFormats: list[str] = ["Json"]
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"enable_info": BoolOption(comment="Enable glossary info / metedata"),

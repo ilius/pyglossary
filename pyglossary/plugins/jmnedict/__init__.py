@@ -37,5 +37,5 @@ website = (
 	"https://www.edrdg.org/wiki/index.php/Main_Page",
 	"EDRDG Wiki",
 )
-relatedFormats: list[str] = []
+relatedFormats: list[str] = ["JMDict", "EDICT2"]
 optionsProp: dict[str, Option] = {}

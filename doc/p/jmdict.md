@@ -42,3 +42,4 @@ pip3 install lxml python-romkan-ng
 
 - [EDICT2 (CEDICT) (.u8)](./edict2.md)
 - [JMnedict](./jmnedict.md)
+- [cc-kedict](./cc_kedict.md)

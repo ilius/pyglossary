@@ -37,6 +37,7 @@ website = (
 	"https://github.com/cheusov/dictd/blob/master/dictunformat.1.in",
 	"dictd/dictunformat.1.in - @cheusov/dictd",
 )
+relatedFormats: list[str] = ["DictOrg", "DictOrgSource"]
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"headword_separator": StrOption(

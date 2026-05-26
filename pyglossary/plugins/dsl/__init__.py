@@ -42,6 +42,7 @@ website = (
 	"https://www.lingvo.ru/",
 	"www.lingvo.ru",
 )
+relatedFormats: list[str] = ["LingoesLDF"]
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
 	"audio": BoolOption(

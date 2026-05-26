@@ -32,3 +32,8 @@ To update, modify plugins/dictunformat/__init__.py file, then run ./scripts/gen
 | Name & Website                                           | Source code | License | Platforms | Language |
 | -------------------------------------------------------- | ----------- | ------- | --------- | -------- |
 | [dictunformat](https://linux.die.net/man/1/dictunformat) | ―           | GPL     | Linux     |          |
+
+### Related Formats
+
+- [DICT.org file format (.index)](./dict_org.md)
+- [DICT.org dictfmt source file](./dict_org_source.md)

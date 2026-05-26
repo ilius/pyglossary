@@ -54,3 +54,9 @@ pip3 install beautifulsoup4
 | Name & Website                   | Source code                                              | License | Platforms                    | Language   |
 | -------------------------------- | -------------------------------------------------------- | ------- | ---------------------------- | ---------- |
 | [Yomitan](https://yomitan.wiki/) | [@yomidevs/yomitan](https://github.com/yomidevs/yomitan) | GPL     | Chrome, Firefox, Edge, Brave | JavaScript |
+
+### Related Formats
+
+- [JMDict (xml)](./jmdict.md)
+- [EDICT2 (CEDICT) (.u8)](./edict2.md)
+- [EPWING](./epwing.md)

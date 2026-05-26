@@ -49,3 +49,8 @@ Mobipocket e-books.
 | [calibre](https://calibre-ebook.com/)                                      | ―           | GPL         | Linux, Windows, Mac |          |
 | [Okular](https://okular.kde.org/)                                          | ―           | GPL         | Linux, Windows, Mac |          |
 | [Book Reader](https://f-droid.org/en/packages/com.github.axet.bookreader/) | ―           | GPL         | Android             |          |
+
+### Related Formats
+
+- [EPUB-2 E-Book](./epub2.md)
+- [Kobo E-Reader Dictionary](./kobo.md)

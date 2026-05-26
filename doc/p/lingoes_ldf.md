@@ -40,3 +40,7 @@ To update, modify plugins/lingoes_ldf/__init__.py file, then run ./scripts/gen
 | Name & Website                                                                     | Source code | License | Platforms | Language |
 | ---------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
 | [Lingoes Dictionary Creator](http://www.lingoes.net/en/dictionary/dict_format.php) | ―           | Unknown |           |          |
+
+### Related Formats
+
+- [ABBYY Lingvo DSL (.dsl)](./dsl.md)

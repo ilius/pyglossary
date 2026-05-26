@@ -41,3 +41,5 @@ pip3 install marisa-trie
 ### Related Formats
 
 - [Kobo E-Reader Dictfile (.df)](./kobo_dictfile.md)
+- [EPUB-2 E-Book](./epub2.md)
+- [Mobipocket (.mobi) E-Book](./mobi.md)

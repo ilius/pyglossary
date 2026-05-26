@@ -44,6 +44,7 @@ sortKeyName = "ebook"
 kind = "package"
 wiki = "https://en.wikipedia.org/wiki/Mobipocket"
 website = None
+relatedFormats: list[str] = ["Epub2", "Kobo"]
 
 optionsProp: dict[str, Option] = {
 	"group_by_prefix_length": IntOption(

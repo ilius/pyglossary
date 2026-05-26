@@ -55,7 +55,7 @@ website = None
 # in Jyutping transcription to CC-CEDICT
 # "https://cantonese.org/download.html",
 
-relatedFormats: list[str] = ["JMDict", "JMnedict"]
+relatedFormats: list[str] = ["JMDict", "JMnedict", "cc-kedict"]
 
 optionsProp: dict[str, Option] = {
 	"encoding": EncodingOption(),
