@@ -8,6 +8,7 @@
 | `utf8_check` | No | `--utf8-check`<br/>`--no-utf8-check` | Fix Unicode in term(s) and definition |
 | `lower` | No | `--lower`<br/>`--no-lower` | Lowercase term(s) |
 | `skip_duplicate_headword` | No | `--skip-duplicate-headword` | Skip entries with a duplicate headword (first term) |
+| `skip_term_regex` | No | `--skip-term-regex` | Skip entries with any term  matching regexp |
 | `trim_arabic_diacritics` | No | `--trim-arabic-diacritics` | Trim Arabic diacritics from headword (first term) |
 | `rtl` | No | `--rtl` | Make definition right-to-left |
 | `remove_html_all` | No | `--remove-html-all` | Remove all HTML tags (not their contents) from definition |

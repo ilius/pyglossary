@@ -32,3 +32,8 @@ You can enable/disable some of these filters using config parameters / command l
 are documented in [doc/config.rst](./config.rst).
 
 The full list of entry filters is also documented in [doc/entry-filters.md](./entry-filters.md).
+
+`--skip-term-regex=REGEX` skips entries where any term in `entry.l_term` fully
+matches the pattern. PyGlossary wraps the pattern with `^` and `$` automatically,
+so `skip-.*` matches a whole term like `skip-me`, not a substring inside a longer
+term. Data entries are passed through unchanged.

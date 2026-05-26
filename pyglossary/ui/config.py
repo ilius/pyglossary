@@ -96,6 +96,7 @@ configDefDict: dict[str, Option] = {
 	"remove_html_all": getEntryFilterOption("remove_html_all"),
 	"normalize_html": getEntryFilterOption("normalize_html"),
 	"skip_duplicate_headword": getEntryFilterOption("skip_duplicate_headword"),
+	"skip_term_regex": getEntryFilterOption("skip_term_regex"),
 	"trim_arabic_diacritics": getEntryFilterOption("trim_arabic_diacritics"),
 	"unescape_word_links": getEntryFilterOption("unescape_word_links"),
 	"color.enable.cmd.unix": BoolOption(

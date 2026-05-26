@@ -1000,6 +1000,32 @@ Japonica"""
 		self.assertEqual(dataEntries[0].getFileName(), "file.bin")
 		self.assertEqual(dataEntries[0].data, b"hello\x00world")
 
+	def test_skip_term_regex(self):
+		from pyglossary.entry_filters import SkipTermRegex
+
+		glos = self.glos = Glossary()
+		filt = SkipTermRegex(glos, r"skip-.*")
+		self.assertIsNotNone(filt.run(glos.newEntry(["keep"], "def1")))
+		self.assertIsNone(filt.run(glos.newEntry(["skip-me"], "def2")))
+		self.assertIsNone(filt.run(glos.newEntry(["also", "skip-alt"], "def3")))
+		filt = SkipTermRegex(glos, r"skip")
+		self.assertIsNone(filt.run(glos.newEntry(["skip"], "def4")))
+		self.assertIsNotNone(filt.run(glos.newEntry(["skip-more"], "def5")))
+		self.assertIsNotNone(
+			filt.run(
+				glos.newDataEntry(
+					"file.bin",
+					b"hello\x00world",
+				),
+			),
+		)
+
+	def test_skip_term_regex_not_enabled(self):
+		glos = self.glos = Glossary()
+		glos.config = {}
+		glos.updateEntryFilters()
+		self.assertNotIn("skip_term_regex", glos._entryFiltersName)
+
 	def test_read_filename(self):
 		glos = self.glos = Glossary()
 		glos.directRead(self.downloadFile("004-bar.txt"))

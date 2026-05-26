@@ -15,6 +15,7 @@
 	"normalize_html": false,
 	"save_info_json": false,
 	"skip_duplicate_headword": false,
+	"skip_term_regex": "",
 	"trim_arabic_diacritics": false,
 	"unescape_word_links": false,
 

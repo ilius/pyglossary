@@ -19,6 +19,7 @@ class ConfigType(TypedDict):
 	normalize_html: NotRequired[bool]
 	save_info_json: NotRequired[bool]
 	skip_duplicate_headword: NotRequired[bool]
+	skip_term_regex: NotRequired[str]
 	trim_arabic_diacritics: NotRequired[bool]
 	unescape_word_links: NotRequired[bool]
 	# color.enable.cmd.unix: bool

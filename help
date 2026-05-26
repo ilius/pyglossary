@@ -75,7 +75,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         [--sort|--no-sort] [--sort-key=<u>NAME</u>] [--sort-encoding=<u>ENCODING</u>]
         [--utf8-check|--no-utf8-check] [--lower|--no-lower]
         [--skip-resources] [--skip-duplicate-headword]
-        [--trim-arabic-diacritics]
+        [--skip-term-regex=<u>REGEX</u>] [--trim-arabic-diacritics]
         [--rtl] [--remove-html=<u>TAGS</u>] [--remove-html-all] [--normalize-html]
         [--unescape-word-links]
         [-r <u>READ_OPTIONS</u>] [-w <u>WRITE_OPTIONS</u>]
@@ -134,12 +134,17 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         --lower / --no-lower             lowercase terms
         --skip-resources                 skip resource/data entries (images, audio, css, etc)
         --skip-duplicate-headword        skip entries with a duplicate headword
+        --skip-term-regex=REGEX          skip entries whose term fully matches REGEX
         --trim-arabic-diacritics         trim Arabic diacritics from headword
         --rtl                            wrap definition in a right-to-left div
         --remove-html=TAGS               remove comma-separated HTML tags from definition
         --remove-html-all                remove all HTML tags from definition
         --normalize-html                 normalize HTML tags in definition (WIP)
         --unescape-word-links            unescape Term/Entry links in definitions
+    --skip-term-regex examples:
+        ${CMD} input.txt output.txt --skip-term-regex='skip'
+        ${CMD} input.txt output.txt --skip-term-regex='skip-.*'
+        ${CMD} input.txt output.txt --skip-term-regex='[0-9]+'
     See doc/entry-filters.md and doc/config.rst for all entry filter options.
 
 

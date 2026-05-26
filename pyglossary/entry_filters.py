@@ -361,6 +361,28 @@ class PreventDuplicateTerms(EntryFilter):
 		return entry
 
 
+class SkipTermRegex(EntryFilter):
+	name = "skip_term_regex"
+	desc = "Skip entries with any term  matching regexp"
+
+	def __init__(self, glos: _GlossaryType, regexStr: str) -> None:
+		EntryFilter.__init__(self, glos)
+		try:
+			self._pat = re.compile(f"^{regexStr}$")
+		except re.error as e:
+			raise ValueError(
+				f"Invalid skip_term_regex regex: {regexStr!r}: {e}",
+			) from e
+
+	def run(self, entry: EntryType) -> EntryType | None:
+		if entry.isData():
+			return entry
+		for term in entry.l_term:
+			if self._pat.match(term):
+				return None
+		return entry
+
+
 class SkipEntriesWithDuplicateHeadword(EntryFilter):
 	name = "skip_duplicate_headword"
 	desc = "Skip entries with a duplicate headword (first term)"
@@ -452,6 +474,7 @@ entryFiltersRules = [
 	("utf8_check", False, FixUnicode),
 	("lower", False, LowerTerm),
 	("skip_duplicate_headword", False, SkipEntriesWithDuplicateHeadword),
+	("skip_term_regex", "", SkipTermRegex),
 	("trim_arabic_diacritics", False, TrimArabicDiacritics),
 	("rtl", False, RTLDefi),
 	("remove_html_all", False, RemoveHtmlTagsAll),
