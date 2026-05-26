@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import gzip
 import unittest
 from collections import Counter
 from glob import glob
@@ -67,6 +68,41 @@ class TestBabylonBglWriter(TestGlossaryBase):
 						self._full_rows(gl2),
 						msg=f"full entry mismatch for {txt_path!r}",
 					)
+
+	def test_bgl_writer_wraps_resource_links(self):
+		import os
+		import tempfile
+
+		tmpdir = tempfile.mkdtemp()
+		txt_path = join(tmpdir, "media.txt")
+		res_dir = txt_path + "_res"
+		os.makedirs(res_dir)
+		png = (
+			b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
+			b"\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0c"
+			b"IDAT\x08\x99\x01\x01\x00\x00\xff\xff\x00\x00\x00\x02\x00\x01"
+			b"\x00\x00\x00\x00IEND\xaeB`\x82"
+		)
+		with open(join(res_dir, "test.png"), "wb") as png_file:
+			png_file.write(png)
+		with open(txt_path, "w", encoding="utf-8") as txt_file:
+			txt_file.write("hello\t<img src='test.png'>\n")
+
+		out_bgl = self.newTempFilePath("media-out.bgl")
+		gl = Glossary()
+		gl.convert(
+			ConvertArgs(
+				inputFilename=txt_path,
+				outputFilename=out_bgl,
+				inputFormat="Tabfile",
+				outputFormat="BabylonBgl",
+			),
+		)
+
+		with open(out_bgl, "rb") as bgl_file:
+			bgl_file.seek(64)
+			payload = gzip.GzipFile(fileobj=bgl_file).read()
+		self.assertIn(b"\x1etest.png\x1f", payload)
 
 
 if __name__ == "__main__":

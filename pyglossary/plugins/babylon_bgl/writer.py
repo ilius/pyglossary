@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING
 
 from pyglossary.compress import stdCompressions
 
+from .bgl_text import wrapResourceLinks
+
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
@@ -109,12 +111,14 @@ def writePayload(
 
 	writeBlockType3(gz, 0x0C, len(word_entries).to_bytes(4, "big"))
 
+	resourceNames = frozenset(entry.getFileName() for entry in data_entries)
+
 	for entry in word_entries:
 		terms = entry.l_term
 		if not terms:
 			continue
 		b_word = terms[0].encode("utf-8")
-		b_defi = entry.defi.encode("utf-8")
+		b_defi = wrapResourceLinks(entry.defi, resourceNames).encode("utf-8")
 		b_alts = [t.encode("utf-8") for t in terms[1:]]
 		if len(b_word) > 255 or any(len(a) > 255 for a in b_alts) or len(b_defi) > 65535:
 			gz.write(_pack_block(11, _pack_entry_type11(b_word, b_defi, b_alts)))

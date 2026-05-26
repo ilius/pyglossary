@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 
 from pyglossary.core import isDebug, log
@@ -29,6 +30,7 @@ from pyglossary.xml_utils import xml_escape
 
 __all__ = [
 	"fixImgLinks",
+	"wrapResourceLinks",
 	"normalizeNewlines",
 	"removeControlChars",
 	"removeNewlines",
@@ -235,6 +237,66 @@ def replaceAsciiCharRefs(b_text: bytes) -> bytes:
 		# no need to escape "<", ">", "&"
 		b_parts[i_part] = bytes([code])
 	return b"".join(b_parts)
+
+
+_pat_resource_attr = re.compile(
+	r"""(?i)\b(src|href)\s*=\s*(['"])(.*?)\2""",
+)
+
+
+def _resourceNameLookup(resourceNames: frozenset[str]) -> dict[str, str]:
+	lookup: dict[str, str] = {}
+	for name in resourceNames:
+		lookup[name] = name
+		norm = name.replace("\\", "/")
+		if norm != name:
+			lookup[norm] = name
+		base = os.path.basename(norm)
+		if base:
+			lookup.setdefault(base, name)
+		for prefix in ("", "./", "sound://"):
+			for candidate in (name, norm, base):
+				if candidate:
+					lookup.setdefault(f"{prefix}{candidate}", name)
+	return lookup
+
+
+def _resolveResourceName(value: str, lookup: dict[str, str]) -> str | None:
+	if "\x1e" in value or "\x1f" in value:
+		return None
+	val = value.replace("\\", "/")
+	if val.lower().startswith("sound://"):
+		val = val[8:]
+	if val.lower().startswith("bres://"):
+		val = val.split("/")[-1]
+	if val.startswith("./"):
+		val = val[2:]
+	return lookup.get(value) or lookup.get(val)
+
+
+def wrapResourceLinks(u_text: str, resourceNames: frozenset[str]) -> str:
+	r"""
+	Wrap embedded resource references for Babylon BGL/GoldenDict.
+
+	GoldenDict replaces \x1e in definitions with a bres:// prefix when
+	indexing BGL files. Without these markers, embedded type-2 resources
+	are not linked from HTML definitions.
+	"""
+	if isDebug():
+		assert isinstance(u_text, str), f"{u_text=}"
+	if not resourceNames:
+		return u_text
+
+	lookup = _resourceNameLookup(resourceNames)
+
+	def repl(m: re.Match[str]) -> str:
+		attr, quote, val = m.group(1), m.group(2), m.group(3)
+		canon = _resolveResourceName(val, lookup)
+		if not canon:
+			return m.group(0)
+		return f"{attr}={quote}\x1e{canon}\x1f{quote}"
+
+	return _pat_resource_attr.sub(repl, u_text)
 
 
 def fixImgLinks(u_text: str) -> str:
