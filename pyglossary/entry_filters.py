@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 __all__ = [
 	"EntryFilter",
 	"EntryFilterType",
+	"MarkdownToHtml",
 	"PreventDuplicateTerms",
 	"RemoveHtmlTagsAll",
 	"ShowMaxMemoryUsage",
@@ -156,6 +157,20 @@ class RTLDefi(EntryFilter):
 
 	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		entry.editFuncDefi(lambda defi: f'<div dir="rtl">{defi}</div>')
+		return entry
+
+
+class MarkdownToHtml(EntryFilter):
+	name = "md_to_html"
+	desc = "Treat plaintext definitions as markdown and convert them to HTML"
+
+	def run(self, entry: EntryType) -> EntryType | None:
+		if entry.defiFormat != "m":
+			return entry
+		import mistune
+
+		entry.editFuncDefi(mistune.html)
+		entry.defiFormat = "h"
 		return entry
 
 
@@ -490,6 +505,7 @@ entryFiltersRules = [
 	# filters that are enabled by plugins using glossary methods:
 	(None, False, PreventDuplicateTerms),
 	(None, False, StripFullHtml),
+	(None, False, MarkdownToHtml),
 	# -------------------------------------
 	# filters are added conditionally (other than with config or glossary methods):
 	(None, False, ShowMaxMemoryUsage),

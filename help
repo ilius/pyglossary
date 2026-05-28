@@ -77,7 +77,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         [--skip-resources] [--skip-duplicate-headword]
         [--skip-term-regex=<u>REGEX</u>] [--trim-arabic-diacritics]
         [--rtl] [--remove-html=<u>TAGS</u>] [--remove-html-all] [--normalize-html]
-        [--unescape-word-links]
+        [--md-to-html] [--unescape-word-links]
         [-r <u>READ_OPTIONS</u>] [-w <u>WRITE_OPTIONS</u>]
         [--json-read-options=<u>JSON</u>] [--json-write-options=<u>JSON</u>]
         [--source-lang=<u>LANGUAGE</u>] [--target-lang=<u>LANGUAGE</u>]
@@ -140,6 +140,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         --remove-html=TAGS               remove comma-separated HTML tags from definition
         --remove-html-all                remove all HTML tags from definition
         --normalize-html                 normalize HTML tags in definition (WIP)
+        --md-to-html                     treat plaintext definitions as markdown and convert them to HTML
         --unescape-word-links            unescape Term/Entry links in definitions
     --skip-term-regex examples:
         ${CMD} input.txt output.txt --skip-term-regex='skip'

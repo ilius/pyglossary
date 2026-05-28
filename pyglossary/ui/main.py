@@ -96,6 +96,7 @@ convertOptionsKeys = (
 	"sortKeyName",
 	"sortEncoding",
 	"sqlite",
+	"markdownToHtml",
 )
 infoOverrideSpec = (
 	("sourceLang", validateLangStr),

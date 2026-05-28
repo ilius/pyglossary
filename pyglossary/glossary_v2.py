@@ -37,6 +37,7 @@ from . import core
 from .core import cacheDir, log
 from .entry import DataEntry, Entry
 from .entry_filters import (
+	MarkdownToHtml,
 	PreventDuplicateTerms,
 	RemoveHtmlTagsAll,
 	ShowMaxMemoryUsage,
@@ -105,6 +106,7 @@ class ConvertArgs:
 	writeOptions: dict[str, Any] | None = None
 	sqlite: bool | None = None
 	infoOverride: dict[str, str] | None = None
+	markdownToHtml: bool = False
 
 
 class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
@@ -1235,6 +1237,9 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			outputFilename=outputFilename,
 			outputFormat=outputFormat,
 		)
+
+		if args.markdownToHtml:
+			self._addExtraEntryFilter(MarkdownToHtml)
 
 		if args.infoOverride:
 			for key, value in args.infoOverride.items():

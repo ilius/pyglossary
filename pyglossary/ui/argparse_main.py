@@ -307,6 +307,13 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		dest="reverse",
 		action="store_true",
 	)
+	parser.add_argument(
+		"--md-to-html",
+		dest="markdownToHtml",
+		action="store_true",
+		default=None,
+		help="convert markdown definitions (defiFormat=m) to HTML",
+	)
 
 	parser.add_argument(
 		"inputFilename",
@@ -353,6 +360,13 @@ def validateFlags(args: argparse.Namespace, log: logging.Logger) -> bool:
 			f"Invalid sortKeyName={args.sortKeyName!r}. Supported values:\n{valuesStr}",
 		)
 		return False
+
+	if args.markdownToHtml:
+		try:
+			import mistune  # noqa: F401
+		except ModuleNotFoundError:
+			log.critical("Run `pip install mistune` to use --md-to-html")
+			return False
 
 	return True
 

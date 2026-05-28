@@ -21,4 +21,5 @@
 | `remove_empty_dup_alt_terms` | Yes |  | Remove empty and duplicate alternate terms |
 | `prevent_duplicate_terms` | No |  | Prevent duplicate terms |
 | `strip_full_html` | No |  | Replace a full HTML document with it's body |
+| `md_to_html` | No |  | Treat plaintext definitions as markdown and convert them to HTML |
 | `max_memory_usage` | No |  | Show Max Memory Usage |
