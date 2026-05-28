@@ -29,12 +29,15 @@ if [ -z "$VERSION" ]; then
 	exit 1
 fi
 
+
 if [ $(git rev-parse --abbrev-ref HEAD) != "master" ] ; then
 	echo "Not in master branch"
 	exit 1
 fi
 
 set -x
+
+$scriptsDir/check-python-version
 
 if git cat-file tag $VERSION 2>/dev/null ; then
 	CUR_VERSION=$(git describe --abbrev=0 --tags "$VERSION^")

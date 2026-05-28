@@ -27,6 +27,8 @@ fi
 
 set -x
 
+$scriptsDir/check-python-version
+
 $scriptsDir/version-set.py $VERSION
 
 sudo rm -rf dist build
