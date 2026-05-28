@@ -42,6 +42,7 @@ class Reader:
 		self._file = open(filename, encoding="utf-8")
 		self._resDir = filename + "_res"
 		if isdir(self._resDir):
+			# TODO: FIXME: use recursive traversal
 			self._resFileNames = os.listdir(self._resDir)
 		else:
 			self._resDir = ""

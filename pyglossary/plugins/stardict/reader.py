@@ -124,6 +124,7 @@ class Reader:
 			self._dictFile = open(self._filename + ".dict", mode="rb")
 		self._resDir = join(dirname(self._filename), "res")
 		if isdir(self._resDir):
+			# TODO: FIXME: use recursive traversal
 			self._resFileNames = os.listdir(self._resDir)
 		else:
 			self._resDir = ""

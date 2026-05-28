@@ -20,8 +20,8 @@
 from __future__ import annotations
 
 import csv
-import os
-from os.path import isdir, join
+from os.path import isdir
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.compress import (
@@ -98,7 +98,7 @@ class Reader:
 		)
 		self._resDir = filename + "_res"
 		if isdir(self._resDir):
-			self._resFileNames = os.listdir(self._resDir)
+			self._resFileNames = Path(self._resDir).rglob("*")
 		else:
 			self._resDir = ""
 			self._resFileNames = []
@@ -176,10 +176,15 @@ class Reader:
 
 		self._entryCount = entryCount
 
-		resDir = self._resDir
-		for fname in self._resFileNames:
-			with open(join(resDir, fname), "rb") as file:
-				yield self._glos.newDataEntry(
-					fname,
-					file.read(),
-				)
+		resDirPath = Path(self._resDir)
+
+		resFilePath: Path
+		for resFilePath in self._resFileNames:
+			if resFilePath.is_file():
+				with resFilePath.open(mode="rb") as file:
+					yield self._glos.newDataEntry(
+						resFilePath.relative_to(resDirPath).as_posix(),
+						file.read(),
+					)
+			else:
+				log.debug(f"ResourceDir: {resFilePath.absolute()}")
