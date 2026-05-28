@@ -1,0 +1,19 @@
+---
+description: Prefer uv for Python commands when uv is available
+alwaysApply: true
+---
+
+# Use uv for Python commands
+
+When running Python in this project, check whether `uv` is available first (`command -v uv`).
+
+If `uv` is present, use it instead of bare `python`, `python3`, `pip`, or `pip3`:
+
+- **Run a script or module**: `uv run python script.py`, `uv run pytest`, `uv run -m pyglossary`
+- **Run a one-off command in the project env**: `uv run <command>`
+- **Invoke Python directly**: `uv python -c "..."`, `uv python script.py`
+- **Install/sync dependencies**: `uv sync`, `uv add <package>`, `uv pip install <package>`
+
+Do not use `python`, `python3`, or `pip` when `uv` is available unless the user explicitly asks for them.
+
+If `uv` is not installed, fall back to the project's usual Python workflow.

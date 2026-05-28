@@ -1,0 +1,89 @@
+---
+description: Conventions for writing PyGlossary release notes
+globs: doc/releases/*.md
+alwaysApply: false
+---
+
+# Release notes
+
+When creating or editing `doc/releases/X.Y.Z.md`:
+
+- Include **uncommitted** user-facing changes from `git diff` / `git status` before tagging, not only merged commits since the previous tag
+
+## Source material
+
+- Compare commits since the previous tag: `git log <prev-tag>..HEAD --no-merges`
+- Follow the section layout in recent files (e.g. `doc/releases/5.3.0.md`, `doc/releases/5.4.0.md`): Compatibility changes, Bug fixes (security / core / plugins / user interface), Features, Improvements, Other changes, New Contributors, Full Changelog link
+- End with: `**Full Changelog**: https://github.com/ilius/pyglossary/compare/<prev-tag>...<new-tag>`
+
+## Issue and pull request links
+
+Use full GitHub URLs (not bare `#562` shorthand) for portability off github.com:
+
+- Issues: `[#562](https://github.com/ilius/pyglossary/issues/562)`
+- Pull requests: `[#716](https://github.com/ilius/pyglossary/pull/716)`
+- Do **not** treat anything inside backticks as an issue or pull request link. Leave inline code literal — e.g. `&#160;`, `#CONTENTS_LANGUAGE:`, config keys, and similar are not GitHub references.
+
+## Links to files in this repo
+
+Do **not** use relative links (e.g. `../p/tmx.md`) in release notes. Release notes are copied into GitHub releases **and** kept as files under `doc/releases/`; relative paths break in one of those contexts.
+
+Use root-relative paths starting with `/` instead, e.g. `[Babylon BGL](/doc/p/babylon_bgl.md)`.
+
+## New read/write format functionalities
+
+For every new reader/writer/format mentioned:
+
+1. **Link to plugin doc** — use root-relative links to `doc/p/`, e.g. `[Babylon BGL](/doc/p/babylon_bgl.md)`
+2. **Brief description** — what the format is (file type, origin, typical tools)
+3. **Use case** — why someone would convert it with PyGlossary; prefix with *Use case:*
+
+Example:
+
+```markdown
+- **[TMX](/doc/p/tmx.md)** reader ([#716](https://github.com/ilius/pyglossary/pull/716)) — Translation Memory eXchange XML (`.tmx`). *Use case:* import source/target pairs from CAT tools as glossary entries.
+```
+
+Read `doc/p/<plugin>.md` (or the plugin source) for accurate descriptions.
+
+In **Compatibility changes**, link format names to `/doc/p/` when a specific plugin is affected.
+
+## Features
+
+Under `### Features`, use subsections in this order:
+
+- `#### New read/write format functionalities`
+- `#### New command-line features` — main `pyglossary` conversion flags/options and standalone CLI tools (`pyglossary-view` / `view-glossary`, `pyglossary-diff` / `diff-glossary`); do **not** list GUI launcher flags (`--ui`, `--tkw`, `--qt6`, `--gtk4`, etc.) here
+- `#### New user interface features` — Gtk, Tk, Qt, web, and other graphical or interactive front ends (include related launcher flags here)
+
+## Improvements
+
+Use `### Improvements` for enhancements to **existing** functionality (not wholly new plugins, UIs, formats, or CLI tools). Examples: richer reader output, better Gtk/Tk behavior that is not a bug fix.
+
+- Link to `/doc/p/` when naming an existing format plugin
+- Do not put regressions or security fixes here — use the Bug fixes sections
+
+## Bug fixes
+
+**Do not list bug fixes for formats or features that did not exist in the previous tag.**
+
+- Fixes during development of a new plugin/writer/UI belong in the feature bullet, not under Bug fixes
+- Omit implementation/refactor notes for brand-new code from Bug fixes and Other changes unless they fix pre-existing behavior
+
+Bug fixes section is only for regressions or fixes to behavior already present in the previous release.
+
+Group bug fixes into `###` sections (in this order; omit empty sections):
+
+- `### Bug fixes (security)` — always first when present; path traversal, unsafe file writes, and similar vulnerabilities
+- `### Bug fixes (core)` — library, plugin loading, conversion pipeline, CLI flags/parsing shared across UIs
+- `### Bug fixes (plugins)` — format-specific readers/writers; link to `/doc/p/` when naming a format
+- `### Bug fixes (user interface)` — Gtk, Tk, Qt, web, and other graphical or interactive-terminal UIs; list terminal UI bugs before GUI bugs. Standalone CLI tools (`view-glossary`, `diff-glossary`) are not user interface — use Bug fixes (core) or **New command-line features** as appropriate
+
+## New Contributors
+
+List contributors whose **first commit to this repo** falls in the current release cycle (`<prev-tag>..HEAD`).
+
+- Do **not** include users who had commits in or before the previous tag — they are not new contributors, even if this is their first contribution credited in release notes or GitHub suggests them
+- Verify with git before listing someone, e.g. `git log --author="<name-or-email>" --reverse --format=%H | head -1` and confirm that commit is after `<prev-tag>`
+- Format: `- [@username](https://github.com/username) made their first contribution in [#NNN](https://github.com/ilius/pyglossary/pull/NNN)`
+- Omit the section entirely if there are no first-time contributors in this release
