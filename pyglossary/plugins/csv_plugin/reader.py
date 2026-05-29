@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import csv
-import os
 from os.path import isdir, join
 from typing import TYPE_CHECKING, cast
 
@@ -30,6 +29,7 @@ from pyglossary.compress import (
 )
 from pyglossary.core import log
 from pyglossary.io_utils import nullTextIO
+from pyglossary.os_utils import listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	import io
@@ -98,7 +98,7 @@ class Reader:
 		)
 		self._resDir = filename + "_res"
 		if isdir(self._resDir):
-			self._resFileNames = os.listdir(self._resDir)
+			self._resFileNames = list(listFilesRecursiveRelPath(self._resDir))
 		else:
 			self._resDir = ""
 			self._resFileNames = []
