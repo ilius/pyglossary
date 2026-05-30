@@ -28,7 +28,6 @@ import gi
 
 from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.option import Option
 from pyglossary.os_utils import abspath2
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.text_utils import (

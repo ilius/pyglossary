@@ -38,7 +38,6 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 	from pyglossary.logger import Logger
-	from pyglossary.option import Option
 
 __all__ = ["FormatButton", "FormatOptionsDialog"]
 

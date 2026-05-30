@@ -73,7 +73,8 @@ class MdEmit:
 			yield
 
 	@contextmanager
-	def _ctx_pass(self, _attr: dict[str, Any]) -> Iterator[None]:
+	@staticmethod
+	def _ctx_pass(_attr: dict[str, Any]) -> Iterator[None]:
 		yield
 
 	@contextmanager
@@ -116,7 +117,7 @@ class MdEmit:
 		grammar = "grammar" in cls.split()
 		if grammar:
 			self._effective_append("*")
-			yield
+			yield  # noqa: RUF075
 			self._effective_append("*")
 			return
 		yield
@@ -125,25 +126,26 @@ class MdEmit:
 	def _ctx_b(self, attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		self._effective_append("**")
-		yield
+		yield  # noqa: RUF075
 		self._effective_append("**")
 
 	@contextmanager
 	def _ctx_strong(self, attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		self._effective_append("**")
-		yield
+		yield  # noqa: RUF075
 		self._effective_append("**")
 
 	@contextmanager
 	def _ctx_big(self, attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		self._effective_append("## ")
-		yield
+		yield  # noqa: RUF075
 		self._effective_append("\n")
 
 	@contextmanager
-	def _ctx_span(self, attr: dict[str, Any]) -> Iterator[None]:
+	@staticmethod
+	def _ctx_span(attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		yield
 
@@ -151,7 +153,7 @@ class MdEmit:
 	def _ctx_p(self, attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		self._effective_append("\n\n")
-		yield
+		yield  # noqa: RUF075
 		self._effective_append("\n\n")
 
 	@contextmanager
@@ -173,9 +175,9 @@ class MdEmit:
 	def _ctx_ol(self, attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		self._list_levels.append({"ordered": True, "next": 1})
-		if self._parts and self._parts[-1] not in ("\n", "\n\n"):
+		if self._parts and self._parts[-1] not in {"\n", "\n\n"}:
 			self._effective_append("\n")
-		yield
+		yield  # noqa: RUF075
 		self._list_levels.pop()
 		self._effective_append("\n")
 
@@ -183,9 +185,9 @@ class MdEmit:
 	def _ctx_ul(self, attr: dict[str, Any]) -> Iterator[None]:
 		del attr
 		self._list_levels.append({"ordered": False, "next": 0})
-		if self._parts and self._parts[-1] not in ("\n", "\n\n"):
+		if self._parts and self._parts[-1] not in {"\n", "\n\n"}:
 			self._effective_append("\n")
-		yield
+		yield  # noqa: RUF075
 		self._list_levels.pop()
 		self._effective_append("\n")
 
@@ -200,7 +202,7 @@ class MdEmit:
 		meta = self._list_levels[-1]
 		start = len(self._parts)
 
-		yield
+		yield  # noqa: RUF075
 
 		raw = "".join(self._parts[start:])
 		del self._parts[start:]

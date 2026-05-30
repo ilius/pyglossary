@@ -164,7 +164,7 @@ class MarkdownToHtml(EntryFilter):
 	name = "md_to_html"
 	desc = "Treat plaintext definitions as markdown and convert them to HTML"
 
-	def run(self, entry: EntryType) -> EntryType | None:
+	def run(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
 		if entry.defiFormat != "m":
 			return entry
 		import mistune

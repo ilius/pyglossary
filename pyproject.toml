@@ -134,6 +134,7 @@ ignore = [
 	"PLR0914", # Too many local variables (x/15)
 
 	"DOC",
+	"PLW0717", # Try clause contains too many statements (? > 5)
 	"D400", # First line should end with a period
 	"D415", # First line should end with a period, question mark, or exclamation point
 	"PYI042",  # Type alias `...` should be CamelCase FIXME
