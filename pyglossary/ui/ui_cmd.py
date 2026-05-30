@@ -236,6 +236,7 @@ class UI(UIBase):
 		self.pbar.update(ratio)
 
 	def progressEnd(self) -> None:
+		self.progress(1.0)
 		self.pbar.finish()
 		if self._resetLogFormatter:
 			self._resetLogFormatter()
