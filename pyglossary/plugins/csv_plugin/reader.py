@@ -61,7 +61,6 @@ class Reader:
 		self._pos = -1
 		self._csvReader: Iterable[list[str]] | None = None
 		self._resDir = ""
-		self._resFileNames: list[str] = []
 		self._bufferRow: list[str] | None = None
 
 	def open(
@@ -97,11 +96,15 @@ class Reader:
 			delimiter=self._delimiter,
 		)
 		self._resDir = filename + "_res"
-		if isdir(self._resDir):
-			self._resFileNames = list(listFilesRecursiveRelPath(self._resDir))
-		else:
+		resCount = 0
+		if not isdir(self._resDir):
 			self._resDir = ""
-			self._resFileNames = []
+		elif self._glos.progressbar:
+			log.info("Counting resource files...")
+			resCount = sum(1 for _f in listFilesRecursiveRelPath(self._resDir))
+			log.info(f"Found {resCount} resource files")
+		self._resCount = resCount
+
 		for row in self._csvReader:
 			if not row:
 				continue
@@ -121,15 +124,22 @@ class Reader:
 				log.exception("error while closing csv file")
 		self.clear()
 
+	def countResourceFiles(self) -> int:
+		return self._resCount
+
 	def __len__(self) -> int:
 		from pyglossary.file_utils import fileCountLines
 
-		if self._entryCount is None:
-			if hasattr(self._file, "compression"):
-				return 0
-			log.debug("Try not to use len(reader) as it takes extra time")
-			self._entryCount = fileCountLines(self._filename) - self._leadingLinesCount
-		return self._entryCount + len(self._resFileNames)
+		if self._entryCount is not None:
+			return self._entryCount
+
+		if hasattr(self._file, "compression"):
+			return 0
+
+		self._entryCount = (
+			fileCountLines(self._filename) - self._leadingLinesCount + self._resCount
+		)
+		return self._entryCount
 
 	def _iterRows(self) -> Iterator[list[str]]:
 		if self._csvReader is None:
@@ -174,12 +184,13 @@ class Reader:
 			entryCount += 1
 			yield self._processRow(row)
 
-		self._entryCount = entryCount
-
 		resDir = self._resDir
-		for fname in self._resFileNames:
+		for fname in listFilesRecursiveRelPath(resDir):
 			with open(join(resDir, fname), "rb") as file:
+				entryCount += 1
 				yield self._glos.newDataEntry(
 					fname,
 					file.read(),
 				)
+
+		self._entryCount = entryCount

@@ -207,6 +207,8 @@ def listFilesRecursiveRelPath(direc: str) -> Iterable[str]:
 	Iterate over relative paths of all files (directly/indirectly)
 	inside given directory.
 	"""
+	if not direc:
+		return
 	direc = normpath(direc)  # remove trailing slash/sep or leading "./"
 	direcLen = len(direc) + 1
 	for root, _subDirs, files in os.walk(direc):

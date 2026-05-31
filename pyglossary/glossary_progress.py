@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 		def __len__(self) -> int: ...
 
+		def countResourceFiles(self) -> int: ...
+
 
 __all__ = ["GlossaryProgress"]
 
@@ -60,16 +62,29 @@ class GlossaryProgress:
 
 	def _byteProgressIter(
 		self,
-		iterable: Iterable[EntryType],
+		reader: ReaderType,
 	) -> Iterator[EntryType]:
 		lastPos = 0
-		for entry in iterable:
+		resIndex = 0
+		resCount = 0
+		if hasattr(reader, "countResourceFiles"):
+			resCount = reader.countResourceFiles()
+		for entry in reader:
 			if entry is None:
 				continue
 			yield entry
-			if (bp := entry.byteProgress()) and bp[0] > lastPos + 100_000:
-				self.progress(bp[0], bp[1], unit="bytes")
-				lastPos = bp[0]
+			bp = entry.byteProgress()
+			if bp:
+				if bp[0] > lastPos + 100_000:
+					self.progress(bp[0], bp[1], unit="bytes")
+					lastPos = bp[0]
+			elif resCount and entry.isData():
+				if resIndex == 0:
+					self.progressEnd()
+					self.progressInit("Reading resources")
+				elif resIndex % 10 == 0:
+					self.progress(resIndex, resCount)
+				resIndex += 1
 
 	def _entryCountProgressIter(
 		self,
