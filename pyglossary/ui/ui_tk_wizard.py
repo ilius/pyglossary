@@ -24,9 +24,15 @@ import subprocess
 import tkinter as tk
 from os.path import isfile, join, splitext
 from pathlib import Path
-from tkinter import filedialog, ttk
+from tkinter import filedialog, messagebox, ttk
 from tkinter import font as tkFont
 from typing import TYPE_CHECKING, Any
+
+try:
+	from tkinterdnd2 import DND_FILES, TkinterDnD
+except ImportError:
+	DND_FILES = None
+	TkinterDnD = None
 
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_utils import Error
@@ -79,7 +85,8 @@ class UI(tk.Frame, UIBase):
 		self,
 		progressbar: bool = True,
 	) -> None:
-		rootWin = self.rootWin = tk.Tk(className="PyGlossary")
+		_TkRoot = TkinterDnD.Tk if TkinterDnD is not None else tk.Tk
+		rootWin = self.rootWin = _TkRoot(className="PyGlossary")
 		if os.sep == "\\":
 			rootWin.attributes("-alpha", 0.0)
 		else:
@@ -174,7 +181,52 @@ class UI(tk.Frame, UIBase):
 			command=self.nextPage,
 		)
 
+		self._setup_wizard_root_file_drop()
+		self._warn_if_dnd_module_missing()
 		self._showPage(0)
+
+	def _warn_if_dnd_module_missing(self) -> None:
+		if TkinterDnD is not None:
+			return
+		log.warning(
+			"tkinterdnd2 is not installed: file drag-and-drop in the Tk wizard is "
+			"disabled. Install with: pip install tkinterdnd2 "
+			"(optional extra: tk-wizard-dnd).",
+		)
+
+	def _setup_wizard_root_file_drop(self) -> None:
+		"""Whole-window file drops on input/output steps (needs ``tkinterdnd2``)."""
+		if TkinterDnD is None or DND_FILES is None:
+			return
+		self.rootWin.drop_target_register(DND_FILES)
+		self.rootWin.dnd_bind("<<Drop>>", self._on_wizard_root_file_drop)
+
+	def _on_wizard_root_file_drop(self, event: Any) -> None:
+		if self.currentPage not in (0, 1):
+			return
+		data = getattr(event, "data", "") or ""
+		if not data:
+			return
+		try:
+			raw_paths = self.rootWin.tk.splitlist(data)
+		except tk.TclError:
+			log.exception("Could not parse dropped paths")
+			return
+		if not raw_paths:
+			return
+		path0 = abspath2(raw_paths[0].strip())
+		if not path0 or not os.path.exists(path0):
+			return
+		if self.currentPage == 0:
+			self.entryInputConvert.delete(0, "end")
+			self.entryInputConvert.insert(0, path0)
+			self.inputEntryChanged()
+			self.fcd_dir = os.path.dirname(path0) if os.path.isfile(path0) else path0
+			self.save_fcd_dir()
+			return
+		self.entryOutputConvert.delete(0, "end")
+		self.entryOutputConvert.insert(0, path0)
+		self.outputEntryChanged()
 
 	def aboutClicked(self) -> None:
 		print("aboutClicked")
@@ -275,6 +327,22 @@ class UI(tk.Frame, UIBase):
 			self.rootWin.attributes("-alpha", 1.0)
 		else:  # Linux
 			self.rootWin.deiconify()
+
+		if TkinterDnD is None:
+			self.rootWin.after(
+				0,
+				lambda: messagebox.showwarning(
+					"Drag and drop unavailable",
+					(
+						"File drag-and-drop into this wizard needs the optional package "
+						"tkinterdnd2, which is not installed.\n\n"
+						"You can still pick files with the buttons.\n\n"
+						"Install: pip install tkinterdnd2\n"
+						"(uv: uv sync --extra tk-wizard-dnd)"
+					),
+					parent=self.rootWin,
+				),
+			)
 
 		# must be before setting self.readOptions and self.writeOptions
 		self.anyEntryChanged()

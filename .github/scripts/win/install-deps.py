@@ -28,3 +28,6 @@ install(
 )
 
 install("-r", "requirements.txt")
+
+# Tk wizard: drag-and-drop from Explorer (see pyglossary/ui/ui_tk_wizard.py)
+install("tkinterdnd2")

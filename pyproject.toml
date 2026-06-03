@@ -28,6 +28,8 @@ qt6 = [
 	"PySide6",
 	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
 ]
+# File drag-and-drop in the Tk wizard (``pyglossary --ui=tk``).
+tk-wizard-dnd = ["tkinterdnd2"]
 dict-cc-source = ["pyparsing"]
 dev = ["mypy", "ruff", "types-polib"]
 
