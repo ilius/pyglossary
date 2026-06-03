@@ -7,33 +7,33 @@ To update, modify plugins/aard2_slob/__init__.py file, then run ./scripts/gen
 
 ### General Information
 
-| Attribute       | Value                                                    |
+| Attribute | Value |
 | --------------- | -------------------------------------------------------- |
-| Name            | Aard2Slob                                                |
-| snake_case_name | aard2_slob                                               |
-| Description     | Aard 2 (.slob)                                           |
-| Extensions      | `.slob`                                                  |
-| Read support    | Yes                                                      |
-| Write support   | Yes                                                      |
-| Single-file     | Yes                                                      |
-| Kind            | 🔢 binary                                                 |
-| Sort-on-write   | No (by default)                                          |
-| Sort key        | (`headword_lower`)                                       |
-| Wiki            | [@itkach/slob/wiki](https://github.com/itkach/slob/wiki) |
-| Website         | [aarddict.org](http://aarddict.org/)                     |
+| Name | Aard2Slob |
+| snake_case_name | aard2_slob |
+| Description | Aard 2 (.slob) |
+| Extensions | `.slob` |
+| Read support | Yes |
+| Write support | Yes |
+| Single-file | Yes |
+| Kind | 🔢 binary |
+| Sort-on-write | No (by default) |
+| Sort key | (`headword_lower`) |
+| Wiki | [@itkach/slob/wiki](https://github.com/itkach/slob/wiki) |
+| Website | [aarddict.org](http://aarddict.org/) |
 
 ### Write options
 
-| Name                               | Default | Type | Comment                                                         |
+| Name | Default | Type | Comment |
 | ---------------------------------- | ------- | ---- | --------------------------------------------------------------- |
-| compression                        | `zlib`  | str  | Compression Algorithm                                           |
-| content_type                       |         | str  | Content Type                                                    |
-| file_size_approx                   | `0`     | int  | split up by given approximate file size<br />examples: 100m, 1g |
-| file_size_approx_check_num_entries | `100`   | int  | for file_size_approx, check every `[?]` entries                 |
-| separate_alternates                | `False` | bool | add alternate headwords as separate entries to slob             |
-| word_title                         | `False` | bool | add headwords title to beginning of definition                  |
-| version_info                       | `False` | bool | add version info tags to slob file                              |
-| audio_goldendict                   | `False` | bool | Convert audio links for GoldenDict (desktop)                    |
+| compression | `zlib` | str | Compression Algorithm |
+| content_type |  | str | Content Type |
+| file_size_approx | `0` | int | split up by given approximate file size<br />examples: 100m, 1g |
+| file_size_approx_check_num_entries | `100` | int | for file_size_approx, check every `[?]` entries |
+| separate_alternates | `False` | bool | add alternate headwords as separate entries to slob |
+| word_title | `False` | bool | add headwords title to beginning of definition |
+| version_info | `False` | bool | add version info tags to slob file |
+| audio_goldendict | `False` | bool | Convert audio links for GoldenDict (desktop) |
 
 ### Dependencies for reading and writing
 
@@ -52,10 +52,10 @@ to install pyicu.
 
 ### Dictionary Applications/Tools
 
-| Name & Website                             | Source code                                                      | License | Platforms | Language |
+| Name & Website | Source code | License | Platforms | Language |
 | ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- | -------- |
-| [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL     | Android   | Java     |
-| [Aard2 for Web](http://aarddict.org/)      | [@itkach/aard2-web](https://github.com/itkach/aard2-web)         | MPL     | Web       | Java     |
+| [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL | Android | Java |
+| [Aard2 for Web](http://aarddict.org/) | [@itkach/aard2-web](https://github.com/itkach/aard2-web) | MPL | Web | Java |
 
 ### Related Formats
 

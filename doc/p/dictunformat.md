@@ -7,31 +7,31 @@ To update, modify plugins/dictunformat/__init__.py file, then run ./scripts/gen
 
 ### General Information
 
-| Attribute       | Value                                                                                                      |
+| Attribute | Value |
 | --------------- | ---------------------------------------------------------------------------------------------------------- |
-| Name            | Dictunformat                                                                                               |
-| snake_case_name | dictunformat                                                                                               |
-| Description     | dictunformat output file                                                                                   |
-| Extensions      | `.dictunformat`                                                                                            |
-| Read support    | Yes                                                                                                        |
-| Write support   | No                                                                                                         |
-| Single-file     | Yes                                                                                                        |
-| Kind            | 📝 text                                                                                                     |
-| Wiki            | [Dictd](https://directory.fsf.org/wiki/Dictd)                                                              |
-| Website         | [dictd/dictunformat.1.in - @cheusov/dictd](https://github.com/cheusov/dictd/blob/master/dictunformat.1.in) |
+| Name | Dictunformat |
+| snake_case_name | dictunformat |
+| Description | dictunformat output file |
+| Extensions | `.dictunformat` |
+| Read support | Yes |
+| Write support | No |
+| Single-file | Yes |
+| Kind | 📝 text |
+| Wiki | [Dictd](https://directory.fsf.org/wiki/Dictd) |
+| Website | [dictd/dictunformat.1.in - @cheusov/dictd](https://github.com/cheusov/dictd/blob/master/dictunformat.1.in) |
 
 ### Read options
 
-| Name               | Default | Type | Comment                               |
+| Name | Default | Type | Comment |
 | ------------------ | ------- | ---- | ------------------------------------- |
-| encoding           | `utf-8` | str  | Encoding/charset                      |
-| headword_separator | `;   `  | str  | separator for headword and alternates |
+| encoding | `utf-8` | str | Encoding/charset |
+| headword_separator | `;   ` | str | separator for headword and alternates |
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                           | Source code | License | Platforms | Language |
+| Name & Website | Source code | License | Platforms | Language |
 | -------------------------------------------------------- | ----------- | ------- | --------- | -------- |
-| [dictunformat](https://linux.die.net/man/1/dictunformat) | ―           | GPL     | Linux     |          |
+| [dictunformat](https://linux.die.net/man/1/dictunformat) | ― | GPL | Linux |  |
 
 ### Related Formats
 

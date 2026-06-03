@@ -7,20 +7,20 @@ To update, modify plugins/kobo/__init__.py file, then run ./scripts/gen
 
 ### General Information
 
-| Attribute       | Value                                                      |
+| Attribute | Value |
 | --------------- | ---------------------------------------------------------- |
-| Name            | Kobo                                                       |
-| snake_case_name | kobo                                                       |
-| Description     | Kobo E-Reader Dictionary                                   |
-| Extensions      | `.kobo`                                                    |
-| Read support    | No                                                         |
-| Write support   | Yes                                                        |
-| Single-file     | No                                                         |
-| Kind            | 📦 package                                                  |
-| Sort-on-write   | Never                                                      |
-| Sort key        | (`headword_lower`)                                         |
-| Wiki            | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader) |
-| Website         | [www.kobo.com](https://www.kobo.com)                       |
+| Name | Kobo |
+| snake_case_name | kobo |
+| Description | Kobo E-Reader Dictionary |
+| Extensions | `.kobo` |
+| Read support | No |
+| Write support | Yes |
+| Single-file | No |
+| Kind | 📦 package |
+| Sort-on-write | Never |
+| Sort key | (`headword_lower`) |
+| Wiki | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader) |
+| Website | [www.kobo.com](https://www.kobo.com) |
 
 ### Dependencies for writing
 
@@ -34,9 +34,9 @@ pip3 install marisa-trie
 
 ### Dictionary Applications/Tools
 
-| Name & Website                       | Source code | License     | Platforms    | Language |
+| Name & Website | Source code | License | Platforms | Language |
 | ------------------------------------ | ----------- | ----------- | ------------ | -------- |
-| [Kobo eReader](https://www.kobo.com) | ―           | Proprietary | Kobo eReader |          |
+| [Kobo eReader](https://www.kobo.com) | ― | Proprietary | Kobo eReader |  |
 
 ### Related Formats
 

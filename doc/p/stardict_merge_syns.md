@@ -7,38 +7,38 @@ To update, modify plugins/stardict_merge_syns/__init__.py file, then run ./scrip
 
 ### General Information
 
-| Attribute       | Value                                                |
+| Attribute | Value |
 | --------------- | ---------------------------------------------------- |
-| Name            | StardictMergeSyns                                    |
-| snake_case_name | stardict_merge_syns                                  |
-| Description     | StarDict (Merge Syns)                                |
-| Extensions      |                                                      |
-| Read support    | No                                                   |
-| Write support   | Yes                                                  |
-| Single-file     | No                                                   |
-| Kind            | 📁 directory                                          |
-| Sort-on-write   | Always                                               |
-| Sort key        | `stardict`                                           |
-| Wiki            | [StarDict](https://en.wikipedia.org/wiki/StarDict)   |
-| Website         | [huzheng.org/stardict](http://huzheng.org/stardict/) |
+| Name | StardictMergeSyns |
+| snake_case_name | stardict_merge_syns |
+| Description | StarDict (Merge Syns) |
+| Extensions |  |
+| Read support | No |
+| Write support | Yes |
+| Single-file | No |
+| Kind | 📁 directory |
+| Sort-on-write | Always |
+| Sort key | `stardict` |
+| Wiki | [StarDict](https://en.wikipedia.org/wiki/StarDict) |
+| Website | [huzheng.org/stardict](http://huzheng.org/stardict/) |
 
 ### Write options
 
-| Name             | Default | Type | Comment                                                        |
+| Name | Default | Type | Comment |
 | ---------------- | ------- | ---- | -------------------------------------------------------------- |
-| large_file       | `False` | bool | Use idxoffsetbits=64 bits, for large files only                |
-| dictzip          | `False` | bool | Compress .dict file to .dict.dz                                |
-| sametypesequence |         | str  | Definition format: h=html, m=plaintext, x=xdxf                 |
-| audio_icon       | `True`  | bool | Add glossary's audio icon                                      |
-| autosqlite       | `True`  | bool | Auto-enable/disable SQLite option based on global SQLite mode. |
-| sqlite           | `False` | bool | Use SQLite to limit memory usage.                              |
+| large_file | `False` | bool | Use idxoffsetbits=64 bits, for large files only |
+| dictzip | `False` | bool | Compress .dict file to .dict.dz |
+| sametypesequence |  | str | Definition format: h=html, m=plaintext, x=xdxf |
+| audio_icon | `True` | bool | Add glossary's audio icon |
+| autosqlite | `True` | bool | Auto-enable/disable SQLite option based on global SQLite mode. |
+| sqlite | `False` | bool | Use SQLite to limit memory usage. |
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                           | Source code                                                | License | Platforms                                                   | Language |
+| Name & Website | Source code | License | Platforms | Language |
 | -------------------------------------------------------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------- | -------- |
-| [KOReader](http://koreader.rocks/)                       | [@koreader/koreader](https://github.com/koreader/koreader) | AGPLv3  | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua      |
-| [sdcv (command line)](https://dushistov.github.io/sdcv/) | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv)       | GPLv2   | Linux, Windows, Mac, Android                                | C++      |
+| [KOReader](http://koreader.rocks/) | [@koreader/koreader](https://github.com/koreader/koreader) | AGPLv3 | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua |
+| [sdcv (command line)](https://dushistov.github.io/sdcv/) | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv) | GPLv2 | Linux, Windows, Mac, Android | C++ |
 
 ### Related Formats
 

@@ -7,32 +7,32 @@ To update, modify plugins/dict_org_source/__init__.py file, then run ./scripts/g
 
 ### General Information
 
-| Attribute       | Value                                              |
+| Attribute | Value |
 | --------------- | -------------------------------------------------- |
-| Name            | DictOrgSource                                      |
-| snake_case_name | dict_org_source                                    |
-| Description     | DICT.org dictfmt source file                       |
-| Extensions      | `.dtxt`                                            |
-| Read support    | No                                                 |
-| Write support   | Yes                                                |
-| Single-file     | Yes                                                |
-| Kind            | 📝 text                                             |
-| Sort-on-write   | No (by default)                                    |
-| Sort key        | (`headword_lower`)                                 |
-| Wiki            | [DICT](https://en.wikipedia.org/wiki/DICT)         |
-| Website         | [@cheusov/dictd](https://github.com/cheusov/dictd) |
+| Name | DictOrgSource |
+| snake_case_name | dict_org_source |
+| Description | DICT.org dictfmt source file |
+| Extensions | `.dtxt` |
+| Read support | No |
+| Write support | Yes |
+| Single-file | Yes |
+| Kind | 📝 text |
+| Sort-on-write | No (by default) |
+| Sort key | (`headword_lower`) |
+| Wiki | [DICT](https://en.wikipedia.org/wiki/DICT) |
+| Website | [@cheusov/dictd](https://github.com/cheusov/dictd) |
 
 ### Write options
 
-| Name            | Default | Type | Comment              |
+| Name | Default | Type | Comment |
 | --------------- | ------- | ---- | -------------------- |
-| remove_html_all | `True`  | bool | Remove all HTML tags |
+| remove_html_all | `True` | bool | Remove all HTML tags |
 
 ### Dictionary Applications/Tools
 
-| Name & Website                                 | Source code | License | Platforms | Language |
+| Name & Website | Source code | License | Platforms | Language |
 | ---------------------------------------------- | ----------- | ------- | --------- | -------- |
-| [dictfmt](https://linux.die.net/man/1/dictfmt) | ―           | GPL     | Linux     |          |
+| [dictfmt](https://linux.die.net/man/1/dictfmt) | ― | GPL | Linux |  |
 
 ### Related Formats
 

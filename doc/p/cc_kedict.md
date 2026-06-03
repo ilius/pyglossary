@@ -7,18 +7,18 @@ To update, modify plugins/cc_kedict/__init__.py file, then run ./scripts/gen
 
 ### General Information
 
-| Attribute       | Value                                                          |
+| Attribute | Value |
 | --------------- | -------------------------------------------------------------- |
-| Name            | cc-kedict                                                      |
-| snake_case_name | cc_kedict                                                      |
-| Description     | cc-kedict                                                      |
-| Extensions      |                                                                |
-| Read support    | Yes                                                            |
-| Write support   | No                                                             |
-| Single-file     | Yes                                                            |
-| Kind            | 📝 text                                                         |
-| Wiki            | ―                                                              |
-| Website         | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict) |
+| Name | cc-kedict |
+| snake_case_name | cc_kedict |
+| Description | cc-kedict |
+| Extensions |  |
+| Read support | Yes |
+| Write support | No |
+| Single-file | Yes |
+| Kind | 📝 text |
+| Wiki | ― |
+| Website | [@mhagiwara/cc-kedict](https://github.com/mhagiwara/cc-kedict) |
 
 ### Dependencies for reading
 
