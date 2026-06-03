@@ -335,6 +335,13 @@ class IntOptionGtk:
 		return self._hbox
 
 
+def _combo_box_text_entry_set_width_chars(combo: gtk.ComboBoxText, width: int) -> None:
+	"""ComboBoxText.get_child() may be a CellView (no set_width_chars), not only Entry."""
+	child = combo.get_child()
+	if isinstance(child, gtk.Entry):
+		child.set_width_chars(width)
+
+
 class StrOptionGtk:
 	def __init__(self, opt: Option) -> None:
 		self.opt = opt
@@ -356,7 +363,7 @@ class StrOptionGtk:
 			self._width = max(len(x) for x in opt.values)
 		else:
 			self._width = 10
-		combo.get_child().set_width_chars(self._width)
+		_combo_box_text_entry_set_width_chars(combo, self._width)
 
 	@property
 	def value(self) -> Any:
@@ -374,7 +381,7 @@ class StrOptionGtk:
 		self._combo.set_active(index)
 		if len(st) > self._width:
 			self._width = len(st)
-			self._combo.get_child().set_width_chars(len(st))
+			_combo_box_text_entry_set_width_chars(self._combo, len(st))
 
 	@property
 	def widget(self) -> gtk.Widget:
@@ -437,7 +444,7 @@ class NewlineOptionGtk:
 			combo.append_text(escapeNRB(value))
 		self._combo = combo
 		pack(hbox, combo)
-		combo.get_child().set_width_chars(5)
+		_combo_box_text_entry_set_width_chars(combo, 5)
 
 	@property
 	def value(self) -> Any:
