@@ -25,6 +25,10 @@ __all__ = [
 	"QComboBox",
 	"QDialog",
 	"QDialogButtonBox",
+	"QDragEnterEvent",
+	"QDragMoveEvent",
+	"QDropEvent",
+	"QEvent",
 	"QFileDialog",
 	"QFormLayout",
 	"QGridLayout",
@@ -35,6 +39,7 @@ __all__ = [
 	"QLineEdit",
 	"QListWidget",
 	"QMainWindow",
+	"QObject",
 	"QPixmap",
 	"QPlainTextEdit",
 	"QProgressBar",
@@ -46,6 +51,7 @@ __all__ = [
 	"QStackedWidget",
 	"QTabWidget",
 	"QTextBrowser",
+	"QUrl",
 	"QVBoxLayout",
 	"QWidget",
 	"Qt",
@@ -53,8 +59,16 @@ __all__ = [
 ]
 
 try:
-	from PySide6.QtCore import Qt, qVersion
-	from PySide6.QtGui import QIcon, QKeySequence, QPixmap, QShortcut
+	from PySide6.QtCore import QEvent, QObject, Qt, QUrl, qVersion
+	from PySide6.QtGui import (
+		QDragEnterEvent,
+		QDragMoveEvent,
+		QDropEvent,
+		QIcon,
+		QKeySequence,
+		QPixmap,
+		QShortcut,
+	)
 	from PySide6.QtWidgets import (
 		QAbstractItemView,
 		QApplication,
@@ -85,8 +99,16 @@ try:
 
 except ImportError:
 	try:
-		from PyQt6.QtCore import Qt, qVersion
-		from PyQt6.QtGui import QIcon, QKeySequence, QPixmap, QShortcut
+		from PyQt6.QtCore import QEvent, QObject, Qt, QUrl, qVersion
+		from PyQt6.QtGui import (
+			QDragEnterEvent,
+			QDragMoveEvent,
+			QDropEvent,
+			QIcon,
+			QKeySequence,
+			QPixmap,
+			QShortcut,
+		)
 		from PyQt6.QtWidgets import (
 			QAbstractItemView,
 			QApplication,

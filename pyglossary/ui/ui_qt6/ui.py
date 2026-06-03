@@ -11,7 +11,7 @@ import subprocess
 import sys
 from os.path import isfile, join, splitext
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_utils import Error
@@ -37,6 +37,10 @@ from .macos_icons import configure_macos_dock_icon
 from .qt_imports import (
 	QApplication,
 	QComboBox,
+	QDragEnterEvent,
+	QDragMoveEvent,
+	QDropEvent,
+	QEvent,
 	QFileDialog,
 	QGridLayout,
 	QHBoxLayout,
@@ -45,6 +49,7 @@ from .qt_imports import (
 	QLabel,
 	QLineEdit,
 	QMainWindow,
+	QObject,
 	QPlainTextEdit,
 	QProgressBar,
 	QPushButton,
@@ -57,11 +62,102 @@ from .qt_imports import (
 )
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from pyglossary.config_type import ConfigType
 
 __all__ = ["UI"]
 
 log = logging.getLogger("pyglossary")
+
+
+class _IoStepDropSurface(QWidget):
+	"""Centers ``inner`` and accepts file URL drops on the full step area."""
+
+	def __init__(self, inner: QWidget, on_path: Callable[[str], None]) -> None:
+		super().__init__()
+		self._on_path = on_path
+		self.setAcceptDrops(True)
+		outer = QVBoxLayout(self)
+		outer.setContentsMargins(8, 4, 8, 4)
+		outer.addStretch(1)
+		mid = QHBoxLayout()
+		mid.addStretch(1)
+		mid.addWidget(inner, alignment=Qt.AlignmentFlag.AlignCenter)
+		mid.addStretch(1)
+		outer.addLayout(mid)
+		outer.addStretch(1)
+
+	def dragEnterEvent(self, e: QDragEnterEvent) -> None:
+		if e.mimeData().hasUrls():
+			e.acceptProposedAction()
+		else:
+			e.ignore()
+
+	def dragMoveEvent(self, e: QDragMoveEvent) -> None:
+		if e.mimeData().hasUrls():
+			e.acceptProposedAction()
+		else:
+			e.ignore()
+
+	def dropEvent(self, e: QDropEvent) -> None:
+		urls = e.mimeData().urls()
+		paths = [
+			abspath2(u.toLocalFile())
+			for u in urls
+			if u.isLocalFile() and u.toLocalFile().strip()
+		]
+		if paths:
+			self._on_path(paths[0])
+			e.acceptProposedAction()
+		else:
+			e.ignore()
+
+
+class _NavBarFileDropFilter(QObject):
+	"""Accept drops on the nav bar while the input or output step is visible."""
+
+	def __init__(self, ui: UI) -> None:
+		super().__init__(ui._mw)
+		self._ui = ui
+
+	def eventFilter(self, _obj: QObject, event: QEvent) -> bool:  # noqa: N802
+		t = event.type()
+		if t not in (QEvent.Type.DragEnter, QEvent.Type.DragMove, QEvent.Type.Drop):
+			return False
+		idx = self._ui.stack.currentIndex()
+		if idx not in (0, 1):
+			return False
+		if t == QEvent.Type.DragEnter:
+			de = cast("QDragEnterEvent", event)
+			if de.mimeData().hasUrls():
+				de.acceptProposedAction()
+				return True
+			return False
+		if t == QEvent.Type.DragMove:
+			dm = cast("QDragMoveEvent", event)
+			if dm.mimeData().hasUrls():
+				dm.acceptProposedAction()
+				return True
+			return False
+		dp = cast("QDropEvent", event)
+		if not dp.mimeData().hasUrls():
+			return False
+		urls = dp.mimeData().urls()
+		paths = [
+			abspath2(u.toLocalFile())
+			for u in urls
+			if u.isLocalFile() and u.toLocalFile().strip()
+		]
+		if not paths:
+			return False
+		path = paths[0]
+		if idx == 0:
+			self._ui._drop_input_path(path)
+		else:
+			self._ui._drop_output_path(path)
+		dp.acceptProposedAction()
+		return True
 
 
 class UI(UIBase):
@@ -120,7 +216,11 @@ class UI(UIBase):
 		root = QVBoxLayout(central)
 		self.stack = QStackedWidget()
 		root.addWidget(self.stack, stretch=1)
-		root.addWidget(self._nav_bar())
+		self._nav_bar_w = self._nav_bar()
+		root.addWidget(self._nav_bar_w)
+		self._nav_drop_filter = _NavBarFileDropFilter(self)
+		self._nav_bar_w.setAcceptDrops(True)
+		self._nav_bar_w.installEventFilter(self._nav_drop_filter)
 
 		self._page_input = self._build_page_input()
 		self._page_output = self._build_page_output()
@@ -146,8 +246,15 @@ class UI(UIBase):
 		sw = screen.availableGeometry().width() if screen else 1024
 		return min(520, max(280, sw - 160))
 
-	def _center_step_host(self, inner: QWidget) -> QWidget:
+	def _center_step_host(
+		self,
+		inner: QWidget,
+		*,
+		file_drop: Callable[[str], None] | None = None,
+	) -> QWidget:
 		"""Center ``inner`` vertically and horizontally in the stacked page."""
+		if file_drop is not None:
+			return _IoStepDropSurface(inner, file_drop)
 		host = QWidget()
 		outer = QVBoxLayout(host)
 		outer.setContentsMargins(8, 4, 8, 4)
@@ -202,7 +309,7 @@ class UI(UIBase):
 		row.addWidget(self.input_path_btn)
 		row.addStretch(1)
 		v.addLayout(row)
-		return self._center_step_host(panel)
+		return self._center_step_host(panel, file_drop=self._drop_input_path)
 
 	def _build_page_output(self) -> QWidget:
 		panel = QWidget()
@@ -235,7 +342,7 @@ class UI(UIBase):
 		self.entry_output = QLineEdit(panel)
 		self.entry_output.textChanged.connect(self._output_changed)
 		self.entry_output.hide()
-		return self._center_step_host(panel)
+		return self._center_step_host(panel, file_drop=self._drop_output_path)
 
 	def _build_page_formats(self) -> QWidget:
 		panel = QWidget()
@@ -322,6 +429,29 @@ class UI(UIBase):
 		self.pbar.hide()
 		layout.addWidget(self.pbar)
 		return w
+
+	def _drop_input_path(self, path: str) -> None:
+		p = (path or "").strip()
+		if not p:
+			return
+		p = abspath2(p)
+		if not os.path.exists(p):
+			return
+		self.entry_input.setText(p)
+		if os.path.isfile(p):
+			self.fcd_dir = os.path.dirname(p)
+		else:
+			self.fcd_dir = self._norm_abs(p)
+		self.save_fcd_dir()
+
+	def _drop_output_path(self, path: str) -> None:
+		p = (path or "").strip()
+		if not p:
+			return
+		p = abspath2(p)
+		if not os.path.exists(p):
+			return
+		self.entry_output.setText(p)
 
 	def _browse_input(self) -> None:
 		def norm(p: str) -> str:
