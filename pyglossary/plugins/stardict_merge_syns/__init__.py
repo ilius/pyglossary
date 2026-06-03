@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from pyglossary.flags import ALWAYS, DEFAULT_YES
 from pyglossary.option import (
 	BoolOption,
+	FileSizeOption,
 	StrOption,
 )
 
@@ -57,6 +58,13 @@ relatedFormats: list[str] = ["Stardict", "StardictTextual"]
 optionsProp: dict[str, Option] = {
 	"large_file": BoolOption(
 		comment="Use idxoffsetbits=64 bits, for large files only",
+	),
+	"max_file_size": FileSizeOption(
+		comment=(
+			"Maximum .dict file size before splitting into multiple glossaries;"
+			" 0 means use default based on large_file (4 GiB or 64-bit limit)."
+			" Examples: 100m, 1g"
+		),
 	),
 	"dictzip": BoolOption(
 		comment="Compress .dict file to .dict.dz",

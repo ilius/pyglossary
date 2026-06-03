@@ -25,13 +25,14 @@ To update, modify plugins/stardict_merge_syns/__init__.py file, then run ./scrip
 ### Write options
 
 | Name | Default | Type | Comment |
-| ---------------- | ------- | ---- | -------------------------------------------------------------- |
+| ---------------- | ------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | large_file | `False` | bool | Use idxoffsetbits=64 bits, for large files only |
 | dictzip | `False` | bool | Compress .dict file to .dict.dz |
 | sametypesequence |  | str | Definition format: h=html, m=plaintext, x=xdxf |
 | audio_icon | `True` | bool | Add glossary's audio icon |
 | autosqlite | `True` | bool | Auto-enable/disable SQLite option based on global SQLite mode. |
 | sqlite | `False` | bool | Use SQLite to limit memory usage. |
+| max_file_size | `0` | int | Maximum .dict file size before splitting into multiple glossaries; 0 means use default based on large_file (4 GiB or 64-bit limit). Examples: 100m, 1g |
 
 ### Dictionary Applications/Tools
 

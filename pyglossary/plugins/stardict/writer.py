@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import re
+from dataclasses import dataclass
 from os.path import (
 	dirname,
 	getsize,
@@ -23,6 +24,7 @@ from pyglossary.plugins.stardict.sqlist import IdxSqList, SynSqList
 from pyglossary.text_utils import uint32ToBytes, uint64ToBytes
 
 if TYPE_CHECKING:
+	import io
 	from collections.abc import Callable, Generator
 
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
@@ -54,6 +56,29 @@ def _newlinesToBr(text: str) -> str:
 	return _re_newline.sub("<br>", text)
 
 
+@dataclass(slots=True)
+class _PartFiles:
+	dictFile: io.BufferedWriter
+	idxFile: io.BufferedWriter
+	altIndexList: T_SdList[tuple[bytes, int]]
+
+
+@dataclass(slots=True)
+class _MultipartState:
+	partIndex: int = 0
+	multiPart: bool = False
+	dictMark: int = 0
+	entryIndex: int = -1
+
+	@property
+	def entryCount(self) -> int:
+		return self.entryIndex + 1
+
+	def resetPart(self) -> None:
+		self.dictMark = 0
+		self.entryIndex = -1
+
+
 class Writer:
 	_large_file: bool = False
 	_dictzip: bool = False
@@ -64,11 +89,13 @@ class Writer:
 	_audio_icon: bool = True
 	_autosqlite: bool = True
 	_sqlite: bool = False
+	_max_file_size: int = 0
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""
 		self._resDir = ""
+		self._openMultipartFiles: list[io.BufferedWriter] = []
 		self._sourceLang: Lang | None = None
 		self._targetLang: Lang | None = None
 		self._p_pattern = re.compile(
@@ -83,11 +110,43 @@ class Writer:
 			'<a (type="sound" )?([^<>]*? )?href="sound://([^<>"]+)"( .*?)?>(.*?)</a>',
 		)
 
+	_partFileExts = (
+		"syn",
+		"idx",
+		"dict",
+		"ifo",
+		"idx.oft",
+		"syn.oft",
+		"dict.dz",
+		"syn.dz",
+	)
+
 	def finish(self) -> None:
 		self._filename = ""
 		self._resDir = ""
 		self._sourceLang = None
 		self._targetLang = None
+		self._openMultipartFiles = []
+
+	def partBasePath(self, partIndex: int) -> str:
+		if partIndex <= 0:
+			return self._filename
+		return f"{self._filename}.{partIndex}"
+
+	def _removeAllPartFiles(self) -> None:
+		partIndex = 0
+		while True:
+			base = self.partBasePath(partIndex)
+			found = False
+			for ext in self._partFileExts:
+				fpath = f"{base}.{ext}"
+				if isfile(fpath):
+					log.info(f"removing file {fpath}")
+					os.remove(fpath)
+					found = True
+			if not found and partIndex > 0:
+				break
+			partIndex += 1
 
 	def open(self, filename: str) -> None:  # noqa: PLR0912
 		if self._autosqlite:
@@ -131,23 +190,10 @@ class Writer:
 					self._sametypesequence = "h"
 
 	def write(self) -> Generator[None, EntryType, None]:
-		from pyglossary.os_utils import runDictzip
-
 		if not isdir(self._resDir):
 			os.mkdir(self._resDir)
 
-		syn_file = f"{self._filename}.syn"
-
-		for fpath in [
-			syn_file,
-			f"{self._filename}.idx.oft",
-			f"{self._filename}.syn.oft",
-			f"{self._filename}.dict.dz",
-			f"{self._filename}.syn.dz",
-		]:
-			if isfile(fpath):
-				log.info(f"removing file {fpath}")
-				os.remove(fpath)
+		self._removeAllPartFiles()
 
 		if self._sametypesequence:
 			yield from self.writeCompact(self._sametypesequence)
@@ -158,11 +204,6 @@ class Writer:
 			os.rmdir(self._resDir)
 		except OSError:
 			pass  # "Directory not empty" or "Permission denied"
-
-		if self._dictzip:
-			runDictzip(f"{self._filename}.dict")
-		if self._dictzip_syn and os.path.exists(syn_file):
-			runDictzip(syn_file)
 
 	def fixDefi(self, defi: str, defiFormat: str) -> bytes:
 		# for StarDict 3.0:
@@ -198,11 +239,133 @@ class Writer:
 			return MemSdList()
 		return SynSqList(join(self._glos.tmpDataDir, "stardict-syn.db"))
 
-	def dictMarkToBytesFunc(self) -> tuple[Callable[[int], bytes], int]:
+	def dictMarkToBytesFunc(self) -> Callable[[int], bytes]:
 		if self._large_file:
-			return uint64ToBytes, 0xFFFFFFFFFFFFFFFF
+			return uint64ToBytes
 
-		return uint32ToBytes, 0xFFFFFFFF
+		return uint32ToBytes
+
+	def dictMarkMax(self) -> int:
+		offsetMax = 0xFFFFFFFFFFFFFFFF if self._large_file else 0xFFFFFFFF
+		if self._max_file_size > 0:
+			return min(self._max_file_size, offsetMax)
+		return offsetMax
+
+	def _checkDictBlockSize(self, blockSize: int, dictMarkMax: int) -> None:
+		if blockSize > dictMarkMax:
+			raise Error(
+				f"StarDict: single entry definition is too big"
+				f" ({blockSize} bytes > {dictMarkMax} bytes limit)",
+			)
+
+	def _needNewPart(
+		self,
+		dictMark: int,
+		blockSize: int,
+		dictMarkMax: int,
+	) -> bool:
+		return dictMark > 0 and dictMark + blockSize > dictMarkMax
+
+	def _openPartFiles(
+		self,
+		partIndex: int,
+	) -> _PartFiles:
+		fileBasePath = self.partBasePath(partIndex)
+		return _PartFiles(
+			open(fileBasePath + ".dict", "wb"),
+			open(fileBasePath + ".idx", "wb"),
+			self.newSynList(),
+		)
+
+	def _finishPart(
+		self,
+		partState: _MultipartState,
+		partFiles: _PartFiles,
+	) -> None:
+		from pyglossary.os_utils import runDictzip
+
+		fileBasePath = self.partBasePath(partState.partIndex)
+		partFiles.dictFile.close()
+		partFiles.idxFile.close()
+
+		self.writeSynFile(partFiles.altIndexList, fileBasePath)
+		partNumber = partState.partIndex + 1 if partState.multiPart else None
+		self.writeIfoFile(
+			partState.entryCount,
+			len(partFiles.altIndexList),
+			fileBasePath,
+			partNumber=partNumber,
+		)
+
+		if self._dictzip:
+			runDictzip(f"{fileBasePath}.dict")
+		syn_file = f"{fileBasePath}.syn"
+		if self._dictzip_syn and isfile(syn_file):
+			runDictzip(syn_file)
+
+	def _closePartFiles(self) -> None:
+		for partFile in self._openMultipartFiles:
+			if not partFile.closed:
+				partFile.close()
+		self._openMultipartFiles = []
+
+	def _writeMultipartMain(
+		self,
+		makeDictBlock: Callable[[EntryType], tuple[bytes, tuple[bytes, ...]]],
+	) -> Generator[None, EntryType, None]:
+		dictMarkToBytes = self.dictMarkToBytesFunc()
+		dictMarkMax = self.dictMarkMax()
+
+		partState = _MultipartState()
+		partFiles = self._openPartFiles(partState.partIndex)
+		self._openMultipartFiles[:] = [partFiles.dictFile, partFiles.idxFile]
+		while True:
+			entry = yield
+			if entry is None:
+				break
+			if entry.isData():
+				entry.save(self._resDir)
+				continue
+
+			b_dictBlock, b_terms = makeDictBlock(entry)
+			blockSize = len(b_dictBlock)
+			self._checkDictBlockSize(blockSize, dictMarkMax)
+
+			if self._needNewPart(partState.dictMark, blockSize, dictMarkMax):
+				partState.multiPart = True
+				self._finishPart(partState, partFiles)
+				partState.partIndex += 1
+				log.info(f"Creating {self.partBasePath(partState.partIndex)}")
+				partFiles = self._openPartFiles(partState.partIndex)
+				self._openMultipartFiles[:] = [partFiles.dictFile, partFiles.idxFile]
+				partState.resetPart()
+
+			partState.entryIndex += 1
+
+			for b_alt in b_terms[1:]:
+				partFiles.altIndexList.append((b_alt, partState.entryIndex))
+
+			partFiles.dictFile.write(b_dictBlock)
+
+			partFiles.idxFile.write(
+				b_terms[0]
+				+ b"\x00"
+				+ dictMarkToBytes(partState.dictMark)
+				+ uint32ToBytes(blockSize)
+			)
+
+			partState.dictMark += blockSize
+
+		self._finishPart(partState, partFiles)
+
+	def _writeMultipart(
+		self,
+		makeDictBlock: Callable[[EntryType], tuple[bytes, tuple[bytes, ...]]],
+	) -> Generator[None, EntryType, None]:
+		try:
+			yield from self._writeMultipartMain(makeDictBlock)
+		finally:
+			self._closePartFiles()
 
 	def writeCompact(self, defiFormat: str) -> Generator[None, EntryType, None]:
 		"""
@@ -213,56 +376,15 @@ class Writer:
 		defiFormat: format of article definition: h - html, m - plain text
 		"""
 		log.debug(f"writeCompact: {defiFormat=}")
-		altIndexList = self.newSynList()
-
-		dictFile = open(self._filename + ".dict", "wb")
-		idxFile = open(self._filename + ".idx", "wb")
-
-		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
 
 		t0 = now()
-
-		dictMark, entryIndex = 0, -1
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				entry.save(self._resDir)
-				continue
-			entryIndex += 1
-
-			b_terms = entry.lb_term
-
-			for b_alt in b_terms[1:]:
-				altIndexList.append((b_alt, entryIndex))
-
-			b_dictBlock = self.fixDefi(entry.defi, defiFormat)
-			dictFile.write(b_dictBlock)
-
-			idxFile.write(
-				b_terms[0]
-				+ b"\x00"
-				+ dictMarkToBytes(dictMark)
-				+ uint32ToBytes(len(b_dictBlock))
-			)
-
-			dictMark += len(b_dictBlock)
-
-			if dictMark > dictMarkMax:
-				raise Error(
-					f"StarDict: {dictMark = } is too big, set option large_file=true",
-				)
-
-		dictFile.close()
-		idxFile.close()
-		log.info(f"Writing dict + idx file took {now() - t0:.2f} seconds")
-
-		self.writeSynFile(altIndexList)
-		self.writeIfoFile(
-			entryIndex + 1,
-			len(altIndexList),
+		yield from self._writeMultipart(
+			lambda entry: (
+				self.fixDefi(entry.defi, defiFormat),
+				entry.lb_term,
+			),
 		)
+		log.info(f"Writing dict + idx file took {now() - t0:.2f} seconds")
 
 	def writeGeneral(self) -> Generator[None, EntryType, None]:
 		"""
@@ -271,63 +393,30 @@ class Writer:
 		sametypesequence option is not used.
 		"""
 		log.debug("writeGeneral")
-		altIndexList = self.newSynList()
-
-		dictFile = open(self._filename + ".dict", "wb")
-		idxFile = open(self._filename + ".idx", "wb")
 
 		t0 = now()
-		dictMarkToBytes, dictMarkMax = self.dictMarkToBytesFunc()
-
-		dictMark, entryIndex = 0, -1
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				entry.save(self._resDir)
-				continue
-			entryIndex += 1
-
-			defiFormat = entry.detectDefiFormat("m")  # call no more than once
-
-			b_terms = entry.lb_term
-
-			for b_alt in b_terms[1:]:
-				altIndexList.append((b_alt, entryIndex))
-
-			b_defi = self.fixDefi(entry.defi, defiFormat)
-			b_dictBlock = defiFormat.encode("ascii") + b_defi + b"\x00"
-			dictFile.write(b_dictBlock)
-
-			idxFile.write(
-				b_terms[0]
-				+ b"\x00"
-				+ dictMarkToBytes(dictMark)
-				+ uint32ToBytes(len(b_dictBlock))
-			)
-
-			dictMark += len(b_dictBlock)
-
-			if dictMark > dictMarkMax:
-				raise Error(
-					f"StarDict: {dictMark = } is too big, set option large_file=true",
-				)
-
-		dictFile.close()
-		idxFile.close()
+		yield from self._writeMultipart(self._generalDictBlock)
 		log.info(f"Writing dict + idx file took {now() - t0:.2f} seconds")
 
-		self.writeSynFile(altIndexList)
-		self.writeIfoFile(
-			entryIndex + 1,
-			len(altIndexList),
-		)
+	def _generalDictBlock(
+		self,
+		entry: EntryType,
+	) -> tuple[bytes, tuple[bytes, ...]]:
+		defiFormat = entry.detectDefiFormat("m")  # call no more than once
+		b_defi = self.fixDefi(entry.defi, defiFormat)
+		return defiFormat.encode("ascii") + b_defi + b"\x00", entry.lb_term
 
-	def writeSynFile(self, altIndexList: T_SdList[tuple[bytes, int]]) -> None:
+	def writeSynFile(
+		self,
+		altIndexList: T_SdList[tuple[bytes, int]],
+		fileBasePath: str | None = None,
+	) -> None:
 		"""Build .syn file."""
 		if not altIndexList:
 			return
+
+		if fileBasePath is None:
+			fileBasePath = self._filename
 
 		log.info(f"Sorting {len(altIndexList)} synonyms...")
 		t0 = now()
@@ -339,7 +428,7 @@ class Writer:
 		)
 		log.info(f"Writing {len(altIndexList)} synonyms...")
 		t0 = now()
-		with open(self._filename + ".syn", "wb") as synFile:
+		with open(fileBasePath + ".syn", "wb") as synFile:
 			synFile.writelines(
 				b_alt + b"\x00" + uint32ToBytes(entryIndex)
 				for b_alt, entryIndex in altIndexList
@@ -348,9 +437,16 @@ class Writer:
 			f"Writing {len(altIndexList)} synonyms took {now() - t0:.2f} seconds",
 		)
 
-	def writeIdxFile(self, indexList: T_SdList[tuple[bytes, bytes]]) -> None:
+	def writeIdxFile(
+		self,
+		indexList: T_SdList[tuple[bytes, bytes]],
+		fileBasePath: str | None = None,
+	) -> None:
 		if not indexList:
 			return
+
+		if fileBasePath is None:
+			fileBasePath = self._filename
 
 		log.info(f"Sorting idx with {len(indexList)} entries...")
 		t0 = now()
@@ -361,13 +457,13 @@ class Writer:
 
 		log.info(f"Writing idx with {len(indexList)} entries...")
 		t0 = now()
-		with open(self._filename + ".idx", mode="wb") as indexFile:
+		with open(fileBasePath + ".idx", mode="wb") as indexFile:
 			indexFile.writelines(key + b"\x00" + value for key, value in indexList)
 		log.info(
 			f"Writing idx with {len(indexList)} entries took {now() - t0:.2f} seconds",
 		)
 
-	def getBookname(self) -> str:
+	def getBookname(self, partNumber: int | None = None) -> str:
 		bookname = _newlinesToSpace(self._glos.getInfo("name"))
 		sourceLang = self._sourceLang
 		targetLang = self._targetLang
@@ -375,7 +471,9 @@ class Writer:
 			langs = f"{sourceLang.code}-{targetLang.code}"
 			if langs not in bookname.lower():
 				bookname = f"{bookname} ({langs})"
-			log.info(f"bookname: {bookname}")
+		if partNumber is not None:
+			bookname = f"{bookname} (part {partNumber})"
+		log.info(f"bookname: {bookname}")
 		return bookname
 
 	def getDescription(self) -> str:
@@ -393,15 +491,19 @@ class Writer:
 		self,
 		entryCount: int,
 		synWordCount: int,
+		fileBasePath: str | None = None,
+		partNumber: int | None = None,
 	) -> None:
 		"""Build .ifo file."""
 		glos = self._glos
 		defiFormat = self._sametypesequence
-		indexFileSize = getsize(self._filename + ".idx")
+		if fileBasePath is None:
+			fileBasePath = self._filename
+		indexFileSize = getsize(fileBasePath + ".idx")
 
 		ifoDict: dict[str, str] = {
 			"version": "3.0.0",
-			"bookname": self.getBookname(),
+			"bookname": self.getBookname(partNumber),
 			"wordcount": str(entryCount),
 			"idxfilesize": str(indexFileSize),
 		}
@@ -428,7 +530,7 @@ class Writer:
 		ifoDict["description"] = self.getDescription()
 
 		with open(
-			self._filename + ".ifo",
+			fileBasePath + ".ifo",
 			mode="w",
 			encoding="utf-8",
 			newline="\n",

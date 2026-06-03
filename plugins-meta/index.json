@@ -1652,6 +1652,12 @@
 				"type": "bool",
 				"comment": "Use idxoffsetbits=64 bits, for large files only"
 			},
+			"max_file_size": {
+				"class": "FileSizeOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Max .dict file size before splitting into multiple glossaries;\n0 means use default based on large_file (4 GiB or 64-bit limit).\n Examples: 100m, 1g"
+			},
 			"stardict_client": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -1741,7 +1747,8 @@
 			"audio_goldendict": false,
 			"audio_icon": true,
 			"autosqlite": true,
-			"sqlite": false
+			"sqlite": false,
+			"max_file_size": 0
 		}
 	},
 	{
@@ -1756,6 +1763,12 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Use idxoffsetbits=64 bits, for large files only"
+			},
+			"max_file_size": {
+				"class": "FileSizeOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Maximum .dict file size before splitting into multiple glossaries; 0 means use default based on large_file (4 GiB or 64-bit limit). Examples: 100m, 1g"
 			},
 			"dictzip": {
 				"class": "BoolOption",
@@ -1823,7 +1836,8 @@
 			"sametypesequence": "",
 			"audio_icon": true,
 			"autosqlite": true,
-			"sqlite": false
+			"sqlite": false,
+			"max_file_size": 0
 		}
 	},
 	{
