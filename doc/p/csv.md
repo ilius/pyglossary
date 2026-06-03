@@ -8,7 +8,7 @@ To update, modify plugins/csv/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------------------------ |
+| --------- | ----- |
 | Name | Csv |
 | snake_case_name | csv |
 | Description | CSV (.csv) |
@@ -25,7 +25,7 @@ To update, modify plugins/csv/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | newline | `\n` | str | Newline string |
 | delimiter | `,` | str | Column delimiter |
@@ -33,7 +33,7 @@ To update, modify plugins/csv/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| --------------- | ------- | ---- | ---------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | newline | `\n` | str | Newline string |
 | resources | `True` | bool | Enable resources / data files |
@@ -62,7 +62,7 @@ Here is a simple script that creates such CSV file (without pyglossary library):
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------ | ----------- | ------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [LibreOffice Calc](https://www.libreoffice.org/discover/calc/) | [git.libreoffice.org/core](https://git.libreoffice.org/core) | MPL/GPL | Linux, Windows, Mac | C++ |
 | [Microsoft Excel](https://www.microsoft.com/en-us/microsoft-365/excel) | ― | Proprietary | Windows |  |
 

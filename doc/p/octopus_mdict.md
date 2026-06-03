@@ -8,7 +8,7 @@ To update, modify plugins/octopus_mdict/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | OctopusMdict |
 | snake_case_name | octopus_mdict |
 | Description | Octopus MDict (.mdx) |
@@ -23,7 +23,7 @@ To update, modify plugins/octopus_mdict/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ------------------- | ------- | ---- | ----------------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding |  | str | Encoding/charset |
 | substyle | `True` | bool | Enable substyle |
 | same_dir_data_files | `False` | bool | Read data files from same directory |
@@ -47,7 +47,7 @@ then try to install [LZO library and Python binding](../lzo.md).
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- | -------------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [MDict](https://www.mdict.cn/) | ― | Proprietary | Android, iOS, Windows, Mac |  |
 | [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL | Linux, Windows, Mac | C++ |
 | [GoldenDict](http://goldendict.org/) | [@goldendict/goldendict](https://github.com/goldendict/goldendict) | GPL | Linux, Windows, Mac | C++ |

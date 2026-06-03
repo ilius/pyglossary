@@ -8,7 +8,7 @@ To update, modify plugins/cc_kedict/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------- |
+| --------- | ----- |
 | Name | cc-kedict |
 | snake_case_name | cc_kedict |
 | Description | cc-kedict |

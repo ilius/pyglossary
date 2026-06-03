@@ -8,7 +8,7 @@ To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Zim |
 | snake_case_name | zim |
 | Description | Zim (.zim, for Kiwix) |
@@ -23,7 +23,7 @@ To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ------------------- | --------- | ---- | ------------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | text_unicode_errors | `replace` | str | Unicode Errors for plaintext, values: `strict`, `ignore`, `replace` |
 | html_unicode_errors | `replace` | str | Unicode Errors for HTML, values: `strict`, `ignore`, `replace` |
 
@@ -40,7 +40,7 @@ pip3 install libzim>=1.0
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ----------------------------------------------------------- | ----------- | ------- | -------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Kiwix Desktop](https://github.com/kiwix/kiwix-desktop) | ― | GPL | Linux, Windows |  |
 | [Kiwix JS](https://github.com/kiwix/kiwix-js) | ― | GPL | Windows |  |
 | [Kiwix Serve](https://github.com/kiwix/kiwix-tools) | ― | GPL | Linux, Windows |  |

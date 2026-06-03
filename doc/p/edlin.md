@@ -8,7 +8,7 @@ To update, modify plugins/edlin/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------ |
+| --------- | ----- |
 | Name | Edlin |
 | snake_case_name | edlin |
 | Description | EDLIN |
@@ -25,12 +25,12 @@ To update, modify plugins/edlin/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| -------- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 
 ### Write options
 
 | Name | Default | Type | Comment |
-| --------- | ------- | ---- | ----------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | prev_link | `True` | bool | Enable link to previous entry |

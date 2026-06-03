@@ -8,7 +8,7 @@ To update, modify plugins/appledict_bin/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | --------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | AppleDictBin |
 | snake_case_name | appledict_bin |
 | Description | AppleDict Binary |
@@ -23,7 +23,7 @@ To update, modify plugins/appledict_bin/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------- | ------- | ---- | --------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | html | `True` | bool | Entries are HTML |
 | html_full | `True` | bool | Turn every entry's definition into an HTML document |
 
@@ -40,7 +40,7 @@ pip3 install lxml biplist
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| -------------------------------------------------------------------------------- | ----------- | ----------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Apple Dictionary](https://support.apple.com/en-gu/guide/dictionary/welcome/mac) | ― | Proprietary | Mac |  |
 
 ### Related Formats

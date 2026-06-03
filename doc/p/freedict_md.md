@@ -8,7 +8,7 @@ To update, modify plugins/freedict_md/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | FreeDictMarkdown |
 | snake_case_name | freedict_md |
 | Description | FreeDict Markdown (.tei) (text output) |
@@ -23,7 +23,7 @@ To update, modify plugins/freedict_md/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------------- | ------- | ---- | ------------------------------------------------ |
+| ---- | ------- | ---- | ------- |
 | discover | `False` | bool | Find and show unsupported tags |
 | auto_rtl | `True` | bool | Auto-detect and mark Right-to-Left text |
 | auto_comma | `True` | bool | Auto-detect comma sign based on text |

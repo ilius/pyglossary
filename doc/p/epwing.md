@@ -8,7 +8,7 @@ To update, modify plugins/epwing/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ----------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | EPWING |
 | snake_case_name | epwing |
 | Description | EPWING |
@@ -35,7 +35,7 @@ The reader includes specialized extractors for various common EPWING dictionarie
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| --------------------------------------------------------- | ----------- | -------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [EBWin4](https://ebstudio.info/manual/EBWin4/EBWin4.html) | ― | Freeware | Windows | Unknown |
 
 ### Related Formats

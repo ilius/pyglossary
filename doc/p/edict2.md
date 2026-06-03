@@ -8,7 +8,7 @@ To update, modify plugins/edict2/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------- |
+| --------- | ----- |
 | Name | EDICT2 |
 | snake_case_name | edict2 |
 | Description | EDICT2 (CEDICT) (.u8) |
@@ -23,7 +23,7 @@ To update, modify plugins/edict2/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| -------------------- | ------- | ---- | ------------------------------------------------------------------------ |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | traditional_title | `False` | bool | Use traditional Chinese for entry titles/keys |
 | colorize_tones | `True` | bool | Set to false to disable tones coloring |

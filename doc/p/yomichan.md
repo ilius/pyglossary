@@ -8,7 +8,7 @@ To update, modify plugins/yomichan/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ----------------------------------------------------- |
+| --------- | ----- |
 | Name | Yomichan |
 | snake_case_name | yomichan |
 | Description | Yomichan (.zip) |
@@ -25,7 +25,7 @@ To update, modify plugins/yomichan/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ---------------------------- | ------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | term_bank_size | `10000` | int | The number of terms in each term bank json file. |
 | term_from_headword_only | `True` | bool | If set to true, only create a term for the headword for each entry, as opposed to create one term for each alternate word. If the headword is ignored by the `ignore_word_with_pattern` option, the next word in the alternate list that is not ignored is used as headword. |
 | no_term_from_reading | `True` | bool | When there are multiple alternate words, don't create term for the one that is the same as the the reading form, which is chosen to be the first alternate forms that consists solely of Hiragana and Katakana. For example, an entry could contain both 'だいがく' and '大学' as alternate words. Setting this option to true would prevent a term to be created for the former. |
@@ -52,7 +52,7 @@ pip3 install beautifulsoup4
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| -------------------------------- | -------------------------------------------------------- | ------- | ---------------------------- | ---------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Yomitan](https://yomitan.wiki/) | [@yomidevs/yomitan](https://github.com/yomidevs/yomitan) | GPL | Chrome, Firefox, Edge, Brave | JavaScript |
 
 ### Related Formats

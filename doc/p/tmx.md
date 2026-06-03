@@ -8,7 +8,7 @@ To update, modify plugins/tmx/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | TMX |
 | snake_case_name | tmx |
 | Description | TMX (.tmx) |

@@ -157,7 +157,7 @@ def renderCell(value):
 def renderTable(rows):
 	"""rows[0] must be headers."""
 	rows = [[renderCell(cell) for cell in row] for row in rows]
-	width = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
+	width = [len(cell) for cell in rows[0]]
 	rows.insert(1, ["-" * colWidth for colWidth in width])
 	return "\n".join(["| " + " | ".join(row) + " |" for row in rows])
 

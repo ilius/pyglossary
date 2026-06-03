@@ -8,7 +8,7 @@ To update, modify plugins/dict_cc_split/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------------------------------------------ |
+| --------- | ----- |
 | Name | Dictcc_split |
 | snake_case_name | dict_cc_split |
 | Description | Dict.cc (SQLite3) - Split |
@@ -23,7 +23,7 @@ To update, modify plugins/dict_cc_split/__init__.py file, then run ./scripts/gen
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ---------------------------------------------------------------------------------- | ----------- | ----------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [dict.cc dictionary](https://play.google.com/store/apps/details?id=cc.dict.dictcc) | ― | Proprietary | Android |  |
 
 ### Related Formats

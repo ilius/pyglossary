@@ -8,7 +8,7 @@ To update, modify plugins/sql/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------- |
+| --------- | ----- |
 | Name | Sql |
 | snake_case_name | sql |
 | Description | SQL (.sql) |
@@ -25,7 +25,7 @@ To update, modify plugins/sql/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| -------------- | ------- | ---- | ---------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | info_keys | `None` | list | List of dbinfo table columns |
 | add_extra_info | `True` | bool | Create dbinfo_extra table |

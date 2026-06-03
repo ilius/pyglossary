@@ -8,7 +8,7 @@ To update, modify plugins/gettext_po/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------- |
+| --------- | ----- |
 | Name | GettextPo |
 | snake_case_name | gettext_po |
 | Description | Gettext Source (.po) |
@@ -25,7 +25,7 @@ To update, modify plugins/gettext_po/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| --------- | ------- | ---- | ----------------------------- |
+| ---- | ------- | ---- | ------- |
 | resources | `True` | bool | Enable resources / data files |
 
 ### Dependencies for reading and writing
@@ -41,6 +41,6 @@ pip3 install polib
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ------------------------------------------------ | ----------- | --------------- | ------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [gettext](https://www.gnu.org/software/gettext/) | ― | GPL | Linux, Windows |  |
 | [poEdit](https://github.com/vslavik/poedit) | ― | MIT / Shareware | Linux, Windows, Mac |  |

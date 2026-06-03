@@ -8,7 +8,7 @@ To update, modify plugins/wordfrequency/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | --------------------------------------------------------------- |
+| --------- | ----- |
 | Name | WordFrequency |
 | snake_case_name | wordfrequency |
 | Description | WordFrequency.info COCA lemma list (.wordfrequency) |
@@ -23,7 +23,7 @@ To update, modify plugins/wordfrequency/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ---------- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | gram_color | `green` | str | Grammar color |
 

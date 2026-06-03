@@ -8,7 +8,7 @@ To update, modify plugins/jmnedict/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------ |
+| --------- | ----- |
 | Name | JMnedict |
 | snake_case_name | jmnedict |
 | Description | JMnedict |

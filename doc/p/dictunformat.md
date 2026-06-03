@@ -8,7 +8,7 @@ To update, modify plugins/dictunformat/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Dictunformat |
 | snake_case_name | dictunformat |
 | Description | dictunformat output file |
@@ -23,14 +23,14 @@ To update, modify plugins/dictunformat/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ------------------ | ------- | ---- | ------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | headword_separator | `;   ` | str | separator for headword and alternates |
 
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| -------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [dictunformat](https://linux.die.net/man/1/dictunformat) | ― | GPL | Linux |  |
 
 ### Related Formats

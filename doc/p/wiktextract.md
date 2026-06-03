@@ -8,7 +8,7 @@ To update, modify plugins/wiktextract/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Wiktextract |
 | snake_case_name | wiktextract |
 | Description | Wiktextract (.jsonl) |
@@ -23,7 +23,7 @@ To update, modify plugins/wiktextract/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------------- | ---------------- | ---- | ---------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | word_title | `False` | bool | Add headwords title to beginning of definition |
 | gram_color | `green` | str | Grammar color |
 | example_padding | `10px 20px` | str | Padding for examples (css value) |

@@ -8,7 +8,7 @@ To update, modify plugins/lingoes_ldf/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | LingoesLDF |
 | snake_case_name | lingoes_ldf |
 | Description | Lingoes Source (.ldf) |
@@ -25,20 +25,20 @@ To update, modify plugins/lingoes_ldf/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| -------- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 
 ### Write options
 
 | Name | Default | Type | Comment |
-| --------- | ------- | ---- | ----------------------------- |
+| ---- | ------- | ---- | ------- |
 | newline | `\n` | str | Newline string |
 | resources | `True` | bool | Enable resources / data files |
 
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ---------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Lingoes Dictionary Creator](http://www.lingoes.net/en/dictionary/dict_format.php) | ― | Unknown |  |  |
 
 ### Related Formats

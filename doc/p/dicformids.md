@@ -8,7 +8,7 @@ To update, modify plugins/dicformids/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------------------ |
+| --------- | ----- |
 | Name | Dicformids |
 | snake_case_name | dicformids |
 | Description | DictionaryForMIDs |
@@ -25,5 +25,5 @@ To update, modify plugins/dicformids/__init__.py file, then run ./scripts/gen
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ---------------------------------------------------------- | ----------- | ------- | --------------------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [DictionaryForMIDs](http://dictionarymid.sourceforge.net/) | ― | GPL | Android, Web, Windows, Linux, Mac | Java |

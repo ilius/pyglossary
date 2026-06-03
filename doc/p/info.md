@@ -8,7 +8,7 @@ To update, modify plugins/info/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | --------------------- |
+| --------- | ----- |
 | Name | Info |
 | snake_case_name | info |
 | Description | Glossary Info (.info) |

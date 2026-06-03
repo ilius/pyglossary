@@ -8,7 +8,7 @@ To update, modify plugins/dsl/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------- |
+| --------- | ----- |
 | Name | ABBYYLingvoDSL |
 | snake_case_name | dsl |
 | Description | ABBYY Lingvo DSL (.dsl) |
@@ -23,7 +23,7 @@ To update, modify plugins/dsl/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ------------- | ----------- | ---- | ---------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding |  | str | Encoding/charset |
 | audio | `True` | bool | Enable audio objects |
 | example_color | `steelblue` | str | Examples color |
@@ -32,7 +32,7 @@ To update, modify plugins/dsl/__init__.py file, then run ./scripts/gen
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------- | --------------------------------------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [ABBYY Lingvo](https://www.lingvo.ru/) | ― | Proprietary | Windows, Mac, Android, iOS, Windows Mobile, Symbian |  |
 | [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL | Linux, Windows, Mac | C++ |
 | [GoldenDict](http://goldendict.org/) | [@goldendict/goldendict](https://github.com/goldendict/goldendict) | GPL | Linux, Windows, Mac | C++ |

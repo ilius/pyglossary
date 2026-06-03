@@ -8,7 +8,7 @@ To update, modify plugins/xliff/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------------------------ |
+| --------- | ----- |
 | Name | XLIFF |
 | snake_case_name | xliff |
 | Description | XLIFF (.xlf, .xliff) |

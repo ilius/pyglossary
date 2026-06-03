@@ -8,7 +8,7 @@ To update, modify plugins/dict_org/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | DictOrg |
 | snake_case_name | dict_org |
 | Description | DICT.org file format (.index) |
@@ -25,14 +25,14 @@ To update, modify plugins/dict_org/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ------- | ------- | ---- | --------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | dictzip | `False` | bool | Compress .dict file to .dict.dz |
 | install | `True` | bool | Install dictionary to /usr/share/dictd/ |
 
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| --------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Dictd](https://directory.fsf.org/wiki/Dictd) | ― | GPL | Linux |  |
 | [GNOME Dictionary](https://wiki.gnome.org/Apps/Dictionary) | ― | GPL | Linux |  |
 | [Xfce4 Dictionary](https://docs.xfce.org/apps/xfce4-dict/start) | ― | GPL | linux |  |

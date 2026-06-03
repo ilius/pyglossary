@@ -8,7 +8,7 @@ To update, modify plugins/dict_cc/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------------------------------------------------ |
+| --------- | ----- |
 | Name | Dictcc |
 | snake_case_name | dict_cc |
 | Description | Dict.cc (SQLite3) |
@@ -23,7 +23,7 @@ To update, modify plugins/dict_cc/__init__.py file, then run ./scripts/gen
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ---------------------------------------------------------------------------------- | ----------- | ----------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [dict.cc dictionary](https://play.google.com/store/apps/details?id=cc.dict.dictcc) | ― | Proprietary | Android |  |
 
 ### Related Formats

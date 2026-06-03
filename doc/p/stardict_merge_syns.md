@@ -8,7 +8,7 @@ To update, modify plugins/stardict_merge_syns/__init__.py file, then run ./scrip
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------- |
+| --------- | ----- |
 | Name | StardictMergeSyns |
 | snake_case_name | stardict_merge_syns |
 | Description | StarDict (Merge Syns) |
@@ -25,7 +25,7 @@ To update, modify plugins/stardict_merge_syns/__init__.py file, then run ./scrip
 ### Write options
 
 | Name | Default | Type | Comment |
-| ---------------- | ------- | ---- | -------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | large_file | `False` | bool | Use idxoffsetbits=64 bits, for large files only |
 | dictzip | `False` | bool | Compress .dict file to .dict.dz |
 | sametypesequence |  | str | Definition format: h=html, m=plaintext, x=xdxf |
@@ -36,7 +36,7 @@ To update, modify plugins/stardict_merge_syns/__init__.py file, then run ./scrip
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| -------------------------------------------------------- | ---------------------------------------------------------- | ------- | ----------------------------------------------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [KOReader](http://koreader.rocks/) | [@koreader/koreader](https://github.com/koreader/koreader) | AGPLv3 | Android, Amazon Kindle, Kobo eReader, PocketBook, Cervantes | Lua |
 | [sdcv (command line)](https://dushistov.github.io/sdcv/) | [@Dushistov/sdcv](https://github.com/Dushistov/sdcv) | GPLv2 | Linux, Windows, Mac, Android | C++ |
 

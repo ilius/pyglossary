@@ -8,7 +8,7 @@ To update, modify plugins/dikt_json/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------ |
+| --------- | ----- |
 | Name | DiktJson |
 | snake_case_name | dikt_json |
 | Description | DIKT JSON (.json) |
@@ -25,7 +25,7 @@ To update, modify plugins/dikt_json/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ----------- | ------- | ---- | ---------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | enable_info | `True` | bool | Enable glossary info / metedata |
 | resources | `True` | bool | Enable resources / data files |

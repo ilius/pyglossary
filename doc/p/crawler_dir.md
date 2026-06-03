@@ -8,7 +8,7 @@ To update, modify plugins/crawler_dir/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------ |
+| --------- | ----- |
 | Name | CrawlerDir |
 | snake_case_name | crawler_dir |
 | Description | Crawler Directory |
@@ -25,5 +25,5 @@ To update, modify plugins/crawler_dir/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ----------- | ------- | ---- | --------------------- |
+| ---- | ------- | ---- | ------- |
 | compression |  | str | Compression Algorithm |

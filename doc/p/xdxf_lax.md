@@ -8,7 +8,7 @@ To update, modify plugins/xdxf_lax/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | XdxfLax |
 | snake_case_name | xdxf_lax |
 | Description | XDXF Lax (.xdxf) |
@@ -23,7 +23,7 @@ To update, modify plugins/xdxf_lax/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ---- | ------- | ---- | ---------------------- |
+| ---- | ------- | ---- | ------- |
 | html | `True` | bool | Entries are HTML |
 | xsl | `True` | bool | Use XSL transformation |
 

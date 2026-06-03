@@ -8,7 +8,7 @@ To update, modify plugins/ayandict_sqlite/__init__.py file, then run ./scripts/g
 ### General Information
 
 | Attribute | Value |
-| --------------- | --------------------------------------------------- |
+| --------- | ----- |
 | Name | AyanDictSQLite |
 | snake_case_name | ayandict_sqlite |
 | Description | AyanDict SQLite |
@@ -25,11 +25,11 @@ To update, modify plugins/ayandict_sqlite/__init__.py file, then run ./scripts/g
 ### Write options
 
 | Name | Default | Type | Comment |
-| ----- | ------- | ---- | ------------------------ |
+| ---- | ------- | ---- | ------- |
 | fuzzy | `True` | bool | Create fuzzy search data |
 
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| --------------------------------------------- | ---------------------------------------------------- | ------- | ------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [AyanDict](https://github.com/ilius/ayandict) | [@ilius/ayandict](https://github.com/ilius/ayandict) | GPL | Linux, Windows, Mac | Go |

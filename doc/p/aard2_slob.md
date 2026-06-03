@@ -8,7 +8,7 @@ To update, modify plugins/aard2_slob/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------- |
+| --------- | ----- |
 | Name | Aard2Slob |
 | snake_case_name | aard2_slob |
 | Description | Aard 2 (.slob) |
@@ -25,7 +25,7 @@ To update, modify plugins/aard2_slob/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ---------------------------------- | ------- | ---- | --------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | compression | `zlib` | str | Compression Algorithm |
 | content_type |  | str | Content Type |
 | file_size_approx | `0` | int | split up by given approximate file size<br />examples: 100m, 1g |
@@ -53,7 +53,7 @@ to install pyicu.
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ------------------------------------------ | ---------------------------------------------------------------- | ------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Aard 2 for Android](http://aarddict.org/) | [@itkach/aard2-android](https://github.com/itkach/aard2-android) | GPL | Android | Java |
 | [Aard2 for Web](http://aarddict.org/) | [@itkach/aard2-web](https://github.com/itkach/aard2-web) | MPL | Web | Java |
 

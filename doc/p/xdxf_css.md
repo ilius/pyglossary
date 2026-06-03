@@ -8,7 +8,7 @@ To update, modify plugins/xdxf_css/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | XdxfCss |
 | snake_case_name | xdxf_css |
 | Description | XDXF with CSS and JS |
@@ -23,7 +23,7 @@ To update, modify plugins/xdxf_css/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ---- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | html | `True` | bool | Entries are HTML |
 
 ### Dependencies for reading

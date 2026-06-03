@@ -8,7 +8,7 @@ To update, modify plugins/kobo_dictfile/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | --------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Dictfile |
 | snake_case_name | kobo_dictfile |
 | Description | Kobo E-Reader Dictfile (.df) |
@@ -25,14 +25,14 @@ To update, modify plugins/kobo_dictfile/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------------------- | ------- | ---- | --------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | extract_inline_images | `True` | bool | Extract inline images |
 
 ### Write options
 
 | Name | Default | Type | Comment |
-| -------- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 
 ### Dependencies for reading
@@ -48,7 +48,7 @@ pip3 install mistune
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ------------------------------------------------ | ----------- | ------- | ------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [dictgen](https://pgaskin.net/dictutil/dictgen/) | ― | MIT | Linux, Windows, Mac |  |
 
 ### Related Formats

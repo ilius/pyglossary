@@ -8,7 +8,7 @@ To update, modify plugins/babylon_bgl/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------ |
+| --------- | ----- |
 | Name | BabylonBgl |
 | snake_case_name | babylon_bgl |
 | Description | Babylon (.BGL) |
@@ -25,7 +25,7 @@ To update, modify plugins/babylon_bgl/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------------------------- | -------- | ---- | ------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | default_encoding_overwrite |  | str | Default encoding (overwrite) |
 | source_encoding_overwrite |  | str | Source encoding (overwrite) |
 | target_encoding_overwrite |  | str | Target encoding (overwrite) |
@@ -38,7 +38,7 @@ To update, modify plugins/babylon_bgl/__init__.py file, then run ./scripts/gen
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ------------------------------------------------------- | ----------- | ---------------------- | -------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Babylon Translator](https://www.babylon-software.com/) | ― | Proprietary (Freemium) | Windows |  |
 | [GoldenDict](http://goldendict.org/) | ― | GPL | Linux, Windows |  |
 | [GoldenDict Mobile (Free)](http://goldendict.mobi/) | ― | Proprietary (Freeware) | Android |  |

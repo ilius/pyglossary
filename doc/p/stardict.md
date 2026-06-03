@@ -8,7 +8,7 @@ To update, modify plugins/stardict/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------- |
+| --------- | ----- |
 | Name | Stardict |
 | snake_case_name | stardict |
 | Description | StarDict (.ifo) |
@@ -25,7 +25,7 @@ To update, modify plugins/stardict/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| -------------- | -------- | ---- | --------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | xdxf_to_html | `True` | bool | Convert XDXF entries to HTML |
 | xsl | `True` | bool | Use XSL transformation |
 | unicode_errors | `strict` | str | What to do with Unicode decoding errors |
@@ -33,7 +33,7 @@ To update, modify plugins/stardict/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ---------------- | ------- | ---- | -------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | large_file | `False` | bool | Use idxoffsetbits=64 bits, for large files only |
 | dictzip | `False` | bool | Compress .dict file to .dict.dz |
 | dictzip_syn | `False` | bool | Compress .syn file to .syn.dz |
@@ -47,7 +47,7 @@ To update, modify plugins/stardict/__init__.py file, then run ./scripts/gen
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------- | ----------------------------------------------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [AyanDict](https://github.com/ilius/ayandict) | [@ilius/ayandict](https://github.com/ilius/ayandict) | GPL | Linux, Windows, Mac | Go |
 | [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL | Linux, Windows, Mac | C++ |
 | [GoldenDict](http://goldendict.org/) | [@goldendict/goldendict](https://github.com/goldendict/goldendict) | GPL | Linux, Windows, Mac | C++ |

@@ -8,7 +8,7 @@ To update, modify plugins/kobo/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------- |
+| --------- | ----- |
 | Name | Kobo |
 | snake_case_name | kobo |
 | Description | Kobo E-Reader Dictionary |
@@ -35,7 +35,7 @@ pip3 install marisa-trie
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ------------------------------------ | ----------- | ----------- | ------------ | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Kobo eReader](https://www.kobo.com) | ― | Proprietary | Kobo eReader |  |
 
 ### Related Formats

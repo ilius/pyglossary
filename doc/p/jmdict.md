@@ -8,7 +8,7 @@ To update, modify plugins/jmdict/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------- |
+| --------- | ----- |
 | Name | JMDict |
 | snake_case_name | jmdict |
 | Description | JMDict (xml) |
@@ -23,7 +23,7 @@ To update, modify plugins/jmdict/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| --------------- | ------- | ---- | -------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | example_padding | `10` | int | Padding for examples (in px) |
 | example_color |  | str | Examples color |
 | translitation | `False` | bool | Add translitation (romaji) of keywords |

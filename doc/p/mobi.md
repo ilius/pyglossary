@@ -8,7 +8,7 @@ To update, modify plugins/mobi/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------------------------------------------ |
+| --------- | ----- |
 | Name | Mobi |
 | snake_case_name | mobi |
 | Description | Mobipocket (.mobi) E-Book |
@@ -25,7 +25,7 @@ To update, modify plugins/mobi/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ---------------------- | -------- | ---- | -------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | keep | `False` | bool | Keep temp files |
 | group_by_prefix_length | `2` | int | Prefix length for grouping |
 | css |  | str | Path to css file |
@@ -44,7 +44,7 @@ Mobipocket e-books.
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| -------------------------------------------------------------------------- | ----------- | ----------- | ------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Amazon Kindle](https://www.amazon.com/kindle) | ― | Proprietary | Amazon Kindle |  |
 | [calibre](https://calibre-ebook.com/) | ― | GPL | Linux, Windows, Mac |  |
 | [Okular](https://okular.kde.org/) | ― | GPL | Linux, Windows, Mac |  |

@@ -8,7 +8,7 @@ To update, modify plugins/xdxf/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Xdxf |
 | snake_case_name | xdxf |
 | Description | XDXF (.xdxf) |
@@ -23,7 +23,7 @@ To update, modify plugins/xdxf/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ---- | ------- | ---- | ---------------------- |
+| ---- | ------- | ---- | ------- |
 | html | `True` | bool | Entries are HTML |
 | xsl | `True` | bool | Use XSL transformation |
 
@@ -40,7 +40,7 @@ pip3 install lxml
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------- | ---------------------------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [GoldenDict-NG by @xiaoyifang](https://xiaoyifang.github.io/goldendict-ng/) | [@xiaoyifang/goldendict-ng](https://github.com/xiaoyifang/goldendict-ng) | GPL | Linux, Windows, Mac | C++ |
 | [GoldenDict](http://goldendict.org/) | [@goldendict/goldendict](https://github.com/goldendict/goldendict) | GPL | Linux, Windows, Mac | C++ |
 | [QTranslate](https://qtranslate.en.lo4d.com/windows) | ― | Proprietary (Freeware) | Windows | C++ |

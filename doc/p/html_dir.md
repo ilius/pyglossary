@@ -8,7 +8,7 @@ To update, modify plugins/html_dir/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ------------------ |
+| --------- | ----- |
 | Name | HtmlDir |
 | snake_case_name | html_dir |
 | Description | HTML Directory |
@@ -25,7 +25,7 @@ To update, modify plugins/html_dir/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| --------------- | -------------- | ---- | ---------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |
 | resources | `True` | bool | Enable resources / data files |
 | max_file_size | `102400` | int | Maximum file size in bytes |

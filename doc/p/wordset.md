@@ -8,7 +8,7 @@ To update, modify plugins/wordset/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Wordset |
 | snake_case_name | wordset |
 | Description | Wordset.org JSON directory |
@@ -23,5 +23,5 @@ To update, modify plugins/wordset/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| -------- | ------- | ---- | ---------------- |
+| ---- | ------- | ---- | ------- |
 | encoding | `utf-8` | str | Encoding/charset |

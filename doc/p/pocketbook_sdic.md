@@ -8,7 +8,7 @@ To update, modify plugins/pocketbook_sdic/__init__.py file, then run ./scripts/g
 ### General Information
 
 | Attribute | Value |
-| --------------- | ---------------------- |
+| --------- | ----- |
 | Name | PocketBookSdic |
 | snake_case_name | pocketbook_sdic |
 | Description | PocketBook SDIC (.dic) |
@@ -25,7 +25,7 @@ To update, modify plugins/pocketbook_sdic/__init__.py file, then run ./scripts/g
 ### Write options
 
 | Name | Default | Type | Comment |
-| --------------- | ------- | ---- | --------------------------------------------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | metadata_dir |  | str | Path to a directory containing collates.txt, morphems.txt, and keyboard.txt |
 | collates_path |  | str | Path to collates.txt (overrides metadata_dir) |
 | keyboard_path |  | str | Path to keyboard.txt (overrides metadata_dir) |

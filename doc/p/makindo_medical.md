@@ -8,7 +8,7 @@ To update, modify plugins/makindo_medical/__init__.py file, then run ./scripts/g
 ### General Information
 
 | Attribute | Value |
-| --------------- | ----------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | MakindoMedical |
 | snake_case_name | makindo_medical |
 | Description | Makindo Medical Reference (SQLite3) |
@@ -23,5 +23,5 @@ To update, modify plugins/makindo_medical/__init__.py file, then run ./scripts/g
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ----------------------------------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Makindo Medical Reference](https://play.google.com/store/apps/details?id=com.pocketmednotes2014.secondapp) | ― | Unknown | Android |  |

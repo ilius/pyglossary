@@ -8,7 +8,7 @@ To update, modify plugins/wordnet/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | -------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | Wordnet |
 | snake_case_name | wordnet |
 | Description | WordNet |
@@ -23,5 +23,5 @@ To update, modify plugins/wordnet/__init__.py file, then run ./scripts/gen
 ### Read options
 
 | Name | Default | Type | Comment |
-| ---------- | ------- | ---- | ------------- |
+| ---- | ------- | ---- | ------- |
 | gram_color | `green` | str | Grammar color |

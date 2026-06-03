@@ -8,7 +8,7 @@ To update, modify plugins/appledict/__init__.py file, then run ./scripts/gen
 ### General Information
 
 | Attribute | Value |
-| --------------- | --------------------------------------------------------------------------------------------- |
+| --------- | ----- |
 | Name | AppleDict |
 | snake_case_name | appledict |
 | Description | AppleDict Source |
@@ -25,7 +25,7 @@ To update, modify plugins/appledict/__init__.py file, then run ./scripts/gen
 ### Write options
 
 | Name | Default | Type | Comment |
-| ----------------- | ------- | ---- | ---------------------------------------- |
+| ---- | ------- | ---- | ------- |
 | clean_html | `True` | bool | use BeautifulSoup parser |
 | css |  | str | custom .css file path |
 | xsl |  | str | custom XSL transformations file path |
@@ -62,7 +62,7 @@ See [doc/apple.md](../apple.md) for additional AppleDict instructions.
 ### Dictionary Applications/Tools
 
 | Name & Website | Source code | License | Platforms | Language |
-| ------------------------------------------------------------------------------------------- | ----------- | ------- | --------- | -------- |
+| -------------- | ----------- | ------- | --------- | -------- |
 | [Dictionary Development Kit](https://github.com/SebastianSzturo/Dictionary-Development-Kit) | ― | Unknown | Mac |  |
 
 ### Related Formats
