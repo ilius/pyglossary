@@ -234,6 +234,7 @@ def mainPrepare(  # noqa: PLR0911
 
 	config.update(configFromArgs(args, log))
 	logHandler.config = config
+	log.setTimeEnable(config["log_time"])
 
 	convertOptions = getConvertOptions(args)
 
