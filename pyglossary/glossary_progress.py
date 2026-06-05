@@ -23,18 +23,23 @@ __all__ = ["GlossaryProgress"]
 
 
 class GlossaryProgress:
+	"""Progress-bar helpers mixed into :class:`~pyglossary.glossary_v2.GlossaryCommon`."""
+
 	def __init__(
 		self,
 		ui: UIType | None = None,  # noqa: F821
 	) -> None:
+		"""Store *ui* for progress updates; bar is active only when UI is set."""
 		self._ui = ui
 		self._progressbar = True
 
 	def clear(self) -> None:
+		"""Reset state and re-enable the progress-bar flag."""
 		self._progressbar = True
 
 	@property
 	def progressbar(self) -> bool:
+		"""Whether progress updates are forwarded to the UI."""
 		return self._ui is not None and self._progressbar
 
 	@progressbar.setter
@@ -42,10 +47,12 @@ class GlossaryProgress:
 		self._progressbar = enabled
 
 	def progressInit(self, *args: Any) -> None:
+		"""Start or restart a progress phase (forwards *args* to the UI)."""
 		if self._ui and self._progressbar:
 			self._ui.progressInit(*args)
 
 	def progress(self, pos: int, total: int, unit: str = "entries") -> None:
+		"""Report current position: ``pos`` of ``total`` with the given *unit*."""
 		if total == 0:
 			log.warning(f"{pos=}, {total=}")
 			return
@@ -57,6 +64,7 @@ class GlossaryProgress:
 		)
 
 	def progressEnd(self) -> None:
+		"""Mark the current progress phase complete."""
 		if self._ui and self._progressbar:
 			self._ui.progressEnd()
 
@@ -91,6 +99,12 @@ class GlossaryProgress:
 		iterable: Iterable[EntryType],
 		entryCount: int,
 	) -> Iterator[EntryType]:
+		"""
+		Wrap an iterable and update progress by entry index.
+
+		Updates are throttled to at most once every ``entryCount // 200``
+		entries, clamped between 1 and 500.
+		"""
 		entryCountThreshold = max(
 			1,
 			min(
@@ -104,6 +118,13 @@ class GlossaryProgress:
 				self.progress(index, entryCount)
 
 	def _progressIter(self, reader: ReaderType) -> Iterable[EntryType]:
+		"""
+		Return a progress-tracking wrapper for *reader*, or *reader* itself.
+
+		Uses byte progress when ``reader.useByteProgress`` is set, otherwise
+		entry-count progress when ``len(reader)`` is known. Falls back to byte
+		progress when the entry count is zero. No wrapper when the bar is off.
+		"""
 		if not self.progressbar:
 			return reader
 		if getattr(reader, "useByteProgress", False):
