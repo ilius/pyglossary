@@ -72,11 +72,28 @@ class GlossaryProgress:
 		self,
 		reader: ReaderType,
 	) -> Iterator[EntryType]:
+		"""
+		Wrap a byte-progress reader and update the progress bar while iterating.
+
+		Text entries report progress via ``entry.byteProgress()`` (file position).
+		Resource entries (``entry.isData()``) that are read from individual files
+		have no byte position, so after main entries are read the bar switches to
+		entry-count progress using ``reader.countResourceFiles()`` as the total.
+
+		``countResourceFiles()`` is called once at the start. Readers cache
+		the result (e.g. from a ``_res`` directory listing at open time), so
+		other formats are not slowed down by repeated counting.
+
+		DSL is the exception: loose resource files are referenced inside entry
+		definitions, so the full count is only known after parsing. If the
+		initial call returns zero, it is called again on the first data entry.
+		"""
 		lastPos = 0
 		resIndex = 0
 		resCount = 0
-		if hasattr(reader, "countResourceFiles"):
-			resCount = reader.countResourceFiles()
+		countResourceFiles = getattr(reader, "countResourceFiles", None)
+		if countResourceFiles:
+			resCount = countResourceFiles()
 		for entry in reader:
 			if entry is None:
 				continue
@@ -86,13 +103,16 @@ class GlossaryProgress:
 				if bp[0] > lastPos + 100_000:
 					self.progress(bp[0], bp[1], unit="bytes")
 					lastPos = bp[0]
-			elif resCount and entry.isData():
-				if resIndex == 0:
-					self.progressEnd()
-					self.progressInit("Reading resources")
-				elif resIndex % 10 == 0:
-					self.progress(resIndex, resCount)
-				resIndex += 1
+			elif entry.isData():
+				if not resCount and countResourceFiles:
+					resCount = countResourceFiles()
+				if resCount:
+					if resIndex == 0:
+						self.progressEnd()
+						self.progressInit("Reading resources")
+					elif resIndex % 10 == 0:
+						self.progress(resIndex, resCount)
+					resIndex += 1
 
 	def _entryCountProgressIter(
 		self,
