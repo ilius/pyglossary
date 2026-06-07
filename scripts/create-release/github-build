@@ -22,9 +22,18 @@ myDir=$(dirname "$0")
 scriptsDir=$(dirname "$myDir")
 CUR_VERSION=$($scriptsDir/version-core)
 
-VERSION=$1
+MAJOR_FLAG=
+VERSION=
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	--major) MAJOR_FLAG=1; shift ;;
+	-*) echo "Unknown option: $1"; exit 1 ;;
+	*) VERSION=$1; shift ;;
+	esac
+done
+
 if [ -z "$VERSION" ]; then
-	echo "Usage: $0 VERSION"
+	echo "Usage: $0 [--major] VERSION"
 	echo "Current version: $CUR_VERSION"
 	exit 1
 fi
@@ -38,6 +47,12 @@ fi
 set -x
 
 $scriptsDir/check-python-version
+
+if ! git cat-file tag "$VERSION" 2>/dev/null ; then
+	VALIDATE_ARGS=()
+	[ -n "$MAJOR_FLAG" ] && VALIDATE_ARGS+=(--major)
+	python3 "$myDir/validate-release-tag.py" "${VALIDATE_ARGS[@]}" "$VERSION"
+fi
 
 if git cat-file tag $VERSION 2>/dev/null ; then
 	CUR_VERSION=$(git describe --abbrev=0 --tags "$VERSION^")
@@ -81,9 +96,9 @@ echo "Pushing tag to origin..."
 git push origin "$VERSION"
 
 MD_PATH=$(realpath $scriptsDir/../doc/releases/$VERSION.md)
-echo -e "## What's Changed\n" >"$MD_PATH"
-git log --pretty='- %h %s' "$CUR_VERSION..$VERSION^" | sort -i -k 3,4 >>"$MD_PATH"
-echo -e "\n\n**Full Changelog**: https://github.com/ilius/pyglossary/compare/$CUR_VERSION...$VERSION\n" >>"$MD_PATH"
+
+CREATE_NOTES_ARGS=(--prev-tag "$CUR_VERSION")
+python3 "$scriptsDir/create-release-notes.py" "${CREATE_NOTES_ARGS[@]}" "$VERSION"
 
 echo "Created $MD_PATH"
 xdg-open "$MD_PATH"
