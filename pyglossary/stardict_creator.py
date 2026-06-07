@@ -69,6 +69,9 @@ class StarDictCreator:
 	def addEntry(self, terms: list[str], defi: str) -> None:
 		self._entryList.append(self._glos.newEntry(terms, defi))
 
+	def addResource(self, fname: str, data: bytes) -> None:
+		self._entryList.append(self._glos.newDataEntry(fname, data))
+
 	def write(self) -> None:
 		for entry in self._entryList:
 			self._gen.send(entry)
