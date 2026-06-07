@@ -12,7 +12,7 @@ from .compress import (
 )
 from .entry import DataEntry
 from .io_utils import nullTextIO
-from .os_utils import listFilesRecursiveRelPath
+from .os_utils import countFilesRecursive, listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
@@ -80,17 +80,26 @@ class TextGlossaryReader:
 		self._bufferLine = ""
 		self._entryIndex = 0
 		self._resDir = ""
-		self._resFileNames: list[str] = []
+		self._resCount = 0
 
 	def _setResDir(self, resDir: str) -> bool:
 		if self._glos.getConfig("skip_resources", False):
 			return False
-		if isdir(resDir):
-			log.info(f"Listing res dir {self._resDir}")
-			self._resDir = resDir
-			self._resFileNames = list(listFilesRecursiveRelPath(self._resDir))
-			return True
-		return False
+
+		if not isdir(resDir):
+			self._resDir = ""
+			self._resCount = 0
+			return False
+
+		resCount = 0
+		if self._glos.progressbar:
+			log.info("Counting resource files...")
+			resCount = countFilesRecursive(resDir)
+			log.info(f"Found {resCount} resource files")
+
+		self._resDir = resDir
+		self._resCount = resCount
+		return True
 
 	def detectResDir(self, filename: str) -> bool:
 		if self._setResDir(f"{filename}_res"):
@@ -279,7 +288,7 @@ class TextGlossaryReader:
 			yield self.newEntry(word, defi)
 
 		resDir = self._resDir
-		for fname in self._resFileNames:
+		for fname in listFilesRecursiveRelPath(resDir):
 			fpath = join(resDir, fname)
 			if not isfile(fpath):
 				log.error(f"No such file: {fpath}")
@@ -289,6 +298,9 @@ class TextGlossaryReader:
 					fname,
 					file.read(),
 				)
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def __len__(self) -> int:
 		return self._entryCount
