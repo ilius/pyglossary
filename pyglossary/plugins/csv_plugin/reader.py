@@ -29,7 +29,7 @@ from pyglossary.compress import (
 )
 from pyglossary.core import log
 from pyglossary.io_utils import nullTextIO
-from pyglossary.os_utils import listFilesRecursiveRelPath
+from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	import io
@@ -101,7 +101,7 @@ class Reader:
 			self._resDir = ""
 		elif self._glos.progressbar:
 			log.info("Counting resource files...")
-			resCount = sum(1 for _f in listFilesRecursiveRelPath(self._resDir))
+			resCount = countFilesRecursive(self._resDir)
 			log.info(f"Found {resCount} resource files")
 		self._resCount = resCount
 

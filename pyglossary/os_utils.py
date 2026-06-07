@@ -217,6 +217,13 @@ def listFilesRecursiveRelPath(direc: str) -> Iterable[str]:
 			yield join(rootRel, fname)
 
 
+def countFilesRecursive(direc: str) -> int:
+	"""Return number of all files (directly/indirectly) inside given directory."""
+	if not direc:
+		return 0
+	return sum(len(files) for _root, _dirs, files in os.walk(direc))
+
+
 # if __name__ == "__main__":
 # 	for direc in sys.argv[1:]:
 # 		print(list(listFilesRecursiveRelPath(direc)))
