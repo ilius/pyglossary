@@ -64,6 +64,9 @@ class Reader:
 		self._filename = ""
 		self._zimfile = None
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		if self._zimfile is None:
 			log.error("len(reader) called before reader.open()")

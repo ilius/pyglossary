@@ -836,6 +836,9 @@ class Reader(ReaderUtils):
 			'Home: <(ref|ptr) target="(.*)">(.*)</\\1>',
 		)
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return self._entryCount
 

@@ -60,6 +60,9 @@ class Reader:
 			article = row[1]
 			yield self._glos.newEntry(terms, article, defiFormat="h")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def close(self) -> None:
 		if self._cur:
 			self._cur.close()

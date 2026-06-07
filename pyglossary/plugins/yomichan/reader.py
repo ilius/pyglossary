@@ -76,6 +76,9 @@ class Reader:
 		# TODO: how do I count real length??
 		return len(self._termBankFiles)
 
+	def countResourceFiles(self) -> int:
+		return len(self._resourceFiles)
+
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._dictFile is None:
 			raise RuntimeError("Yomichan: resources were read while reader is not open")

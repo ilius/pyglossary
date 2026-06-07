@@ -289,6 +289,9 @@ class Reader:
 		targetLocale = langs["DCSDictionaryIndexLanguage"]
 		self._glos.targetLangName = locale.normalize(targetLocale).split("_")[0]
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return self._entryCount
 

@@ -38,6 +38,7 @@ class Reader:
 		self._rootPath = None
 		self._resDir = ""
 		self._resFileNames: list[str] = []
+		self._resCount = 0
 
 	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToData
@@ -64,8 +65,13 @@ class Reader:
 			self._glos.setInfo(key, value)
 
 		self._resDir = join(filename, "res")
+		self._resCount = 0
 		if isdir(self._resDir):
 			self._resFileNames = os.listdir(self._resDir)
+			self._resCount = len(self._resFileNames)
+			if self._glos.progressbar:
+				log.info("Counting resource files...")
+				log.info(f"Found {self._resCount} resource files")
 		else:
 			self._resDir = ""
 			self._resFileNames = []
@@ -74,7 +80,10 @@ class Reader:
 		if self._entryCount is None:
 			log.error("called len() on a reader which is not open")
 			return 0
-		return self._entryCount + len(self._resFileNames)
+		return self._entryCount + self._resCount
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def __iter__(self) -> Iterator[EntryType]:
 		if not self._rootPath:

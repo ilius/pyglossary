@@ -46,6 +46,9 @@ class Reader:
 		self._tabFileNames = [x[1] for x in orderFileNames]
 		self.nextTabFile()
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

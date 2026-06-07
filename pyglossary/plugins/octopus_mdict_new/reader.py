@@ -220,6 +220,9 @@ class Reader:
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return self._entryCount + self._dataEntryCount
 

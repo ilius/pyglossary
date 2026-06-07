@@ -324,6 +324,9 @@ class Reader:
 		self._entryCount = 0
 		self.wordnet: WordNet | None = None
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return self._entryCount
 

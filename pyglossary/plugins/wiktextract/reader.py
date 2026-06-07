@@ -98,6 +98,9 @@ class Reader:
 		self._filename = ""
 		self._fileSize = 0
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

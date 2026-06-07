@@ -36,13 +36,19 @@ class Reader:
 		self._entryCount: int | None = None
 		self._resDir = ""
 		self._resFileNames: list[str] = []
+		self._resCount = 0
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, encoding="utf-8")
 		self._resDir = filename + "_res"
+		self._resCount = 0
 		if isdir(self._resDir):
 			self._resFileNames = os.listdir(self._resDir)
+			self._resCount = len(self._resFileNames)
+			if self._glos.progressbar:
+				log.info("Counting resource files...")
+				log.info(f"Found {self._resCount} resource files")
 		else:
 			self._resDir = ""
 			self._resFileNames = []
@@ -62,6 +68,9 @@ class Reader:
 				newline=b"\nmsgid",
 			)
 		return self._entryCount
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def makeEntry(self, word: str, defi: str) -> EntryType:
 		if self._alts:

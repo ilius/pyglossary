@@ -75,6 +75,9 @@ class Reader:
 				pass
 		self._temp_zip_path = ""
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return len(self._yomichan_reader)
 

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import gzip
-import os
 from os.path import (
 	dirname,
 	isdir,
@@ -98,7 +97,7 @@ class Reader:
 		self._synDict: dict[int, list[str]] = {}
 		self._sametypesequence = ""
 		self._resDir = ""
-		self._resFileNames: list[str] = []
+		self._resCount = 0
 		self._entryCount: int | None = None
 
 	def open(self, filename: str) -> None:
@@ -123,11 +122,14 @@ class Reader:
 		else:
 			self._dictFile = open(self._filename + ".dict", mode="rb")
 		self._resDir = join(dirname(self._filename), "res")
-		if isdir(self._resDir):
-			self._resFileNames = os.listdir(self._resDir)
-		else:
+		self._resCount = 0
+		if not isdir(self._resDir):
 			self._resDir = ""
-			self._resFileNames = []
+		else:
+			self._resCount = sum(1 for _f in listFilesRecursiveRelPath(self._resDir))
+			if self._glos.progressbar:
+				log.info("Counting resource files...")
+				log.info(f"Found {self._resCount} resource files")
 		# self.readResources()
 
 	def __len__(self) -> int:
@@ -135,7 +137,10 @@ class Reader:
 			raise RuntimeError(
 				"StarDict: len(reader) called while reader is not open",
 			)
-		return self._entryCount + len(self._resFileNames)
+		return self._entryCount + self._resCount
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def readIfoFile(self) -> None:
 		""".ifo file is a text file in utf-8 encoding."""

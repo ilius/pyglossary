@@ -84,6 +84,9 @@ class Reader:
 	def __len__(self) -> int:
 		return self._entryCount
 
+	def countResourceFiles(self) -> int:
+		return len(self._resourceFiles)
+
 	def __iter__(self) -> Iterator[EntryType]:
 		for rel, absPath in self._resourceFiles:
 			with open(absPath, "rb") as fromFile:

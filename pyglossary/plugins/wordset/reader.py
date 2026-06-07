@@ -49,6 +49,9 @@ class Reader:
 			self._glos.setInfo("name", "Wordset.org")
 		self._glos.setDefaultDefiFormat("h")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 
