@@ -1,6 +1,7 @@
 import sys
 import unittest
-from os.path import abspath, dirname
+from os.path import abspath, dirname, isfile
+from unittest.mock import patch
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -8,6 +9,7 @@ sys.path.insert(0, rootDir)
 from glossary_v2_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.plugins.stardict.writer import Writer
 
 __all__ = ["TestGlossaryStarDictBase"]
 
@@ -350,6 +352,89 @@ sametypesequence=abcd
 			)
 
 		# self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
+
+
+class TestGlossaryStarDictSplit(TestGlossaryErrorsBase):
+	def test_write_splits_when_dict_exceeds_size_limit(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Split Test")
+
+		for i in range(3):
+			glos.addEntry(glos.newEntry([f"word{i}"], "x" * 20))
+
+		outputFilename = self.newTempFilePath("split-test.ifo")
+		part1Filename = self.newTempFilePath("split-test.1.ifo")
+		part2Filename = self.newTempFilePath("split-test.2.ifo")
+
+		with patch.object(Writer, "dictMarkMax", return_value=50):
+			glos.write(
+				outputFilename,
+				formatName="Stardict",
+				sametypesequence="m",
+			)
+
+		for ext in ("ifo", "idx", "dict"):
+			self.assertTrue(isfile(f"{outputFilename[:-4]}.{ext}"))
+			self.assertTrue(isfile(f"{part1Filename[:-4]}.{ext}"))
+			self.assertFalse(isfile(f"{part2Filename[:-4]}.{ext}"))
+
+		with open(outputFilename, encoding="utf-8") as ifoFile:
+			part0Ifo = ifoFile.read()
+		with open(part1Filename, encoding="utf-8") as ifoFile:
+			part1Ifo = ifoFile.read()
+
+		self.assertIn("bookname=Split Test (part 1)", part0Ifo)
+		self.assertIn("bookname=Split Test (part 2)", part1Ifo)
+		self.assertIn("wordcount=2", part0Ifo)
+		self.assertIn("wordcount=1", part1Ifo)
+
+	def test_write_splits_with_max_file_size_option(self):
+		glos = self.glos = Glossary()
+		glos.setInfo("name", "Split Test")
+
+		for i in range(3):
+			glos.addEntry(glos.newEntry([f"word{i}"], "x" * 20))
+
+		outputFilename = self.newTempFilePath("split-max-size.ifo")
+		part1Filename = self.newTempFilePath("split-max-size.1.ifo")
+
+		glos.write(
+			outputFilename,
+			formatName="Stardict",
+			sametypesequence="m",
+			max_file_size=50,
+		)
+
+		for ext in ("ifo", "idx", "dict"):
+			self.assertTrue(isfile(f"{outputFilename[:-4]}.{ext}"))
+			self.assertTrue(isfile(f"{part1Filename[:-4]}.{ext}"))
+
+		with open(outputFilename, encoding="utf-8") as ifoFile:
+			part0Ifo = ifoFile.read()
+		with open(part1Filename, encoding="utf-8") as ifoFile:
+			part1Ifo = ifoFile.read()
+
+		self.assertIn("bookname=Split Test (part 1)", part0Ifo)
+		self.assertIn("bookname=Split Test (part 2)", part1Ifo)
+		self.assertIn("wordcount=2", part0Ifo)
+		self.assertIn("wordcount=1", part1Ifo)
+
+	def test_write_single_entry_too_big_raises(self):
+		glos = self.glos = Glossary()
+		glos.addEntry(glos.newEntry(["big"], "x" * 100))
+
+		outputFilename = self.newTempFilePath("split-too-big.ifo")
+
+		with patch.object(Writer, "dictMarkMax", return_value=50):
+			with self.assertRaisesRegex(
+				Error,
+				"single entry definition is too big",
+			):
+				glos.write(
+					outputFilename,
+					formatName="Stardict",
+					sametypesequence="m",
+				)
 
 
 if __name__ == "__main__":
