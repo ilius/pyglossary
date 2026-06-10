@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 __all__ = [
 	"abspath2",
+	"countFilesRecursive",
 	"indir",
 	"listFilesRecursiveRelPath",
 	"rmtree",

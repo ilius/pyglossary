@@ -21,6 +21,7 @@ __all__ = [
 	"PreventDuplicateTerms",
 	"RemoveHtmlTagsAll",
 	"ShowMaxMemoryUsage",
+	"SkipTermRegex",
 	"StripFullHtml",
 	"entryFiltersRules",
 ]

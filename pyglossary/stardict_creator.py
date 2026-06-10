@@ -13,6 +13,8 @@ from pyglossary.sq_entry_list import SqEntryList
 if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, RawEntryType
 
+__all__ = ["StarDictCreator"]
+
 
 class StarDictCreator:
 	def __init__(
