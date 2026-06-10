@@ -21,6 +21,8 @@
 # Gregorian calendar:
 # http://en.wikipedia.org/wiki/Gregorian_calendar
 
+"""This module is used in plugins."""
+
 from __future__ import annotations
 
 from datetime import datetime

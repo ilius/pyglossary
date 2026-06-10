@@ -1,3 +1,5 @@
+"""This module is used in plugins."""
+
 from __future__ import annotations
 
 from os.path import splitext

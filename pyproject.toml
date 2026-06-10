@@ -195,6 +195,7 @@ ignore = [
 	"D212",    # multi-line-summary-first-line, conflicts with D213:multi-line-summary-second-line
 	"D401",    # First line of docstring should be in imperative mood
 	"D417",    # Missing argument descriptions in the docstring
+	"D404",    # First word of the docstring should not be "This"
 	"E402",    # Module level import not at top of file
 	"SIM105",  # Use contextlib.suppress({exception}) instead of try-except-pass
 	"SIM117",  # Use a single with statement with multiple contexts...

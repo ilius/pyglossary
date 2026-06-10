@@ -1,3 +1,5 @@
+"""This module is used in plugins."""
+
 __all__ = [
 	"c_author",
 	"c_copyright",

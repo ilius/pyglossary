@@ -12,6 +12,8 @@
 # also see:
 # https://github.com/servo/servo/blob/master/components/style/properties/counted_unknown_properties.py
 
+"""This module is used in plugins."""
+
 from __future__ import annotations
 
 import re

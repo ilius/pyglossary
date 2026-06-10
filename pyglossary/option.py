@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""This module is used in plugins."""
+
 from __future__ import annotations
 
 import logging
