@@ -20,11 +20,12 @@ class StarDictCreator:
 		filename: str,
 		tmpDbFile: str,
 		defiFormat: str = "h",
+		info: dict[str, str] | None = None,
 	) -> None:
 		self._filename = filename
 		self._defiFormat = defiFormat
 		self._defiFormatB = defiFormat.encode("ascii")
-		glos = self._glos = Glossary()
+		glos = self._glos = Glossary(info=info)
 		w = self._writer = Writer(glos)
 
 		# w._sametypesequence = "h" # generally not needed
