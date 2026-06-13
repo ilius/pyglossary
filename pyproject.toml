@@ -28,6 +28,10 @@ qt6 = [
 	"PySide6",
 	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
 ]
+wx = [
+	"wxPython",
+	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
+]
 # File drag-and-drop in the Tk wizard (``pyglossary --ui=tk``).
 tk-wizard-dnd = ["tkinterdnd2"]
 dict-cc-source = ["pyparsing"]
@@ -436,6 +440,7 @@ ignore-paths = [
 	"^pyglossary/ui/progressbar/.*",
 	"^pyglossary/ui/ui_gtk3.py$",
 	"^pyglossary/ui/ui_qt6/ui.py$",
+	"^pyglossary/ui/ui_wx/ui.py$",
 	"^pyglossary/ui/ui_qt.py$",
 	"^pyglossary/ui/wcwidth/",
 	"^pyglossary/plugins/babylon_bgl/bgl_gzip.py$",
