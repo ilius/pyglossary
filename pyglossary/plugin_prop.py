@@ -466,6 +466,11 @@ class PluginProp:  # noqa: PLR0904
 					f": {module.__file__}",
 				)
 
+		if self.readerClass and not self.checkReaderClass():
+			raise PluginCheckError("invalid Reader class")
+		if self.writerClass and not self.checkWriterClass():
+			raise PluginCheckError("invalid Writer class")
+
 	def checkReaderClass(self) -> bool:
 		cls = self._Reader
 		for attr in (
