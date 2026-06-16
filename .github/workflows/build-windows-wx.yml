@@ -1,4 +1,5 @@
-name: Build for Windows x86_64
+name: Build Windows wx
+
 on:
   push:
     branches:
@@ -6,43 +7,57 @@ on:
     paths-ignore:
       - 'doc/**'
       - '*.md'
-      # - '.github/**'
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  UV_SYSTEM_PYTHON: 0
+  PYTHONWARNINGS: ignore::EncodingWarning
+  PYTHONWARNDEFAULTENCODING: 0
+  APPNAME: PyGlossaryWx
+  DIST_DIR: dist.nuitka.wx
+  DEFAULT_UI: wx
+  MAIN_SCRIPT: main.py
+  RESOURCE_DIR: resources
+
 jobs:
-
-  build_windows_x64:
+  build_windows_wx:
     runs-on: windows-2022
-
-    env:
-      PYTHONWARNDEFAULTENCODING: true
-      APPNAME: PyGlossary
-      DIST_DIR: dist.nuitka.tk
-      DEFAULT_UI: tk
-      MAIN_SCRIPT: main.py
-      RESOURCE_DIR: "resources"
 
     steps:
       - name: Check-out repository
         uses: actions/checkout@v4
         with:
           submodules: true
-          # Number of commits to fetch, ootb only 1 commit
-          # 0 = all history for all branches and tags. (needed for git describe)
           fetch-depth: 0
           fetch-tags: true
-          # ref: build-release # comment out before merge!
 
-      - name: "Set up Python 3.13"
+      - name: Set up Python 3.13
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-          # x64, or arm64
-          architecture: 'x64'
+          architecture: x64
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: latest
+
+      - name: Cache uv
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-wx-3.13
+
+      - name: Create venv
+        shell: bash
+        run: |
+          uv venv .venv --python 3.13
+          echo "VIRTUAL_ENV=$PWD/.venv" >> $GITHUB_ENV
+          echo "$PWD/.venv/Scripts" >> $GITHUB_PATH
 
       - name: Set environment variables
         shell: bash
@@ -50,33 +65,28 @@ jobs:
           VERSION=$(git describe --abbrev=0 --tags || git describe)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
-          echo "FILENAME_BASE=PyGlossary-${VERSION}-Windows-${RUNNER_ARCH}" >> $GITHUB_ENV
+          echo "FILENAME_BASE=${{ env.APPNAME }}-${VERSION}-Windows-${RUNNER_ARCH}" >> $GITHUB_ENV
 
-      - name: "create and activate venv"
-        shell: cmd
-        run: python3 -m venv .venv && .venv\Scripts\activate.bat
+      - name: Install dependencies
+        shell: bash
+        run: uv run python .github/scripts/win/install-deps.py
 
       - name: Patch sources for nuitka build
-        shell: cmd
-        run: python3 .github\scripts\win\patch_sources.py
+        shell: bash
+        run: uv run python .github/scripts/win/patch_sources.py
 
-      - name: "install nuitka"
-        shell: cmd
-        run: python3 -m pip install nuitka
-
-      - name: "Install Dependencies"
-        shell: cmd
-        run: python3 .github\scripts\win\install-deps.py
+      - name: Install nuitka
+        shell: bash
+        run: uv pip install -U nuitka
 
       - name: Nuitka build
         env:
           PYTHONWARNDEFAULTENCODING: 0
-        shell: cmd
-        run: python .github\scripts\win\nuitka-build.py
+        run: uv run python .github/scripts/win/nuitka-build.py
 
       - name: Copy assets
-        shell: cmd
-        run: python3 .github\scripts\win\copy_assets.py
+        shell: bash
+        run: uv run python .github/scripts/win/copy_assets.py
 
       - name: Pack to zip before uploading
         shell: cmd
@@ -84,24 +94,26 @@ jobs:
         run: |
           7z a -tzip ..\..\${{ env.FILENAME_BASE }}-dist.zip .
 
-      - name: Upload Artifacts
+      - name: Upload dist zip
         uses: actions/upload-artifact@v4
         with:
-          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context
           name: ${{ env.FILENAME_BASE }}
           if-no-files-found: error
           path: |
             ${{ env.FILENAME_BASE }}-dist.zip
-            
+
       - name: Create Inno Installer
         shell: cmd
         run: >-
           iscc .github/scripts/win/inno_setup.iss
           /DMyAppVersion="${{ env.VERSION }}"
+          /DMyAppName="${{ env.APPNAME }}"
+          /DMyAppExeName="${{ env.APPNAME }}.exe"
+          /DOutputBaseFilenamePrefix="${{ env.APPNAME }}"
           /DSourceFilesGlob="${{ github.workspace }}\${{ env.DIST_DIR }}\${{ env.APPNAME }}.dist\*"
           /DLicenseFile="${{ github.workspace }}\LICENSE"
           /O${{ github.workspace }}\Output
-          
+
       - name: Upload Inno Installer EXE
         uses: actions/upload-artifact@v4
         with:
@@ -109,10 +121,10 @@ jobs:
           if-no-files-found: error
           path: |
             Output\*.exe
-            
+
   release:
     if: true
-    needs: [build_windows_x64]
+    needs: [build_windows_wx]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -122,7 +134,6 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-          # ref: build-release # comment out before merge
 
       - name: Set release vars
         run: |
@@ -140,16 +151,19 @@ jobs:
           pwd
           echo ${{ github.workspace }}/artifacts
           find ${{ github.workspace }}/artifacts
-            
+
       - name: make release
         uses: ncipollo/release-action@v1
-        # https://github.com/ncipollo/release-action
         with:
           name: ${{ env.VERSION }}
+          body: |
+            ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
+            ## Windows (wxPython UI)
+            - Portable zip and installer for Windows x64 (`PyGlossaryWx`)
           artifacts: "artifacts/*.zip,artifacts/*.exe"
           artifactContentType: application/zip
           generateReleaseNotes: true
           makeLatest: true
           allowUpdates: true
-          omitBodyDuringUpdate: true # preserve the existing body during updates:
+          omitBodyDuringUpdate: true
           tag: ${{ env.VERSION }}

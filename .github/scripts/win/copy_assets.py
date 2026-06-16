@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 dist_dir = os.getenv("DIST_DIR")
+app_name = os.getenv("APPNAME", "main")
 
 if not dist_dir:
 	sys.stderr.write("empty DIST_DIR!")
@@ -17,7 +18,7 @@ if not dist_dir_path.exists():
 	sys.stderr.write(f"DIST_DIR does not exist: {dist_dir}")
 	sys.exit(1)
 
-target_path = dist_dir_path / "main.dist"
+target_path = dist_dir_path / f"{app_name}.dist"
 
 sources = [
 	"about",
