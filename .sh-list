@@ -9,6 +9,7 @@ scripts/test-glossary.sh
 scripts/test.sh
 scripts/version
 scripts/ci/no-diff.sh
+scripts/ci/collect-coverage.sh
 scripts/ci/test.sh
 scripts/ci/test-deprecated.sh
 scripts/ci/mac/nuitka-build.sh

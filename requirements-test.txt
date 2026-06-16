@@ -1,5 +1,6 @@
 PyICU
 beautifulsoup4
+coverage
 biplist
 freezegun
 html5lib
