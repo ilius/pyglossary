@@ -487,6 +487,9 @@ class PluginProp:  # noqa: PLR0904
 				self._Reader = None
 				return False
 
+		if not hasattr(cls, "countResourceFiles"):
+			log.warning(f"No countResourceFiles in {self.name} Reader")
+
 		return True
 
 	def checkWriterClass(self) -> bool:

@@ -9,10 +9,9 @@
 
 from __future__ import annotations
 
-import operator
 import os
 import plistlib
-from os.path import basename, dirname, isdir, isfile, join, relpath, splitext
+from os.path import basename, dirname, isdir, isfile, join, splitext
 from typing import TYPE_CHECKING
 
 from lxml import etree
@@ -20,6 +19,7 @@ from lxml.etree import QName
 
 from pyglossary.core import log
 from pyglossary.info import c_author, c_copyright, c_name
+from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -44,7 +44,8 @@ class Reader:
 		self._dirname = ""
 		self._xmlPath = ""
 		self._entryElems: list[_Element] = []
-		self._resourceFiles: list[tuple[str, str]] = []
+		self._resDir = ""
+		self._resCount = 0
 		self._entryCount = 0
 
 	def open(self, filename: str) -> None:
@@ -71,23 +72,36 @@ class Reader:
 				continue
 			self._entryElems.append(elem)
 
-		self._resourceFiles = self._collect_other_resources()
-		self._entryCount = len(self._entryElems) + len(self._resourceFiles)
+		self._resDir = join(self._dirname, "OtherResources")
+		self._resCount = 0
+		if not isdir(self._resDir):
+			self._resDir = ""
+		else:
+			if self._glos.progressbar:
+				log.info("Counting resource files...")
+			self._resCount = countFilesRecursive(self._resDir)
+			if self._glos.progressbar:
+				log.info(f"Found {self._resCount} resource files")
+		self._entryCount = len(self._entryElems) + self._resCount
 
 	def close(self) -> None:
 		self._dirname = ""
 		self._xmlPath = ""
 		self._entryElems.clear()
-		self._resourceFiles.clear()
+		self._resDir = ""
+		self._resCount = 0
 		self._entryCount = 0
 
 	def __len__(self) -> int:
 		return self._entryCount
 
+	def countResourceFiles(self) -> int:
+		return self._resCount
+
 	def __iter__(self) -> Iterator[EntryType]:
-		for rel, absPath in self._resourceFiles:
-			with open(absPath, "rb") as fromFile:
-				yield self._glos.newDataEntry(rel.replace("\\", "/"), fromFile.read())
+		for fname in listFilesRecursiveRelPath(self._resDir):
+			with open(join(self._resDir, fname), "rb") as fromFile:
+				yield self._glos.newDataEntry(fname.replace("\\", "/"), fromFile.read())
 
 		for elem in self._entryElems:
 			terms_list = self._entry_terms(elem)
@@ -140,23 +154,6 @@ class Reader:
 				seen.add(idx)
 				alts.append(idx)
 		return alts
-
-	def _collect_other_resources(self) -> list[tuple[str, str]]:
-		root = join(self._dirname, "OtherResources")
-		if not isdir(root):
-			return []
-
-		results: list[tuple[str, str]] = []
-		for dir_, _subdirs, files in os.walk(root):
-			for name in files:
-				if name.startswith("."):
-					continue
-				absPath = join(dir_, name)
-				rel = relpath(absPath, root)
-				results.append((rel, absPath))
-
-		results.sort(key=operator.itemgetter(0))
-		return results
 
 	def _load_plist_info(self) -> None:
 		plist_path = join(

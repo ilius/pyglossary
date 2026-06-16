@@ -20,6 +20,9 @@ class Reader:
 		self._filename = ""
 		self._entryCount = 0
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		# return the number of entries if you have it
 		# if you don't, return 0 and progressbar will be disabled

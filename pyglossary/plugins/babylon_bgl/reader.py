@@ -143,6 +143,9 @@ class Reader(
 		self.aboutBytes: bytes | None = None
 		self.aboutExt = ""
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		if self.numEntries is None:
 			log.warning("len(reader) called while numEntries=None")

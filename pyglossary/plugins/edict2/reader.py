@@ -60,6 +60,9 @@ class Reader:
 		self.file.close()
 		self.file = nullTextIO
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

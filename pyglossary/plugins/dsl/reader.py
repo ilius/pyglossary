@@ -100,6 +100,7 @@ class Reader:
 		self._fileSize = 0
 		self._bufferLine = ""
 		self._resFileSet: set[str] = set()
+		self._resCount = 0
 		self._includes: list[Reader] = []
 		self._abbrevDict: dict[str, str] = {}
 
@@ -138,6 +139,9 @@ class Reader:
 	def __len__(self) -> int:
 		# FIXME
 		return 0
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def open(
 		self,
@@ -182,6 +186,16 @@ class Reader:
 
 		if self._abbrev:
 			self.loadAbbrevFile()
+
+		self._resCount = 0
+		resZipPath = self._filename + ".files.zip"
+		if isfile(resZipPath):
+			if self._glos.progressbar:
+				log.info("Counting resource files...")
+			with zipfile.ZipFile(resZipPath, mode="r") as zf:
+				self._resCount = len(zf.namelist())
+			if self._glos.progressbar:
+				log.info(f"Found {self._resCount} resource files")
 
 	def loadAbbrevFile(self) -> None:
 		baseName, _ = splitext(self._filename)
@@ -286,9 +300,11 @@ class Reader:
 		resFileSet = self._resFileSet.copy()
 
 		resZipPath = self._filename + ".files.zip"
+		zipCount = 0
 		if isfile(resZipPath):
 			with zipfile.ZipFile(resZipPath, mode="r") as zf:
 				fnameList = zf.namelist()
+				zipCount = len(fnameList)
 				resFileSet -= set(fnameList)
 				for fname in sorted(fnameList):
 					with zf.open(fname) as file:
@@ -296,6 +312,8 @@ class Reader:
 					yield self._glos.newDataEntry(fname, data)
 
 		resDir = dirname(self._filename)
+		looseCount = sum(1 for fname in resFileSet if isfile(join(resDir, fname)))
+		self._resCount = zipCount + looseCount
 		for fname in sorted(resFileSet):
 			fpath = join(resDir, fname)
 			if not isfile(fpath):

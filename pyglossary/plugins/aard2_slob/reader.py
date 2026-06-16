@@ -93,6 +93,9 @@ class Reader:
 				continue
 			self._glos.setInfo(f"slob.{key}", value)
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		if self._slobObj is None:
 			log.error("called len() on a reader which is not open")

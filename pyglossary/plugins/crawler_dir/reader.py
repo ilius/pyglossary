@@ -39,6 +39,9 @@ class Reader:
 	def close(self) -> None:
 		pass
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return self._entryCount
 

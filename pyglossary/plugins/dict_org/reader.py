@@ -58,6 +58,9 @@ class Reader:
 		# Use <br /> so it can be rendered as newline correctly
 		return defi.replace("\n", "<br />")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		if self._dictdb is None:
 			return 0

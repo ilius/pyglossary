@@ -33,6 +33,9 @@ class Reader:
 		for key, value in info.items():
 			self._glos.setInfo(key, value)
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

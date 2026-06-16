@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import os
 from os.path import dirname, isdir, isfile, join
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
+from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 from pyglossary.text_utils import (
 	splitByBarUnescapeNTB,
 	unescapeNTB,
@@ -37,7 +37,7 @@ class Reader:
 		self._entryCount = None
 		self._rootPath = None
 		self._resDir = ""
-		self._resFileNames: list[str] = []
+		self._resCount = 0
 
 	def open(self, filename: str) -> None:
 		from pyglossary.json_utils import jsonToData
@@ -64,17 +64,23 @@ class Reader:
 			self._glos.setInfo(key, value)
 
 		self._resDir = join(filename, "res")
-		if isdir(self._resDir):
-			self._resFileNames = os.listdir(self._resDir)
-		else:
+		resCount = 0
+		if not isdir(self._resDir):
 			self._resDir = ""
-			self._resFileNames = []
+		elif self._glos.progressbar:
+			log.info("Counting resource files...")
+			resCount = countFilesRecursive(self._resDir)
+			log.info(f"Found {resCount} resource files")
+		self._resCount = resCount
 
 	def __len__(self) -> int:
 		if self._entryCount is None:
 			log.error("called len() on a reader which is not open")
 			return 0
-		return self._entryCount + len(self._resFileNames)
+		return self._entryCount + self._resCount
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def __iter__(self) -> Iterator[EntryType]:
 		if not self._rootPath:
@@ -128,7 +134,7 @@ class Reader:
 			self._entryCount = entryCount
 
 		resDir = self._resDir
-		for fname in self._resFileNames:
+		for fname in listFilesRecursiveRelPath(resDir):
 			with open(join(resDir, fname), "rb") as file:
 				yield self._glos.newDataEntry(
 					fname,

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import os
-from os.path import isdir
+from os.path import isdir, join
 from typing import TYPE_CHECKING
 
 from pyglossary.core import exc_note, log, pip
 from pyglossary.io_utils import nullTextIO
+from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 from pyglossary.text_utils import splitByBar
 
 if TYPE_CHECKING:
@@ -35,17 +35,20 @@ class Reader:
 		self._file: io.TextIOBase = nullTextIO
 		self._entryCount: int | None = None
 		self._resDir = ""
-		self._resFileNames: list[str] = []
+		self._resCount = 0
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
 		self._file = open(filename, encoding="utf-8")
 		self._resDir = filename + "_res"
-		if isdir(self._resDir):
-			self._resFileNames = os.listdir(self._resDir)
-		else:
+		resCount = 0
+		if not isdir(self._resDir):
 			self._resDir = ""
-			self._resFileNames = []
+		elif self._glos.progressbar:
+			log.info("Counting resource files...")
+			resCount = countFilesRecursive(self._resDir)
+			log.info(f"Found {resCount} resource files")
+		self._resCount = resCount
 
 	def close(self) -> None:
 		self._file.close()
@@ -62,6 +65,9 @@ class Reader:
 				newline=b"\nmsgid",
 			)
 		return self._entryCount
+
+	def countResourceFiles(self) -> int:
+		return self._resCount
 
 	def makeEntry(self, word: str, defi: str) -> EntryType:
 		if self._alts:
@@ -128,4 +134,14 @@ class Reader:
 		if term:
 			yield self.makeEntry(term, defi)
 			entryCount += 1
+
+		resDir = self._resDir
+		for fname in listFilesRecursiveRelPath(resDir):
+			with open(join(resDir, fname), "rb") as file:
+				entryCount += 1
+				yield self._glos.newDataEntry(
+					fname,
+					file.read(),
+				)
+
 		self._entryCount = entryCount

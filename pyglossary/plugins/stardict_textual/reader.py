@@ -52,6 +52,9 @@ class Reader:
 			tr = self.xdxf_setup()
 		return tr.transformByInnerString(text)
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

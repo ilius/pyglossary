@@ -36,6 +36,9 @@ class Reader:
 		self._cur = self._con.cursor()
 		self._glos.setDefaultDefiFormat("m")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		if self._cur is None:
 			raise ValueError("cur is None")

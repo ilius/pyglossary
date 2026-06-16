@@ -75,6 +75,9 @@ class Reader:
 				self._file.close()
 				self._file = compressionOpen(self._filename, mode="rb")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

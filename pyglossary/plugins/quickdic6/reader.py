@@ -147,6 +147,9 @@ class Reader:
 		self._filename = ""
 		self._dic = None
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		if self._dic is None:
 			return 0

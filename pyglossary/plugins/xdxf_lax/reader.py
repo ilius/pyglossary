@@ -141,6 +141,9 @@ class Reader:
 		cfile.seek(0)
 		self._glos.setInfo("input_file_size", str(self._fileSize))
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return 0
 

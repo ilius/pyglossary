@@ -242,6 +242,9 @@ class Reader:
 		self._fileSize = 0
 		self._link_number_postfix = re.compile("・[0-9]+$")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def __len__(self) -> int:
 		return self._entryCount
 

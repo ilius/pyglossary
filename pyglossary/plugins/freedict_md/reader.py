@@ -102,6 +102,9 @@ class Reader(FreeDictReader):
 		super().open(filename)
 		self._glos.setDefaultDefiFormat("m")
 
+	def countResourceFiles(self) -> int:
+		return 0
+
 	def loadInclude(self, elem: Element) -> Reader | None:
 		href = elem.attrib.get("href")
 		if not href:
