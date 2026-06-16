@@ -22,6 +22,21 @@ echo "LDFLAGS: $LDFLAGS"
 echo "CPPFLAGS: $CPPFLAGS"
 echo "DYLD_LIBRARY_PATH: $DYLD_LIBRARY_PATH"
 
+if [ "${DEFAULT_UI:-tk}" = "wx" ]; then
+	NUITKA_UI_OPTS=(
+		--include-package=wx
+		--include-module=wx._xml
+		--include-package=objc
+		--nofollow-import-to=pyglossary.ui.ui_tk
+		--nofollow-import-to=pyglossary.ui.ui_tk_wizard
+	)
+else
+	NUITKA_UI_OPTS=(
+		--enable-plugin=tk-inter
+		--include-module=tkinter
+	)
+fi
+
 python -m nuitka \
   --standalone \
   --assume-yes-for-downloads \
@@ -31,9 +46,8 @@ python -m nuitka \
   --macos-signed-app-name="$APPNAME" \
   --macos-app-name="$APPNAME" \
   --macos-app-mode=gui \
-  --enable-plugin=tk-inter \
+  "${NUITKA_UI_OPTS[@]}" \
   --include-package=pyglossary \
-  --include-module=tkinter \
   --nofollow-import-to=pyglossary.ui.ui_gtk \
   --nofollow-import-to=pyglossary.ui.ui_gtk4 \
   --nofollow-import-to=pyglossary.ui.ui_qt6 \
