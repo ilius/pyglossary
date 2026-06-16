@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 import traceback
 
-from .wx_imports import wx
+import wx
 
 __all__ = ["WxLogHandler"]
 

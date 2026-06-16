@@ -13,6 +13,8 @@ from os.path import isfile, join, splitext
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import wx
+
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_utils import Error
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
@@ -33,7 +35,6 @@ from .general_options import GeneralOptionsWxDialog
 from .info import PreConvertInfoWxDialog
 from .log_handler import WxLogHandler
 from .macos_icons import configure_macos_dock_icon
-from .wx_imports import wx
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

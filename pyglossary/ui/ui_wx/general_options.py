@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import wx
+
 from pyglossary.ui.config import configDefDict
 
 from .sort_helpers import (
@@ -14,7 +16,6 @@ from .sort_helpers import (
 	SORT_KEY_DESC_LIST,
 	SORT_KEY_NAME_BY_DESC,
 )
-from .wx_imports import wx
 
 if TYPE_CHECKING:
 	from .ui import UI
