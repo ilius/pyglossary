@@ -3,8 +3,8 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
     <b>Gtk3</b> Interface:
         To open PyGlossary window:
             <b>${CMD}</b>
-        PyGI is the default interface (so you never need to use "--ui=gtk" or --gtk option)
-        If PyGI was not found (not installed), then PyGlossary will fallback to Tkinter.
+        PyGI is the default interface on many Linux setups (so you never need to use "--ui=gtk" or --gtk option)
+        If PyGI was not found (not installed), then PyGlossary will try other installed interfaces (Qt, wxPython, Tkinter, web, etc.; see README).
     <b>Gtk4</b> Interface:
         To open PyGlossary window:
             <b>${CMD} --gtk4</b>
@@ -22,6 +22,10 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
             <b>${CMD} --ui=qt6</b> or <b>${CMD} --ui=qt</b>
         Or shortcuts:
             <b>${CMD} --qt6</b> or <b>${CMD} --qt</b>
+    <b>wxPython wizard</b> Interface (needs wxPython):
+            <b>${CMD} --ui=wx</b>
+        Or shortcut:
+            <b>${CMD} --wx</b>
     <b>Web</b> Interface:
         To open PyGlossary window:
             <b>${CMD} --web</b>

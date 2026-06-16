@@ -129,6 +129,9 @@ ways to use the program).
 - **Qt6-based interface**, good native-looking interface for all operating systems.
   Requires either PySide6 or PyQt6. Uses a wizard-based UI flow for simplicity of use.
 
+- **wxPython-based interface**, wizard-style GUI using wxPython. Install with
+  `pip install pyglossary[wx]` (or install `wxPython` separately).
+
 - **Tkinter-based interface**, meant to be used in the lack of more modern UI. Specially on
   Windows where Tkinter library is installed with Python itself.
   You can [install Tkinter](./doc/tkinter.md) on Linux or Mac OS X.
@@ -162,11 +165,13 @@ When you run PyGlossary without any command-line arguments or options/flags, PyG
 - It tries to find PyGI+Gtk3 and open **Gtk3-based** interface.
 - It tries to find PyGI+Gtk4 and open **Gtk4-based** interface.
 - It tries to find PySide6 or PyQt6 and open **Qt 6** interface.
-- It tries to find Tkinter and open **Tkinter-based** interface.
+- It tries to find wxPython and open **wxPython-based** interface.
+- It tries to find Tkinter and open the **classic Tkinter** interface.
+- It tries to open the **Tk wizard** interface (also Tkinter-based).
 - If it's run in command line (with stdin connected to a terminal) it tries to find `prompt_toolkit` and run **interactive command-line** interface.
 - It runs a HTTP server and opens the **web interface** in your browser.
 
-The order depends on operating system. Currently on Mac OS and Windows, Tkinter and the Qt are checked before Gtk.
+The order depends on operating system. On **GNU/Linux** the default order is Gtk3, Gtk4, Qt 6, wxPython, Tkinter (classic), Tk wizard, then web. On **Mac OS** and **Windows**, Qt 6, wxPython, and the Tk wizard are tried before classic Tkinter and Gtk.
 
 You can explicitly select user interface type using `--ui`
 
@@ -174,6 +179,7 @@ You can explicitly select user interface type using `--ui`
 - `./main.py --ui=gtk4`
 - `./main.py --ui=gtk` which currently selects `gtk3`
 - `./main.py --ui=qt6` or `./main.py --ui=qt`: Qt 6 wizard-based interface
+- `./main.py --ui=wx` or `./main.py --wx`: wxPython wizard-based interface
 - `./main.py --ui=tk`
 - `./main.py --ui=tk_wizard`: new wizard-based Tkinter interface
   - Shortcut: `./main.py --tkw`
@@ -214,6 +220,8 @@ Some formats have additional requirements.
 If you have trouble with any format, please check the [link given for that format](#supported-formats) to see its documentations.
 
 The **Qt 6 wizard** GUI (`--ui=qt`, `--ui=qt6`, `--qt`, or `--qt6`) needs PySide6 or PyQt6: `pip install pyglossary[qt6]` (or install `PySide6` separately). On macOS, that extra also installs **`pyobjc-framework-Cocoa`** so the Dock and app switcher can show PyGlossary’s icon (standalone `python`/CLI runs do not ship an `.app` bundle icon otherwise).
+
+The **wxPython wizard** GUI (`--ui=wx` or `--wx`) needs wxPython: `pip install pyglossary[wx]` (or install `wxPython` separately). On macOS, that extra also installs **`pyobjc-framework-Cocoa`** for the same Dock icon behaviour as the Qt extra.
 
 **Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
 
