@@ -337,7 +337,7 @@ mccabe.max-complexity = 13
 "scripts/*.py" = ["ANN", "T201", "INP001"]
 "scripts/*/*.py" = ["ANN", "T201", "INP001"]
 "doc/lib-examples/*.py" = ["ANN", "INP"]
-
+".github/scripts/*/*.py" = ["T201"]
 
 [tool.ty.rules]
 unresolved-import = "ignore"

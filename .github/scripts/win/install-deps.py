@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 
@@ -16,7 +17,10 @@ pyVerSuffix = f"cp{pyVer}-cp{pyVer}"
 
 
 def install(*args: str) -> None:
-	subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", *args])
+	cmd = [sys.executable, "-m", "pip", "install"]
+	if not os.getenv("VIRTUAL_ENV"):
+		cmd.append("--user")
+	subprocess.check_call([*cmd, *args])
 
 
 install(
@@ -29,5 +33,9 @@ install(
 
 install("-r", "requirements.txt")
 
-# Tk wizard: drag-and-drop from Explorer (see pyglossary/ui/ui_tk_wizard.py)
-install("tkinterdnd2")
+default_ui = os.getenv("DEFAULT_UI", "tk")
+if default_ui == "wx":
+	install("wxPython")
+else:
+	# Tk wizard: drag-and-drop from Explorer (see pyglossary/ui/ui_tk_wizard.py)
+	install("tkinterdnd2")
