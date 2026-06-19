@@ -123,10 +123,10 @@ class _NavBarFileDropFilter(QObject):
 
 	def eventFilter(self, _obj: QObject, event: QEvent) -> bool:  # noqa: N802
 		t = event.type()
-		if t not in (QEvent.Type.DragEnter, QEvent.Type.DragMove, QEvent.Type.Drop):
+		if t not in {QEvent.Type.DragEnter, QEvent.Type.DragMove, QEvent.Type.Drop}:
 			return False
 		idx = self._ui.stack.currentIndex()
-		if idx not in (0, 1):
+		if idx not in {0, 1}:
 			return False
 		if t == QEvent.Type.DragEnter:
 			de = cast("QDragEnterEvent", event)

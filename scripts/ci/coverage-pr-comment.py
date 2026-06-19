@@ -58,8 +58,10 @@ def render_comment(
 	lines.extend(
 		[
 			"",
-			"_Overall line coverage on Python 3.12. "
-			"Download workflow artifacts for the HTML report._",
+			(
+				"_Overall line coverage on Python 3.12. "
+				"Download workflow artifacts for the HTML report._"
+			),
 		],
 	)
 	return "\n".join(lines) + "\n"

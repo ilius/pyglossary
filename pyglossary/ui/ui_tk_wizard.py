@@ -85,8 +85,8 @@ class UI(tk.Frame, UIBase):
 		self,
 		progressbar: bool = True,
 	) -> None:
-		_TkRoot = TkinterDnD.Tk if TkinterDnD is not None else tk.Tk
-		rootWin = self.rootWin = _TkRoot(className="PyGlossary")
+		TkRoot = TkinterDnD.Tk if TkinterDnD is not None else tk.Tk
+		rootWin = self.rootWin = TkRoot(className="PyGlossary")
 		if os.sep == "\\":
 			rootWin.attributes("-alpha", 0.0)
 		else:
@@ -202,7 +202,7 @@ class UI(tk.Frame, UIBase):
 		self.rootWin.dnd_bind("<<Drop>>", self._on_wizard_root_file_drop)
 
 	def _on_wizard_root_file_drop(self, event: Any) -> None:
-		if self.currentPage not in (0, 1):
+		if self.currentPage not in {0, 1}:
 			return
 		data = getattr(event, "data", "") or ""
 		if not data:

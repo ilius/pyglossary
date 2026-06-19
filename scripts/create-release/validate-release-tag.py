@@ -54,7 +54,7 @@ def main() -> None:
 	else:
 		patch_bump = (major, minor, patch + 1)
 		minor_bump = (major, minor + 1, 0)
-		if new not in (patch_bump, minor_bump):
+		if new not in {patch_bump, minor_bump}:
 			patch_str = ".".join(str(part) for part in patch_bump)
 			minor_str = ".".join(str(part) for part in minor_bump)
 			sys.exit(

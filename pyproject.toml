@@ -136,6 +136,9 @@ select = [
 	# "FLY",   # flynt
 ]
 ignore = [
+	"PLR6301", # Method {method_name} could be a function, class method, or static method
+	"D421", # Property docstring should not start with a verb ("Returns")
+
 	"PLR0917", # Too many positional arguments (x/5)
 	"PLR0914", # Too many local variables (x/15)
 

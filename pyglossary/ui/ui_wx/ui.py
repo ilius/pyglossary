@@ -323,7 +323,7 @@ class UI(UIBase):
 
 	def _nav_bar_drop_path(self, path: str) -> None:
 		idx = self.currentPage
-		if idx not in (0, 1):
+		if idx not in {0, 1}:
 			return
 		p = abspath2(path)
 		if not p.strip():

@@ -111,7 +111,7 @@ def _docstring_insert_index(lines: list[str]) -> int:
 		index += 1
 	while index < len(lines):
 		stripped = lines[index].strip()
-		if stripped == "" or stripped.startswith("#"):
+		if not stripped or stripped.startswith("#"):
 			index += 1
 			continue
 		break

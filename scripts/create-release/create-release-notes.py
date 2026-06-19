@@ -414,7 +414,7 @@ def categorize_commit(  # noqa: C901, PLR0912
 	):
 		return "feature_cli", "New command-line features"
 
-	if (UI_RE.search(subject) or (ui_files and "fix" not in subject.lower())) and (
+	if (UI_RE.search(subject) or (ui_files and "fix" not in subject.lower())) and (  # noqa: PLR0916
 		"add" in subject.lower()
 		or "support" in subject.lower()
 		or "drag-and-drop" in subject.lower()
@@ -606,7 +606,7 @@ def uncommitted_entries() -> list[NoteEntry]:
 				subsection=None,
 				text=(
 					"- *(uncommitted)* working tree has unstaged changes"
-					" — review `git diff` before tagging",
+					" — review `git diff` before tagging"
 				),
 				sort_key="zzz-uncommitted",
 			),
@@ -642,8 +642,7 @@ def render(entries: list[NoteEntry], prev_tag: str, version: str) -> str:
 		+ by_section["feature_ui"]
 	)
 	if feature_items:
-		lines.append(SECTION_HEADINGS["features"])
-		lines.append("")
+		lines += (SECTION_HEADINGS["features"], "")
 		for section_key, subsection_title in (
 			("feature_formats", "New read/write format functionalities"),
 			("feature_cli", "New command-line features"),
@@ -652,8 +651,7 @@ def render(entries: list[NoteEntry], prev_tag: str, version: str) -> str:
 			items = by_section[section_key]
 			if not items:
 				continue
-			lines.append(f"#### {subsection_title}")
-			lines.append("")
+			lines += (f"#### {subsection_title}", "")
 			for item in sorted(items, key=lambda e: e.sort_key or e.text.lower()):
 				lines.append(item.text)  # noqa: PERF401
 			lines.append("")
@@ -663,15 +661,13 @@ def render(entries: list[NoteEntry], prev_tag: str, version: str) -> str:
 
 	contributors = by_section.get("contributors", [])
 	if contributors:
-		lines.append(SECTION_HEADINGS["contributors"])
-		lines.append("")
+		lines += (SECTION_HEADINGS["contributors"], "")
 		for item in contributors:
 			lines.append(item.text)  # noqa: PERF401
 		lines.append("")
 
 	compare = f"{GITHUB}/compare/{prev_tag}...{version}"
-	lines.append(f"**Full Changelog**: [{compare}]({compare})")
-	lines.append("")
+	lines += (f"**Full Changelog**: [{compare}]({compare})", "")
 	return "\n".join(lines)
 
 
@@ -685,9 +681,9 @@ def confirm_overwrite(path: Path) -> bool:
 		except (EOFError, KeyboardInterrupt):
 			print("\nAborted")
 			return False
-		if answer in ("y", "yes"):
+		if answer in {"y", "yes"}:
 			return True
-		if answer in ("n", "no", ""):
+		if answer in {"n", "no", ""}:
 			print("Aborted")
 			return False
 
