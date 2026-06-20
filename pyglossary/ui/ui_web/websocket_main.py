@@ -197,6 +197,7 @@ def handle_list_dir_request(
 	server: ServerType,
 	message: str,
 ) -> None:
+	log.debug(f"processing listDir request from client #{client.get('id')}")
 	params = json.loads(message)
 	req_id = params.get("reqId")
 	target = params.get("target")  # which input this listing is for

@@ -792,12 +792,13 @@
                 const reqId = ++listDirSeq;
                 listDirCallbacks.set(reqId, { resolve, reject });
                 sendListDir(reqId, target, path, showHidden);
+                // timeout safety
                 setTimeout(() => {
                     if (listDirCallbacks.has(reqId)) {
                         listDirCallbacks.delete(reqId);
                         reject(new Error('listDir timeout'));
                     }
-                }, 8000);
+                }, 5000);
             });
         }
 
