@@ -838,46 +838,74 @@
         // ---------------- Autocomplete ----------------
         let acState = {
             input: null,
-            reqId: 0,
             entries: [],
+            filtered: [],
             active: -1,
             lastDir: null,
+            lastInputId: null,
+            reqSeq: 0,
             debounce: null,
+            blurTimer: null,
         };
         const acDropdown = document.getElementById('acDropdown');
 
         function initAutocomplete() {
             ['inputFilename', 'outputFilename'].forEach(id => {
                 const el = document.getElementById(id);
-                el.addEventListener('focus', () => maybeShowAutocomplete(el));
+                el.addEventListener('focus', () => {
+                    // Cancel any pending blur-hide from a previous input
+                    clearTimeout(acState.blurTimer);
+                    maybeShowAutocomplete(el);
+                });
                 el.addEventListener('input', () => {
                     clearTimeout(acState.debounce);
-                    acState.debounce = setTimeout(() => maybeShowAutocomplete(el), 150);
+                    acState.debounce = setTimeout(() => maybeShowAutocomplete(el), 120);
                 });
                 el.addEventListener('keydown', e => onAutocompleteKeydown(e));
                 el.addEventListener('blur', () => {
                     // delay so click on a suggestion registers
-                    setTimeout(hideAutocomplete, 200);
+                    acState.blurTimer = setTimeout(hideAutocomplete, 200);
                 });
             });
-            document.addEventListener('scroll', hideAutocomplete, true);
-            window.addEventListener('resize', hideAutocomplete);
+            // Reposition on window scroll; hide on scroll of other elements
+            // but NEVER on scroll inside the dropdown itself
+            document.addEventListener('scroll', (e) => {
+                if (acDropdown.classList.contains('hidden')) return;
+                if (e.target === acDropdown || acDropdown.contains(e.target)) return;
+                if (e.target === document || e.target === document.documentElement || e.target === document.body || e.target === window) {
+                    repositionAutocomplete();
+                } else {
+                    hideAutocomplete();
+                }
+            }, true);
+            window.addEventListener('resize', () => {
+                if (!acDropdown.classList.contains('hidden')) repositionAutocomplete();
+            });
         }
 
         async function maybeShowAutocomplete(inputEl) {
             acState.input = inputEl;
+            acState.lastInputId = inputEl.id;
             const { dir, prefix } = splitPathForAutocomplete(inputEl.value);
-            if (acState.lastDir !== dir) {
+
+            // Track the request sequence to avoid stale responses overwriting state
+            const reqSeq = ++acState.reqSeq;
+
+            if (acState.lastDir !== dir || acState.lastInputId !== inputEl.id) {
                 acState.lastDir = dir;
+                acState.lastInputId = inputEl.id;
                 acState.entries = [];
                 try {
                     const resp = await requestListDir(inputEl.id, dir, pickerShowHidden());
+                    // Guard against stale responses from a previous input/dir
+                    if (reqSeq !== acState.reqSeq || acState.input !== inputEl) return;
                     acState.entries = resp.entries || [];
                 } catch (e) {
-                    hideAutocomplete();
+                    if (reqSeq === acState.reqSeq && acState.input === inputEl) hideAutocomplete();
                     return;
                 }
             }
+            if (reqSeq !== acState.reqSeq || acState.input !== inputEl) return;
             renderAutocomplete(prefix, inputEl);
         }
 
@@ -891,7 +919,8 @@
             }
             acState.active = -1;
             acDropdown.innerHTML = '';
-            filtered.slice(0, 200).forEach((e, i) => {
+            const max = 200;
+            filtered.slice(0, max).forEach((e, i) => {
                 const li = document.createElement('li');
                 li.className = e.isDir ? 'dir' : '';
                 li.textContent = (e.isDir ? '\uD83D\uDCC1 ' : '\uD83D\uDCC4 ') + e.name;
@@ -903,12 +932,18 @@
                 acDropdown.appendChild(li);
             });
             acState.filtered = filtered;
-            positionAutocomplete(inputEl);
+            repositionAutocomplete();
             acDropdown.classList.remove('hidden');
         }
 
-        function positionAutocomplete(inputEl) {
+        function repositionAutocomplete() {
+            const inputEl = acState.input;
+            if (!inputEl) return;
             const r = inputEl.getBoundingClientRect();
+            if (r.bottom === 0 && r.top === 0) {
+                hideAutocomplete();
+                return;
+            }
             acDropdown.style.top = (window.scrollY + r.bottom + 2) + 'px';
             acDropdown.style.left = (window.scrollX + r.left) + 'px';
             acDropdown.style.minWidth = r.width + 'px';
@@ -918,6 +953,7 @@
             acDropdown.classList.add('hidden');
             acDropdown.innerHTML = '';
             acState.active = -1;
+            acState.filtered = [];
         }
 
         function acceptAutocomplete(entry) {
@@ -938,16 +974,24 @@
         }
 
         function onAutocompleteKeydown(e) {
-            if (acDropdown.classList.contains('hidden')) return;
             const list = acState.filtered;
+            // If dropdown is hidden, ArrowDown should reopen it
+            if (acDropdown.classList.contains('hidden')) {
+                if (e.key === 'ArrowDown' && acState.input === e.target) {
+                    e.preventDefault();
+                    maybeShowAutocomplete(e.target);
+                }
+                return;
+            }
             if (!list || !list.length) return;
+            const count = Math.min(list.length, 200);
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                acState.active = (acState.active + 1) % Math.min(list.length, 200);
+                acState.active = acState.active < 0 ? 0 : (acState.active + 1) % count;
                 updateAcActive();
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                acState.active = (acState.active - 1 + Math.min(list.length, 200)) % Math.min(list.length, 200);
+                acState.active = acState.active < 0 ? count - 1 : (acState.active - 1 + count) % count;
                 updateAcActive();
             } else if (e.key === 'Enter' || e.key === 'Tab') {
                 if (acState.active >= 0) {
@@ -955,15 +999,30 @@
                     acceptAutocomplete(list[acState.active]);
                 }
             } else if (e.key === 'Escape') {
+                e.preventDefault();
                 hideAutocomplete();
             }
         }
 
         function updateAcActive() {
-            [...acDropdown.children].forEach((li, i) => {
-                li.classList.toggle('ac-active', i === acState.active);
-                if (i === acState.active) li.scrollIntoView({ block: 'nearest' });
-            });
+            const items = acDropdown.children;
+            for (let i = 0; i < items.length; i++) {
+                items[i].classList.toggle('ac-active', i === acState.active);
+            }
+            // Manually scroll the active item into view WITHOUT triggering
+            // a scroll event that could cascade back and dismiss the dropdown
+            if (acState.active >= 0 && items[acState.active]) {
+                const item = items[acState.active];
+                const ddTop = acDropdown.scrollTop;
+                const ddBottom = ddTop + acDropdown.clientHeight;
+                const itemTop = item.offsetTop;
+                const itemBottom = itemTop + item.offsetHeight;
+                if (itemTop < ddTop) {
+                    acDropdown.scrollTop = itemTop;
+                } else if (itemBottom > ddBottom) {
+                    acDropdown.scrollTop = itemBottom - acDropdown.clientHeight;
+                }
+            }
         }
 
         // ---------------- Modal picker ----------------
