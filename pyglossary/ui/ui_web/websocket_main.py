@@ -50,6 +50,7 @@ __all__ = ["create_server"]
 
 MAX_IMAGE_SIZE = 512000
 DEFAULT_MAX_BROWSE_ENTRIES = 42
+MAX_LISTDIR_ENTRIES = 2000
 
 
 log = logging.getLogger("pyglossary.web.server")
@@ -80,6 +81,12 @@ def message_received(client: dict[str, Any], server: ServerType, message: str) -
 	if message == "ping":
 		print(f"Client({client.get('id')}) said: {message}")
 		server.send_message_to_all({"type": "info", "text": "ws: pong ✔️"})
+
+	elif "listDir" in message:
+		try:
+			handle_list_dir_request(client, server, message)
+		except Exception as e:
+			log.error(f"{e!s} handling listDir request {client}")
 
 	elif "browse" in message:
 		try:
@@ -183,6 +190,115 @@ def handle_browse_request(
 			)
 		if num_results >= max_results:
 			break
+
+
+def handle_list_dir_request(
+	client: dict[str, Any],
+	server: ServerType,
+	message: str,
+) -> None:
+	params = json.loads(message)
+	req_id = params.get("reqId")
+	target = params.get("target")  # which input this listing is for
+	raw_path = params.get("path") or "~"
+	show_hidden = bool(params.get("showHidden", False))
+
+	try:
+		resolved = Path(raw_path).expanduser()
+	except (ValueError, OSError) as e:
+		server.send_message_to_all(
+			{
+				"type": "listDir",
+				"reqId": req_id,
+				"target": target,
+				"error": f"invalid path: {e!s}",
+			}
+		)
+		return
+
+	# If the path points to a file, list its parent and mark the file selected.
+	selected_name = None
+	if resolved.is_file():
+		selected_name = resolved.name
+		resolved = resolved.parent
+
+	if not resolved.exists():
+		server.send_message_to_all(
+			{
+				"type": "listDir",
+				"reqId": req_id,
+				"target": target,
+				"error": f"path does not exist: {resolved}",
+			}
+		)
+		return
+
+	if not resolved.is_dir():
+		server.send_message_to_all(
+			{
+				"type": "listDir",
+				"reqId": req_id,
+				"target": target,
+				"error": f"not a directory: {resolved}",
+			}
+		)
+		return
+
+	entries = []
+	truncated = False
+	try:
+		for child in resolved.iterdir():
+			name = child.name
+			if not show_hidden and name.startswith("."):
+				continue
+			try:
+				is_dir = child.is_dir()
+			except OSError:
+				is_dir = False
+			try:
+				stat = child.stat()
+				size = stat.st_size
+				mtime = stat.st_mtime
+			except OSError:
+				size = None
+				mtime = None
+			entries.append(
+				{
+					"name": name,
+					"isDir": is_dir,
+					"size": size,
+					"mtime": mtime,
+				}
+			)
+			if len(entries) >= MAX_LISTDIR_ENTRIES:
+				truncated = True
+				break
+	except PermissionError as e:
+		server.send_message_to_all(
+			{
+				"type": "listDir",
+				"reqId": req_id,
+				"target": target,
+				"error": f"permission denied: {e!s}",
+				"path": str(resolved),
+			}
+		)
+		return
+
+	# Sort: directories first, then by name (case-insensitive)
+	entries.sort(key=lambda e: (not e["isDir"], e["name"].lower()))
+
+	server.send_message_to_all(
+		{
+			"type": "listDir",
+			"reqId": req_id,
+			"target": target,
+			"path": str(resolved),
+			"entries": entries,
+			"selected": selected_name,
+			"truncated": truncated,
+		}
+	)
 
 
 def create_server(host: str, port: int) -> HttpWebsocketServer:

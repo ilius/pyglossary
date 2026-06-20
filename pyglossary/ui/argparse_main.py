@@ -45,7 +45,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		"-u",
 		"--ui",
 		dest="ui_type",
-		default="auto",
+		default="tk",
 		choices=(
 			"cmd",
 			"gtk",
