@@ -135,7 +135,7 @@ def handle_browse_request(
 	log.debug(f"processing client #{client} message")
 	params = json.loads(message)
 	wordQuery = params.get("word")
-	glossary_path = params.get("path")
+	glossary_path = os.path.expanduser(params.get("path"))
 	glossary_format = params.get("format")
 	max_results = int(params.get("max", DEFAULT_MAX_BROWSE_ENTRIES))
 
@@ -183,7 +183,7 @@ def handle_browse_request(
 			server.send_message_to_all(
 				{
 					"type": "browse",
-					"data": f"<hr>Total: {num_results}",
+					"data": f"<hr>{num_results}",
 					"num": num_results,
 					"max": max_results,
 				}
