@@ -9,7 +9,9 @@ from pathlib import Path
 
 
 def repo_root() -> Path:
-	return Path(__file__).resolve().parents[2]
+	myDir = Path(__file__).resolve()
+	assert len(myDir.parents) > 3, f"{myDir=}"
+	return myDir.parents[2]
 
 
 def run(cmd: list[str], *, cwd: Path, env: dict[str, str] | None = None) -> None:
