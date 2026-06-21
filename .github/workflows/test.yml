@@ -40,7 +40,7 @@ jobs:
       - name: Run tests
         run: bash scripts/ci/test.sh
       - name: Collect coverage reports
-        if: never() && matrix.python-version == '3.12'
+        if: always() && matrix.python-version == '3.12'
         run: bash scripts/ci/collect-coverage.sh
       - name: Compare coverage on PR
         id: coverage
