@@ -53,16 +53,16 @@ jobs:
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: python3 scripts/ci/coverage-pr-comment.py
-      - name: Post coverage PR comment
-        if: >-
-          always() &&
-          github.event_name == 'pull_request' &&
-          matrix.python-version == '3.12' &&
-          steps.coverage.outputs.coverage_comment_ready == 'true'
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body-path: artifacts/coverage/pr-comment.md
+      # - name: Post coverage PR comment
+      #   if: >-
+      #     always() &&
+      #     github.event_name == 'pull_request' &&
+      #     matrix.python-version == '3.12' &&
+      #     steps.coverage.outputs.coverage_comment_ready == 'true'
+      #   uses: peter-evans/create-or-update-comment@v4
+      #   with:
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     body-path: artifacts/coverage/pr-comment.md
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
