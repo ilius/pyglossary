@@ -122,6 +122,126 @@
             display: none;
             visibility: hidden;
         }
+
+        /* ---- File picker modal ---- */
+        #filePicker {
+            max-width: 640px;
+        }
+        #filePicker article {
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #pickerPath {
+            font-family: 'Fira Code', 'Fira Mono', 'Jetbrains Mono', Consolas, Monaco, Lucida Console, monospace;
+            font-size: x-small;
+        }
+        #pickerList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1 1 auto;
+            max-height: 50vh;
+            border: 1px solid var(--pico-muted-border-color);
+            border-radius: var(--pico-border-radius);
+            background-color: var(--pico-background-color);
+            color: var(--pico-color);
+        }
+        #pickerList li {
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            font-size: small;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--pico-color);
+            transition: background-color 0.08s ease;
+        }
+        #pickerList li.dir { font-weight: 532; }
+        #pickerList li.selected {
+            background-color: var(--pico-primary-background);
+            color: var(--pico-primary-inverse);
+        }
+        #pickerList li:hover {
+            background-color: var(--pico-dropdown-hover-background-color);
+        }
+        #pickerList li.selected:hover {
+            background-color: var(--pico-primary-hover-background);
+            color: var(--pico-primary-inverse);
+        }
+        #pickerFilter { margin: 0; }
+        #pickerNameRow { display: flex; gap: 0.5rem; align-items: center; }
+        #pickerNameRow label { margin: 0; flex: 0 0 auto; }
+        #pickerName { flex: 1; }
+        #pickerTruncated {
+            font-size: x-small;
+            color: var(--pico-muted-color);
+            padding: 0.2rem 0.6rem;
+        }
+        /* native Pico checkbox inside a plain label */
+        .pickerCheckboxRow {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin: 0.25rem 0;
+            font-size: small;
+        }
+        .pickerCheckboxRow input[type="checkbox"] {
+            margin: 0;
+            flex: 0 0 auto;
+        }
+        .pickerCheckboxRow label {
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* ---- Autocomplete dropdown ---- */
+        .ac-dropdown {
+            position: absolute;
+            z-index: 1000;
+            min-width: 18rem;
+            max-height: 14rem;
+            overflow-y: auto;
+            background: var(--pico-background-color);
+            color: var(--pico-color);
+            border: 1px solid var(--pico-muted-border-color);
+            border-radius: var(--pico-border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: small;
+        }
+        .ac-dropdown li {
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            gap: 0.35rem;
+            align-items: center;
+            color: var(--pico-color);
+            transition: background-color 0.08s ease;
+        }
+        .ac-dropdown li.dir { font-weight: 532; }
+        .ac-dropdown li.ac-active {
+            background-color: var(--pico-primary-background);
+            color: var(--pico-primary-inverse);
+        }
+        .ac-dropdown li:hover {
+            background-color: var(--pico-dropdown-hover-background-color);
+        }
+        .ac-dropdown li.ac-active:hover {
+            background-color: var(--pico-primary-hover-background);
+            color: var(--pico-primary-inverse);
+        }
     </style>
 </head>
 
@@ -180,6 +300,7 @@
                         <select id="inputFormat" name="inputFormat" required>
                             <option></option>
                         </select>
+                        <input type="button" class="outline secondary picker-btn" data-target="inputFilename" data-mode="open" value="&#128193;" title="Browse for file">
                         <a target="_blank" class="button outline secondary browse hidden" href="/browse.html">
                             <input type="button" class="outline secondary" id="preview1" value="&#x1F50E;">
                         </a>
@@ -195,6 +316,7 @@
                         <select id="outputFormat" tabindex="-1" name="outputFormat" required>
                             <option></option>
                         </select>
+                        <input type="button" tabindex="-1" class="outline secondary picker-btn" data-target="outputFilename" data-mode="save" value="&#128193;" title="Browse for output location">
                         <a target="_blank" class="button outline secondary browse hidden" href="/browse.html">
                             <input type="button" tabindex="-1" class="outline secondary" id="preview2" value="&#x1F50E;">
                         </a>
@@ -230,10 +352,10 @@
                     <summary>&#9432; How to convert a dictionary?</summary>
                     <p>
                     <ol>
-                        <li>Paste the full path to a dictionary file on your local file system in the <b>Input file</b>
-                            field.</li>
+                        <li>Click &#128193; or type in the <b>Input file</b>
+                            field to select the source file.</li>
                         <li>Select input file format if not detected automatically.</li>
-                        <li>Paste the full path to the converted file in the <b>Output file</b> field.</li>
+                        <li>Click &#128193; or type in the <b>Output file</b> field to pick the output file.</li>
                         <li>Select a <a target="_blank"
                                 href="https://github.com/ilius/pyglossary?tab=readme-ov-file#supported-formats">target
                                 format</a> to convert to</li>
@@ -299,6 +421,37 @@
     </dialog>
     <!-- ./ ConfigDialog -->
 
+    <!-- FilePickerDialog -->
+    <dialog id="filePicker">
+        <article>
+            <h2 id="pickerTitle">Browse</h2>
+            <fieldset role="group">
+                <input type="button" id="pickerUp" value="&#x2191; Up" class="outline secondary">
+                <input type="search" id="pickerPath" placeholder="/current/path" autocomplete="off">
+                <input type="button" id="pickerGo" value="Go" class="outline secondary">
+            </fieldset>
+            <input type="search" id="pickerFilter" placeholder="filter entries..." autocomplete="off">
+            <ul id="pickerList"></ul>
+            <div id="pickerTruncated" class="hidden"></div>
+            <div id="pickerNameRow" class="hidden">
+                <label for="pickerName">File:</label>
+                <input type="text" id="pickerName" placeholder="filename (for save)" autocomplete="off">
+            </div>
+            <div class="pickerCheckboxRow">
+                <input type="checkbox" id="pickerHidden">
+                <label for="pickerHidden">Show hidden files</label>
+            </div>
+            <footer>
+                <button id="pickerCancel" class="secondary">Cancel</button>
+                <button id="pickerChoose">Choose</button>
+            </footer>
+        </article>
+    </dialog>
+    <!-- ./ FilePickerDialog -->
+
+    <!-- Autocomplete dropdown -->
+    <ul id="acDropdown" class="ac-dropdown hidden"></ul>
+
     <script>
         document.getElementById('theme-switcher').addEventListener('click', function () {
             if (this.dataset.themeSwitcher !== 'dark') {
@@ -351,6 +504,8 @@
                     progressText.innerText = message.text;
                 } else if (message.type == 'info') {
                     log(message.text);
+                } else if (message.type == 'listDir') {
+                    handleListDirResponse(message);
                 }
             });
 
@@ -598,7 +753,460 @@
             loadConfig();
             attachListeners();
             initWsConnection();
+            initFilePicker();
+            initAutocomplete();
         };
+    </script>
+
+    <script>
+        // ---------------- File picker + autocomplete ----------------
+        const SEP = '/'; // use posix sep for display; server resolves anyway
+        const KEY_PICKER_HIDDEN = 'pg_picker_showHidden';
+        const KEY_PICKER_LASTDIR = 'pg_picker_lastDir';
+
+        // Track the single open WS so listDir requests can be sent.
+        function sendListDir(reqId, target, path, showHidden) {
+            if (!window.ws || window.ws.readyState !== WebSocket.OPEN) {
+                return false;
+            }
+            window.ws.send(JSON.stringify({
+                action: 'listDir',
+                reqId,
+                target,
+                path,
+                showHidden,
+            }));
+            return true;
+        }
+
+        // Pending listDir requests keyed by reqId -> callback
+        const listDirCallbacks = new Map();
+        let listDirSeq = 0;
+
+        function requestListDir(target, path, showHidden) {
+            return new Promise((resolve, reject) => {
+                if (!window.ws || window.ws.readyState !== WebSocket.OPEN) {
+                    reject(new Error('WebSocket not open'));
+                    return;
+                }
+                const reqId = ++listDirSeq;
+                listDirCallbacks.set(reqId, { resolve, reject });
+                sendListDir(reqId, target, path, showHidden);
+                // timeout safety
+                setTimeout(() => {
+                    if (listDirCallbacks.has(reqId)) {
+                        listDirCallbacks.delete(reqId);
+                        reject(new Error('listDir timeout'));
+                    }
+                }, 5000);
+            });
+        }
+
+        function handleListDirResponse(message) {
+            const cb = listDirCallbacks.get(message.reqId);
+            if (cb) {
+                listDirCallbacks.delete(message.reqId);
+                if (message.error) cb.reject(new Error(message.error));
+                else cb.resolve(message);
+            } else if (message.error) {
+                log(`listDir error: ${message.error}`);
+            }
+        }
+
+        function joinPath(dir, name) {
+            if (!dir) return name;
+            if (dir.endsWith('/') || dir.endsWith('\\')) return dir + name;
+            return dir + SEP + name;
+        }
+
+        function parentDir(p) {
+            // returns parent path using the last separator found
+            const idx = Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\'));
+            if (idx <= 0) return p.startsWith('/') ? '/' : '~';
+            return p.slice(0, idx);
+        }
+
+        function splitPathForAutocomplete(value) {
+            // returns {dir, prefix}; dir is what we list, prefix is what we filter on
+            if (!value) return { dir: '~', prefix: '' };
+            const v = value.trim();
+            const idx = Math.max(v.lastIndexOf('/'), v.lastIndexOf('\\'));
+            if (idx === -1) return { dir: '~', prefix: v };
+            return { dir: v.slice(0, idx), prefix: v.slice(idx + 1) };
+        }
+
+        // ---------------- Autocomplete ----------------
+        let acState = {
+            input: null,
+            entries: [],
+            filtered: [],
+            active: -1,
+            lastDir: null,
+            lastInputId: null,
+            reqSeq: 0,
+            debounce: null,
+            blurTimer: null,
+        };
+        const acDropdown = document.getElementById('acDropdown');
+
+        function initAutocomplete() {
+            ['inputFilename', 'outputFilename'].forEach(id => {
+                const el = document.getElementById(id);
+                el.addEventListener('focus', () => {
+                    // Cancel any pending blur-hide from a previous input
+                    clearTimeout(acState.blurTimer);
+                    maybeShowAutocomplete(el);
+                });
+                el.addEventListener('input', () => {
+                    clearTimeout(acState.debounce);
+                    acState.debounce = setTimeout(() => maybeShowAutocomplete(el), 120);
+                });
+                el.addEventListener('keydown', e => onAutocompleteKeydown(e));
+                el.addEventListener('blur', () => {
+                    // delay so click on a suggestion registers
+                    acState.blurTimer = setTimeout(hideAutocomplete, 200);
+                });
+            });
+            // Reposition on window scroll; hide on scroll of other elements
+            // but NEVER on scroll inside the dropdown itself
+            document.addEventListener('scroll', (e) => {
+                if (acDropdown.classList.contains('hidden')) return;
+                if (e.target === acDropdown || acDropdown.contains(e.target)) return;
+                if (e.target === document || e.target === document.documentElement || e.target === document.body || e.target === window) {
+                    repositionAutocomplete();
+                } else {
+                    hideAutocomplete();
+                }
+            }, true);
+            window.addEventListener('resize', () => {
+                if (!acDropdown.classList.contains('hidden')) repositionAutocomplete();
+            });
+        }
+
+        async function maybeShowAutocomplete(inputEl) {
+            acState.input = inputEl;
+            acState.lastInputId = inputEl.id;
+            const { dir, prefix } = splitPathForAutocomplete(inputEl.value);
+
+            // Track the request sequence to avoid stale responses overwriting state
+            const reqSeq = ++acState.reqSeq;
+
+            if (acState.lastDir !== dir || acState.lastInputId !== inputEl.id) {
+                acState.lastDir = dir;
+                acState.lastInputId = inputEl.id;
+                acState.entries = [];
+                try {
+                    const resp = await requestListDir(inputEl.id, dir, pickerShowHidden());
+                    // Guard against stale responses from a previous input/dir
+                    if (reqSeq !== acState.reqSeq || acState.input !== inputEl) return;
+                    acState.entries = resp.entries || [];
+                } catch (e) {
+                    if (reqSeq === acState.reqSeq && acState.input === inputEl) hideAutocomplete();
+                    return;
+                }
+            }
+            if (reqSeq !== acState.reqSeq || acState.input !== inputEl) return;
+            renderAutocomplete(prefix, inputEl);
+        }
+
+        function renderAutocomplete(prefix, inputEl) {
+            const filtered = acState.entries.filter(e =>
+                e.name.toLowerCase().startsWith(prefix.toLowerCase())
+            );
+            if (!filtered.length) {
+                hideAutocomplete();
+                return;
+            }
+            acState.active = -1;
+            acDropdown.innerHTML = '';
+            const max = 200;
+            filtered.slice(0, max).forEach((e, i) => {
+                const li = document.createElement('li');
+                li.className = e.isDir ? 'dir' : '';
+                li.textContent = (e.isDir ? '\uD83D\uDCC1 ' : '\uD83D\uDCC4 ') + e.name;
+                li.dataset.idx = i;
+                li.addEventListener('mousedown', ev => {
+                    ev.preventDefault();
+                    acceptAutocomplete(filtered[i]);
+                });
+                acDropdown.appendChild(li);
+            });
+            acState.filtered = filtered;
+            repositionAutocomplete();
+            acDropdown.classList.remove('hidden');
+        }
+
+        function repositionAutocomplete() {
+            const inputEl = acState.input;
+            if (!inputEl) return;
+            const r = inputEl.getBoundingClientRect();
+            if (r.bottom === 0 && r.top === 0) {
+                hideAutocomplete();
+                return;
+            }
+            acDropdown.style.top = (window.scrollY + r.bottom + 2) + 'px';
+            acDropdown.style.left = (window.scrollX + r.left) + 'px';
+            acDropdown.style.minWidth = r.width + 'px';
+        }
+
+        function hideAutocomplete() {
+            acDropdown.classList.add('hidden');
+            acDropdown.innerHTML = '';
+            acState.active = -1;
+            acState.filtered = [];
+        }
+
+        function acceptAutocomplete(entry) {
+            const inputEl = acState.input;
+            if (!inputEl) return;
+            const { dir } = splitPathForAutocomplete(inputEl.value);
+            const newPath = joinPath(dir, entry.name);
+            inputEl.value = entry.isDir ? newPath + SEP : newPath;
+            inputEl.dispatchEvent(new Event('input'));
+            if (entry.isDir) {
+                // descend: refresh listing for the new dir
+                acState.lastDir = null;
+                maybeShowAutocomplete(inputEl);
+            } else {
+                hideAutocomplete();
+                inputEl.focus();
+            }
+        }
+
+        function onAutocompleteKeydown(e) {
+            const list = acState.filtered;
+            // If dropdown is hidden, ArrowDown should reopen it
+            if (acDropdown.classList.contains('hidden')) {
+                if (e.key === 'ArrowDown' && acState.input === e.target) {
+                    e.preventDefault();
+                    maybeShowAutocomplete(e.target);
+                }
+                return;
+            }
+            if (!list || !list.length) return;
+            const count = Math.min(list.length, 200);
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                acState.active = acState.active < 0 ? 0 : (acState.active + 1) % count;
+                updateAcActive();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                acState.active = acState.active < 0 ? count - 1 : (acState.active - 1 + count) % count;
+                updateAcActive();
+            } else if (e.key === 'Enter' || e.key === 'Tab') {
+                if (acState.active >= 0) {
+                    e.preventDefault();
+                    acceptAutocomplete(list[acState.active]);
+                }
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                hideAutocomplete();
+            }
+        }
+
+        function updateAcActive() {
+            const items = acDropdown.children;
+            for (let i = 0; i < items.length; i++) {
+                items[i].classList.toggle('ac-active', i === acState.active);
+            }
+            // Manually scroll the active item into view WITHOUT triggering
+            // a scroll event that could cascade back and dismiss the dropdown
+            if (acState.active >= 0 && items[acState.active]) {
+                const item = items[acState.active];
+                const ddTop = acDropdown.scrollTop;
+                const ddBottom = ddTop + acDropdown.clientHeight;
+                const itemTop = item.offsetTop;
+                const itemBottom = itemTop + item.offsetHeight;
+                if (itemTop < ddTop) {
+                    acDropdown.scrollTop = itemTop;
+                } else if (itemBottom > ddBottom) {
+                    acDropdown.scrollTop = itemBottom - acDropdown.clientHeight;
+                }
+            }
+        }
+
+        // ---------------- Modal picker ----------------
+        const pickerDialog = document.getElementById('filePicker');
+        const pickerList = document.getElementById('pickerList');
+        const pickerPath = document.getElementById('pickerPath');
+        const pickerFilter = document.getElementById('pickerFilter');
+        const pickerNameRow = document.getElementById('pickerNameRow');
+        const pickerName = document.getElementById('pickerName');
+        const pickerTitle = document.getElementById('pickerTitle');
+        const pickerHidden = document.getElementById('pickerHidden');
+        const pickerTruncated = document.getElementById('pickerTruncated');
+        let pickerState = {
+            target: null,    // input id
+            mode: 'open',    // 'open' or 'save'
+            currentDir: '~',
+            entries: [],
+            selectedFile: null,
+        };
+
+        function pickerShowHidden() {
+            return localStorage.getItem(KEY_PICKER_HIDDEN) === '1';
+        }
+
+        function initFilePicker() {
+            pickerHidden.checked = pickerShowHidden();
+            pickerHidden.addEventListener('change', () => {
+                localStorage.setItem(KEY_PICKER_HIDDEN, pickerHidden.checked ? '1' : '0');
+                navigatePicker(pickerState.currentDir);
+            });
+            document.querySelectorAll('.picker-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    openPicker(btn.dataset.target, btn.dataset.mode);
+                });
+            });
+            document.getElementById('pickerUp').addEventListener('click', () => {
+                navigatePicker(parentDir(pickerState.currentDir));
+            });
+            document.getElementById('pickerGo').addEventListener('click', () => {
+                navigatePicker(pickerPath.value || '~');
+            });
+            pickerPath.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    navigatePicker(pickerPath.value || '~');
+                }
+            });
+            pickerFilter.addEventListener('input', () => renderPickerEntries());
+            pickerName.addEventListener('input', () => {
+                pickerState.selectedFile = pickerName.value;
+            });
+            pickerName.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmPicker();
+                }
+            });
+            document.getElementById('pickerCancel').addEventListener('click', closePicker);
+            document.getElementById('pickerChoose').addEventListener('click', confirmPicker);
+            pickerDialog.addEventListener('close', () => {
+                if (pickerDialog.returnValue === 'choose') return;
+            });
+        }
+
+        function openPicker(targetId, mode) {
+            pickerState.target = targetId;
+            pickerState.mode = mode;
+            pickerTitle.textContent = mode === 'save' ? 'Save to...' : 'Open file...';
+            pickerNameRow.classList.toggle('hidden', mode !== 'save');
+            const current = document.getElementById(targetId).value;
+            let startDir = localStorage.getItem(KEY_PICKER_LASTDIR) || '~';
+            if (current) {
+                const { dir } = splitPathForAutocomplete(current);
+                startDir = dir || startDir;
+            }
+            pickerName.value = mode === 'save' ? (current ? current.split(/[\\/]/).pop() : '') : '';
+            pickerFilter.value = '';
+            pickerDialog.showModal();
+            navigatePicker(startDir);
+        }
+
+        function closePicker() {
+            pickerDialog.close();
+        }
+
+        async function navigatePicker(path) {
+            pickerState.currentDir = path;
+            pickerPath.value = path;
+            pickerList.innerHTML = '';
+            pickerTruncated.classList.add('hidden');
+            try {
+                const resp = await requestListDir(pickerState.target, path, pickerHidden.checked);
+                pickerState.entries = resp.entries || [];
+                pickerState.currentDir = resp.path || path;
+                pickerPath.value = pickerState.currentDir;
+                if (resp.selected) {
+                    pickerState.selectedFile = resp.selected;
+                    if (pickerState.mode === 'save') pickerName.value = resp.selected;
+                }
+                if (resp.truncated) {
+                    pickerTruncated.textContent = `Listing truncated at ${resp.entries.length} entries. Use the filter box to narrow down.`;
+                    pickerTruncated.classList.remove('hidden');
+                }
+                renderPickerEntries();
+            } catch (e) {
+                const li = document.createElement('li');
+                li.textContent = '\u26A0 ' + e.message;
+                li.style.color = 'var(--pico-primary)';
+                pickerList.appendChild(li);
+            }
+        }
+
+        function renderPickerEntries() {
+            const q = (pickerFilter.value || '').toLowerCase();
+            pickerList.innerHTML = '';
+            const entries = pickerState.entries.filter(e =>
+                !q || e.name.toLowerCase().includes(q)
+            );
+            entries.slice(0, 1000).forEach(e => {
+                const li = document.createElement('li');
+                li.className = (e.isDir ? 'dir' : '') +
+                    (e.name === pickerState.selectedFile ? ' selected' : '');
+                li.textContent = (e.isDir ? '\uD83D\uDCC1 ' : '\uD83D\uDCC4 ') + e.name;
+                li.addEventListener('click', () => onPickerRowClick(e));
+                li.addEventListener('dblclick', () => onPickerRowDblClick(e));
+                pickerList.appendChild(li);
+            });
+        }
+
+        function onPickerRowClick(entry) {
+            if (entry.isDir) return; // single click on dir does nothing, dblclick descends
+            pickerState.selectedFile = entry.name;
+            if (pickerState.mode === 'save') {
+                pickerName.value = entry.name;
+            }
+            renderPickerEntries();
+        }
+
+        function onPickerRowDblClick(entry) {
+            if (entry.isDir) {
+                navigatePicker(joinPath(pickerState.currentDir, entry.name));
+            } else if (pickerState.mode === 'open') {
+                commitPicked(joinPath(pickerState.currentDir, entry.name));
+            } else {
+                pickerName.value = entry.name;
+                pickerState.selectedFile = entry.name;
+                renderPickerEntries();
+            }
+        }
+
+        function confirmPicker() {
+            if (pickerState.mode === 'save') {
+                const name = (pickerName.value || '').trim();
+                if (!name) {
+                    pickerName.focus();
+                    return;
+                }
+                const full = joinPath(pickerState.currentDir, name);
+                const existing = pickerState.entries.find(e => e.name === name && !e.isDir);
+                if (existing && !confirm(`File exists: ${full}\nOverwrite?`)) {
+                    return;
+                }
+                commitPicked(full);
+            } else {
+                if (!pickerState.selectedFile) {
+                    if (pickerState.entries.length === 1 && !pickerState.entries[0].isDir) {
+                        pickerState.selectedFile = pickerState.entries[0].name;
+                    } else {
+                        pickerList.focus();
+                        return;
+                    }
+                }
+                commitPicked(joinPath(pickerState.currentDir, pickerState.selectedFile));
+            }
+        }
+
+        function commitPicked(fullPath) {
+            const input = document.getElementById(pickerState.target);
+            input.value = fullPath;
+            input.dispatchEvent(new Event('input'));
+            localStorage.setItem(KEY_PICKER_LASTDIR, pickerState.currentDir);
+            pickerDialog.close('choose');
+            hideAutocomplete();
+        }
     </script>
 </body>
 
