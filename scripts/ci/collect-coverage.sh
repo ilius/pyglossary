@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-rootDir=$(dirname $(dirname $(realpath $(dirname "$0"))))
+rootDir=$(git rev-parse --show-toplevel)
 artifactDir="$rootDir/artifacts/coverage"
 mkdir -p "$artifactDir"
 
