@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Read ABBYY Lingvo DSL dictionary format
 #
 # Copyright © 2013-2020 Saeed Rasooli <saeed.gnu@gmail.com>

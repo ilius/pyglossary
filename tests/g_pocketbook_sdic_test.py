@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Integration tests for PocketBook SDIC writer plugin."""
 
 from __future__ import annotations

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # mypy: ignore-errors
 #
 # readmdict.py from https://bitbucket.org/xwang/mdict-analysis

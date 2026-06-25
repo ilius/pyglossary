@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Incremental Markdown emitter matching freedict.Reader htmlfile usage."""
 
 from __future__ import annotations

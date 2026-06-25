@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import unittest
 from collections import Counter
 from glob import glob

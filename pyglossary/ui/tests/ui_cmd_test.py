@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # mypy: ignore-errors
 """Integration-style tests for ``ui_cmd`` (CLI help, option parsing, ``UI.run``)."""
 

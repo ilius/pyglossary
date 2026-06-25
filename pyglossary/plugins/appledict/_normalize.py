@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #
 # Copyright © 2016-2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)

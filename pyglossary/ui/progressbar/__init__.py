@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # progressbar  - Text progress bar library for Python.
 # Copyright (c) 2005 Nilton Volpato

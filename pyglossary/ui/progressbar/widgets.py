@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # mypy: ignore-errors
 #
 # progressbar  - Text progress bar library for Python.

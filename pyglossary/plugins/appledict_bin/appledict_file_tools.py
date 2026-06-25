@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright © 2023 soshial <soshial@gmail.com> (soshial)
 #
 # This program is a free software; you can redistribute it and/or modify
