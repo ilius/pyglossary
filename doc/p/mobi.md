@@ -31,6 +31,7 @@ To update, modify plugins/mobi/__init__.py file, then run ./scripts/gen
 | css |  | str | Path to css file |
 | cover_path |  | str | Path to cover file |
 | kindlegen_path |  | str | Path to kindlegen executable |
+| kindlegen_args | `None` | list | Additional arguments forwarded to kindlegen |
 | file_size_approx | `271360` | int | Approximate size of each xhtml file (example: 200kb) |
 | hide_word_index | `False` | bool | Hide headword in tap-to-check interface |
 | spellcheck | `True` | bool | Enable wildcard search and spell correction during word lookup |

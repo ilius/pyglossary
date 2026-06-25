@@ -852,6 +852,11 @@
 				"customValue": true,
 				"comment": "Path to kindlegen executable"
 			},
+			"kindlegen_args": {
+				"class": "ListOption",
+				"type": "list",
+				"comment": "Additional arguments forwarded to kindlegen"
+			},
 			"compress": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -913,6 +918,7 @@
 			"css": "",
 			"cover_path": "",
 			"kindlegen_path": "",
+			"kindlegen_args": null,
 			"file_size_approx": 271360,
 			"hide_word_index": false,
 			"spellcheck": true,

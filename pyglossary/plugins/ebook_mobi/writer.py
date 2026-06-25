@@ -61,6 +61,7 @@ class Writer(EbookWriter):
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""
+	_kindlegen_args: list | None = None
 	_file_size_approx: int = 271360
 	_hide_word_index: bool = False
 	_spellcheck: bool = True
@@ -296,15 +297,19 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		# name = self._glos.getInfo("name")
 		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
 		direc, filename = split(filename)
+
+		kindlegen_args = self._kindlegen_args or []
+		kindlegen_args.extend(["-gen_ff_mobi7", "-dont_append_source"])
+		if isDebug():
+			kindlegen_args.append("-verbose")
+		kindlegen_args.extend(["-o", "content.mobi"])
+		log.info(f"Effective kindlegen arguments: {' '.join(kindlegen_args)}")
+
 		cmd = [
 			kindlegen_path,
 			join(filename, "OEBPS", "content.opf"),
-			"-gen_ff_mobi7",
-			"-dont_append_source",
+			*kindlegen_args,
 		]
-		if isDebug():
-			cmd.append("-verbose")
-		cmd += ["-o", "content.mobi"]
 		proc = subprocess.Popen(
 			cmd,
 			cwd=direc,
