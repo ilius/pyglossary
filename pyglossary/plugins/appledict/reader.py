@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Read Apple Dictionary XML sources written by Dictionary Development Kit format.
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)

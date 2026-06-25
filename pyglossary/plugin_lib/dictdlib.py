@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Dictionary creation library
 # Copyright (C) 2002 John Goerzen <jgoerzen@complete.org>

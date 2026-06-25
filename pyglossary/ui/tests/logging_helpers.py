@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Shared helpers for ``pyglossary.ui`` unit tests."""
 
 from __future__ import annotations

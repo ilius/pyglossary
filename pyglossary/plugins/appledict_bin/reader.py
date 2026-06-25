@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright © 2019 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 #
 # This program is a free software; you can redistribute it and/or modify

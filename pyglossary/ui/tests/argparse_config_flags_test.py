@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Tests for CLI config flags registered from ``configDefDict`` (e.g. ``--log-time``)."""
 
 from __future__ import annotations

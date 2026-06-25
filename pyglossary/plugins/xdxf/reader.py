@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright © 2025 Saeed Rasooli
 # Copyright © 2016 ivan tkachenko me@ratijas.tk

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Tests for :mod:`pyglossary.ui.terminal_theme`."""
 
 from __future__ import annotations

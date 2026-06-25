@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import sys
 import unittest
 from os.path import abspath, dirname

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Tests for interactive cmd UI: ``ConversionSession``, ``InteractivePrompt``, ``UI``."""
 
 from __future__ import annotations

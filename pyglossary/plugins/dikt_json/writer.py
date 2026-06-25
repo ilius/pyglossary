@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # mypy: ignore-errors
 # from https://github.com/maxim-saplin/pyglossary
 

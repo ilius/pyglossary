@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-# -*- coding: utf-8 -*-
-
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 

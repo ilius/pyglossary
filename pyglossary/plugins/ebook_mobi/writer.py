@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright © 2012-2016 Alberto Pettarin (alberto@albertopettarin.it)
 # Copyright © 2016-2022 Saeed Rasooli <saeed.gnu@gmail.com>

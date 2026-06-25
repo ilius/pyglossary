@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright © 2008-2020 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Copyright © 2011-2012 kubtek <kubtek@gmail.com>

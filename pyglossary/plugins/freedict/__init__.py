@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .options import optionsProp
 from .reader import Reader
 

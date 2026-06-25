@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Lax implementation of xdxf reader.
 #

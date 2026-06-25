@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pyglossary.plugins.freedict.options import optionsProp
 
 from .reader import Reader

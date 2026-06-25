@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # mypy: ignore-errors
 #
 # Copyright (C) 2016-2023 Saeed Rasooli on https://github.com/ilius/pyglossary/

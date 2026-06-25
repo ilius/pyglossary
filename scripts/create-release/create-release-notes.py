@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Generate doc/releases/VERSION.md from git history."""
 
 from __future__ import annotations
