@@ -70,6 +70,11 @@ class Writer:
 		"spx": "audio/x-speex",
 		"wav": "audio/wav",
 		"mp4": "video/mp4",
+		"m4a": "audio/mp4",
+		"m4b": "audio/mp4",
+		"aac": "audio/aac",
+		"webm": "audio/webm",
+		"weba": "audio/webm",
 	}
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
