@@ -98,7 +98,7 @@ git push origin "$VERSION"
 MD_PATH=$(realpath $scriptsDir/../doc/releases/$VERSION.md)
 
 CREATE_NOTES_ARGS=(--prev-tag "$CUR_VERSION")
-python3 "$scriptsDir/create-release-notes.py" "${CREATE_NOTES_ARGS[@]}" "$VERSION"
+python3 "$scriptsDir/create-release/create-release-notes.py" "${CREATE_NOTES_ARGS[@]}" "$VERSION"
 
 echo "Created $MD_PATH"
 xdg-open "$MD_PATH"
