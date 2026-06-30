@@ -20,7 +20,7 @@ from __future__ import annotations
 import ast
 import logging
 import traceback
-from os.path import isfile
+from os.path import exists, isfile
 from typing import TYPE_CHECKING, Any, Protocol
 
 import gi
@@ -1165,9 +1165,12 @@ class UI(UIBase, gtk.Application):
 		progressbar: bool = True,
 	) -> None:
 		UIBase.__init__(self)
+		application_id = "apps.pyglossary"
+		if exists("/.flatpak-info"):
+			application_id = "io.github.ilius.pyglossary"
 		gtk.Application.__init__(
 			self,
-			application_id="apps.pyglossary",
+			application_id=application_id,
 			flags=gio.ApplicationFlags.FLAGS_NONE,
 		)
 		if progressbar:
