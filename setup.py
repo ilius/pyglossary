@@ -10,7 +10,7 @@ from os.path import dirname, isdir, join
 
 from setuptools import find_packages, setup
 
-VERSION = "5.4.1"
+VERSION = "5.4.2"
 log = logging.getLogger("root")
 relRootDir = "share/pyglossary"
 
