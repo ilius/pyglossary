@@ -15,9 +15,7 @@ classifiers = [
 	"Programming Language :: Python :: 3.14",
 ]
 requires-python = ">= 3.12"
-dependencies = [
-    "slint>=1.17.0b2"
-]
+dependencies = []
 
 [project.scripts]
 pyglossary = "pyglossary.ui.main:main"
@@ -33,6 +31,9 @@ qt6 = [
 wx = [
 	"wxPython",
 	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
+]
+slint = [
+	"slint>=1.17.0b2"
 ]
 # File drag-and-drop in the Tk wizard (``pyglossary --ui=tk``).
 tk-wizard-dnd = ["tkinterdnd2"]
