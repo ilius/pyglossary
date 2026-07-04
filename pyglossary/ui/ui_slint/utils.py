@@ -172,6 +172,7 @@ def weakCallback(method: Any) -> Callable[..., Any]:
 
 	return wrapper
 
+
 # Map pyglossary log levels to console text colors.
 #
 # NOTE: these are plain hex strings (not slint.Color) on purpose. The log
@@ -403,10 +404,13 @@ def _pickOpenX11(initialdir: str | None) -> str:
 	if shutil.which("zenity"):
 		# trailing separator: a bare directory path would pre-fill it as the
 		# selected *file* name; with the separator zenity just starts there
-		return _runCapture([
-			"zenity", "--file-selection",
-			f"--filename={join(startDir, '')}",
-		])
+		return _runCapture(
+			[
+				"zenity",
+				"--file-selection",
+				f"--filename={join(startDir, '')}",
+			]
+		)
 	if shutil.which("kdialog"):
 		return _runCapture(["kdialog", "--getopenfilename", startDir])
 	log.error("no file dialog tool found (need zenity or kdialog)")
@@ -418,10 +422,14 @@ def _pickSaveX11(initialdir: str | None) -> str:
 
 	startDir = _x11StartDir(initialdir)
 	if shutil.which("zenity"):
-		return _runCapture([
-			"zenity", "--file-selection", "--save",
-			f"--filename={join(startDir, '')}",
-		])
+		return _runCapture(
+			[
+				"zenity",
+				"--file-selection",
+				"--save",
+				f"--filename={join(startDir, '')}",
+			]
+		)
 	if shutil.which("kdialog"):
 		return _runCapture(["kdialog", "--getsavefilename", startDir])
 	log.error("no file dialog tool found (need zenity or kdialog)")

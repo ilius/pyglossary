@@ -61,9 +61,7 @@ class FormatPicker:
 			self._shown = list(self._all)
 		else:
 			prefix = [d for d in self._all if d.lower().startswith(query)]
-			contains = [
-				d for d in self._all if query in d.lower() and d not in prefix
-			]
+			contains = [d for d in self._all if query in d.lower() and d not in prefix]
 			self._shown = prefix + contains
 		# rebuild model in place
 		self._model = slint.ListModel(list(self._shown))

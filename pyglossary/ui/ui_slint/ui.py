@@ -91,9 +91,9 @@ _NONE_OUTPUT_LABEL = "(choose output format)"
 
 
 def _runConvert(
-		glos: Glossary,
-		convertArgs: ConvertArgs,
-		done: Any,
+	glos: Glossary,
+	convertArgs: ConvertArgs,
+	done: Any,
 ) -> None:
 	"""
 	Background-thread entry point.
@@ -180,9 +180,7 @@ class UI(UIBase):
 			plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
 		]
 		self.writeDesc = [
-			plugin.description
-			for plugin in Glossary.plugins.values()
-			if plugin.canWrite
+			plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
 		]
 
 		self.progressbar = progressbar
@@ -257,9 +255,8 @@ class UI(UIBase):
 		from pyglossary.ui.version import getAboutHeader
 
 		header = getAboutHeader("Slint", slintVersion)
-		authorsText = ("\n".join(authors)
-			.replace("\u26AB\uFE0E", "-")
-			.replace("\t", "    ")
+		authorsText = (
+			"\n".join(authors).replace("\u26ab\ufe0e", "-").replace("\t", "    ")
 		)
 		return "\n\n".join(
 			[
@@ -464,10 +461,10 @@ class UI(UIBase):
 		plugin = self.pluginByDesc.get(desc) if desc else None
 		pathI = self.win.input_file_path
 		if (
-				pathI
-				and not self.win.output_file_path
-				and plugin is not None
-				and plugin.extensionCreate
+			pathI
+			and not self.win.output_file_path
+			and plugin is not None
+			and plugin.extensionCreate
 		):
 			pathNoExt, _ext = splitext(pathI)
 			self.win.output_file_path = pathNoExt + plugin.extensionCreate
@@ -573,8 +570,7 @@ class UI(UIBase):
 		log.info(f"Theme changed to {label!r}; restart the app for it to take effect")
 		dialog = AlertDialog(
 			message=(
-				f"Theme changed to “{label}”.\n"
-				"Restart PyGlossary for it to take effect."
+				f"Theme changed to “{label}”.\nRestart PyGlossary for it to take effect."
 			),
 			onClose=self._unref,
 		)
@@ -592,9 +588,7 @@ class UI(UIBase):
 		if not inPath:
 			log.critical("Input file path is empty!")
 			return
-		inFormat = (
-			self.pluginByDesc[self._inFormat].name if self._inFormat else ""
-		)
+		inFormat = self.pluginByDesc[self._inFormat].name if self._inFormat else ""
 
 		outPath = self.win.output_file_path
 		if not outPath:
@@ -647,17 +641,17 @@ class UI(UIBase):
 	# run() — entry point called by runner.py (same signature as ui_tk)
 	# -------------------------------------------------------------
 	def run(  # noqa: PLR0913
-			self,
-			inputFilename: str = "",
-			outputFilename: str = "",
-			inputFormat: str = "",
-			outputFormat: str = "",
-			reverse: bool = False,
-			config: ConfigType | None = None,
-			readOptions: dict[str, Any] | None = None,
-			writeOptions: dict[str, Any] | None = None,
-			convertOptions: dict[str, Any] | None = None,
-			glossarySetAttrs: dict[str, Any] | None = None,
+		self,
+		inputFilename: str = "",
+		outputFilename: str = "",
+		inputFormat: str = "",
+		outputFormat: str = "",
+		reverse: bool = False,
+		config: ConfigType | None = None,
+		readOptions: dict[str, Any] | None = None,
+		writeOptions: dict[str, Any] | None = None,
+		convertOptions: dict[str, Any] | None = None,
+		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> None:
 		# Only replace the config loaded in __init__ when the caller (main.py)
 		# actually passes one (the full, file-loaded + CLI-flag-merged config).

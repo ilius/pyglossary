@@ -57,7 +57,8 @@ class FormatOptionsDialog:
 			return
 		formatName = plugin.name
 		optionsDefaults: dict[str, Any] = self._kindFormatsOptions[kind].get(
-			formatName, {},
+			formatName,
+			{},
 		)
 		optionsProp = plugin.optionsProp
 
@@ -88,7 +89,9 @@ class FormatOptionsDialog:
 				"int-value": int(current) if optKind == "int" else 0,
 				"choices": slint.ListModel(
 					[str(v) for v in (prop.values or [])],
-				) if optKind == "choice" else slint.ListModel([]),
+				)
+				if optKind == "choice"
+				else slint.ListModel([]),
 				"current-choice": str(current) if optKind == "choice" else "",
 			}
 			rows.append(row)
