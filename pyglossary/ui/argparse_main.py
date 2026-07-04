@@ -45,7 +45,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		"-u",
 		"--ui",
 		dest="ui_type",
-		default="auto",
+		default="slint",
 		choices=(
 			"cmd",
 			"gtk",
@@ -57,6 +57,7 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 			"tk",
 			"tk_wizard",
 			"web",
+			"slint",
 			"auto",
 			"none",
 		),
@@ -140,6 +141,14 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		const="web",
 		default=None,
 		help="use web browser interface",
+	)
+	parser.add_argument(
+		"--slint",
+		dest="ui_type",
+		action="store_const",
+		const="slint",
+		default=None,
+		help="use Slint-based user interface",
 	)
 	parser.add_argument(
 		"--interactive",

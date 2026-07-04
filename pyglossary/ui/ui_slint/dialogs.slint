@@ -1,0 +1,642 @@
+// dialogs.slint
+//
+// Secondary (non-modal) windows used by the Slint UI:
+//   - FormatPickerDialog : searchable list to pick an input/output format
+//   - OptionsMenuDialog  : the 4-entry "Options ▾" menu
+//   - OptionsDialog      : generic Read/Write format-options editor
+//   - GeneralOptionsDialog : sort / sqlite / general config toggles
+//   - InfoDialog         : name / sourceLang / targetLang metadata editor
+//
+// All are opened from Python with `.show()` (non-blocking); results are
+// delivered back through callbacks or read back from in-out properties on OK.
+// Loaded together via `slint.load_file("dialogs.slint")`.
+
+import {
+    Button,
+    LineEdit,
+    ScrollView,
+    Switch,
+    SpinBox,
+    ComboBox,
+    VerticalBox,
+    Palette,
+    StandardButton,
+} from "std-widgets.slint";
+
+// ============================================================
+// FormatPickerDialog
+// ============================================================
+export component FormatPickerDialog inherits Window {
+    title: "Select Format";
+    preferred-width: 460px;
+    preferred-height: 480px;
+    min-width: 360px;
+    min-height: 320px;
+
+    in-out property <[string]> shown-formats: [];
+    in-out property <int> current-index: -1;
+    in-out property <string> query: "";
+
+    callback search-edited(string);
+    callback item-clicked(int);
+    callback item-double-clicked(int);
+    callback ok();
+    callback cancel();
+
+    function clamp-index(i: int) -> int {
+        return i < 0 ? 0 : (i >= root.shown-formats.length ? root.shown-formats.length - 1 : i);
+    }
+
+    // Wraps the whole dialog so Up/Down/Enter/Escape work no matter where
+    // focus is, while `forward-focus` keeps actual text-input focus (and
+    // therefore typing) on the search box -- the standard "quick open" /
+    // command-palette pattern (type to filter, arrow keys to move the
+    // selection, Enter to accept), rather than making each row its own tab
+    // stop.
+    FocusScope {
+        forward-focus: search-input;
+
+        key-pressed(event) => {
+            if (event.text == Key.DownArrow) {
+                root.current-index = root.shown-formats.length > 0
+                    ? clamp-index(root.current-index + 1)
+                    : -1;
+                return EventResult.accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.current-index = root.shown-formats.length > 0
+                    ? clamp-index(root.current-index - 1)
+                    : -1;
+                return EventResult.accept;
+            }
+            if (event.text == Key.Return) {
+                root.ok();
+                return EventResult.accept;
+            }
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return EventResult.accept;
+            }
+            return EventResult.reject;
+        }
+
+        VerticalLayout {
+            spacing: 8px;
+            padding: 8px;
+
+            search-input := LineEdit {
+                // two-way, not one-way + write-back: a one-way binding gets
+                // detached as soon as the widget writes to `text` (typing),
+                // after which external writes to `query` would be invisible
+                text <=> root.query;
+                placeholder-text: "Search formats…";
+                edited(v) => {
+                    root.search-edited(v);
+                }
+            }
+
+            Rectangle {
+                vertical-stretch: 1;
+                border-width: 1px;
+                border-color: Palette.border;
+                background: Palette.background;
+
+                ScrollView {
+                    VerticalLayout {
+                        padding: 4px;
+                        spacing: 1px;
+                        alignment: start;
+
+                        for f[i] in root.shown-formats: Rectangle {
+                            height: 24px;
+                            border-radius: 3px;
+                            background: i == root.current-index
+                                ? Palette.accent-background
+                                : (item-touch.has-hover ? Palette.alternate-background : transparent);
+                            HorizontalLayout {
+                                padding-left: 8px;
+                                Text {
+                                    text: f;
+                                    vertical-alignment: center;
+                                    color: i == root.current-index
+                                        ? Palette.accent-foreground
+                                        : Palette.foreground;
+                                }
+                            }
+
+                            item-touch := TouchArea {
+                                clicked => {
+                                    root.current-index = i;
+                                    root.item-clicked(i);
+                                }
+                                double-clicked => {
+                                    root.current-index = i;
+                                    root.item-double-clicked(i);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: end;
+                Button {
+                    text: "Cancel";
+                    clicked => { root.cancel(); }
+                }
+
+                Button {
+                    text: "  OK  ";
+                    primary: true;
+                    clicked => { root.ok(); }
+                }
+            }
+        }
+    }
+
+    // Autofocus the search box as soon as the dialog is shown.
+    init => {
+        search-input.focus();
+    }
+}
+
+// ============================================================
+// OptionsMenuDialog  (the "Options ▾" menu)
+// ============================================================
+export component OptionsMenuDialog inherits Window {
+    title: "Options";
+    preferred-width: 280px;
+    preferred-height: 280px;
+
+    callback read-options();
+    callback write-options();
+    callback general-options();
+    callback info-options();
+    callback theme-options();
+    callback close-menu();
+
+    VerticalLayout {
+        spacing: 8px;
+        padding: 12px;
+        Button {
+            text: "Read Options";
+            clicked => { root.read-options(); }
+        }
+
+        Button {
+            text: "Write Options";
+            clicked => { root.write-options(); }
+        }
+
+        Button {
+            text: "General Options";
+            clicked => { root.general-options(); }
+        }
+
+        Button {
+            text: "Info / Metadata";
+            clicked => { root.info-options(); }
+        }
+
+        Button {
+            text: "Theme";
+            clicked => { root.theme-options(); }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
+
+        Button {
+            text: "Close";
+            clicked => { root.close-menu(); }
+        }
+    }
+}
+
+// ============================================================
+// ThemeDialog  (pick a built-in Slint widget style; applied on next launch)
+// ============================================================
+export component ThemeDialog inherits Window {
+    title: "Theme";
+    preferred-width: 320px;
+    preferred-height: 180px;
+
+    // `theme-names` and `theme-values` are parallel arrays: `theme-names` are
+    // the human-readable labels shown in the combo box, `theme-values` are
+    // the corresponding slint style identifiers (see utils.py / ui.py); the
+    // caller reads back the chosen style via `current-index`.
+    in-out property <[string]> theme-names: [];
+    in-out property <int> current-index: -1;
+
+    callback ok();
+    callback cancel();
+
+    VerticalLayout {
+        spacing: 12px;
+        padding: 12px;
+
+        Text {
+            text: "Widget style. Takes effect after restarting the app.";
+            wrap: word-wrap;
+        }
+
+        ComboBox {
+            model: root.theme-names;
+            current-index <=> root.current-index;
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: end;
+            Button {
+                text: "Cancel";
+                clicked => { root.cancel(); }
+            }
+
+            Button {
+                text: "  OK  ";
+                primary: true;
+                clicked => { root.ok(); }
+            }
+        }
+    }
+}
+
+// ============================================================
+// AlertDialog  (single-button informational message box)
+// ============================================================
+// Uses Slint's built-in `Dialog` element (not a std-widgets import) paired
+// with `StandardButton`: Slint places the button per the host platform's
+// convention and auto-generates a `<kind>_clicked` callback per button
+// (here: `ok_clicked`) -- no custom button layout/callback needed, unlike
+// the other dialogs in this file.
+export component AlertDialog inherits Dialog {
+    title: "Notice";
+    preferred-width: 360px;
+    preferred-height: 150px;
+
+    in property <string> message: "";
+
+    VerticalLayout {
+        padding: 16px;
+        Text {
+            text: root.message;
+            wrap: word-wrap;
+        }
+    }
+
+    StandardButton { kind: ok; }
+}
+
+// ============================================================
+// OptionsDialog  (generic Read/Write format options editor)
+// ============================================================
+// One OptionItem per option. `kind` selects the widget:
+//   "bool"   -> Switch
+//   "int"    -> SpinBox  (also used for FileSizeOption)
+//   "choice" -> ComboBox (options with a fixed .values list)
+//   "str"    -> LineEdit (default)
+export struct OptionItem {
+    name: string,
+    comment: string,
+    kind: string,
+    bool-value: bool,
+    str-value: string,
+    int-value: int,
+    choices: [string],
+    current-choice: string,
+}
+
+export component OptionsDialog inherits Window {
+    title: "Format Options";
+    preferred-width: 640px;
+    preferred-height: 520px;
+    min-width: 420px;
+    min-height: 320px;
+
+    in-out property <string> title-text: "Format Options";
+    in-out property <[OptionItem]> options: [];
+
+    callback set-bool(int, bool);
+    callback set-str(int, string);
+    callback set-int(int, int);
+    callback set-choice(int, string);
+    callback ok();
+    callback cancel();
+
+    VerticalLayout {
+        spacing: 8px;
+        padding: 12px;
+
+        Text {
+            text: root.title-text;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+            ScrollView {
+                VerticalLayout {
+                    spacing: 10px;
+                    padding: 4px;
+                    alignment: start;
+
+                    for opt[i] in root.options: VerticalLayout {
+                        spacing: 4px;
+
+                        Text {
+                            text: opt.comment;
+                            font-size: 12px;
+                            // theme-aware (was hardcoded #444444, unreadable
+                            // in dark mode); slightly dimmed vs. normal text
+                            color: Palette.foreground.transparentize(0.25);
+                        }
+
+                        if opt.kind == "bool": HorizontalLayout {
+                            spacing: 8px;
+                            Switch {
+                                text: opt.name;
+                                checked: opt.bool-value;
+                                toggled => { root.set-bool(i, self.checked); }
+                            }
+                        }
+
+                        if opt.kind == "int": HorizontalLayout {
+                            spacing: 8px;
+                            // pin the cross-axis height so the control keeps its
+                            // natural size instead of stretching vertically
+                            height: 32px;
+                            Text {
+                                text: opt.name;
+                                vertical-alignment: center;
+                                width: 180px;
+                            }
+
+                            SpinBox {
+                                value: opt.int-value;
+                                minimum: 0;
+                                maximum: 1000000000;
+                                edited(v) => { root.set-int(i, v); }
+                                horizontal-stretch: 1;
+                            }
+                        }
+
+                        if opt.kind == "choice": HorizontalLayout {
+                            spacing: 8px;
+                            // pin the cross-axis height: ComboBox has no bounded
+                            // max-height and would otherwise stretch vertically
+                            height: 32px;
+                            Text {
+                                text: opt.name;
+                                vertical-alignment: center;
+                                width: 180px;
+                            }
+
+                            ComboBox {
+                                model: opt.choices;
+                                current-value: opt.current-choice;
+                                selected(v) => { root.set-choice(i, v); }
+                            }
+                        }
+
+                        if opt.kind == "str": HorizontalLayout {
+                            spacing: 8px;
+                            height: 32px;
+                            Text {
+                                text: opt.name;
+                                vertical-alignment: center;
+                                width: 180px;
+                            }
+
+                            LineEdit {
+                                text: opt.str-value;
+                                edited(v) => { root.set-str(i, v); }
+                                horizontal-stretch: 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: end;
+            Button {
+                text: "Cancel";
+                clicked => { root.cancel(); }
+            }
+
+            Button {
+                text: "  OK  ";
+                primary: true;
+                clicked => { root.ok(); }
+            }
+        }
+    }
+}
+
+// ============================================================
+// GeneralOptionsDialog
+// ============================================================
+export struct ConfigCheck {
+    comment: string,
+    value: bool,
+}
+
+export component GeneralOptionsDialog inherits Window {
+    title: "General Options";
+    preferred-width: 560px;
+    preferred-height: 560px;
+    min-width: 420px;
+    min-height: 360px;
+
+    // scalar fields use two-way binding (<=>); Python reads them on OK
+	in-out property <bool> sort-enabled: false;
+    in-out property <[string]> sort-key-descs: [];
+    in-out property <string> current-sort-key: "";
+    in-out property <bool> sort-encoding-enabled: false;
+    in-out property <string> sort-encoding: "utf-8";
+    in-out property <string> sort-locale: "";
+    in-out property <bool> sqlite-enabled: false;
+	// list of config toggles (updated via callback)
+	in-out property <[ConfigCheck]> config-checks: [];
+
+    callback set-config(int, bool);
+    callback ok();
+    callback cancel();
+
+    VerticalLayout {
+        spacing: 10px;
+        padding: 12px;
+
+        HorizontalLayout {
+            spacing: 8px;
+            Switch {
+                text: "Sort entries by";
+                checked <=> root.sort-enabled;
+            }
+
+            ComboBox {
+                model: root.sort-key-descs;
+                current-value <=> root.current-sort-key;
+                horizontal-stretch: 1;
+                enabled: root.sort-enabled;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            Switch {
+                text: "Sort Encoding";
+                checked <=> root.sort-encoding-enabled;
+                enabled: root.sort-enabled;
+            }
+
+            LineEdit {
+                text <=> root.sort-encoding;
+                enabled: root.sort-enabled && root.sort-encoding-enabled;
+                width: 160px;
+            }
+
+            Text {
+                text: "Locale";
+                vertical-alignment: center;
+            }
+
+            LineEdit {
+                text <=> root.sort-locale;
+                enabled: root.sort-enabled;
+                horizontal-stretch: 1;
+            }
+        }
+
+        Switch {
+            text: "SQLite mode";
+            checked <=> root.sqlite-enabled;
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+            border-width: 1px;
+            border-color: Palette.border;
+            ScrollView {
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 6px;
+                    for c[i] in root.config-checks: Switch {
+                        text: c.comment;
+                        checked: c.value;
+                        toggled => { root.set-config(i, self.checked); }
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: end;
+            Button {
+                text: "Cancel";
+                clicked => { root.cancel(); }
+            }
+
+            Button {
+                text: "  OK  ";
+                primary: true;
+                clicked => { root.ok(); }
+            }
+        }
+    }
+}
+
+// ============================================================
+// InfoDialog  (name / sourceLang / targetLang)
+// ============================================================
+export component InfoDialog inherits Window {
+    title: "Set Info / Metadata";
+    preferred-width: 520px;
+    preferred-height: 220px;
+    min-width: 360px;
+
+    in-out property <string> name-value: "";
+    in-out property <string> source-lang: "";
+    in-out property <string> target-lang: "";
+
+    callback ok();
+    callback cancel();
+
+    VerticalLayout {
+        spacing: 10px;
+        padding: 12px;
+
+        HorizontalLayout {
+            spacing: 8px;
+            Text {
+                text: "Glossary Name";
+                vertical-alignment: center;
+                width: 140px;
+            }
+
+            LineEdit {
+                text <=> root.name-value;
+                horizontal-stretch: 1;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            Text {
+                text: "Source Language";
+                vertical-alignment: center;
+                width: 140px;
+            }
+
+            LineEdit {
+                text <=> root.source-lang;
+                horizontal-stretch: 1;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            Text {
+                text: "Target Language";
+                vertical-alignment: center;
+                width: 140px;
+            }
+
+            LineEdit {
+                text <=> root.target-lang;
+                horizontal-stretch: 1;
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: end;
+            Button {
+                text: "Cancel";
+                clicked => { root.cancel(); }
+            }
+
+            Button {
+                text: "  OK  ";
+                primary: true;
+                clicked => { root.ok(); }
+            }
+        }
+    }
+}

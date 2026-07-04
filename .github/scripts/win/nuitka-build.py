@@ -18,11 +18,27 @@ def main() -> None:
 			"--include-module=wx._xml",
 			"--nofollow-import-to=pyglossary.ui.ui_tk",
 			"--nofollow-import-to=pyglossary.ui.ui_tk_wizard",
+			"--nofollow-import-to=pyglossary.ui.ui_slint",
+			"--nofollow-import-to=slint",
+		]
+	elif default_ui == "slint":
+		ui_opts = [
+			"--include-package=slint",
+			"--include-package-data=slint",
+			"--nofollow-import-to=pyglossary.ui.ui_tk",
+			"--nofollow-import-to=pyglossary.ui.ui_tk_wizard",
+			"--nofollow-import-to=pyglossary.ui.ui_wx",
+			"--nofollow-import-to=tkinter",
+			"--nofollow-import-to=wx",
 		]
 	else:
 		ui_opts = [
 			"--enable-plugin=tk-inter",
 			"--include-module=tkinter",
+			"--nofollow-import-to=pyglossary.ui.ui_wx",
+			"--nofollow-import-to=pyglossary.ui.ui_slint",
+			"--nofollow-import-to=wx",
+			"--nofollow-import-to=slint",
 		]
 
 	cmd = [

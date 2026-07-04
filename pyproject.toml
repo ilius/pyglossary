@@ -15,7 +15,9 @@ classifiers = [
 	"Programming Language :: Python :: 3.14",
 ]
 requires-python = ">= 3.12"
-dependencies = []
+dependencies = [
+    "slint>=1.17.0b2"
+]
 
 [project.scripts]
 pyglossary = "pyglossary.ui.main:main"
