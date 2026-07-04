@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from .utils import load_slint, weakCallback
 
 if TYPE_CHECKING:
-	pass
+	from collections.abc import Callable
 
 __all__ = ["InfoDialog"]
 
@@ -20,7 +20,7 @@ class InfoDialog:
 		self,
 		info: dict[str, Any],
 		onOk: Callable[[dict[str, Any]], None],
-		onClose: Callable[["InfoDialog"], None],
+		onClose: Callable[[InfoDialog], None],
 	) -> None:
 		self.info = info
 		self._onOk = onOk

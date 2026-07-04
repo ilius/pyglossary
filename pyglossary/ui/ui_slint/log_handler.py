@@ -45,7 +45,7 @@ class SlintLogHandler(logging.Handler):
 	no-op.
 	"""
 
-	def __init__(self, ui: "UI") -> None:
+	def __init__(self, ui: UI) -> None:
 		logging.Handler.__init__(self)
 		self._ui = weakref.ref(ui)
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import slint
 
 from .utils import SLINT_STYLES, load_slint, weakCallback
 
 if TYPE_CHECKING:
-	pass
+	from collections.abc import Callable
 
 __all__ = ["ThemeDialog"]
 
@@ -27,7 +27,7 @@ class ThemeDialog:
 		self,
 		currentStyle: str,
 		onOk: Callable[[str], None],
-		onClose: Callable[["ThemeDialog"], None],
+		onClose: Callable[[ThemeDialog], None],
 	) -> None:
 		self._onOk = onOk
 		self._onClose = onClose

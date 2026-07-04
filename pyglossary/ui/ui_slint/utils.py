@@ -4,20 +4,23 @@ import logging
 import weakref
 from os.path import dirname, isfile, join
 from pathlib import Path
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import slint
 
 from pyglossary.core import confDir, homeDir, sysName
 
+if TYPE_CHECKING:
+	from collections.abc import Callable
+
 __all__ = [
 	"SLINT_STYLES",
+	"levelColor",
+	"loadFcdDir",
 	# "disableMacWindowTabbing",
 	"load_slint",
-	"levelColor",
 	"pickOpenFile",
 	"pickSaveFile",
-	"loadFcdDir",
 	"saveFcdDir",
 	"setSlintStyle",
 	"weakCallback",

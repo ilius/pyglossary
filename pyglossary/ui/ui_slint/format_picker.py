@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import slint
 
 from .utils import load_slint, weakCallback
 
 if TYPE_CHECKING:
-	pass
+	from collections.abc import Callable
 
 __all__ = ["FormatPicker"]
 
@@ -25,7 +25,7 @@ class FormatPicker:
 		descList: list[str],
 		activeDesc: str,
 		onSelect: Callable[[str], None],
-		onClose: Callable[["FormatPicker"], None],
+		onClose: Callable[[FormatPicker], None],
 	) -> None:
 		self._all = list(descList)
 		self._shown: list[str] = list(descList)

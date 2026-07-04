@@ -58,9 +58,9 @@ from .options_dialog import FormatOptionsDialog
 from .theme_dialog import ThemeDialog
 from .utils import (
 	SLINT_STYLES,
+	load_slint,
 	# disableMacWindowTabbing,
 	loadFcdDir,
-	load_slint,
 	saveFcdDir,
 	setSlintStyle,
 	weakCallback,
@@ -258,9 +258,9 @@ class UI(UIBase):
 
 		header = getAboutHeader("Slint", slintVersion)
 		authorsText = ("\n".join(authors)
-		               .replace("\u26AB\uFE0E", "-")
-		               .replace("\t", "    ")
-		               )
+			.replace("\u26AB\uFE0E", "-")
+			.replace("\t", "    ")
+		)
 		return "\n\n".join(
 			[
 				header,
@@ -728,14 +728,14 @@ class UI(UIBase):
 
 		Two-part mitigation, both required:
 		1. Explicitly drop every slint object this module still holds (main
-		   window, console list model, secondary dialog controllers) here, on
-		   the event-loop thread, while it's still safe to do so -- so nothing
-		   slint-related is left for CPython's normal finalization to clear
-		   later on a different/unknown thread.
+			window, console list model, secondary dialog controllers) here, on
+			the event-loop thread, while it's still safe to do so -- so nothing
+			slint-related is left for CPython's normal finalization to clear
+			later on a different/unknown thread.
 		2. Bypass normal CPython interpreter finalization entirely via
-		   `os._exit()`, since we're quitting anyway -- this skips
-		   `sys.modules` clearing, GC finalization and atexit handlers, so
-		   nothing can run (safely or not) after this point.
+			`os._exit()`, since we're quitting anyway -- this skips
+			`sys.modules` clearing, GC finalization and atexit handlers, so
+			nothing can run (safely or not) after this point.
 		"""
 		for handler in list(log.handlers):
 			try:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import slint
 
@@ -11,6 +11,8 @@ from pyglossary.ui.config import configDefDict
 from .utils import load_slint, weakCallback
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from .ui import UI
 
 __all__ = ["GeneralOptionsDialog"]
@@ -42,9 +44,9 @@ class GeneralOptionsDialog:
 
 	def __init__(
 		self,
-		ui: "UI",
+		ui: UI,
 		onOk: Callable[[], None],
-		onClose: Callable[["GeneralOptionsDialog"], None],
+		onClose: Callable[[GeneralOptionsDialog], None],
 	) -> None:
 		self.ui = ui
 		self._onOk = onOk

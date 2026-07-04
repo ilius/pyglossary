@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import slint
 
@@ -10,7 +10,7 @@ from pyglossary.glossary_v2 import Glossary
 from .utils import load_slint, weakCallback
 
 if TYPE_CHECKING:
-	pass
+	from collections.abc import Callable
 
 __all__ = ["FormatOptionsDialog"]
 
@@ -47,7 +47,7 @@ class FormatOptionsDialog:
 		kind: str,  # "Read" or "Write"
 		values: dict[str, Any],
 		onOk: Callable[[dict[str, Any]], None],
-		onClose: Callable[["FormatOptionsDialog"], None],
+		onClose: Callable[[FormatOptionsDialog], None],
 	) -> None:
 		pluginByDesc = {p.description: p for p in Glossary.plugins.values()}
 		plugin = pluginByDesc.get(formatDesc)

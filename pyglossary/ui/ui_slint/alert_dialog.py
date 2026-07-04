@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from .utils import load_slint, weakCallback
 
 if TYPE_CHECKING:
-	pass
+	from collections.abc import Callable
 
 __all__ = ["AlertDialog"]
 
@@ -22,7 +22,7 @@ class AlertDialog:
 	def __init__(
 		self,
 		message: str,
-		onClose: Callable[["AlertDialog"], None],
+		onClose: Callable[[AlertDialog], None],
 	) -> None:
 		self._onClose = onClose
 
