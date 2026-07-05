@@ -2,7 +2,7 @@ name: Build for Windows x86_64 (Slint)
 on:
   push:
     branches:
-      - 'build-release'
+      - 'build-release-slint'
     paths-ignore:
       - 'doc/**'
       - '*.md'

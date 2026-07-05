@@ -4,7 +4,7 @@ name: Build for MacOS x86_64 / arm64 (Slint)
 on:
   push:
     branches:
-      - 'build-release'
+      - 'build-release-slint'
   workflow_dispatch:
 
 concurrency:
