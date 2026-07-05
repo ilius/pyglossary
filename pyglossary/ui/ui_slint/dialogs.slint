@@ -2,10 +2,11 @@
 //
 // Secondary (non-modal) windows used by the Slint UI:
 //   - FormatPickerDialog : searchable list to pick an input/output format
-//   - OptionsMenuDialog  : the 4-entry "Options ▾" menu
 //   - OptionsDialog      : generic Read/Write format-options editor
 //   - GeneralOptionsDialog : sort / sqlite / general config toggles
 //   - InfoDialog         : name / sourceLang / targetLang metadata editor
+//   - ThemeDialog        : pick built-in Slint widget style (radio buttons)
+//   - AlertDialog        : single-button informational message box
 //
 // All are opened from Python with `.show()` (non-blocking); results are
 // delivered back through callbacks or read back from in-out properties on OK.
@@ -163,110 +164,109 @@ export component FormatPickerDialog inherits Window {
 }
 
 // ============================================================
-// OptionsMenuDialog  (the "Options ▾" menu)
-// ============================================================
-export component OptionsMenuDialog inherits Window {
-    title: "Options";
-    preferred-width: 280px;
-    preferred-height: 280px;
-
-    callback read-options();
-    callback write-options();
-    callback general-options();
-    callback info-options();
-    callback theme-options();
-    callback close-menu();
-
-    VerticalLayout {
-        spacing: 8px;
-        padding: 12px;
-        Button {
-            text: "Read Options";
-            clicked => { root.read-options(); }
-        }
-
-        Button {
-            text: "Write Options";
-            clicked => { root.write-options(); }
-        }
-
-        Button {
-            text: "General Options";
-            clicked => { root.general-options(); }
-        }
-
-        Button {
-            text: "Info / Metadata";
-            clicked => { root.info-options(); }
-        }
-
-        Button {
-            text: "Theme";
-            clicked => { root.theme-options(); }
-        }
-
-        Rectangle {
-            vertical-stretch: 1;
-        }
-
-        Button {
-            text: "Close";
-            clicked => { root.close-menu(); }
-        }
-    }
-}
-
-// ============================================================
 // ThemeDialog  (pick a built-in Slint widget style; applied on next launch)
 // ============================================================
 export component ThemeDialog inherits Window {
     title: "Theme";
     preferred-width: 320px;
-    preferred-height: 180px;
+    preferred-height: 260px;
 
     // `theme-names` and `theme-values` are parallel arrays: `theme-names` are
-    // the human-readable labels shown in the combo box, `theme-values` are
-    // the corresponding slint style identifiers (see utils.py / ui.py); the
-    // caller reads back the chosen style via `current-index`.
+    // the human-readable labels shown in the list, `theme-values` are the
+    // corresponding slint style identifiers (see utils.py / ui.py); the caller
+    // reads back the chosen style via `current-index`.
     in-out property <[string]> theme-names: [];
     in-out property <int> current-index: -1;
 
     callback ok();
     callback cancel();
 
-    VerticalLayout {
-        spacing: 12px;
-        padding: 12px;
+    FocusScope {
+        forward-focus: cancel-btn;
 
-        Text {
-            text: "Widget style. Takes effect after restarting the app.";
-            wrap: word-wrap;
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return EventResult.accept;
+            }
+            return EventResult.reject;
         }
 
-        ComboBox {
-            model: root.theme-names;
-            current-index <=> root.current-index;
-        }
+        VerticalLayout {
+            spacing: 12px;
+            padding: 12px;
 
-        Rectangle {
-            vertical-stretch: 1;
-        }
-
-        HorizontalLayout {
-            spacing: 8px;
-            alignment: end;
-            Button {
-                text: "Cancel";
-                clicked => { root.cancel(); }
+            Text {
+                text: "Widget style. Takes effect after restarting the app.";
+                wrap: word-wrap;
             }
 
-            Button {
-                text: "  OK  ";
-                primary: true;
-                clicked => { root.ok(); }
+            Rectangle {
+                vertical-stretch: 1;
+                border-width: 1px;
+                border-color: Palette.border;
+                background: Palette.background;
+
+                ScrollView {
+                    VerticalLayout {
+                        padding: 4px;
+                        spacing: 2px;
+                        alignment: start;
+
+                        for theme[i] in root.theme-names: Rectangle {
+                            height: 32px;
+                            border-radius: 4px;
+                            background: touch.has-hover
+                                ? Palette.alternate-background
+                                : transparent;
+
+                            HorizontalLayout {
+                                spacing: 10px;
+
+                                Rectangle {
+                                    width: 4px;
+                                    border-radius: 2px;
+                                    background: i == root.current-index
+                                        ? Palette.accent-foreground
+                                        : transparent;
+                                }
+
+                                Text {
+                                    text: theme;
+                                    color: Palette.foreground;
+                                    vertical-alignment: center;
+                                }
+                            }
+
+                            touch := TouchArea {
+                                clicked => {
+                                    root.current-index = i;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: end;
+
+                cancel-btn := Button {
+                    text: "Cancel";
+                    clicked => { root.cancel(); }
+                }
+
+                Button {
+                    text: "  OK  ";
+                    primary: true;
+                    clicked => { root.ok(); }
+                }
             }
         }
     }
+
+    init => { cancel-btn.focus(); }
 }
 
 // ============================================================
@@ -331,117 +331,132 @@ export component OptionsDialog inherits Window {
     callback ok();
     callback cancel();
 
-    VerticalLayout {
-        spacing: 8px;
-        padding: 12px;
+    FocusScope {
+        forward-focus: cancel-btn;
 
-        Text {
-            text: root.title-text;
-            font-size: 14px;
-            font-weight: 700;
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return EventResult.accept;
+            }
+            return EventResult.reject;
         }
 
-        Rectangle {
-            vertical-stretch: 1;
-            ScrollView {
-                VerticalLayout {
-                    spacing: 10px;
-                    padding: 4px;
-                    alignment: start;
+        VerticalLayout {
+            spacing: 8px;
+            padding: 12px;
 
-                    for opt[i] in root.options: VerticalLayout {
-                        spacing: 4px;
+            Text {
+                text: root.title-text;
+                font-size: 14px;
+                font-weight: 700;
+            }
 
-                        Text {
-                            text: opt.comment;
-                            font-size: 12px;
-                            // theme-aware (was hardcoded #444444, unreadable
-                            // in dark mode); slightly dimmed vs. normal text
-                            color: Palette.foreground.transparentize(0.25);
-                        }
+            Rectangle {
+                vertical-stretch: 1;
+                ScrollView {
+                    VerticalLayout {
+                        spacing: 10px;
+                        padding: 4px;
+                        alignment: start;
 
-                        if opt.kind == "bool": HorizontalLayout {
-                            spacing: 8px;
-                            Switch {
-                                text: opt.name;
-                                checked: opt.bool-value;
-                                toggled => { root.set-bool(i, self.checked); }
-                            }
-                        }
+                        for opt[i] in root.options: VerticalLayout {
+                            spacing: 4px;
 
-                        if opt.kind == "int": HorizontalLayout {
-                            spacing: 8px;
-                            // pin the cross-axis height so the control keeps its
-                            // natural size instead of stretching vertically
-                            height: 32px;
                             Text {
-                                text: opt.name;
-                                vertical-alignment: center;
-                                width: 180px;
+                                text: opt.comment;
+                                font-size: 12px;
+                                // theme-aware (was hardcoded #444444, unreadable
+                                // in dark mode); slightly dimmed vs. normal text
+                                color: Palette.foreground.transparentize(0.25);
                             }
 
-                            SpinBox {
-                                value: opt.int-value;
-                                minimum: 0;
-                                maximum: 1000000000;
-                                edited(v) => { root.set-int(i, v); }
-                                horizontal-stretch: 1;
-                            }
-                        }
-
-                        if opt.kind == "choice": HorizontalLayout {
-                            spacing: 8px;
-                            // pin the cross-axis height: ComboBox has no bounded
-                            // max-height and would otherwise stretch vertically
-                            height: 32px;
-                            Text {
-                                text: opt.name;
-                                vertical-alignment: center;
-                                width: 180px;
+                            if opt.kind == "bool": HorizontalLayout {
+                                spacing: 8px;
+                                Switch {
+                                    text: opt.name;
+                                    checked: opt.bool-value;
+                                    toggled => { root.set-bool(i, self.checked); }
+                                }
                             }
 
-                            ComboBox {
-                                model: opt.choices;
-                                current-value: opt.current-choice;
-                                selected(v) => { root.set-choice(i, v); }
-                            }
-                        }
+                            if opt.kind == "int": HorizontalLayout {
+                                spacing: 8px;
+                                // pin the cross-axis height so the control keeps its
+                                // natural size instead of stretching vertically
+                                height: 32px;
+                                Text {
+                                    text: opt.name;
+                                    vertical-alignment: center;
+                                    width: 180px;
+                                }
 
-                        if opt.kind == "str": HorizontalLayout {
-                            spacing: 8px;
-                            height: 32px;
-                            Text {
-                                text: opt.name;
-                                vertical-alignment: center;
-                                width: 180px;
+                                SpinBox {
+                                    value: opt.int-value;
+                                    minimum: 0;
+                                    maximum: 1000000000;
+                                    edited(v) => { root.set-int(i, v); }
+                                    horizontal-stretch: 1;
+                                }
                             }
 
-                            LineEdit {
-                                text: opt.str-value;
-                                edited(v) => { root.set-str(i, v); }
-                                horizontal-stretch: 1;
+                            if opt.kind == "choice": HorizontalLayout {
+                                spacing: 8px;
+                                // pin the cross-axis height: ComboBox has no bounded
+                                // max-height and would otherwise stretch vertically
+                                height: 32px;
+                                Text {
+                                    text: opt.name;
+                                    vertical-alignment: center;
+                                    width: 180px;
+                                }
+
+                                ComboBox {
+                                    model: opt.choices;
+                                    current-value: opt.current-choice;
+                                    selected(v) => { root.set-choice(i, v); }
+                                }
+                            }
+
+                            if opt.kind == "str": HorizontalLayout {
+                                spacing: 8px;
+                                height: 32px;
+                                Text {
+                                    text: opt.name;
+                                    vertical-alignment: center;
+                                    width: 180px;
+                                }
+
+                                LineEdit {
+                                    text: opt.str-value;
+                                    edited(v) => { root.set-str(i, v); }
+                                    horizontal-stretch: 1;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        HorizontalLayout {
-            spacing: 8px;
-            alignment: end;
-            Button {
-                text: "Cancel";
-                clicked => { root.cancel(); }
-            }
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: end;
 
-            Button {
-                text: "  OK  ";
-                primary: true;
-                clicked => { root.ok(); }
+                cancel-btn := Button {
+                    text: "Cancel";
+                    clicked => { root.cancel(); }
+                }
+
+                Button {
+                    text: "  OK  ";
+                    primary: true;
+                    clicked => { root.ok(); }
+                }
             }
         }
     }
+
+    init => { cancel-btn.focus(); }
 }
 
 // ============================================================
@@ -474,88 +489,103 @@ export component GeneralOptionsDialog inherits Window {
     callback ok();
     callback cancel();
 
-    VerticalLayout {
-        spacing: 10px;
-        padding: 12px;
+    FocusScope {
+        forward-focus: cancel-btn;
 
-        HorizontalLayout {
-            spacing: 8px;
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return EventResult.accept;
+            }
+            return EventResult.reject;
+        }
+
+        VerticalLayout {
+            spacing: 10px;
+            padding: 12px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                Switch {
+                    text: "Sort entries by";
+                    checked <=> root.sort-enabled;
+                }
+
+                ComboBox {
+                    model: root.sort-key-descs;
+                    current-value <=> root.current-sort-key;
+                    horizontal-stretch: 1;
+                    enabled: root.sort-enabled;
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 8px;
+                Switch {
+                    text: "Sort Encoding";
+                    checked <=> root.sort-encoding-enabled;
+                    enabled: root.sort-enabled;
+                }
+
+                LineEdit {
+                    text <=> root.sort-encoding;
+                    enabled: root.sort-enabled && root.sort-encoding-enabled;
+                    width: 160px;
+                }
+
+                Text {
+                    text: "Locale";
+                    vertical-alignment: center;
+                }
+
+                LineEdit {
+                    text <=> root.sort-locale;
+                    enabled: root.sort-enabled;
+                    horizontal-stretch: 1;
+                }
+            }
+
             Switch {
-                text: "Sort entries by";
-                checked <=> root.sort-enabled;
+                text: "SQLite mode";
+                checked <=> root.sqlite-enabled;
             }
 
-            ComboBox {
-                model: root.sort-key-descs;
-                current-value <=> root.current-sort-key;
-                horizontal-stretch: 1;
-                enabled: root.sort-enabled;
-            }
-        }
-
-        HorizontalLayout {
-            spacing: 8px;
-            Switch {
-                text: "Sort Encoding";
-                checked <=> root.sort-encoding-enabled;
-                enabled: root.sort-enabled;
-            }
-
-            LineEdit {
-                text <=> root.sort-encoding;
-                enabled: root.sort-enabled && root.sort-encoding-enabled;
-                width: 160px;
-            }
-
-            Text {
-                text: "Locale";
-                vertical-alignment: center;
-            }
-
-            LineEdit {
-                text <=> root.sort-locale;
-                enabled: root.sort-enabled;
-                horizontal-stretch: 1;
-            }
-        }
-
-        Switch {
-            text: "SQLite mode";
-            checked <=> root.sqlite-enabled;
-        }
-
-        Rectangle {
-            vertical-stretch: 1;
-            border-width: 1px;
-            border-color: Palette.border;
-            ScrollView {
-                VerticalLayout {
-                    padding: 8px;
-                    spacing: 6px;
-                    for c[i] in root.config-checks: Switch {
-                        text: c.comment;
-                        checked: c.value;
-                        toggled => { root.set-config(i, self.checked); }
+            Rectangle {
+                vertical-stretch: 1;
+                border-width: 1px;
+                border-color: Palette.border;
+                ScrollView {
+                    VerticalLayout {
+                        padding: 8px;
+                        spacing: 6px;
+                        for c[i] in root.config-checks: Switch {
+                            text: c.comment;
+                            checked: c.value;
+                            toggled => { root.set-config(i, self.checked); }
+                        }
                     }
                 }
             }
-        }
 
-        HorizontalLayout {
-            spacing: 8px;
-            alignment: end;
-            Button {
-                text: "Cancel";
-                clicked => { root.cancel(); }
-            }
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: end;
 
-            Button {
-                text: "  OK  ";
-                primary: true;
-                clicked => { root.ok(); }
+                cancel-btn := Button {
+                    text: "Cancel";
+                    clicked => { root.cancel(); }
+                }
+
+                Button {
+                    text: "  OK  ";
+                    primary: true;
+                    clicked => { root.ok(); }
+                }
             }
         }
     }
+
+    init => { cancel-btn.focus(); }
 }
 
 // ============================================================
@@ -574,69 +604,83 @@ export component InfoDialog inherits Window {
     callback ok();
     callback cancel();
 
-    VerticalLayout {
-        spacing: 10px;
-        padding: 12px;
+    FocusScope {
+        forward-focus: name-input;
 
-        HorizontalLayout {
-            spacing: 8px;
-            Text {
-                text: "Glossary Name";
-                vertical-alignment: center;
-                width: 140px;
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return EventResult.accept;
             }
-
-            LineEdit {
-                text <=> root.name-value;
-                horizontal-stretch: 1;
-            }
+            return EventResult.reject;
         }
 
-        HorizontalLayout {
-            spacing: 8px;
-            Text {
-                text: "Source Language";
-                vertical-alignment: center;
-                width: 140px;
+        VerticalLayout {
+            spacing: 10px;
+            padding: 12px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                Text {
+                    text: "Glossary Name";
+                    vertical-alignment: center;
+                    width: 140px;
+                }
+
+                name-input := LineEdit {
+                    text <=> root.name-value;
+                    horizontal-stretch: 1;
+                }
             }
 
-            LineEdit {
-                text <=> root.source-lang;
-                horizontal-stretch: 1;
-            }
-        }
+            HorizontalLayout {
+                spacing: 8px;
+                Text {
+                    text: "Source Language";
+                    vertical-alignment: center;
+                    width: 140px;
+                }
 
-        HorizontalLayout {
-            spacing: 8px;
-            Text {
-                text: "Target Language";
-                vertical-alignment: center;
-                width: 140px;
-            }
-
-            LineEdit {
-                text <=> root.target-lang;
-                horizontal-stretch: 1;
-            }
-        }
-
-        Rectangle {
-            vertical-stretch: 1;
-        }
-
-        HorizontalLayout {
-            spacing: 8px;
-            alignment: end;
-            Button {
-                text: "Cancel";
-                clicked => { root.cancel(); }
+                LineEdit {
+                    text <=> root.source-lang;
+                    horizontal-stretch: 1;
+                }
             }
 
-            Button {
-                text: "  OK  ";
-                primary: true;
-                clicked => { root.ok(); }
+            HorizontalLayout {
+                spacing: 8px;
+                Text {
+                    text: "Target Language";
+                    vertical-alignment: center;
+                    width: 140px;
+                }
+
+                LineEdit {
+                    text <=> root.target-lang;
+                    horizontal-stretch: 1;
+                }
+            }
+
+            Rectangle {
+                vertical-stretch: 1;
+            }
+
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: end;
+                Button {
+                    text: "Cancel";
+                    clicked => { root.cancel(); }
+                }
+
+                Button {
+                    text: "  OK  ";
+                    primary: true;
+                    clicked => { root.ok(); }
+                }
             }
         }
     }
+
+    init => { name-input.focus(); }
 }

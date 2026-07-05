@@ -59,7 +59,6 @@ from .theme_dialog import ThemeDialog
 from .utils import (
 	SLINT_STYLES,
 	load_slint,
-	# disableMacWindowTabbing,
 	loadFcdDir,
 	saveFcdDir,
 	setSlintStyle,
@@ -122,33 +121,6 @@ def _runConvert(
 			pass
 
 
-class _OptionsMenuController:
-	"""
-	Tiny controller for the pop-up options menu.
-
-	Its only reason to exist is lifetime hygiene: the UI keeps this plain-Python
-	object alive in its dialog-retention set, while the Slint menu component
-	points back only through weak callbacks. The menu is therefore never a member
-	of a reference cycle and is freed by reference counting on the event-loop
-	thread the moment this controller is dropped from the set.
-	"""
-
-	def __init__(self, ui: UI) -> None:
-		self._ui = ui
-		self.dialog = load_slint("dialogs.slint").OptionsMenuDialog()
-		self.dialog.read_options = weakCallback(ui._openReadOptions)
-		self.dialog.write_options = weakCallback(ui._openWriteOptions)
-		self.dialog.general_options = weakCallback(ui._openGeneralOptions)
-		self.dialog.info_options = weakCallback(ui._openInfo)
-		self.dialog.theme_options = weakCallback(ui._openTheme)
-		self.dialog.close_menu = weakCallback(self._close)
-		self.dialog.show()
-
-	def _close(self) -> None:
-		self.dialog.hide()
-		self._ui._unref(self)
-
-
 class UI(UIBase):
 	"""Slint front-end for PyGlossary."""
 
@@ -162,11 +134,6 @@ class UI(UIBase):
 		# Must happen before the first load_slint() call below (which compiles
 		# main_window.slint with this style baked in) -- see setSlintStyle.
 		setSlintStyle(self.config.get("ui_slint_theme", ""))
-
-		# Best-effort, macOS-only, no-op unless running from the .app bundle --
-		# must run before any window (including the main one) is created. See
-		# disableMacWindowTabbing.
-		# disableMacWindowTabbing()
 
 		if not Glossary.readFormats:
 			# idempotent: mainPrepare already calls Glossary.init() in normal
@@ -228,7 +195,7 @@ class UI(UIBase):
 		w.browse_output_file = weakCallback(self._browseOutput)
 		w.choose_input_format = weakCallback(self._chooseInputFormat)
 		w.choose_output_format = weakCallback(self._chooseOutputFormat)
-		w.show_options = weakCallback(self._showOptionsMenu)
+		w.options_selected = weakCallback(self._onOptionsSelected)
 		w.start_convert = weakCallback(self.convert)
 		w.clear_console = weakCallback(self._clearConsole)
 		w.verbosity_changed = weakCallback(self._verbosityChanged)
@@ -489,14 +456,19 @@ class UI(UIBase):
 		self._ref(picker)
 
 	# -------------------------------------------------------------
-	# Options menu + sub-dialogs
+	# Options dropdown + sub-dialogs
 	# -------------------------------------------------------------
-	def _showOptionsMenu(self) -> None:
-		# Wrapped in a plain-Python controller (not driven inline) so the weak
-		# reference for the close callback is taken on the controller rather than
-		# on the Slint component itself (pyo3 objects are not weak-referenceable),
-		# and so the menu component is never part of a reference cycle.
-		self._ref(_OptionsMenuController(self))
+	def _onOptionsSelected(self, value: str) -> None:
+		if value == "Read Options":
+			self._openReadOptions()
+		elif value == "Write Options":
+			self._openWriteOptions()
+		elif value == "General Options":
+			self._openGeneralOptions()
+		elif value == "Info / Metadata":
+			self._openInfo()
+		elif value == "Theme":
+			self._openTheme()
 
 	def _openReadOptions(self) -> None:
 		if not self._inFormat:

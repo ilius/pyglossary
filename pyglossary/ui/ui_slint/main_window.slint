@@ -167,7 +167,7 @@ export component MainWindow inherits Window {
     callback browse-output-file();
     callback choose-input-format();
     callback choose-output-format();
-    callback show-options();
+    callback options-selected(string);
     callback start-convert();
     callback clear-console();
     callback verbosity-changed(string);
@@ -284,9 +284,16 @@ export component MainWindow inherits Window {
 
                     HorizontalLayout {
                         spacing: 6px;
-                        Button {
-                            text: "Options";
-                            clicked => { root.show-options(); }
+                        UpComboBox {
+                            model: ["Options", "Read Options", "Write Options", "General Options", "Info / Metadata", "Theme"];
+                            current-value: "Options";
+                            selected(value) => {
+                                if (value != "Options") {
+                                    root.options-selected(value);
+                                }
+                                self.current-value = "Options";
+                            }
+                            width: 140px;
                         }
 
                         Button {
