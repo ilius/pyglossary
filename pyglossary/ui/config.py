@@ -145,7 +145,21 @@ configDefDict: dict[str, Option] = {
 	"ui_autoSetFormat": BoolOption(hasFlag=False),
 	"ui_slint_theme": StrOption(
 		hasFlag=False,
-		values=["", "fluent", "material", "cupertino", "cosmic"],
+		values=[
+			"",
+			"fluent",
+			"fluent-light",
+			"fluent-dark",
+			"material",
+			"material-light",
+			"material-dark",
+			"cupertino",
+			"cupertino-light",
+			"cupertino-dark",
+			"cosmic",
+			"cosmic-light",
+			"cosmic-dark",
+		],
 		comment="Slint UI: widget style/theme, empty means system default"
 		" (applied on next launch)",
 	),

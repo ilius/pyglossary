@@ -45,9 +45,17 @@ _SLINT_CACHE: dict[tuple[str, str], Any] = {}
 SLINT_STYLES: list[tuple[str, str]] = [
 	("System default", ""),
 	("Fluent", "fluent"),
+	("Fluent Light", "fluent-light"),
+	("Fluent Dark", "fluent-dark"),
 	("Material", "material"),
+	("Material Light", "material-light"),
+	("Material Dark", "material-dark"),
 	("Cupertino", "cupertino"),
+	("Cupertino Light", "cupertino-light"),
+	("Cupertino Dark", "cupertino-dark"),
 	("Cosmic", "cosmic"),
+	("Cosmic Light", "cosmic-light"),
+	("Cosmic Dark", "cosmic-dark"),
 ]
 
 # The style every subsequent load_slint() call compiles with, until changed
