@@ -459,16 +459,18 @@ class UI(UIBase):
 	# Options dropdown + sub-dialogs
 	# -------------------------------------------------------------
 	def _onOptionsSelected(self, value: str) -> None:
-		if value == "Read Options":
-			self._openReadOptions()
-		elif value == "Write Options":
-			self._openWriteOptions()
-		elif value == "General Options":
-			self._openGeneralOptions()
-		elif value == "Info / Metadata":
-			self._openInfo()
-		elif value == "Theme":
-			self._openTheme()
+		# keys must match the UpComboBox model in main_window.slint
+		handler = {
+			"Read Options": self._openReadOptions,
+			"Write Options": self._openWriteOptions,
+			"General Options": self._openGeneralOptions,
+			"Info / Metadata": self._openInfo,
+			"Theme": self._openTheme,
+		}.get(value)
+		if handler is None:
+			log.error(f"unknown Options entry {value!r}")
+			return
+		handler()
 
 	def _openReadOptions(self) -> None:
 		if not self._inFormat:

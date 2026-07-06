@@ -25,6 +25,37 @@ import {
 } from "std-widgets.slint";
 
 // ============================================================
+// DialogKeys
+// ============================================================
+// Shared keyboard shell for the simple OK/Cancel dialogs: Return fires
+// `submit` (wire to root.ok()), Escape fires `dismiss` (wire to
+// root.cancel()); anything else is left to the focused widget. Grabs focus on
+// init and forwards it to whatever element the dialog names via
+// `forward-focus`, so the shortcuts work immediately without a per-dialog
+// `init => { ....focus(); }` line. FormatPickerDialog keeps its own
+// FocusScope because it additionally drives Up/Down list navigation.
+component DialogKeys inherits FocusScope {
+    callback submit();
+    callback dismiss();
+
+    key-pressed(event) => {
+        if (event.text == Key.Return) {
+            root.submit();
+            return EventResult.accept;
+        }
+        if (event.text == Key.Escape) {
+            root.dismiss();
+            return EventResult.accept;
+        }
+        return EventResult.reject;
+    }
+
+    init => { self.focus(); }
+
+    @children
+}
+
+// ============================================================
 // FormatPickerDialog
 // ============================================================
 export component FormatPickerDialog inherits Window {
@@ -181,16 +212,10 @@ export component ThemeDialog inherits Window {
     callback ok();
     callback cancel();
 
-    FocusScope {
-        forward-focus: cancel-btn;
-
-        key-pressed(event) => {
-            if (event.text == Key.Escape) {
-                root.cancel();
-                return EventResult.accept;
-            }
-            return EventResult.reject;
-        }
+    DialogKeys {
+        forward-focus: ok-btn;
+        submit => { root.ok(); }
+        dismiss => { root.cancel(); }
 
         VerticalLayout {
             spacing: 12px;
@@ -252,12 +277,12 @@ export component ThemeDialog inherits Window {
                 spacing: 8px;
                 alignment: end;
 
-                cancel-btn := Button {
+                Button {
                     text: "Cancel";
                     clicked => { root.cancel(); }
                 }
 
-                Button {
+                ok-btn := Button {
                     text: "  OK  ";
                     primary: true;
                     clicked => { root.ok(); }
@@ -265,8 +290,6 @@ export component ThemeDialog inherits Window {
             }
         }
     }
-
-    init => { cancel-btn.focus(); }
 }
 
 // ============================================================
@@ -331,16 +354,10 @@ export component OptionsDialog inherits Window {
     callback ok();
     callback cancel();
 
-    FocusScope {
-        forward-focus: cancel-btn;
-
-        key-pressed(event) => {
-            if (event.text == Key.Escape) {
-                root.cancel();
-                return EventResult.accept;
-            }
-            return EventResult.reject;
-        }
+    DialogKeys {
+        forward-focus: ok-btn;
+        submit => { root.ok(); }
+        dismiss => { root.cancel(); }
 
         VerticalLayout {
             spacing: 8px;
@@ -442,12 +459,12 @@ export component OptionsDialog inherits Window {
                 spacing: 8px;
                 alignment: end;
 
-                cancel-btn := Button {
+                Button {
                     text: "Cancel";
                     clicked => { root.cancel(); }
                 }
 
-                Button {
+                ok-btn := Button {
                     text: "  OK  ";
                     primary: true;
                     clicked => { root.ok(); }
@@ -455,8 +472,6 @@ export component OptionsDialog inherits Window {
             }
         }
     }
-
-    init => { cancel-btn.focus(); }
 }
 
 // ============================================================
@@ -489,16 +504,10 @@ export component GeneralOptionsDialog inherits Window {
     callback ok();
     callback cancel();
 
-    FocusScope {
-        forward-focus: cancel-btn;
-
-        key-pressed(event) => {
-            if (event.text == Key.Escape) {
-                root.cancel();
-                return EventResult.accept;
-            }
-            return EventResult.reject;
-        }
+    DialogKeys {
+        forward-focus: ok-btn;
+        submit => { root.ok(); }
+        dismiss => { root.cancel(); }
 
         VerticalLayout {
             spacing: 10px;
@@ -571,12 +580,12 @@ export component GeneralOptionsDialog inherits Window {
                 spacing: 8px;
                 alignment: end;
 
-                cancel-btn := Button {
+                Button {
                     text: "Cancel";
                     clicked => { root.cancel(); }
                 }
 
-                Button {
+                ok-btn := Button {
                     text: "  OK  ";
                     primary: true;
                     clicked => { root.ok(); }
@@ -584,8 +593,6 @@ export component GeneralOptionsDialog inherits Window {
             }
         }
     }
-
-    init => { cancel-btn.focus(); }
 }
 
 // ============================================================
@@ -604,16 +611,10 @@ export component InfoDialog inherits Window {
     callback ok();
     callback cancel();
 
-    FocusScope {
+    DialogKeys {
         forward-focus: name-input;
-
-        key-pressed(event) => {
-            if (event.text == Key.Escape) {
-                root.cancel();
-                return EventResult.accept;
-            }
-            return EventResult.reject;
-        }
+        submit => { root.ok(); }
+        dismiss => { root.cancel(); }
 
         VerticalLayout {
             spacing: 10px;
@@ -681,6 +682,4 @@ export component InfoDialog inherits Window {
             }
         }
     }
-
-    init => { name-input.focus(); }
 }

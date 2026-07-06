@@ -285,12 +285,14 @@ export component MainWindow inherits Window {
                     HorizontalLayout {
                         spacing: 6px;
                         UpComboBox {
-                            model: ["Options", "Read Options", "Write Options", "General Options", "Info / Metadata", "Theme"];
+                            // "Options" is only the closed-state caption, not
+                            // a model entry, so the popup lists actions only
+                            model: ["Read Options", "Write Options", "General Options", "Info / Metadata", "Theme"];
                             current-value: "Options";
                             selected(value) => {
-                                if (value != "Options") {
-                                    root.options-selected(value);
-                                }
+                                root.options-selected(value);
+                                // restore the static caption instead of
+                                // showing the last-picked action as selection
                                 self.current-value = "Options";
                             }
                             width: 140px;
