@@ -21,6 +21,7 @@ import {
     ComboBox,
     VerticalBox,
     Palette,
+    RadioGroup,
     StandardButton,
 } from "std-widgets.slint";
 
@@ -220,6 +221,43 @@ export component ThemeDialog inherits Window {
         return i < 0 ? 0 : (i >= root.theme-names.length ? root.theme-names.length - 1 : i);
     }
 
+    // ScrollView has no built-in scroll-into-view; nudge `viewport-y` just
+    // enough that row `i` is fully visible, with a small margin so the next
+    // row peeks through. Row geometry is derived arithmetically (uniform
+    // GridLayout rows with 8px spacing, 8px list padding) rather than read
+    // from the buttons: mutating `viewport-y` from a per-button `changed`
+    // handler re-enters layout and panics this slint version, so this must
+    // only be called from plain callback context (key handler, timer).
+    function reveal-index(i: int) {
+        if (i < 0 || root.theme-names.length == 0) {
+            return;
+        }
+        row-h = (theme-group.height - (root.theme-names.length - 1) * 8px)
+            / root.theme-names.length;
+        row-top = 8px + i * (row-h + 8px);
+        if (row-top - 4px < -theme-scroll.viewport-y) {
+            theme-scroll.viewport-y = -(row-top - 4px);
+        } else if (row-top + row-h + 4px > -theme-scroll.viewport-y + theme-scroll.visible-height) {
+            theme-scroll.viewport-y = theme-scroll.visible-height - (row-top + row-h + 4px);
+        }
+    }
+
+    property <length> row-h;
+    property <length> row-top;
+    property <bool> armed: false;
+
+    // one-shot, post-layout: check the initially selected theme (see `want`)
+    // and bring it into view (geometry is all zeros at `init` time)
+    reveal-timer := Timer {
+        interval: 50ms;
+        running: true;
+        triggered => {
+            self.running = false;
+            root.armed = true;
+            root.reveal-index(root.current-index);
+        }
+    }
+
     DialogKeys {
         forward-focus: ok-btn;
         submit => { root.ok(); }
@@ -231,12 +269,14 @@ export component ThemeDialog inherits Window {
                 root.current-index = root.theme-names.length > 0
                     ? clamp-index(root.current-index + 1)
                     : -1;
+                root.reveal-index(root.current-index);
                 return EventResult.accept;
             }
             if (event.text == Key.UpArrow) {
                 root.current-index = root.theme-names.length > 0
                     ? clamp-index(root.current-index - 1)
                     : -1;
+                root.reveal-index(root.current-index);
                 return EventResult.accept;
             }
             return EventResult.reject;
@@ -257,62 +297,47 @@ export component ThemeDialog inherits Window {
                 border-color: Palette.border;
                 background: Palette.background;
 
-                ScrollView {
-                    VerticalLayout {
-                        padding: 4px;
-                        spacing: 2px;
+                theme-scroll := ScrollView {
+                    theme-list := VerticalLayout {
+                        padding: 8px;
                         alignment: start;
 
-                        // vertical radio-button list; std-widgets has no
-                        // RadioButton, so the indicator (ring + dot) is drawn
-                        // by hand from Palette colors to fit light and dark
-                        for theme[i] in root.theme-names: Rectangle {
-                            height: 32px;
-                            border-radius: 4px;
-                            background: touch.has-hover
-                                ? Palette.alternate-background
-                                : transparent;
-
-                            HorizontalLayout {
-                                padding-left: 8px;
-                                spacing: 10px;
-
-                                Rectangle {
-                                    width: 18px;
-
-                                    Rectangle {
-                                        width: 18px;
-                                        height: 18px;
-                                        x: 0;
-                                        y: (parent.height - self.height) / 2;
-                                        border-radius: self.width / 2;
-                                        border-width: 2px;
-                                        border-color: i == root.current-index
-                                            ? Palette.accent-background
-                                            : Palette.foreground.transparentize(0.55);
-                                        background: transparent;
-
-                                        if i == root.current-index: Rectangle {
-                                            width: 8px;
-                                            height: 8px;
-                                            x: (parent.width - self.width) / 2;
-                                            y: (parent.height - self.height) / 2;
-                                            border-radius: self.width / 2;
-                                            background: Palette.accent-background;
-                                        }
+                        // Native std-widgets radio buttons. This slint version
+                        // (1.17.0b2) exposes neither the group's `current-index`
+                        // element property nor its `select()` function (both
+                        // arrived in 1.17.0 final), so the dialog's
+                        // `current-index` stays the master and selection is
+                        // pushed into the group per button.
+                        //
+                        // Do NOT bind `checked:` to `current-index` directly:
+                        // the group *writes* to `checked` when reverting or
+                        // bridging state, which would silently detach such a
+                        // binding — after that, moving the selection back onto
+                        // this button (Up/Down keys) has no visual effect.
+                        // Instead `want` (a private property the group never
+                        // writes) tracks the dialog selection, and its change
+                        // handler forwards it through the supported push path
+                        // (an explicit `checked = true` write, which the
+                        // group's bridge keeps in sync from then on).
+                        // `toggled` mirrors mouse / Space selections back.
+                        theme-group := RadioGroup {
+                            for theme[i] in root.theme-names: RadioButton {
+                                text: theme;
+                                // gated on `armed`: a `changed` handler only
+                                // fires on transitions, so a want that is
+                                // already true at first evaluation would never
+                                // push the initial selection; flipping `armed`
+                                // post-layout forces that first transition
+                                property <bool> want: root.armed && i == root.current-index;
+                                changed want => {
+                                    if (self.want && !self.checked) {
+                                        self.checked = true;
                                     }
                                 }
-
-                                Text {
-                                    text: theme;
-                                    color: Palette.foreground;
-                                    vertical-alignment: center;
-                                }
-                            }
-
-                            touch := TouchArea {
-                                clicked => {
-                                    root.current-index = i;
+                                toggled => {
+                                    if (self.checked && root.current-index != i) {
+                                        root.current-index = i;
+                                    }
                                 }
                             }
                         }
