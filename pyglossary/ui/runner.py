@@ -17,9 +17,9 @@ if TYPE_CHECKING:
 
 __all__ = ["getRunner"]
 
-ui_list = ["gtk3", "gtk4", "qt6", "wx", "tk", "tk_wizard", "web"]
+ui_list = ["gtk3", "gtk4", "qt6", "wx", "tk", "tk_wizard", "web", "slint"]
 if os.sep == "\\" or sysName == "darwin":  # windows or mac
-	ui_list = ["qt6", "wx", "tk_wizard", "tk", "gtk3", "gtk4", "web"]
+	ui_list = ["qt6", "wx", "tk_wizard", "tk", "gtk3", "gtk4", "web", "slint"]
 
 log: logging.Logger | None = None
 
@@ -66,6 +66,12 @@ def load_ui_web() -> Callable:  # type: ignore[type-arg]
 	return UI
 
 
+def load_ui_slint() -> Callable:  # type: ignore[type-arg]
+	from pyglossary.ui.ui_slint import UI
+
+	return UI
+
+
 ui_loaders: dict[str, Callable] = {  # type: ignore[type-arg]
 	"gtk3": load_ui_gtk3,
 	"gtk4": load_ui_gtk4,
@@ -75,6 +81,7 @@ ui_loaders: dict[str, Callable] = {  # type: ignore[type-arg]
 	"tk": load_ui_tk,
 	"tk_wizard": load_ui_tk_wizard,
 	"web": load_ui_web,
+	"slint": load_ui_slint,
 }
 
 

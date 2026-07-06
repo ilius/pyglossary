@@ -1,0 +1,480 @@
+// main_window.slint
+//
+// Slint UI definition for the PyGlossary "Slint" front-end.
+// Visually mirrors the Tkinter UI (pyglossary/ui/ui_tk/ui.py): a Convert
+// tab with Input/Output file + format pickers, a black console log view and
+// a bottom status/progress bar; plus an About tab.
+//
+// Loaded from Python via:
+//   import slint
+//   ui = slint.load_file("main_window.slint")
+//   win = ui.MainWindow()
+//
+// Property / callback names use kebab-case (Slint convention). On the Python
+// side they are accessed with underscores, e.g. `input-file-path` ->
+// `win.input_file_path`.
+
+import {
+    Button,
+    LineEdit,
+    TabWidget,
+    ScrollView,
+    ProgressIndicator,
+    Palette,
+} from "std-widgets.slint";
+
+export struct ConsoleLine {
+    text: string,
+    text-color: color,
+}
+
+// A ComboBox whose popup opens *upward*.
+// Workaround for https://github.com/slint-ui/slint/issues/4870 (still open)
+// TODO: replace with stock ComboBox when #4870 is fixed
+// It is used for the verbosity selector in the bottom status bar. This Slint
+// build renders PopupWindow embedded in (and clipped to) the parent window, so a
+// stock ComboBox flush against the bottom edge can only open downward and gets
+// clipped. This component keeps the selector at the bottom edge by growing the
+// popup upward instead. Color comes from `Palette`, so it follows the active
+// Slint theme (light/dark) automatically.
+component UpComboBox inherits Rectangle {
+    in-out property <[string]> model;
+    in-out property <string> current-value;
+    callback selected(string);
+
+    // `popup-shown` is tracked by hand: this Slint version's PopupWindow has
+    // no `closed` callback, so a click-outside auto-close cannot be observed;
+    // the flag is re-synced by the trigger's click toggle. `highlight` is the
+    // keyboard cursor inside the open popup; each row syncs it to the current
+    // value on popup open (rows are instantiated on show, so their `init`
+    // runs then).
+    property <bool> popup-shown: false;
+    property <int> highlight: 0;
+
+    forward-focus: fs;
+
+    height: 28px;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: fs.has-focus ? Palette.accent-background : Palette.border;
+    // Palette.control-background is translucent by design (Fluent layering),
+    // so it must sit on an opaque surface; use the opaque window background.
+    background: Palette.background;
+
+    function open-popup() {
+        root.popup-shown = true;
+        popup.show();
+        // showing the popup moves keyboard focus into it; take it back so
+        // the arrow/Return/Escape handling below keeps working while open
+        fs.focus();
+    }
+
+    function close-popup() {
+        popup.close();
+        root.popup-shown = false;
+    }
+
+    function commit(index: int) {
+        if (index >= 0 && index < root.model.length) {
+            root.highlight = index;
+            root.current-value = root.model[index];
+            root.selected(root.model[index]);
+        }
+        root.close-popup();
+    }
+
+    HorizontalLayout {
+        padding-left: 8px;
+        padding-right: 8px;
+        spacing: 4px;
+        Text {
+            text: root.current-value;
+            color: Palette.foreground;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+        }
+
+        Text {
+            text: "▲";
+            font-size: 10px;
+            color: Palette.foreground;
+            vertical-alignment: center;
+        }
+    }
+
+    fs := FocusScope {
+        key-pressed(event) => {
+            if (!root.popup-shown) {
+                if (event.text == Key.Return || event.text == " "
+                        || event.text == Key.DownArrow || event.text == Key.UpArrow) {
+                    root.open-popup();
+                    return EventResult.accept;
+                }
+                return EventResult.reject;
+            }
+            if (event.text == Key.DownArrow) {
+                root.highlight = Math.min(root.highlight + 1, root.model.length - 1);
+                return EventResult.accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.highlight = Math.max(root.highlight - 1, 0);
+                return EventResult.accept;
+            }
+            if (event.text == Key.Return || event.text == " ") {
+                root.commit(root.highlight);
+                return EventResult.accept;
+            }
+            if (event.text == Key.Escape) {
+                root.close-popup();
+                return EventResult.accept;
+            }
+            return EventResult.reject;
+        }
+    }
+
+    TouchArea {
+        clicked => {
+            fs.focus();
+            // toggle; also re-syncs `popup-shown` after a click-outside
+            // auto-close (which the flag cannot observe)
+            if (root.popup-shown) {
+                root.close-popup();
+            } else {
+                root.open-popup();
+            }
+        }
+    }
+
+    popup := PopupWindow {
+        x: 0;
+        // place the popup's bottom edge at the trigger's top edge, so the list
+        // grows up into the visible window area rather than off the bottom
+        y: -self.height;
+        width: root.width;
+        close-policy: close-on-click-outside;
+
+        Rectangle {
+            // opaque fill so the list does not show the console behind it
+            background: Palette.background;
+            border-width: 1px;
+            border-radius: 4px;
+            border-color: Palette.border;
+
+            VerticalLayout {
+                padding: 2px;
+                spacing: 0px;
+
+                for item[i] in root.model: Rectangle {
+                    height: 26px;
+                    border-radius: 3px;
+                    background: (item-touch.has-hover || i == root.highlight)
+                        ? Palette.accent-background
+                        : (item == root.current-value
+                        ? Palette.alternate-background
+                        : transparent);
+
+                    // rows are created when the popup opens: start the
+                    // keyboard cursor on the currently selected item
+                    init => {
+                        if (item == root.current-value) {
+                            root.highlight = i;
+                        }
+                    }
+
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        Text {
+                            text: item;
+                            vertical-alignment: center;
+                            color: (item-touch.has-hover || i == root.highlight)
+                                ? Palette.accent-foreground
+                                : Palette.foreground;
+                        }
+                    }
+
+                    item-touch := TouchArea {
+                        clicked => { root.commit(i); }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export component MainWindow inherits Window {
+    title: "PyGlossary (Slint)";
+    preferred-width: 960px;
+    preferred-height: 520px;
+    min-width: 760px;
+    min-height: 440px;
+    // background: #ececec;
+
+    // ---------------------------------------------------------------
+	// State - read/written from Python (ui.py)
+	// ---------------------------------------------------------------
+	in-out property <string> input-file-path: "";
+    in-out property <string> output-file-path: "";
+    in-out property <string> input-format: "(choose input format)";
+    in-out property <string> output-format: "(choose output format)";
+
+    in-out property <[string]> verbosity-levels: [
+        "0 - Critical",
+        "1 - Error",
+        "2 - Warning",
+        "3 - Info",
+        "4 - Debug",
+        "5 - Trace",
+        "6 - All",
+    ];
+    in-out property <string> verbosity: "3 - Info";
+
+    in-out property <[ConsoleLine]> console-lines: [];
+
+    in-out property <float> progress: 0.0;
+    in-out property <string> status-text: "";
+    in-out property <bool> converting: false;
+
+    // About tab content (plain text, set from Python)
+	in-out property <string> about-text;
+
+    // ---------------------------------------------------------------
+	// Callbacks - bound in Python by assigning callables
+	// ---------------------------------------------------------------
+	callback browse-input-file();
+    callback browse-output-file();
+    callback choose-input-format();
+    callback choose-output-format();
+    callback options-selected(string);
+    callback start-convert();
+    callback clear-console();
+    callback verbosity-changed(string);
+	// Emitted when the user types in the input/output path fields, so Python
+	// can run auto-format-detection (mirrors ui_tk.anyEntryChanged).
+	callback input-file-edited(string);
+    callback output-file-edited(string);
+
+    VerticalLayout {
+        padding: 8px;
+        spacing: 8px;
+
+        TabWidget {
+            Tab {
+                title: "Convert";
+
+                VerticalLayout {
+                    spacing: 10px;
+                    padding: 6px;
+
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Text {
+                            text: "Input File:";
+                            vertical-alignment: center;
+                            width: 96px;
+                        }
+
+                        LineEdit {
+                            // Two-way (not `text: root.input-file-path;` +
+                            // manual write-back in `edited`): a one-way
+                            // binding on an in-out widget property gets
+                            // silently detached once the widget itself
+                            // writes to it (e.g. the user typing), so later
+                            // external (Python-side) assignments -- like
+                            // setting this after the Browse dialog returns
+                            // -- stop being reflected in the widget.
+                            text <=> root.input-file-path;
+                            placeholder-text: "Path to input glossary file";
+                            edited(value) => {
+                                root.input-file-edited(value);
+                            }
+                            horizontal-stretch: 1;
+                        }
+
+                        Button {
+                            text: "Browse";
+                            clicked => { root.browse-input-file(); }
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Text {
+                            text: "Input Format:";
+                            vertical-alignment: center;
+                            width: 96px;
+                        }
+
+                        Button {
+                            text: root.input-format;
+                            horizontal-stretch: 1;
+                            clicked => { root.choose-input-format(); }
+                        }
+                    }
+
+                    Rectangle {
+                        height: 6px;
+                    }
+
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Text {
+                            text: "Output File:";
+                            vertical-alignment: center;
+                            width: 96px;
+                        }
+
+                        LineEdit {
+                            // See the input-file-path LineEdit above for why
+                            // this must be two-way, not one-way + write-back.
+                            text <=> root.output-file-path;
+                            placeholder-text: "Path to output glossary file";
+                            edited(value) => {
+                                root.output-file-edited(value);
+                            }
+                            horizontal-stretch: 1;
+                        }
+
+                        Button {
+                            text: "Browse";
+                            clicked => { root.browse-output-file(); }
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Text {
+                            text: "Output Format:";
+                            vertical-alignment: center;
+                            width: 96px;
+                        }
+
+                        Button {
+                            text: root.output-format;
+                            horizontal-stretch: 1;
+                            clicked => { root.choose-output-format(); }
+                        }
+                    }
+
+                    Rectangle {
+                        height: 4px;
+                    }
+
+                    HorizontalLayout {
+                        spacing: 6px;
+                        UpComboBox {
+                            // "Options" is only the closed-state caption, not
+                            // a model entry, so the popup lists actions only
+                            model: ["Read Options", "Write Options", "General Options", "Info / Metadata", "Theme"];
+                            current-value: "Options";
+                            selected(value) => {
+                                root.options-selected(value);
+                                // restore the static caption instead of
+                                // showing the last-picked action as selection
+                                self.current-value = "Options";
+                            }
+                            width: 140px;
+                        }
+
+                        Button {
+                            text: root.converting ? "Converting…" : "Convert";
+                            enabled: !root.converting;
+                            primary: true;
+                            horizontal-stretch: 1;
+                            clicked => { root.start-convert(); }
+                        }
+                    }
+
+                    Rectangle {
+                        background: #000000;
+                        border-width: 1px;
+                        border-color: #444444;
+                        vertical-stretch: 1;
+
+                        ScrollView {
+                            VerticalLayout {
+                                padding: 6px;
+                                spacing: 2px;
+                                alignment: start;
+
+                                for line in root.console-lines: Text {
+                                    text: line.text;
+                                    color: line.text-color;
+                                    font-family: "Courier New";
+                                    font-size: 12px;
+                                    wrap: word-wrap;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Tab {
+                title: "About";
+
+                ScrollView {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 8px;
+                        alignment: start;
+
+                        Text {
+                            text: "PyGlossary — Slint UI";
+                            font-size: 18px;
+                            font-weight: 700;
+                        }
+
+                        StyledText {
+                            text: @markdown("[https://github.com/ilius/pyglossary](https://github.com/ilius/pyglossary)");
+                            link-color: Palette.color-scheme == ColorScheme.dark ? #6cb6ff : #0a58ca;
+                            default-font-size: 10pt;
+                        }
+
+                        Text {
+                            text: root.about-text;
+                        }
+                    }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            height: 28px;
+
+            Button {
+                text: "Clear";
+                clicked => { root.clear-console(); }
+            }
+
+            Text {
+                text: "Verbosity";
+                vertical-alignment: center;
+            }
+
+            UpComboBox {
+                model: root.verbosity-levels;
+                // Two-way for the same reason as the file-path LineEdits
+                // above: UpComboBox writes to its own `current-value` when an
+                // item is picked, which would detach a one-way binding and
+                // make later Python-side writes to `root.verbosity` invisible.
+                current-value <=> root.verbosity;
+                selected(value) => {
+                    root.verbosity-changed(value);
+                }
+                width: 140px;
+            }
+
+            ProgressIndicator {
+                progress: root.progress;
+                horizontal-stretch: 1;
+            }
+
+            Text {
+                text: root.status-text;
+                color: #c9b400;
+                vertical-alignment: center;
+            }
+        }
+    }
+}

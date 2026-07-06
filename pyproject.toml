@@ -32,6 +32,9 @@ wx = [
 	"wxPython",
 	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
 ]
+slint = [
+	"slint>=1.17.0b2"
+]
 # File drag-and-drop in the Tk wizard (``pyglossary --ui=tk``).
 tk-wizard-dnd = ["tkinterdnd2"]
 dict-cc-source = ["pyparsing"]

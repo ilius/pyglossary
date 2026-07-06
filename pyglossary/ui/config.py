@@ -143,6 +143,26 @@ configDefDict: dict[str, Option] = {
 	),
 	# general GUI options
 	"ui_autoSetFormat": BoolOption(hasFlag=False),
+	"ui_slint_theme": StrOption(
+		hasFlag=False,
+		values=[
+			"",
+			"fluent",
+			"fluent-light",
+			"fluent-dark",
+			"material",
+			"material-light",
+			"material-dark",
+			"cupertino",
+			"cupertino-light",
+			"cupertino-dark",
+			"cosmic",
+			"cosmic-light",
+			"cosmic-dark",
+		],
+		comment="Slint UI: widget style/theme, empty means system default"
+		" (applied on next launch)",
+	),
 	# Tkinter
 	"tk.progressbar.color.fill": StrOption(
 		hasFlag=False,

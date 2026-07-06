@@ -32,6 +32,7 @@
 	"cmdi.msg.color": -1,
 
 	"ui_autoSetFormat": true,
+	"ui_slint_theme": "",
 
 	"tk.progressbar.color.fill": "blue",
 	"tk.progressbar.color.background": "gray",
