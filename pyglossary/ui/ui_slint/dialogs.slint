@@ -37,6 +37,10 @@ import {
 component DialogKeys inherits FocusScope {
     callback submit();
     callback dismiss();
+    // any key other than Return/Escape is offered to the dialog first (e.g.
+    // Up/Down list navigation in ThemeDialog); default: leave it unhandled
+    callback other-key(event: KeyEvent) -> EventResult;
+    other-key(event) => { return EventResult.reject; }
 
     key-pressed(event) => {
         if (event.text == Key.Return) {
@@ -47,7 +51,7 @@ component DialogKeys inherits FocusScope {
             root.dismiss();
             return EventResult.accept;
         }
-        return EventResult.reject;
+        return root.other-key(event);
     }
 
     init => { self.focus(); }
@@ -212,10 +216,31 @@ export component ThemeDialog inherits Window {
     callback ok();
     callback cancel();
 
+    function clamp-index(i: int) -> int {
+        return i < 0 ? 0 : (i >= root.theme-names.length ? root.theme-names.length - 1 : i);
+    }
+
     DialogKeys {
         forward-focus: ok-btn;
         submit => { root.ok(); }
         dismiss => { root.cancel(); }
+        // radio-group keyboard convention: the list is not a tab stop of its
+        // own; Up/Down move the selection no matter which button has focus
+        other-key(event) => {
+            if (event.text == Key.DownArrow) {
+                root.current-index = root.theme-names.length > 0
+                    ? clamp-index(root.current-index + 1)
+                    : -1;
+                return EventResult.accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.current-index = root.theme-names.length > 0
+                    ? clamp-index(root.current-index - 1)
+                    : -1;
+                return EventResult.accept;
+            }
+            return EventResult.reject;
+        }
 
         VerticalLayout {
             spacing: 12px;
@@ -238,6 +263,9 @@ export component ThemeDialog inherits Window {
                         spacing: 2px;
                         alignment: start;
 
+                        // vertical radio-button list; std-widgets has no
+                        // RadioButton, so the indicator (ring + dot) is drawn
+                        // by hand from Palette colors to fit light and dark
                         for theme[i] in root.theme-names: Rectangle {
                             height: 32px;
                             border-radius: 4px;
@@ -246,14 +274,33 @@ export component ThemeDialog inherits Window {
                                 : transparent;
 
                             HorizontalLayout {
+                                padding-left: 8px;
                                 spacing: 10px;
 
                                 Rectangle {
-                                    width: 4px;
-                                    border-radius: 2px;
-                                    background: i == root.current-index
-                                        ? Palette.accent-foreground
-                                        : transparent;
+                                    width: 18px;
+
+                                    Rectangle {
+                                        width: 18px;
+                                        height: 18px;
+                                        x: 0;
+                                        y: (parent.height - self.height) / 2;
+                                        border-radius: self.width / 2;
+                                        border-width: 2px;
+                                        border-color: i == root.current-index
+                                            ? Palette.accent-background
+                                            : Palette.foreground.transparentize(0.55);
+                                        background: transparent;
+
+                                        if i == root.current-index: Rectangle {
+                                            width: 8px;
+                                            height: 8px;
+                                            x: (parent.width - self.width) / 2;
+                                            y: (parent.height - self.height) / 2;
+                                            border-radius: self.width / 2;
+                                            background: Palette.accent-background;
+                                        }
+                                    }
                                 }
 
                                 Text {
@@ -307,15 +354,28 @@ export component AlertDialog inherits Dialog {
 
     in property <string> message: "";
 
-    VerticalLayout {
-        padding: 16px;
-        Text {
-            text: root.message;
-            wrap: word-wrap;
+    // declared explicitly (same name the Dialog would auto-generate for the
+    // ok StandardButton, and what alert_dialog.py binds) so Return/Escape can
+    // invoke it too
+    callback ok-clicked();
+
+    DialogKeys {
+        submit => { root.ok-clicked(); }
+        dismiss => { root.ok-clicked(); }
+
+        VerticalLayout {
+            padding: 16px;
+            Text {
+                text: root.message;
+                wrap: word-wrap;
+            }
         }
     }
 
-    StandardButton { kind: ok; }
+    StandardButton {
+        kind: ok;
+        clicked => { root.ok-clicked(); }
+    }
 }
 
 // ============================================================

@@ -42,13 +42,46 @@ component UpComboBox inherits Rectangle {
     in-out property <string> current-value;
     callback selected(string);
 
+    // `popup-shown` is tracked by hand: this Slint version's PopupWindow has
+    // no `closed` callback, so a click-outside auto-close cannot be observed;
+    // the flag is re-synced by the trigger's click toggle. `highlight` is the
+    // keyboard cursor inside the open popup; each row syncs it to the current
+    // value on popup open (rows are instantiated on show, so their `init`
+    // runs then).
+    property <bool> popup-shown: false;
+    property <int> highlight: 0;
+
+    forward-focus: fs;
+
     height: 28px;
     border-width: 1px;
     border-radius: 4px;
-    border-color: Palette.border;
+    border-color: fs.has-focus ? Palette.accent-background : Palette.border;
     // Palette.control-background is translucent by design (Fluent layering),
     // so it must sit on an opaque surface; use the opaque window background.
     background: Palette.background;
+
+    function open-popup() {
+        root.popup-shown = true;
+        popup.show();
+        // showing the popup moves keyboard focus into it; take it back so
+        // the arrow/Return/Escape handling below keeps working while open
+        fs.focus();
+    }
+
+    function close-popup() {
+        popup.close();
+        root.popup-shown = false;
+    }
+
+    function commit(index: int) {
+        if (index >= 0 && index < root.model.length) {
+            root.highlight = index;
+            root.current-value = root.model[index];
+            root.selected(root.model[index]);
+        }
+        root.close-popup();
+    }
 
     HorizontalLayout {
         padding-left: 8px;
@@ -69,8 +102,47 @@ component UpComboBox inherits Rectangle {
         }
     }
 
+    fs := FocusScope {
+        key-pressed(event) => {
+            if (!root.popup-shown) {
+                if (event.text == Key.Return || event.text == " "
+                        || event.text == Key.DownArrow || event.text == Key.UpArrow) {
+                    root.open-popup();
+                    return EventResult.accept;
+                }
+                return EventResult.reject;
+            }
+            if (event.text == Key.DownArrow) {
+                root.highlight = Math.min(root.highlight + 1, root.model.length - 1);
+                return EventResult.accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.highlight = Math.max(root.highlight - 1, 0);
+                return EventResult.accept;
+            }
+            if (event.text == Key.Return || event.text == " ") {
+                root.commit(root.highlight);
+                return EventResult.accept;
+            }
+            if (event.text == Key.Escape) {
+                root.close-popup();
+                return EventResult.accept;
+            }
+            return EventResult.reject;
+        }
+    }
+
     TouchArea {
-        clicked => { popup.show(); }
+        clicked => {
+            fs.focus();
+            // toggle; also re-syncs `popup-shown` after a click-outside
+            // auto-close (which the flag cannot observe)
+            if (root.popup-shown) {
+                root.close-popup();
+            } else {
+                root.open-popup();
+            }
+        }
     }
 
     popup := PopupWindow {
@@ -92,31 +164,36 @@ component UpComboBox inherits Rectangle {
                 padding: 2px;
                 spacing: 0px;
 
-                for item in root.model: Rectangle {
+                for item[i] in root.model: Rectangle {
                     height: 26px;
                     border-radius: 3px;
-                    background: item-touch.has-hover
+                    background: (item-touch.has-hover || i == root.highlight)
                         ? Palette.accent-background
                         : (item == root.current-value
                         ? Palette.alternate-background
                         : transparent);
+
+                    // rows are created when the popup opens: start the
+                    // keyboard cursor on the currently selected item
+                    init => {
+                        if (item == root.current-value) {
+                            root.highlight = i;
+                        }
+                    }
+
                     HorizontalLayout {
                         padding-left: 8px;
                         Text {
                             text: item;
                             vertical-alignment: center;
-                            color: item-touch.has-hover
+                            color: (item-touch.has-hover || i == root.highlight)
                                 ? Palette.accent-foreground
                                 : Palette.foreground;
                         }
                     }
 
                     item-touch := TouchArea {
-                        clicked => {
-                            root.current-value = item;
-                            root.selected(item);
-                            popup.close();
-                        }
+                        clicked => { root.commit(i); }
                     }
                 }
             }
