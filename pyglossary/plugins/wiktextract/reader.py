@@ -60,7 +60,11 @@ class Reader:
 		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
 		self._entryCount = 0
-		self._badExampleKeys = set()
+		self._badExampleKeys = {
+			"bold_literal_offsets",
+			"bold_text_offsets",
+			"bold_translation_offsets",
+		}
 
 	def open(
 		self,
