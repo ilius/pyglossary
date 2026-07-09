@@ -1782,6 +1782,14 @@
 		"title_tag": "b"
 	},
 	{
+		"codes": ["lkt"],
+		"name": "Lakota",
+		"alt_names": [],
+		"script": ["Latin"],
+		"wiki": "https://en.wikipedia.org/wiki/Lakota_language",
+		"title_tag": "b"
+	},
+	{
 		"codes": ["ady"],
 		"name": "Adyghe",
 		"alt_names": [],
