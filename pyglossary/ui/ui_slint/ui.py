@@ -133,7 +133,7 @@ class UI(UIBase):
 
 		# Must happen before the first load_slint() call below (which compiles
 		# main_window.slint with this style baked in) -- see setSlintStyle.
-		setSlintStyle(self.config.get("ui_slint_theme", ""))
+		setSlintStyle(self.config.get("slint.theme", ""))
 
 		if not Glossary.readFormats:
 			# idempotent: mainPrepare already calls Glossary.init() in normal
@@ -526,16 +526,16 @@ class UI(UIBase):
 
 	def _openTheme(self) -> None:
 		dialog = ThemeDialog(
-			currentStyle=self.config.get("ui_slint_theme", ""),
+			currentStyle=self.config.get("slint.theme", ""),
 			onOk=self._onThemeChosen,
 			onClose=self._unref,
 		)
 		self._ref(dialog)
 
 	def _onThemeChosen(self, style: str) -> None:
-		if style == self.config.get("ui_slint_theme", ""):
+		if style == self.config.get("slint.theme", ""):
 			return
-		self.config["ui_slint_theme"] = style
+		self.config["slint.theme"] = style
 		self.saveConfig()
 		label = next(
 			(label for label, value in SLINT_STYLES if value == style),
@@ -630,7 +630,7 @@ class UI(UIBase):
 		# Only replace the config loaded in __init__ when the caller (main.py)
 		# actually passes one (the full, file-loaded + CLI-flag-merged config).
 		# `config or {}` would wipe the already-loaded config on a standalone
-		# run (config=None), losing ui_autoSetFormat / ui_slint_theme etc.
+		# run (config=None), losing ui_autoSetFormat / slint.theme etc.
 		if config:
 			self.config = config
 

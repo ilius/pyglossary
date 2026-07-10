@@ -32,12 +32,12 @@
 	"cmdi.msg.color": -1,
 
 	"ui_autoSetFormat": true,
-	"ui_slint_theme": "",
 
 	"tk.progressbar.color.fill": "blue",
 	"tk.progressbar.color.background": "gray",
 	"tk.progressbar.color.text": "yellow",
 	"tk.progressbar.font": "Sans",
+	"slint.theme": "",
 
 	"reverse_matchWord": true,
 	"reverse_showRel": "Percent",

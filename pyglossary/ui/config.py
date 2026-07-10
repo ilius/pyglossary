@@ -143,7 +143,7 @@ configDefDict: dict[str, Option] = {
 	),
 	# general GUI options
 	"ui_autoSetFormat": BoolOption(hasFlag=False),
-	"ui_slint_theme": StrOption(
+	"slint.theme": StrOption(
 		hasFlag=False,
 		values=[
 			"",
