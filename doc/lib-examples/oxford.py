@@ -3,7 +3,7 @@ from pyglossary import Glossary
 
 def takePhonetic_oxford_gb(glos):
 	phonGlos = Glossary()  # phonetic glossary
-	phonGlos.setInfo("name", glos.getInfo("name") + "_phonetic")
+	phonGlos.info.name = glos.info.name + "_phonetic"
 	for entry in glos:
 		term = entry.s_term
 		defi = entry.defi

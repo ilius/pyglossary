@@ -83,14 +83,14 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			self._glos.info["input_file_size"] = str(self._fileSize)
 		else:
 			self.warning("Wiktextract Reader: file is not seekable")
 
 		self._glos.setDefaultDefiFormat("h")
 
 		if self._word_title:
-			self._glos.setInfo("definition_has_headwords", "True")
+			self._glos.info["definition_has_headwords"] = "True"
 
 		self._file = cfile
 		self._warnings: Counter[str] = collections.Counter()

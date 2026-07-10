@@ -78,7 +78,7 @@ def writeHeader(
 ) -> None:
 	gz.write(_pack_block(0, b"\x08\x42"))
 
-	title = (glos.getInfo("name") or "Glossary").strip() or "Glossary"
+	title = (glos.info["name"] or "Glossary").strip() or "Glossary"
 	writeBlockType3(gz, 0x01, title.encode("utf-8"))
 
 	writeBlockType3(gz, 0x11, (0x8000).to_bytes(4, "big"))
@@ -89,13 +89,13 @@ def writeHeader(
 	writeBlockType3(gz, 0x1A, bytes([0x42]))
 	writeBlockType3(gz, 0x1B, bytes([0x42]))
 
-	if glos.getInfo("author"):
-		writeBlockType3(gz, 0x02, glos.getInfo("author").encode("utf-8"))
-	if glos.getInfo("email"):
-		writeBlockType3(gz, 0x03, glos.getInfo("email").encode("utf-8"))
-	if glos.getInfo("copyright"):
-		writeBlockType3(gz, 0x04, glos.getInfo("copyright").encode("utf-8"))
-	desc = glos.getInfo("description")
+	if glos.info["author"]:
+		writeBlockType3(gz, 0x02, glos.info["author"].encode("utf-8"))
+	if glos.info["email"]:
+		writeBlockType3(gz, 0x03, glos.info["email"].encode("utf-8"))
+	if glos.info["copyright"]:
+		writeBlockType3(gz, 0x04, glos.info["copyright"].encode("utf-8"))
+	desc = glos.info["description"]
 	if desc:
 		writeBlockType3(gz, 0x09, desc.encode("utf-8"))
 

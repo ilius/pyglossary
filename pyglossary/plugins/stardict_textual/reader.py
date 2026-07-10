@@ -77,7 +77,7 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			# self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			# self._glos.info["input_file_size"] = f"{self._fileSize}"
 		else:
 			log.warning("StarDict Textual File Reader: file is not seekable")
 
@@ -95,7 +95,7 @@ class Reader:
 	def setGlosInfo(self, key: str, value: str) -> None:
 		if value is None:
 			return
-		self._glos.setInfo(key, unescape_unicode(value))
+		self._glos.info[key] = unescape_unicode(value)
 
 	def setMetadata(self, header: Element) -> None:
 		if (elem := header.find("./bookname")) is not None and elem.text:

@@ -62,7 +62,7 @@ def reverseGlossary(  # noqa: PLR0913
 			allowed values: None, "Percent", "Percent At First"
 	"""
 	if not savePath:
-		savePath = glos.getInfo("name") + ".txt"
+		savePath = glos.info.name + ".txt"
 
 	if saveStep < 2:
 		raise ValueError("saveStep must be more than 1")

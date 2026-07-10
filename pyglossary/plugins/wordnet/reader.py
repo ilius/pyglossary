@@ -344,14 +344,14 @@ class Reader:
 		copyrightLine = self._readCopyrightLine()
 		if copyrightLine:
 			words = copyrightLine.strip().split(" ")
-			self._glos.setInfo("copyright", " ".join(words[1:]))
+			self._glos.info["copyright"] = " ".join(words[1:])
 			pos = words.index("Copyright")
 			try:
 				year = int(words[pos + 1])
 			except ValueError:
 				log.warning(f"unexpected line: {copyrightLine}")
 			else:
-				self._glos.setInfo("creationTime", f"{year}-01-01")
+				self._glos.info["creationTime"] = f"{year}-01-01"
 
 		self.wordnet = WordNet(filename, gram_color=self._gram_color)
 		log.info("Running wordnet.prepare()")

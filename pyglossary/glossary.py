@@ -63,7 +63,7 @@ class Glossary(GlossaryCommon, PluginHandler):
 					"Glossary: `info` has invalid type, dict or OrderedDict expected",
 				)
 			for key, value in info.items():
-				self.setInfo(key, value)
+				self.info[key] = value
 
 	# TODO: use Protocol for hf and return type
 	def titleElement(

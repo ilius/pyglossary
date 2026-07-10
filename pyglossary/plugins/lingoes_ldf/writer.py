@@ -26,10 +26,10 @@ class Writer:
 		self._filename = ""
 
 	def getInfo(self, key: str) -> str:
-		return self._glos.getInfo(key).replace("\n", "<br>")
+		return self._glos.info[key].replace("\n", "<br>")
 
 	def getAuthor(self) -> str:
-		return self._glos.author.replace("\n", "<br>")
+		return self._glos.info.author.replace("\n", "<br>")
 
 	def finish(self) -> None:
 		self._filename = ""
@@ -52,7 +52,7 @@ class Writer:
 			f"###Author: {self.getAuthor()}\n"
 			f"###Email: {self.getInfo('email')}\n"
 			f"###Website: {self.getInfo('website')}\n"
-			f"###Copyright: {self.getInfo('copyright')}\n"
+			f"###Copyright: {self._glos.info.copyright.replace('\n', '<br>')}\n"
 		)
 		yield from writeTxt(
 			self._glos,

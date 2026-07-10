@@ -63,13 +63,13 @@ class Reader:
 		tags = dict(self._slobObj.tags.items())
 
 		if t_label in tags:
-			self._glos.setInfo("name", tags[t_label])
+			self._glos.info.name = tags[t_label]
 
 		if t_created_at in tags:
-			self._glos.setInfo("creationTime", tags[t_created_at])
+			self._glos.info.creationTime = tags[t_created_at]
 
 		if t_created_by in tags:
-			self._glos.setInfo("author", tags[t_created_by])
+			self._glos.info.author = tags[t_created_by]
 
 		copyrightLines: list[str] = []
 		for key in (t_copyright, t_license_name, t_license_url):
@@ -79,18 +79,18 @@ class Reader:
 				continue
 			copyrightLines.append(value)
 		if copyrightLines:
-			self._glos.setInfo("copyright", "\n".join(copyrightLines))
+			self._glos.info.copyright = "\n".join(copyrightLines)
 
 		if t_uri in tags:
-			self._glos.setInfo("website", tags[t_uri])
+			self._glos.info["website"] = tags[t_uri]
 
 		if t_edition in tags:
-			self._glos.setInfo("edition", tags[t_edition])
+			self._glos.info["edition"] = tags[t_edition]
 
 		for key, value in tags.items():
 			if key in supported_tags:
 				continue
-			self._glos.setInfo(f"slob.{key}", value)
+			self._glos.info[f"slob.{key}"] = value
 
 	def countResourceFiles(self) -> int:
 		return 0

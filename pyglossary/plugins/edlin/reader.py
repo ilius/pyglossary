@@ -59,7 +59,7 @@ class Reader:
 		self._prev_link = info.pop("prev_link")
 		self._rootPath = info.pop("root")
 		for key, value in info.items():
-			self._glos.setInfo(key, value)
+			self._glos.info[key] = value
 
 		self._resDir = join(filename, "res")
 		resCount = 0

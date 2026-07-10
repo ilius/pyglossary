@@ -39,6 +39,20 @@ slint = [
 tk-wizard-dnd = ["tkinterdnd2"]
 dict-cc-source = ["pyparsing"]
 dev = ["mypy", "ruff", "types-polib"]
+test = [
+	"PyICU",
+	"beautifulsoup4",
+	"biplist",
+	"freezegun",
+	"html5lib",
+	"lxml>=6.1.0",
+	"marisa-trie",
+	"mistune",
+	"polib",
+	"prompt_toolkit",
+	"pytest",
+	"python-idzip",
+]
 
 [project.urls]
 Homepage = "https://github.com/ilius/pyglossary"
@@ -535,3 +549,24 @@ requires = [
 	# "wheel >= 0.29.0",
 ]
 build-backend = "setuptools.build_meta"
+
+
+[dependency-groups]
+test = [
+	"beautifulsoup4",
+	"biplist",
+	"freezegun",
+	"html5lib",
+	"lxml>=6.1.0",
+	"marisa-trie",
+	"mistune",
+	"polib",
+	"prompt_toolkit",
+	"pytest",
+	"python-idzip",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["tests", "tests/deprecated"]
+testpaths = ["tests", "pyglossary/ui/tests"]
+

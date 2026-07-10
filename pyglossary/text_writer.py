@@ -97,7 +97,7 @@ class TextGlossaryWriter:
 
 	def open(self, filename: str) -> None:
 		if self._file_size_approx > 0:
-			self._glos.setInfo("file_count", "-1")
+			self._glos.info["file_count"] = "-1"
 		self._open(filename)
 		self._filename = filename
 		if not self._glos.getConfig("skip_resources", False):
@@ -168,7 +168,7 @@ class TextGlossaryWriter:
 		file_size_approx = self._file_size_approx
 		entryCount = 0
 		fileIndex = 0
-		glosName = self._glos.getInfo("name") or self._filename
+		glosName = self._glos.info.name or self._filename
 
 		while True:
 			entry = yield
@@ -204,7 +204,7 @@ class TextGlossaryWriter:
 				):
 					fileIndex += 1
 					log.info(f"Creating {self._filename}.{fileIndex}")
-					self._glos.setInfo("name", f"{glosName} part {fileIndex + 1}")
+					self._glos.info.name = f"{glosName} part {fileIndex + 1}"
 					file = self._open(f"{self._filename}.{fileIndex}")
 
 	def finish(self) -> None:

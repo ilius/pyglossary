@@ -97,11 +97,11 @@ class Writer:
 		]
 
 	def _getInfo(self, key: str) -> str:
-		info = self._glos.getInfo(key)
+		info = self._glos.info[key]
 		return info.replace("\n", "<br>")
 
 	def _getAuthor(self) -> str:
-		return self._glos.author.replace("\n", "<br>")
+		return self._glos.info.author.replace("\n", "<br>")
 
 	def _getDictionaryIndex(self) -> dict[str, Any]:
 		# Schema: https://github.com/FooSoft/yomichan/

@@ -128,12 +128,12 @@ class Writer:
 			encoding=self._encoding,
 		) as toFile:
 			info = {}
-			info["name"] = self._glos.getInfo("name")
+			info["name"] = self._glos.info.name
 			info["root"] = self.hashToPath(rootHash)
 			info["prev_link"] = self._prev_link
 			info["wordCount"] = count
 			# info["modified"] =
 
-			info |= self._glos.getExtraInfos(["name", "root", "prev_link", "wordCount"])
+			info |= self._glos.info - ["name", "root", "prev_link", "wordCount"]
 
 			toFile.write(dataToPrettyJson(info))

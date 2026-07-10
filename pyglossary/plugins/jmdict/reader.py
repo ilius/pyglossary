@@ -346,7 +346,7 @@ class Reader:
 		m = re.search("JMdict created: ([0-9]{4}-[0-9]{2}-[0-9]{2})", header)
 		if m is None:
 			return
-		self._glos.setInfo("creationTime", m.group(1))
+		self._glos.info["creationTime"] = m.group(1)
 
 	def setMetadata(self, header: str) -> None:
 		# TODO: self.set_info("edition", ...)
@@ -387,8 +387,8 @@ class Reader:
 		self._glos.sourceLangName = "Japanese"
 
 		self._glos.setDefaultDefiFormat("h")
-		self._glos.setInfo("definition_has_headwords", "True")
-		self._glos.setInfo("entry_url", "https://jisho.org/search/{word}")
+		self._glos.info["definition_has_headwords"] = "True"
+		self._glos.info["entry_url"] = "https://jisho.org/search/{word}"
 		# also good: f"https://sakuradict.com/search?q={{word}}"
 
 		header = ""

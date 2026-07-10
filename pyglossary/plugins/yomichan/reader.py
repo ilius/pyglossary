@@ -95,11 +95,11 @@ class Reader:
 			raise NotImplementedError(
 				"Yomichan: supported only dictionaries of 3 version",
 			)
-		self._glos.setInfo("sourceLang", "ja")
+		self._glos.info["sourceLang"] = "ja"
 		for c_field in FIELDS_TO_WRITE:
 			value = index.get(c_field)
 			if value is not None:
-				self._glos.setInfo(c_field, value)
+				self._glos.info[c_field] = value
 		self._isSequenced = index.get("isSequenced", False)
 
 	def _readTermBanks(self) -> Generator[EntryType, None, None]:

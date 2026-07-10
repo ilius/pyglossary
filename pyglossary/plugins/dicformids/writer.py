@@ -82,8 +82,8 @@ class Writer:
 		with open(probsPath, mode="w", newline="\n", encoding="utf-8") as fileObj:
 			fileObj.write(
 				PROP_TEMPLATE.format(
-					name=glos.getInfo("name"),
-					author=glos.author,
+					name=glos.info.name,
+					author=glos.info.author,
 					indexFileMaxSize=self.indexFileMaxSize,
 					entryCount=self.entryCount,
 					directoryPostfix=self.directoryPostfix,

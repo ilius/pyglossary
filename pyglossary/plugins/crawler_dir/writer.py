@@ -84,8 +84,8 @@ class Writer:
 			encoding="utf-8",
 		) as infoFile:
 			info = {}
-			info["name"] = self._glos.getInfo("name")
+			info["name"] = self._glos.info.name
 			info["wordCount"] = entryCount
-			info |= self._glos.getExtraInfos(["name", "wordCount"])
+			info |= self._glos.info - ["name", "wordCount"]
 
 			infoFile.write(dataToPrettyJson(info))

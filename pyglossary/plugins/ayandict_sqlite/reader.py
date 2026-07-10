@@ -35,7 +35,7 @@ class Reader:
 		for row in self._cur.fetchall():
 			if row[0] == "hash":
 				continue
-			self._glos.setInfo(row[0], row[1])
+			self._glos.info[row[0]] = row[1]
 
 	def __len__(self) -> int:
 		if self._cur is None:

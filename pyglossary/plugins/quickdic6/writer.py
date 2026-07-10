@@ -92,9 +92,9 @@ class Writer:
 		glos = self._glos
 
 		log.info("Collecting meta data ...")
-		name = glos.getInfo("bookname")
+		name = glos.info.name
 		if not name:
-			name = glos.getInfo("description")
+			name = glos.info.description
 
 		sourceLangCode, targetLangCode = "EN", "EN"
 		if glos.sourceLang:
@@ -104,7 +104,7 @@ class Writer:
 
 		langs = f"{sourceLangCode}->{targetLangCode}"
 		if langs not in name.lower():
-			name = f"{self._glos.getInfo('name')} ({langs})"
+			name = f"{self._glos.info['name']} ({langs})"
 
 		log.info(f"QuickDic: {langs = }, {name = }")
 

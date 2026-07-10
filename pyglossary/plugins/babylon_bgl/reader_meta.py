@@ -99,21 +99,21 @@ class _BglReaderMeta:
 		if self.sourceLang:
 			glos.sourceLangName = self.sourceLang.name
 			if self.sourceLang.name2:
-				glos.setInfo("sourceLang2", self.sourceLang.name2)
+				glos.info["sourceLang2"] = self.sourceLang.name2
 		if self.targetLang:
 			glos.targetLangName = self.targetLang.name
 			if self.targetLang.name2:
-				glos.setInfo("targetLang2", self.targetLang.name2)
+				glos.info["targetLang2"] = self.targetLang.name2
 		###
-		glos.setInfo("bgl_defaultCharset", self.defaultCharset)
-		glos.setInfo("bgl_sourceCharset", self.sourceCharset)
-		glos.setInfo("bgl_targetCharset", self.targetCharset)
-		glos.setInfo("bgl_defaultEncoding", self.defaultEncoding)
-		glos.setInfo("bgl_sourceEncoding", self.sourceEncoding)
-		glos.setInfo("bgl_targetEncoding", self.targetEncoding)
+		glos.info["bgl_defaultCharset"] = self.defaultCharset
+		glos.info["bgl_sourceCharset"] = self.sourceCharset
+		glos.info["bgl_targetCharset"] = self.targetCharset
+		glos.info["bgl_defaultEncoding"] = self.defaultEncoding
+		glos.info["bgl_sourceEncoding"] = self.sourceEncoding
+		glos.info["bgl_targetEncoding"] = self.targetEncoding
 		###
-		glos.setInfo("sourceCharset", "UTF-8")
-		glos.setInfo("targetCharset", "UTF-8")
+		glos.info["sourceCharset"] = "UTF-8"
+		glos.info["targetCharset"] = "UTF-8"
 		###
 		if "lastUpdated" not in self.info and "bgl_firstUpdated" in self.info:
 			log.debug("replacing bgl_firstUpdated with lastUpdated")
@@ -128,7 +128,7 @@ class _BglReaderMeta:
 			if key == "utf8Encoding":
 				key = "bgl_" + key  # noqa: PLW2901
 			try:
-				glos.setInfo(key, s_value)
+				glos.info[key] = s_value
 			except Exception:
 				log.exception(f"key = {key}")
 

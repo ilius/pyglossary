@@ -22,6 +22,9 @@ from typing import TYPE_CHECKING
 
 from .info import (
 	c_author,
+	c_copyright,
+	c_creationTime,
+	c_description,
 	c_name,
 	c_publisher,
 	c_sourceLang,
@@ -32,7 +35,8 @@ from .langs import Lang, langDict
 from .text_utils import fixUtf8
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
+	from collections.abc import Iterable, Iterator
+
 __all__ = ["GlossaryInfo"]
 
 log = logging.getLogger("pyglossary")
@@ -41,6 +45,21 @@ log = logging.getLogger("pyglossary")
 class GlossaryInfo:
 	def __init__(self) -> None:
 		self._info: dict[str, str] = {}
+
+	def clear(self) -> None:
+		self._info.clear()
+
+	def __getitem__(self, key: str) -> str:
+		return self.getInfo(key)
+
+	def __setitem__(self, key: str, value: object) -> None:
+		self.setInfo(key, value)
+
+	def __delitem__(self, key: str) -> None:
+		del self._info[key]
+
+	def __sub__(self, exclude_keys: Iterable[str]) -> dict[str, str]:
+		return self.getExtraInfos(list(exclude_keys))
 
 	def infoKeys(self) -> list[str]:
 		return list(self._info)
@@ -95,12 +114,48 @@ class GlossaryInfo:
 		return extra
 
 	@property
+	def name(self) -> str:
+		return self._info.get(c_name, "")
+
+	@name.setter
+	def name(self, value: object) -> None:
+		self._info[c_name] = value
+
+	@property
+	def description(self) -> str:
+		return self._info.get(c_description, "")
+
+	@description.setter
+	def description(self, value: object) -> None:
+		self._info[c_description] = value
+
+	@property
+	def copyright(self) -> str:
+		return self._info.get(c_copyright, "")
+
+	@copyright.setter  # noqa: A003
+	def copyright(self, value: object) -> None:
+		self._info[c_copyright] = value
+
+	@property
 	def author(self) -> str:
 		for key in (c_author, c_publisher):
 			value = self._info.get(key, "")
 			if value:
 				return value
 		return ""
+
+	@author.setter
+	def author(self, value: object) -> None:
+		self._info[c_author] = value
+
+	@property
+	def creationTime(self) -> str:
+		return self._info.get(c_creationTime, "")
+
+	@creationTime.setter
+	def creationTime(self, value: object) -> None:
+		self._info[c_creationTime] = value
 
 	@staticmethod
 	def _getLangByStr(st: str) -> Lang | None:
@@ -187,7 +242,7 @@ class GlossaryInfo:
 		"""Extract sourceLang and targetLang from glossary name/title."""
 		import re
 
-		name = self._info.get(c_name)
+		name = self.name
 		if not name:
 			return
 		if self._info.get(c_sourceLang):

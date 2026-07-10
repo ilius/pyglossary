@@ -166,7 +166,7 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			# self._glos.setInfo("input_file_size", f"{self._fileSize}")
+			# self._glos.info["input_file_size"] = f"{self._fileSize}"
 		else:
 			log.warning("DSL Reader: file is not seekable")
 
@@ -236,12 +236,9 @@ class Reader:
 			", specify it by: --read-options encoding=ENCODING",
 		)
 
-	def setInfo(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, _unwrap_quotes(value))
-
 	def processHeaderLine(self, line: str) -> None:
 		if line.startswith("#NAME"):
-			self.setInfo("name", _unwrap_quotes(line[6:].strip()))
+			self._glos.info.name = _unwrap_quotes(line[6:].strip())
 		elif line.startswith("#INDEX_LANGUAGE"):
 			self._glos.sourceLangName = _unwrap_quotes(line[16:].strip())
 		elif line.startswith("#CONTENTS_LANGUAGE"):

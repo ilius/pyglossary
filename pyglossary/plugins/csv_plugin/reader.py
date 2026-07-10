@@ -84,7 +84,7 @@ class Reader:
 				cfile.seek(0, 2)
 				self._fileSize = cfile.tell()
 				cfile.seek(0)
-				# self._glos.setInfo("input_file_size", f"{self._fileSize}")
+				# self._glos.info["input_file_size"] = f"{self._fileSize}"
 			else:
 				log.warning("CSV Reader: file is not seekable")
 
@@ -113,7 +113,7 @@ class Reader:
 			if len(row) < 2:
 				log.error(f"invalid row: {row}")
 				continue
-			self._glos.setInfo(row[0].lstrip("#"), row[1])
+			self._glos.info[row[0].lstrip("#")] = row[1]
 
 	def close(self) -> None:
 		if self._file:

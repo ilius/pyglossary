@@ -438,9 +438,9 @@ class Writer:
 
 		# Dictionary display name
 		name = (
-			self._glos.getInfo("bookname")
-			or self._glos.getInfo("name")
-			or self._glos.getInfo("description")
+			self._glos.info["bookname"]
+			or self._glos.info.name
+			or self._glos.info.description
 			or "Dictionary"
 		)
 

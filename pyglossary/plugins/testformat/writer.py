@@ -36,10 +36,10 @@ class Writer:
 			# here write word and defi to the output file (depending on
 			# your format)
 		# here read info from Glossaey object
-		name = glos.getInfo("name")
-		desc = glos.getInfo("description")
-		author = glos.author
-		copyright_ = glos.getInfo("copyright")
+		name = glos.info.name
+		desc = glos.info.description
+		author = glos.info.author
+		copyright_ = glos.info.copyright
 		# if an info key doesn't exist, getInfo returns empty string
 		# now write info to the output file (depending on your output format)
 		log.info(f"{name=}")

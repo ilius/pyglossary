@@ -129,7 +129,7 @@ class TextGlossaryReader:
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
 			log.debug(f"File size of {filename}: {self._fileSize}")
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			self._glos.info["input_file_size"] = str(self._fileSize)
 		else:
 			log.warning("TextGlossaryReader: file is not seekable")
 
@@ -209,9 +209,6 @@ class TextGlossaryReader:
 			byteProgress=byteProgress,
 		)
 
-	def setInfo(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, value)
-
 	def _loadNextInfo(self) -> bool:
 		"""Returns True when reached the end."""
 		block = self.nextBlock()
@@ -229,7 +226,7 @@ class TextGlossaryReader:
 		key = self.fixInfoWord(key)
 		if not key:
 			return False
-		self.setInfo(key, value)
+		self._glos.info[key] = value
 		return False
 
 	def loadInfo(self) -> Generator[tuple[int, int], None, None]:
@@ -243,10 +240,10 @@ class TextGlossaryReader:
 			pass
 
 		if self._fileIndex == 0 and not os.getenv("NO_READ_MULTI_PART"):
-			fileCountStr = self._glos.getInfo("file_count")
+			fileCountStr = self._glos.info["file_count"]
 			if fileCountStr:
 				self._fileCount = int(fileCountStr)
-				self._glos.setInfo("file_count", "")
+				self._glos.info["file_count"] = ""
 
 	@staticmethod
 	def _genDataEntries(

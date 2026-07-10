@@ -66,8 +66,8 @@ for word, defi in mydict.items():
 		defiFormat="m",  # "m" for plain text, "h" for HTML
 	))
 
-glos.setInfo("title", "My Test StarDict")
-glos.setInfo("author", "John Doe")
+glos.info.name = "My Test StarDict"
+glos.info.author = "John Doe"
 glos.write("test.ifo", format="Stardict")
 ```
 

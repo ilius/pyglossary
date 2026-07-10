@@ -34,7 +34,7 @@ class TestLegacyGlossaryCSV(TestGlossaryBase):
 
 		if infoOverride:
 			for key, value in infoOverride.items():
-				glos.setInfo(key, value)
+				glos.info[key] = value
 
 		wRes = glos.write(outputFilename, format="Tabfile")
 		self.assertEqual(outputFilename, wRes)

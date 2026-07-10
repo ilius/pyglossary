@@ -34,7 +34,7 @@ class Reader:
 			info = jsonToData(infoFp.read())
 		self._entryCount = info.pop("wordCount")
 		for key, value in info.items():
-			self._glos.setInfo(key, value)
+			self._glos.info[key] = value
 
 	def close(self) -> None:
 		pass

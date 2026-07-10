@@ -249,23 +249,23 @@ class Reader:
 		if not name:
 			name = metadata.get("CFBundleIdentifier")
 		if name:
-			self._glos.setInfo("name", name)
+			self._glos.info.name = name
 
 		identifier = metadata.get("CFBundleIdentifier")
 		if identifier and identifier != name:
-			self._glos.setInfo("CFBundleIdentifier", identifier)
+			self._glos.info["CFBundleIdentifier"] = identifier
 
 		copyright_ = metadata.get("DCSDictionaryCopyright")
 		if copyright_:
-			self._glos.setInfo("copyright", copyright_)
+			self._glos.info["copyright"] = copyright_
 
 		author = metadata.get("DCSDictionaryManufacturerName")
 		if author:
-			self._glos.setInfo("author", author)
+			self._glos.info["author"] = author
 
 		edition = metadata.get("CFBundleInfoDictionaryVersion")
 		if edition:
-			self._glos.setInfo("edition", edition)
+			self._glos.info["edition"] = edition
 
 		if "DCSDictionaryLanguages" in metadata:
 			self.setLangs(metadata)

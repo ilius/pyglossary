@@ -213,7 +213,7 @@ class Writer:
 		if os.sep == "\\":
 			time.sleep(0.1)
 
-		entry_url_fmt = self._glos.getInfo("entry_url")
+		entry_url_fmt = self._glos.info["entry_url"]
 
 		re_href = re.compile(
 			b' href="[^<>"]*?"',
@@ -241,7 +241,7 @@ class Writer:
 
 	def writeInfo(self, filename: str, header: str) -> None:
 		glos = self._glos
-		title = glos.getInfo("name")
+		title = glos.info.name
 		customStyle = (
 			"table, th, td {border: 1px solid black; "
 			"border-collapse: collapse; padding: 5px;}"
@@ -293,7 +293,7 @@ class Writer:
 		self._encoding = encoding
 		self._filename_format = filename_format
 
-		entry_url_fmt = glos.getInfo("entry_url")
+		entry_url_fmt = glos.info["entry_url"]
 
 		def getEntryWebLink(entry: EntryType) -> str:
 			if not entry_url_fmt:
@@ -315,7 +315,7 @@ class Writer:
 			encoding="utf-8",
 		)
 
-		title = glos.getInfo("name")
+		title = glos.info.name
 		style = ""
 		if self._dark:
 			style = _darkStyle

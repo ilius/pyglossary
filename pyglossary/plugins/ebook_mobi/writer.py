@@ -147,7 +147,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 			self,
 			glos,
 		)
-		glos.setInfo("uuid", str(uuid.uuid4()).replace("-", ""))
+		glos.info["uuid"] = str(uuid.uuid4()).replace("-", "")
 		# FIXME: check if full html pages/documents as entry do work
 		# glos.stripFullHtml(errorHandler=None)
 
@@ -214,14 +214,14 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		creationDate = datetime.now().strftime("%Y-%m-%d")
 
 		return self.OPF_TEMPLATE.format(
-			identifier=self._glos.getInfo("uuid"),
+			identifier=self._glos.info["uuid"],
 			# use Language code instead name for kindlegen
 			sourceLang=self.getLangCode(self._glos.sourceLang),
 			targetLang=self.getLangCode(self._glos.targetLang),
-			title=self._glos.getInfo("name"),
-			creator=self._glos.author,
-			copyright=self._glos.getInfo("copyright"),
-			description=self._glos.getInfo("description"),
+			title=self._glos.info.name,
+			creator=self._glos.info.author,
+			copyright=self._glos.info["copyright"],
+			description=self._glos.info.description,
 			creationDate=creationDate,
 			cover=cover,
 			manifest=manifest_contents,
@@ -292,7 +292,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		if not self._glos.targetLang:
 			log.error("Target language is empty, pass --target-lang=LANG flag.")
 
-		# name = self._glos.getInfo("name")
+		# name = self._glos.info.name
 		log.info(f"Creating .mobi file with kindlegen, using {kindlegen_path!r}")
 		direc, filename = split(filename)
 		cmd = [

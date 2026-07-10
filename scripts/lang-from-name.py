@@ -14,6 +14,6 @@ log.setLevel(logging.INFO)
 
 name = " ".join(sys.argv[1:])
 glos = Glossary()
-glos.setInfo("name", name)
-glos.detectLangsFromName()
-print(f"{name!r}\t{glos.sourceLangName or None}\t{glos.targetLangName or None}")
+glos.info.name = name
+glos.info.detectLangsFromName()
+print(f"{name!r}\t{glos.info.sourceLangName or None}\t{glos.info.targetLangName or None}")

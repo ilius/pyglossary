@@ -26,7 +26,7 @@ class Reader(TextGlossaryReader):
 
 	def setInfo(self, word: str, defi: str) -> None:
 		if word == "00-database-short":
-			self._glos.setInfo("name", defi)
+			self._glos.info.name = defi
 			return
 
 		if word != "00-database-info":
@@ -38,7 +38,7 @@ class Reader(TextGlossaryReader):
 		for line in defi.split("\n"):
 			if not line.startswith("##:"):
 				if lastKey:
-					glos.setInfo(word, f"{glos.getInfo(lastKey)}\n{line}")
+					glos.info[word] = f"{glos.info[lastKey]}\n{line}"
 				continue
 
 			parts = line[3:].split(":")
@@ -46,7 +46,7 @@ class Reader(TextGlossaryReader):
 				log.error(f"unexpected line: {line}")
 			key = lastKey = parts[0]
 			value = ":".join(parts[1:])
-			glos.setInfo(key, value)
+			glos.info[key] = value
 
 	def nextBlock(self) -> tuple[str | list[str], str, None] | None:
 		if not self._file:

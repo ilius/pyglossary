@@ -107,7 +107,7 @@ class Reader:
 		self._filename = filename
 		self._filename = realpath(self._filename)
 		self.readIfoFile()
-		sametypesequence = self._glos.getInfo("sametypesequence")
+		sametypesequence = self._glos.info["sametypesequence"]
 		if sametypesequence == "-":
 			sametypesequence = ""
 		if not _verifySameTypeSequence(sametypesequence):
@@ -163,9 +163,9 @@ class Reader:
 				except UnicodeDecodeError:
 					log.error(f"ifo line is not UTF-8: {line!r}")
 					continue
-				self._glos.setInfo(key, value)
+				self._glos.info[key] = value
 
-		idxoffsetbits = self._glos.getInfo("idxoffsetbits")
+		idxoffsetbits = self._glos.info["idxoffsetbits"]
 		if idxoffsetbits:
 			if idxoffsetbits == "32":
 				self._large_file = False

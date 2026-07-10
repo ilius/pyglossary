@@ -128,7 +128,7 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 	def _write_sdic(self, entries, bookname="Test", **write_options):
 		"""Helper: create a glossary, add entries, write to SDIC."""
 		self.glos = glos = Glossary()
-		glos.setInfo("bookname", bookname)
+		glos.info.name = bookname
 		for terms_, defi in entries:
 			terms = [terms_] if isinstance(terms_, str) else terms_
 			glos.addEntry(glos.newEntry(terms, defi))

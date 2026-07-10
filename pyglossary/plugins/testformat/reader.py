@@ -36,11 +36,11 @@ class Reader:
 		self._entryCount = 100
 		# log.info(f"some useful message")
 		# here read info from file and set to Glossary object
-		self._glos.setInfo("name", "Test")
+		self._glos.info.name = "Test"
 		desc = "Test glossary created by a PyGlossary plugin"
-		self._glos.setInfo("description", desc)
-		self._glos.setInfo("author", "Me")
-		self._glos.setInfo("copyright", "GPL")
+		self._glos.info.description = desc
+		self._glos.info["author"] = "Me"
+		self._glos.info["copyright"] = "GPL"
 
 	def close(self) -> None:
 		# this is called after reading/conversion is finished

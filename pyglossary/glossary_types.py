@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import (
 	Callable,
+	Iterable,
 	Iterator,
 	Sequence,
 )
@@ -17,6 +18,7 @@ __all__ = [
 	"Callable",
 	"EntryListType",
 	"EntryType",
+	"GlossaryInfoCommonType",
 	"RawEntryType",
 	"ReaderGlossaryType",
 	"WriterGlossaryType",
@@ -135,9 +137,37 @@ class EntryListType(Protocol):
 
 
 class GlossaryInfoCommonType(Protocol):
+	def __getitem__(self, key: str) -> str: ...
+
+	def __setitem__(self, key: str, value: object) -> None: ...
+
+	def __sub__(self, exclude_keys: Iterable[str]) -> dict[str, str]: ...
+
 	def getInfo(self, key: str) -> str: ...
 
-	def setInfo(self, key: str, value: str) -> None: ...
+	def setInfo(self, key: str, value: object) -> None: ...
+
+	def iterInfo(self) -> Iterator[tuple[str, str]]: ...
+
+	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]: ...
+
+	def infoKeys(self) -> list[str]: ...
+
+	def titleTag(self, sample: str) -> str: ...
+
+	def detectLangsFromName(self) -> None: ...
+
+	@property
+	def name(self) -> str: ...
+
+	@name.setter
+	def name(self, value: object) -> None: ...
+
+	@property
+	def copyright(self) -> str: ...
+
+	@copyright.setter  # noqa: A003
+	def copyright(self, value: object) -> None: ...
 
 	@property
 	def sourceLang(self) -> Lang | None: ...
@@ -160,8 +190,20 @@ class GlossaryInfoCommonType(Protocol):
 	@property
 	def author(self) -> str: ...
 
+	@author.setter
+	def author(self, value: object) -> None: ...
 
-class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
+	@property
+	def creationTime(self) -> str: ...
+
+	@creationTime.setter
+	def creationTime(self, value: object) -> None: ...
+
+
+class ReaderGlossaryType(Protocol):
+	@property
+	def info(self) -> GlossaryInfoCommonType: ...
+
 	def newEntry(
 		self,
 		word: MultiStr,
@@ -177,8 +219,6 @@ class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
 
 	def setDefaultDefiFormat(self, defiFormat: str) -> None: ...
 
-	def titleTag(self, sample: str) -> str: ...
-
 	@property
 	def alts(self) -> bool: ...
 
@@ -188,8 +228,9 @@ class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
 	def getConfig(self, name: str, default: Any) -> Any: ...
 
 
-class WriterGlossaryType(GlossaryInfoCommonType, Protocol):
-	# def __len__(self) -> int: ...
+class WriterGlossaryType(Protocol):
+	@property
+	def info(self) -> GlossaryInfoCommonType: ...
 
 	@property
 	def filename(self) -> str: ...
@@ -200,10 +241,6 @@ class WriterGlossaryType(GlossaryInfoCommonType, Protocol):
 		self,
 		maxCount: int,
 	) -> dict[str, float] | None: ...
-
-	def iterInfo(self) -> Iterator[tuple[str, str]]: ...
-
-	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]: ...
 
 	def wordTitleStr(
 		self,

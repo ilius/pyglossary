@@ -169,10 +169,7 @@ p.groupDefinition {
 	COVER_TEMPLATE = '<meta name="cover" content="{cover}" />'
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
-		glos.setInfo(
-			"uuid",
-			os.getenv("EPUB_UUID") or glos.getInfo("uuid") or _newUUID(),
-		)
+		glos.info["uuid"] = os.getenv("EPUB_UUID") or glos.info["uuid"] or _newUUID()
 		EbookWriter.__init__(
 			self,
 			glos,
@@ -214,8 +211,8 @@ p.groupDefinition {
 			index += 1
 		ncx_items_unicode = "\n".join(ncx_items)
 		ncx_contents = self.NCX_TEMPLATE.format(
-			identifier=self._glos.getInfo("uuid"),
-			title=self._glos.getInfo("name"),
+			identifier=self._glos.info["uuid"],
+			title=self._glos.info.name,
 			ncx_items=ncx_items_unicode,
 		).encode("utf-8")
 		self.add_file_manifest(

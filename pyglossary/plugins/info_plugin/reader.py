@@ -29,7 +29,7 @@ class Reader:
 			info = jsonToData(infoFp.read())
 		assert isinstance(info, dict), f"{info=}"
 		for key, value in info.items():
-			self._glos.setInfo(key, value)
+			self._glos.info[key] = value
 
 	def countResourceFiles(self) -> int:
 		return 0

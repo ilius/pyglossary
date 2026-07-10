@@ -104,16 +104,16 @@ class Writer:
 		)
 
 		# "label" tag is a dictionary name shown in UI
-		slobWriter.tag(t_label, self._glos.getInfo("name") + namePostfix)
+		slobWriter.tag(t_label, self._glos.info.name + namePostfix)
 
-		createdAt = self._glos.getInfo("creationTime")
+		createdAt = self._glos.info["creationTime"]
 		if createdAt is not None:
 			slobWriter.tag(t_created_at, createdAt)
-		createdBy = self._glos.getInfo("author")
+		createdBy = self._glos.info.author
 		if createdBy is not None:
 			slobWriter.tag(t_created_by, createdBy)
 
-		licenseName = self._glos.getInfo("license")
+		licenseName = self._glos.info["license"]
 		if licenseName is not None:
 			slobWriter.tag(t_license_name, licenseName)
 

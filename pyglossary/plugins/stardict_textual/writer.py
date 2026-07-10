@@ -57,22 +57,22 @@ class Writer:
 
 		glos = self._glos
 
-		desc = glos.getInfo("description")
-		copyright_ = glos.getInfo("copyright")
+		desc = glos.info.description
+		copyright_ = glos.info.copyright
 		if copyright_:
 			desc = f"{copyright_}\n{desc}"
-		publisher = glos.getInfo("publisher")
+		publisher = glos.info["publisher"]
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"
 
 		info = maker.info(
 			maker.version("3.0.0"),
-			maker.bookname(glos.getInfo("name")),
-			maker.author(glos.getInfo("author")),
-			maker.email(glos.getInfo("email")),
-			maker.website(glos.getInfo("website")),
+			maker.bookname(glos.info.name),
+			maker.author(glos.info.author),
+			maker.email(glos.info["email"]),
+			maker.website(glos.info["website"]),
 			maker.description(desc),
-			maker.date(glos.getInfo("creationTime")),
+			maker.date(glos.info.creationTime),
 			maker.dicttype(""),
 		)
 		file = self._file

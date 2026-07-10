@@ -264,7 +264,7 @@ class Writer:
 				).format(dict_name=fileNameBase),
 			)
 
-		copyright_ = glos.getInfo("copyright")
+		copyright_ = glos.info["copyright"]
 		if BeautifulSoup:
 			# strip html tags
 			copyright_ = str(
@@ -283,7 +283,7 @@ class Writer:
 				if front_back_matter
 				else ""
 			)
-			bundle_id = glos.getInfo("CFBundleIdentifier")
+			bundle_id = glos.info["CFBundleIdentifier"]
 			if not bundle_id:
 				bundle_id = fileNameBase.replace(" ", "")
 			toFile.write(
@@ -295,10 +295,10 @@ class Writer:
 				).format(
 					# identifier must be unique
 					CFBundleIdentifier=bundle_id,
-					CFBundleDisplayName=glos.getInfo("name"),
+					CFBundleDisplayName=glos.info.name,
 					CFBundleName=fileNameBase,
 					DCSDictionaryCopyright=copyright_,
-					DCSDictionaryManufacturerName=glos.author,
+					DCSDictionaryManufacturerName=glos.info.author,
 					DCSDictionaryXSL=basename(xsl) if xsl else "",
 					DCSDictionaryDefaultPrefs=_format_default_prefs(default_prefs),
 					DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",

@@ -99,7 +99,7 @@ class Reader:
 		# log.debug("mdx.header = " + pformat(self._mdx.header))
 		# for key, value in self._mdx.header.items():
 		# 	key = key.lower()
-		# 	self._glos.setInfo(key, value)
+		# 	self._glos.info[key] = value
 		try:
 			title = toStr(self._mdx.header[b"Title"])
 		except KeyError:
@@ -110,10 +110,10 @@ class Reader:
 				# TODO: how to avoid this?
 				title = ""
 			if title:
-				self._glos.setInfo("name", title)
+				self._glos.info.name = title
 		desc = toStr(self._mdx.header.get(b"Description", ""))
 		if desc:
-			self._glos.setInfo("description", desc)
+			self._glos.info.description = desc
 
 		self.loadLinks()
 

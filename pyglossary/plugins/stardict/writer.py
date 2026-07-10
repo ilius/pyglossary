@@ -463,7 +463,7 @@ class Writer:
 		)
 
 	def getBookname(self, partNumber: int | None = None) -> str:
-		bookname = _newlinesToSpace(self._glos.getInfo("name"))
+		bookname = _newlinesToSpace(self._glos.info.name)
 		sourceLang = self._sourceLang
 		targetLang = self._targetLang
 		if sourceLang and targetLang:
@@ -477,11 +477,11 @@ class Writer:
 
 	def getDescription(self) -> str:
 		glos = self._glos
-		desc = glos.getInfo("description")
-		copyright_ = glos.getInfo("copyright")
+		desc = glos.info.description
+		copyright_ = glos.info["copyright"]
 		if copyright_:
 			desc = f"{copyright_}\n{desc}"
-		publisher = glos.getInfo("publisher")
+		publisher = glos.info["publisher"]
 		if publisher:
 			desc = f"Publisher: {publisher}\n{desc}"
 		return _newlinesToBr(desc)
@@ -520,7 +520,7 @@ class Writer:
 				"description",
 			}:
 				continue
-			value = glos.getInfo(key)
+			value = glos.info[key]
 			if not value:
 				continue
 			value = _newlinesToSpace(value)

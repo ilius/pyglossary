@@ -37,7 +37,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		glos = self.glos = Glossary()
 		if info:
 			for key, value in info.items():
-				glos.setInfo(key, value)
+				glos.info[key] = value
 
 		if config is not None:
 			glos.config = config
@@ -357,7 +357,7 @@ sametypesequence=abcd
 class TestGlossaryStarDictSplit(TestGlossaryErrorsBase):
 	def test_write_splits_when_dict_exceeds_size_limit(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "Split Test")
+		glos.info["name"] = "Split Test"
 
 		for i in range(3):
 			glos.addEntry(glos.newEntry([f"word{i}"], "x" * 20))
@@ -390,7 +390,7 @@ class TestGlossaryStarDictSplit(TestGlossaryErrorsBase):
 
 	def test_write_splits_with_max_file_size_option(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "Split Test")
+		glos.info["name"] = "Split Test"
 
 		for i in range(3):
 			glos.addEntry(glos.newEntry([f"word{i}"], "x" * 20))

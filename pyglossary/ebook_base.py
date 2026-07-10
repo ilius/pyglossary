@@ -354,7 +354,7 @@ class EbookWriter:
 				),
 			)
 		links_str = self.INDEX_XHTML_LINK_JOINER.join(links)
-		title = self._glos.getInfo("name")
+		title = self._glos.info.name
 		contents = self.INDEX_XHTML_TEMPLATE.format(
 			title=title,
 			indexTitle=title,
@@ -379,12 +379,12 @@ class EbookWriter:
 		creationDate = datetime.now().strftime("%Y-%m-%d")
 
 		return self.OPF_TEMPLATE.format(
-			identifier=self._glos.getInfo("uuid"),
+			identifier=self._glos.info["uuid"],
 			sourceLang=self._glos.sourceLangName,
 			targetLang=self._glos.targetLangName,
-			title=self._glos.getInfo("name"),
-			creator=self._glos.author,
-			copyright=self._glos.getInfo("copyright"),
+			title=self._glos.info.name,
+			creator=self._glos.info.author,
+			copyright=self._glos.info.copyright,
 			creationDate=creationDate,
 			cover=cover,
 			manifest=manifest_contents,

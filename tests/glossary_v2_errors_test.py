@@ -251,13 +251,13 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 
 	def test_lang_err_get_source(self):
 		glos = Glossary()
-		glos.setInfo("sourcelang", "test")
+		glos.info["sourcelang"] = "test"
 		self.assertEqual(glos.sourceLangName, "")
 		self.assertLogError("unknown language 'test'")
 
 	def test_lang_err_get_target(self):
 		glos = Glossary()
-		glos.setInfo("targetlang", "test")
+		glos.info["targetlang"] = "test"
 		self.assertEqual(glos.targetLangName, "")
 		self.assertLogError("unknown language 'test'")
 

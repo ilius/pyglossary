@@ -181,7 +181,7 @@ class GlossaryCreator:
 
 	def setInfo(self, key: str, value: str) -> None:
 		"""Set glossary metadata (e.g. ``title``, ``author``)."""
-		self._glos.setInfo(key, value)
+		self._glos.info[key] = value
 
 	def _appendEntry(self, entry: EntryType) -> None:
 		"""Route the entry to the sorted buffer or in-memory glossary."""

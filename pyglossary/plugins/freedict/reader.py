@@ -744,7 +744,7 @@ class Reader(ReaderUtils):
 		return "\n".join(lines)
 
 	def setGlosInfo(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, unescape_unicode(value))
+		self._glos.info[key] = unescape_unicode(value)
 
 	def setCopyright(self, header: Element) -> None:
 		elems = header.findall(".//availability//p", _NAMESPACE)
@@ -865,7 +865,7 @@ class Reader(ReaderUtils):
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			self._glos.info["input_file_size"] = str(self._fileSize)
 		else:
 			log.warning("FreeDict Reader: file is not seekable")
 
@@ -874,7 +874,7 @@ class Reader(ReaderUtils):
 		self._glos.setDefaultDefiFormat("h")
 
 		if self._word_title:
-			self._glos.setInfo("definition_has_headwords", "True")
+			self._glos.info["definition_has_headwords"] = "True"
 
 		context = ET.iterparse(  # type: ignore # noqa: PGH003
 			cfile,

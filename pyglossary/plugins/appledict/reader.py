@@ -180,7 +180,7 @@ class Reader:
 		for plistKey, glossaryKey in mapping.items():
 			val = info.get(plistKey)
 			if isinstance(val, str) and val.strip():
-				self._glos.setInfo(glossaryKey, val.strip())
+				self._glos.setInfo[glossaryKey] = val.strip()
 
 	@staticmethod
 	def _resolve_dictionary_xml(dirname: str) -> str:

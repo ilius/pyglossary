@@ -90,7 +90,7 @@ class TestGlossaryStarDictSortCustom(TestGlossaryStarDictBase):
 
 	def test_write_manual(self):
 		gloss = Glossary()
-		gloss.setInfo("title", "repro")
+		gloss.info.name = "repro"
 
 		gloss.addEntry(gloss.newEntry(["Z", "ZZ"], "Z"))
 		gloss.addEntry(gloss.newEntry(["A", "AA"], "A"))

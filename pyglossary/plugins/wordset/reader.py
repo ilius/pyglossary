@@ -43,9 +43,9 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		self._filename = filename
-		name = self._glos.getInfo("name")
+		name = self._glos.info.name
 		if not name or name == "data":
-			self._glos.setInfo("name", "Wordset.org")
+			self._glos.info.name = "Wordset.org"
 		self._glos.setDefaultDefiFormat("h")
 
 	def countResourceFiles(self) -> int:

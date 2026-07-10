@@ -63,6 +63,8 @@ class TestGlossaryBase(unittest.TestCase):
 			"006-empty-filtered.txt",
 			"100-en-de-v4.txt",
 			"100-en-fa.txt",
+			"100-en-fa-sdt.xml",
+			"100-en-fa-sdt.xml.txt",
 			"100-ja-en.txt",
 			"100-en-fa-v2.info",
 		}
@@ -270,7 +272,7 @@ class TestGlossaryBase(unittest.TestCase):
 		outputFilename = self.newTempFilePath(fname2)
 		glos = self.glos = Glossary()
 		if name is not None:
-			glos.setInfo("name", name)
+			glos.info.name = name
 		if config is not None:
 			glos.config = config
 		res = glos.convert(
@@ -378,7 +380,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test__str__3(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("title", "Test Title")
+		glos.info["title"] = "Test Title"
 		self.assertEqual(
 			str(glos),
 			"Glossary{filename: '', name: 'Test Title'}",
@@ -387,7 +389,7 @@ class TestGlossary(TestGlossaryBase):
 	def test__str__4(self):
 		glos = self.glos = Glossary()
 		glos._filename = "test.txt"
-		glos.setInfo("title", "Test Title")
+		glos.info["title"] = "Test Title"
 		self.assertEqual(
 			str(glos),
 			"Glossary{filename: 'test.txt', name: 'Test Title'}",
@@ -395,43 +397,43 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_info_1(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("test", "ABC")
-		self.assertEqual(glos.getInfo("test"), "ABC")
+		glos.info["test"] = "ABC"
+		self.assertEqual(glos.info["test"], "ABC")
 
 	def test_info_2(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("bookname", "Test Glossary")
-		self.assertEqual(glos.getInfo("title"), "Test Glossary")
+		glos.info["bookname"] = "Test Glossary"
+		self.assertEqual(glos.info["title"], "Test Glossary")
 
 	def test_info_3(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("bookname", "Test Glossary")
-		glos.setInfo("title", "Test 2")
-		self.assertEqual(glos.getInfo("name"), "Test 2")
-		self.assertEqual(glos.getInfo("bookname"), "Test 2")
-		self.assertEqual(glos.getInfo("title"), "Test 2")
+		glos.info["bookname"] = "Test Glossary"
+		glos.info["title"] = "Test 2"
+		self.assertEqual(glos.info.name, "Test 2")
+		self.assertEqual(glos.info["bookname"], "Test 2")
+		self.assertEqual(glos.info["title"], "Test 2")
 
 	def test_info_4(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("test", 123)
-		self.assertEqual(glos.getInfo("test"), "123")
+		glos.info["test"] = 123
+		self.assertEqual(glos.info["test"], "123")
 
 	def test_info_del_1(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("test", "abc")
-		self.assertEqual(glos.getInfo("test"), "abc")
-		glos.setInfo("test", None)
-		self.assertEqual(glos.getInfo("test"), "")
+		glos.info["test"] = "abc"
+		self.assertEqual(glos.info["test"], "abc")
+		glos.info["test"] = None
+		self.assertEqual(glos.info["test"], "")
 
 	def test_info_del_2(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("test", None)
-		self.assertEqual(glos.getInfo("test"), "")
+		glos.info["test"] = None
+		self.assertEqual(glos.info["test"], "")
 
 	def test_setInfo_err1(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.setInfo(1, "a")
+			glos.info[1] = "a"
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid key=1, must be str")
 		else:
@@ -440,7 +442,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_getInfo_err1(self):
 		glos = self.glos = Glossary()
 		try:
-			glos.getInfo(1)
+			glos.info[1]
 		except TypeError as e:
 			self.assertEqual(str(e), "invalid key=1, must be str")
 		else:
@@ -448,26 +450,26 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_getExtraInfos_1(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("a", "test 1")
-		glos.setInfo("b", "test 2")
-		glos.setInfo("c", "test 3")
-		glos.setInfo("d", "test 4")
-		glos.setInfo("name", "my name")
+		glos.info["a"] = "test 1"
+		glos.info["b"] = "test 2"
+		glos.info["c"] = "test 3"
+		glos.info["d"] = "test 4"
+		glos.info.name = "my name"
 
 		self.assertEqual(
-			glos.getExtraInfos(["b", "c", "title"]),
+			glos.info - ["b", "c", "title"],
 			{"a": "test 1", "d": "test 4"},
 		)
 
 	def test_infoKeys_1(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("a", "test 1")
-		glos.setInfo("b", "test 2")
-		glos.setInfo("name", "test name")
-		glos.setInfo("title", "test title")
+		glos.info["a"] = "test 1"
+		glos.info["b"] = "test 2"
+		glos.info.name = "test name"
+		glos.info["title"] = "test title"
 
 		self.assertEqual(
-			glos.infoKeys(),
+			glos.info.infoKeys(),
 			["a", "b", "name"],
 		)
 
@@ -492,7 +494,7 @@ class TestGlossary(TestGlossaryBase):
 		self.assertTrue(res)
 		self.assertEqual(glos.sourceLangName, "English")
 		self.assertEqual(glos.targetLangName, "Persian")
-		self.assertIn("Sample: ", glos.getInfo("name"))
+		self.assertIn("Sample: ", glos.info.name)
 
 		entryCount = sum(1 for _ in glos)
 		self.assertEqual(entryCount, 100)
@@ -508,12 +510,12 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_get_source(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("sourcelang", "farsi")
+		glos.info["sourcelang"] = "farsi"
 		self.assertEqual(glos.sourceLangName, "Persian")
 
 	def test_lang_get_target(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("targetlang", "malay")
+		glos.info["targetlang"] = "malay"
 		self.assertEqual(glos.targetLangName, "Malay")
 
 	def test_lang_set_source(self):
@@ -538,14 +540,14 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_getObj_source(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("sourcelang", "farsi")
+		glos.info["sourcelang"] = "farsi"
 		self.assertIsNotNone(glos.sourceLang)
 		if glos.sourceLang is not None:
 			self.assertEqual(glos.sourceLang.name, "Persian")
 
 	def test_lang_getObj_target(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("targetlang", "malay")
+		glos.info["targetlang"] = "malay"
 		self.assertIsNotNone(glos.targetLang)
 		if glos.targetLang is not None:
 			self.assertEqual(glos.targetLang.name, "Malay")
@@ -553,7 +555,7 @@ class TestGlossary(TestGlossaryBase):
 	def test_lang_detect_dataset_1(self):
 		for name, sourceLang, targetLang in nameLangsTestData:
 			glos = self.glos = Glossary()
-			glos.setInfo("name", name)
+			glos.info.name = name
 			glos.detectLangsFromName()
 			self.assertEqual(
 				(glos.sourceLangName, glos.targetLangName),
@@ -563,7 +565,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_detect_1(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "en-fa")
+		glos.info.name = "en-fa"
 		glos.detectLangsFromName()
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
@@ -572,7 +574,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_detect_2(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "test-en-fa")
+		glos.info.name = "test-en-fa"
 		glos.detectLangsFromName()
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
@@ -581,7 +583,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_detect_3(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "eng to per")
+		glos.info.name = "eng to per"
 		glos.detectLangsFromName()
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
@@ -590,7 +592,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_detect_4(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "Test english to farsi")
+		glos.info.name = "Test english to farsi"
 		glos.detectLangsFromName()
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
@@ -599,7 +601,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_detect_5(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "freedict-eng-deu.index")
+		glos.info.name = "freedict-eng-deu.index"
 		glos.detectLangsFromName()
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
@@ -608,7 +610,7 @@ class TestGlossary(TestGlossaryBase):
 
 	def test_lang_detect_6(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "Church Slavonic-deu.index")
+		glos.info.name = "Church Slavonic-deu.index"
 		glos.detectLangsFromName()
 		print(glos.sourceLangName)
 		# ("Church Slavonic", "German"),
@@ -620,7 +622,7 @@ class TestGlossary(TestGlossaryBase):
 	# FIXME: should be either ("", "") or ("Fijian", "German")
 	def test_lang_detect_7(self):
 		glos = self.glos = Glossary()
-		glos.setInfo("name", "Na vosa vaka-Viti-deu.index")
+		glos.info.name = "Na vosa vaka-Viti-deu.index"
 		glos.detectLangsFromName()
 		self.assertEqual(
 			(glos.sourceLangName, glos.targetLangName),
