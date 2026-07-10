@@ -15,7 +15,7 @@ Window titles, icon paths, and fixed sizes reused across Qt 6 widgets.
 
 from __future__ import annotations
 
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 
 __all__ = [
 	"INPUT_FILE_DIALOG_USE_NON_NATIVE_QT",

@@ -14,7 +14,7 @@ import sys
 from typing import TYPE_CHECKING, Any, cast
 
 from pyglossary.core import sysName
-from pyglossary.glossary_v2 import Error
+from pyglossary.glossary_v3 import Error
 from pyglossary.stubs.config_types import ConfigType
 
 from .base import UIBase
@@ -133,7 +133,7 @@ def base_ui_run(  # noqa: PLR0913
 	convertOptions: dict[str, Any] | None = None,
 	glossarySetAttrs: dict[str, Any] | None = None,
 ) -> bool:
-	from pyglossary.glossary_v2 import ConvertArgs, Glossary
+	from pyglossary.glossary_v3 import ConvertArgs, Glossary
 
 	assert log
 	ui = UIBase(progressbar=False)

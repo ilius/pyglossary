@@ -23,11 +23,11 @@ glos.convert(
 )
 ```
 
-And if you choose to use `glossary_v2`:
+And if you choose to use `glossary_v2` or `glossary_v3`:
 
 ```python
 import sys
-from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Glossary
 
 # Glossary.init() should be called only once, so make sure you put it
 # in the right place
@@ -70,8 +70,8 @@ for word, defi in mydict.items():
 		)
 	)
 
-glos.setInfo("title", "My Test StarDict")
-glos.setInfo("author", "John Doe")
+glos.info.name = "My Test StarDict"
+glos.info.author = "John Doe"
 glos.write("test.ifo", format="Stardict")
 ```
 

@@ -207,7 +207,7 @@ def mainPrepare(  # noqa: PLR0911
 
 	##############################
 
-	from pyglossary.glossary_v2 import Glossary
+	from pyglossary.glossary_v3 import Glossary
 
 	from .ui_cmd import printHelp
 

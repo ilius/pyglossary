@@ -1,14 +1,14 @@
 import sys
 
 from pyglossary.exp.glossary_creator import GlossaryCreator
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 
 Glossary.init()
 
 creator = GlossaryCreator(sys.argv[1], "Epub2")
 
-creator.setInfo("title", "Sample EPUB Glossary")
-creator.setInfo("author", "PyGlossary")
+creator.info["title"] = "Sample EPUB Glossary"
+creator.info["author"] = "PyGlossary"
 
 # numbers are alphabetical rank; list order is deliberately shuffled
 entries = [

@@ -40,7 +40,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import confirm
 
 from pyglossary.core import confDir
-from pyglossary.glossary_v2 import Error, Glossary
+from pyglossary.glossary_v3 import Error, Glossary
 from pyglossary.sort_keys import lookupSortKey, namedSortKeyList
 from pyglossary.ui import ui_cmd
 from pyglossary.ui.config import configDefDict

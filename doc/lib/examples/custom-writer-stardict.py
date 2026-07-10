@@ -3,7 +3,7 @@ import sys
 from os.path import isfile
 
 from pyglossary.exp.stardict_creator import StarDictCreator
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 
 Glossary.init()
 

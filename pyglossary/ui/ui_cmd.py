@@ -31,7 +31,7 @@ from os.path import join
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import dataDir, log
-from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Error, Glossary
 
 from .base import UIBase, fread
 from .wcwidth import wcswidth

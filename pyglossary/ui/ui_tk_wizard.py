@@ -42,7 +42,7 @@ except ImportError:
 
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_utils import Error
-from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Glossary
 from pyglossary.ui.base import UIBase
 from pyglossary.ui.ui_tk.about import createAboutFrame
 from pyglossary.utils.os_utils import abspath2

@@ -34,7 +34,7 @@ from gi.repository import Gtk as gtk
 from gi.repository import Pango as pango
 
 from pyglossary.core import homePage
-from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Error, Glossary
 from pyglossary.ui.base import (
 	aboutText,
 	authors,

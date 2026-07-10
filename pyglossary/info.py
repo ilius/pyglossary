@@ -12,6 +12,7 @@ __all__ = [
 	"c_author",
 	"c_copyright",
 	"c_creationTime",
+	"c_description",
 	"c_name",
 	"c_publisher",
 	"c_sourceLang",

@@ -148,7 +148,7 @@ class Reader:
 					log.warning(f"empty tag <{elem.tag}>")
 				continue
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
-			self._glos.setInfo(key, elem.text)
+			self._glos.info[key] = elem.text
 
 		del context
 
@@ -156,7 +156,7 @@ class Reader:
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			self._glos.info["input_file_size"] = str(self._fileSize)
 		else:
 			log.warning("XDXF Reader: file is not seekable")
 			self._file.close()

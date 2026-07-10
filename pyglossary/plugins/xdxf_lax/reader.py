@@ -122,7 +122,7 @@ class Reader:
 		desc += endTag
 		elem = XML(desc)
 		if elem.text:
-			self._glos.setInfo(infoKey, elem.text)
+			self._glos.info[infoKey] = elem.text
 
 	def readMetadata(self) -> None:
 		file = self._file
@@ -150,7 +150,7 @@ class Reader:
 		cfile.seek(0, 2)
 		self._fileSize = cfile.tell()
 		cfile.seek(0)
-		self._glos.setInfo("input_file_size", str(self._fileSize))
+		self._glos.info["input_file_size"] = str(self._fileSize)
 
 	def countResourceFiles(self) -> int:
 		return 0

@@ -13,6 +13,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 		}
 		self.dataFileCRC32 |= {
 			"100-en-fa-sdt.xml": "48cb3336",
+			"100-en-fa-sdt-2.xml": "386f8460",
 			"100-en-fa-sdt.xml.txt": "0c9b4025",
 			"stardict-xdxf-2.xml": "b3285d5c",
 			"stardict-xdxf-2.xml-x.txt": "de63f937",
@@ -40,7 +41,7 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 	def test_convert_txt_sdxml_1(self):
 		self.convert_txt_sdxml(
 			"100-en-fa",
-			"100-en-fa-sdt",
+			"100-en-fa-sdt-2",
 		)
 
 	def test_convert_sdxml_txt_1(self):

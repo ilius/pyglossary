@@ -141,7 +141,7 @@ class TextGlossaryReader:
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
 			log.debug(f"File size of {filename}: {self._fileSize}")
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			self._glos.info["input_file_size"] = str(self._fileSize)
 		else:
 			log.warning("TextGlossaryReader: file is not seekable")
 
@@ -222,7 +222,11 @@ class TextGlossaryReader:
 		)
 
 	def setInfo(self, key: str, value: str) -> None:
-		self._glos.setInfo(key, value)
+		"""
+		This is overridden by some sub-classes
+		And used in _loadNextInfo
+		"""
+		self._glos.info[key] = value
 
 	def _loadNextInfo(self) -> bool:
 		"""Returns True when reached the end."""
@@ -241,6 +245,8 @@ class TextGlossaryReader:
 		key = self.fixInfoWord(key)
 		if not key:
 			return False
+		# DO NOT use `glos.info[key] = value` directly here
+		# because the setInfo method is overridden/customized in some sub-classes
 		self.setInfo(key, value)
 		return False
 
@@ -255,10 +261,10 @@ class TextGlossaryReader:
 			pass
 
 		if self._fileIndex == 0 and not os.getenv("NO_READ_MULTI_PART"):
-			fileCountStr = self._glos.getInfo("file_count")
+			fileCountStr = self._glos.info["file_count"]
 			if fileCountStr:
 				self._fileCount = int(fileCountStr)
-				self._glos.setInfo("file_count", "")
+				self._glos.info["file_count"] = ""
 
 	@staticmethod
 	def _genDataEntries(

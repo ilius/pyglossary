@@ -197,7 +197,7 @@ class Reader:
 
 		fl = self._from_lang.upper()
 		tl = self._to_lang.upper()
-		self._glos.setInfo("title", f"dict.cc {fl}-{tl}")
+		self._glos.info["title"] = f"dict.cc {fl}-{tl}"
 
 		total = len(translations_to_source_words)
 		for count, (translations, src_words) in enumerate(

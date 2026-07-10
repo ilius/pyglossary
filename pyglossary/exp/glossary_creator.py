@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Any
 from pyglossary.core import cacheDir
 from pyglossary.flags import ALWAYS
 from pyglossary.glossary_utils import WriteError
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 from pyglossary.plugin_handler import PluginHandler
 from pyglossary.sort_keys import defaultSortKeyName, lookupSortKey
 from pyglossary.sq_entry_list import SqEntryList
@@ -93,6 +93,8 @@ class GlossaryCreator:
 		self._sqlite = sqlite
 		self._glos = Glossary()
 		self._entryList: SqEntryList | None = None
+
+		self.info = self._glos.info
 
 		if formatName not in PluginHandler.plugins:
 			raise WriteError(f"No plugin {formatName!r} was found")
@@ -181,7 +183,7 @@ class GlossaryCreator:
 
 	def setInfo(self, key: str, value: str) -> None:
 		"""Set glossary metadata (e.g. ``title``, ``author``)."""
-		self._glos.setInfo(key, value)
+		self._glos.info[key] = value
 
 	def _appendEntry(self, entry: EntryType) -> None:
 		"""Route the entry to the sorted buffer or in-memory glossary."""

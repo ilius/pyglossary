@@ -55,7 +55,7 @@ class Writer:
 		glos = self._glos
 
 		for key in info_keys:
-			value = glos.getInfo(key)
+			value = glos.info[key]
 			value = (
 				value.replace("'", "''")
 				.replace("\x00", "")
@@ -88,7 +88,7 @@ class Writer:
 		fileObj.write(f"INSERT INTO dbinfo VALUES({','.join(infoValues)});\n")
 
 		if self._add_extra_info:
-			extraInfo = glos.getExtraInfos(info_keys)
+			extraInfo = glos.info - info_keys
 			for index, (key, value) in enumerate(extraInfo.items()):
 				key2 = key.replace("'", "''")
 				value2 = value.replace("'", "''")

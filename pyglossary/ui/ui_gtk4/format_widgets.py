@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 from gi.repository import Gtk as gtk
 
 from pyglossary.core import pip
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 from pyglossary.ui.dependency import checkDepends
 from pyglossary.utils.text_utils import escapeNRB, unescapeNRB
 

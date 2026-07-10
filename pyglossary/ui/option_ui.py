@@ -88,7 +88,7 @@ def evaluateReadOptions(
 	inputFilename: str,
 	inputFormat: str | None,
 ) -> tuple[dict[str, Any] | None, str | None]:
-	from pyglossary.glossary_v2 import Glossary
+	from pyglossary.glossary_v3 import Glossary
 
 	inputArgs = Glossary.detectInputFormat(
 		inputFilename,
@@ -119,7 +119,7 @@ def evaluateWriteOptions(
 	outputFilename: str,
 	outputFormat: str | None,
 ) -> tuple[dict[str, Any] | None, str | None]:
-	from pyglossary.glossary_v2 import Glossary
+	from pyglossary.glossary_v3 import Glossary
 
 	outputArgs = Glossary.detectOutputFormat(
 		filename=outputFilename,

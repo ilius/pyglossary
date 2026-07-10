@@ -15,7 +15,7 @@ import ast
 import logging
 from typing import TYPE_CHECKING, Any, Protocol
 
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 from pyglossary.option import IntOption
 from pyglossary.utils.text_utils import escapeNTB, unescapeNTB
 

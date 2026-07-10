@@ -18,8 +18,8 @@
 """
 Backward-compatible ``Glossary`` import path.
 
-Re-exports the modern ``glossary_v2`` API under the historical module name.
-New code should import ``Glossary`` from ``pyglossary.glossary_v2`` directly;
+Re-exports the modern ``glossary_v3`` API under the historical module name.
+New code should import ``Glossary`` from ``pyglossary.glossary_v3`` directly;
 this module emits a deprecation warning when instantiated.
 """
 
@@ -31,7 +31,7 @@ from time import perf_counter as now
 from typing import TYPE_CHECKING
 
 from .core import log
-from .glossary_v2 import ConvertArgs, Error, GlossaryCommon, ReadError, WriteError
+from .glossary_v3 import ConvertArgs, Error, GlossaryCommon, ReadError, WriteError
 from .plugin_handler import PluginHandler
 from .sort_keys import lookupSortKey
 
@@ -60,7 +60,7 @@ class Glossary(GlossaryCommon, PluginHandler):
 		we will not reference to it.
 		"""
 		warnings.warn(
-			"This class is deprecated. Use glossary_v2.Glossary",
+			"This class is deprecated. Use glossary_v3.Glossary",
 			category=DeprecationWarning,
 			stacklevel=2,
 		)
@@ -71,7 +71,16 @@ class Glossary(GlossaryCommon, PluginHandler):
 					"Glossary: `info` has invalid type, dict or OrderedDict expected",
 				)
 			for key, value in info.items():
-				self.setInfo(key, value)
+				self.info[key] = value
+
+	def getInfo(self, key: str) -> str:
+		return self.info[key]
+
+	def setInfo(self, key: str, value: object) -> None:
+		self.info[key] = value
+
+	def getExtraInfos(self, excludeKeys: list[str]) -> dict[str, str]:
+		return self.info.getExtraInfos(excludeKeys)
 
 	# TODO: use Protocol for hf and return type
 	def titleElement(

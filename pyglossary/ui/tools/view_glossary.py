@@ -21,7 +21,7 @@ from subprocess import PIPE, Popen
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 
 from .colors import reset, yellow
 from .format_entry import formatEntry

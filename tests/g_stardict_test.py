@@ -8,6 +8,7 @@ sys.path.insert(0, rootDir)
 
 from glossary_v2_errors_test import TestGlossaryErrorsBase
 
+from pyglossary.exp.glossary_creator import GlossaryCreator
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.plugins.stardict.writer import Writer
 
@@ -37,7 +38,7 @@ class TestGlossaryStarDictBase(TestGlossaryErrorsBase):
 		glos = self.glos = Glossary()
 		if info:
 			for key, value in info.items():
-				glos.setInfo(key, value)
+				glos.info[key] = value
 
 		if config is not None:
 			glos.config = config
@@ -373,22 +374,23 @@ sametypesequence=abcd
 
 class TestGlossaryStarDictSplit(TestGlossaryErrorsBase):
 	def test_write_splits_when_dict_exceeds_size_limit(self):
-		glos = self.glos = Glossary()
-		glos.setInfo("name", "Split Test")
+		outputFilename = self.newTempFilePath("split-test.ifo")
+		creator = GlossaryCreator(
+			outputFilename,
+			"Stardict",
+			sqlite=False,
+			sametypesequence="m",
+		)
+		creator.info["name"] = "Split Test"
 
 		for i in range(3):
-			glos.addEntry(glos.newEntry([f"word{i}"], "x" * 20))
+			creator.addEntry([f"word{i}"], "x" * 20)
 
-		outputFilename = self.newTempFilePath("split-test.ifo")
 		part1Filename = self.newTempFilePath("split-test.1.ifo")
 		part2Filename = self.newTempFilePath("split-test.2.ifo")
 
 		with patch.object(Writer, "dictMarkMax", return_value=50):
-			glos.write(
-				outputFilename,
-				formatName="Stardict",
-				sametypesequence="m",
-			)
+			creator.finish()
 
 		for ext in ("ifo", "idx", "dict"):
 			self.assertTrue(isfile(f"{outputFilename[:-4]}.{ext}"))
@@ -406,21 +408,22 @@ class TestGlossaryStarDictSplit(TestGlossaryErrorsBase):
 		self.assertIn("wordcount=1", part1Ifo)
 
 	def test_write_splits_with_max_file_size_option(self):
-		glos = self.glos = Glossary()
-		glos.setInfo("name", "Split Test")
-
-		for i in range(3):
-			glos.addEntry(glos.newEntry([f"word{i}"], "x" * 20))
-
 		outputFilename = self.newTempFilePath("split-max-size.ifo")
-		part1Filename = self.newTempFilePath("split-max-size.1.ifo")
-
-		glos.write(
+		creator = GlossaryCreator(
 			outputFilename,
-			formatName="Stardict",
+			"Stardict",
+			sqlite=False,
 			sametypesequence="m",
 			max_file_size=50,
 		)
+		creator.info["name"] = "Split Test"
+
+		for i in range(3):
+			creator.addEntry([f"word{i}"], "x" * 20)
+
+		part1Filename = self.newTempFilePath("split-max-size.1.ifo")
+
+		creator.finish()
 
 		for ext in ("ifo", "idx", "dict"):
 			self.assertTrue(isfile(f"{outputFilename[:-4]}.{ext}"))

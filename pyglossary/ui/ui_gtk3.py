@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 import gi
 
 from pyglossary.core import homePage, pip
-from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.glossary_v3 import ConvertArgs, Error, Glossary
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
 from pyglossary.utils.os_utils import abspath2
 from pyglossary.utils.text_utils import (

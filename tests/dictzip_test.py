@@ -1,5 +1,6 @@
 import gzip
 import logging
+import shutil
 import unittest
 from pathlib import Path
 
@@ -39,12 +40,14 @@ class TestDictzip(TestGlossaryErrorsBase):
 			result = file.read().decode()
 		self.assertEqual(result, TEXT)
 
+	@unittest.skipUnless(shutil.which("dictzip"), "dictzip utility not in PATH")
 	def test_dictzip_compressed_exists(self) -> None:
 		method = "dictzip"
 		runDictzip(self.test_file_path, method)
 		self.assertTrue(self.result_file_path.exists())
 		self.assertTrue(self.result_file_path.is_file())
 
+	@unittest.skipUnless(shutil.which("dictzip"), "dictzip utility not in PATH")
 	def test_dictzip_compressed_matches(self) -> None:
 		method = "dictzip"
 		runDictzip(self.test_file_path, method)
@@ -60,6 +63,7 @@ class TestDictzip(TestGlossaryErrorsBase):
 		err = self.mockLog.popLog(logging.ERROR, expected, partial=True)
 		self.assertIsNotNone(err)
 
+	@unittest.skipUnless(shutil.which("dictzip"), "dictzip utility not in PATH")
 	def test_idzip_missing_target(self) -> None:
 		method = "dictzip"
 		filename = "/NOT_EXISTED_PATH/boilerplate.txt"

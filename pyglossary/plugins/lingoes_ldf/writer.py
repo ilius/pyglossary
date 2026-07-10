@@ -35,12 +35,6 @@ class Writer:
 		self._glos = glos
 		self._filename = ""
 
-	def getInfo(self, key: str) -> str:
-		return self._glos.getInfo(key).replace("\n", "<br>")
-
-	def getAuthor(self) -> str:
-		return self._glos.author.replace("\n", "<br>")
-
 	def finish(self) -> None:
 		self._filename = ""
 
@@ -56,13 +50,14 @@ class Writer:
 
 		newline = self._newline
 		resources = self._resources
+		info = self._glos.info
 		head = (
-			f"###Title: {self.getInfo('title')}\n"
-			f"###Description: {self.getInfo('description')}\n"
-			f"###Author: {self.getAuthor()}\n"
-			f"###Email: {self.getInfo('email')}\n"
-			f"###Website: {self.getInfo('website')}\n"
-			f"###Copyright: {self.getInfo('copyright')}\n"
+			f"###Title: {info.name}\n"
+			f"###Description: {info.description}\n"
+			f"###Author: {info.author.replace('\n', '<br>')}\n"
+			f"###Email: {info['email']}\n"
+			f"###Website: {info['website']}\n"
+			f"###Copyright: {info.copyright.replace('\n', '<br>')}\n"
 		)
 		yield from writeTxt(
 			self._glos,

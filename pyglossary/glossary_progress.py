@@ -33,7 +33,7 @@ __all__ = ["GlossaryProgress"]
 
 
 class GlossaryProgress:
-	"""Progress-bar helpers mixed into :class:`~pyglossary.glossary_v2.GlossaryCommon`."""
+	"""Progress-bar helpers mixed into :class:`~pyglossary.glossary_v3.GlossaryCommon`."""
 
 	def __init__(
 		self,

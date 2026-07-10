@@ -12,7 +12,7 @@ from os.path import splitext
 from typing import TYPE_CHECKING
 
 from pyglossary.entry import DataEntry, Entry
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 from pyglossary.plugins.stardict import Writer
 from pyglossary.sort_keys import lookupSortKey
 from pyglossary.sq_entry_list import SqEntryList

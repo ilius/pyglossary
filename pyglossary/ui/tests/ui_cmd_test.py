@@ -21,7 +21,7 @@ rootDir = abspath(join(_here, "..", "..", ".."))
 sys.path.insert(0, rootDir)
 
 from pyglossary.core import log
-from pyglossary.glossary_v2 import Error, Glossary
+from pyglossary.glossary_v3 import Error, Glossary
 from pyglossary.logger import StdLogHandler
 from pyglossary.ui import pbar_legacy
 from pyglossary.ui.tests.logging_helpers import silence_pyglossary_log

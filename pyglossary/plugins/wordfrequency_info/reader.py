@@ -159,9 +159,9 @@ class Reader(TextGlossaryReader):
 			if line.startswith("rank\t"):
 				self._setColumns(line.split("\t"))
 				if description_lines:
-					self.setInfo("description", "\n".join(description_lines))
-				self.setInfo("name", "Word Frequency (COCA)")
-				self.setInfo("website", "https://www.wordfrequency.info/")
+					self._glos.info["description"] = "\n".join(description_lines)
+				self._glos.info["name"] = "Word Frequency (COCA)"
+				self._glos["website"] = "https://www.wordfrequency.info/"
 				return
 
 	def _col(self, parts: list[str], name: str) -> str:

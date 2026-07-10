@@ -22,7 +22,7 @@ sys.path.insert(0, rootDir)
 
 from prompt_toolkit.completion import WordCompleter
 
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 from pyglossary.option import Option
 from pyglossary.ui.tests.logging_helpers import silence_pyglossary_log
 from pyglossary.ui.ui_cmd_interactive.conversion_session import ConversionSession

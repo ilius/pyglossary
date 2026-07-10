@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 import slint
 
-from pyglossary.glossary_v2 import Glossary
+from pyglossary.glossary_v3 import Glossary
 
 from .utils import load_slint, weakCallback
 
