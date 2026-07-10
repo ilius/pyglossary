@@ -72,7 +72,7 @@ def main() -> None:
 		"--noinclude-setuptools-mode=nofollow",
 		"--nofollow-import-to=pyglossary.ui.ui_gtk",
 		"--nofollow-import-to=pyglossary.ui.ui_gtk4",
-		"--nofollow-import-to=pyglossary.ui.ui_qt",
+		"--nofollow-import-to=pyglossary.ui.ui_qt6",
 		"--nofollow-import-to=gi",
 		"--nofollow-import-to=gtk",
 		"--nofollow-import-to=pyqt4",

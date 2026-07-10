@@ -116,7 +116,6 @@ step_nuitka_build() {
 		--include-package-data=slint \
 		--nofollow-import-to=pyglossary.ui.ui_gtk \
 		--nofollow-import-to=pyglossary.ui.ui_gtk4 \
-		--nofollow-import-to=pyglossary.ui.ui_qt \
 		--nofollow-import-to=pyglossary.ui.ui_qt6 \
 		--nofollow-import-to=pyglossary.ui.ui_tk \
 		--nofollow-import-to=pyglossary.ui.ui_tk_wizard \

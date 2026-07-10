@@ -447,7 +447,6 @@ ignore-paths = [
 	"^pyglossary/ui/ui_gtk3.py$",
 	"^pyglossary/ui/ui_qt6/ui.py$",
 	"^pyglossary/ui/ui_wx/ui.py$",
-	"^pyglossary/ui/ui_qt.py$",
 	"^pyglossary/ui/wcwidth/",
 	"^pyglossary/plugins/babylon_bgl/bgl_gzip.py$",
 ]
