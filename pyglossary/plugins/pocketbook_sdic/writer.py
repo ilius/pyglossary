@@ -372,6 +372,9 @@ class Writer:
 				continue
 			word = entry.l_term[0] if entry.l_term else entry.s_term
 			defi = entry.defi
+			entry.detectDefiFormat()
+			if entry.defiFormat == "m":
+				defi = defi.replace("\n", "<br>")
 			entries.append((word, defi))
 
 		if data_count > 0:
