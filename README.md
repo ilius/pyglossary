@@ -198,12 +198,12 @@ You can either download the latest `setup.exe` from [Releases](https://github.co
 - If command was not found, make sure Python environment variables are set up:
   <img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
 
-## Installation on Mac OS (14)
+## Installation on Mac OS (14 & 15)
 
 If you download the DMG file from [Releases](https://github.com/ilius/pyglossary/releases) and install it, Mac may refuse to run it, showing **the app is damaged and cannot be opened** error. In that case, move the unpacked bundle to `/Applications`, and run this from the Terminal:
 
 ```bash
-/usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossary.app
+/usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryTK.app
 ```
 
 Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossary.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
