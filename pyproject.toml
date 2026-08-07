@@ -518,6 +518,7 @@ exclude_toplevel_module = [
 	"PySide6",
 	"romkan",
 	"setuptools",
+	"slint",
 	"toml",
 	"tqdm",
 	"typing_extensions",
