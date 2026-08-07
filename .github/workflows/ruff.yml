@@ -18,7 +18,7 @@ jobs:
       - name: List files
         run: ls -l
       - name: Download ruff
-        run: ./.github/scripts/get-ruff.sh
+        run: ./scripts/ci/get-ruff.sh
       - name: Format and check code with ruff
         run: ./ruff format; ./ruff check --fix
       - name: Check for changes
