@@ -50,7 +50,6 @@ __all__ = [
 	"QStackedWidget",
 	"QTabWidget",
 	"QTextBrowser",
-	"QUrl",
 	"QVBoxLayout",
 	"QWidget",
 	"Qt",
@@ -58,7 +57,7 @@ __all__ = [
 ]
 
 try:
-	from PySide6.QtCore import QEvent, QObject, Qt, QUrl, qVersion
+	from PySide6.QtCore import QEvent, QObject, Qt, qVersion
 	from PySide6.QtGui import (
 		QDragEnterEvent,
 		QDragMoveEvent,
@@ -98,7 +97,7 @@ try:
 
 except ImportError:
 	try:
-		from PyQt6.QtCore import QEvent, QObject, Qt, QUrl, qVersion
+		from PyQt6.QtCore import QEvent, QObject, Qt, qVersion
 		from PyQt6.QtGui import (
 			QDragEnterEvent,
 			QDragMoveEvent,

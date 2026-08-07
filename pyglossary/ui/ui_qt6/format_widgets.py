@@ -35,7 +35,6 @@ if TYPE_CHECKING:
 
 __all__ = [
 	"FormatOptionsQtDialog",
-	"OptionQtType",
 	"format_pick_dialog",
 ]
 
