@@ -24,5 +24,9 @@ STATIC_DEPS=true uv pip install --no-binary python-lzo python-lzo
 
 uv pip install -r requirements.txt
 
-# Tk wizard: drag-and-drop from Finder (see pyglossary/ui/ui_tk_wizard.py)
-uv pip install tkinterdnd2
+if [ "${DEFAULT_UI:-tk}" = "wx" ]; then
+	uv pip install wxPython "pyobjc-framework-Cocoa>=11"
+else
+	# Tk wizard: drag-and-drop from Finder (see pyglossary/ui/ui_tk_wizard.py)
+	uv pip install tkinterdnd2
+fi

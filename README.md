@@ -203,7 +203,7 @@ You can either download the latest `setup.exe` from [Releases](https://github.co
 If you download the DMG file from [Releases](https://github.com/ilius/pyglossary/releases) and install it, Mac may refuse to run it, showing **the app is damaged and cannot be opened** error. In that case, move the unpacked bundle to `/Applications`, and run this from the Terminal:
 
 ```bash
-/usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryTK.app
+/usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryWX.app
 ```
 
 Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossary.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
