@@ -443,6 +443,7 @@ class PluginProp:  # noqa: PLR0904
 		"wiki",
 		"website",
 		"optionsProp",
+		"relatedFormats",
 		"Reader",
 		"Writer",
 	]
