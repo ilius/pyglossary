@@ -34,14 +34,16 @@ from pyglossary.glossary_v2 import ConvertArgs, Glossary
 Glossary.init()
 
 glos = Glossary()
-glos.convert(ConvertArgs(
-	inputFilename=sys.argv[1],
-	outputFilename=f"{sys.argv[1]}.txt",
-	# although it can detect format for *.txt, you can still pass outputFormat
-	outputFormat="Tabfile",
-	# you can pass readOptions or writeOptions as a dict
-	# writeOptions={"encoding": "utf-8"},
-))
+glos.convert(
+	ConvertArgs(
+		inputFilename=sys.argv[1],
+		outputFilename=f"{sys.argv[1]}.txt",
+		# although it can detect format for *.txt, you can still pass outputFormat
+		outputFormat="Tabfile",
+		# you can pass readOptions or writeOptions as a dict
+		# writeOptions={"encoding": "utf-8"},
+	)
+)
 ```
 
 You may look at docstring of `Glossary.convert` for full list of keyword arguments.
@@ -60,11 +62,13 @@ mydict = {
 	"c": "test3",
 }
 for word, defi in mydict.items():
-	glos.addEntryObj(glos.newEntry(
-		word,
-		defi,
-		defiFormat="m",  # "m" for plain text, "h" for HTML
-	))
+	glos.addEntryObj(
+		glos.newEntry(
+			word,
+			defi,
+			defiFormat="m",  # "m" for plain text, "h" for HTML
+		)
+	)
 
 glos.setInfo("title", "My Test StarDict")
 glos.setInfo("author", "John Doe")
