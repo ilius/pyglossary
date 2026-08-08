@@ -513,6 +513,7 @@ exclude_toplevel_module = [
 	"psutil",
 	"pygments",
 	"pymorphy3",
+	"pyparsing",
 	"PyQt4",
 	"PyQt6",
 	"PySide6",
