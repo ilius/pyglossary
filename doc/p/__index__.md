@@ -2,6 +2,7 @@
 | ----------- | ---- | -------- |
 | Aard 2 (.slob) | Aard2Slob | [aard2_slob.md](./aard2_slob.md) |
 | Almaany.com (SQLite3) | Almaany | [almaany.md](./almaany.md) |
+| Anki deck package (.apkg, .colpkg) | AnkiApkg | [anki_apkg.md](./anki_apkg.md) |
 | AppleDict Source | AppleDict | [appledict.md](./appledict.md) |
 | AppleDict Binary | AppleDictBin | [appledict_bin.md](./appledict_bin.md) |
 | AyanDict SQLite | AyanDictSQLite | [ayandict_sqlite.md](./ayandict_sqlite.md) |
