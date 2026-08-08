@@ -276,7 +276,7 @@ mccabe.max-complexity = 13
 	"A005", # Module `random` shadows a Python standard-library module
 ]
 
-"pyglossary/glossary.py" = ["ANN"]
+"pyglossary/glossary_v1.py" = ["ANN"]
 
 "*_types.py" = [
 	"TC003", # Move standard library import `...` into a type-checking block
@@ -440,7 +440,7 @@ extension-pkg-allow-list = [
 ]
 ignore-paths = [
 	"^pyglossary/ui/ui_gtk4/ui.py$",
-	"^pyglossary/glossary.py$",
+	"^pyglossary/glossary_v1.py$",
 	"^pyglossary/reverse.py$",
 	"^tests/unused_test.py$",
 	"^pyglossary/ui/progressbar/.*",
