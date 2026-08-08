@@ -13,7 +13,7 @@ rootDir = join(homeDir, "pyglossary")
 sys.path.insert(0, rootDir)
 
 from pyglossary.core import userPluginsDir
-from pyglossary.glossary import Glossary
+from pyglossary.glossary_v2 import Glossary
 
 Glossary.init(
 	# usePluginsJson=False,

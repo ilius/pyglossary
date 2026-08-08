@@ -1,4 +1,4 @@
-from pyglossary.glossary import Glossary
+from pyglossary.glossary_v2 import Glossary
 
 Glossary.init()
 
@@ -17,8 +17,8 @@ mydict = {
 }
 
 for word, defi in mydict.items():
-	glos.addEntryObj(glos.newEntry(word, defi, defiFormat=defiFormat))
+	glos.addEntry(glos.newEntry(word, defi, defiFormat=defiFormat))
 
 glos.setInfo("title", "My Test StarDict")
 glos.setInfo("author", "John Doe")
-glos.write("test.ifo", format="Stardict")
+glos.write("test.ifo", formatName="Stardict")

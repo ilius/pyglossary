@@ -11,7 +11,7 @@ sys.path.insert(0, rootDir)
 
 from pyglossary.core import userPluginsDir
 from pyglossary.flags import DEFAULT_NO
-from pyglossary.glossary import Glossary
+from pyglossary.glossary_v2 import Glossary
 
 Glossary.init(
 	usePluginsJson=False,
