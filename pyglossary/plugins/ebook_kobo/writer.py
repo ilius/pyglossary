@@ -38,26 +38,35 @@ __all__ = ["Writer"]
 
 
 def _is_cyrillic_char(c: str) -> bool:
-	# U+0400 - U+04FF: Cyrillic
-	# U+0500 - U+052F: Cyrillic Supplement
-	if "\u0400" <= c <= "\u052f":
-		return True
+	return (
+		"\u0400" <= c <= "\u04ff"     # Cyrillic
+		or "\u0500" <= c <= "\u052f"  # Cyrillic Supplement
+		or "\u2de0" <= c <= "\u2dff"  # Cyrillic Extended-A
+		or "\ua640" <= c <= "\ua69f"  # Cyrillic Extended-B
+		or "\u1c80" <= c <= "\u1c8f"  # Cyrillic Extended-C
+		# U+FE2E, U+FE2F: Combining Half Marks
+		# U+1D2B, U+1D78: Phonetic Extensions
+		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
+	)
 
-	# U+2DE0 - U+2DFF: Cyrillic Extended-A
-	if "\u2de0" <= c <= "\u2dff":
-		return True
 
-	# U+A640 - U+A69F: Cyrillic Extended-B
-	if "\ua640" <= c <= "\ua69f":
-		return True
+def _is_japanese_kana(c: str) -> bool:
+	# U+3040 – U+309F: Hiragana
+	# U+30A0 – U+30FF: Katakana
+	return "\u3040" <= c <= "\u30ff"
 
-	# U+1C80 - U+1C8F: Cyrillic Extended-C
-	if "\u1c80" <= c <= "\u1c8f":
-		return True
 
-	# U+FE2E, U+FE2F: Combining Half Marks
-	# U+1D2B, U+1D78: Phonetic Extensions
-	return c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
+def _is_han_char(c: str) -> bool:
+	# Japanese kanji / Chinese hanzi
+	return (
+		"\u3400" <= c <= "\u4dbf"       # CJK Unified Ideographs Extension A
+		or "\u4e00" <= c <= "\u9fff"    # CJK Unified Ideographs
+		or "\uf900" <= c <= "\ufaff"    # CJK Compatibility Ideographs
+		or "\u20000" <= c <= "\u2a6df"  # CJK Unified Ideographs Extension B
+		or "\u2a700" <= c <= "\u2b73f"  # CJK Unified Ideographs Extension C
+		or "\u2b740" <= c <= "\u2b81f"  # CJK Unified Ideographs Extension D
+		or "\u2f800" <= c <= "\u2fa1f"  # CJK Compatibility Ideographs Supplement
+	)
 
 
 def _fixFilename(fname: str) -> str:
@@ -90,13 +99,17 @@ class Writer:
 		if not word:
 			return "11"
 		wo = word[:2].strip().lower()
+
+		# Special case for CJK dictionaries: return single character kanji/hanzi prefix
+		if _is_han_char(wo[0]):
+			return wo[0]
 		if not wo:
 			return "11"
 		if wo[0] == "\x00":
 			return "11"
 		if len(wo) > 1 and wo[1] == "\x00":
 			wo = wo[:1]
-		if _is_cyrillic_char(wo[0]):
+		if _is_cyrillic_char(wo[0]) or _is_japanese_kana(wo[0]):
 			return wo
 		# if either of the first 2 chars are not unicode letters, return "11"
 		for c in wo:
