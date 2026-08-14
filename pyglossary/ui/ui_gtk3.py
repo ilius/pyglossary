@@ -416,7 +416,7 @@ class StrOptionGtk:
 
 	@property
 	def value(self) -> Any:
-		return self._combo.get_active_text()
+		return self.opt.evaluate(self._combo.get_active_text())[0]
 
 	@value.setter
 	def value(self, x: Any) -> None:
