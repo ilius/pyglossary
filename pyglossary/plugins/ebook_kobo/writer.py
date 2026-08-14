@@ -37,27 +37,18 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def _is_cyrillic_char(c: str) -> bool:
-	# U+0400 - U+04FF: Cyrillic
-	# U+0500 - U+052F: Cyrillic Supplement
-	if "\u0400" <= c <= "\u052f":
-		return True
+def _is_cyrillic_or_kana(c: str) -> bool:
+	return (
+		unicodedata.name(c, '').startswith(("CYRILLIC", "HIRAGANA", "KATAKANA"))
+		# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
+		# U+1D2B, U+1D78: Phonetic Extensions
+		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
+	)
 
-	# U+2DE0 - U+2DFF: Cyrillic Extended-A
-	if "\u2de0" <= c <= "\u2dff":
-		return True
 
-	# U+A640 - U+A69F: Cyrillic Extended-B
-	if "\ua640" <= c <= "\ua69f":
-		return True
-
-	# U+1C80 - U+1C8F: Cyrillic Extended-C
-	if "\u1c80" <= c <= "\u1c8f":
-		return True
-
-	# U+FE2E, U+FE2F: Combining Half Marks
-	# U+1D2B, U+1D78: Phonetic Extensions
-	return c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
+def _is_han_char(c: str) -> bool:
+	# Japanese kanji / Chinese hanzi
+	return unicodedata.name(c, '').startswith("CJK")
 
 
 def _fixFilename(fname: str) -> str:
@@ -90,13 +81,17 @@ class Writer:
 		if not word:
 			return "11"
 		wo = word[:2].strip().lower()
+
+		# Special case for CJK dictionaries: return single character kanji/hanzi prefix
 		if not wo:
 			return "11"
+		if _is_han_char(wo[0]):
+			return wo[0]
 		if wo[0] == "\x00":
 			return "11"
 		if len(wo) > 1 and wo[1] == "\x00":
 			wo = wo[:1]
-		if _is_cyrillic_char(wo[0]):
+		if _is_cyrillic_or_kana(wo[0]):
 			return wo
 		# if either of the first 2 chars are not unicode letters, return "11"
 		for c in wo:
