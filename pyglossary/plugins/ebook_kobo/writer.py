@@ -39,16 +39,17 @@ __all__ = ["Writer"]
 
 def _is_cyrillic_or_kana(c: str) -> bool:
 	return (
-			unicodedata.name(c).startswith(("CYRILLIC", "HIRAGANA", "KATAKANA"))
-			# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
-			# U+1D2B, U+1D78: Phonetic Extensions
-			or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
+		unicodedata.name(c, '').startswith(("CYRILLIC", "HIRAGANA", "KATAKANA"))
+		# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
+		# U+1D2B, U+1D78: Phonetic Extensions
+		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
 	)
 
 
 def _is_han_char(c: str) -> bool:
 	# Japanese kanji / Chinese hanzi
-	return unicodedata.name(c).startswith("CJK")
+	return unicodedata.name(c, '').startswith("CJK")
+
 
 def _fixFilename(fname: str) -> str:
 	return Path(fname.replace("/", "2F").replace("\\", "5C")).name
@@ -82,10 +83,10 @@ class Writer:
 		wo = word[:2].strip().lower()
 
 		# Special case for CJK dictionaries: return single character kanji/hanzi prefix
-		if _is_han_char(wo[0]):
-			return wo[0]
 		if not wo:
 			return "11"
+		if _is_han_char(wo[0]):
+			return wo[0]
 		if wo[0] == "\x00":
 			return "11"
 		if len(wo) > 1 and wo[1] == "\x00":
