@@ -39,7 +39,7 @@ __all__ = ["Writer"]
 
 def _is_cyrillic_or_kana(c: str) -> bool:
 	return (
-		unicodedata.name(c, '').startswith(("CYRILLIC", "HIRAGANA", "KATAKANA"))
+		unicodedata.name(c, "").startswith(("CYRILLIC", "HIRAGANA", "KATAKANA"))
 		# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
 		# U+1D2B, U+1D78: Phonetic Extensions
 		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
@@ -48,7 +48,7 @@ def _is_cyrillic_or_kana(c: str) -> bool:
 
 def _is_han_char(c: str) -> bool:
 	# Japanese kanji / Chinese hanzi
-	return unicodedata.name(c, '').startswith("CJK")
+	return unicodedata.name(c, "").startswith("CJK")
 
 
 def _fixFilename(fname: str) -> str:
