@@ -100,9 +100,9 @@ class Writer:
 		return wo.ljust(2, "a")
 
 	def fix_defi(self, defi: str) -> str:
-		# @pgaskin on #219: Kobo supports images in dictionaries,
-		# but these have a lot of gotchas
-		# (see https://pgaskin.net/dictutil/dicthtml/format.html).
+		# @pgaskin on https://github.com/ilius/pyglossary/issues/219
+		# Kobo supports images in dictionaries, but these have a lot of gotchas
+		#  see https://pgaskin.net/dictutil/dicthtml/format.html
 		# Basically, The best way to do it is to encode the images as a
 		# base64 data URL after shrinking it and making it grayscale
 		# (if it's JPG, this is as simple as only keeping the Y channel)

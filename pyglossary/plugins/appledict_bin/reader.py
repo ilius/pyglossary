@@ -303,7 +303,8 @@ class Reader:
 		entryElem: Element,
 	) -> str:
 		if not self._html:
-			# FIXME: this produces duplicate text for Idioms.dictionary, see #301
+			# FIXME: this produces duplicate text for Idioms.dictionary,
+			# see https://github.com/ilius/pyglossary/issues/301
 			return "".join(self.tostring(child) for child in entryElem.iterdescendants())
 
 		entryElem.tag = "div"
