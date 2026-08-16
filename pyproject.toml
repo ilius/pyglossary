@@ -500,6 +500,7 @@ exclude_toplevel_module = [
 	"html5lib",
 	"icu",
 	"idzip",
+	"jaconv",
 	"libzim",
 	"lxml",
 	"lzo",

@@ -848,6 +848,7 @@
 		"sortOnWrite": "never",
 		"writeOptions": {},
 		"writeDepends": {
+			"jaconv": "jaconv",
 			"marisa_trie": "marisa-trie"
 		}
 	},
