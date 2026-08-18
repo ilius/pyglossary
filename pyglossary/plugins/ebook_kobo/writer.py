@@ -37,13 +37,13 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def _unicode_name(c: str) -> str:
-	return unicodedata.name(c, "")
+def _unicode_has_prefix(c: str, *prefix: str) -> bool:
+	return unicodedata.name(c, "").startswith(prefix)
 
 
 def _is_cyrillic(c: str) -> bool:
 	return (
-		_unicode_name(c).startswith("CYRILLIC")
+		_unicode_has_prefix(c, "CYRILLIC")
 		# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
 		# U+1D2B, U+1D78: Phonetic Extensions
 		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
@@ -52,11 +52,11 @@ def _is_cyrillic(c: str) -> bool:
 
 def _is_han_char(c: str) -> bool:
 	# Japanese kanji / Chinese hanzi
-	return _unicode_name(c).startswith("CJK")
+	return _unicode_has_prefix(c, "CJK")
 
 
 def _is_kana(c: str) -> bool:
-	return _unicode_name(c).startswith(("HIRAGANA", "KATAKANA"))
+	return _unicode_has_prefix(c, "HIRAGANA", "KATAKANA")
 
 
 def _to_katakana(s: str) -> bool:
