@@ -42,12 +42,14 @@ def _unicode_has_prefix(c: str, *prefix: str) -> bool:
 
 
 def _is_cyrillic(c: str) -> bool:
-	return (
-		_unicode_has_prefix(c, "CYRILLIC")
-		# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
-		# U+1D2B, U+1D78: Phonetic Extensions
-		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
-	)
+	return _unicode_has_prefix(c, "CYRILLIC") or c in {
+		# Combining Half Marks (Titlo left/right half marks)
+		"\ufe2e",  # COMBINING CYRILLIC TITLO LEFT HALF
+		"\ufe2f",  # COMBINING CYRILLIC TITLO RIGHT HALF
+		# Phonetic Extensions:
+		"\u1d2b",  # CYRILLIC LETTER SMALL CAPITAL EL
+		"\u1d78",  # MODIFIER LETTER CYRILLIC EN
+	}
 
 
 def _is_han_char(c: str) -> bool:
