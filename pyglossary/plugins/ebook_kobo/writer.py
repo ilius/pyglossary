@@ -37,9 +37,13 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def _is_cyrillic_or_kana(c: str) -> bool:
+def _unicode_name(c: str) -> str:
+	return unicodedata.name(c, "")
+
+
+def _is_cyrillic(c: str) -> bool:
 	return (
-		unicodedata.name(c, "").startswith(("CYRILLIC", "HIRAGANA", "KATAKANA"))
+		_unicode_name(c).startswith("CYRILLIC")
 		# U+FE2E, U+FE2F: Combining Half Marks (Titlo left/right half marks)
 		# U+1D2B, U+1D78: Phonetic Extensions
 		or c in {"\ufe2e", "\ufe2f", "\u1d2b", "\u1d78"}
@@ -48,7 +52,17 @@ def _is_cyrillic_or_kana(c: str) -> bool:
 
 def _is_han_char(c: str) -> bool:
 	# Japanese kanji / Chinese hanzi
-	return unicodedata.name(c, "").startswith("CJK")
+	return _unicode_name(c).startswith("CJK")
+
+
+def _is_kana(c: str) -> bool:
+	return _unicode_name(c).startswith(("HIRAGANA", "KATAKANA"))
+
+
+def _to_katakana(s: str) -> bool:
+	import jaconv
+
+	return jaconv.hira2kata(s)
 
 
 def _fixFilename(fname: str) -> str:
@@ -59,6 +73,7 @@ class Writer:
 	WORDS_FILE_NAME = "words"
 
 	depends = {
+		"jaconv": "jaconv",
 		"marisa_trie": "marisa-trie",
 	}
 
@@ -82,16 +97,19 @@ class Writer:
 			return "11"
 		wo = word[:2].strip().lower()
 
-		# Special case for CJK dictionaries: return single character kanji/hanzi prefix
 		if not wo:
 			return "11"
-		if _is_han_char(wo[0]):
-			return wo[0]
 		if wo[0] == "\x00":
 			return "11"
 		if len(wo) > 1 and wo[1] == "\x00":
 			wo = wo[:1]
-		if _is_cyrillic_or_kana(wo[0]):
+		# Special case for CJK dictionaries: return single character kanji/hanzi prefix
+		if _is_han_char(wo[0]):
+			return wo[0]
+		# Normalize hiragana to katakana
+		if _is_kana(wo[0]):
+			return _to_katakana(wo)
+		if _is_cyrillic(wo[0]):
 			return wo
 		# if either of the first 2 chars are not unicode letters, return "11"
 		for c in wo:
@@ -109,6 +127,16 @@ class Writer:
 
 		# for now we just skip data entries and remove '<img' tags
 		return self._img_pattern.sub("[Image: \\1]", defi)
+
+	def normalize_headword(self, headword: str) -> str:
+		# For Japanese, need to convert <a name="..." /> to katakana,
+		# or else searching for hiragana-only words won't work
+		# See https://github.com/pgaskin/dictutil/issues/16
+		# and https://github.com/reader-dict/monolingual/issues/2750
+		headword_entry = headword.rsplit(", ", maxsplit=1)[-1]
+		if any(_is_kana(c) for c in headword_entry):
+			return _to_katakana(headword_entry)
+		return headword_entry
 
 	def write_groups(self) -> Generator[None, EntryType, None]:
 		import gzip
@@ -182,6 +210,7 @@ class Writer:
 		lastPrefix = ""
 		for prefix, row in data:
 			headword, variants, defi = loads(decompress(row))
+			headword_entry = self.normalize_headword(headword)
 			if lastPrefix and prefix != lastPrefix:
 				writeGroup(lastPrefix)
 				groupCounter = 0
@@ -191,7 +220,7 @@ class Writer:
 				f'<variant name="{v.strip().lower()}"/>' for v in variants
 			)
 			body = f"<div><b>{headword}</b><var>{htmlVariants}</var><br/>{defi}</div>"
-			htmlContents += f'<w><a name="{headword}" />{body}</w>\n'
+			htmlContents += f'<w><a name="{headword_entry}" />{body}</w>\n'
 			groupCounter += 1
 		del data
 

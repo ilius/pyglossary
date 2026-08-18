@@ -4,6 +4,7 @@ coverage
 biplist
 freezegun
 html5lib
+jaconv
 lxml>=6.1.0
 marisa-trie
 mistune

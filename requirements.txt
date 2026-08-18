@@ -3,6 +3,7 @@ beautifulsoup4
 biplist
 colorize-pinyin
 html5lib
+jaconv
 libzim>=1.0
 lxml
 marisa-trie
