@@ -22,6 +22,14 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"""
+Convert EPWING dictionary data to glossary entries.
+
+Based on yomichan-import; walks EPWING catalog and article binaries, decodes
+Japanese/EUC text, and maps articles to headwords and HTML definitions suitable
+for Yomichan and other targets. Used by the EPWING plugin reader path.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -41,6 +49,8 @@ __all__ = ["convert_epwing_to_yomichan"]
 
 
 class dbTerm:
+	"""db Term."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		expression: str,
@@ -90,6 +100,8 @@ class dbTerm:
 
 
 class dbKanji:
+	"""db Kanji."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		character: str,
@@ -118,6 +130,8 @@ class dbKanji:
 
 
 class EpwingExtractor:
+	"""Epwing Extractor."""
+
 	def extract_terms(self, heading: str, text: str, sequence: int) -> list[dbTerm]:
 		raise NotImplementedError
 
@@ -150,6 +164,8 @@ class EpwingExtractor:
 
 
 class KoujienExtractor(EpwingExtractor):
+	"""Koujien Extractor."""
+
 	def __init__(self) -> None:
 		self.parts_exp = re.compile(
 			r"([^（【〖]+)(?:【(.*)】)?(?:〖(.*)〗)?(?:（(.*)）)?"
@@ -297,6 +313,8 @@ class KoujienExtractor(EpwingExtractor):
 
 
 class DaijirinExtractor(KoujienExtractor):
+	"""Daijirin Extractor."""
+
 	def get_revision(self) -> str:
 		return "daijirin2"
 
@@ -357,6 +375,8 @@ class DaijirinExtractor(KoujienExtractor):
 
 
 class DaijisenExtractor(KoujienExtractor):
+	"""Daijisen Extractor."""
+
 	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(r"([^【]+)(?:【(.*)】)?")
@@ -418,6 +438,8 @@ class DaijisenExtractor(KoujienExtractor):
 
 # This handles the basic uncompressed HONMON reading.
 class EpwingBook:
+	"""Epwing Book."""
+
 	def __init__(self, path: str) -> None:
 		self.path = path
 		self.subbooks = []
@@ -454,6 +476,8 @@ class EpwingBook:
 
 
 class EpwingSubbook:
+	"""Epwing Subbook."""
+
 	def __init__(self, path: str, title: str) -> None:
 		self.path = path
 		self.title = title
@@ -534,6 +558,8 @@ class EpwingSubbook:
 
 
 class MeikyouExtractor(KoujienExtractor):
+	"""Meikyou Extractor."""
+
 	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(
@@ -615,6 +641,8 @@ class MeikyouExtractor(KoujienExtractor):
 
 
 class GakkenExtractor(KoujienExtractor):
+	"""Gakken Extractor."""
+
 	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(r"([ぁ-んァ-ヶー‐・]*)(?:【(.*)】)?")
@@ -717,6 +745,8 @@ class GakkenExtractor(KoujienExtractor):
 
 
 class WadaiExtractor(KoujienExtractor):
+	"""Wadai Extractor."""
+
 	def __init__(self) -> None:
 		super().__init__()
 		self.parts_exp = re.compile(r"([^＜]+)(?:＜([^＞【]+)(?:【([^】]+)】)?＞)?")
@@ -781,6 +811,8 @@ class WadaiExtractor(KoujienExtractor):
 
 
 class KotowazaExtractor(EpwingExtractor):
+	"""Kotowaza Extractor."""
+
 	def __init__(self) -> None:
 		self.read_group_exp = re.compile(r"([^ぁ-ゖァ-ヺ]*)(\([^)]*\))")
 		self.read_group_alts_exp = re.compile(r"\(([^)]*)\)")

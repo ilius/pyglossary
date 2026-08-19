@@ -1,3 +1,10 @@
+"""
+PyGlossary JMnedict format plugin.
+
+Japanese proper-name dictionary XML companion to JMdict. Read-only ``Reader``
+maps name entries with readings and translations into glossary entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

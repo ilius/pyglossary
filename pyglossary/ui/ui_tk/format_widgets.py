@@ -14,6 +14,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Tkinter per-plugin format option widgets.
+
+Tk widgets for each ``Option`` subtype, used by ``ui_tk`` and ``ui_tk_wizard``
+to edit plugin-specific read/write settings.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -46,6 +53,8 @@ pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values
 
 
 class FormatDialog(tk.Toplevel):
+	"""Format Dialog."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		rootWin: tk.Tk,
@@ -246,6 +255,8 @@ class FormatDialog(tk.Toplevel):
 
 
 class FormatButton(ttk.Button):
+	"""Format Button."""
+
 	noneLabel = "[Select Format]"
 
 	def __init__(
@@ -302,6 +313,8 @@ class FormatButton(ttk.Button):
 
 
 class OptionTkType(Protocol):
+	"""Option Tk Type."""
+
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None: ...
 	@property
 	def value(self) -> Any: ...
@@ -312,6 +325,8 @@ class OptionTkType(Protocol):
 
 
 class BoolOptionTk:
+	"""Bool Option Tk."""
+
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
@@ -339,6 +354,8 @@ class BoolOptionTk:
 
 
 class IntOptionTk:
+	"""Int Option Tk."""
+
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		assert isinstance(opt, IntOption)
 		frame = ttk.Frame(master=parent)
@@ -389,6 +406,8 @@ class IntOptionTk:
 
 
 class StrOptionTk:
+	"""Str Option Tk."""
+
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		self.opt = opt
 		frame = ttk.Frame(master=parent)
@@ -430,14 +449,16 @@ class StrOptionTk:
 
 
 class FileSizeOptionTk(StrOptionTk):
-	pass
+	"""File Size Option Tk."""
 
 
 class HtmlColorOptionTk(StrOptionTk):
-	pass
+	"""Html Color Option Tk."""
 
 
 class MultiLineStrOptionTk:
+	"""Multi Line Str Option Tk."""
+
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
 		frame = ttk.Frame(master=parent)
 		frame.pack(side="top", fill="y", expand=True)
@@ -463,10 +484,12 @@ class MultiLineStrOptionTk:
 
 
 class NewlineOptionTk(MultiLineStrOptionTk):
-	pass
+	"""Newline Option Tk."""
 
 
 class LiteralEvalOptionTk:
+	"""Literal Eval Option Tk."""
+
 	typeHint = ""
 
 	def __init__(self, opt: Option, parent: ttk.Widget) -> None:
@@ -495,10 +518,14 @@ class LiteralEvalOptionTk:
 
 
 class ListOptionTk(LiteralEvalOptionTk):
+	"""List Option Tk."""
+
 	typeHint = "Python list"
 
 
 class DictOptionTk(LiteralEvalOptionTk):
+	"""Dict Option Tk."""
+
 	typeHint = "Python dict"
 
 
@@ -518,6 +545,8 @@ optionClassByName: dict[str, OptionTkType] = {
 
 
 class FormatOptionsDialog(tk.Toplevel):
+	"""Format Options Dialog."""
+
 	commentLen = 60
 	kindFormatsOptions = {
 		"Read": Glossary.formatsReadOptions,

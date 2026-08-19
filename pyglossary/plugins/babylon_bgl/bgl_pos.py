@@ -19,6 +19,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Babylon BGL part-of-speech code tables.
+
+Maps BGL numeric POS identifiers to human-readable grammar labels. Used when
+rendering Babylon definitions with part-of-speech annotations.
+"""
+
 from __future__ import annotations
 
 __all__ = ["partOfSpeechByCode"]

@@ -17,6 +17,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Base class and shared resources for PyGlossary UI backends.
+
+``UIBase`` loads user configuration from JSON, exposes about/license text
+helpers, and defines common hooks used by GTK, Qt, Tk, wx, Slint, web, and
+command-line interfaces.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -53,6 +61,8 @@ summary = (
 
 
 class UIBase:
+	"""UI Base."""
+
 	conflictingParams = [
 		("sqlite", "direct"),
 		("remove_html", "remove_html_all"),

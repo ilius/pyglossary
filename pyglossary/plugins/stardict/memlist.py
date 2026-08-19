@@ -1,3 +1,10 @@
+"""
+StarDict in-memory entry list for write buffering.
+
+Buffers glossary entries in memory (or spills to SQLite) while the StarDict
+writer sorts and emits ``.ifo``/``.idx``/``.dict`` file sets.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -10,6 +17,8 @@ __all__ = ["MemSdList"]
 
 # TODO py3.12: MemSdList[T]
 class MemSdList:
+	"""Mem Sd List."""
+
 	def __init__(self) -> None:
 		self._l: list[Any] = []
 

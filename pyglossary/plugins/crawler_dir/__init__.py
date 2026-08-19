@@ -1,4 +1,12 @@
 # mypy: ignore-errors
+"""
+PyGlossary crawler directory format plugin.
+
+Directory of crawled web pages indexed as glossary entries (``.crawler/``).
+Registers ``Reader`` and ``Writer`` for offline mirrors with HTML definitions
+and relative link rewriting.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

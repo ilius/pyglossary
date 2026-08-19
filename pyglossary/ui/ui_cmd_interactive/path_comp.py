@@ -17,7 +17,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Tab-completion for paths and ``!`` shell tokens in file prompts."""
+"""
+Tab-completion for paths and ``!`` shell tokens in file prompts.
+
+Completers for glossary file paths, format names, and tokens after ``!`` when
+the interactive cmd UI embeds a minimal filesystem shell.
+"""
 
 from __future__ import annotations
 

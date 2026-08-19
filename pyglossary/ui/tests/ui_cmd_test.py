@@ -1,5 +1,10 @@
 # mypy: ignore-errors
-"""Integration-style tests for ``ui_cmd`` (CLI help, option parsing, ``UI.run``)."""
+"""
+Integration-style tests for :mod:`pyglossary.ui.ui_cmd`.
+
+Exercises CLI help text, option parsing, and non-interactive ``UI.run``
+conversion paths.
+"""
 
 from __future__ import annotations
 
@@ -106,6 +111,8 @@ class TestPrintHelp(unittest.TestCase):
 
 
 class TestUiCmdRun(unittest.TestCase):
+	"""Tests for Test Ui Cmd Run."""
+
 	@classmethod
 	def setUpClass(cls) -> None:
 		Glossary.init()

@@ -1,3 +1,11 @@
+"""
+PyGlossary JMdict format plugin.
+
+Japanese-Multilingual Dictionary XML used for Japanese lexical data. Read-only
+``Reader`` parses JMdict XML entries into headwords, readings, senses, and HTML
+definitions suitable for Yomichan and other targets.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

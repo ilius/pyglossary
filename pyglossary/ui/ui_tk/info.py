@@ -15,6 +15,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Glossary metadata viewer for the Tkinter UI.
+
+Displays info-dictionary fields from the loaded glossary in a Tk panel.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -35,6 +41,8 @@ __all__ = ["PreConvertInfoDialog"]
 
 
 class PreConvertInfoDialog(tk.Toplevel):
+	"""Pre Convert Info Dialog."""
+
 	def __init__(
 		self,
 		info: dict[str, Any],

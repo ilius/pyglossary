@@ -1,6 +1,13 @@
 # mypy: ignore-errors
 # from https://github.com/maxim-saplin/pyglossary
 
+"""
+PyGlossary DIKT JSON format plugin.
+
+JSON export format used by the DIKT dictionary tool chain. Write-only ``Writer``
+serializes glossary entries into DIKT-compatible JSON records.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

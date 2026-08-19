@@ -13,7 +13,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-"""Chinese wildcard and pinyin indexes."""
+"""
+Chinese wildcard and pinyin indexes for AppleDict.
+
+Generates supplemental index keys for simplified/traditional Chinese headwords,
+including pinyin readings and wildcard forms used by Apple Dictionary search.
+Registered with the AppleDict ``indexes`` package for Chinese source languages.
+"""
 
 from __future__ import annotations
 

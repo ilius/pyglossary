@@ -1,3 +1,10 @@
+"""
+Input/output format picker for the Slint UI.
+
+Slint components for choosing detected or manual read/write formats before
+conversion.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

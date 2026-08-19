@@ -16,7 +16,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
-"""This module is used in plugins."""
+"""
+SLOB (Aard dictionary blob) format support for PyGlossary.
+
+Re-exports reader, writer, collation, and compression helpers used by the Aard2
+SLOB plugin and related tools.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

@@ -16,6 +16,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Write EPUB-2 ``.epub`` e-book dictionaries.
+
+Packages glossary entries into EPUB-2 container files with XHTML content documents,
+OPF manifest, and NCX navigation. Produces e-book dictionaries readable on
+EPUB-2 compatible devices.
+"""
+
 from __future__ import annotations
 
 import os
@@ -39,6 +47,8 @@ class Writer(EbookWriter):
 	# these class attrs are only in Epub
 	# MIMETYPE_CONTENTS, CONTAINER_XML_CONTENTS
 	# NCX_TEMPLATE, NCX_NAVPOINT_TEMPLATE
+
+	"""Write glossary files in EPUB-2 ebook format."""
 
 	MIMETYPE_CONTENTS = "application/epub+zip"
 	CONTAINER_XML_CONTENTS = """<?xml version="1.0" encoding="UTF-8" ?>

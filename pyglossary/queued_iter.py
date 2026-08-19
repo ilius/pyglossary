@@ -1,3 +1,11 @@
+"""
+Background-prefetching iterator for producer/consumer pipelines.
+
+``QueuedIterator`` runs the source iterator on a worker thread and buffers items
+in a bounded queue so slow consumers do not block fast producers (and vice
+versa).
+"""
+
 from __future__ import annotations
 
 import queue
@@ -11,6 +19,8 @@ __all__ = ["QueuedIterator"]
 
 
 class QueuedIterator[T]:
+	"""Background-prefetching iterator."""
+
 	def __init__(
 		self,
 		iterator: Iterator[T],

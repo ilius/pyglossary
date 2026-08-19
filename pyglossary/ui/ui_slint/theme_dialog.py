@@ -1,3 +1,10 @@
+"""
+Theme and appearance settings for the Slint UI.
+
+Lets users pick Slint styles and related visual preferences for the native UI
+frontend.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

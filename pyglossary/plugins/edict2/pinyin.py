@@ -1,6 +1,13 @@
 # coding=utf-8
 # based on https://github.com/zkoch/CEDICT_Parser
 
+"""
+EDICT2 pinyin tone-mark conversion helpers.
+
+Converts numbered and plain pinyin syllables to tone-marked Unicode forms.
+Adapted from CEDICT parser utilities for EDICT2 reading display.
+"""
+
 from __future__ import annotations
 
 __all__ = ["convert"]

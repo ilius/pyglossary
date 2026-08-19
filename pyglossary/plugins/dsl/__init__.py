@@ -1,3 +1,11 @@
+"""
+PyGlossary ABBYY Lingvo DSL format plugin.
+
+Textual ``.dsl`` dictionaries from ABBYY Lingvo with markup for abbreviations,
+examples, and audio references. Read-only plugin: imports ``Reader`` only and
+exposes encoding and styling options for DSL source files.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

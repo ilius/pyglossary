@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Miscellaneous GTK 3 UI utilities.
+
+Icon loading, widget sizing, and dialog helpers shared across the GTK 3
+backend.
+"""
+
 from __future__ import annotations
 
 import logging

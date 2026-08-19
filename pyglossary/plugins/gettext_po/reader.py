@@ -1,3 +1,11 @@
+"""
+Read Gettext ``.po`` translation catalog files.
+
+Parses GNU gettext PO message catalogs into glossary entries keyed by ``msgid``.
+Uses ``msgstr`` text as definitions and preserves translator comments and
+context markers where present.
+"""
+
 from __future__ import annotations
 
 from os.path import isdir, join
@@ -18,6 +26,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Gettext Po glossary files."""
+
 	useByteProgress = False
 	depends = {
 		"polib": "polib",

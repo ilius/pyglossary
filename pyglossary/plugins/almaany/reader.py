@@ -1,3 +1,11 @@
+"""
+Read Almaany.com SQLite3 bilingual dictionaries.
+
+Opens Almaany ``.db`` exports and loads Arabic-English (and related) term pairs
+into glossary entries. Queries SQLite tables for headwords and HTML definitions,
+normalizing escaped markup before yielding each entry.
+"""
+
 from __future__ import annotations
 
 import html
@@ -13,6 +21,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Almaany glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

@@ -1,3 +1,11 @@
+"""
+Read Wiktionary data extracted by Wiktextract (JSON/JSONL).
+
+Maps Wiktextract lemma objects to glossary entries, rendering senses, tags,
+etymology, and pronunciations as HTML. Handles multilingual Wiktionary dumps
+processed through the Wiktextract tool chain.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -27,6 +35,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Wiktextract glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

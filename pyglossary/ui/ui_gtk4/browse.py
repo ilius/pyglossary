@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Glossary entry browser for the GTK 4 UI.
+
+Lets users search and preview entries from the loaded input glossary before or
+after conversion.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -31,6 +38,8 @@ __all__ = ["BrowseButton"]
 
 
 class BrowseButton(gtk.Button):
+	"""Browse Button."""
+
 	def __init__(
 		self,
 		setFilePathFunc: Callable[[str], None],

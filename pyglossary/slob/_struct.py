@@ -1,4 +1,11 @@
 # Binary struct helpers for slob (pyglossary)
+"""
+Binary struct read/write helpers for SLOB records.
+
+``StructReader`` decodes length-prefixed strings and fixed-width integers from
+SLOB item streams according to format size constants.
+"""
+
 from __future__ import annotations
 
 import io
@@ -29,6 +36,8 @@ def read_byte_string(f: IOBase, len_spec: str) -> bytes:
 
 
 class StructReader:
+	"""Struct Reader."""
+
 	def __init__(
 		self,
 		file: IOBase,
@@ -89,6 +98,8 @@ class StructReader:
 
 
 class StructWriter:
+	"""Struct Writer."""
+
 	def __init__(
 		self,
 		file: io.BufferedRandom | io.BufferedWriter,

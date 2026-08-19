@@ -1,3 +1,10 @@
+"""
+Sort glossary entries by lowercased headword bytes.
+
+Case-insensitive byte ordering of the primary term, useful for formats that
+ignore case when indexing.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

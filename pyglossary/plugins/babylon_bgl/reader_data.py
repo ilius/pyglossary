@@ -19,6 +19,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Babylon BGL entry payload data extraction.
+
+Unpacks compressed and typed definition blobs from BGL record bodies. Bridges
+raw BGL bytes to HTML text for the main Babylon BGL reader.
+"""
+
 from __future__ import annotations
 
 import io
@@ -42,6 +49,8 @@ re_b_reference = re.compile(b"^[0-9a-fA-F]{4}$")
 
 
 class EntryWordData(NamedTuple):
+	"""Entry Word Data."""
+
 	pos: int
 	b_word: bytes
 	u_word: str
@@ -49,6 +58,8 @@ class EntryWordData(NamedTuple):
 
 
 class Block:
+	"""Block."""
+
 	def __init__(self) -> None:
 		self.data = b""
 		self.type = ""

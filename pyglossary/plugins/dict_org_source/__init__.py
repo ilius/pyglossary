@@ -1,3 +1,10 @@
+"""
+PyGlossary DICT.org source format plugin.
+
+Plain-text source consumed by ``dictfmt`` to build DICT.org databases. Write-only
+``Writer`` emits ``.dtxt`` files suitable for the dictfmt toolchain.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

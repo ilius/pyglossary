@@ -1,3 +1,11 @@
+"""
+Read AyanDict SQLite dictionary databases.
+
+Opens AyanDict SQLite stores and queries term and definition tables. Maps rows
+to glossary entries with optional metadata fields preserved from the source
+schema.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -12,6 +20,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read AyanDict SQLite glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

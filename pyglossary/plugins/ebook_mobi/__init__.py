@@ -1,3 +1,11 @@
+"""
+PyGlossary MOBI ebook format plugin.
+
+Mobipocket ``.mobi`` e-book dictionaries packaged from glossary entries.
+Write-only ``Writer`` builds OPF/NCX/HTML internally and zips the result into a
+Kindle-compatible MOBI archive.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

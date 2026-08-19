@@ -13,7 +13,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
-"""extended indexes generation with respect to source language."""
+"""
+Extended AppleDict index generation by source language.
+
+Registers per-language callables that expand headword lists into additional
+lookup keys for Apple Dictionary Development Kit XML. Language submodules plug
+into the shared ``languages`` registry at import time.
+"""
 
 from __future__ import annotations
 

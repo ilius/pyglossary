@@ -1,3 +1,11 @@
+"""
+Typed schema for user configuration values.
+
+``ConfigType`` is a ``TypedDict`` describing optional PyGlossary settings such as
+``auto_sqlite``, HTML cleanup flags, RTL handling, and duplicate-headword
+skipping. Used by the UI and CLI when reading ``conf.json``.
+"""
+
 from typing import NotRequired, TypedDict
 
 __all__ = ["ConfigType"]
@@ -6,6 +14,8 @@ __all__ = ["ConfigType"]
 
 
 class ConfigType(TypedDict):
+	"""Configuration schema type."""
+
 	log_time: NotRequired[bool]
 	cleanup: NotRequired[bool]
 	auto_sqlite: NotRequired[bool]

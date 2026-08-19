@@ -1,3 +1,11 @@
+"""
+Streamed StarDict glossary builder with bounded memory use.
+
+``StarDictCreator`` accepts entries incrementally into a SQLite-backed list,
+then finishes a StarDict directory (``.ifo`` / ``.idx`` / ``.dict``) via the
+StarDict writer plugin—suited to programmatic dictionary generation.
+"""
+
 from __future__ import annotations
 
 from os.path import splitext
@@ -17,6 +25,8 @@ __all__ = ["StarDictCreator"]
 
 
 class StarDictCreator:
+	"""Create StarDict glossaries with bounded memory use."""
+
 	def __init__(
 		self,
 		filename: str,

@@ -2,8 +2,11 @@
 # mypy: ignore-errors
 
 """
-To render markdown: pip install rich
-To enable html/xdxf highlighting: pip install pygments
+CLI tool to browse and pretty-print glossary entries in the terminal.
+
+Loads a glossary (any supported format) and displays terms with formatted
+definitions. Optional ``rich`` and ``pygments`` improve Markdown and HTML/XDXF
+rendering when installed.
 """
 
 from __future__ import annotations

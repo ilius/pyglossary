@@ -1,4 +1,12 @@
 # mypy: ignore-errors
+"""
+Write crawler directory ``.crawler`` glossary bundles.
+
+Exports glossary entries into compressed tab-separated shards under a crawler
+directory layout. Mirrors the crawler reader structure for round-trip and
+crawler-based distribution.
+"""
+
 from __future__ import annotations
 
 from hashlib import sha1
@@ -17,6 +25,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in crawler directory format."""
+
 	_compression: str = ""
 
 	def __init__(self, glos: WriterGlossaryType) -> None:

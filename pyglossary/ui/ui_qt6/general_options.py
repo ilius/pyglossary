@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Global conversion options panel for the Qt 6 UI.
+
+Qt controls for glossary-wide settings such as sort keys, filters, and
+encodings.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -33,6 +40,8 @@ __all__ = ["GeneralOptionsQtDialog"]
 
 
 class GeneralOptionsQtDialog(QDialog):
+	"""General Options Qt Dialog."""
+
 	def __init__(self, ui: UI, parent: QWidget | None) -> None:
 		super().__init__(parent)
 		self._ui = ui

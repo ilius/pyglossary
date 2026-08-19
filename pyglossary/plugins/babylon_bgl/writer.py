@@ -7,6 +7,14 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
+"""
+Write glossary files in Babylon BGL format.
+
+Packages glossary entries into a Babylon ``.bgl`` binary with index tables and
+compressed definition bodies. Reuses BGL writer helpers for charset metadata and
+Babylon-specific record layout.
+"""
+
 from __future__ import annotations
 
 import gzip
@@ -128,6 +136,8 @@ GZIP_OFFSET = 64
 
 
 class Writer:
+	"""Write glossary files in Babylon BGL format."""
+
 	compressions = stdCompressions
 
 	def __init__(self, glos: WriterGlossaryType) -> None:

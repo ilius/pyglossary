@@ -1,3 +1,10 @@
+"""
+PyGlossary XLIFF format plugin.
+
+XML Localization Interchange File Format glossaries (``.xlf``, ``.xliff``).
+Read-only ``Reader`` extracts ``<trans-unit>`` source/target pairs as entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

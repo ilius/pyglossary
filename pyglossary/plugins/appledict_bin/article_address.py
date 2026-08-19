@@ -12,6 +12,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+AppleDict binary article address records.
+
+Named tuple and parser for article byte offsets within AppleDict binary data
+files. Resolves headword keys to HTML definition locations during import.
+"""
+
 from __future__ import annotations
 
 from typing import NamedTuple
@@ -20,6 +27,8 @@ __all__ = ["ArticleAddress"]
 
 
 class ArticleAddress(NamedTuple):
+	"""Article Address."""
+
 	sectionOffset: int
 	chunkOffset: int
 

@@ -1,3 +1,10 @@
+"""
+Wiktextract Chinese-language parsing utilities.
+
+Provides helpers for normalizing Wiktextract Chinese headwords, readings, and
+sense text during import. Used by the Wiktextract reader for zh-specific fields.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

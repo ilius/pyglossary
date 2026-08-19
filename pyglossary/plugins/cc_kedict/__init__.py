@@ -1,4 +1,11 @@
 # mypy: ignore-errors
+"""
+PyGlossary cc-kedict format plugin.
+
+Community Korean-English dictionary SQLite data (cc-kedict). Read-only
+``Reader`` loads bilingual lemmas from cc-kedict database files.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

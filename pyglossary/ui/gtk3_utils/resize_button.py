@@ -16,6 +16,13 @@
 # GNU General Public License for more details.
 
 
+"""
+Resizable split-pane button widget for GTK 3.
+
+Provides a draggable handle used in GTK 3 layouts to let users resize adjacent
+panes (for example log vs. option panels).
+"""
+
 from __future__ import annotations
 
 from . import gdk, gtk
@@ -25,6 +32,8 @@ __all__ = ["ResizeButton"]
 
 
 class ResizeButton(gtk.EventBox):
+	"""Resize Button."""
+
 	def __init__(
 		self,
 		win: gtk.Window,

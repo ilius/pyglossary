@@ -1,3 +1,11 @@
+"""
+Write DICT.org dictfmt ``.dtxt`` source files.
+
+Exports glossary entries as plain-text source suitable for ``dictfmt`` indexing.
+Writes headword and definition blocks that DICT.org tooling converts to
+``.index`` dictionary bundles.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -11,6 +19,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in DICT.org source format."""
+
 	_remove_html_all: bool = True
 
 	def __init__(self, glos: WriterGlossaryType) -> None:

@@ -16,6 +16,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Write Kobo e-reader ``.kobo`` dictionary packages.
+
+Builds Kobo dictionary archives with gzip-compressed definition blobs and
+collation metadata. Formats HTML definitions and headword indexes for Kobo
+e-reader dictionary slots.
+"""
+
 from __future__ import annotations
 
 import re
@@ -72,6 +80,8 @@ def _fixFilename(fname: str) -> str:
 
 
 class Writer:
+	"""Write glossary files in Kobo ebook format."""
+
 	WORDS_FILE_NAME = "words"
 
 	depends = {

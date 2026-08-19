@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Glossary metadata viewer for the GTK 4 UI.
+
+Displays title, source/target languages, and other info fields read from the
+input glossary.
+"""
+
 from __future__ import annotations
 
 from typing import Any

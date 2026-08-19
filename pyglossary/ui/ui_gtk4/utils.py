@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Shared GTK 4 UI helper functions.
+
+Dialog helpers, CSS loading, and minor widget utilities used across the GTK 4
+backend modules.
+"""
+
 from __future__ import annotations
 
 from os.path import isabs, join
@@ -75,6 +82,8 @@ def HBox(**kwargs: Any) -> gtk.Box:
 
 
 class FixedSizePicture(gtk.Picture):
+	"""Fixed Size Picture."""
+
 	def __init__(self, path: str) -> None:
 		gtk.Picture.__init__(self)
 		# self.size = size
@@ -208,6 +217,8 @@ def labelImageButton(  # noqa: PLR0913
 
 
 class MyHButtonBox(gtk.Box):
+	"""My H Button Box."""
+
 	def __init__(self) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL)
 		self.get_style_context().add_class("margin_10")

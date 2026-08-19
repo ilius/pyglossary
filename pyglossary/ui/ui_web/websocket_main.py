@@ -22,6 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+Entry point that starts the browser PyGlossary UI over WebSocket.
+
+Launches the HTTP/WebSocket server and blocks until the web conversion session
+finishes or the user exits.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -42,6 +49,8 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType
 
 	class ServerType(Protocol):
+		"""Server Type."""
+
 		def send_message_to_all(self, msg: str | dict) -> None: ...
 		def shutdown(self) -> None: ...
 

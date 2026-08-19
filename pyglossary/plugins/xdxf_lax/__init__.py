@@ -1,3 +1,11 @@
+"""
+PyGlossary XDXF lax format plugin.
+
+Relaxed XDXF variant tolerant of imperfect or extension-heavy XML. Read-only
+``Reader`` parses lax XDXF files and converts entries to glossary HTML with
+fewer schema constraints than strict XDXF.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

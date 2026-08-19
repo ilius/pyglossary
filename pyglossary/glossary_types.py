@@ -1,4 +1,14 @@
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Shared typing protocols for glossary entries and I/O.
+
+Defines ``EntryType``, ``RawEntryType``, ``EntryListType``, and reader/writer
+``Protocol`` types that decouple core conversion logic from concrete ``Entry``
+and ``Glossary`` implementations.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -32,6 +42,8 @@ type RawEntryType = Sequence[bytes]
 
 class EntryType(Protocol):  # noqa: PLR0904
 	# def __init__(self) -> None: ...
+
+	"""Entry Type."""
 
 	@classmethod
 	def isData(cls) -> bool: ...
@@ -106,6 +118,8 @@ class EntryType(Protocol):  # noqa: PLR0904
 
 
 class EntryListType(Protocol):
+	"""Entry List Type."""
+
 	def __init__(
 		self,
 		entryToRaw: Callable[[EntryType], RawEntryType],
@@ -135,6 +149,8 @@ class EntryListType(Protocol):
 
 
 class GlossaryInfoCommonType(Protocol):
+	"""Glossary Info Common Type."""
+
 	def getInfo(self, key: str) -> str: ...
 
 	def setInfo(self, key: str, value: str) -> None: ...
@@ -162,6 +178,8 @@ class GlossaryInfoCommonType(Protocol):
 
 
 class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
+	"""Reader Glossary Type."""
+
 	def newEntry(
 		self,
 		word: MultiStr,
@@ -190,6 +208,8 @@ class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
 
 class WriterGlossaryType(GlossaryInfoCommonType, Protocol):
 	# def __len__(self) -> int: ...
+
+	"""Writer Glossary Type."""
 
 	@property
 	def filename(self) -> str: ...

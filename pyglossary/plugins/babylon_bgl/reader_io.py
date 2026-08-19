@@ -19,6 +19,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Babylon BGL binary stream I/O helpers.
+
+Reads length-prefixed records and seeks within ``.bgl`` byte streams during
+import. Low-level I/O layer used by the Babylon BGL reader entry parser.
+"""
+
 from __future__ import annotations
 
 import io

@@ -1,3 +1,11 @@
+"""
+Read OpenZIM archives used by Kiwix offline dictionaries.
+
+Indexes ``.zim`` files and walks article entries to build glossary headwords from
+titles. Extracts article HTML bodies as definitions and applies namespace and
+redirect handling for offline Wikipedia-style content.
+"""
+
 from __future__ import annotations
 
 import os
@@ -18,6 +26,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Zimfile glossary files."""
+
 	_text_unicode_errors = "replace"
 	_html_unicode_errors = "replace"
 	useByteProgress = False

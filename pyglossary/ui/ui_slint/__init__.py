@@ -7,6 +7,12 @@
 # module convention as ui_tk / ui_qt6 / ui_gtk4. Register and dispatch via
 # `--ui=slint` (see pyglossary/ui/runner.py and pyglossary/ui/argparse_main.py).
 
+"""
+PyGlossary Slint user interface package.
+
+Exports the experimental Slint-based ``UI`` backend and related dialog modules.
+"""
+
 from .ui import UI
 
 __all__ = ["UI"]

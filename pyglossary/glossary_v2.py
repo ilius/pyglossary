@@ -15,6 +15,21 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Glossary implementation and conversion API.
+
+Provides ``Glossary`` (subclass of ``GlossaryCommon``), the main entry point for
+loading, converting, and writing dictionary files. Conversion is driven by
+``ConvertArgs`` and format plugins discovered via ``PluginHandler``.
+
+Key responsibilities: entry storage (in-memory or SQLite via ``SqEntryList``),
+entry filter pipeline (``entry_filters``), sort-key selection, reader/writer
+orchestration, and progress reporting.
+
+For programmatic output without loading everything into RAM, see
+``GlossaryCreator`` instead.
+"""
+
 from __future__ import annotations
 
 import os
@@ -93,6 +108,8 @@ __all__ = [
 
 @dataclass(slots=True, frozen=True)
 class ConvertArgs:
+	"""Arguments for a glossary conversion run."""
+
 	inputFilename: str
 	inputFormat: str = ""
 	direct: bool | None = None

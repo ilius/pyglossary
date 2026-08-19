@@ -1,4 +1,11 @@
 # On-disk ref/store item lists for slob (pyglossary)
+"""
+On-disk reference and store item lists for SLOB.
+
+``RefList`` and ``Store`` manage packed item tables and in-memory writers used
+when building and querying SLOB blob indexes.
+"""
+
 from __future__ import annotations
 
 import io
@@ -23,6 +30,8 @@ __all__ = ["BinMemWriter", "RefList", "Store"]
 
 
 class BinMemWriter:
+	"""Bin Mem Writer."""
+
 	def __init__(self) -> None:
 		self.content_type_ids: list[int] = []
 		self.item_dir: list[bytes] = []
@@ -59,6 +68,8 @@ class BinMemWriter:
 
 
 class ItemList[T]:
+	"""Item List."""
+
 	def __init__(
 		self,
 		reader: StructReader,
@@ -107,6 +118,8 @@ class ItemList[T]:
 
 
 class RefList(ItemList[Ref]):
+	"""Ref List."""
+
 	def __init__(
 		self,
 		f: IOBase,
@@ -157,6 +170,8 @@ class RefList(ItemList[Ref]):
 
 
 class Bin(ItemList[bytes]):
+	"""Bin."""
+
 	def __init__(
 		self,
 		count: int,
@@ -175,11 +190,15 @@ class Bin(ItemList[bytes]):
 
 
 class StoreItem(NamedTuple):
+	"""Store Item."""
+
 	content_type_ids: list[int]
 	compressed_content: bytes
 
 
 class Store(ItemList[StoreItem]):
+	"""Store."""
+
 	def __init__(
 		self,
 		file: IOBase,

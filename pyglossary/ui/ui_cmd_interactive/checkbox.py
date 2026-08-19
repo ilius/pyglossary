@@ -17,7 +17,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Minimal checkbox widget for boolean prompts."""
+"""
+Minimal checkbox widget for boolean prompts.
+
+Renders a simple on/off control in the terminal for plugin options and config
+flags that use :class:`~pyglossary.option.BoolOption` in the interactive UI.
+"""
 
 from __future__ import annotations
 

@@ -12,7 +12,17 @@
 # also see:
 # https://github.com/servo/servo/blob/master/components/style/properties/counted_unknown_properties.py
 
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Normalize Apple Dictionary CSS for broader HTML renderers.
+
+``substituteAppleCSS`` strips WebKit-only properties, maps macOS system font
+names to portable alternatives, and rewrites other Apple-specific CSS so
+dictionary styling survives outside Dictionary.app.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

@@ -1,3 +1,10 @@
+"""
+Mock logging utilities used by SLOB-related tests.
+
+Provides lightweight stand-ins for the PyGlossary logger in unit tests that
+exercise SLOB helpers.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -9,6 +16,8 @@ __all__ = [
 
 
 class MockLogHandler(logging.Handler):
+	"""Mock Log Handler."""
+
 	def __init__(self) -> None:
 		logging.Handler.__init__(self)
 		self.clear()

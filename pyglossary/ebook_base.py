@@ -21,7 +21,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Shared base writer for ebook glossary formats (EPUB, MOBI, Kobo, etc.).
+
+``EbookWriter`` groups entries by headword prefix, builds OPF/NCX/HTML (or
+format-specific) structure inside a temporary directory, and packages the result
+as a zip archive. Subclassed by individual ebook plugins.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -50,6 +60,8 @@ log = logging.getLogger("pyglossary")
 
 
 class GroupState:
+	"""State for grouped ebook entry output."""
+
 	def __init__(self, writer: EbookWriter) -> None:
 		self.writer = writer
 		self.last_prefix = ""

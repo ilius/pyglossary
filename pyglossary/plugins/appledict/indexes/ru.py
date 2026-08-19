@@ -12,7 +12,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-"""Russian indexes based on pymorphy."""
+"""
+Russian morphological indexes for AppleDict.
+
+Uses pymorphy to produce inflected and normalized Russian index keys from
+headwords. Registered with the AppleDict ``indexes`` package when pymorphy is
+available at runtime.
+"""
 
 from __future__ import annotations
 

@@ -1,8 +1,8 @@
 """
-Functions that read and write gzipped files.
+Babylon BGL gzip/block decompression.
 
-The user of the file doesn't have to worry about the compression,
-but random access is not allowed.
+Low-level routines for Babylon ``.bgl`` compressed blocks, including custom
+gzip variants used in older Babylon dictionaries.
 """
 
 # mypy: ignore-errors
@@ -447,6 +447,8 @@ def _read_gzip_header(fp: IO[bytes]) -> bytes:
 
 
 class _GzipReader(DecompressReader):
+	"""Internal gzip reader."""
+
 	def __init__(self, fp: IO[bytes]) -> None:
 		super().__init__(_PaddedFile(fp), zlib.decompressobj, wbits=-zlib.MAX_WBITS)
 		# Set flag indicating start of a new member

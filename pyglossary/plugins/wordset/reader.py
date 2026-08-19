@@ -1,3 +1,11 @@
+"""
+Read Wordset.org JSON directory exports.
+
+Loads JSON files from a Wordset.org data directory and maps word objects to
+glossary entries. Combines definitions, examples, and relation metadata from
+the Wordset schema.
+"""
+
 from __future__ import annotations
 
 from json import load
@@ -17,6 +25,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Wordset glossary files."""
+
 	useByteProgress = False
 	_encoding: str = "utf-8"
 

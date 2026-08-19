@@ -1,3 +1,10 @@
+"""
+Bridge between plugin ``Option`` objects and UI widget factories.
+
+Maps option types to toolkit-specific editors shared across GTK, Qt, Tk, and
+other backends when rendering per-format read/write settings.
+"""
+
 from __future__ import annotations
 
 import json

@@ -1,3 +1,11 @@
+"""
+Write EDLIN ``.edlin`` dictionary text files.
+
+Exports glossary entries as line-oriented EDLIN records with headword markers
+and multi-line definitions. Preserves EDLIN formatting conventions for tools
+that consume the EDLIN source format.
+"""
+
 from __future__ import annotations
 
 import os
@@ -20,6 +28,8 @@ def _makeDir(direc: str) -> None:
 
 
 class Writer:
+	"""Write glossary files in Edlin format."""
+
 	_encoding: str = "utf-8"
 	_prev_link: bool = True
 

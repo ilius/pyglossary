@@ -22,6 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+HTTP and WebSocket server for the browser PyGlossary UI.
+
+Serves the static web client and upgrades connections for real-time conversion
+control and log streaming.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -55,10 +62,14 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 
 	class ServerType(Protocol):
+		"""Server Type."""
+
 		def send_message_to_all(self, msg: str | dict) -> None: ...
 		def shutdown(self) -> None: ...
 
 	class HandlerType(Protocol):
+		"""Handler Type."""
+
 		def send_pong(self, message: str | bytes) -> None: ...
 
 		def send_close(
@@ -106,6 +117,8 @@ DEFAULT_CLOSE_REASON = b""
 
 
 class API:
+	"""API."""
+
 	def run_forever(self, threaded: bool = False) -> None:
 		raise NotImplementedError
 

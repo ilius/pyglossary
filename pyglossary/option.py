@@ -1,4 +1,15 @@
-"""This module is used in plugins."""
+"""
+Plugin configuration option types.
+
+Defines the ``Option`` base class and typed subclasses (``BoolOption``,
+``StrOption``, ``EncodingOption``, ``FileSizeOption``, etc.) used in plugin
+``optionsProp`` dicts. Options carry display metadata, allowed values, CLI flag
+names, and validation for read/write plugin settings.
+
+Plugins and ``PluginProp`` deserialize options via ``optionFromDict``.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -37,6 +48,8 @@ def optionFromDict(data: dict[str, Any]) -> Option:
 
 
 class Option:
+	"""Base plugin configuration option."""
+
 	classes: dict[str, type] = {}
 
 	@classmethod
@@ -142,6 +155,8 @@ class Option:
 
 @Option.register
 class BoolOption(Option):
+	"""Plugin option for bool."""
+
 	def __init__(
 		self,
 		**kwargs: Any,
@@ -183,6 +198,8 @@ class BoolOption(Option):
 
 @Option.register
 class StrOption(Option):
+	"""Plugin option for str."""
+
 	def __init__(
 		self,
 		**kwargs: Any,
@@ -210,6 +227,8 @@ class StrOption(Option):
 
 @Option.register
 class IntOption(Option):
+	"""Plugin option for int."""
+
 	def __init__(
 		self,
 		minim: int | None = None,
@@ -236,6 +255,8 @@ class IntOption(Option):
 
 @Option.register
 class FileSizeOption(IntOption):
+	"""Plugin option for file size."""
+
 	factors = {
 		"KiB": 1024,
 		"kib": 1024,
@@ -300,6 +321,8 @@ class FileSizeOption(IntOption):
 
 @Option.register
 class FloatOption(Option):
+	"""Plugin option for float."""
+
 	def __init__(
 		self,
 		**kwargs: Any,
@@ -325,6 +348,8 @@ class FloatOption(Option):
 
 @Option.register
 class DictOption(Option):
+	"""Plugin option for dict."""
+
 	def __init__(
 		self,
 		**kwargs: Any,
@@ -365,6 +390,8 @@ class DictOption(Option):
 
 @Option.register
 class ListOption(Option):
+	"""Plugin option for list."""
+
 	def __init__(self, **kwargs: Any) -> None:
 		Option.__init__(
 			self,
@@ -397,6 +424,8 @@ class ListOption(Option):
 
 @Option.register
 class EncodingOption(Option):
+	"""Plugin option for encoding."""
+
 	re_category = re.compile("^[a-z]+")
 
 	def __init__(
@@ -473,6 +502,8 @@ class EncodingOption(Option):
 
 @Option.register
 class NewlineOption(Option):
+	"""Plugin option for newline."""
+
 	def __init__(
 		self,
 		customValue: bool = True,
@@ -501,6 +532,8 @@ class NewlineOption(Option):
 
 @Option.register
 class UnicodeErrorsOption(Option):
+	"""Plugin option for unicode errors."""
+
 	def __init__(
 		self,
 		comment: str | None = None,
@@ -526,6 +559,8 @@ class UnicodeErrorsOption(Option):
 
 @Option.register
 class HtmlColorOption(Option):
+	"""Plugin option for html color."""
+
 	def toDict(self) -> dict[str, Any]:
 		data = Option.toDict(self)
 		del data["customValue"]

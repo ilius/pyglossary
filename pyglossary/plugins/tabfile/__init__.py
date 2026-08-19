@@ -1,3 +1,11 @@
+"""
+PyGlossary Tabfile format plugin.
+
+Tab-separated and related plain-text glossaries with one term per line.
+Registers both ``Reader`` and ``Writer`` for ``.txt``, ``.tab``, and ``.tsv``
+files, with options for encoding, resources, and optional file splitting.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

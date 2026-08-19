@@ -1,3 +1,10 @@
+"""
+PyGlossary Makindo Medical format plugin.
+
+SQLite3 medical reference data from Makindo. Read-only ``Reader`` queries
+Makindo schema tables and maps records to glossary entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

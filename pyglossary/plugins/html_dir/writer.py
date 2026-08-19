@@ -1,3 +1,10 @@
+"""
+Write glossaries as a directory of HTML files.
+
+Generates one HTML page per entry (or grouped layout) plus index pages — a
+simple static website view of a dictionary.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -49,6 +56,8 @@ h6 {{ font-size: 1.0em;}}
 
 
 class Writer:
+	"""Write glossary files in Html Dir format."""
+
 	_encoding: str = "utf-8"
 	_resources: bool = True
 	_max_file_size: int = 102400

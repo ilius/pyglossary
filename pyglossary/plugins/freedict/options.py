@@ -1,3 +1,10 @@
+"""
+FreeDict TEI reader option definitions.
+
+Declares PyGlossary options for FreeDict import such as HTML output paths,
+encoding, and TEI processing flags. Wired into the FreeDict plugin ``optionsProp``.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

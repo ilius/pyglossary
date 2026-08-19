@@ -1,3 +1,10 @@
+"""
+PyGlossary AyanDict SQLite format plugin.
+
+SQLite databases used by the AyanDict mobile dictionary app. Registers ``Reader``
+and ``Writer`` for bilingual tables stored in ``.db`` files.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

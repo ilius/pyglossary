@@ -1,3 +1,10 @@
+"""
+PyGlossary JSON format plugin.
+
+Plain JSON glossary serialization (``.json``). Write-only ``Writer`` dumps
+entries as a JSON array or object graph for tooling and debugging interchange.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

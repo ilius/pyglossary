@@ -1,3 +1,10 @@
+"""
+PyGlossary Wordset format plugin.
+
+JSON directory dumps from Wordset.org open lexical data. Read-only ``Reader``
+walks per-lemma JSON files under a ``-wordset/`` directory layout.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

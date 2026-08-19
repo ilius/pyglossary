@@ -1,3 +1,10 @@
+"""
+Manual test harness for DSL markup transformation.
+
+Runs sample DSL fragments through ``Transformer`` when executed as a script.
+Used during DSL plugin development, not part of the public plugin API.
+"""
+
 import sys
 from os.path import dirname
 

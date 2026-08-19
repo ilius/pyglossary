@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+In-memory storage for glossary entries during conversion.
+
+``EntryList`` keeps raw entry tuples in RAM, converts to ``Entry`` objects on
+iteration, and supports in-memory sorting via a selected ``NamedSortKey``. Used
+when a glossary is small enough to avoid SQLite-backed storage.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -36,6 +44,8 @@ log = logging.getLogger("pyglossary")
 
 
 class EntryList:
+	"""In-memory collection of glossary entries."""
+
 	def __init__(
 		self,
 		entryToRaw: Callable[[EntryType], RawEntryType],

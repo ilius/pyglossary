@@ -1,3 +1,11 @@
+"""
+Read TMX translation memory ``.tmx`` files.
+
+Parses TMX XML for translation units and maps source segments to glossary
+headwords with target-language definitions. Handles TMX header metadata and
+multiple ``<tu>`` entries per file.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
@@ -21,6 +29,8 @@ _XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 
 class Reader:
+	"""Read Tmx glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

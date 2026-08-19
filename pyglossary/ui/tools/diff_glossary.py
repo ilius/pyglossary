@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 # mypy: ignore-errors
+"""
+CLI tool to compare two glossary files entry by entry.
+
+Loads both inputs (any supported format), aligns entries by term, and reports
+added, removed, or changed definitions — useful for regression testing
+conversions.
+"""
+
 from __future__ import annotations
 
 import argparse

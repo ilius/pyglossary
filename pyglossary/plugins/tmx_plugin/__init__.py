@@ -1,3 +1,11 @@
+"""
+PyGlossary TMX format plugin.
+
+Translation Memory eXchange files (``.tmx``) with bilingual translation units.
+Read-only ``Reader`` maps TMX ``<tu>`` segments to glossary headwords and
+definitions.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

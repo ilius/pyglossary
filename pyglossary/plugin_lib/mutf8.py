@@ -24,6 +24,12 @@
 # The code is from https://github.com/TkTech/mutf8 (MIT License) with fixes
 # by @gentlegiantJGC (https://github.com/TkTech/mutf8/pull/7).
 
+"""Java modified UTF-8 encoding helpers (vendored mutf8).
+
+Encodes and safely decodes Python strings to the modified UTF-8 variant used in
+some Android and MDict binary structures.
+"""
+
 __all__ = [
 	# "decode_modified_utf8",
 	"encode_modified_utf8",

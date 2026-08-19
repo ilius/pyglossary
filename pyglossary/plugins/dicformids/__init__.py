@@ -1,4 +1,11 @@
 # mypy: ignore-errors
+"""
+PyGlossary DictionaryForMIDs format plugin.
+
+DictionaryForMIDs package layout (``.mids/`` directory). Registers ``Reader`` and
+``Writer`` for the Java ME dictionary format with indexed record files.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

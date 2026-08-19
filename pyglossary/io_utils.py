@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Null I/O stream objects for optional file handles.
+
+Provides ``nullTextIO`` and ``nullBinaryIO``, discard sinks that satisfy the
+``io`` interface so readers and writers can keep a uniform code path when no
+real output file is open.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -13,6 +21,8 @@ __all__ = ["nullBinaryIO", "nullTextIO"]
 
 
 class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
+	"""Internal null binary io."""
+
 	def __enter__(self) -> Self:
 		raise NotImplementedError
 
@@ -85,6 +95,8 @@ class _NullBinaryIO(io.BufferedIOBase):  # noqa: PLR0904
 
 
 class _NullTextIO(io.TextIOBase):  # noqa: PLR0904
+	"""Internal null text io."""
+
 	def __enter__(self) -> Self:
 		raise NotImplementedError
 

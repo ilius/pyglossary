@@ -1,3 +1,11 @@
+"""
+PyGlossary dict.cc split format plugin.
+
+Split SQLite3 dict.cc databases spread across multiple ``.db`` files. Read-only
+``Reader`` aggregates shards into a single glossary view for large dict.cc
+exports.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

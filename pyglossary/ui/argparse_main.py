@@ -1,3 +1,10 @@
+"""
+Primary CLI argument definitions for PyGlossary.
+
+Registers global flags (input/output paths, formats, sort keys, logging) and
+builds a ``ConfigType`` instance from parsed ``argparse`` results.
+"""
+
 from __future__ import annotations
 
 import os

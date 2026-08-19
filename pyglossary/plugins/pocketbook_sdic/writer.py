@@ -1,3 +1,9 @@
+"""
+Write PocketBook ``.sdic`` dictionary files.
+
+Packages sorted glossary entries into PocketBook SDIC format for e-ink devices.
+"""
+
 from __future__ import annotations
 
 import os
@@ -313,6 +319,8 @@ def _resolve_metadata_file(
 
 
 class Writer:
+	"""Write glossary files in Pocketbook Sdic format."""
+
 	_metadata_dir: str = ""
 	_collates_path: str = ""
 	_keyboard_path: str = ""

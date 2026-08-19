@@ -1,3 +1,10 @@
+"""
+PyGlossary Almaany format plugin.
+
+SQLite3 databases from Almaany.com bilingual dictionaries. Read-only ``Reader``
+loads Arabic-English (and related) term pairs from Almaany ``.db`` exports.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+About dialog for the Qt 6 PyGlossary UI.
+
+Presents version, credits, and license text in a Qt message box or dedicated
+about window.
+"""
+
 from __future__ import annotations
 
 from html import escape
@@ -60,6 +67,8 @@ def _new_about_browser(text: str) -> QTextBrowser:
 
 
 class AboutQtDialog(QDialog):
+	"""About Qt Dialog."""
+
 	def __init__(self, parent: QWidget | None = None) -> None:
 		super().__init__(parent)
 		self.setWindowTitle("About PyGlossary")

@@ -1,3 +1,11 @@
+"""
+Read dict.cc split SQLite3 dictionary shards.
+
+Opens multiple dict.cc ``.db`` shard files from a split export and merges term
+queries across databases. Produces unified glossary entries with the same schema
+as the monolithic dict.cc reader.
+"""
+
 from __future__ import annotations
 
 import html
@@ -16,6 +24,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read dict.cc split glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

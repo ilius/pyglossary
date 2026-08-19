@@ -1,4 +1,12 @@
 # Slob file writer (pyglossary)
+"""
+SLOB dictionary file writer.
+
+Builds ``.slob`` archives: blob storage with optional compression (zlib, bz2,
+lzma), ICU-based collation for keys, redirect chains, and reproducible header
+metadata. Companion to ``slob._slob_obj.Slob`` reader.
+"""
+
 from __future__ import annotations
 
 import encodings
@@ -47,11 +55,15 @@ __all__ = ["Writer", "WriterEvent"]
 
 
 class WriterEvent(NamedTuple):
+	"""Writer Event."""
+
 	name: str
 	data: object
 
 
 class Writer:
+	"""Write SLOB dictionary files."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		filename: str,

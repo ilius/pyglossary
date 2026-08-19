@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+GTK 4 ``UIBase`` implementation and application bootstrap.
+
+Wires together GTK 4 windows, signal handlers, and conversion actions for the
+``--ui=gtk4`` backend.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -45,6 +52,8 @@ gtk.IconTheme.get_for_display(gdk.Display.get_default()).add_search_path(appResD
 
 
 class UI(UIBase, gtk.Application):
+	"""UI."""
+
 	def __init__(
 		self,
 		progressbar: bool = True,

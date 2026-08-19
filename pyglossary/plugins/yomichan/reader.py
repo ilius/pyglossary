@@ -1,3 +1,11 @@
+"""
+Read Yomichan browser-extension term bank ZIP packages.
+
+Unpacks ``.zip`` archives of JSON term banks and reconstructs glossary entries
+with readings, tags, and structured definitions. Merges split term-bank files
+according to Yomichan sorting and indexing conventions.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -29,6 +37,8 @@ BASE_BANK_PATTERN = re.compile(r".+_(meta_)?bank_(\d+).json\Z")
 
 
 class Reader:
+	"""Read Yomichan glossary files."""
+
 	useByteProgress = False
 	compressions = ["zip"]
 

@@ -12,6 +12,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+AppleDict binary file layout utilities.
+
+Low-level helpers for reading binary chunks, offsets, and endian-specific
+structs from Apple Dictionary ``.dictionary`` and ``.data`` files.
+"""
+
 from __future__ import annotations
 
 from struct import unpack

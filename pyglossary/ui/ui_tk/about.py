@@ -15,6 +15,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+About dialog for the Tkinter PyGlossary UI.
+
+Shows version, authors, and license text in a Tk ``Toplevel`` window.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -42,6 +48,8 @@ __all__ = ["createAboutFrame"]
 
 
 class VerticalNotebook(ttk.Frame):
+	"""Vertical Notebook."""
+
 	def __init__(
 		self,
 		parent: tk.Widget,

@@ -14,6 +14,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Logging handler that forwards records to the Tkinter log widget.
+
+Appends formatted PyGlossary log lines to the Tk ``Text`` widget used as a
+conversion console.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -27,6 +34,8 @@ __all__ = ["TkTextLogHandler"]
 
 
 class TkTextLogHandler(logging.Handler):
+	"""Tk Text Log Handler."""
+
 	def __init__(self, tktext: tk.Text) -> None:
 		logging.Handler.__init__(self)
 		#####

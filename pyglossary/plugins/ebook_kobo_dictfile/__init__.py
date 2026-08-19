@@ -1,3 +1,10 @@
+"""
+PyGlossary Kobo Dictfile format plugin.
+
+Kobo plain ``.df`` dictionary files used by older Kobo tooling. Registers
+``Reader`` and ``Writer`` for the line-oriented Dictfile interchange format.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

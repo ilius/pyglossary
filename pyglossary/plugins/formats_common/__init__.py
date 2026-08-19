@@ -1,3 +1,12 @@
+"""
+Shared imports and defaults for format plugin modules.
+
+Re-exports glossary types, option classes, compression helpers, and flag
+constants so individual plugins can use a single ``from formats_common import
+...`` style without duplicating boilerplate. Not registered as a user-facing
+format (``enable = False``).
+"""
+
 from __future__ import annotations
 
 import logging

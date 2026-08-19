@@ -1,3 +1,11 @@
+"""
+Write AyanDict SQLite dictionary databases.
+
+Creates AyanDict-compatible SQLite tables and inserts glossary headwords with
+definitions and metadata columns. Outputs a database file ready for AyanDict
+clients.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -16,6 +24,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in AyanDict SQLite format."""
+
 	_fuzzy: int = True
 
 	def __init__(self, glos: WriterGlossaryType) -> None:

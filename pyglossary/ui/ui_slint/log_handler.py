@@ -9,6 +9,13 @@
 # the Free Software Foundation; either version 3, or (at your option) any
 # later version.
 
+"""
+Logging handler that forwards records to the Slint log view.
+
+Streams PyGlossary logger output into the Slint UI log component with level
+colors.
+"""
+
 from __future__ import annotations
 
 import logging

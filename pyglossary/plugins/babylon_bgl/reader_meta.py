@@ -19,6 +19,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Babylon BGL dictionary metadata parsing.
+
+Reads BGL header fields for title, languages, version, and index parameters.
+Supplies glossary info and encoding hints to the Babylon BGL reader.
+"""
+
 from __future__ import annotations
 
 from pyglossary.core import log

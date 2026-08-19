@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Tkinter wizard-style UI for step-by-step glossary conversion.
+
+Multi-page flow: choose input, output format/path, options, then convert. Aimed
+at users who prefer guided setup over the full single-window GTK/Qt interfaces.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -78,6 +85,8 @@ pluginByDesc = {plugin.description: plugin for plugin in Glossary.plugins.values
 
 
 class UI(tk.Frame, UIBase):
+	"""UI."""
+
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
 	def __init__(

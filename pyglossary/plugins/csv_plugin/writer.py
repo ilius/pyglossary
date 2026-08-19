@@ -16,6 +16,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Write glossary files in Csv format.
+
+Writes glossary entries as CSV rows with configurable delimiters and encoding.
+Optional columns can carry alternate terms, definition format markers, or info
+metadata alongside the primary term/definition pair.
+"""
+
 from __future__ import annotations
 
 import codecs
@@ -41,6 +49,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Csv format."""
+
 	compressions = stdCompressions
 
 	_encoding: str = "utf-8"

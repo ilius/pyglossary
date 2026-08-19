@@ -1,3 +1,11 @@
+"""
+Read StarDict textual XML dictionary exports.
+
+Parses StarDict XML dumps with ``<stardict>`` entries into glossary headwords
+and definitions. Reconstructs synonyms and book metadata from XML attributes
+and child elements.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
@@ -23,6 +31,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read StarDict textual glossary files."""
+
 	useByteProgress = True
 	_encoding: str = "utf-8"
 	_xdxf_to_html: bool = True

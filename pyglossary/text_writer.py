@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Generic text-file glossary writer.
+
+``TextGlossaryWriter`` writes tab-separated headword/definition lines with
+configurable encoding, escaping, compression, and optional resource directories.
+``writeTxt`` is a convenience wrapper for one-shot export.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -25,6 +33,8 @@ file_size_check_every = 100
 
 
 class TextGlossaryWriter:
+	"""Write glossaries to a text file."""
+
 	_encoding: str = "utf-8"
 	_newline: str = "\n"
 	_termListEncodeFunc: Callable[[list[str]], str] | None = None

@@ -22,6 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+WebSocket protocol handler for the browser-based PyGlossary UI.
+
+Receives JSON commands from the web client (set paths, options, start
+conversion) and streams progress/log events back over WebSocket.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -70,6 +77,8 @@ log = logging.getLogger("pyglossary.web.server")
 
 
 class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
+	"""HTTP Web Socket Handler."""
+
 	browse_roots = []
 
 	@classmethod

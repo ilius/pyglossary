@@ -16,6 +16,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Debug helpers for Babylon BGL reverse engineering.
+
+Logging and dump utilities for inspecting BGL record structure during reader
+development; not used in normal conversions.
+"""
+
 from __future__ import annotations
 
 import gzip
@@ -55,6 +62,8 @@ def isASCII(data: str) -> bool:
 
 
 class MetaData:
+	"""Meta Data."""
+
 	def __init__(self) -> None:
 		self.blocks = []
 		self.numEntries = None
@@ -68,12 +77,16 @@ class MetaData:
 
 @dataclass
 class MetaDataBlock:
+	"""Meta Data Block."""
+
 	data: bytes
 	type: str
 
 
 @dataclass
 class MetaDataRange:
+	"""Meta Data Range."""
+
 	type: str
 	count: int
 
@@ -185,6 +198,8 @@ class GzipWithCheck:
 
 
 class DebugReader(Reader):
+	"""Debug Reader."""
+
 	_collect_metadata2: bool = False
 	_search_char_samples: bool = False
 	_write_gz: bool = False

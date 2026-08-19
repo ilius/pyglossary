@@ -1,4 +1,11 @@
-"""This module is used in plugins."""
+"""
+Transform XDXF definitions using pure-Python XDXF element handlers.
+
+``XdxfTransformer`` converts XDXF markup (keywords, examples, images, etc.) to
+HTML without an XSLT engine — a fallback when ``lxml`` XSLT is unavailable.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -20,6 +27,8 @@ __all__ = [
 
 
 class XdxfTransformer:
+	"""Xdxf Transformer."""
+
 	_gram_color: str = "green"
 	_example_padding: int = 10
 

@@ -1,3 +1,10 @@
+"""
+PyGlossary StarDict textual format plugin.
+
+XML serialization of StarDict glossaries (``.xml`` output). Registers ``Reader``
+and ``Writer`` for the textual interchange representation of StarDict data.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

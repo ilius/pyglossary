@@ -1,3 +1,10 @@
+"""
+EDICT2 shared parsing utilities.
+
+Provides regex helpers, named tuples, and generators for walking EDICT2 text
+lines. Shared by the EDICT2 reader and conversion modules.
+"""
+
 from __future__ import annotations
 
 import re
@@ -10,6 +17,8 @@ __all__ = ["get_chinese_references"]
 
 
 class ChineseWordReference(NamedTuple):
+	"""Chinese Word Reference."""
+
 	text: str
 	trad: str
 	simp: str

@@ -1,4 +1,11 @@
 # Slob file header parsing (pyglossary)
+"""
+SLOB file header parser.
+
+Reads the UUID, encoding, compression, and tag metadata block at the start of a
+``.slob`` dictionary archive.
+"""
+
 from __future__ import annotations
 
 import encodings

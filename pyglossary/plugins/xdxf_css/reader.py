@@ -19,6 +19,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Read XDXF dictionaries with embedded CSS and JavaScript.
+
+Parses XDXF XML like the standard reader but preserves linked stylesheets and
+script blocks in definitions. Converts XDXF markup to HTML while inlining CSS
+and JS resources referenced by the source archive.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -45,6 +53,8 @@ if TYPE_CHECKING:
 	from pyglossary.lxml_types import Element
 
 	class TransformerType(typing.Protocol):
+		"""Transformer Type."""
+
 		def transform(self, article: Element) -> str: ...
 
 
@@ -52,6 +62,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read XDXF CSS glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

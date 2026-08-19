@@ -17,6 +17,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+PyGlossary AppleDict source format plugin.
+
+XML sources for Apple's Dictionary Development Kit (``.apple/`` directory
+layout). Reads compiled AppleDict bundles and writes DDK-ready XML with
+optional extended indexes, CSS normalization, and Jing schema validation.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

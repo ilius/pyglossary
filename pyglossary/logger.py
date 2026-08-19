@@ -1,3 +1,11 @@
+"""
+Logging configuration and helpers for PyGlossary.
+
+Sets up the root ``pyglossary`` logger with verbosity levels (including custom
+``TRACE``), optional timestamps, terminal color formatting, and
+``StdLogHandler`` integration for UI log panes.
+"""
+
 from __future__ import annotations
 
 import inspect
@@ -39,6 +47,8 @@ def trace(log: logging.Logger, msg: str) -> None:
 
 
 class _Formatter(logging.Formatter):
+	"""Internal formatter."""
+
 	def __init__(self, *args: Any, **kwargs: Any) -> None:
 		logging.Formatter.__init__(self, *args, **kwargs)
 		self.fill: Callable[[str], str] | None = None
@@ -54,6 +64,8 @@ class _Formatter(logging.Formatter):
 
 
 class Logger(logging.Logger):
+	"""PyGlossary logger wrapper."""
+
 	levelsByVerbosity = (
 		logging.CRITICAL,
 		logging.ERROR,
@@ -164,6 +176,8 @@ def format_exception(
 
 
 class StdLogHandler(logging.Handler):
+	"""Std Log Handler."""
+
 	colorsConfig = {
 		"CRITICAL": ("color.cmd.critical", 196),
 		"ERROR": ("color.cmd.error", 1),

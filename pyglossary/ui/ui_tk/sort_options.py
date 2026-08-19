@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Sort-key selection widgets for the Tkinter UI.
+
+Combo boxes and locale options for choosing named sort modules before writing
+sorted glossaries.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -31,10 +38,14 @@ sortKeyDescByName = {sk.name: sk.desc for sk in namedSortKeyList}
 
 
 class UIType(Protocol):
-	pass  # TODO
+	"""Supported PyGlossary UI backend."""
+
+	# TODO
 
 
 class SortOptionsBox(ttk.Frame):
+	"""Sort Options Box."""
+
 	def __init__(
 		self,
 		ui: UIType,

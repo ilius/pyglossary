@@ -1,3 +1,10 @@
+"""
+Yomichan term bank type definitions and constants.
+
+Defines typed structures for Yomichan JSON term bank fields, index metadata,
+and serialization helpers. Shared by the Yomichan reader and writer plugins.
+"""
+
 from __future__ import annotations
 
 from typing import Literal, NotRequired, Required
@@ -6,11 +13,15 @@ from typing_extensions import TypedDict
 
 
 class DefinitionString(TypedDict):
+	"""Definition String."""
+
 	type: Literal["text"]
 	text: str
 
 
 class DefinitionImage(TypedDict, total=False):
+	"""Definition Image."""
+
 	type: Required[Literal["image"]]
 	path: Required[str]
 	width: int
@@ -27,6 +38,8 @@ class DefinitionImage(TypedDict, total=False):
 
 
 class DefinitionStructContent(TypedDict):
+	"""Definition Struct Content."""
+
 	type: Literal["structured-content"]
 	content: StructuredContent
 
@@ -40,11 +53,15 @@ type StyleAttributes = dict[str, str | int]
 
 
 class EmptyTagStructContent(TypedDict):
+	"""Empty Tag Struct Content."""
+
 	tag: Literal["br"]
 	data: NotRequired[DataAttributes]
 
 
 class GenericContainerStructContent(TypedDict, total=False):
+	"""Generic Container Struct Content."""
+
 	tag: Required[Literal["ruby", "rt", "rp", "table", "thead", "tbody", "tfoot", "tr"]]
 	content: StructuredContent
 	data: DataAttributes
@@ -52,6 +69,8 @@ class GenericContainerStructContent(TypedDict, total=False):
 
 
 class TableStructContent(TypedDict, total=False):
+	"""Table Struct Content."""
+
 	tag: Required[Literal["td", "th"]]
 	content: StructuredContent
 	data: DataAttributes
@@ -62,6 +81,8 @@ class TableStructContent(TypedDict, total=False):
 
 
 class StylishContainerStructContent(TypedDict, total=False):
+	"""Stylish Container Struct Content."""
+
 	tag: Required[Literal["span", "div", "ol", "ul", "li", "details", "summary"]]
 	content: StructuredContent
 	data: DataAttributes
@@ -73,6 +94,8 @@ class StylishContainerStructContent(TypedDict, total=False):
 
 
 class ImageTagStructContent(TypedDict, total=False):
+	"""Image Tag Struct Content."""
+
 	tag: Required[Literal["img"]]
 	data: DataAttributes
 	path: Required[str]
@@ -98,6 +121,8 @@ class ImageTagStructContent(TypedDict, total=False):
 
 
 class LinkTagStructContent(TypedDict, total=False):
+	"""Link Tag Struct Content."""
+
 	tag: Required[Literal["a"]]
 	content: StructuredContent
 	href: Required[str]

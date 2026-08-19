@@ -1,3 +1,11 @@
+"""
+PyGlossary glossary info format plugin.
+
+PyGlossary metadata sidecar files (``.info``). Read-only ``Reader`` loads
+glossary info dictionaries (title, author, source/target languages) without
+importing full entry content.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

@@ -1,3 +1,10 @@
+"""
+Unit-test helpers for ``pyglossary.core``.
+
+Provides ``MockLogHandler`` and ``getMockLogger`` to capture log records by level
+during tests without writing to stderr or configuring the real package logger.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -9,6 +16,8 @@ __all__ = [
 
 
 class MockLogHandler(logging.Handler):
+	"""Mock Log Handler."""
+
 	def __init__(self) -> None:
 		logging.Handler.__init__(self)
 		self.clear()

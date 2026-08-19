@@ -1,3 +1,9 @@
+"""
+Glossary metadata dialog for the Slint UI.
+
+Displays info-dictionary fields from the loaded glossary in a Slint window.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

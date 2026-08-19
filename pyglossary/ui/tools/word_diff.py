@@ -1,3 +1,10 @@
+"""
+CLI tool to compare glossary terms between two files.
+
+Highlights per-word differences in headwords for quick visual inspection of
+near-duplicate or variant spellings across glossaries.
+"""
+
 from __future__ import annotations
 
 import difflib

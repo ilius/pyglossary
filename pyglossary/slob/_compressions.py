@@ -1,4 +1,11 @@
 # slob compression registry (pyglossary)
+"""
+Compression codec registry for SLOB blob storage.
+
+Maps SLOB header compression names to zlib, bz2, lzma, and identity compress
+and decompress callables.
+"""
+
 from __future__ import annotations
 
 import typing
@@ -10,11 +17,15 @@ __all__ = ["COMPRESSIONS", "Compression"]
 
 
 class Compression(NamedTuple):
+	"""Compression."""
+
 	compress: Callable[..., bytes]  # first arg: bytes
 	decompress: Callable[[bytes], bytes]
 
 
 class CompressionModule(typing.Protocol):
+	"""Compression Module."""
+
 	@staticmethod
 	def compress(data: bytes, compresslevel: int = 9) -> bytes:
 		raise NotImplementedError

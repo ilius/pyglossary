@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Filesystem and process helpers for conversion workflows.
+
+Includes non-normalizing ``abspath2``, recursive file listing and counting,
+safe ``rmtree``, ``runDictzip`` for StarDict compression, temporary-directory
+context manager ``indir``, and optional memory-usage logging.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

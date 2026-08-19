@@ -1,3 +1,11 @@
+"""
+Write QuickDic version 6 ``.quickdic`` archives.
+
+Builds QuickDic v6 ZIP bundles with binary indexes and compressed definition
+stores. Applies QuickDic collation and packages resources expected by Android
+QuickDic v6 clients.
+"""
+
 from __future__ import annotations
 
 import datetime as dt
@@ -34,6 +42,8 @@ _defaultNormalizerRules = (
 
 
 class Writer:
+	"""Write glossary files in QuickDic 6 format."""
+
 	_normalizer_rules = ""
 
 	def __init__(self, glos: WriterGlossaryType) -> None:

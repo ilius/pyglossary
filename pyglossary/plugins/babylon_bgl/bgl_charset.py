@@ -15,6 +15,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Babylon BGL charset code to Python codec mapping.
+
+Lookup table from BGL charset byte codes to standard Python codec names.
+Referenced by charset detection helpers during BGL import.
+"""
+
 __all__ = ["charsetByCode"]
 
 charsetByCode = {

@@ -1,3 +1,11 @@
+"""
+Read StarDict glossary files.
+
+Parses ``.ifo`` metadata plus ``.idx``/``.dict``/``.syn`` (plain or gzip).
+Supports optional XDXF transformation of definitions and reports progress by entry
+count. Handles both 32-bit and 64-bit StarDict index layouts.
+"""
+
 from __future__ import annotations
 
 import gzip
@@ -25,6 +33,8 @@ if TYPE_CHECKING:
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
 
 	class XdxfTransformerType(Protocol):
+		"""Xdxf Transformer Type."""
+
 		def transformByInnerString(self, text: str) -> str: ...
 
 
@@ -41,6 +51,8 @@ def _verifySameTypeSequence(s: str) -> bool:
 
 
 class Reader:
+	"""Read StarDict glossary files."""
+
 	useByteProgress = False
 	_xdxf_to_html: bool = True
 	_xsl: bool = True

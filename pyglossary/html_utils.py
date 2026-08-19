@@ -1,4 +1,14 @@
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+HTML entity tables and unescaping for dictionary content.
+
+Maintains an extended ``name2codepoint`` map (including entities missing from the
+standard library) and ``unescape_unicode`` to turn ``&name;`` / numeric references
+into Unicode characters while preserving markup-sensitive characters.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

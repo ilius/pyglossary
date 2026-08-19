@@ -15,6 +15,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+AppleDict headword title normalization utilities.
+
+Produces short, long, and display title variants from raw glossary headwords.
+Used when generating AppleDict DDK ``d:index`` and entry title attributes.
+"""
+
 from __future__ import annotations
 
 import re

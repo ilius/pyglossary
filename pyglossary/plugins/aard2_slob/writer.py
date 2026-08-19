@@ -1,3 +1,11 @@
+"""
+Write glossary files in Aard2 SLOB format.
+
+Builds a ``.slob`` dictionary by writing sorted keys, definition blobs, and
+redirect chains with chosen compression and content-type headers. Uses ICU
+collation when sorting keys for the archive index.
+"""
+
 from __future__ import annotations
 
 import os
@@ -27,6 +35,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Aard2 SLOB format."""
+
 	depends = {
 		"icu": "pyicu",
 	}

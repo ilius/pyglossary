@@ -1,3 +1,10 @@
+"""
+Pseudo-random sort order for glossary entries.
+
+Shuffles entries with a deterministic or user-supplied seed — useful for
+testing pipelines without lexical bias.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

@@ -1,3 +1,11 @@
+"""
+PyGlossary StarDict format plugin.
+
+Directory-based StarDict glossaries identified by an ``.ifo`` index file plus
+``.idx``/``.dict``/``.syn`` companions. Supports reading and writing with
+sort-on-write, dictzip compression, SQLite buffering, and XDXF-to-HTML options.
+"""
+
 from __future__ import annotations
 
 import os

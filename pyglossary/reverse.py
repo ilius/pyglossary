@@ -1,3 +1,11 @@
+"""
+Reverse a glossary by swapping headwords and definitions.
+
+``reverseGlossary`` walks entries, extracts definition text as new headwords
+(and vice versa), updates source/target language metadata, and reports progress
+through the host glossary's UI hooks.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -18,6 +26,8 @@ log = logging.getLogger("pyglossary")
 if TYPE_CHECKING:
 
 	class _GlossaryType(typing.Protocol):
+		"""Internal glossary type."""
+
 		def __iter__(self) -> Iterator[EntryType]: ...
 
 		def getInfo(self, key: str) -> str: ...

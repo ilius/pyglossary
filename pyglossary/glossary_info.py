@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Glossary metadata container and language resolution.
+
+``GlossaryInfo`` stores title, author, source/target languages, and arbitrary
+extra info keys with alias normalization. Provides accessors used by readers,
+writers, and the UI when displaying or editing dictionary properties.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -39,6 +47,8 @@ log = logging.getLogger("pyglossary")
 
 
 class GlossaryInfo:
+	"""Glossary metadata container."""
+
 	def __init__(self) -> None:
 		self._info: dict[str, str] = {}
 

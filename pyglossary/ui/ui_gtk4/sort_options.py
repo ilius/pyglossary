@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Sort-key selection widgets for the GTK 4 UI.
+
+Lets users pick named sort modules and locale-aware collation options before
+writing sorted output formats.
+"""
+
 from __future__ import annotations
 
 from gi.repository import Gtk as gtk
@@ -40,6 +47,8 @@ sortKeyNames = [sk.name for sk in namedSortKeyList]
 
 
 class SortOptionsBox(gtk.Box):
+	"""Sort Options Box."""
+
 	def __init__(self, mainWin: gtk.Window) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.mainWin = mainWin

@@ -17,7 +17,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Detect light terminal backgrounds and adapt palette foregrounds for contrast."""
+"""
+Detect light terminal backgrounds and adapt CLI palette colors.
+
+Probes the active terminal theme (including macOS/iTerm hints) and adjusts
+foreground RGB values from :mod:`pyglossary.ui.termcolors` so log and prompt
+text remains readable on pale backgrounds.
+"""
 
 from __future__ import annotations
 

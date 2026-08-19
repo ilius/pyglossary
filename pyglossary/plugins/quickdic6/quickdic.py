@@ -1,3 +1,10 @@
+"""
+QuickDic v6 core dictionary data structures.
+
+Defines the in-memory QuickDic dictionary model with indexes, lemmas, and
+definition blobs. Central type used by QuickDic reader and writer modules.
+"""
+
 from __future__ import annotations
 
 import datetime as dt
@@ -15,6 +22,8 @@ __all__ = ["QuickDic"]
 
 
 class QuickDic:
+	"""Quick Dic."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		name: str,

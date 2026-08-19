@@ -14,6 +14,14 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Read Octopus MDict ``.mdx`` dictionary archives.
+
+Opens MDict ``.mdx`` dictionary and optional ``.mdd`` resource files via the
+readmdict library. Extracts keyed HTML definitions and resolves embedded media
+references from companion data files.
+"""
+
 from __future__ import annotations
 
 import gc
@@ -37,6 +45,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Octopus MDict (new) glossary files."""
+
 	useByteProgress = False
 	_encoding: str = ""
 	_substyle: bool = True

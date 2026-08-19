@@ -1,3 +1,10 @@
+"""
+FreeDict TEI import utility functions.
+
+Provides language detection, writing-system helpers, and shared parsing routines
+for FreeDict ``.tei`` sources. Used by the FreeDict reader during TEI conversion.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -20,6 +27,8 @@ XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 
 class ReaderUtils:
+	"""Reader Utils."""
+
 	@staticmethod
 	def tostring(elem: Element) -> str:
 		from lxml import etree as ET

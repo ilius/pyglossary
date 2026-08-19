@@ -16,6 +16,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Read Dsl glossary files.
+
+Tokenizes and parses ABBYY Lingvo DSL source, resolving ``#include`` directives
+and DSL markup into HTML definitions. Applies reader options for abbreviations,
+example styling, and linked audio objects.
+"""
+
 from __future__ import annotations
 
 import html.entities
@@ -83,6 +91,8 @@ def _unwrap_quotes(s: str) -> str:
 
 
 class Reader:
+	"""Read Dsl glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions + ("dz",)
 

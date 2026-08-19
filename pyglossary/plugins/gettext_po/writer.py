@@ -1,3 +1,10 @@
+"""
+Write Gettext ``.po`` translation catalog files.
+
+Serializes glossary headwords as ``msgid`` strings and definitions as ``msgstr``
+values. Produces GNU gettext PO files for translation workflow interchange.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -15,6 +22,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Gettext Po format."""
+
 	depends = {
 		"polib": "polib",
 	}

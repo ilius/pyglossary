@@ -1,3 +1,10 @@
+"""
+StarDict SQLite synonym list buffering.
+
+Maintains an in-memory or SQLite-backed list of StarDict synonym records during
+write. Used by the StarDict writer to batch and flush ``.syn`` companion files.
+"""
+
 from __future__ import annotations
 
 import os
@@ -20,6 +27,8 @@ __all__ = [
 
 
 class _BaseSqList:
+	"""Internal base sq list."""
+
 	def __init__(
 		self,
 		database: str,
@@ -102,6 +111,8 @@ class _BaseSqList:
 
 
 class IdxSqList(_BaseSqList):
+	"""Idx Sq List."""
+
 	@classmethod
 	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]
@@ -111,6 +122,8 @@ class IdxSqList(_BaseSqList):
 
 
 class SynSqList(_BaseSqList):
+	"""Syn Sq List."""
+
 	@classmethod
 	def getExtraColumns(cls) -> list[tuple[str, str]]:
 		# list[(columnName, dataType)]

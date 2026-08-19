@@ -1,3 +1,10 @@
+"""
+Sort glossary entries for Dicformids output layout.
+
+Applies the ordering rules expected by the Dicformids writer plugin when
+grouping and indexing entries.
+"""
+
 from __future__ import annotations
 
 import re

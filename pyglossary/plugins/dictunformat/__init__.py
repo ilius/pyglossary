@@ -1,3 +1,10 @@
+"""
+PyGlossary dictunformat format plugin.
+
+Output from the GNU ``dictunformat`` utility (``.dictunformat``). Read-only
+``Reader`` parses the line-oriented dump back into glossary entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

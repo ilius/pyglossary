@@ -172,6 +172,12 @@
 # February, 2010
 
 
+"""Pure-Python Salsa20 stream cipher (vendored).
+
+Implements the Salsa20 core used to decrypt newer MDict ``.mdx``/``.mdd``
+payloads when OpenSSL bindings are unavailable.
+"""
+
 import operator
 from struct import Struct
 
@@ -190,6 +196,8 @@ _version = "p4.0"
 
 
 class Salsa20:
+	"""Salsa20."""
+
 	def __init__(self, key=None, IV=None, rounds=20) -> None:
 		self._lastChunk64 = True
 		self._IVbitlen = 64  # must be 64 bits

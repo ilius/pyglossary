@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Logging handler that forwards records to the Qt 6 log view.
+
+Formats PyGlossary log records and appends them to the Qt text widget used as a
+conversion console.
+"""
+
 from __future__ import annotations
 
 import html
@@ -16,6 +23,8 @@ __all__ = ["QtLogHandler"]
 
 
 class QtLogHandler(logging.Handler):
+	"""Qt Log Handler."""
+
 	def __init__(self, text_widget: QPlainTextEdit) -> None:
 		super().__init__()
 		self._tw = text_widget

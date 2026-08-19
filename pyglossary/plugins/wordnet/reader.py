@@ -12,6 +12,14 @@
 # Copyright (C) 2015 Igor Tkach
 #
 # This plugin is based on https://github.com/itkach/wordnet2slob
+"""
+Read Princeton WordNet lexical database files.
+
+Loads synsets, lemmas, and gloss text from WordNet data and index files. Builds
+glossary entries keyed by lemma with sense definitions and part-of-speech tags
+derived from WordNet relations.
+"""
+
 from __future__ import annotations
 
 import os
@@ -47,6 +55,8 @@ _re_ref = re.compile(r"`(\w+)'")
 
 
 class SynSet:
+	"""Syn Set."""
+
 	def __init__(self, line: str | bytes) -> None:
 		self.line = line
 		if isinstance(line, bytes):
@@ -90,6 +100,8 @@ class SynSet:
 
 
 class PointerSymbols:
+	"""Pointer Symbols."""
+
 	n = {
 		"!": "Antonyms",
 		"@": "Hypernyms",
@@ -152,6 +164,8 @@ class PointerSymbols:
 
 
 class Pointer:
+	"""Pointer."""
+
 	def __init__(self, symbol: str, offset: str, pos: str, source_target: str) -> None:
 		self.symbol = symbol
 		self.offset = int(offset)
@@ -168,6 +182,8 @@ class Pointer:
 
 
 class WordNet:
+	"""Word Net."""
+
 	article_template = "<h1>%s</h1><span>%s</span>"
 	synSetTypes = {
 		"n": "n.",
@@ -314,6 +330,8 @@ class WordNet:
 
 
 class Reader:
+	"""Read Wordnet glossary files."""
+
 	useByteProgress = False
 	_gram_color: str = "green"
 

@@ -1,3 +1,11 @@
+"""
+Persian (Farsi) text normalization for glossary entries.
+
+``faEditStr`` normalizes legacy Arabic-codepoint variants to standard Persian
+letters, fixes heh forms, and adjusts punctuation spacing after the Arabic
+comma.
+"""
+
 from __future__ import annotations
 
 from .text_utils import replacePostSpaceChar

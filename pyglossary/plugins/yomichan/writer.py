@@ -1,3 +1,11 @@
+"""
+Write Yomichan browser-extension term bank ZIP packages.
+
+Packages sorted glossary entries into JSON term banks and bundles them in a
+``.zip`` archive. Splits large banks, writes index metadata, and applies
+Yomichan pitch-accent and structured-definition options.
+"""
+
 from __future__ import annotations
 
 import json
@@ -56,6 +64,8 @@ def _compilePat(pattern: str) -> re.Pattern[str] | None:
 
 
 class Writer:
+	"""Write glossary files in Yomichan format."""
+
 	depends = {
 		"bs4": "beautifulsoup4",
 	}

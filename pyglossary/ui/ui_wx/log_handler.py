@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Logging handler that forwards records to the wxWidgets log view.
+
+Appends formatted PyGlossary log lines to the wx text control used as a
+conversion console.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -13,6 +20,8 @@ __all__ = ["WxLogHandler"]
 
 
 class WxLogHandler(logging.Handler):
+	"""Wx Log Handler."""
+
 	def __init__(self, text_widget: wx.TextCtrl) -> None:
 		super().__init__()
 		self._tw = text_widget

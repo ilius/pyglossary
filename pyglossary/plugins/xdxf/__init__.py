@@ -1,3 +1,11 @@
+"""
+PyGlossary XDXF format plugin.
+
+XML Dictionary Exchange Format files (``.xdxf``) with structured dictionary
+markup. Read-only ``Reader`` parses XDXF entries and can transform definitions
+to HTML for downstream formats.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

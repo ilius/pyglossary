@@ -1,4 +1,10 @@
-"""Jing, a validator for RELAX NG and other schema languages."""
+"""
+Jing RELAX NG and XML schema validator wrapper.
+
+Runs the bundled Jing tool against Apple Dictionary XML sources to catch schema
+violations before packaging. Exposes ``run`` and ``main`` helpers used from the
+AppleDict plugin and the ``jing`` CLI module.
+"""
 
 from __future__ import annotations
 

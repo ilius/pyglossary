@@ -1,5 +1,12 @@
 # mypy: ignore-errors
 
+"""
+``tqdm``-based progress bar adapter for glossary conversion.
+
+Provides a drop-in progress reporter used during large read/write operations
+when ``tqdm`` is installed.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -20,6 +27,8 @@ def createProgressBar(title: str) -> MyTqdm:
 
 
 class MyTqdm(tqdm):
+	"""My Tqdm."""
+
 	@property
 	def format_dict(self) -> MutableMapping[str, Any]:
 		d = super().format_dict

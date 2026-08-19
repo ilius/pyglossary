@@ -1,3 +1,11 @@
+"""
+Write StarDict glossaries with merged synonym entries.
+
+Emits standard StarDict ``.ifo``/``.idx``/``.dict`` file sets like the main
+writer but collapses synonym lines into primary headwords. Outputs a directory
+layout suitable for StarDict-compatible viewers.
+"""
+
 from __future__ import annotations
 
 from time import perf_counter as now
@@ -18,6 +26,8 @@ __all__ = ["Writer"]
 
 
 class Writer(StdWriter):
+	"""Write glossary files in Stardict Merge Syns format."""
+
 	dictzipSynFile = False
 
 	def fixDefi(self, defi: str, defiFormat: str) -> bytes:  # noqa: ARG002, PLR6301

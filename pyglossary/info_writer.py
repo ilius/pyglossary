@@ -1,4 +1,13 @@
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Write PyGlossary ``.info`` metadata sidecar files.
+
+``InfoWriter`` streams glossary metadata (title, languages, author, entry count,
+and extra info keys) to a text info file alongside converted dictionary output.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -21,6 +30,8 @@ __all__ = ["InfoWriter"]
 
 
 class InfoWriter:
+	"""Write glossary info metadata files."""
+
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""

@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Generic text-file glossary reader.
+
+``TextGlossaryReader`` parses tab-separated dictionary files (optionally
+compressed), yields ``Entry`` objects, and can walk companion resource
+directories. ``TextFilePosWrapper`` tracks byte offsets for progress reporting.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -42,6 +50,8 @@ type nextBlockResultType = (
 
 
 class TextFilePosWrapper(io.TextIOBase):
+	"""Text File Pos Wrapper."""
+
 	def __init__(self, fileobj: io.TextIOBase, encoding: str) -> None:
 		self.fileobj = fileobj
 		self._encoding = encoding
@@ -63,6 +73,8 @@ class TextFilePosWrapper(io.TextIOBase):
 
 
 class TextGlossaryReader:
+	"""Read glossaries from a text file."""
+
 	_encoding: str = "utf-8"
 
 	compressions = stdCompressions

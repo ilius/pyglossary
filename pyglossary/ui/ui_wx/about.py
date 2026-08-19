@@ -2,6 +2,12 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+About dialog for the wxWidgets PyGlossary UI.
+
+Shows version, authors, and license information in a wx ``AboutBox`` or dialog.
+"""
+
 from __future__ import annotations
 
 from html import escape
@@ -137,6 +143,8 @@ def _new_html_panel(
 
 
 class AboutWxDialog(wx.Dialog):
+	"""About Wx Dialog."""
+
 	def __init__(self, parent: wx.Window | None = None) -> None:
 		super().__init__(parent, title="About PyGlossary", size=(600, 550))
 		bg, _, _ = _sys_window_colours()

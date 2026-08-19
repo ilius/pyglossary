@@ -14,6 +14,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Shared Tkinter UI helper functions.
+
+Dialog wrappers, image loading, and layout utilities used across the Tk
+backend modules.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk

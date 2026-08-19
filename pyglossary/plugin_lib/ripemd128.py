@@ -14,6 +14,12 @@
 # 	digest == b"\x3f\xa9\xb5\x7f\x05\x3c\x05\x3f\xbe\x27\x35\xb2\x38\x0d\xb5\x96"
 # )
 
+"""Pure-Python RIPEMD-128 hash (vendored).
+
+Computes 128-bit digests required by MDict engine version 3 key-block
+decryption alongside Salsa20.
+"""
+
 import struct
 
 __all__ = ["ripemd128"]

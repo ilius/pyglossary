@@ -1,3 +1,10 @@
+"""
+Shared helpers for the Slint UI backend.
+
+Bridges PyGlossary glossary state, plugin metadata, and option values into
+Slint-compatible data structures.
+"""
+
 from __future__ import annotations
 
 import logging

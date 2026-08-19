@@ -1,3 +1,10 @@
+"""
+Write PyGlossary internal test format files.
+
+Exports minimal ``.test`` fixtures for plugin regression and round-trip checks.
+Writes simple headword and definition records matching the testformat reader.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -13,6 +20,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Testformat format."""
+
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._filename = ""

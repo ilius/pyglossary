@@ -1,3 +1,11 @@
+"""
+Aard2 SLOB archive metadata parsing.
+
+Reads and writes SLOB header metadata blocks including compression, UUID, and
+tag summary fields. Supports the Aard2 SLOB reader when opening ``.slob``
+archives.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

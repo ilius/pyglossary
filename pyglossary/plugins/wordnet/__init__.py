@@ -1,3 +1,10 @@
+"""
+PyGlossary WordNet format plugin.
+
+Princeton WordNet lexical database files. Read-only ``Reader`` maps synsets,
+lemmas, and gloss text into glossary entries for English WordNet distributions.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

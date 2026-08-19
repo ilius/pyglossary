@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Tkinter graphical user interface for PyGlossary.
+
+Full-featured Tk-based main window with format-specific option panels, sort
+settings, and conversion controls. Fallback GUI when GTK/Qt are not installed.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -91,6 +98,8 @@ tk.CallWrapper.__call__ = CallWrapper__call__
 
 
 class UI(tk.Frame, UIBase):
+	"""UI."""
+
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
 	def __init__(

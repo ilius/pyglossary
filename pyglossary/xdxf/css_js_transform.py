@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Transform XDXF definitions using embedded CSS and JavaScript.
+
+``XdxfTransformer`` parses XDXF XML, inlines or links stylesheet/script
+resources, and produces standalone HTML suitable for StarDict and other targets
+that do not execute XDXF transforms natively.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -19,6 +27,8 @@ __all__ = [
 
 
 class XdxfTransformer:
+	"""Xdxf Transformer."""
+
 	def __init__(self, encoding: str = "utf-8") -> None:
 		self._encoding = encoding
 		self._childTagWriteMapping = {

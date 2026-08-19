@@ -1,4 +1,9 @@
-"""Tests for interactive cmd UI: ``ConversionSession``, ``InteractivePrompt``, ``UI``."""
+"""
+Tests for the interactive command-line UI components.
+
+Covers ``ConversionSession``, ``InteractivePrompt``, and the interactive
+``UI.run`` workflow in :mod:`pyglossary.ui.ui_cmd_interactive`.
+"""
 
 from __future__ import annotations
 
@@ -26,6 +31,8 @@ from pyglossary.ui.ui_cmd_interactive.ui import UI
 
 
 class TestConversionSession(unittest.TestCase):
+	"""Tests for Test Conversion Session."""
+
 	def test_get_run_kwargs_matches_ui_cmd_contract(self) -> None:
 		s = ConversionSession()
 		cfg = {"log_time": False}
@@ -135,6 +142,8 @@ class TestInteractivePrompt(unittest.TestCase):
 
 
 class TestUICmdInteractive(unittest.TestCase):
+	"""Tests for Test UI Cmd Interactive."""
+
 	@classmethod
 	def setUpClass(cls) -> None:
 		Glossary.init()

@@ -17,7 +17,11 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-"""Default ProgressBar widgets."""
+"""Default widgets for the vendored terminal ``ProgressBar``.
+
+Implements percentage, bar, ETA, and elapsed-time sub-widgets rendered on a
+single terminal line.
+"""
 
 from __future__ import annotations
 
@@ -37,7 +41,8 @@ else:
 
 
 class UnknownLength:
-    pass
+    """Unknown Length."""
+
 
 
 def format_updatable(updatable, pbar):
@@ -368,6 +373,8 @@ class ReverseBar(Bar):
 
 
 class BouncingBar(Bar):
+    """Bouncing Bar."""
+
     def update(self, pbar, width):
         """Updates the progress bar and its subcomponents."""
         left, marker, right = (format_updatable(i, pbar) for i in

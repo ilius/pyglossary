@@ -1,3 +1,12 @@
+"""
+Write glossary files in StarDict format.
+
+Emits ``.ifo``, compressed ``.idx``/``.dict``/``.syn`` under a directory or
+single-file layout. Can buffer entries in memory (``MemSdList``) or SQLite
+(``IdxSqList``/``SynSqList``) for large glossaries. Honors glossary sort keys
+and StarDict info fields (bookname, author, etc.).
+"""
+
 from __future__ import annotations
 
 import os
@@ -57,6 +66,8 @@ def _newlinesToBr(text: str) -> str:
 
 @dataclass(slots=True)
 class _PartFiles:
+	"""Internal part files."""
+
 	dictFile: io.BufferedWriter
 	idxFile: io.BufferedWriter
 	altIndexList: T_SdList[tuple[bytes, int]]
@@ -64,6 +75,8 @@ class _PartFiles:
 
 @dataclass(slots=True)
 class _MultipartState:
+	"""Internal multipart state."""
+
 	partIndex: int = 0
 	multiPart: bool = False
 	dictMark: int = 0
@@ -79,6 +92,8 @@ class _MultipartState:
 
 
 class Writer:
+	"""Write glossary files in StarDict format."""
+
 	_large_file: bool = False
 	_dictzip: bool = False
 	_dictzip_syn: bool = False

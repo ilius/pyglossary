@@ -1,3 +1,11 @@
+"""
+Write JSON ``.json`` glossary export files.
+
+Serializes glossary entries to a JSON array or object structure with headwords,
+definitions, and optional metadata fields. Intended for interchange with tools
+that consume PyGlossary JSON dumps.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -19,6 +27,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in JSON format."""
+
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True

@@ -1,5 +1,12 @@
 # mypy: ignore-errors
 
+"""
+Reproducible ZIP archive implementation.
+
+Subclass of :class:`zipfile.ZipFile` that fixes entry metadata via
+``SOURCE_DATE_EPOCH`` and stable member ordering for deterministic packaging.
+"""
+
 import os
 import shutil
 import time

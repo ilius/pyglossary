@@ -1,3 +1,10 @@
+"""
+QuickDic v6 binary read helpers.
+
+Decodes QuickDic v6 index and definition records from archive bytes during
+import. Used by the QuickDic reader to reconstruct glossary entries.
+"""
+
 from __future__ import annotations
 
 import gzip

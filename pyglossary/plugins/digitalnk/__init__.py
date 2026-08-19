@@ -1,3 +1,10 @@
+"""
+PyGlossary DigitalNK format plugin.
+
+North Korean dictionary SQLite3 archives. Read-only ``Reader`` extracts
+Korean headwords and definitions from DigitalNK ``.db`` databases.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

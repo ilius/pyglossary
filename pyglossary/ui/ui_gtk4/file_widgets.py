@@ -15,6 +15,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+File and path picker widgets for the GTK 4 UI.
+
+GTK 4 controls for choosing input/output glossary paths and related filenames.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -33,6 +39,8 @@ _ = str  # later replace with translator function
 
 
 class InputFileBox(gtk.Box):
+	"""Input File Box."""
+
 	def __init__(
 		self,
 		entryChanged: Callable[[gtk.Entry], None],
@@ -66,6 +74,8 @@ class InputFileBox(gtk.Box):
 
 
 class OutputFileBox(gtk.Box):
+	"""Output File Box."""
+
 	def __init__(
 		self,
 		entryChanged: Callable[[gtk.Entry], None],

@@ -1,3 +1,11 @@
+"""
+Write StarDict textual XML dictionary exports.
+
+Serializes glossary entries to StarDict XML with ``<stardict>`` records,
+synonyms, and book metadata. Produces a single XML file for tools that import
+StarDict textual format.
+"""
+
 from __future__ import annotations
 
 import os
@@ -21,6 +29,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in StarDict textual format."""
+
 	_encoding: str = "utf-8"
 
 	compressions = stdCompressions

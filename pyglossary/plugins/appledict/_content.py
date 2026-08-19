@@ -20,6 +20,13 @@
 # (like Oxford_Advanced_English-Chinese_Dictionary_9th_Edition.mdx)
 # should be moved to separate modules (like content processors) and enabled
 # per-glossary (by title or something else)
+"""
+AppleDict HTML definition content processing.
+
+Normalizes and transforms glossary HTML for AppleDict DDK entry bodies. Applies
+source-specific cleanup rules before XML serialization in the AppleDict writer.
+"""
+
 from __future__ import annotations
 
 import logging

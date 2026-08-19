@@ -2,6 +2,14 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Qt 6 graphical user interface for PyGlossary.
+
+PySide6/PyQt6 main window mirroring core conversion features: format detection,
+plugin options, sorting, and progress. Alternative desktop UI for environments
+with Qt 6 but without GTK.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -160,6 +168,8 @@ class _NavBarFileDropFilter(QObject):
 
 
 class UI(UIBase):
+	"""UI."""
+
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
 	def __init__(self, progressbar: bool = True) -> None:  # noqa: ARG002 — API parity

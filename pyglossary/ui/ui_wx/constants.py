@@ -7,6 +7,12 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
+"""
+Shared constants for the wxWidgets UI layout.
+
+Window titles, icon paths, and fixed dimensions reused across wx panels.
+"""
+
 from __future__ import annotations
 
 from pyglossary.glossary_v2 import Glossary

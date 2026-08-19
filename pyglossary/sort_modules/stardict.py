@@ -1,3 +1,10 @@
+"""
+Sort glossary entries the way StarDict indexes expect.
+
+Produces lower-then-original byte tuple keys matching StarDict's default
+case-insensitive collation behavior.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

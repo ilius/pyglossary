@@ -11,6 +11,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Read Apple Dictionary binary (``.dictionary``) packages.
+
+Extracts keys, definitions, and resources from AppleDict binary format used on
+macOS/iOS, including plist metadata and keyed index streams.
+"""
+
 from __future__ import annotations
 
 import os
@@ -60,6 +67,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read AppleDict binary glossary files."""
+
 	useByteProgress = True
 	depends = {
 		"lxml": "lxml",

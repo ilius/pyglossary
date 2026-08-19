@@ -1,3 +1,11 @@
+"""
+PyGlossary Aard2 SLOB format plugin.
+
+Single-file ``.slob`` dictionaries used by Aard 2 / Aarddict readers. Supports
+reading and writing with configurable blob compression, content types, and ICU
+collation for sorted keys.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

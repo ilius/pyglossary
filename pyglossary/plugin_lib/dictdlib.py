@@ -17,6 +17,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+"""DICT.org ``dictd`` database creation library (vendored).
+
+Builds compressed ``.dict``/``.index`` pairs compatible with the dictd server
+format; used by DICT.org-related writers.
+"""
+
 from __future__ import annotations
 
 import gzip
@@ -94,6 +100,8 @@ def sortKey(x: str) -> list[str]:
 
 
 class DictDB:
+	"""Dict DB."""
+
 	def __init__(
 		self,
 		basename: str,

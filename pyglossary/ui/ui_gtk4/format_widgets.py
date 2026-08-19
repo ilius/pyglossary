@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+GTK 4 per-plugin format option widgets.
+
+GTK 4 implementations of option editors (booleans, strings, encodings, file
+sizes, etc.) shown when a read/write format is selected in the GTK 4 UI.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -56,6 +63,8 @@ log = logging.getLogger("pyglossary")
 
 # TODO: Dialog is deprecated since version 4.10, Use Window instead
 class FormatDialog(gtk.Dialog):
+	"""Format Dialog."""
+
 	def __init__(
 		self,
 		descList: list[str],
@@ -212,6 +221,8 @@ class FormatDialog(gtk.Dialog):
 
 
 class FormatButton(gtk.Button):
+	"""Format Button."""
+
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
@@ -267,6 +278,8 @@ class FormatButton(gtk.Button):
 
 
 class OptionTkType(Protocol):
+	"""Option Tk Type."""
+
 	def __init__(self, opt: Option) -> None: ...
 	@property
 	def value(self) -> Any: ...
@@ -277,6 +290,8 @@ class OptionTkType(Protocol):
 
 
 class BoolOptionGtk:
+	"""Bool Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		hbox = HBox()
 		cb = gtk.CheckButton(
@@ -300,6 +315,8 @@ class BoolOptionGtk:
 
 
 class IntOptionGtk:
+	"""Int Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		hbox = HBox()
 		pack(
@@ -342,6 +359,8 @@ def _combo_box_text_entry_set_width_chars(combo: gtk.ComboBoxText, width: int) -
 
 
 class StrOptionGtk:
+	"""Str Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		self.opt = opt
 		hbox = HBox()
@@ -389,14 +408,16 @@ class StrOptionGtk:
 
 # should I use str input (Entry) to allow values like 1m and 1g?
 class FileSizeOptionGtk(IntOptionGtk):
-	pass
+	"""File Size Option Gtk."""
 
 
 class HtmlColorOptionGtk(StrOptionGtk):
-	pass
+	"""Html Color Option Gtk."""
 
 
 class MultiLineStrOptionGtk:
+	"""Multi Line Str Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		hbox = HBox()
 		pack(
@@ -428,6 +449,8 @@ class MultiLineStrOptionGtk:
 
 
 class NewlineOptionGtk:
+	"""Newline Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		self.opt = opt
 		hbox = HBox()
@@ -466,6 +489,8 @@ class NewlineOptionGtk:
 
 
 class LiteralEvalOptionGtk(MultiLineStrOptionGtk):
+	"""Literal Eval Option Gtk."""
+
 	@property
 	def value(self) -> Any:
 		return ast.literal_eval(self._buf.get_text())
@@ -476,10 +501,14 @@ class LiteralEvalOptionGtk(MultiLineStrOptionGtk):
 
 
 class ListOptionGtk(LiteralEvalOptionGtk):
+	"""List Option Gtk."""
+
 	typeHint = "Python list"
 
 
 class DictOptionGtk(LiteralEvalOptionGtk):
+	"""Dict Option Gtk."""
+
 	typeHint = "Python dict"
 
 
@@ -499,6 +528,8 @@ optionClassByName: dict[str, OptionTkType] = {
 
 
 class FormatOptionsDialog(gtk.Dialog):
+	"""Format Options Dialog."""
+
 	commentLen = 60
 	kindFormatsOptions = {
 		"r": Glossary.formatsReadOptions,
@@ -570,6 +601,8 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(gtk.Box):
+	"""Format Box."""
+
 	def __init__(
 		self,
 		app: gtk.Application,
@@ -649,6 +682,8 @@ class FormatBox(gtk.Box):
 
 
 class InputFormatBox(FormatBox):
+	"""Input Format Box."""
+
 	dialogTitle = "Select Input Format"
 
 	def __init__(self, app: gtk.Application, **kwargs: Any) -> None:
@@ -660,6 +695,8 @@ class InputFormatBox(FormatBox):
 
 
 class OutputFormatBox(FormatBox):
+	"""Output Format Box."""
+
 	dialogTitle = "Select Output Format"
 
 	def __init__(self, app: gtk.Application, **kwargs: Any) -> None:

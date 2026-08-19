@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Qt binding import shim for PyGlossary.
+
+Tries PySide6 first, then PyQt6, and re-exports the shared Qt API used by the
+Qt 6 UI modules.
+"""
+
 from __future__ import annotations
 
 __all__ = [

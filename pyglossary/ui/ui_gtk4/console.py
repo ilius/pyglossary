@@ -1,3 +1,10 @@
+"""
+Embedded log console widget for the GTK 4 UI.
+
+Displays conversion log records with level-based styling inside the main
+window.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -16,6 +23,8 @@ __all__ = ["ConvertConsole"]
 
 
 class ConvertConsole(gtk.ScrolledWindow):
+	"""Convert Console."""
+
 	def __init__(
 		self,
 		mainWin: MainWinType,

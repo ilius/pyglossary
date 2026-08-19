@@ -15,6 +15,15 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Load and dispatch PyGlossary format plugins.
+
+``PluginHandler`` scans ``pyglossary/plugins`` (and optional user plugin dirs),
+builds a format-name → ``PluginProp`` index, detects input format from filename
+(``DetectedFormat``), and provides ``read``/``write`` helpers used by
+``Glossary``.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -42,12 +51,16 @@ log = logging.getLogger("pyglossary")
 
 
 class DetectedFormat(NamedTuple):
+	"""Detected glossary file format and compression."""
+
 	filename: str
 	formatName: str
 	compression: str
 
 
 class PluginLoader:
+	"""Load a single format plugin module."""
+
 	loadedModules: set[str] = set()
 
 	@staticmethod
@@ -130,6 +143,8 @@ class PluginLoader:
 
 
 class PluginHandler:
+	"""Discover and run format plugins."""
+
 	plugins: dict[str, PluginProp] = {}
 	pluginByExt: dict[str, PluginProp] = {}
 

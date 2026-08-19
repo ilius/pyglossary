@@ -1,4 +1,12 @@
 # mypy: ignore-errors
+"""
+Write DictionaryForMIDs ``.mids`` project directories.
+
+Exports glossary entries into numbered tab-separated lesson files and supporting
+DictionaryForMIDs project layout. Reverses the reader workflow for MID-compatible
+mobile dictionary builds.
+"""
+
 from __future__ import annotations
 
 import os
@@ -49,6 +57,8 @@ language1NormationClassName=de.kugihan.dictionaryformids.translation.NormationEn
 
 
 class Writer:
+	"""Write glossary files in Dicformids format."""
+
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self.linesPerDirectoryFile = 500  # 200

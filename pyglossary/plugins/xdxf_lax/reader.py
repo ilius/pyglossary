@@ -20,6 +20,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Read XDXF XML with a permissive lax parser.
+
+Uses relaxed XDXF parsing rules for malformed or non-standard dictionary files.
+Extracts headwords and definition fragments without strict schema validation,
+favoring import success over full markup fidelity.
+"""
+
 from __future__ import annotations
 
 import re
@@ -50,10 +58,14 @@ __all__ = ["Reader"]
 if TYPE_CHECKING:
 
 	class TransformerType(typing.Protocol):
+		"""Transformer Type."""
+
 		def transform(self, article: Element) -> str: ...
 
 
 class Reader:
+	"""Read XDXF lax glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

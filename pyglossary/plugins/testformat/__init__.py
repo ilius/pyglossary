@@ -1,3 +1,11 @@
+"""
+PyGlossary test format plugin.
+
+Internal regression format (``.test`` / ``.tst``) for PyGlossary development.
+Registers ``Reader`` and ``Writer`` to exercise the plugin pipeline with minimal
+fixtures.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

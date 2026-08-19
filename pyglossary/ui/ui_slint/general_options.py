@@ -1,3 +1,9 @@
+"""
+Global conversion options panel for the Slint UI.
+
+Binds glossary-wide configuration fields to Slint property models.
+"""
+
 from __future__ import annotations
 
 import logging

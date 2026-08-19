@@ -2,6 +2,12 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Glossary metadata viewer for the Qt 6 UI.
+
+Shows info-dictionary fields from the loaded glossary in a Qt panel.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -22,6 +28,8 @@ __all__ = ["PreConvertInfoQtDialog"]
 
 
 class PreConvertInfoQtDialog(QDialog):
+	"""Pre Convert Info Qt Dialog."""
+
 	def __init__(self, info: dict[str, Any], parent: QWidget | None) -> None:
 		super().__init__(parent)
 		self._info = info

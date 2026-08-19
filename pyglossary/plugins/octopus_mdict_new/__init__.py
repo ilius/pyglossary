@@ -1,3 +1,11 @@
+"""
+PyGlossary Octopus MDict (new) format plugin.
+
+MDict ``.mdx`` dictionary archives read through the Octopus MDict reader stack.
+Read-only plugin decodes compressed key blocks and definition records from
+modern MDict engine versions.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

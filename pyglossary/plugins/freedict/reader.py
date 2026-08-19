@@ -1,3 +1,12 @@
+"""
+Read FreeDict TEI XML dictionaries.
+
+Parses TEI ``<entry>`` elements (including XInclude), resolves FreeDict
+translation and orthography modules, detects source/target languages from
+``xml:lang``, and builds HTML definitions. Supports bzip2/gzip-compressed
+``.dct`` files.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -35,6 +44,8 @@ _NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
 
 @dataclass(slots=True)
 class _ParsedSense:
+	"""Internal parsed sense."""
+
 	transCits: list[Element]
 	defs: list[Element]
 	grams: list[Element]
@@ -47,6 +58,8 @@ class _ParsedSense:
 
 
 class Reader(ReaderUtils):
+	"""Read Freedict glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

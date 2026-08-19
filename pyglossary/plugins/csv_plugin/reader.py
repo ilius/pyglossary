@@ -16,6 +16,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Read Csv glossary files.
+
+Loads comma- or custom-separated tables where each row becomes a glossary
+entry. Supports header rows, encoding selection, and column mapping for term
+and definition fields.
+"""
+
 from __future__ import annotations
 
 import csv
@@ -40,6 +48,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Csv glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 

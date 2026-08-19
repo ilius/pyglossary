@@ -1,3 +1,10 @@
+"""
+ABBYY Lingvo DSL typed error and token aliases.
+
+Declares type aliases and error categories for the DSL lexer and transformer.
+Keeps DSL plugin modules consistently typed without circular imports.
+"""
+
 from __future__ import annotations
 
 import typing
@@ -14,6 +21,8 @@ __all__ = [
 
 
 class TransformerType(typing.Protocol):
+	"""Transformer Type."""
+
 	start: int
 	pos: int
 	input: str
@@ -54,6 +63,8 @@ class TransformerType(typing.Protocol):
 
 
 class TitleTransformerType(TransformerType, typing.Protocol):
+	"""Title Transformer Type."""
+
 	title: str
 	outputAlt: str
 

@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Qt 6 per-plugin format option widgets.
+
+Qt widgets for each ``Option`` subtype shown when a read/write format is
+selected in the Qt 6 main window.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -43,6 +50,8 @@ log: Logger = logging.getLogger("pyglossary")
 
 
 class OptionQtType(Protocol):
+	"""Option Qt Type."""
+
 	def __init__(self, opt: Option, parent: QWidget) -> None: ...
 
 	@property
@@ -56,6 +65,8 @@ class OptionQtType(Protocol):
 
 
 class BoolOptionQt:
+	"""Bool Option Qt."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -77,6 +88,8 @@ class BoolOptionQt:
 
 
 class IntOptionQt:
+	"""Int Option Qt."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -108,6 +121,8 @@ class IntOptionQt:
 
 
 class StrOptionQt:
+	"""Str Option Qt."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -146,14 +161,16 @@ class StrOptionQt:
 
 
 class FileSizeOptionQt(StrOptionQt):
-	pass
+	"""File Size Option Qt."""
 
 
 class HtmlColorOptionQt(StrOptionQt):
-	pass
+	"""Html Color Option Qt."""
 
 
 class MultiLineStrOptionQt:
+	"""Multi Line Str Option Qt."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -179,10 +196,12 @@ class MultiLineStrOptionQt:
 
 
 class NewlineOptionQt(MultiLineStrOptionQt):
-	pass
+	"""Newline Option Qt."""
 
 
 class LiteralEvalOptionQt:
+	"""Literal Eval Option Qt."""
+
 	typeHint = ""
 
 	def __init__(
@@ -212,10 +231,14 @@ class LiteralEvalOptionQt:
 
 
 class ListOptionQt(LiteralEvalOptionQt):
+	"""List Option Qt."""
+
 	typeHint = "Python list"
 
 
 class DictOptionQt(LiteralEvalOptionQt):
+	"""Dict Option Qt."""
+
 	typeHint = "Python dict"
 
 
@@ -281,6 +304,8 @@ def format_pick_dialog(
 
 
 class FormatOptionsQtDialog(QDialog):
+	"""Format Options Qt Dialog."""
+
 	kind_formats_options = {
 		"Read": Glossary.formatsReadOptions,
 		"Write": Glossary.formatsWriteOptions,

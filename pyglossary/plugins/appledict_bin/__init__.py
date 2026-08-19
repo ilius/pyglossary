@@ -1,3 +1,11 @@
+"""
+PyGlossary AppleDict binary format plugin.
+
+macOS/iOS ``.dictionary`` and ``.data`` binary packages. Read-only plugin that
+extracts keys, HTML definitions, plist metadata, and keyed index streams from
+installed Apple Dictionary bundles.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

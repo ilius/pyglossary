@@ -16,7 +16,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Colored prompts, line input, and embedded ``!`` filesystem commands."""
+"""
+Colored prompts, line input, and embedded ``!`` filesystem commands.
+
+``InteractivePrompt`` drives the question-and-answer flow for
+:class:`~pyglossary.ui.ui_cmd_interactive.ui.UiCmdInteractive`, including path
+completion, yes/no checks, and a small ``!`` shell for browsing directories
+without leaving the converter.
+"""
 
 from __future__ import annotations
 

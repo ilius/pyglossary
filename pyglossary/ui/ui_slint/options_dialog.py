@@ -1,3 +1,10 @@
+"""
+Per-format plugin options dialog for the Slint UI.
+
+Edits ``Option`` values for the selected read/write format inside a Slint
+modal.
+"""
+
 from __future__ import annotations
 
 import logging

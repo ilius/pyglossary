@@ -1,3 +1,11 @@
+"""
+Abstract base for glossary entry objects.
+
+``BaseEntry`` defines the shared interface for headwords, definitions, alternate
+forms, and in-place edits. Concrete types ``Entry`` and ``DataEntry`` in
+``entry.py`` implement this protocol for lexical and binary resource entries.
+"""
+
 from __future__ import annotations
 
 import warnings
@@ -13,6 +21,8 @@ type MultiStr = str | list[str]
 
 
 class BaseEntry(ABC):  # noqa: PLR0904
+	"""Common base for glossary entry types."""
+
 	__slots__: list[str] = [
 		"_term",
 	]

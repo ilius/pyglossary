@@ -1,3 +1,10 @@
+"""
+PyGlossary GTK 4 user interface package.
+
+Exports the GTK 4 ``UI`` class and widgets for file selection, format options,
+and conversion on Linux desktops with PyGObject/GTK 4.
+"""
+
 from __future__ import annotations
 
 import gi

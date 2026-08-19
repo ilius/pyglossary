@@ -16,7 +16,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Session dataclass holding conversion parameters for the interactive cmd UI."""
+"""
+Session dataclass holding conversion parameters for the interactive cmd UI.
+
+``ConversionSession`` stores input/output paths, format names, sort options, and
+per-plugin read/write option dicts while the user steps through prompts.
+Methods build ``ConvertArgs`` for :class:`~pyglossary.glossary_v2.Glossary`.
+"""
 
 from __future__ import annotations
 

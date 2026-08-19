@@ -1,3 +1,11 @@
+"""
+PyGlossary FreeDict Markdown format plugin.
+
+FreeDict TEI sources rendered to Markdown-oriented output (``.tei`` input).
+Read-only plugin that mirrors the FreeDict reader pipeline while emitting
+Markdown-friendly definitions instead of HTML.
+"""
+
 from pyglossary.plugins.freedict.options import optionsProp
 
 from .reader import Reader

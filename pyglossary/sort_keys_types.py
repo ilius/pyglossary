@@ -1,3 +1,11 @@
+"""
+Protocol types for glossary sort-key factory functions.
+
+Defines ``SortKeyMakerType``, ``SQLiteSortKeyMakerType``, and locale-aware
+variants that return callables producing sort keys from headword lists. Shared
+between ``sort_keys`` and ``sort_modules`` implementations.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -15,6 +23,8 @@ type SQLiteSortKeyType = list[tuple[str, str, SortKeyType]]
 
 
 class SortKeyMakerType(Protocol):
+	"""Sort Key Maker Type."""
+
 	def __call__(
 		self,
 		sortEncoding: str = "utf-8",
@@ -23,6 +33,8 @@ class SortKeyMakerType(Protocol):
 
 
 class SQLiteSortKeyMakerType(Protocol):
+	"""SQ Lite Sort Key Maker Type."""
+
 	def __call__(
 		self,
 		sortEncoding: str = "utf-8",
@@ -31,6 +43,8 @@ class SQLiteSortKeyMakerType(Protocol):
 
 
 class LocaleSortKeyMakerType(Protocol):
+	"""Locale Sort Key Maker Type."""
+
 	def __call__(
 		self,
 		collator: T_Collator,  # noqa: F821
@@ -38,6 +52,8 @@ class LocaleSortKeyMakerType(Protocol):
 
 
 class LocaleSQLiteSortKeyMakerType(Protocol):
+	"""Locale SQ Lite Sort Key Maker Type."""
+
 	def __call__(
 		self,
 		collator: T_Collator,  # noqa: F821

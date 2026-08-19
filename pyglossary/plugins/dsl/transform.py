@@ -1,3 +1,10 @@
+"""
+ABBYY Lingvo DSL markup-to-HTML transformer.
+
+Applies DSL inline and block tag rules to produce HTML definitions. Central
+conversion engine used by the DSL reader and title parser.
+"""
+
 from __future__ import annotations
 
 import re
@@ -18,12 +25,16 @@ _re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
 
 class Result(NamedTuple):
+	"""Result."""
+
 	output: str
 	resFileSet: set[str]
 
 
 # called Lexer by Rob Pike in "Lexical Scanning" video)
 class Transformer:
+	"""Transformer."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		inputText: str,

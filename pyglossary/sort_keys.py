@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Registry of named glossary sort keys.
+
+``NamedSortKey`` tuples bundle a sort name, description, and factory callables
+for in-memory and SQLite-backed ordering. ``lookupSortKey`` and
+``namedSortKeyList`` expose the built-in keys (headword, locale, ebook, etc.).
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -44,6 +52,8 @@ defaultSortKeyName = "headword_lower"
 
 
 class NamedSortKey(NamedTuple):
+	"""Named glossary sort key implementation."""
+
 	name: str
 	desc: str
 	normal: SortKeyMakerType | None
@@ -100,6 +110,8 @@ def _load_stardict() -> ModuleType:
 
 @dataclass(slots=True)  # not frozen because of mod
 class LocaleNamedSortKey:
+	"""Locale-aware named sort key."""
+
 	name: str
 	desc: str
 	load: Callable[[], Any]

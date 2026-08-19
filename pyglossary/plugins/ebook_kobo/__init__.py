@@ -1,3 +1,11 @@
+"""
+PyGlossary Kobo ebook format plugin.
+
+Kobo e-reader dictionary packages (``.kobo`` / ``.kobo.zip``). Write-only
+``Writer`` produces the Kobo-specific dictionary bundle layout from sorted
+glossary entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

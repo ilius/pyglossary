@@ -1,3 +1,11 @@
+"""
+Read Japanese EPWING CD-ROM dictionary catalogs.
+
+Walks EPWING directory structure through the ``converter`` module and emits
+headwords with HTML definitions. Targets Yomichan-compatible output from
+EPWING article and catalog binaries.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -19,6 +27,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read EPWING glossary files."""
+
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._yomichan_reader = YomichanReader(glos)

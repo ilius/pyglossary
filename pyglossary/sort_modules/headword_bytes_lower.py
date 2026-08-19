@@ -1,3 +1,10 @@
+"""
+Sort glossary entries by lowercased headword as raw bytes.
+
+Like ``headword_lower`` but keeps binary sort keys without Unicode normalization,
+for legacy byte-oriented indexes.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

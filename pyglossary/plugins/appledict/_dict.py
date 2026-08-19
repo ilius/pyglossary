@@ -15,6 +15,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+AppleDict DDK dictionary bundle writer helpers.
+
+Builds Apple Dictionary Development Kit XML dictionary structures from glossary
+entries. Handles entry keys, resource paths, and plist references for DDK export.
+"""
+
 from __future__ import annotations
 
 import logging

@@ -1,3 +1,10 @@
+"""
+Read EDLIN dictionary text format files.
+
+Parses ``.edlin`` line-oriented dictionary sources into headword and definition
+pairs. Handles EDLIN record markers and multi-line definitions during import.
+"""
+
 from __future__ import annotations
 
 from os.path import dirname, isdir, isfile, join
@@ -19,6 +26,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Edlin glossary files."""
+
 	useByteProgress = False
 	_encoding: str = "utf-8"
 

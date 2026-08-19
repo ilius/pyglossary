@@ -17,6 +17,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Babylon BGL plugin option definitions.
+
+Declares PyGlossary reader and writer options for Babylon ``.bgl`` import and
+export. Wired into the Babylon BGL plugin ``optionsProp`` registry.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

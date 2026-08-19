@@ -19,6 +19,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Babylon BGL glossary entry iteration.
+
+Walks the BGL index and yields headword records with offsets into definition
+data. Core entry loop coordinating I/O, charset, and data helper modules.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

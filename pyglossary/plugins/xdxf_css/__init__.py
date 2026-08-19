@@ -1,3 +1,11 @@
+"""
+PyGlossary XDXF CSS format plugin.
+
+XDXF dictionaries that rely on embedded CSS and JavaScript for presentation.
+Read-only ``Reader`` inlines or links stylesheet resources and produces
+standalone HTML from XDXF markup.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

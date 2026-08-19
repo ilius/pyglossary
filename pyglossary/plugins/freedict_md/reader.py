@@ -1,3 +1,11 @@
+"""
+Read FreeDict Markdown (``.tei``) dictionary sources.
+
+Parses FreeDict TEI/Markdown hybrid files into glossary entries. Uses the
+``md_emit`` pipeline to turn structured dictionary sections into HTML
+definitions keyed by headword.
+"""
+
 from __future__ import annotations
 
 from os.path import isfile, join

@@ -32,6 +32,13 @@
 #   conversion worker thread, pyo3's unsendable assertion panics the interpreter.
 
 
+"""
+Slint-based graphical user interface for PyGlossary.
+
+Experimental/native-UI frontend using Slint markup for layout and Rust-backed
+widgets; exposes the same conversion pipeline as other ``ui_*`` backends.
+"""
+
 from __future__ import annotations
 
 import gc

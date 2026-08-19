@@ -1,3 +1,11 @@
+"""
+Write Lingoes ``.ldf`` source dictionary files.
+
+Serializes glossary entries to Lingoes LDF markup with headwords, translations,
+and examples. Applies LDF escaping and optional compression for Lingoes import
+tools.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -16,6 +24,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Lingoes LDF format."""
+
 	compressions = stdCompressions
 
 	_newline: str = "\n"

@@ -13,7 +13,15 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-"""This module is used in plugins."""
+"""
+Low-level text and binary string utilities.
+
+Covers UTF-8 repair (``fixUtf8``), bar-separated term lists (``joinByBar``,
+``splitByBar``), tab/newline escaping for tabfile formats, CRC32 hex digests,
+and small integer packing helpers used across readers and writers.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

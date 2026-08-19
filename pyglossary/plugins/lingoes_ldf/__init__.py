@@ -1,3 +1,11 @@
+"""
+PyGlossary Lingoes LDF format plugin.
+
+Lingoes dictionary source files (``.ldf``) with Lingoes markup. Registers
+``Reader`` and ``Writer`` for the LDF text format used by the Lingoes desktop
+dictionary application.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

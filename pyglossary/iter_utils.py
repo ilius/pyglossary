@@ -15,6 +15,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Iterator utilities borrowed from the itertools ecosystem.
+
+Currently provides ``unique_everseen``, which yields distinct items from an
+iterable while preserving first-seen order.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

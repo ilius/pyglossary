@@ -16,6 +16,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Write Mobipocket ``.mobi`` e-book dictionaries.
+
+Generates MOBI dictionary e-books with HTML content, index records, and EXTH
+metadata. Assembles PalmDOC-compressed text and MOBI headers for Kindle and
+legacy Mobipocket readers.
+"""
+
 from __future__ import annotations
 
 import os
@@ -36,6 +44,8 @@ __all__ = ["Writer"]
 
 
 class GroupStateBySize:
+	"""Group State By Size."""
+
 	def __init__(self, writer: Writer) -> None:
 		self.writer = writer
 		self.group_index = -1
@@ -57,6 +67,8 @@ class GroupStateBySize:
 
 
 class Writer(EbookWriter):
+	"""Write glossary files in MOBI ebook format."""
+
 	_compress: bool = False
 	_keep: bool = False
 	_kindlegen_path: str = ""

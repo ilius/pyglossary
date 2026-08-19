@@ -1,3 +1,11 @@
+"""
+Read WordFrequency.info COCA lemma list files.
+
+Imports ``.wordfrequency`` lemma lists as glossary entries keyed by word form.
+Each line becomes a headword with frequency rank or count metadata attached as
+the definition text.
+"""
+
 from __future__ import annotations
 
 import html
@@ -108,6 +116,8 @@ def _pos_name(pos: str) -> str:
 
 
 class Reader(TextGlossaryReader):
+	"""Read word frequency info glossary files."""
+
 	useByteProgress = True
 	_gram_color: str = "green"
 

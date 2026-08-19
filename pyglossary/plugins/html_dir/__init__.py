@@ -1,3 +1,11 @@
+"""
+PyGlossary HTML directory format plugin.
+
+Static HTML dictionary sites under a ``.hdir/`` directory tree. Write-only
+``Writer`` generates per-entry HTML pages plus index navigation from glossary
+entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

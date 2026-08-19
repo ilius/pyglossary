@@ -17,7 +17,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Wrappers around ``prompt_toolkit.prompt`` for the interactive cmd UI."""
+"""
+Wrappers around ``prompt_toolkit.prompt`` for the interactive cmd UI.
+
+Centralizes styled prompts (colors, validation, default values) used by
+:class:`~pyglossary.ui.ui_cmd_interactive.interactive_prompt.InteractivePrompt`.
+"""
 
 from __future__ import annotations
 

@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Backward-compatible ``Glossary`` import path.
+
+Re-exports the modern ``glossary_v2`` API under the historical module name.
+New code should import ``Glossary`` from ``pyglossary.glossary_v2`` directly;
+this module emits a deprecation warning when instantiated.
+"""
+
 from __future__ import annotations
 
 import warnings

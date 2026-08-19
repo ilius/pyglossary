@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+SQLite-backed storage for glossary entries during conversion.
+
+``SqEntryList`` persists raw entry tuples in a temporary database so large
+glossaries can be sorted and written without holding every entry in RAM. Mirrors
+the ``EntryList`` API but uses SQLite sort-key columns for ordering.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -37,6 +45,8 @@ log = logging.getLogger("pyglossary")
 
 
 class SqEntryList:
+	"""SQLite-backed collection of glossary entries."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		entryToRaw: Callable[[EntryType], RawEntryType],

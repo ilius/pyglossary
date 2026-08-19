@@ -1,3 +1,10 @@
+"""
+EDICT2 sense summarization for compact definitions.
+
+Strips parenthetical glosses and compresses long sense text into shorter HTML
+summaries. Used when exporting EDICT2 entries with condensed definitions.
+"""
+
 from __future__ import annotations
 
 import re

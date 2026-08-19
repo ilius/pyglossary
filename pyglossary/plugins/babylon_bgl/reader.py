@@ -19,6 +19,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Read Babylon BGL glossary files.
+
+Decodes the binary ``.bgl`` container, reads index and definition records, and
+converts Babylon rich text (fonts, colors, images) into HTML entries. Handles
+multiple charsets and embedded resources referenced from definitions.
+"""
+
 from __future__ import annotations
 
 import os
@@ -66,6 +74,8 @@ class Reader(
 	_BglReaderMeta,
 	_BglReaderIO,
 ):
+	"""Read Babylon BGL glossary files."""
+
 	useByteProgress = False
 
 	_default_encoding_overwrite: str = ""

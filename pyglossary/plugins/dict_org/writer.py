@@ -1,3 +1,11 @@
+"""
+Write DICT.org ``.index`` dictionary file sets.
+
+Exports glossary entries to DICT.org index and data companion files with offset
+tables pointing into a shared definition blob. Produces bundles compatible with
+DICT protocol server tooling.
+"""
+
 from __future__ import annotations
 
 from os.path import splitext
@@ -53,6 +61,8 @@ def _installToDictd(filename: str, dictzip: bool) -> None:
 
 
 class Writer:
+	"""Write glossary files in DICT.org format."""
+
 	_dictzip: bool = False
 	_install: bool = True
 

@@ -16,6 +16,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Non-interactive command-line UI for PyGlossary (``--ui=cmd``).
+
+Runs conversion from explicit CLI arguments without graphical widgets or
+prompts; defers to :mod:`pyglossary.ui.ui_cmd_interactive` for guided mode.
+"""
+
 from __future__ import annotations
 
 import os
@@ -153,6 +160,8 @@ def parseFormatOptionsStr(st: str) -> dict[str, str] | None:
 
 
 class NullObj:
+	"""Null Obj."""
+
 	def __getattr__(self, attr: str) -> NullObj:
 		return self
 
@@ -174,6 +183,8 @@ class NullObj:
 
 
 class UI(UIBase):
+	"""UI."""
+
 	def __init__(
 		self,
 		progressbar: bool = True,

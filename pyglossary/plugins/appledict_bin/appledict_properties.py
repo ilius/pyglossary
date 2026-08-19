@@ -11,6 +11,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+AppleDict binary plist property parsing.
+
+Dataclasses and decoders for metadata plists inside ``.dictionary`` bundles.
+Extracts title, identifier, and index parameters for the binary reader.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -23,6 +30,8 @@ __all__ = ["AppleDictProperties", "from_metadata"]
 class AppleDictProperties:
 	# in plist file: IDXDictionaryVersion
 	# values := (1 | 2 | 3)
+	"""Apple Dict Properties."""
+
 	format_version: int
 
 	# in plist file: HeapDataCompressionType values := (absent | 1 | 2)

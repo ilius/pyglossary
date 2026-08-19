@@ -1,3 +1,10 @@
+"""
+Alert and error dialog for the Slint UI.
+
+Shows blocking confirmation and error messages during Slint-driven conversion
+flows.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

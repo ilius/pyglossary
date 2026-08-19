@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Sort-key UI helpers for the Qt 6 backend.
+
+Populates sort-module combo boxes and wires locale collation options to glossary
+config.
+"""
+
 from __future__ import annotations
 
 from pyglossary.sort_keys import namedSortKeyList

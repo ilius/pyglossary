@@ -1,3 +1,11 @@
+"""
+Write glossary files in Tabfile format.
+
+Emits one line per entry with a configurable delimiter between headword and
+definition. Can append glossary info headers, embed resource references, and
+split output when an approximate file size limit is set.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -13,6 +21,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Tabfile format."""
+
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True

@@ -11,6 +11,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+AppleDict binary keyed index data extraction.
+
+Reads keyed index streams and key-offset tables from AppleDict binary bundles.
+Supplies the AppleDict binary reader with lookup data for headword resolution.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

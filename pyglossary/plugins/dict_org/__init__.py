@@ -1,3 +1,11 @@
+"""
+PyGlossary DICT.org format plugin.
+
+DICT protocol index files (``.index``) paired with definition databases.
+Registers ``Reader`` and ``Writer`` for the classic DICT.org on-disk layout
+used by dictd and related tools.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

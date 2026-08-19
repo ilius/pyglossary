@@ -1,3 +1,11 @@
+"""
+Read EDICT2 Japanese-English dictionary text files.
+
+Parses EDICT2/JMdict-style lines with kanji, reading, and sense fields. Splits
+multi-sense entries and converts markup into glossary definitions with optional
+pitch-accent and romanization helpers from sibling modules.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -26,6 +34,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read EDICT2 glossary files."""
+
 	useByteProgress = True
 	depends = {
 		"lxml": "lxml",

@@ -1,3 +1,10 @@
+"""
+PyGlossary Babylon BDC format plugin.
+
+Babylon ``.bdc`` data containers related to the Babylon ecosystem. Plugin
+metadata for BDC assets; conversion support is limited compared to BGL.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

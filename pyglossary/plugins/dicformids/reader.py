@@ -1,4 +1,12 @@
 # mypy: ignore-errors
+"""
+Read DictionaryForMIDs ``.mids`` project directories.
+
+Walks DictionaryForMIDs folder layouts and loads tab-separated vocabulary files
+via the tabfile reader. Assembles numbered lesson files into a single glossary
+stream.
+"""
+
 from __future__ import annotations
 
 import operator
@@ -18,6 +26,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Dicformids glossary files."""
+
 	useByteProgress = False
 	re_number = re.compile(r"\d+")
 

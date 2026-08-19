@@ -15,6 +15,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+GTK 3 graphical user interface for PyGlossary.
+
+Main window with file pickers, format selectors, sort options, per-plugin option
+widgets, conversion progress, and log output. Implements ``UIBase`` using
+PyGObject/GTK 3; default GUI on Linux when GTK is available.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -120,6 +128,8 @@ def getWorkAreaSize() -> tuple[int, int] | None:
 
 
 class FormatDialog(gtk.Dialog):
+	"""Format Dialog."""
+
 	def __init__(
 		self,
 		descList: list[str],
@@ -270,6 +280,8 @@ class FormatDialog(gtk.Dialog):
 
 
 class FormatButton(gtk.Button):
+	"""Format Button."""
+
 	noneLabel = "[Select Format]"
 	dialogTitle = "Select Format"
 
@@ -317,6 +329,8 @@ class FormatButton(gtk.Button):
 
 
 class OptionTkType(Protocol):
+	"""Option Tk Type."""
+
 	def __init__(self, opt: Option) -> None: ...
 	@property
 	def value(self) -> Any: ...
@@ -327,6 +341,8 @@ class OptionTkType(Protocol):
 
 
 class BoolOptionGtk:
+	"""Bool Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		hbox = HBox()
 		cb = gtk.CheckButton(
@@ -350,6 +366,8 @@ class BoolOptionGtk:
 
 
 class IntOptionGtk:
+	"""Int Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		hbox = HBox()
 		pack(
@@ -392,6 +410,8 @@ def _combo_box_text_entry_set_width_chars(combo: gtk.ComboBoxText, width: int) -
 
 
 class StrOptionGtk:
+	"""Str Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		self.opt = opt
 		hbox = HBox()
@@ -438,14 +458,16 @@ class StrOptionGtk:
 
 
 class FileSizeOptionGtk(StrOptionGtk):
-	pass
+	"""File Size Option Gtk."""
 
 
 class HtmlColorOptionGtk(StrOptionGtk):
-	pass
+	"""Html Color Option Gtk."""
 
 
 class MultiLineStrOptionGtk:
+	"""Multi Line Str Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		hbox = HBox()
 		pack(
@@ -477,6 +499,8 @@ class MultiLineStrOptionGtk:
 
 
 class NewlineOptionGtk:
+	"""Newline Option Gtk."""
+
 	def __init__(self, opt: Option) -> None:
 		self.opt = opt
 		hbox = HBox()
@@ -515,6 +539,8 @@ class NewlineOptionGtk:
 
 
 class LiteralEvalOptionGtk(MultiLineStrOptionGtk):
+	"""Literal Eval Option Gtk."""
+
 	@property
 	def value(self) -> Any:
 		return ast.literal_eval(self._buf.get_text())
@@ -525,10 +551,14 @@ class LiteralEvalOptionGtk(MultiLineStrOptionGtk):
 
 
 class ListOptionGtk(LiteralEvalOptionGtk):
+	"""List Option Gtk."""
+
 	typeHint = "Python list"
 
 
 class DictOptionGtk(LiteralEvalOptionGtk):
+	"""Dict Option Gtk."""
+
 	typeHint = "Python dict"
 
 
@@ -548,6 +578,8 @@ optionClassByName: dict[str, OptionTkType] = {
 
 
 class FormatOptionsDialog(gtk.Dialog):
+	"""Format Options Dialog."""
+
 	commentLen = 60
 	kindFormatsOptions = {
 		"r": Glossary.formatsReadOptions,
@@ -610,6 +642,8 @@ class FormatOptionsDialog(gtk.Dialog):
 
 
 class FormatBox(FormatButton):
+	"""Format Box."""
+
 	def __init__(
 		self,
 		descList: list[str],
@@ -708,6 +742,8 @@ class FormatBox(FormatButton):
 
 
 class InputFormatBox(FormatBox):
+	"""Input Format Box."""
+
 	dialogTitle = "Select Input Format"
 
 	def __init__(self, **kwargs: Any) -> None:
@@ -725,6 +761,8 @@ class InputFormatBox(FormatBox):
 
 
 class OutputFormatBox(FormatBox):
+	"""Output Format Box."""
+
 	dialogTitle = "Select Output Format"
 
 	def __init__(self, **kwargs: Any) -> None:
@@ -742,6 +780,8 @@ class OutputFormatBox(FormatBox):
 
 
 class GtkTextviewLogHandler(logging.Handler):
+	"""Gtk Textview Log Handler."""
+
 	def __init__(self, ui: UI, textview_dict: dict[str, gtk.TextView]) -> None:
 		logging.Handler.__init__(self)
 
@@ -792,6 +832,8 @@ class GtkTextviewLogHandler(logging.Handler):
 
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
+	"""Gtk Single Textview Log Handler."""
+
 	def __init__(self, ui: UI, textview: gtk.TextView) -> None:
 		GtkTextviewLogHandler.__init__(
 			self,
@@ -808,6 +850,8 @@ class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
 
 
 class BrowseButton(gtk.Button):
+	"""Browse Button."""
+
 	def __init__(
 		self,
 		setFilePathFunc: Callable[[str], None],
@@ -856,6 +900,8 @@ sortKeyNames = [sk.name for sk in namedSortKeyList]
 
 
 class SortOptionsBox(gtk.Box):
+	"""Sort Options Box."""
+
 	def __init__(self, ui: UI) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.ui = ui
@@ -954,6 +1000,8 @@ class SortOptionsBox(gtk.Box):
 
 
 class GeneralOptionsDialog(gtk.Dialog):
+	"""General Options Dialog."""
+
 	def onDeleteEvent(self, _widget: gtk.Widget, _event: gdk.Event) -> bool:
 		self.hide()
 		return True
@@ -1113,6 +1161,8 @@ class PreConvertInfoDialog(gtk.Dialog):
 
 
 class OptionsButton(gtk.MenuButton):
+	"""Options Button."""
+
 	def __init__(
 		self,
 		ui: UI,
@@ -1160,6 +1210,8 @@ class OptionsButton(gtk.MenuButton):
 
 
 class UI(UIBase, gtk.Application):
+	"""UI."""
+
 	def __init__(
 		self,
 		progressbar: bool = True,
@@ -1211,6 +1263,8 @@ class UI(UIBase, gtk.Application):
 
 
 class MainWindow(gtk.Dialog):
+	"""Main Window."""
+
 	def status(self, msg: str) -> None:
 		# try:
 		# 	_id = self.statusMsgDict[msg]

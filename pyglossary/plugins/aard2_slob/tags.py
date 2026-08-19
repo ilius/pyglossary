@@ -1,3 +1,10 @@
+"""
+Aard2 SLOB tag constants and filtering helpers.
+
+Defines known SLOB blob tags (copyright, audio, etc.) and utilities to filter
+entries by tag during Aard2 SLOB import. Shared between SLOB reader and writer.
+"""
+
 t_created_at = "created.at"
 t_label = "label"
 t_created_by = "created.by"

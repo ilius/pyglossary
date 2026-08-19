@@ -17,7 +17,12 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""Input history helpers for path prompts."""
+"""
+Input history helpers for path prompts.
+
+Stores and recalls recent file and directory paths so ``prompt_toolkit`` path
+prompts can offer up-arrow history during interactive conversion setup.
+"""
 
 from __future__ import annotations
 

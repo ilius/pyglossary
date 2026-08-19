@@ -1,4 +1,12 @@
 # mypy: ignore-errors
+"""
+Read crawler directory ``.crawler`` glossary bundles.
+
+Scans crawler export directories for compressed tab-separated entry files.
+Opens each shard with the configured compression codec and yields headword and
+definition pairs from the crawler layout.
+"""
+
 from __future__ import annotations
 
 from os import listdir
@@ -18,6 +26,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read crawler directory glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

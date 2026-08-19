@@ -1,3 +1,11 @@
+"""
+Read JMdict Japanese-English XML lexicon files.
+
+Parses JMdict XML for kanji, kana readings, and sense blocks. Converts each
+lexical entry into one or more glossary headwords with structured HTML
+definitions and part-of-speech tags.
+"""
+
 from __future__ import annotations
 
 import os
@@ -27,6 +35,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read JMdict glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

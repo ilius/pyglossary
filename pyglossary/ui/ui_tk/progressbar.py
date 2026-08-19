@@ -14,6 +14,13 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""
+Terminal-style progress bar widget for the Tkinter UI.
+
+Tk ``Canvas``/``ttk`` progress display used during glossary read/write in the
+Tk backend.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -23,6 +30,8 @@ __all__ = ["ProgressBar"]
 
 
 class ProgressBar(ttk.Frame):
+	"""Progress Bar."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		rootWin: tk.Tk,

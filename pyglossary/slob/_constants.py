@@ -1,4 +1,11 @@
 # slob format constants (pyglossary)
+"""
+Binary layout constants for the SLOB file format.
+
+Defines magic bytes, MIME types, struct size limits, and default compression
+used when reading and writing ``.slob`` archives.
+"""
+
 from __future__ import annotations
 
 from struct import calcsize

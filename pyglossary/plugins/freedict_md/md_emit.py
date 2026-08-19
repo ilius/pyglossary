@@ -1,4 +1,10 @@
-"""Incremental Markdown emitter matching freedict.Reader htmlfile usage."""
+"""
+Incremental Markdown emitter for FreeDict Markdown output.
+
+Streams Markdown sections while matching the FreeDict reader ``htmlfile`` usage
+pattern. Builds TEI-derived dictionary sections incrementally during FreeDict
+Markdown export.
+"""
 
 from __future__ import annotations
 

@@ -1,3 +1,11 @@
+"""
+Read Tabfile glossary files.
+
+Parses tab-, comma-, or custom-delimited text with a term in the first field and
+definition in the remainder. Honors encoding and resource options, and can read
+split multi-file tabfile packages.
+"""
+
 from __future__ import annotations
 
 from pyglossary.core import log
@@ -11,6 +19,8 @@ __all__ = ["Reader"]
 
 
 class Reader(TextGlossaryReader):
+	"""Read Tabfile glossary files."""
+
 	useByteProgress = True
 
 	@classmethod

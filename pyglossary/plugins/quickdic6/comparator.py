@@ -1,3 +1,10 @@
+"""
+QuickDic v6 headword collation comparator.
+
+Implements locale-aware sorting rules for QuickDic lemma ordering. Shared by
+QuickDic read and write paths when building sorted indexes.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -9,6 +16,8 @@ __all__ = ["Comparator"]
 
 
 class Comparator:
+	"""Comparator."""
+
 	def __init__(self, locale_str: str, normalizer_rules: str, version: int) -> None:
 		import icu
 

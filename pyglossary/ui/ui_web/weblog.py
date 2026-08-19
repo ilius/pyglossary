@@ -22,6 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+Web log formatter and ring buffer for the browser UI.
+
+Collects PyGlossary log records and serializes them for delivery to connected
+web clients.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -33,10 +40,14 @@ __all__ = ["WebLogHandler"]
 if TYPE_CHECKING:
 
 	class ServerType(Protocol):
+		"""Server Type."""
+
 		def send_message_to_all(self, msg: str | dict[str, Any]) -> None: ...
 
 
 class WebLogHandler(logging.Handler):
+	"""Web Log Handler."""
+
 	def __init__(self, server: ServerType) -> None:
 		logging.Handler.__init__(self)
 		self.srv = server

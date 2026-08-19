@@ -1,3 +1,11 @@
+"""
+Lazy loader and factory for PyGlossary UI backends.
+
+``getRunner`` maps ``--ui`` values (gtk3, gtk4, qt6, wx, tk, web, slint, cmd)
+to the corresponding UI class, with platform-specific defaults on Windows and
+macOS.
+"""
+
 from __future__ import annotations
 
 import logging

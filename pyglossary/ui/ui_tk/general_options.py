@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Global conversion options panel for the Tkinter UI.
+
+Tk widgets for glossary-wide settings such as sort keys, filters, and
+encodings.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -33,10 +40,14 @@ __all__ = ["GeneralOptionsDialog"]
 
 
 class UIType(Protocol):
-	pass  # TODO
+	"""Supported PyGlossary UI backend."""
+
+	# TODO
 
 
 class GeneralOptionsDialog(tk.Toplevel):
+	"""General Options Dialog."""
+
 	def __init__(
 		self,
 		ui: UIType,

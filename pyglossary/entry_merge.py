@@ -1,3 +1,11 @@
+"""
+Merge glossary entries that share the same headword.
+
+Combines duplicate plaintext entries into one HTML definition, optionally
+transforming XDXF fragments and wrapping multi-term entries. Invoked from the
+entry-filter pipeline when ``merge``-style options are enabled.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

@@ -1,3 +1,11 @@
+"""
+PyGlossary EDICT2 format plugin.
+
+Extended EDICT/CEDICT line-oriented Japanese-English dictionary (``.u8`` and
+related layouts). Read-only ``Reader`` parses kanji, readings, and glosses with
+optional pinyin and summarization helpers for long entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

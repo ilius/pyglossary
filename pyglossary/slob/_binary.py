@@ -1,4 +1,11 @@
 # Packed bin/item index helpers for slob (pyglossary)
+"""
+Packed integer helpers for SLOB on-disk indexes.
+
+Merges and splits 16-bit index components stored in combined integer fields
+inside SLOB binary structures.
+"""
+
 from __future__ import annotations
 
 __all__ = ["meld_ints", "unmeld_ints"]

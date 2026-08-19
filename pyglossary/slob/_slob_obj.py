@@ -1,4 +1,11 @@
 # Slob reader object (pyglossary)
+"""
+High-level SLOB dictionary reader.
+
+``Slob`` opens a ``.slob`` file, resolves keys through collation-ordered
+indexes, and returns decompressed blob payloads for dictionary lookups.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -23,6 +30,8 @@ __all__ = ["Slob"]
 
 
 class Slob:
+	"""Read and query a SLOB dictionary file."""
+
 	def __init__(
 		self,
 		*filenames: str,

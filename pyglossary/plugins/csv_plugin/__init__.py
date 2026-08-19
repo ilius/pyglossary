@@ -16,6 +16,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+PyGlossary CSV format plugin.
+
+Comma-separated glossary tables in ``.csv`` files with configurable delimiters
+and encodings. Registers ``Reader`` and ``Writer`` for tabular interchange and
+spreadsheet-friendly round-trips.
+"""
+
 from __future__ import annotations
 
 import csv

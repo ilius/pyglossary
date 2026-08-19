@@ -1,3 +1,11 @@
+"""
+SQLite reader and writer helpers for StarDict-style glossaries.
+
+Provides ``Writer`` and ``Reader`` classes that store headwords, definitions,
+and synonym rows in a temporary SQLite database used by the StarDict plugin and
+related tooling.
+"""
+
 from __future__ import annotations
 
 from os.path import isfile
@@ -18,6 +26,8 @@ if TYPE_CHECKING:
 
 
 class Writer:
+	"""Write StarDict glossary data to SQLite."""
+
 	def __init__(self, glos: WriterGlossaryType) -> None:
 		self._glos = glos
 		self._clear()
@@ -95,6 +105,8 @@ class Writer:
 
 
 class Reader:
+	"""Read StarDict glossary data from SQLite."""
+
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
 		self._clear()

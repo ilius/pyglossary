@@ -1,3 +1,11 @@
+"""
+PyGlossary EPWING format plugin.
+
+Japanese EPWING CD-ROM dictionary catalog and article binaries. Read-only
+``Reader`` walks EPWING structure via ``converter`` and emits headwords with HTML
+definitions for Yomichan-compatible output.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

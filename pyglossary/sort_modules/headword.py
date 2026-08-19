@@ -1,3 +1,10 @@
+"""
+Sort glossary entries by primary headword bytes.
+
+Uses the first alternate term encoded with the configured sort encoding; the
+default lexical ordering for most conversions.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

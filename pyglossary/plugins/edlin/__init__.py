@@ -1,3 +1,11 @@
+"""
+PyGlossary EDLIN format plugin.
+
+EDLIN line-oriented dictionary interchange (``.edlin/`` directory). Registers
+``Reader`` and ``Writer`` for the EDLIN text package used in some community
+dictionaries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

@@ -1,3 +1,11 @@
+"""
+Read DigitalNK North Korean dictionary SQLite databases.
+
+Loads DigitalNK SQLite3 term tables for Korean headwords and definitions.
+Maps database rows to glossary entries with encoding and schema handling for
+N-Korean lexical data.
+"""
+
 from __future__ import annotations
 
 import html
@@ -13,6 +21,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read DigitalNK glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

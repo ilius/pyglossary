@@ -1,3 +1,10 @@
+"""
+Read dict.cc SQLite3 bilingual dictionary databases.
+
+Queries dict.cc ``.db`` tables for German and translation pairs. Maps stored
+terms, alternatives, and examples into glossary entries with HTML definitions.
+"""
+
 from __future__ import annotations
 
 import html
@@ -17,6 +24,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read dict.cc glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

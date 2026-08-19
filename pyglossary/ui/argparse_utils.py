@@ -1,3 +1,10 @@
+"""
+Shared ``argparse`` helpers for PyGlossary CLI and UI modules.
+
+Provides flag builders, type converters, and validation utilities reused by
+``argparse_main`` and individual UI backends.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -7,6 +14,8 @@ __all__ = ["StoreConstAction"]
 
 
 class StoreConstAction(argparse.Action):
+	"""Store Const Action."""
+
 	def __init__(
 		self,
 		option_strings: str | list[str],

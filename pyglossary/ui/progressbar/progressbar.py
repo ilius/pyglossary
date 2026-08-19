@@ -18,6 +18,12 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+"""Vendored text progress bar used by PyGlossary CLI and legacy UIs.
+
+Defines the ``ProgressBar`` class and update loop for terminal-based progress
+reporting during glossary read/write operations.
+"""
+
 from __future__ import annotations
 
 """Main ProgressBar class."""

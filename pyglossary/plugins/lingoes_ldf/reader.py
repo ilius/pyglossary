@@ -1,3 +1,11 @@
+"""
+Read Lingoes ``.ldf`` source dictionary files.
+
+Parses Lingoes LDF markup for headwords, translations, and examples. Decodes
+the proprietary text format and yields glossary entries with HTML definitions
+suitable for conversion to other dictionary formats.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -15,6 +23,8 @@ __all__ = ["Reader"]
 
 
 class Reader(TextGlossaryReader):
+	"""Read Lingoes LDF glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 

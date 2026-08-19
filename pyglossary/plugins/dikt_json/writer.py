@@ -1,6 +1,14 @@
 # mypy: ignore-errors
 # from https://github.com/maxim-saplin/pyglossary
 
+"""
+Write DIKT JSON dictionary export files.
+
+Emits glossary entries in the DIKT JSON schema used by DIKT mobile dictionary
+apps. Serializes headwords, definitions, and optional fields to a compressed
+``.json`` output.
+"""
+
 from __future__ import annotations
 
 import re
@@ -17,6 +25,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in DIKT JSON format."""
+
 	_encoding: str = "utf-8"
 	_enable_info: bool = True
 	_resources: bool = True

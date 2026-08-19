@@ -1,4 +1,11 @@
 # slob named record types (pyglossary)
+"""
+Named tuple types for SLOB header and reference records.
+
+Defines ``Header`` and ``Ref`` structures shared by the SLOB reader and writer
+modules.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -10,6 +17,8 @@ __all__ = ["Header", "Ref"]
 
 
 class Ref(NamedTuple):
+	"""Ref."""
+
 	key: str
 	bin_index: int
 	item_index: int
@@ -17,6 +26,8 @@ class Ref(NamedTuple):
 
 
 class Header(NamedTuple):
+	"""Header."""
+
 	magic: bytes
 	uuid: UUID
 	encoding: str

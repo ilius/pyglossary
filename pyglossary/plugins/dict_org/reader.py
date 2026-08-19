@@ -1,3 +1,11 @@
+"""
+Read DICT.org ``.index`` dictionary file sets.
+
+Opens DICT.org index files alongside companion data files and resolves offsets
+to definition text. Yields headwords with definitions formatted for DICT protocol
+dictionary bundles.
+"""
+
 from __future__ import annotations
 
 import re
@@ -15,6 +23,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read DICT.org glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

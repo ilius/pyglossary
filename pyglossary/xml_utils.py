@@ -1,7 +1,14 @@
 # from xml.sax.saxutils import escape as xml_escape
 # from xml.sax.saxutils import unescape as xml_unescape
 
-"""This module is used in plugins."""
+"""
+Minimal XML character escaping.
+
+``xml_escape`` replaces ``&``, ``<``, and ``>`` in text (and optionally quotes)
+so dictionary content can be embedded safely in XML-based formats.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

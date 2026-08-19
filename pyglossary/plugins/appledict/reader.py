@@ -6,6 +6,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, version 3 of the License.
 
+"""
+Read AppleDict Dictionary Development Kit XML sources.
+
+Loads ``.apple`` directory bundles with entry XML, CSS, and plist metadata.
+Parses DDK entry elements into glossary headwords with HTML definitions and
+optional extended index data.
+"""
+
 from __future__ import annotations
 
 import os
@@ -33,6 +41,8 @@ NS_D = "http://www.apple.com/DTDs/DictionaryService-1.0.rng"
 
 
 class Reader:
+	"""Read AppleDict glossary files."""
+
 	useByteProgress = False
 	depends = {
 		"lxml": "lxml",

@@ -1,3 +1,11 @@
+"""
+Read Aard2 SLOB glossary files.
+
+Opens ``.slob`` archives via the internal SLOB reader, iterates keyed blobs, and
+yields glossary entries with optional tag filtering. Decompresses stored blobs
+according to the archive header compression settings.
+"""
+
 from __future__ import annotations
 
 import re
@@ -27,6 +35,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Aard2 SLOB glossary files."""
+
 	useByteProgress = False
 	depends = {
 		"icu": "pyicu",  # >=1.5

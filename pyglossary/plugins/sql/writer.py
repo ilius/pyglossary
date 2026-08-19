@@ -1,3 +1,11 @@
+"""
+Write SQL ``.sql`` dump files from glossary entries.
+
+Generates ``INSERT`` statements (or dialect-specific DDL) that recreate glossary
+headwords and definitions in a relational schema. Suitable for importing
+dictionaries into SQLite or other SQL backends.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -12,6 +20,8 @@ __all__ = ["Writer"]
 
 
 class Writer:
+	"""Write glossary files in Sql format."""
+
 	_encoding: str = "utf-8"
 	_info_keys: list[str] | None = None
 	_add_extra_info: bool = True

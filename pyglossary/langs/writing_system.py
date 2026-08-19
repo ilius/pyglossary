@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Writing-system detection and metadata.
+
+``WritingSystem`` records script name, Unicode ranges, text direction, title tag,
+and population hints. ``getWritingSystemFromText`` picks the best match for a
+sample string — used by readers (e.g. FreeDict) to set glossary language info.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -18,6 +26,8 @@ __all__ = [
 
 
 class WritingSystem(NamedTuple):
+	"""Writing system metadata for a language."""
+
 	name: str
 	iso: list[tuple[int, str]] | list[tuple[int, str, str]] = []
 	unicode: list[str] = []

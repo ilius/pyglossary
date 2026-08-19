@@ -1,4 +1,11 @@
 # Blob and key-indexed views for slob (pyglossary)
+"""
+In-memory blob views and key-indexed item maps for SLOB.
+
+``Blob`` wraps compressed payload bytes; ``KeydItemDict`` maps collation keys to
+blob references for reader lookups.
+"""
+
 from __future__ import annotations
 
 from bisect import bisect_left
@@ -11,6 +18,8 @@ from ._types import Ref
 if TYPE_CHECKING:
 
 	class MiniSequence[T](Protocol):
+		"""Mini Sequence."""
+
 		def __getitem__(self, s: int) -> T: ...
 		def __len__(self) -> int: ...
 
@@ -19,6 +28,8 @@ __all__ = ["Blob", "KeydItemDict"]
 
 
 class Blob:
+	"""Blob."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		content_id: int,
@@ -61,6 +72,8 @@ class Blob:
 
 
 class KeydItemDict[T: (Blob, Ref)]:
+	"""Keyd Item Dict."""
+
 	def __init__(
 		self,
 		blobs: MiniSequence[T],

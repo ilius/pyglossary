@@ -17,6 +17,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+CLI entry point for PyGlossary.
+
+Parses command-line flags, applies config overrides, selects the requested UI
+backend, and starts conversion or interactive mode.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -108,6 +115,8 @@ infoOverrideSpec = (
 
 @dataclass(slots=True, frozen=True)
 class MainPrepareResult:
+	"""Main Prepare Result."""
+
 	args: argparse.Namespace
 	uiType: str
 	inputFilename: str

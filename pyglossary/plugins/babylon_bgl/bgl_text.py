@@ -19,6 +19,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Babylon BGL inline text and HTML markup parsing.
+
+Decodes Babylon-specific text runs, fonts, and HTML fragments inside BGL
+definition blobs. Converts proprietary BGL text encoding to normalized HTML.
+"""
+
 from __future__ import annotations
 
 import re

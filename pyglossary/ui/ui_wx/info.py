@@ -2,6 +2,12 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Glossary metadata viewer for the wxWidgets UI.
+
+Displays info-dictionary fields from the loaded glossary in a wx panel.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -12,6 +18,8 @@ __all__ = ["PreConvertInfoWxDialog"]
 
 
 class PreConvertInfoWxDialog(wx.Dialog):
+	"""Pre Convert Info Wx Dialog."""
+
 	def __init__(
 		self,
 		info: dict[str, Any],

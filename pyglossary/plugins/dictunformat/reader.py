@@ -1,3 +1,11 @@
+"""
+Read DICT.org ``dictunformat`` plain-text dictionary dumps.
+
+Parses unformatted dictionary text produced by the dictunformat utility into
+headword and definition pairs. Splits entries on blank lines and normalizes
+leading whitespace for glossary import.
+"""
+
 from __future__ import annotations
 
 from pyglossary.core import log
@@ -12,6 +20,8 @@ __all__ = ["Reader"]
 
 
 class Reader(TextGlossaryReader):
+	"""Read Dictunformat glossary files."""
+
 	useByteProgress = True
 	_headword_separator = ";   "
 	# https://github.com/cheusov/dictd/blob/master/dictfmt/dictunformat.in#L14

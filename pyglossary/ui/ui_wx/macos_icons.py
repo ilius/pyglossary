@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+macOS-specific wx icon helpers.
+
+Loads native macOS icon resources for the wx window and toolbar when running
+on Darwin.
+"""
+
 from __future__ import annotations
 
 import logging

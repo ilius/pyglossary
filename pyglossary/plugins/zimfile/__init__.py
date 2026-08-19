@@ -1,3 +1,11 @@
+"""
+PyGlossary Zim format plugin.
+
+OpenZIM archives (``.zim``) as used by Kiwix offline Wikipedia and dictionaries.
+Read-only ``Reader`` indexes ZIM entries and extracts article HTML as glossary
+definitions keyed by title.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

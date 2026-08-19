@@ -1,3 +1,11 @@
+"""
+Read PyGlossary internal test format files.
+
+Imports ``.test`` and ``.tst`` fixtures used for plugin regression checks.
+Parses minimal headword and definition records to validate reader and writer
+round-trips.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -11,6 +19,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Testformat glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

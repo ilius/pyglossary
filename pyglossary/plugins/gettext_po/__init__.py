@@ -1,3 +1,11 @@
+"""
+PyGlossary Gettext PO format plugin.
+
+GNU gettext ``.po`` translation catalogs treated as bilingual glossaries.
+Registers ``Reader`` and ``Writer`` mapping ``msgid``/``msgstr`` pairs to
+headwords and definitions.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

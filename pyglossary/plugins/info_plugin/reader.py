@@ -1,3 +1,11 @@
+"""
+Read PyGlossary ``.info`` glossary metadata files.
+
+Parses glossary info sidecar files that describe source format, languages, and
+conversion options. Yields a single informational entry or merges metadata into
+the active glossary context during import.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -14,6 +22,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read glossary info glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

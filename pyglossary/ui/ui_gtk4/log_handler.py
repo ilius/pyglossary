@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Logging handler that forwards records to the GTK 4 log console.
+
+Attaches to the PyGlossary logger and streams formatted messages into the GTK 4
+UI log view.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -32,10 +39,14 @@ log = logging.getLogger("pyglossary")
 
 
 class MainWinType(Protocol):
+	"""Main Win Type."""
+
 	def status(self, msg: str) -> None: ...
 
 
 class GtkTextviewLogHandler(logging.Handler):
+	"""Gtk Textview Log Handler."""
+
 	def __init__(
 		self,
 		mainWin: MainWinType,
@@ -90,6 +101,8 @@ class GtkTextviewLogHandler(logging.Handler):
 
 
 class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
+	"""Gtk Single Textview Log Handler."""
+
 	def __init__(self, mainWin: MainWinType, textview: gtk.TextView) -> None:
 		GtkTextviewLogHandler.__init__(
 			self,

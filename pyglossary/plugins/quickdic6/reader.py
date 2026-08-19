@@ -1,3 +1,11 @@
+"""
+Read QuickDic version 6 ``.quickdic`` archives.
+
+Unpacks QuickDic v6 ZIP bundles and reads binary index and definition stores.
+Reconstructs glossary entries with sorting and collation rules from the QuickDic
+format.
+"""
+
 from __future__ import annotations
 
 import datetime as dt
@@ -31,6 +39,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read QuickDic 6 glossary files."""
+
 	useByteProgress = False
 	depends = {
 		"icu": "pyicu",

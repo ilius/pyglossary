@@ -1,4 +1,11 @@
 # mypy: ignore-errors
+"""
+Read cc-kedict Korean-English SQLite dictionary data.
+
+Opens cc-kedict community database files and queries bilingual lemma tables.
+Maps Korean headwords and English glosses into glossary entries for import.
+"""
+
 from __future__ import annotations
 
 from io import BytesIO
@@ -20,6 +27,8 @@ __all__ = ["Reader"]
 
 
 class YamlReader(TextGlossaryReader):
+	"""Yaml Reader."""
+
 	useByteProgress = True
 	tagStyle = (
 		"color:white;"
@@ -270,6 +279,8 @@ class YamlReader(TextGlossaryReader):
 
 
 class Reader:
+	"""Read Cc Kedict glossary files."""
+
 	depends = {
 		"yaml": "PyYAML",
 		"lxml": "lxml",

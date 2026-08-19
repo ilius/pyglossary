@@ -1,3 +1,11 @@
+"""
+PyGlossary word frequency info format plugin.
+
+COCA lemma frequency lists from WordFrequency.info (``.wordfrequency``).
+Read-only ``Reader`` imports ranked lemma metadata as lightweight glossary
+entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

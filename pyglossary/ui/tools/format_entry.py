@@ -1,3 +1,10 @@
+"""
+Pretty-print a single glossary entry for terminal display.
+
+Formats definitions as plain text, Markdown, or highlighted HTML/XDXF when
+optional renderers are installed.
+"""
+
 from __future__ import annotations
 
 import os

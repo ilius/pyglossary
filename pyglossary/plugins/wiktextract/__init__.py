@@ -1,3 +1,11 @@
+"""
+PyGlossary Wiktextract format plugin.
+
+JSON Lines dumps produced by the Wiktextract Wiktionary extraction tool
+(``.jsonl``). Read-only ``Reader`` maps lemma objects to HTML entries with
+senses, etymology, tags, and pronunciations.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

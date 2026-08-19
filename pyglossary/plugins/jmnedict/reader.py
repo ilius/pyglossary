@@ -1,3 +1,11 @@
+"""
+Read JMnedict Japanese proper-name XML lexicon.
+
+Parses JMnedict XML for named-entity entries with readings and name-type tags.
+Converts each lexical entry into glossary headwords with HTML definitions
+summarizing name senses and cross-references.
+"""
+
 from __future__ import annotations
 
 import os
@@ -27,6 +35,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read JMnedict glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

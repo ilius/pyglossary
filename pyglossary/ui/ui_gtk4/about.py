@@ -16,6 +16,12 @@
 # GNU General Public License for more details.
 
 
+"""
+About dialog for the GTK 4 PyGlossary UI.
+
+Shows version, authors, and license information in the GTK 4 main window.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -32,6 +38,8 @@ __all__ = ["AboutWidget"]
 
 
 class AboutTabTitleBox(gtk.Box):
+	"""About Tab Title Box."""
+
 	def __init__(self, title: str, icon: str) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.VERTICAL)
 		self.set_spacing(10)
@@ -53,6 +61,8 @@ class AboutTabTitleBox(gtk.Box):
 
 
 class AboutWidget(gtk.Box):
+	"""About Widget."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		logo: str = "",

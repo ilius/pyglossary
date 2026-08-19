@@ -1,3 +1,10 @@
+"""
+Server-side controller for the browser PyGlossary UI.
+
+Maps WebSocket commands to glossary state, conversion jobs, and progress events
+for the web client.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -24,6 +31,8 @@ PORT = 1984
 
 
 class WebUI(UIBase):
+	"""Browser-based PyGlossary user interface."""
+
 	def __init__(self, progressbar: bool = True) -> None:
 		UIBase.__init__(self)
 		self._toPause = False

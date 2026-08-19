@@ -1,3 +1,11 @@
+"""
+PyGlossary EPUB-2 ebook format plugin.
+
+EPUB 2 ``.epub`` dictionary e-books with NCX navigation. Write-only ``Writer``
+groups entries by prefix, emits XHTML content documents, and packages the EPUB
+container.
+"""
+
 from __future__ import annotations
 
 import os

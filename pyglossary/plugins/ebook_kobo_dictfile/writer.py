@@ -15,6 +15,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Write Kobo dictfile plain-text dictionary exports.
+
+Serializes glossary entries to Kobo dictfile line-oriented records with escaped
+headwords and HTML definitions. Extracts inline images for separate resource
+files when present.
+"""
+
 from __future__ import annotations
 
 import os
@@ -42,6 +50,8 @@ def escapeDefi(defi: str) -> str:
 
 
 class Writer:
+	"""Write glossary files in Ebook Kobo Dictfile format."""
+
 	_encoding: str = "utf-8"
 
 	@staticmethod

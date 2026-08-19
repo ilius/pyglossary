@@ -1,4 +1,9 @@
-"""Tests for :mod:`pyglossary.ui.terminal_theme`."""
+"""
+Tests for :mod:`pyglossary.ui.terminal_theme`.
+
+Checks background detection and foreground color adaptation for light terminal
+themes.
+"""
 
 from __future__ import annotations
 
@@ -15,6 +20,8 @@ from pyglossary.ui import terminal_theme as tt
 
 
 class TestParseOsc11Background(unittest.TestCase):
+	"""Tests for Test Parse Osc11 Background."""
+
 	def test_rgb_four_hex_digits(self) -> None:
 		raw = b"\x1b]11;rgb:ffff/ffff/ffff\x1b\\"
 		self.assertEqual(tt.parse_osc11_background(raw), (255, 255, 255))
@@ -36,6 +43,8 @@ class TestParseOsc11Background(unittest.TestCase):
 
 
 class TestLightBackgroundHeuristics(unittest.TestCase):
+	"""Tests for Test Light Background Heuristics."""
+
 	def tearDown(self) -> None:
 		tt.reset_terminal_theme_cache()
 
@@ -63,6 +72,8 @@ class TestLightBackgroundHeuristics(unittest.TestCase):
 
 
 class TestAdaptForeground(unittest.TestCase):
+	"""Tests for Test Adapt Foreground."""
+
 	def test_bright_color_darkened_on_light(self) -> None:
 		r, g, b = tt.adapt_rgb_for_light_background(85, 255, 85)
 		self.assertLess(tt.relative_luminance_srgb(r, g, b), 0.4)

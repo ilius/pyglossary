@@ -1,3 +1,11 @@
+"""
+PyGlossary Yomichan format plugin.
+
+ZIP packages of JSON term banks used by the Yomichan browser extension. Reads
+and writes ``.zip`` archives with sorted headwords, term bank splitting, and
+options for pitch-accent and structured-definition rendering.
+"""
+
 from __future__ import annotations
 
 import os

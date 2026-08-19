@@ -1,3 +1,10 @@
+"""
+Named terminal color definitions for PyGlossary CLI output.
+
+Large table of ``ColorProp`` records (RGB, HSL, hex, aliases) consumed by
+terminal styling helpers.
+"""
+
 from collections import namedtuple
 
 __all__ = ["colors"]

@@ -1,4 +1,9 @@
-"""Tests for CLI config flags registered from ``configDefDict`` (e.g. ``--log-time``)."""
+"""
+Tests for CLI config flags derived from ``configDefDict``.
+
+Verifies that options such as ``--log-time`` are registered and applied to the
+UI configuration object.
+"""
 
 from __future__ import annotations
 
@@ -90,6 +95,8 @@ class TestBoolConfigFlags(unittest.TestCase):
 
 
 class TestStrConfigFlags(unittest.TestCase):
+	"""Tests for Test Str Config Flags."""
+
 	@classmethod
 	def setUpClass(cls) -> None:
 		cls.parser = _make_parser()
@@ -104,6 +111,8 @@ class TestStrConfigFlags(unittest.TestCase):
 
 
 class TestConfigFlagConflicts(unittest.TestCase):
+	"""Tests for Test Config Flag Conflicts."""
+
 	@classmethod
 	def setUpClass(cls) -> None:
 		cls.parser = _make_parser()
@@ -120,6 +129,8 @@ class TestConfigFlagConflicts(unittest.TestCase):
 
 
 class TestConfigFromArgs(unittest.TestCase):
+	"""Tests for Test Config From Args."""
+
 	def test_omits_unset_flags(self) -> None:
 		parser = _make_parser()
 		args = parser.parse_args([])

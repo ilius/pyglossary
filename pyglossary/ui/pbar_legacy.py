@@ -1,5 +1,12 @@
 # mypy: ignore-errors
 
+"""
+Legacy text progress bar adapter for glossary conversion.
+
+Wraps the vendored ``progressbar`` package to report read/write progress when
+``tqdm`` is unavailable or disabled.
+"""
+
 from . import progressbar as pb
 
 __all__ = ["createProgressBar"]

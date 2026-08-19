@@ -1,3 +1,10 @@
+"""
+UI-layer version and branding strings.
+
+Supplies version text shown in about dialogs and terminal banners across UI
+backends.
+"""
+
 from __future__ import annotations
 
 import sys

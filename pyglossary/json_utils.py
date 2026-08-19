@@ -1,4 +1,11 @@
-"""This module is used in plugins."""
+"""
+Small JSON encode/decode helpers.
+
+``dataToPrettyJson`` serializes dicts and lists with tab indentation, and
+``jsonToData`` parses JSON strings or bytes back into Python structures.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

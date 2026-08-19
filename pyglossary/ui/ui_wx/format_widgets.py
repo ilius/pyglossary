@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+wxWidgets per-plugin format option widgets.
+
+wx controls for each ``Option`` subtype shown when a read/write format is
+selected in the wx main window.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -30,6 +37,8 @@ log: Logger = logging.getLogger("pyglossary")
 
 
 class OptionWxType(Protocol):
+	"""Option Wx Type."""
+
 	def __init__(self, opt: Option, parent: wx.Window) -> None: ...
 
 	@property
@@ -43,6 +52,8 @@ class OptionWxType(Protocol):
 
 
 class BoolOptionWx:
+	"""Bool Option Wx."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -64,6 +75,8 @@ class BoolOptionWx:
 
 
 class IntOptionWx:
+	"""Int Option Wx."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -104,6 +117,8 @@ class IntOptionWx:
 
 
 class StrOptionWx:
+	"""Str Option Wx."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -151,14 +166,16 @@ class StrOptionWx:
 
 
 class FileSizeOptionWx(StrOptionWx):
-	pass
+	"""File Size Option Wx."""
 
 
 class HtmlColorOptionWx(StrOptionWx):
-	pass
+	"""Html Color Option Wx."""
 
 
 class MultiLineStrOptionWx:
+	"""Multi Line Str Option Wx."""
+
 	def __init__(
 		self,
 		opt: Option,
@@ -192,10 +209,12 @@ class MultiLineStrOptionWx:
 
 
 class NewlineOptionWx(MultiLineStrOptionWx):
-	pass
+	"""Newline Option Wx."""
 
 
 class LiteralEvalOptionWx:
+	"""Literal Eval Option Wx."""
+
 	typeHint = ""
 
 	def __init__(
@@ -231,10 +250,14 @@ class LiteralEvalOptionWx:
 
 
 class ListOptionWx(LiteralEvalOptionWx):
+	"""List Option Wx."""
+
 	typeHint = "Python list"
 
 
 class DictOptionWx(LiteralEvalOptionWx):
+	"""Dict Option Wx."""
+
 	typeHint = "Python dict"
 
 
@@ -304,6 +327,8 @@ def format_pick_dialog(
 
 
 class FormatOptionsWxDialog(wx.Dialog):
+	"""Format Options Wx Dialog."""
+
 	kind_formats_options = {
 		"Read": Glossary.formatsReadOptions,
 		"Write": Glossary.formatsWriteOptions,

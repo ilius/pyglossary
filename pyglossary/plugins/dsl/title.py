@@ -1,3 +1,10 @@
+"""
+ABBYY Lingvo DSL headword title parsing.
+
+Extracts headword titles, variants, and pronunciation blocks from DSL title
+lines. Converts title markup to HTML via the DSL ``Transformer``.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, NamedTuple, cast
@@ -100,11 +107,15 @@ def lexCurly(tr: TransformerType) -> tuple[LexType, ErrorType]:
 
 
 class TitleResult(NamedTuple):
+	"""Title Result."""
+
 	output: str
 	outputAlt: str
 
 
 class TitleTransformer:
+	"""Title Transformer."""
+
 	def __init__(
 		self,
 		inputTitle: str,

@@ -1,3 +1,11 @@
+"""
+PyGlossary StarDict merge syns format plugin.
+
+StarDict writer variant that merges synonym lines into main entries before
+writing. Write-only ``Writer`` targets the usual ``-stardict/`` directory
+layout with consolidated synonym handling.
+"""
+
 from __future__ import annotations
 
 import os

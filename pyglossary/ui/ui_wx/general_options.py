@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Global conversion options panel for the wxWidgets UI.
+
+wx controls for glossary-wide settings such as sort keys, filters, and
+encodings.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -23,6 +30,8 @@ __all__ = ["GeneralOptionsWxDialog"]
 
 
 class GeneralOptionsWxDialog(wx.Dialog):
+	"""General Options Wx Dialog."""
+
 	def __init__(self, ui: UI, parent: wx.Window | None) -> None:
 		super().__init__(parent, title="General Options", size=(480, 420))
 		self._ui = ui

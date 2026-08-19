@@ -1,3 +1,10 @@
+"""
+Read Makindo Medical Reference SQLite3 databases.
+
+Opens Makindo medical SQLite stores and extracts term and definition rows.
+Yields glossary entries suitable for medical bilingual reference conversion.
+"""
+
 from __future__ import annotations
 
 import html
@@ -13,6 +20,8 @@ __all__ = ["Reader"]
 
 
 class Reader:
+	"""Read Makindo Medical glossary files."""
+
 	useByteProgress = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:

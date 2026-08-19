@@ -5,7 +5,15 @@
 # under Apache License, Version 2.0, January 2004
 # http://www.apache.org/licenses/
 
-"""This module is used in plugins."""
+"""
+Typing stubs for ``lxml`` HTML/XML construction in plugins.
+
+Extends upstream ``types-lxml`` ideas with ``Element`` and ``T_htmlfile``
+protocols so plugin code using ``lxml.etree`` can be type-checked without
+importing heavy runtime dependencies everywhere.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -62,6 +70,8 @@ class IncrementalFileWriter(typing.Protocol):
 	# 	self,
 	# 	doctype: AnyStr | None,
 	# ) -> None: ...
+
+	"""Incremental File Writer."""
 
 	def write(
 		self,
@@ -134,7 +144,7 @@ class T_htmlfile(  # noqa: PGH003
 	# AsyncIncrementalFileWriter,
 	# AsyncContextManager[AsyncIncrementalFileWriter],
 ):
-	pass
+	"""T htmlfile."""
 
 
 # typing.AsyncContextManager

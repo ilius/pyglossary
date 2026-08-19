@@ -1,3 +1,10 @@
+"""
+Sort glossary entries for three-letter ebook index groups.
+
+Buckets headwords by the first three characters to match ebook index pagination
+used by some writers.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

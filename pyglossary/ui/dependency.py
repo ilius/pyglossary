@@ -20,6 +20,13 @@
 # ^ this takes about 3 seconds
 # installed_packages = set(r.decode().split('==')[0] for r in reqs.split())
 
+"""
+Optional dependency checks for PyGlossary UI backends.
+
+Reports whether GTK, Qt, Tk, wx, Slint, or web stack packages are importable
+so the runner can suggest available ``--ui`` choices.
+"""
+
 from __future__ import annotations
 
 __all__ = ["checkDepends"]

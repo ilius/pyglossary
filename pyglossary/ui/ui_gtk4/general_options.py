@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Global conversion options panel for the GTK 4 UI.
+
+Edits glossary-wide settings (sort keys, filters, encodings) outside per-format
+plugin options.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -36,6 +43,8 @@ __all__ = ["GeneralOptionsDialog"]
 
 
 class GeneralOptionsDialog(gtk.Dialog):
+	"""General Options Dialog."""
+
 	def onCloseRequest(self, _widget: gtk.Widget) -> bool:
 		self.hide()
 		return True

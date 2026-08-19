@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+Sort-key UI helpers for the wxWidgets backend.
+
+Populates sort-module controls and wires locale collation options to glossary
+config.
+"""
+
 from __future__ import annotations
 
 from pyglossary.sort_keys import namedSortKeyList

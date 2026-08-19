@@ -1,3 +1,11 @@
+"""
+PyGlossary QuickDic 6 format plugin.
+
+QuickDic Android dictionary packages (``.quickdic`` and versioned ZIP layouts).
+Registers ``Reader`` and ``Writer`` for the QuickDic v6 binary schema with
+locale-aware term ordering.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

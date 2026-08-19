@@ -1,4 +1,8 @@
-"""Shared helpers for ``pyglossary.ui`` unit tests."""
+"""
+Shared logging fixtures for ``pyglossary.ui`` unit tests.
+
+Provides mock handlers and logger setup reused across UI test modules.
+"""
 
 from __future__ import annotations
 

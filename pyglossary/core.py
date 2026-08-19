@@ -1,4 +1,15 @@
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Core runtime constants and install paths for PyGlossary.
+
+Exposes ``VERSION``, package and user data directories (``rootDir``, ``confDir``,
+``dataDir``, ``pluginsDir``), and helpers to create the user config tree on first
+run. Also provides ``exc_note`` for attaching context to exceptions and re-exports
+the package ``log`` logger.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

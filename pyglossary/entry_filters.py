@@ -1,3 +1,16 @@
+"""
+Entry filter plugins for glossary conversion.
+
+Each filter subclasses ``EntryFilter`` and implements ``prepare()`` and
+``run(entry)`` — returning a modified entry or ``None`` to skip it. Filters are
+registered in ``entryFiltersRules`` and toggled from glossary config (e.g.
+``lower``, ``remove_html``, ``prevent_duplicate_terms``).
+
+Built-in filters cover whitespace trimming, HTML cleanup, Markdown→HTML, RTL
+definitions, Arabic diacritics, duplicate-term prevention, regex skips, and
+debug helpers such as ``ShowMaxMemoryUsage``.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -30,6 +43,8 @@ log = logging.getLogger("pyglossary")
 
 
 class _GlossaryType(typing.Protocol):
+	"""Internal glossary type."""
+
 	@property
 	def sourceLang(self) -> Lang | None: ...
 
@@ -42,6 +57,8 @@ class _GlossaryType(typing.Protocol):
 
 
 class EntryFilterType(typing.Protocol):
+	"""Entry Filter Type."""
+
 	name: str = ""
 	desc: str = ""
 	falseComment: str = ""
@@ -57,6 +74,8 @@ class EntryFilterType(typing.Protocol):
 
 
 class EntryFilter:
+	"""Entry Filter base class."""
+
 	name: str = ""
 	desc: str = ""
 	falseComment: str = ""
@@ -79,6 +98,11 @@ class EntryFilter:
 
 
 class TrimWhitespaces(EntryFilter):
+	"""
+	Trim Whitespaces.
+	Remove leading/trailing whitespaces from term(s) and definition
+	"""
+
 	name = "trim_whitespaces"
 	desc = "Remove leading/trailing whitespaces from term(s) and definition"
 
@@ -89,6 +113,8 @@ class TrimWhitespaces(EntryFilter):
 
 
 class NonEmptyTermFilter(EntryFilter):
+	"""Filter to skip entries with empty terms."""
+
 	name = "non_empty_term"
 	desc = "Skip entries with empty terms"
 
@@ -99,6 +125,8 @@ class NonEmptyTermFilter(EntryFilter):
 
 
 class NonEmptyDefiFilter(EntryFilter):
+	"""Filter to skip entries with empty definition."""
+
 	name = "non_empty_defi"
 	desc = "Skip entries with empty definition"
 
@@ -109,6 +137,8 @@ class NonEmptyDefiFilter(EntryFilter):
 
 
 class RemoveEmptyAndDuplicateAltTerms(EntryFilter):
+	"""Remove empty and Duplicate alternate terms."""
+
 	name = "remove_empty_dup_alt_terms"
 	desc = "Remove empty and duplicate alternate terms"
 
@@ -120,6 +150,8 @@ class RemoveEmptyAndDuplicateAltTerms(EntryFilter):
 
 
 class FixUnicode(EntryFilter):
+	"""Fix Unicode errors in term(s) and definition."""
+
 	name = "utf8_check"
 	desc = "Fix Unicode in term(s) and definition"
 	falseComment = "Do not fix Unicode in term(s) and definition"
@@ -131,6 +163,8 @@ class FixUnicode(EntryFilter):
 
 
 class LowerTerm(EntryFilter):
+	"""Lowercase term(s)."""
+
 	name = "lower"
 	desc = "Lowercase term(s)"
 	falseComment = "Do not lowercase terms before writing"
@@ -152,6 +186,8 @@ class LowerTerm(EntryFilter):
 
 
 class RTLDefi(EntryFilter):
+	"""Filter to make definitions right-to-left."""
+
 	name = "rtl"
 	desc = "Make definition right-to-left"
 
@@ -161,6 +197,11 @@ class RTLDefi(EntryFilter):
 
 
 class MarkdownToHtml(EntryFilter):
+	"""
+	Markdown To HTML.
+	Treat plaintext definitions as markdown and convert them to HTML
+	"""
+
 	name = "md_to_html"
 	desc = "Treat plaintext definitions as markdown and convert them to HTML"
 
@@ -175,6 +216,8 @@ class MarkdownToHtml(EntryFilter):
 
 
 class RemoveHtmlTagsAll(EntryFilter):
+	"""Remove all HTML tags (not their contents) from definition."""
+
 	name = "remove_html_all"
 	desc = "Remove all HTML tags (not their contents) from definition"
 
@@ -217,6 +260,8 @@ class RemoveHtmlTagsAll(EntryFilter):
 
 
 class RemoveHtmlTags(EntryFilter):
+	"""Remove given comma-separated HTML tags (not their contents) from definition."""
+
 	name = "remove_html"
 	desc = "Remove given comma-separated HTML tags (not their contents) from definition"
 
@@ -236,6 +281,8 @@ class RemoveHtmlTags(EntryFilter):
 
 
 class StripFullHtml(EntryFilter):
+	"""Replace a full HTML document with it's body."""
+
 	name = "strip_full_html"
 	desc = "Replace a full HTML document with it's body"
 
@@ -257,6 +304,8 @@ class StripFullHtml(EntryFilter):
 # including class name, element ids/names, scripts, <a href="bword://...">
 # etc. How can we fix that?
 class NormalizeHtml(EntryFilter):
+	"""Normalize HTML tags in definition."""
+
 	name = "normalize_html"
 	desc = "Normalize HTML tags in definition (WIP)"
 
@@ -305,6 +354,8 @@ class NormalizeHtml(EntryFilter):
 
 
 class SkipDataEntry(EntryFilter):
+	"""Skip resources / data entries."""
+
 	name = "skip_resources"
 	desc = "Skip resources / data files"
 
@@ -315,6 +366,8 @@ class SkipDataEntry(EntryFilter):
 
 
 class LanguageCleanup(EntryFilter):
+	"""Language-specific cleanup/fixes."""
+
 	name = "lang"
 	desc = "Language-specific cleanup/fixes"
 
@@ -346,6 +399,11 @@ class LanguageCleanup(EntryFilter):
 
 
 class PreventDuplicateTerms(EntryFilter):
+	"""
+	Filter to prevent duplicate terms in many entries.
+	Multiple terms in a single entry are treated as one combined term.
+	"""
+
 	name = "prevent_duplicate_terms"
 	desc = "Prevent duplicate terms"
 
@@ -377,8 +435,10 @@ class PreventDuplicateTerms(EntryFilter):
 
 
 class SkipTermRegex(EntryFilter):
+	"""Skip entries with any term matching regexp."""
+
 	name = "skip_term_regex"
-	desc = "Skip entries with any term  matching regexp"
+	desc = "Skip entries with any term matching regexp"
 
 	def __init__(self, glos: _GlossaryType, regexStr: str) -> None:
 		EntryFilter.__init__(self, glos)
@@ -399,6 +459,8 @@ class SkipTermRegex(EntryFilter):
 
 
 class SkipEntriesWithDuplicateHeadword(EntryFilter):
+	"""Skip entries with a duplicate headword (first term)."""
+
 	name = "skip_duplicate_headword"
 	desc = "Skip entries with a duplicate headword (first term)"
 
@@ -415,6 +477,8 @@ class SkipEntriesWithDuplicateHeadword(EntryFilter):
 
 
 class TrimArabicDiacritics(EntryFilter):
+	"""Trim Arabic diacritics from headword (first term)."""
+
 	name = "trim_arabic_diacritics"
 	desc = "Trim Arabic diacritics from headword (first term)"
 
@@ -434,6 +498,8 @@ class TrimArabicDiacritics(EntryFilter):
 
 
 class UnescapeTermLinks(EntryFilter):
+	"""Unescape Term/Entry Links."""
+
 	name = "unescape_word_links"  # used in config, do not change
 	desc = "Unescape Term/Entry Links"
 
@@ -458,6 +524,8 @@ class UnescapeTermLinks(EntryFilter):
 
 
 class ShowMaxMemoryUsage(EntryFilter):
+	"""Show Max Memory Usage."""
+
 	name = "max_memory_usage"
 	desc = "Show Max Memory Usage"
 	MAX_TERM_LEN = 30

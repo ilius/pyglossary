@@ -1,3 +1,10 @@
+"""
+QuickDic v6 shared constants and helpers.
+
+Holds format version markers, magic values, and small utilities shared across
+QuickDic reader, writer, and codec modules.
+"""
+
 from __future__ import annotations
 
 __all__ = [

@@ -16,6 +16,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Default UI configuration schema and option metadata.
+
+``configDefDict`` describes user-editable settings (paths, window geometry,
+logging) consumed by ``UIBase`` and serialized to JSON config files.
+"""
+
 from __future__ import annotations
 
 from pyglossary.entry_filters import EntryFilter, entryFiltersRules

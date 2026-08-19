@@ -1,3 +1,10 @@
+"""
+Sort glossary entries for ebook dictionary output.
+
+Orders headwords the way ebook writers (EPUB, MOBI, Kobo) expect when building
+chapter and index pages.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any

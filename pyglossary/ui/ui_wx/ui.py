@@ -2,6 +2,13 @@
 #
 # Copyright © 2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 
+"""
+wxWidgets graphical user interface for PyGlossary.
+
+Cross-platform desktop UI (notably on macOS) with format widgets, general
+options, and conversion workflow equivalent to other PyGlossary GUI backends.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -46,6 +53,8 @@ log = logging.getLogger("pyglossary")
 
 
 class _FileDropTarget(wx.FileDropTarget):
+	"""Internal file drop target."""
+
 	def __init__(self, on_path: Callable[[str], None]) -> None:
 		super().__init__()
 		self._on_path = on_path
@@ -79,6 +88,8 @@ class _IoStepDropSurface(wx.Panel):
 
 
 class UI(UIBase):
+	"""UI."""
+
 	fcd_dir_save_path = join(confDir, "ui-tk-fcd-dir")
 
 	def __init__(self, progressbar: bool = True) -> None:  # noqa: ARG002 — API parity

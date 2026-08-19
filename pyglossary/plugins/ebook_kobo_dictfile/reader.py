@@ -15,6 +15,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Read Kobo dictfile plain-text dictionary exports.
+
+Parses Kobo dictfile line-oriented records into glossary entries. Handles
+inline HTML images via the image utils helper and decodes dictfile-specific
+escaping for headwords and definitions.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -30,6 +38,8 @@ __all__ = ["Reader"]
 
 
 class Reader(TextGlossaryReader):
+	"""Read Ebook Kobo Dictfile glossary files."""
+
 	useByteProgress = True
 	depends = {
 		"mistune": "mistune",

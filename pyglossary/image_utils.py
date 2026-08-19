@@ -1,4 +1,12 @@
-"""This module is used in plugins."""
+"""
+Extract inline HTML images to external files.
+
+``extractInlineHtmlImages`` scans definition HTML for ``data:image/...;base64,``
+``src`` attributes, writes decoded image bytes under a target directory, and
+replaces each inline URI with a relative file reference.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

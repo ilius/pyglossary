@@ -15,6 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+GTK 4 main application window for PyGlossary.
+
+Hosts file selection, format pickers, conversion actions, and embeds
+``format_widgets`` option panels. Entry point for the GTK 4 UI backend.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -75,6 +82,8 @@ _ = str  # later replace with translator function
 
 
 class ConvertStatusBox(gtk.Box):
+	"""Convert Status Box."""
+
 	def __init__(
 		self,
 		clearClicked: Callable,
@@ -147,6 +156,8 @@ class MainWindow(gtk.ApplicationWindow):
 	# @property
 	# def config(self):
 	# 	return self.ui.config
+
+	"""Main Window."""
 
 	css = """
 check {

@@ -1,3 +1,10 @@
+"""
+ANSI color escape helpers for PyGlossary CLI tools.
+
+Defines foreground/background wrappers used by ``diff_glossary``,
+``view_glossary``, and interactive terminal UIs.
+"""
+
 __all__ = ["green", "red", "reset", "yellow"]
 
 redCode = 1

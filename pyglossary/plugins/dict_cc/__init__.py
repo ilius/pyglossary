@@ -1,3 +1,10 @@
+"""
+PyGlossary dict.cc format plugin.
+
+SQLite3 databases exported from dict.cc vocabulary lists. Read-only ``Reader``
+queries bilingual term pairs and example sentences from dict.cc ``.db`` archives.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

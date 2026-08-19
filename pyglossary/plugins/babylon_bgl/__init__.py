@@ -15,6 +15,14 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+PyGlossary Babylon BGL format plugin.
+
+Binary Babylon dictionaries stored in a single ``.bgl`` archive. Provides
+``Reader`` and ``Writer`` for the legacy Babylon format, including rich-text
+definitions, embedded images, and charset metadata reverse-engineered from BGL.
+"""
+
 from .options import optionsProp
 from .reader import Reader
 from .writer import Writer

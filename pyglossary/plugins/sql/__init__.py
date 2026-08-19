@@ -1,3 +1,10 @@
+"""
+PyGlossary SQL format plugin.
+
+SQL DDL/DML scripts (``.sql``) that recreate glossary tables. Write-only
+``Writer`` emits INSERT statements or schema plus data for relational import.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

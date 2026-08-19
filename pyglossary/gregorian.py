@@ -20,7 +20,17 @@
 # Gregorian calendar:
 # http://en.wikipedia.org/wiki/Gregorian_calendar
 
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Gregorian calendar and Julian day conversions.
+
+Provides ``to_jd`` and ``jd_to`` for converting between Julian day numbers and
+``datetime`` values, plus ``isLeap`` for leap-year checks. Used where dictionary
+metadata or plugins need calendar arithmetic.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 

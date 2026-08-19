@@ -1,3 +1,10 @@
+"""
+ABBYY Lingvo DSL lexer and token parser.
+
+Tokenizes ``.dsl`` source lines into markup tokens for titles, abbreviations,
+examples, and media references. Feeds the DSL reader transformation pipeline.
+"""
+
 from __future__ import annotations
 
 from os.path import splitext

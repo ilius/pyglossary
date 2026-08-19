@@ -1,3 +1,10 @@
+"""
+QuickDic v6 binary write helpers.
+
+Encodes glossary data into QuickDic v6 on-disk record layouts during export.
+Called by the QuickDic writer when packaging ``.quickdic`` ZIP archives.
+"""
+
 from __future__ import annotations
 
 import gzip

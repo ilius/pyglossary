@@ -1,4 +1,11 @@
 # Multi-file sequential reader for slob (pyglossary)
+"""
+Sequential reader across multiple SLOB data files.
+
+Presents a single seekable byte stream over one or more on-disk fragments that
+compose a split SLOB archive.
+"""
+
 from __future__ import annotations
 
 import io
@@ -14,6 +21,8 @@ __all__ = ["MultiFileReader"]
 
 
 class MultiFileReader(BufferedIOBase):
+	"""Multi File Reader."""
+
 	def __init__(
 		self,
 		*args: str,

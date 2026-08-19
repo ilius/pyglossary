@@ -16,6 +16,12 @@
 # GNU General Public License for more details.
 
 
+"""
+About-dialog content helpers for the GTK 3 UI.
+
+Loads logo, author list, and license text shown in the GTK 3 about window.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -31,6 +37,8 @@ __all__ = ["AboutWidget"]
 
 
 class AboutWidget(gtk.Box):
+	"""About Widget."""
+
 	def __init__(  # noqa: PLR0913
 		self,
 		logo: str = "",

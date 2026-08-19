@@ -20,6 +20,13 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
+"""
+Babylon BGL dictionary info block structures.
+
+Dataclasses and parsers for BGL title, author, and creation metadata blocks.
+Populates glossary info fields when reading Babylon ``.bgl`` files.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -42,6 +49,8 @@ __all__ = ["charsetInfoDecode", "infoType3ByCode"]
 
 @dataclass(slots=True)
 class InfoItem:
+	"""Info Item."""
+
 	name: str
 	decode: Callable[[bytes], Any] | None = None
 	attr: bool = False

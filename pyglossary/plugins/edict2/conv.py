@@ -1,3 +1,10 @@
+"""
+EDICT2 record conversion and normalization routines.
+
+Transforms raw EDICT2/JMdict line fields into structured sense and reading
+objects. Used by the EDICT2 reader when splitting multi-sense entries.
+"""
+
 from __future__ import annotations
 
 # mypy: ignore-errors
@@ -68,6 +75,8 @@ def parse_line_simp(line: str) -> tuple[str, str, str, list[str]] | None:
 
 
 class Article(NamedTuple):
+	"""Article."""
+
 	first: str
 	second: str
 	pinyin: str

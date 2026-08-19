@@ -1,3 +1,10 @@
+"""
+PyGlossary PocketBook SDIC format plugin.
+
+PocketBook ``.dic`` SDIC dictionaries for e-ink devices. Write-only ``Writer``
+packages sorted entries into the PocketBook SDIC binary layout.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

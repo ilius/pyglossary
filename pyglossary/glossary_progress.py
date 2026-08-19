@@ -1,3 +1,11 @@
+"""
+Progress reporting mixin for glossary read and write operations.
+
+``GlossaryProgress`` forwards entry and resource counts to an optional UI
+backend (``UIType``) during ``directRead`` and ``directWrite``, including
+weighted phases when resource files are processed alongside entries.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -12,6 +20,8 @@ if TYPE_CHECKING:
 	from .ui_type import UIType
 
 	class ReaderType(Protocol):
+		"""Reader Type."""
+
 		def __iter__(self) -> Iterator[EntryType]: ...
 
 		def __len__(self) -> int: ...

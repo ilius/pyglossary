@@ -19,6 +19,13 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Babylon BGL charset detection and decoding.
+
+Maps BGL charset identifiers to Python codecs and decodes definition bytes.
+Used when the Babylon BGL reader resolves text encoding for each entry.
+"""
+
 from __future__ import annotations
 
 from pyglossary.core import log

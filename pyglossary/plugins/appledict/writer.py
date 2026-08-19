@@ -17,6 +17,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Write AppleDict Dictionary Development Kit XML sources.
+
+Emits ``.apple`` directory bundles with entry XML, CSS, plist metadata, and
+optional extended indexes. Normalizes HTML definitions and validates output
+against the Jing RELAX NG schema when enabled.
+"""
+
 from __future__ import annotations
 
 import os
@@ -134,6 +142,8 @@ def _write_css(fname: str, css_file: str) -> None:
 
 
 class Writer:
+	"""Write glossary files in AppleDict format."""
+
 	depends = {
 		"lxml": "lxml",
 		"bs4": "beautifulsoup4",

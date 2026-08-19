@@ -1,3 +1,10 @@
+"""
+Unit tests for the PyGlossary SLOB implementation.
+
+Exercises round-trip read/write, collation, compression, and edge cases for the
+``.slob`` format support code.
+"""
+
 from __future__ import annotations
 
 import encodings
@@ -50,6 +57,8 @@ log.addHandler(mockLog)
 
 
 class StructReaderWriter(StructWriter):
+	"""Struct Reader Writer."""
+
 	def __init__(
 		self,
 		file: io.BufferedRandom,
@@ -76,7 +85,7 @@ class StructReaderWriter(StructWriter):
 
 
 class TagNotFound(Exception):
-	pass
+	"""Tag Not Found."""
 
 
 def set_tag_value(filename: str, name: str, value: str) -> None:
@@ -102,6 +111,8 @@ def set_tag_value(filename: str, name: str, value: str) -> None:
 
 
 class BaseTest(unittest.TestCase):
+	"""Tests for Base Test."""
+
 	def setUp(self):
 		self.tmpdir = tempfile.TemporaryDirectory(prefix="test")
 		self._writers = []
@@ -126,6 +137,8 @@ class BaseTest(unittest.TestCase):
 
 
 class TestReadWrite(BaseTest):
+	"""Tests for Test Read Write."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 
@@ -205,6 +218,8 @@ class TestReadWrite(BaseTest):
 
 
 class TestSort(BaseTest):
+	"""Tests for Test Sort."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 
@@ -254,6 +269,8 @@ class TestSort(BaseTest):
 
 
 class TestSortKey(BaseTest):
+	"""Tests for Test Sort Key."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 
@@ -318,6 +335,8 @@ class TestSortKey(BaseTest):
 
 
 class TestFind(BaseTest):
+	"""Tests for Test Find."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 
@@ -450,6 +469,8 @@ class TestFind(BaseTest):
 
 
 class TestPrefixFind(BaseTest):
+	"""Tests for Test Prefix Find."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 
@@ -471,6 +492,8 @@ class TestPrefixFind(BaseTest):
 
 
 class TestAlias(BaseTest):
+	"""Tests for Test Alias."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 
@@ -558,6 +581,8 @@ class TestAlias(BaseTest):
 
 
 class TestBlobId(BaseTest):
+	"""Tests for Test Blob Id."""
+
 	def test(self):
 		max_i = 2**32 - 1
 		max_j = 2**16 - 1
@@ -569,6 +594,8 @@ class TestBlobId(BaseTest):
 
 
 class TestMultiFileReader(BaseTest):
+	"""Tests for Test Multi File Reader."""
+
 	def test_read_all(self):
 		fnames = []
 		for name in "abcdef":
@@ -606,6 +633,8 @@ class TestMultiFileReader(BaseTest):
 
 
 class TestFormatErrors(BaseTest):
+	"""Tests for Test Format Errors."""
+
 	def test_wrong_file_type(self):
 		name = os.path.join(self.tmpdir.name, "1")
 		with open(name, "wb") as f:
@@ -636,6 +665,8 @@ class TestFormatErrors(BaseTest):
 
 
 class TestTooLongText(BaseTest):
+	"""Tests for Test Too Long Text."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 		self.path = os.path.join(self.tmpdir.name, "test.slob")
@@ -737,6 +768,8 @@ class TestTooLongText(BaseTest):
 
 
 class TestEditTag(BaseTest):
+	"""Tests for Test Edit Tag."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 		self.path = os.path.join(self.tmpdir.name, "test.slob")
@@ -760,6 +793,8 @@ class TestEditTag(BaseTest):
 
 
 class TestBinItemNumberLimit(BaseTest):
+	"""Tests for Test Bin Item Number Limit."""
+
 	def setUp(self):
 		BaseTest.setUp(self)
 		self.path = os.path.join(self.tmpdir.name, "test.slob")

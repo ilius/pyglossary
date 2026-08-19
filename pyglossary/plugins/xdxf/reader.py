@@ -18,6 +18,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 
+"""
+Read XDXF ``.xdxf`` XML dictionary files.
+
+Parses XDXF article elements into glossary headwords with structured HTML
+definitions. Resolves XDXF markup tags, cross-references, and optional styling
+directives from the XML source.
+"""
+
 from __future__ import annotations
 
 import re
@@ -47,10 +55,14 @@ __all__ = ["Reader"]
 if TYPE_CHECKING:
 
 	class TransformerType(typing.Protocol):
+		"""Transformer Type."""
+
 		def transform(self, article: Element) -> str: ...
 
 
 class Reader:
+	"""Read XDXF glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

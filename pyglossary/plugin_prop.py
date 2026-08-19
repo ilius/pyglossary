@@ -15,6 +15,15 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
+"""
+Plugin metadata and validation.
+
+``PluginProp`` wraps per-format plugin module attributes (name, extensions,
+``Reader``/``Writer`` classes, ``optionsProp``, sort-on-write flags, etc.) and
+lazy-loads reader/writer classes. Used by ``PluginHandler`` to enumerate formats
+and instantiate the correct plugin for a file extension or format name.
+"""
+
 from __future__ import annotations
 
 import logging
@@ -58,10 +67,12 @@ def sortOnWriteFromStr(sortOnWriteStr: str | None) -> StrWithDesc:
 
 
 class PluginCheckError(Exception):
-	pass
+	"""Raised when plugin metadata validation fails."""
 
 
 class PluginProp:  # noqa: PLR0904
+	"""Metadata describing a format plugin."""
+
 	__slots__ = [
 		"_Reader",
 		"_ReaderLoaded",

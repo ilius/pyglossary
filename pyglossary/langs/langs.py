@@ -1,3 +1,10 @@
+"""
+Language code metadata loaded from PyGlossary locale data.
+
+``Lang`` stores ISO codes, display names, title HTML tags, and RTL flags;
+``langDict`` indexes all known languages for UI pickers and writers.
+"""
+
 from __future__ import annotations
 
 import json
@@ -12,6 +19,8 @@ log = logging.getLogger("pyglossary")
 
 
 class Lang:
+	"""Language code and display name."""
+
 	def __init__(
 		self,
 		codes: list[str],
@@ -62,6 +71,8 @@ class Lang:
 
 
 class LangDict(dict[str, Lang | None]):
+	"""Mapping of language codes to Lang instances."""
+
 	def _addLang(self, lang: Lang) -> None:
 		for key in lang.codes:
 			if key in self:

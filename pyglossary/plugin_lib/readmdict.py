@@ -17,6 +17,12 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+"""MDict ``.mdx`` / ``.mdd`` file reader (mdict-analysis).
+
+Decodes MDict dictionary and resource archives: header parsing, key blocks,
+definition records, LZO/zlib compression, and Salsa20/RIPEMD128 for newer
+engine versions. Used by Octopus MDict and related plugins."""
+
 from __future__ import annotations
 
 import logging

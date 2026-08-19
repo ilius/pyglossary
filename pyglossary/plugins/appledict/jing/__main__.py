@@ -1,4 +1,9 @@
-"""main entry point."""
+"""
+CLI entry point for the bundled Jing validator.
+
+Configures logging and invokes ``main`` when the ``jing`` package is executed
+with ``python -m``. Used by the AppleDict writer to validate DTD/XML output.
+"""
 
 import logging
 import os

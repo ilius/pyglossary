@@ -1,3 +1,11 @@
+"""
+Typing protocols for PyICU collators and locales.
+
+Defines ``T_Locale`` and ``T_Collator`` ``Protocol`` types so locale-aware sort
+key modules can be type-checked whether or not ICU is installed at analysis
+time.
+"""
+
 from __future__ import annotations
 
 import typing
@@ -8,12 +16,16 @@ __all__ = ["T_Collator", "T_Locale"]
 
 
 class T_Locale(typing.Protocol):
+	"""T Locale."""
+
 	def __init__(self, _id: str) -> None: ...
 
 	def getName(self) -> str: ...
 
 
 class T_Collator(typing.Protocol):
+	"""T Collator."""
+
 	PRIMARY: int = 0
 	SECONDARY: int = 1
 	TERTIARY: int = 2

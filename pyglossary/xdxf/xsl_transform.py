@@ -1,4 +1,11 @@
-"""This module is used in plugins."""
+"""
+Transform XDXF definitions using XSLT stylesheets.
+
+``XslXdxfTransformer`` applies the standard XDXF XSL transform via ``lxml`` for
+high-fidelity HTML output.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -22,6 +29,8 @@ __all__ = [
 
 
 class XslXdxfTransformer:
+	"""Xsl Xdxf Transformer."""
+
 	_gram_color: str = "green"
 	_example_padding: int = 10
 

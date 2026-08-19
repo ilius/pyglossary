@@ -1,4 +1,11 @@
 # ICU collation helpers for slob (pyglossary)
+"""
+ICU collation helpers for SLOB dictionary keys.
+
+Builds locale-aware sort keys at primary through quaternary strength levels used
+when ordering and binary-searching SLOB entries.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Callable

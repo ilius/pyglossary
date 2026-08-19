@@ -1,3 +1,11 @@
+"""
+Read XLIFF ``.xlf`` and ``.xliff`` translation files.
+
+Parses XLIFF XML translation units into glossary headwords and target-language
+definitions. Reads ``<source>`` and ``<target>`` segments from each ``<trans-unit>``
+element.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
@@ -22,6 +30,8 @@ _XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 
 class Reader:
+	"""Read Xliff glossary files."""
+
 	useByteProgress = True
 	compressions = stdCompressions
 	depends = {

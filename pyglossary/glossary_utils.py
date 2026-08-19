@@ -16,7 +16,17 @@
 # with this program. Or on Debian systems, from /usr/share/common-licenses/GPL
 # If not, see <http://www.gnu.org/licenses/gpl.txt>.
 
-"""This module is used in plugins."""
+"""
+This module is used in plugins.
+
+Shared glossary error types and filename helpers.
+
+Defines ``Error``, ``ReadError``, and ``WriteError`` as the common exception
+hierarchy for conversion failures, and ``splitFilenameExt`` to peel compression
+and format extensions from a dictionary path.
+
+This module is used in plugins.
+"""
 
 from __future__ import annotations
 
@@ -33,15 +43,15 @@ MAX_EXT_LEN = 4  # FIXME
 
 
 class Error(Exception):
-	pass
+	"""Base PyGlossary error."""
 
 
 class ReadError(Error):
-	pass
+	"""Raised when reading a glossary file fails."""
 
 
 class WriteError(Error):
-	pass
+	"""Raised when writing a glossary file fails."""
 
 
 def splitFilenameExt(
