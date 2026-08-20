@@ -21,7 +21,9 @@ When creating or editing `doc/releases/X.Y.Z.md`:
 Use full GitHub URLs (not bare `#562` shorthand) for portability off github.com:
 
 - Issues: `[#562](https://github.com/ilius/pyglossary/issues/562)`
-- Pull requests: `[#716](https://github.com/ilius/pyglossary/pull/716)`
+- Pull requests: `PR [#716](https://github.com/ilius/pyglossary/pull/716) by [@username](https://github.com/username)`
+- Introduce an issue or pull request link with a comma: `Fix parsing, [#562](https://github.com/ilius/pyglossary/issues/562)`. Do not wrap the link in parentheses.
+- Resolve every `#NNN` through the GitHub API before writing notes: a result with `pull_request` is a pull request, otherwise it is an issue. The release-notes script caches results in `scripts/create-release/github-refs.csv`; use `--no-github-lookup` to generate notes from cached data only. Cache entries are always sorted numerically by ID.
 - Do **not** treat anything inside backticks as an issue or pull request link. Leave inline code literal — e.g. `&#160;`, `#CONTENTS_LANGUAGE:`, config keys, and similar are not GitHub references.
 
 ## Links to files in this repo
@@ -41,7 +43,7 @@ For every new reader/writer/format mentioned:
 Example:
 
 ```markdown
-- **[TMX](/doc/p/tmx.md)** reader ([#716](https://github.com/ilius/pyglossary/pull/716)) — Translation Memory eXchange XML (`.tmx`). *Use case:* import source/target pairs from CAT tools as glossary entries.
+- **[TMX](/doc/p/tmx.md)** reader, PR [#716](https://github.com/ilius/pyglossary/pull/716) by [@username](https://github.com/username) — Translation Memory eXchange XML (`.tmx`). *Use case:* import source/target pairs from CAT tools as glossary entries.
 ```
 
 Read `doc/p/<plugin>.md` (or the plugin source) for accurate descriptions.
@@ -85,5 +87,5 @@ List contributors whose **first commit to this repo** falls in the current relea
 
 - Do **not** include users who had commits in or before the previous tag — they are not new contributors, even if this is their first contribution credited in release notes or GitHub suggests them
 - Verify with git before listing someone, e.g. `git log --author="<name-or-email>" --reverse --format=%H | head -1` and confirm that commit is after `<prev-tag>`
-- Format: `- [@username](https://github.com/username) made their first contribution in [#NNN](https://github.com/ilius/pyglossary/pull/NNN)`
+- Format: `- [@username](https://github.com/username) made their first contribution in PR [#NNN](https://github.com/ilius/pyglossary/pull/NNN)`
 - Omit the section entirely if there are no first-time contributors in this release
