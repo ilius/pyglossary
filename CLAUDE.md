@@ -1,0 +1,95 @@
+# PyGlossary instructions
+
+## Git
+
+- Do not add files to `.gitignore` without explicit user approval. If a file is commonly ignored but is not already tracked, ask before committing it.
+
+## Quality checks
+
+- At the end of every task, run `ruff format` and `ruff check --fix`. Resolve any remaining Ruff errors before completing the task.
+
+## Release notes
+
+When creating or editing `doc/releases/X.Y.Z.md`:
+
+- Include **uncommitted** user-facing changes from `git diff` / `git status` before tagging, not only merged commits since the previous tag.
+
+### Source material
+
+- Compare commits since the previous tag: `git log <prev-tag>..HEAD --no-merges`.
+- Follow the section layout in recent files (for example, `doc/releases/5.3.0.md` and `doc/releases/5.4.0.md`): Compatibility changes, Bug fixes (security / core / plugins / user interface), Features, Improvements, Other changes, New Contributors, Full Changelog link.
+- End with: `**Full Changelog**: https://github.com/ilius/pyglossary/compare/<prev-tag>...<new-tag>`.
+
+### Issue and pull request links
+
+Use full GitHub URLs (not bare `#562` shorthand) for portability off github.com:
+
+- Issues: `[#562](https://github.com/ilius/pyglossary/issues/562)`.
+- Pull requests: `PR [#716](https://github.com/ilius/pyglossary/pull/716) by [@username](https://github.com/username)`.
+- Introduce an issue or pull request link with a comma: `Fix parsing, [#562](https://github.com/ilius/pyglossary/issues/562)`. Do not wrap the link in parentheses.
+- Resolve every `#NNN` through the GitHub API before writing notes: a result with `pull_request` is a pull request, otherwise it is an issue. The release-notes script caches results in `scripts/create-release/github-refs.csv`; use `--no-github-lookup` to generate notes from cached data only. Cache entries are always sorted numerically by ID.
+- Do **not** treat anything inside backticks as an issue or pull request link. Leave inline code literal — for example, `&#160;`, `#CONTENTS_LANGUAGE:`, config keys, and similar are not GitHub references.
+
+### Links to files in this repository
+
+Do **not** use relative links (for example, `../p/tmx.md`) in release notes. Release notes are copied into GitHub releases **and** kept under `doc/releases/`; relative paths break in one of those contexts.
+
+Use root-relative paths starting with `/` instead, for example `[Babylon BGL](/doc/p/babylon_bgl.md)`.
+
+### New read/write format functionalities
+
+For every new reader, writer, or format:
+
+1. **Link to plugin doc** — use root-relative links to `doc/p/`, for example `[Babylon BGL](/doc/p/babylon_bgl.md)`.
+2. **Brief description** — what the format is (file type, origin, typical tools).
+3. **Use case** — why someone would convert it with PyGlossary; prefix with *Use case:*.
+
+Example:
+
+```markdown
+- **[TMX](/doc/p/tmx.md)** reader, PR [#716](https://github.com/ilius/pyglossary/pull/716) by [@username](https://github.com/username) — Translation Memory eXchange XML (`.tmx`). *Use case:* import source/target pairs from CAT tools as glossary entries.
+```
+
+Read `doc/p/<plugin>.md` (or the plugin source) for accurate descriptions.
+
+In **Compatibility changes**, link format names to `/doc/p/` when a specific plugin is affected.
+
+### Features
+
+Under `### Features`, use subsections in this order:
+
+- `#### New read/write format functionalities`
+- `#### New command-line features` — main `pyglossary` conversion flags/options and standalone CLI tools (`pyglossary-view` / `view-glossary`, `pyglossary-diff` / `diff-glossary`); do **not** list GUI launcher flags (`--ui`, `--tkw`, `--qt6`, `--gtk4`, and so on) here.
+- `#### New user interface features` — Gtk, Tk, Qt, web, and other graphical or interactive front ends (include related launcher flags here).
+
+### Improvements
+
+Use `### Improvements` for enhancements to **existing** functionality (not wholly new plugins, UIs, formats, or CLI tools). Examples: richer reader output, better Gtk/Tk behavior that is not a bug fix.
+
+- Link to `/doc/p/` when naming an existing format plugin.
+- Do not put regressions or security fixes here — use the Bug fixes sections.
+
+### Bug fixes
+
+**Do not list bug fixes for formats or features that did not exist in the previous tag.**
+
+- Fixes during development of a new plugin, writer, or UI belong in the feature bullet, not under Bug fixes.
+- Omit implementation/refactor notes for brand-new code from Bug fixes and Other changes unless they fix pre-existing behavior.
+
+Bug fixes are only for regressions or fixes to behavior already present in the previous release.
+
+Group bug fixes into `###` sections in this order, omitting empty sections:
+
+- `### Bug fixes (security)` — always first when present; path traversal, unsafe file writes, and similar vulnerabilities.
+- `### Bug fixes (core)` — library, plugin loading, conversion pipeline, CLI flags/parsing shared across UIs.
+- `### Bug fixes (plugins)` — format-specific readers/writers; link to `/doc/p/` when naming a format.
+- `### Bug fixes (user interface)` — Gtk, Tk, Qt, web, and other graphical or interactive-terminal UIs; list terminal UI bugs before GUI bugs. Standalone CLI tools (`view-glossary`, `diff-glossary`) are not user interface — use Bug fixes (core) or **New command-line features** as appropriate.
+
+### New Contributors
+
+List contributors whose **first commit to this repo** falls in the current release cycle (`<prev-tag>..HEAD`).
+
+- Do **not** include users who had commits in or before the previous tag — they are not new contributors, even if this is their first contribution credited in release notes or GitHub suggests them.
+- Verify with git before listing someone, for example: `git log --author="<name-or-email>" --reverse --format=%H | head -1`; confirm that commit is after `<prev-tag>`.
+- Format: `- [@username](https://github.com/username) made their first contribution in PR [#NNN](https://github.com/ilius/pyglossary/pull/NNN)`.
+- Omit the section entirely if there are no first-time contributors in this release.
