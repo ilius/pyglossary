@@ -25,3 +25,4 @@ vulture.*
 .dmypy.json
 .vscode
 uv.lock
+doc/releases/dev.md
