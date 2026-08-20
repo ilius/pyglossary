@@ -569,7 +569,7 @@ BARE_FILENAME_RE = re.compile(
 # Underscore identifiers (e.g. glossary_v2, valid__all__, plugin_prop)
 UNDERSCORE_IDENT_RE = re.compile(
 	r"(?<![`\w/.])"
-	r"(_*[a-zA-Z]\w*(?:_\w+)+)"
+	r"(_*[a-zA-Z](?=\w*_\w)\w+)"
 	r"(?![`\w/.])",
 )
 # camelCase or PascalCase identifiers (e.g. relatedFormats, StoreConstAction)
