@@ -530,6 +530,8 @@ class EpwingSubbook:
 
 		data_path = _find_name(self.path, "DATA")
 		honmon_path = _find_name(data_path, self.text_name)
+		if os.path.getsize(honmon_path) == 0:
+			raise ValueError(f"Empty EPWING text file {honmon_path}")
 		with open(honmon_path, "rb") as file:
 			with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as data:
 				seen = set()
