@@ -453,7 +453,7 @@ def _decode_catalog_title(data: bytes) -> str:
 	data = data.split(b"\0", 1)[0]
 	if len(data) % 2:
 		data = data[:-1]
-	return bytes(byte | 0x80 for byte in data).decode("euc_jp").rstrip()
+	return bytes(byte | 0x80 for byte in data).decode("euc_jp", errors="replace").rstrip()
 
 
 class EpwingBook:
@@ -481,7 +481,7 @@ class EpwingBook:
 			offset = 16 + index * _EPWING_CATALOG_SIZE
 			record = data[offset : offset + _EPWING_CATALOG_SIZE]
 			title = _decode_catalog_title(record[2:82])
-			directory = record[82:90].decode("ascii").rstrip(" \0")
+			directory = record[82:90].decode("ascii", errors="replace").rstrip(" \0")
 			index_page = int.from_bytes(record[94:96], "big")
 			text_name = "HONMON"
 			compression_hint = 0
@@ -490,7 +490,9 @@ class EpwingBook:
 				extra_offset = catalog_end + index * _EPWING_CATALOG_SIZE
 				extra = data[extra_offset : extra_offset + _EPWING_CATALOG_SIZE]
 				if len(extra) == _EPWING_CATALOG_SIZE and extra[4]:
-					text_name = extra[4:12].decode("ascii").rstrip(" \0")
+					text_name = (
+						extra[4:12].decode("ascii", errors="replace").rstrip(" \0")
+					)
 					compression_hint = extra[55]
 
 			subbook_path = _find_name(self.path, directory)
@@ -707,7 +709,7 @@ class EpwingSubbook:
 					raise ValueError(f"Invalid EPWING character at offset {offset}")
 			offset += 2
 
-		return output.decode("euc_jp")
+		return output.decode("euc_jp", errors="replace")
 
 	@staticmethod
 	def _control_step(data: mmap.mmap, offset: int, code: int) -> tuple[int, int | None]:
