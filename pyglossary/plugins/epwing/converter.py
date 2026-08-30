@@ -35,6 +35,7 @@ from __future__ import annotations
 # mypy: ignore-errors
 import json
 import logging
+import mmap
 import os
 import re
 import zipfile
@@ -157,7 +158,7 @@ class EpwingExtractor:
 			mode = match.group(1)
 			code = int(match.group(2))
 			font = font_narrow if mode == "n" else font_wide
-			return font.get(code, "")
+			return font.get(code, "�")
 
 		text = re.sub(r"{{([nw])_(\d+)}}", repl, text)
 		return re.sub(r"\n+", "\n", text)
@@ -436,7 +437,25 @@ class DaijisenExtractor(KoujienExtractor):
 		return "daijisen2"
 
 
-# This handles the basic uncompressed HONMON reading.
+_EPWING_PAGE_SIZE = 2048
+_EPWING_CATALOG_SIZE = 164
+
+
+def _find_name(path: str, name: str) -> str:
+	"""Return a child path, matching its name without case sensitivity."""
+	for child in os.listdir(path):
+		if child.casefold() == name.casefold():
+			return os.path.join(path, child)
+	raise FileNotFoundError(f"{name} not found in {path}")
+
+
+def _decode_catalog_title(data: bytes) -> str:
+	data = data.split(b"\0", 1)[0]
+	if len(data) % 2:
+		data = data[:-1]
+	return bytes(byte | 0x80 for byte in data).decode("euc_jp").rstrip()
+
+
 class EpwingBook:
 	"""Epwing Book."""
 
@@ -446,115 +465,359 @@ class EpwingBook:
 		self._load()
 
 	def _load(self) -> None:
-		# Read CATALOGS
-		catalogs_path = os.path.join(self.path, "CATALOGS")
-		if not os.path.exists(catalogs_path):
-			catalogs_path = os.path.join(self.path, "catalogs")
+		catalogs_path = _find_name(self.path, "CATALOGS")
+		with open(catalogs_path, "rb") as file:
+			data = file.read()
 
-		if not os.path.exists(catalogs_path):
-			raise FileNotFoundError(f"CATALOGS not found in {self.path}")
+		if len(data) < 16:
+			raise ValueError(f"Invalid EPWING CATALOGS: {catalogs_path}")
+		subbook_count = int.from_bytes(data[:2], "big")
+		version = int.from_bytes(data[2:4], "big")
+		catalog_end = 16 + subbook_count * _EPWING_CATALOG_SIZE
+		if not subbook_count or len(data) < catalog_end:
+			raise ValueError(f"Invalid EPWING CATALOGS: {catalogs_path}")
 
-		with open(catalogs_path, "rb") as f:
-			data = f.read()
-			# Find subdirectories that exist in the book path
-			# EPWING 4 and 6 have different CATALOGS layouts.
-			# A simple approach: find any 8-char or shorter strings that matches
-			# directory names.
-			possible_dirs = [
-				d
-				for d in os.listdir(self.path)
-				if os.path.isdir(os.path.join(self.path, d))
-			]
-			for d in possible_dirs:
-				if d in {"DATA", "GAIJI", "MOVIE", "STREAM"}:
-					continue  # Skip common ones
-				if d.encode("ascii") in data:
-					subbook_path = os.path.join(self.path, d)
-					# Try to find title near the directory name in CATALOGS?
-					# Or just use the directory name as title for mapping.
-					self.subbooks.append(EpwingSubbook(subbook_path, d.upper()))
+		for index in range(subbook_count):
+			offset = 16 + index * _EPWING_CATALOG_SIZE
+			record = data[offset : offset + _EPWING_CATALOG_SIZE]
+			title = _decode_catalog_title(record[2:82])
+			directory = record[82:90].decode("ascii").rstrip(" \0")
+			index_page = int.from_bytes(record[94:96], "big")
+			text_name = "HONMON"
+			compression_hint = 0
+
+			if version != 1:
+				extra_offset = catalog_end + index * _EPWING_CATALOG_SIZE
+				extra = data[extra_offset : extra_offset + _EPWING_CATALOG_SIZE]
+				if len(extra) == _EPWING_CATALOG_SIZE and extra[4]:
+					text_name = extra[4:12].decode("ascii").rstrip(" \0")
+					compression_hint = extra[55]
+
+			subbook_path = _find_name(self.path, directory)
+			self.subbooks.append(
+				EpwingSubbook(
+					subbook_path,
+					title,
+					index_page,
+					text_name,
+					compression_hint,
+				)
+			)
 
 
 class EpwingSubbook:
 	"""Epwing Subbook."""
 
-	def __init__(self, path: str, title: str) -> None:
+	def __init__(
+		self,
+		path: str,
+		title: str,
+		index_page: int,
+		text_name: str,
+		compression_hint: int,
+	) -> None:
 		self.path = path
 		self.title = title
+		self.index_page = index_page
+		self.text_name = text_name
+		self.compression_hint = compression_hint
 
 	def entries(self) -> Iterator[dict[str, str]]:
-		honmon_path = os.path.join(self.path, "DATA", "HONMON")
-		if not os.path.exists(honmon_path):
-			return
+		if self.compression_hint:
+			raise NotImplementedError("Compressed EPWING HONMON files are not supported")
 
-		with open(honmon_path, "rb") as f:
-			# We will read in 2KB blocks (standard EPWING page size) or just the
-			# whole file if small.
-			# For 500MB, reading the whole file into RAM is fine on modern machines
-			data = f.read()
+		data_path = _find_name(self.path, "DATA")
+		honmon_path = _find_name(data_path, self.text_name)
+		with open(honmon_path, "rb") as file:
+			with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as data:
+				seen = set()
+				for text_pos, heading_pos in self._entry_positions(data):
+					if text_pos in seen:
+						continue
+					seen.add(text_pos)
+					yield {
+						"heading": self._read_content(data, heading_pos, heading=True),
+						"text": self._read_content(data, text_pos, heading=False),
+					}
 
-			# Simple scanner for heading and text
-			pos = 0
-			while True:
-				# 1F 09: Entry start (heading)
-				start = data.find(b"\x1f\x09", pos)
-				if start == -1:
+	def _entry_positions(
+		self, data: mmap.mmap
+	) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
+		index_page = self._page(data, self.index_page)
+		index_count = index_page[1]
+		if index_count >= _EPWING_PAGE_SIZE // 16 - 1:
+			raise ValueError(f"Invalid EPWING index table in {self.text_name}")
+
+		word_indexes = {}
+		for index in range(index_count):
+			offset = 16 + index * 16
+			index_id = index_page[offset]
+			if index_id in {0x90, 0x91, 0x92}:
+				word_indexes[index_id] = int.from_bytes(
+					index_page[offset + 2 : offset + 6], "big"
+				)
+
+		# Match zero-epwing's alphabet, kana, then as-is search order.
+		for index_id in (0x92, 0x90, 0x91):
+			if start_page := word_indexes.get(index_id):
+				yield from self._leaf_positions(data, start_page)
+
+	def _leaf_positions(  # noqa: PLR0912
+		self, data: mmap.mmap, page_number: int
+	) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
+		for _depth in range(16):
+			page = self._page(data, page_number)
+			page_id = page[0]
+			if page_id & 0x80:
+				break
+			entry_length = page[1]
+			entry_count = int.from_bytes(page[2:4], "big")
+			if not entry_count:
+				raise ValueError(f"Empty EPWING index page {page_number}")
+			if entry_length:
+				child_offset = 4 + entry_length
+			else:
+				key_length = page[4]
+				child_offset = 5 + key_length
+			page_number = int.from_bytes(page[child_offset : child_offset + 4], "big")
+		else:
+			raise ValueError("EPWING index is too deep")
+
+		while True:
+			page = self._page(data, page_number)
+			page_id = page[0]
+			if not page_id & 0x80:
+				raise ValueError(f"Expected EPWING leaf page {page_number}")
+			entry_length = page[1]
+			entry_count = int.from_bytes(page[2:4], "big")
+			offset = 4
+
+			for _index in range(entry_count):
+				if page_id & 0x10:
+					group_id = page[offset]
+					key_length = page[offset + 1]
+					if group_id == 0x80:
+						offset += key_length + 4
+						continue
+					if group_id not in {0x00, 0xC0}:
+						raise ValueError(f"Invalid EPWING group ID {group_id:#x}")
+					position_offset = offset + key_length + 2
+					offset += key_length + 14
+				elif entry_length:
+					position_offset = offset + entry_length
+					offset += entry_length + 12
+				else:
+					key_length = page[offset]
+					position_offset = offset + key_length + 1
+					offset += key_length + 13
+
+				if offset > _EPWING_PAGE_SIZE:
+					raise ValueError(f"Invalid EPWING leaf page {page_number}")
+				text_pos = self._position(page, position_offset)
+				heading_pos = self._position(page, position_offset + 6)
+				yield text_pos, heading_pos
+
+			if page_id & 0x20:
+				break
+			page_number += 1
+
+	@staticmethod
+	def _page(data: mmap.mmap, page_number: int) -> bytes:
+		start = (page_number - 1) * _EPWING_PAGE_SIZE
+		end = start + _EPWING_PAGE_SIZE
+		if page_number < 1 or end > len(data):
+			raise ValueError(f"Invalid EPWING page number {page_number}")
+		return data[start:end]
+
+	@staticmethod
+	def _position(page: bytes, offset: int) -> tuple[int, int]:
+		return (
+			int.from_bytes(page[offset : offset + 4], "big"),
+			int.from_bytes(page[offset + 4 : offset + 6], "big"),
+		)
+
+	def _read_content(  # noqa: PLR0912
+		self,
+		data: mmap.mmap,
+		position: tuple[int, int],
+		*,
+		heading: bool,
+	) -> str:
+		offset = (position[0] - 1) * _EPWING_PAGE_SIZE + position[1]
+		output = bytearray()
+		narrow = False
+		skip_code = None
+		auto_stop_code = None
+		printable_count = 0
+
+		while offset < len(data):
+			first = data[offset]
+			if first == 0x1F:
+				if offset + 1 >= len(data):
 					break
+				code = data[offset + 1]
+				if code == 0x03:
+					break
+				if code == 0x41 and offset + 3 < len(data):
+					argument = int.from_bytes(data[offset + 2 : offset + 4], "big")
+					if not heading and printable_count and argument == auto_stop_code:
+						break
+					if auto_stop_code is None:
+						auto_stop_code = argument
+				if code == 0x0A:
+					if heading:
+						break
+					if skip_code is None:
+						output.append(0x0A)
+				elif code == 0x04:
+					narrow = True
+				elif code == 0x05:
+					narrow = False
 
-				# 1F 0A: Text start
-				text_start = data.find(b"\x1f\x0a", start)
-				if text_start == -1:
-					pos = start + 2
-					continue
+				soft_stop = code == 0x6C or (
+					code == 0x4B
+					and offset + 9 < len(data)
+					and data[offset + 8 : offset + 10] == b"\x1f\x6b"
+				)
+				step, new_skip = self._control_step(data, offset, code)
+				if new_skip is not None:
+					skip_code = new_skip
+				elif skip_code == code:
+					skip_code = None
+				offset += step
+				if soft_stop:
+					break
+				continue
 
-				# Find the end of this entry.
-				# Usually it's either the next 1F 09 or end of 2KB block?
-				# For simplified scanner, find the next 1F 09.
-				next_entry = data.find(b"\x1f\x09", text_start)
-				end = len(data) if next_entry == -1 else next_entry
+			if offset + 1 >= len(data):
+				break
+			second = data[offset + 1]
+			printable_count += 1
+			if skip_code is None:
+				if 0x20 < first < 0x7F and 0x20 < second < 0x7F:
+					ascii_byte = self._narrow_ascii(first, second) if narrow else None
+					if ascii_byte is None:
+						output.extend((first | 0x80, second | 0x80))
+					else:
+						output.append(ascii_byte)
+				elif 0xA0 < first < 0xFF and 0x20 < second < 0x7F:
+					mode = "n" if narrow else "w"
+					output.extend(f"{{{{{mode}_{first << 8 | second}}}}}".encode())
+				else:
+					raise ValueError(f"Invalid EPWING character at offset {offset}")
+			offset += 2
 
-				heading_raw = data[start + 2 : text_start]
-				text_raw = data[text_start + 2 : end]
+		return output.decode("euc_jp")
 
-				def clean(raw: bytes) -> str:
-					processed = bytearray()
-					i = 0
-					while i < len(raw):
-						if raw[i] == 0x1F:
-							# Font markers
-							if i + 3 < len(raw) and raw[i + 1] in {
-								0x61,
-								0x62,
-							}:  # 1F 61 (narrow), 1F 62 (wide)
-								code = int.from_bytes(raw[i + 2 : i + 4], "big")
-								marker = (
-									f"{{{{{'n' if raw[i + 1] == 0x61 else 'w'}_{code}}}}}"
-								)
-								processed.extend(marker.encode("ascii"))
-								i += 4
-							else:
-								i += 1
-						elif raw[i] == 0x1E:
-							# 1E 00/01: font switch?
-							i += 2
-						elif raw[i] < 0x20:
-							# Skip other control codes
-							i += 1
-						else:
-							processed.append(raw[i])
-							i += 1
+	@staticmethod
+	def _control_step(data: mmap.mmap, offset: int, code: int) -> tuple[int, int | None]:
+		steps = {
+			0x09: 4,
+			0x14: 4,
+			0x1A: 4,
+			0x1B: 4,
+			0x1C: 4,
+			0x1D: 4,
+			0x1E: 4,
+			0x1F: 4,
+			0x39: 46,
+			0x3C: 20,
+			0x41: 4,
+			0x44: 12,
+			0x45: 4,
+			0x4A: 18,
+			0x4B: 8,
+			0x4C: 4,
+			0x4D: 20,
+			0x4F: 34,
+			0x52: 8,
+			0x53: 10,
+			0x62: 8,
+			0x63: 8,
+			0x64: 8,
+			0xE0: 4,
+		}
+		step = steps.get(code, 2)
+		if code == 0x42:
+			step = 4 if offset + 2 < len(data) and data[offset + 2] == 0 else 2
+		elif code == 0x45 and offset + 2 < len(data) and data[offset + 2] == 0x1F:
+			step = 2
+		elif (
+			code == 0x4B
+			and offset + 9 < len(data)
+			and data[offset + 8 : offset + 10] == b"\x1f\x6b"
+		):
+			step = 10
 
-					for enc in ("euc-jp", "cp932", "shift-jis", "utf-8"):
-						try:
-							# Use errors="replace" for the last fallback or just ignore
-							return processed.decode(enc)
-						except Exception:
-							continue
-					return processed.decode("ascii", errors="ignore")
+		if offset + step > len(data):
+			raise ValueError(f"Truncated EPWING control code {code:#x}")
+		if code == 0x14:
+			return step, 0x15
+		if code in {
+			0x35,
+			0x36,
+			0x37,
+			0x38,
+			0x3A,
+			0x3B,
+			0x3D,
+			0x3E,
+			0x3F,
+			0x49,
+			0x4E,
+			*range(0x70, 0x90),
+		}:
+			return step, code + 0x20
+		if code in range(0xE4, 0xFF, 2):
+			return step, code + 1
+		return step, None
 
-				yield {"heading": clean(heading_raw), "text": clean(text_raw)}
-
-				pos = end
+	@staticmethod
+	def _narrow_ascii(first: int, second: int) -> int | None:
+		if first == 0x23:
+			if 0x30 <= second <= 0x39 or 0x41 <= second <= 0x5A:
+				return second
+			if 0x61 <= second <= 0x7A:
+				return second
+		if first != 0x21:
+			return None
+		return {
+			0x21: 0x20,
+			0x24: 0x2C,
+			0x25: 0x2E,
+			0x27: 0x3A,
+			0x28: 0x3B,
+			0x29: 0x3F,
+			0x2A: 0x21,
+			0x2E: 0x60,
+			0x30: 0x5E,
+			0x31: 0x7E,
+			0x32: 0x5F,
+			0x3E: 0x2D,
+			0x3F: 0x2F,
+			0x40: 0x5C,
+			0x43: 0x7C,
+			0x47: 0x27,
+			0x49: 0x22,
+			0x4A: 0x28,
+			0x4B: 0x29,
+			0x4E: 0x5B,
+			0x4F: 0x5D,
+			0x50: 0x7B,
+			0x51: 0x7D,
+			0x5C: 0x2B,
+			0x5D: 0x2D,
+			0x61: 0x3D,
+			0x63: 0x3C,
+			0x64: 0x3E,
+			0x6F: 0x5C,
+			0x70: 0x24,
+			0x73: 0x25,
+			0x74: 0x23,
+			0x75: 0x26,
+			0x76: 0x2A,
+			0x77: 0x40,
+		}.get(second)
 
 
 class MeikyouExtractor(KoujienExtractor):
@@ -875,19 +1138,19 @@ def convert_epwing_to_yomichan(
 	log.info(f"EPWING: Converting {input_path}...")
 	book = EpwingBook(input_path)
 
-	# Expanded extractors map matching Go version titles exactly
 	extractors_map = {
-		"大辞林": DaijirinExtractor(),
+		"三省堂　スーパー大辞林": DaijirinExtractor(),
 		"大辞泉": DaijisenExtractor(),
-		"広辞苑": KoujienExtractor(),
-		"KOUJIEN": KoujienExtractor(),
 		"明鏡国語辞典": MeikyouExtractor(),
-		"学研": GakkenExtractor(),
+		"故事ことわざの辞典": KotowazaExtractor(),
+		"研究社　新和英大辞典　第５版": WadaiExtractor(),
+		"広辞苑第六版": KoujienExtractor(),
+		"広辞苑　第四版": KoujienExtractor(),
+		"付属資料": KoujienExtractor(),
+		"学研国語大辞典": GakkenExtractor(),
 		"古語辞典": GakkenExtractor(),
 		"故事ことわざ辞典": GakkenExtractor(),
-		"故事ことわざの辞典": KotowazaExtractor(),
-		"研究社": WadaiExtractor(),
-		"付属資料": KoujienExtractor(),
+		"学研漢和大字典": GakkenExtractor(),
 	}
 
 	all_terms = []
@@ -897,12 +1160,7 @@ def convert_epwing_to_yomichan(
 	sequence = 0
 
 	for subbook in book.subbooks:
-		extractor = None
-		for key, ext in extractors_map.items():
-			if key in subbook.title:
-				extractor = ext
-				break
-
+		extractor = extractors_map.get(subbook.title)
 		if not extractor:
 			log.warning(f"EPWING: Skipping unknown subbook '{subbook.title}'")
 			continue
