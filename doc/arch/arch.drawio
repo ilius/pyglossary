@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="arch" id="arch">
-    <mxGraphModel dx="947" dy="567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1375" pageHeight="1062.5" math="0" shadow="0">
+    <mxGraphModel dx="1373" dy="822" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1375" pageHeight="1062.5" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -33,6 +33,9 @@
         </mxCell>
         <mxCell id="slint" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Slint" vertex="1">
           <mxGeometry height="50" width="125" x="306.25" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="s1ce6EvR2SXb7nznxv0C-1" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="wxWidgets" vertex="1">
+          <mxGeometry height="50" width="125" x="306.25" y="117.5" as="geometry" />
         </mxCell>
         <mxCell id="ui-cmd" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=classicThin;startFill=1;fontFamily=Droid Sans;fontSize=17.5;" target="cmd">
           <mxGeometry relative="1" as="geometry" />
