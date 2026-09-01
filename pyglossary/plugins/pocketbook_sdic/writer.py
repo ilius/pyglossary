@@ -6,6 +6,7 @@ Packages sorted glossary entries into PocketBook SDIC format for e-ink devices.
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import struct
@@ -37,6 +38,7 @@ __all__ = [
 	"_pack_blocks",
 	"_prepare_collate_section",
 	"_prepare_keyboard_section",
+	"_prepare_metadata_section",
 	"_prepare_morphems_section",
 	"_prepare_section_compressed",
 	"_prepare_sparse_index_section",
@@ -240,6 +242,29 @@ def _prepare_keyboard_section(keyboard: str) -> bytes:
 	return _prepare_section_compressed(keyboard.encode("utf-8"))
 
 
+def _prepare_metadata_section(meta: str) -> bytes:
+	"""
+	Build the optional JSON metadata section: [uint32 size][json bytes].
+
+	Ensures all nine keys required by libdictionary.so are present.
+	"""
+	data = json.loads(meta)
+	full_meta = {
+		"version": int(data.get("version") or 0),
+		"specialProject": int(data.get("specialProject") or 0),
+		"name": str(data.get("name") or ""),
+		"localeFrom": str(data.get("localeFrom") or ""),
+		"localeTo": str(data.get("localeTo") or ""),
+		"description": str(data.get("description") or ""),
+		"category": str(data.get("category") or ""),
+		"provider": str(data.get("provider") or ""),
+		"set": str(data.get("set") or ""),
+	}
+
+	json_bytes = json.dumps(full_meta, indent=2, ensure_ascii=False).encode("utf-8")
+	return struct.pack("<I", len(json_bytes)) + json_bytes
+
+
 def _prepare_sparse_index_section(sparse_index: bytes) -> bytes:
 	"""
 	Build the sparse index section (zlib-compressed).
@@ -256,6 +281,7 @@ def _build_header(
 	max_entry_size: int,
 	name: str,
 	section_sizes: list[int],
+	metadata_len: int = 0,
 ) -> bytes:
 	"""Build the 128-byte SDIC header."""
 	header = bytearray(HEADER_SIZE)
@@ -267,10 +293,15 @@ def _build_header(
 	struct.pack_into("<I", header, 0x08, entry_count)
 	# MaxEntrySize (0x0C)
 	struct.pack_into("<I", header, 0x0C, max(DEFAULT_MAX_ENTRY_SIZE, max_entry_size))
-	# Reserved1 (0x10-0x23) stays zero — no encryption, no metadata
+	# Reserved1 (0x10-0x1B) stays zero — padding
+	# EncryptionSeed (0x1C) stays zero
 
 	# Section offsets
 	offset = HEADER_SIZE
+	if metadata_len > 0:
+		# MetadataOffset (0x20)
+		struct.pack_into("<I", header, 0x20, offset)
+		offset += metadata_len
 	# CollateOffset (0x24)
 	struct.pack_into("<I", header, 0x24, offset)
 	offset += section_sizes[0]
@@ -298,8 +329,8 @@ def _resolve_metadata_file(
 	explicit_path: str | None,
 	metadata_dir: str | None,
 	filename: str,
-	defaults_dir: str,
-) -> str:
+	defaults_dir: str | None,
+) -> str | None:
 	"""Resolve a metadata file path using the fallback chain."""
 	if explicit_path:
 		if not os.path.isfile(explicit_path):
@@ -311,10 +342,13 @@ def _resolve_metadata_file(
 		path = os.path.join(metadata_dir, filename)
 		if os.path.isfile(path):
 			return path
+		if defaults_dir is None:
+			return None
 		raise FileNotFoundError(
 			f"{filename} not found in metadata_dir: {metadata_dir}",
 		)
-	# Built-in defaults
+	if defaults_dir is None:
+		return None
 	return os.path.join(defaults_dir, filename)
 
 
@@ -325,6 +359,7 @@ class Writer:
 	_collates_path: str = ""
 	_keyboard_path: str = ""
 	_morphems_path: str = ""
+	_metadata_json_path: str = ""
 	_merge_separator: str = "<br>"
 
 	def __init__(self, glos: WriterGlossaryType) -> None:
@@ -337,7 +372,7 @@ class Writer:
 	def finish(self) -> None:
 		self._filename = ""
 
-	def write(self) -> Generator[None, EntryType, None]:
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912
 		defaults_dir = os.path.join(
 			os.path.dirname(__file__),
 			"defaults",
@@ -361,12 +396,23 @@ class Writer:
 			"keyboard.txt",
 			defaults_dir,
 		)
+		metadata_json_path = _resolve_metadata_file(
+			self._metadata_json_path or None,
+			metadata_dir,
+			"metadata.json",
+			None,
+		)
 
 		collate = load_collates(collates_path)
 		with open(morphems_path, encoding="utf-8") as f:
 			morphems = f.read().strip()
 		with open(keyboard_path, encoding="utf-8") as f:
 			keyboard = f.read().strip()
+
+		metadata_section = b""
+		if metadata_json_path:
+			with open(metadata_json_path, encoding="utf-8") as f:
+				metadata_section = _prepare_metadata_section(f.read())
 
 		# Collect entries
 		entries: list[tuple[str, str]] = []
@@ -406,7 +452,9 @@ class Writer:
 				merged[-1] = (word, merged[-1][1] + sep + defi)
 			else:
 				merged.append((word, defi))
-		entries = merged
+		if len(entries) != len(merged):
+			log.info(f"SDIC: merged {len(entries) - len(merged)} duplicate headwords")
+			entries = merged
 
 		# Encode entries
 		words: list[str] = []
@@ -457,11 +505,14 @@ class Writer:
 			max_entry_size=max_entry_size,
 			name=name,
 			section_sizes=section_sizes,
+			metadata_len=len(metadata_section),
 		)
 
 		# Write the final file
 		with open(self._filename, "wb") as f:
 			f.write(header)
+			if metadata_section:
+				f.write(metadata_section)
 			f.write(collate_section)
 			f.write(morphems_section)
 			f.write(keyboard_section)

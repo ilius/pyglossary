@@ -26,8 +26,9 @@ To update, modify plugins/pocketbook_sdic/__init__.py file, then run ./scripts/g
 
 | Name | Default | Type | Comment |
 | ---- | ------- | ---- | ------- |
-| metadata_dir |  | str | Path to a directory containing collates.txt, morphems.txt, and keyboard.txt |
+| metadata_dir |  | str | Path to a directory containing collates.txt, morphems.txt, keyboard.txt, and an optional metadata.json |
 | collates_path |  | str | Path to collates.txt (overrides metadata_dir) |
 | keyboard_path |  | str | Path to keyboard.txt (overrides metadata_dir) |
 | morphems_path |  | str | Path to morphems.txt (overrides metadata_dir) |
+| metadata_json_path |  | str | Path to metadata.json (overrides metadata_dir) |
 | merge_separator | `<br>` | str | Separator for merging duplicate headwords |

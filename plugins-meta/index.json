@@ -1579,7 +1579,7 @@
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
-				"comment": "Path to a directory containing collates.txt, morphems.txt, and keyboard.txt"
+				"comment": "Path to a directory containing collates.txt, morphems.txt, keyboard.txt, and an optional metadata.json"
 			},
 			"collates_path": {
 				"class": "StrOption",
@@ -1599,6 +1599,12 @@
 				"customValue": true,
 				"comment": "Path to morphems.txt (overrides metadata_dir)"
 			},
+			"metadata_json_path": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Path to metadata.json (overrides metadata_dir)"
+			},
 			"merge_separator": {
 				"class": "StrOption",
 				"type": "str",
@@ -1614,6 +1620,7 @@
 			"collates_path": "",
 			"keyboard_path": "",
 			"morphems_path": "",
+			"metadata_json_path": "",
 			"merge_separator": "<br>"
 		}
 	},

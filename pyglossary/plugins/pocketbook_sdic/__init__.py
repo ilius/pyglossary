@@ -47,7 +47,8 @@ website = None
 optionsProp: dict[str, Option] = {
 	"metadata_dir": StrOption(
 		comment="Path to a directory containing collates.txt,"
-		" morphems.txt, and keyboard.txt",
+		" morphems.txt, keyboard.txt, and an optional"
+		" metadata.json",
 	),
 	"collates_path": StrOption(
 		comment="Path to collates.txt (overrides metadata_dir)",
@@ -57,6 +58,9 @@ optionsProp: dict[str, Option] = {
 	),
 	"morphems_path": StrOption(
 		comment="Path to morphems.txt (overrides metadata_dir)",
+	),
+	"metadata_json_path": StrOption(
+		comment="Path to metadata.json (overrides metadata_dir)",
 	),
 	"merge_separator": StrOption(
 		comment="Separator for merging duplicate headwords",

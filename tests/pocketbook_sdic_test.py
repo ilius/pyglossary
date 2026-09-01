@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import struct
 import sys
@@ -30,6 +31,7 @@ from pyglossary.plugins.pocketbook_sdic.writer import (
 	_pack_blocks,
 	_prepare_collate_section,
 	_prepare_keyboard_section,
+	_prepare_metadata_section,
 	_prepare_morphems_section,
 	_prepare_section_compressed,
 	_prepare_sparse_index_section,
@@ -390,6 +392,25 @@ class TestPrepareSections(unittest.TestCase):
 		self.assertEqual(len(decompressed), size)
 		self.assertTrue(decompressed.endswith(b"\x00\x00"))
 
+	def test_metadata_section_encoding(self):
+		meta = json.dumps(
+			{
+				"name": "Test Dictionary",
+				"localeFrom": "en",
+				"localeTo": "fr",
+			}
+		)
+		section = _prepare_metadata_section(meta)
+		json_len = struct.unpack_from("<I", section, 0)[0]
+		self.assertEqual(len(section), 4 + json_len)
+		data = json.loads(section[4:].decode("utf-8"))
+		self.assertEqual(data["name"], "Test Dictionary")
+		self.assertEqual(data["localeFrom"], "en")
+		self.assertEqual(data["localeTo"], "fr")
+		self.assertEqual(data["version"], 0)
+		self.assertEqual(data["specialProject"], 0)
+		self.assertEqual(data["description"], "")
+
 
 class TestBuildHeader(unittest.TestCase):
 	"""Test header construction."""
@@ -441,6 +462,23 @@ class TestBuildHeader(unittest.TestCase):
 		self.assertEqual(keyboard_offset, HEADER_SIZE + 300)
 		self.assertEqual(sparse_offset, HEADER_SIZE + 600)
 		self.assertEqual(data_offset, HEADER_SIZE + 1000)
+
+	def test_header_with_metadata_offset(self):
+		metadata_len = 150
+		header = _build_header(
+			entry_count=10,
+			max_entry_size=100,
+			name="Test",
+			section_sizes=[10, 20, 30, 40],
+			metadata_len=metadata_len,
+		)
+		meta_offset = struct.unpack_from("<I", header, 0x20)[0]
+		collate_offset = struct.unpack_from("<I", header, 0x24)[0]
+		morphems_offset = struct.unpack_from("<I", header, 0x28)[0]
+
+		self.assertEqual(meta_offset, HEADER_SIZE)
+		self.assertEqual(collate_offset, HEADER_SIZE + metadata_len)
+		self.assertEqual(morphems_offset, HEADER_SIZE + metadata_len + 10)
 
 	def test_header_name(self):
 		header = _build_header(0, 0, "My Dictionary", [0, 0, 0, 0])
