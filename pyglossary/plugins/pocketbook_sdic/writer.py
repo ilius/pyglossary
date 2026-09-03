@@ -462,7 +462,15 @@ class Writer:
 		max_entry_size = 0
 		for word, defi in entries:
 			body_bytes = encode_body(defi)
-			payload = _encode_entry(word, body_bytes)
+			try:
+				payload = _encode_entry(word, body_bytes)
+			except struct.error:
+				# 'H' format requires 0 <= number <= 65535
+				log.warning(
+					f"SDIC: cannot encode entry for word {word!r}"
+					f", body length: {len(body_bytes)}"
+				)
+				continue
 			max_entry_size = max(max_entry_size, len(payload))
 			words.append(word)
 			payloads.append(payload)
