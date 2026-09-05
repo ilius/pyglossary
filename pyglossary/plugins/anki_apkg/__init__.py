@@ -3,18 +3,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.option import (
-	BoolOption,
-	IntOption,
-)
-
-from .reader import Reader
-
 if TYPE_CHECKING:
 	from pyglossary.option import Option
 
 __all__ = [
-	"Reader",
 	"description",
 	"enable",
 	"extensionCreate",
@@ -42,13 +34,4 @@ website = (
 	"ankitects/anki",
 )
 
-optionsProp: dict[str, Option] = {
-	"word_field": IntOption(
-		customValue=True,
-		minim=0,
-		comment="0-based index of the note field to use as headword",
-	),
-	"include_tags": BoolOption(
-		comment="Prepend Anki tags to the definition (HTML)",
-	),
-}
+optionsProp: dict[str, Option] = {}
