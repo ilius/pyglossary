@@ -51,7 +51,7 @@ jobs:
         run: brew update
 
       - name: Install brew dependencies
-        run: bash scripts/ci/mac/slint/build.sh deps-brew
+        run: python3 scripts/ci/mac/slint/build.py deps-brew
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
@@ -74,7 +74,7 @@ jobs:
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
-          bash scripts/ci/mac/slint/build.sh venv
+          python3 scripts/ci/mac/slint/build.py venv
           echo "VIRTUAL_ENV=$PWD/.venv" >> $GITHUB_ENV
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
@@ -85,21 +85,21 @@ jobs:
           echo "VERSION_WITH_HASH=$(git describe)" >> $GITHUB_ENV
 
       - name: Install pyglossary dependencies
-        run: bash scripts/ci/mac/slint/build.sh deps-python
+        run: python3 scripts/ci/mac/slint/build.py deps-python
 
       - name: Patch sources for nuitka build
-        run: bash scripts/ci/mac/slint/build.sh patch
+        run: python3 scripts/ci/mac/slint/build.py patch
 
       - name: nuitka Build
         env:
           PYTHONWARNDEFAULTENCODING: 0
-        run: bash scripts/ci/mac/slint/build.sh nuitka-build
+        run: python3 scripts/ci/mac/slint/build.py nuitka-build
 
       - name: Copy assets
-        run: bash scripts/ci/mac/slint/build.sh copy-assets
+        run: python3 scripts/ci/mac/slint/build.py copy-assets
 
       - name: Create DMG
-        run: bash scripts/ci/mac/slint/build.sh dmg
+        run: python3 scripts/ci/mac/slint/build.py dmg
 
       - name: Upload Artifacts DMG
         if: true
