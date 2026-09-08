@@ -49,64 +49,64 @@ Web interface
 
 ## Supported formats
 
-| Format                                                  |     |    Extension    | Read | Write |
+| Format | | Extension | Read | Write |
 | ------------------------------------------------------- | :-: | :-------------: | :--: | :---: |
-| [Aard 2 (slob)](./doc/p/aard2_slob.md)                  | 🔢  |      .slob      | ✅ | ✅ |
-| [AppleDict Binary](./doc/p/appledict_bin.md)            | 📁  |   .dictionary   | ✅ | ❌ |
-| [AppleDict Source](./doc/p/appledict.md)                | 📁  |                 | ✅ | ✅ |
-| [Babylon BGL](./doc/p/babylon_bgl.md)                   | 🔢  |      .bgl       | ✅ | ✅ |
-| [CSV](./doc/p/csv.md)                                   | 📝  |      .csv       | ✅ | ✅ |
-| [Dict.cc translation export](./doc/p/dict_cc_source.md) | 📝  |       .txt      | ✅ | ❌ |
-| [DICT.org / Dictd server](./doc/p/dict_org.md)          | 📁  |    (📝.index)   | ✅ | ✅ |
-| [DICT.org / dictfmt source](./doc/p/dict_org_source.md) | 📝  |     (.dtxt)     |    | ✅ |
-| [dictunformat output file](./doc/p/dictunformat.md)     | 📝  | (.dictunformat) | ✅ |    |
-| [DictionaryForMIDs](./doc/p/dicformids.md)              | 📁  |    (📁.mids)    | ✅ | ✅ |
-| [DIKT JSON](./doc/p/dikt_json.md)                       | 📝  |     (.json)     |    | ✅ |
-| [EPUB-2 E-Book](./doc/p/epub2.md)                       | 📦  |      .epub      | ❌ | ✅ |
-| [FreeDict](./doc/p/freedict.md)                         | 📝  |      .tei       | ✅ | ❌ |
-| [FreeDict Markdown](./doc/p/freedict_md.md)             | 📝  |      .tei       | ✅ | ❌ |
-| [Gettext Source](./doc/p/gettext_po.md)                 | 📝  |       .po       | ✅ | ✅ |
-| [HTML Directory (by file size)](./doc/p/html_dir.md)    | 📁  |                 | ❌ | ✅ |
-| [JSON](./doc/p/json.md)                                 | 📝  |      .json      |    | ✅ |
-| [Kobo E-Reader Dictionary](./doc/p/kobo.md)             | 📦  |    .kobo.zip    | ❌ | ✅ |
-| [Kobo E-Reader Dictfile](./doc/p/kobo_dictfile.md)      | 📝  |       .df       | ✅ | ✅ |
-| [Lingoes Source](./doc/p/lingoes_ldf.md)                | 📝  |      .ldf       | ✅ | ✅ |
-| [Mobipocket E-Book](./doc/p/mobi.md)                    | 🔢  |      .mobi      | ❌ | ✅ |
-| [Octopus MDict](./doc/p/octopus_mdict.md)               | 🔢  |      .mdx       | ✅ | ❌ |
-| [PocketBook SDIC](./doc/p/pocketbook_sdic.md)           | 🔢  |      .dic       | ❌ | ✅ |
-| [QuickDic version 6](./doc/p/quickdic6.md)              | 🔢  |     .quickdic   | ✅ | ✅ |
-| [SQL](./doc/p/sql.md)                                   | 📝  |      .sql       | ❌ | ✅ |
-| [StarDict](./doc/p/stardict.md)                         | 📁  |     (📝.ifo)    | ✅ | ✅ |
-| [StarDict Textual File](./doc/p/stardict_textual.md)    | 📝  |     (.xml)      | ✅ | ✅ |
-| [Tabfile](./doc/p/tabfile.md)                           | 📝  |   .txt, .tab    | ✅ | ✅ |
-| [TMX](./doc/p/tmx.md)                                   | 📝  |      .tmx       | ✅ |    |
-| [Wiktextract](./doc/p/wiktextract.md)                   | 📝  |     .jsonl      | ✅ | ❌ |
-| [XDXF](./doc/p/xdxf.md)                                 | 📝  |      .xdxf      | ✅ | ❌ |
-| [XLIFF](./doc/p/xliff.md)                               | 📝  | .xlf, .xliff    | ✅ |    |
-| [Zim (Kiwix)](./doc/p/zim.md)                           | 🔢  |      .zim       | ✅ |    |
-| [ABBYY Lingvo DSL](./doc/p/dsl.md)                   🇷🇺 | 📝  |      .dsl       | ✅ | ❌ |
-| [Almaany.com](./doc/p/almaany.md)              (Arabic) | 🛢️  |      .db        | ✅ | ❌ |
-| [cc-kedict](./doc/p/cc_kedict.md)                    🇰🇷 | 📝  |                 | ✅ | ❌ |
-| [Dict.cc](./doc/p/dict_cc.md)                        🇩🇪 | 🛢️  |       .db       | ✅ |    |
-| [DigitalNK](./doc/p/digitalnk.md)                    🇰🇵 | 🛢️  |       .db       | ✅ |    |
-| [EDICT2 (CEDICT)](./doc/p/edict2.md)                 🇨🇳 | 📝  |     (.u8)       | ✅ | ❌ |
-| [EPWING](./epwing.md)                                🇯🇵 | 📁  |                 | ✅ | ❌ |
-| [JMDict](./doc/p/jmdict.md)                          🇯🇵 | 📝  |                 | ✅ | ❌ |
-| [JMnedict](./doc/p/jmnedict.md)                      🇯🇵 | 📝  |                 | ✅ | ❌ |
-| [WordNet](./doc/p/wordnet.md)                        🇬🇧 | 📁  |                 | ✅ | ❌ |
-| [WordFrequency.info](./doc/p/wordfrequency.md)       🇬🇧 | 📝  | .wordfrequency  | ✅ | ❌ |
-| [@wordset dictionary](./doc/p/wordset.md)            🇬🇧 | 📁  |                 | ✅ |    |
-| [Yomichan / Yomitan](./doc/p/yomichan.md)            🇯🇵 | 📦  |     (.zip)      | ✅ | ✅ |
+| [Aard 2 (slob)](./doc/p/aard2_slob.md) | 🔢 | .slob | ✅ | ✅ |
+| [AppleDict Binary](./doc/p/appledict_bin.md) | 📁 | .dictionary | ✅ | ❌ |
+| [AppleDict Source](./doc/p/appledict.md) | 📁 | | ✅ | ✅ |
+| [Babylon BGL](./doc/p/babylon_bgl.md) | 🔢 | .bgl | ✅ | ✅ |
+| [CSV](./doc/p/csv.md) | 📝 | .csv | ✅ | ✅ |
+| [Dict.cc translation export](./doc/p/dict_cc_source.md) | 📝 | .txt | ✅ | ❌ |
+| [DICT.org / Dictd server](./doc/p/dict_org.md) | 📁 | (📝.index) | ✅ | ✅ |
+| [DICT.org / dictfmt source](./doc/p/dict_org_source.md) | 📝 | (.dtxt) | | ✅ |
+| [dictunformat output file](./doc/p/dictunformat.md) | 📝 | (.dictunformat) | ✅ | |
+| [DictionaryForMIDs](./doc/p/dicformids.md) | 📁 | (📁.mids) | ✅ | ✅ |
+| [DIKT JSON](./doc/p/dikt_json.md) | 📝 | (.json) | | ✅ |
+| [EPUB-2 E-Book](./doc/p/epub2.md) | 📦 | .epub | ❌ | ✅ |
+| [FreeDict](./doc/p/freedict.md) | 📝 | .tei | ✅ | ❌ |
+| [FreeDict Markdown](./doc/p/freedict_md.md) | 📝 | .tei | ✅ | ❌ |
+| [Gettext Source](./doc/p/gettext_po.md) | 📝 | .po | ✅ | ✅ |
+| [HTML Directory (by file size)](./doc/p/html_dir.md) | 📁 | | ❌ | ✅ |
+| [JSON](./doc/p/json.md) | 📝 | .json | | ✅ |
+| [Kobo E-Reader Dictionary](./doc/p/kobo.md) | 📦 | .kobo.zip | ❌ | ✅ |
+| [Kobo E-Reader Dictfile](./doc/p/kobo_dictfile.md) | 📝 | .df | ✅ | ✅ |
+| [Lingoes Source](./doc/p/lingoes_ldf.md) | 📝 | .ldf | ✅ | ✅ |
+| [Mobipocket E-Book](./doc/p/mobi.md) | 🔢 | .mobi | ❌ | ✅ |
+| [Octopus MDict](./doc/p/octopus_mdict.md) | 🔢 | .mdx | ✅ | ❌ |
+| [PocketBook SDIC](./doc/p/pocketbook_sdic.md) | 🔢 | .dic | ❌ | ✅ |
+| [QuickDic version 6](./doc/p/quickdic6.md) | 🔢 | .quickdic | ✅ | ✅ |
+| [SQL](./doc/p/sql.md) | 📝 | .sql | ❌ | ✅ |
+| [StarDict](./doc/p/stardict.md) | 📁 | (📝.ifo) | ✅ | ✅ |
+| [StarDict Textual File](./doc/p/stardict_textual.md) | 📝 | (.xml) | ✅ | ✅ |
+| [Tabfile](./doc/p/tabfile.md) | 📝 | .txt, .tab | ✅ | ✅ |
+| [TMX](./doc/p/tmx.md) | 📝 | .tmx | ✅ | |
+| [Wiktextract](./doc/p/wiktextract.md) | 📝 | .jsonl | ✅ | ❌ |
+| [XDXF](./doc/p/xdxf.md) | 📝 | .xdxf | ✅ | ❌ |
+| [XLIFF](./doc/p/xliff.md) | 📝 | .xlf, .xliff | ✅ | |
+| [Zim (Kiwix)](./doc/p/zim.md) | 🔢 | .zim | ✅ | |
+| [ABBYY Lingvo DSL](./doc/p/dsl.md) 🇷🇺 | 📝 | .dsl | ✅ | ❌ |
+| [Almaany.com](./doc/p/almaany.md) (Arabic) | 🛢️ | .db | ✅ | ❌ |
+| [cc-kedict](./doc/p/cc_kedict.md) 🇰🇷 | 📝 | | ✅ | ❌ |
+| [Dict.cc](./doc/p/dict_cc.md) 🇩🇪 | 🛢️ | .db | ✅ | |
+| [DigitalNK](./doc/p/digitalnk.md) 🇰🇵 | 🛢️ | .db | ✅ | |
+| [EDICT2 (CEDICT)](./doc/p/edict2.md) 🇨🇳 | 📝 | (.u8) | ✅ | ❌ |
+| [EPWING](./epwing.md) 🇯🇵 | 📁 | | ✅ | ❌ |
+| [JMDict](./doc/p/jmdict.md) 🇯🇵 | 📝 | | ✅ | ❌ |
+| [JMnedict](./doc/p/jmnedict.md) 🇯🇵 | 📝 | | ✅ | ❌ |
+| [WordNet](./doc/p/wordnet.md) 🇬🇧 | 📁 | | ✅ | ❌ |
+| [WordFrequency.info](./doc/p/wordfrequency.md) 🇬🇧 | 📝 | .wordfrequency | ✅ | ❌ |
+| [@wordset dictionary](./doc/p/wordset.md) 🇬🇧 | 📁 | | ✅ | |
+| [Yomichan / Yomitan](./doc/p/yomichan.md) 🇯🇵 | 📦 | (.zip) | ✅ | ✅ |
 
 Legend:
 
-- 📁	Directory
-- 📝	Text file
-- 📦	Package/archive file
-- 🛢️	SQLite file
-- 🔢	Binary file
-- ✅	Supported
-- ❌ 	Will not be supported
+- 📁 Directory
+- 📝 Text file
+- 📦 Package/archive file
+- 🛢️ SQLite file
+- 🔢 Binary file
+- ✅ Supported
+- ❌ Will not be supported
 
 **Note**: SQLite-based formats are not detected by extension (`.db`);
 So you need to select the format (with UI or `--read-format` flag).
@@ -204,8 +204,14 @@ You can either download the latest `setup.exe` from [Releases](https://github.co
 
 If you download the DMG file from [Releases](https://github.com/ilius/pyglossary/releases) and install it, Mac may refuse to run it, showing **the app is damaged and cannot be opened** error. In that case, move the unpacked bundle to `/Applications`, and run this from the Terminal:
 
-```bash
+```
 /usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryWX.app
+```
+
+Or
+
+```
+/usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryTK.app
 ```
 
 Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossary.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
