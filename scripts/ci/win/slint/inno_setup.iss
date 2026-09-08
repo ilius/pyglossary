@@ -1,5 +1,5 @@
 ; Inno Setup script for the Slint-UI build of PyGlossary.
-; Copy of .github/scripts/win/inno_setup.iss with its own AppId, app name,
+; Copy of scripts/ci/win/inno_setup.iss with its own AppId, app name,
 ; exe name and output filename prefix so it can be installed side-by-side
 ; with the Tk build without colliding with it (different install dir,
 ; different registry AppId, different Start Menu / Desktop entries).

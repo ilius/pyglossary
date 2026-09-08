@@ -93,7 +93,7 @@ jobs:
 
       - name: Set pip build vars
         id: envpip
-        run: bash .github/scripts/mac/prepare-env-vars.sh
+        run: bash scripts/ci/mac/prepare-env-vars.sh
 
       - name: Print env vars
         run: |
