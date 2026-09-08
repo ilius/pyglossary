@@ -58,7 +58,7 @@ jobs:
 
       - name: Patch sources for nuitka build
         shell: cmd
-        run: python3 .github\scripts\win\patch_sources.py
+        run: python3 scripts/ci/win/patch_sources.py
 
       - name: "install nuitka"
         shell: cmd
@@ -66,17 +66,17 @@ jobs:
 
       - name: "Install Dependencies"
         shell: cmd
-        run: python3 .github\scripts\win\install-deps.py
+        run: python3 scripts/ci/win/install-deps.py
 
       - name: Nuitka build
         env:
           PYTHONWARNDEFAULTENCODING: 0
         shell: cmd
-        run: python .github\scripts\win\nuitka-build.py
+        run: python scripts/ci/win/nuitka-build.py
 
       - name: Copy assets
         shell: cmd
-        run: python3 .github\scripts\win\copy_assets.py
+        run: python3 scripts/ci/win/copy_assets.py
 
       - name: Pack to zip before uploading
         shell: cmd
@@ -96,7 +96,7 @@ jobs:
       - name: Create Inno Installer
         shell: cmd
         run: >-
-          iscc .github/scripts/win/inno_setup.iss
+          iscc scripts/ci/win/inno_setup.iss
           /DMyAppVersion="${{ env.VERSION }}"
           /DSourceFilesGlob="${{ github.workspace }}\${{ env.DIST_DIR }}\${{ env.APPNAME }}.dist\*"
           /DLicenseFile="${{ github.workspace }}\LICENSE"

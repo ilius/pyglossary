@@ -8,12 +8,12 @@
 # Unlike scripts/ci/mac/ (tk build, split across 5 files), this keeps every
 # stage in one script and computes its own brew/compiler env vars per-stage,
 # so it does not depend on a prior GitHub Actions step exporting them into
-# $GITHUB_ENV -- it also runs standalone locally via `make -C scripts/ci/mac-slint`.
+# $GITHUB_ENV -- it also runs standalone locally via `make -C scripts/ci/mac/slint`.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 cd "$REPO_ROOT"
 
 APPNAME="${APPNAME:-PyGlossarySlint}"
