@@ -46,7 +46,7 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("pyglossary")
 
-__all__ = ["convert_epwing_to_yomichan"]
+__all__ = ["EpwingBook", "EpwingExtractor", "EpwingSubbook", "convert_epwing_to_yomichan"]
 
 
 class dbTerm:
