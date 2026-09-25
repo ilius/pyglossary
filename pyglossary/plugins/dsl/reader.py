@@ -112,6 +112,9 @@ class Reader:
 		self._resCount = 0
 		self._includes: list[Reader] = []
 		self._abbrevDict: dict[str, str] = {}
+		# the main DSL file can #INCLUDE other DSL files and _abrv.dsl
+		# -- the headers in this files MUST NOT overwrite the glossary info
+		self._isSub = False
 
 	def transform(
 		self,
@@ -213,8 +216,12 @@ class Reader:
 			return
 		log.info(f"Reading abbreviation file {abbrevName!r}")
 		reader = Reader(self._glos)
+		reader._isSub = True
+		reader._abbrev = ""
 		reader.open(abbrevName)
 		for entry in reader:
+			if entry.isData():
+				continue
 			for word in entry.l_term:
 				self._abbrevDict[word] = entry.defi
 		reader.close()
@@ -250,17 +257,20 @@ class Reader:
 		self._glos.setInfo(key, _unwrap_quotes(value))
 
 	def processHeaderLine(self, line: str) -> None:
-		if line.startswith("#NAME"):
+		if line.startswith("#INCLUDE"):
+			self.processInclude(_unwrap_quotes(line[9:].strip()))
+		elif self._isSub:
+			return
+		elif line.startswith("#NAME"):
 			self.setInfo("name", _unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):
 			self._glos.sourceLangName = _unwrap_quotes(line[16:].strip())
 		elif line.startswith("#CONTENTS_LANGUAGE"):
 			self._glos.targetLangName = _unwrap_quotes(line[19:].strip())
-		elif line.startswith("#INCLUDE"):
-			self.processInclude(_unwrap_quotes(line[9:].strip()))
 
 	def processInclude(self, filename: str) -> None:
 		reader = Reader(self._glos)
+		reader._isSub = True
 		reader._audio = self._audio
 		reader._example_color = self._example_color
 		with indir(self._dirPath):
