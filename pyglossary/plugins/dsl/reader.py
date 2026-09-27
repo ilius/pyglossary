@@ -257,10 +257,10 @@ class Reader:
 		self._glos.setInfo(key, _unwrap_quotes(value))
 
 	def processHeaderLine(self, line: str) -> None:
+		if self._isSub:
+			return
 		if line.startswith("#INCLUDE"):
 			self.processInclude(_unwrap_quotes(line[9:].strip()))
-		elif self._isSub:
-			return
 		elif line.startswith("#NAME"):
 			self.setInfo("name", _unwrap_quotes(line[6:].strip()))
 		elif line.startswith("#INDEX_LANGUAGE"):
