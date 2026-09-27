@@ -118,7 +118,7 @@ class TestGlossaryDSL(TestGlossaryBase):
 		self.assertEqual(glos.getInfo("name"), "Main")
 		self.assertEqual(glos.sourceLangName, "English")
 		self.assertEqual(glos.targetLangName, "English")
-		self.assertEqual(sorted(terms), ["test", "test 2"])
+		self.assertEqual(terms, ["test 2", "test"])
 
 	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(
