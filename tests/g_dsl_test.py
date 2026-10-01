@@ -99,6 +99,27 @@ class TestGlossaryDSL(TestGlossaryBase):
 			expectedOutputFilePath,
 		)
 
+	def test_companion_file_headers_do_not_overwrite_main_info(self):
+		files = {
+			"main.dsl": '#NAME "Main"\n#INDEX_LANGUAGE "English"\n'
+			'#CONTENTS_LANGUAGE "English"\n#INCLUDE "inc.dsl"\n\n'
+			"test\n\t[p]abbr[/p] main\n",
+			"inc.dsl": '#NAME "Included"\n#INDEX_LANGUAGE "Russian"\n'
+			'#CONTENTS_LANGUAGE "Russian"\n\ntest 2\n\tincluded\n',
+			"main_abrv.dsl": '#NAME "Abbrev"\n#INDEX_LANGUAGE "German"\n'
+			'#CONTENTS_LANGUAGE "German"\n\nabbr\n\tabbreviation\n',
+		}
+		for name, text in files.items():
+			with open(join(self.tempDir, name), "w", encoding="utf-8") as file:
+				file.write(text)
+		glos = self.glos = Glossary()
+		glos.directRead(join(self.tempDir, "main.dsl"))
+		terms = [entry.s_term for entry in glos]
+		self.assertEqual(glos.getInfo("name"), "Main")
+		self.assertEqual(glos.sourceLangName, "English")
+		self.assertEqual(glos.targetLangName, "English")
+		self.assertEqual(terms, ["test 2", "test"])
+
 	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(
 			"100-RussianAmericanEnglish-ru-en",
