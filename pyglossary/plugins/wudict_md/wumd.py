@@ -323,16 +323,14 @@ _COMMENT_END = re.compile("--!?>")
 _RAW_END = {
 	t: re.compile(f"</{t}[ \t\n\r\f/>]", re.IGNORECASE | re.ASCII) for t in _RAW_TEXT
 }
-# readScript's states: script data, escaped (in <!--), double escaped (in
-# <!--<script>); an escaped `<` not starting a tag returns to script data.
-# Only `-->` leaves them: `--!>` ends a comment, which these are not (HTML 13.2.5).
+
 _SCRIPT = (
 	re.compile("<!--|</script[ \t\n\r\f/>]", re.IGNORECASE | re.ASCII),
 	re.compile(
-		"-->|</script[ \t\n\r\f/>]|<script[ \t\n\r\f/>]|<(?![/A-Za-z])",
+		"--!?>|</script[ \t\n\r\f/>]|<script[ \t\n\r\f/>]|<(?![/A-Za-z])",
 		re.IGNORECASE | re.ASCII,
 	),
-	re.compile("-->|</script[ \t\n\r\f/>]", re.IGNORECASE | re.ASCII),
+	re.compile("--!?>|</script[ \t\n\r\f/>]", re.IGNORECASE | re.ASCII),
 )
 
 
@@ -401,6 +399,8 @@ def _script_end(s: str, i: int) -> int:
 		t = m[0]
 		if t == "<!--":
 			state, i = 1, m.end() - 2  # its dashes may end it: <!-->
+		elif t == "--!>":
+			i = m.end()
 		elif t in ("-->", "<"):
 			state, i = 0, m.end()
 		elif t[1] != "/":
@@ -1976,17 +1976,20 @@ _HTML6 = _TYPE6 | {"meta"}  # goldmark's type-6 names
 # (not tabs), `>` or `/>`, and spaces to the end of the line.
 _TYPE7_REST = re.compile(
 	"((?:[ \t\r\n]+[A-Za-z_:][A-Za-z0-9:._-]*"
-	"(?:[ \t\r\n]*=[ \t\r\n]*(?:\"[^\"]*\"|'[^']*'|[^\\x00-\\x20\"'=<>`]+))?)*) */?> *\\Z"
+	"(?:[ \t\r\n]*=[ \t\r\n]*(?:\"[^\"]*\"|'[^']*'|[^\x00-\x20\"'=<>`]+))?)*) */?> *\\Z"
 )
-# What ends an HTML block of each type (CommonMark 4.6, not HTML: type 2 ends
+# What ends an HTML block of types 1-5 (CommonMark 4.6, not HTML: type 2 ends
 # at `-->` only); 6 and 7 end before a blank line.
-_HTML_END = {
-	1: re.compile("</(?:script|pre|style|textarea)>", re.IGNORECASE),
-	2: re.compile("-->"),
-	3: re.compile(r"\?>"),
-	4: re.compile(">"),
-	5: re.compile(r"\]\]>"),
-}
+_HTML_END1 = (b"</script>", b"</pre>", b"</style>", b"</textarea>")
+_HTML_END = {2: "-->", 3: "?>", 4: ">", 5: "]]>"}
+
+
+def _html_ends(kind: int, line: str) -> bool:
+	"""Whether line ends an HTML block of type 1-5, as goldmark decides it."""
+	if kind == 1:  # bytes fold ASCII only, as goldmark: `</ſcript>` ends nothing
+		b = line.encode("utf-8", "surrogatepass").lower()
+		return any(t in b for t in _HTML_END1)
+	return _HTML_END[kind] in line
 
 
 def html_block_start(line: str, in_paragraph: bool, eof: bool) -> int:  # noqa: PLR0911, PLR0912
@@ -2096,14 +2099,14 @@ def parser() -> MarkdownIt:
 		kind = html_block_start(line, silent, state.eMarks[start] >= len(state.src))
 		if not kind or silent:
 			return bool(kind)
-		stop, k = _HTML_END.get(kind), start + 1
-		if not (stop and stop.search(line)):
+		ends, k = kind < 6, start + 1
+		if not (ends and _html_ends(kind, line)):
 			while k < end and state.sCount[k] >= state.blkIndent:
 				text = state.src[state.bMarks[k] + state.tShift[k] : state.eMarks[k]]
-				if stop is None and not text:
+				if not ends and not text:
 					break
 				k += 1
-				if stop and stop.search(text):
+				if ends and _html_ends(kind, text):
 					break
 		state.line = k
 		token = state.push("html_block", "", 0)
