@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import os
+import posixpath
 import zipfile
 from typing import TYPE_CHECKING
 
@@ -110,14 +111,11 @@ class Reader:
 	def _zipResources(self) -> Iterator[EntryType]:
 		with zipfile.ZipFile(self._resZip) as z:
 			for info in z.infolist():
-				name = info.filename
 				if info.is_dir():
 					continue
-				if (
-					name.startswith("/")
-					or ".." in name.split("/")
-					or info.file_size > wumd.MAX_MARKDOWN
-				):
-					log.warning(f"{self._resZip}: skipping {name!r}")
+				if info.file_size > wumd.MAX_MARKDOWN:
+					log.warning(f"{self._resZip}: skipping {info.filename!r}: too large")
 					continue
+				# `.` and `..` resolve at the container's root (R2.3)
+				name = posixpath.normpath("/" + info.filename)[1:]
 				yield self._glos.newDataEntry(name, z.read(info))

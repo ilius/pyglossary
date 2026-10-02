@@ -120,8 +120,6 @@ class Writer:
 			try:
 				md = self._body(src)
 			except wumd.CleanError as e:
-				# R6.8: the raw entry on stdout, and how to keep its HTML.
-				print("\n".join("## " + n for n in names) + "\n\n" + src)  # noqa: T201
 				raise ValueError(
 					f"entry {names[0]!r} (#{index}): {e}\n"
 					"hint: keep the dictionary's HTML instead: --write-options=mode=html",

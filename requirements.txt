@@ -7,6 +7,7 @@ jaconv
 libzim>=1.0
 lxml
 marisa-trie
+markdown-it-py
 mistune
 polib
 prompt_toolkit

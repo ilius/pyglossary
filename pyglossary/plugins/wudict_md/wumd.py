@@ -71,7 +71,7 @@ _GO_SPACE = (
 _GO_FIELD = re.compile(f"[^{_GO_SPACE}]+")
 _HSPACE = " \t\n\r\f"  # HTML whitespace
 _HFIELD = re.compile("[^ \t\n\r\f]+")
-_SURROGATES = re.compile("[\ud800-\udfff]+")
+_SURROGATES = re.compile("[\ud800-\udfff]")
 _ESC = {
 	ord("&"): "&amp;",
 	ord("'"): "&#39;",
@@ -119,8 +119,8 @@ def go_lower(s: str) -> str:
 
 def valid_text(s: str) -> str:
 	"""
-	R2.1 on a body: invalid UTF-8 (here a run of lone surrogates) and NUL
-	become U+FFFD.
+	R2.1 on a body: each byte of invalid UTF-8 (here a lone surrogate) and
+	NUL become U+FFFD.
 	"""
 	return _SURROGATES.sub("\ufffd", s).replace("\x00", "\ufffd")
 
@@ -325,6 +325,7 @@ _RAW_END = {
 }
 # readScript's states: script data, escaped (in <!--), double escaped (in
 # <!--<script>); an escaped `<` not starting a tag returns to script data.
+# Only `-->` leaves them: `--!>` ends a comment, which these are not (HTML 13.2.5).
 _SCRIPT = (
 	re.compile("<!--|</script[ \t\n\r\f/>]", re.IGNORECASE | re.ASCII),
 	re.compile(
@@ -1792,7 +1793,8 @@ def clean_body(src: str, st: dict[str, int] | None = None) -> str:
 # ---------------------------------------------------------------------------
 # `html` mode (R6.5)
 
-_TYPE6_START = re.compile("<([A-Za-z][A-Za-z0-9]*)[ \t\n>/]")
+# A type-6 start tag the reader (goldmark) opens a block with.
+_TYPE6_START = re.compile("<([A-Za-z][A-Za-z0-9]*)(?: |>|/>)")
 _TYPE6 = frozenset((
 	"address", "article", "aside", "base", "basefont", "blockquote", "body", "caption",
 	"center", "col", "colgroup", "dd", "details", "dialog", "dir", "div", "dl", "dt",
@@ -1968,17 +1970,16 @@ def field_key(name: str) -> str:
 # ---------------------------------------------------------------------------
 # The reader (§3)
 
-_RAW_TAGS = frozenset(("pre", "script", "style", "textarea"))
 _TAG = re.compile("[A-Za-z][A-Za-z0-9-]*")
-# What may follow a type-7 tag's name: an open tag's attributes and end, or a
-# closing tag's end, then only spaces and tabs.
-_OPEN_TAG_REST = re.compile(
-	"(?:[ \t]+[A-Za-z_:][A-Za-z0-9_.:-]*"
-	"(?:[ \t]*=[ \t]*(?:[^ \t\n\r\"'=<>`]+|'[^'\n]*'|\"[^\"\n]*\"))?)*"
-	"[ \t]*/?>[ \t]*\\Z"
+_HTML6 = _TYPE6 | {"meta"}  # goldmark's type-6 names
+# What may follow a type-7 tag's name in goldmark: attributes, then spaces
+# (not tabs), `>` or `/>`, and spaces to the end of the line.
+_TYPE7_REST = re.compile(
+	"((?:[ \t\r\n]+[A-Za-z_:][A-Za-z0-9:._-]*"
+	"(?:[ \t\r\n]*=[ \t\r\n]*(?:\"[^\"]*\"|'[^']*'|[^\\x00-\\x20\"'=<>`]+))?)*) */?> *\\Z"
 )
-_CLOSE_TAG_REST = re.compile("[ \t]*>[ \t]*\\Z")
-# What ends an HTML block of each type; 6 and 7 end before a blank line.
+# What ends an HTML block of each type (CommonMark 4.6, not HTML: type 2 ends
+# at `-->` only); 6 and 7 end before a blank line.
 _HTML_END = {
 	1: re.compile("</(?:script|pre|style|textarea)>", re.IGNORECASE),
 	2: re.compile("-->"),
@@ -1988,45 +1989,62 @@ _HTML_END = {
 }
 
 
-def html_block_start(line: str, in_paragraph: bool) -> int:
+def html_block_start(line: str, in_paragraph: bool, eof: bool) -> int:  # noqa: PLR0911, PLR0912
 	"""
-	The kind of HTML block line starts (CommonMark 0.31.2, 4.6), 0 for none;
-	in_paragraph when a paragraph is open, which type 7 cannot interrupt.
-	The same as wudict's htmlBlockStart.
+	The kind of HTML block line starts, 0 for none, as goldmark decides it:
+	CommonMark 4.6 but for `<pre/>` (type 1), `</textarea>`, `</ span>` (type
+	7), `meta` (a type-6 name), a tab after the tag or before `>` and a bare
+	`<div` line but the last (none), `<!doctype` (none). in_paragraph: a
+	paragraph is open; eof: the line ends the text without a newline.
 	"""
 	if len(line) < 2 or line[0] != "<":
 		return 0
+	for name in ("textarea", "script", "style", "pre"):
+		if line[1 : len(name) + 1].lower() == name:
+			rest = line[len(name) + 1 :]
+			if rest[:1] in ("", " ", "\t", "\r", ">") or rest.startswith("/>"):
+				return 1
+			break
 	if line.startswith("<!--"):
 		return 2
 	if line[1] == "?":
 		return 3
+	if line[1] == "!" and "A" <= line[2:3] <= "Z":
+		return 4
 	if line.startswith("<![CDATA["):
 		return 5
-	if line[1] == "!":
-		return 4 if line[2:3].isascii() and line[2:3].isalpha() else 0
 	closing = line[1] == "/"
-	m = _TAG.match(line, 2 if closing else 1)
+	m = _TAG.match(line, len(line) - len(line[2:].lstrip(" ")) if closing else 1)
 	if not m:
 		return 0
 	name, rest = m[0].lower(), line[m.end() :]
-	if not closing and name in _RAW_TAGS and rest[:1] in ("", " ", "\t", ">"):
-		return 1
-	if name in _TYPE6 and (rest[:1] in ("", " ", "\t", ">") or rest.startswith("/>")):
+	if t7 := _TYPE7_REST.match(rest):
+		if name in _HTML6:
+			return 6
+		if (
+			name not in ("script", "style", "pre")
+			and not in_paragraph
+			and not (closing and t7[1])
+		):
+			return 7
+	if name in _HTML6 and (
+		rest[:1] in (" ", ">") or rest.startswith("/>") or (not rest and eof)
+	):
 		return 6
-	if in_paragraph or name in _RAW_TAGS:
-		return 0
-	return 7 if (_CLOSE_TAG_REST if closing else _OPEN_TAG_REST).match(rest) else 0
+	return 0
 
 
+_UNDERLINE = re.compile("(?:=+|-+)[ \t]*")
 _PARSER: MarkdownIt | None = None
 
 
 def parser() -> MarkdownIt:
 	"""
-	Stock CommonMark with tables, where markdown-it departs from CommonMark
-	in what §3 reads: heading text is trimmed of spaces and tabs only (R3.4);
-	HTML blocks start as CommonMark says; and the lines after a link reference
-	definition continue its paragraph.
+	Stock CommonMark with tables, where markdown-it departs from CommonMark:
+	headings and paragraphs are trimmed of spaces and tabs only (R3.4); HTML
+	blocks start as CommonMark says; the lines after a link reference
+	definition continue its paragraph; and an autolink's text is its URL as
+	written.
 	"""
 	global _PARSER
 	if _PARSER is not None:
@@ -2034,6 +2052,7 @@ def parser() -> MarkdownIt:
 	from markdown_it import MarkdownIt
 
 	md = MarkdownIt("commonmark", {"html": True}).enable("table")
+	md.normalizeLinkText = str  # type: ignore[method-assign]
 	rules = {r.name: r for r in md.block.ruler.__rules__}
 	heading, lheading, reference, paragraph = (
 		rules[k].fn for k in ("heading", "lheading", "reference", "paragraph")
@@ -2057,12 +2076,24 @@ def parser() -> MarkdownIt:
 			state.tokens[-2].content = text.strip(" \t")
 		return ok
 
+	def para(state, start, end, silent):  # noqa: ANN001, ANN202
+		ok = paragraph(state, start, end, silent)
+		if ok and not silent:
+			# markdown-it strips any whitespace; refill only when an edge has some
+			last = state.line - 1
+			first = state.src[state.bMarks[start] + state.tShift[start]]
+			tail = state.src[state.bMarks[last] : state.eMarks[last]].rstrip(" \t")
+			if first.isspace() or tail[-1:].isspace():
+				text = state.getLines(start, state.line, state.blkIndent, False)
+				state.tokens[-2].content = text.strip(" \t")
+		return ok
+
 	def html_block(state, start, end, silent):  # noqa: ANN001, ANN202
 		# A rule is called silently to ask whether its block interrupts a paragraph.
 		if state.is_code_block(start):
 			return False
 		line = state.src[state.bMarks[start] + state.tShift[start] : state.eMarks[start]]
-		kind = html_block_start(line, silent)
+		kind = html_block_start(line, silent, state.eMarks[start] >= len(state.src))
 		if not kind or silent:
 			return bool(kind)
 		stop, k = _HTML_END.get(kind), start + 1
@@ -2081,7 +2112,21 @@ def parser() -> MarkdownIt:
 		return True
 
 	def ref(state, start, end, silent):  # noqa: ANN001, ANN202
-		ok = reference(state, start, end, silent)
+		# A definition ends before a setext underline: `[a]:` over `===` is a heading.
+		if not state.src.startswith("[", state.bMarks[start] + state.tShift[start]):
+			return False
+		k, top = start + 1, state.lineMax
+		while k < top and not state.isEmpty(k):
+			if state.sCount[k] - state.blkIndent < 4 and _UNDERLINE.fullmatch(
+				state.src, state.bMarks[k] + state.tShift[k], state.eMarks[k]
+			):
+				break
+			k += 1
+		state.lineMax = k
+		try:
+			ok = reference(state, start, end, silent)
+		finally:
+			state.lineMax = top
 		if ok and not silent:
 			state.env["_wumd_ref"] = state.line
 		return ok
@@ -2102,7 +2147,7 @@ def parser() -> MarkdownIt:
 		return (
 			ref(state, start, end, False)
 			or setext(state, start, end, False)
-			or paragraph(state, start, end, False)
+			or para(state, start, end, False)
 		)
 
 	for k, fn in (
@@ -2110,6 +2155,7 @@ def parser() -> MarkdownIt:
 		("lheading", setext),
 		("html_block", html_block),
 		("reference", ref),
+		("paragraph", para),
 	):
 		md.block.ruler.at(k, fn, {"alt": rules[k].alt})
 	md.block.ruler.before("table", "wumd_continued", continued)
@@ -2214,8 +2260,48 @@ def top_blocks(tokens: list[Token], stop: int | None = None) -> list[tuple[int, 
 	return out
 
 
+_CANDIDATE = re.compile("^##(?=[ \t]|$)", re.MULTILINE)  # a line that may start an entry
+
+
+def _swallowed(line: str, start: int) -> str:
+	return (
+		f"{go_quote(clip(line))} is inside the HTML block that starts on line {start}, so"
+		" it is not an entry; end that block before it (a blank line, or its closing tag)"
+	)
+
+
+def clip(s: str) -> str:
+	"""A line quoted in a warning, cut at 60 bytes."""
+	b = s.rstrip("\r").encode()
+	return b[:60].decode(errors="ignore") + "\u2026" if len(b) > 60 else s.rstrip("\r")
+
+
+def go_quote(s: str) -> str:
+	"""strconv.Quote."""
+	out = ['"']
+	for c in s:
+		if c in '"\\':
+			out.append("\\" + c)
+		elif c.isprintable():
+			out.append(c)
+		else:
+			o = ord(c)
+			esc = {7: "a", 8: "b", 9: "t", 10: "n", 11: "v", 12: "f", 13: "r"}.get(o)
+			out.append(
+				"\\" + esc
+				if esc
+				else f"\\x{o:02x}"
+				if o < 0x80
+				else f"\\u{o:04x}"
+				if o < 0x10000
+				else f"\\U{o:08x}"
+			)
+	return "".join(out) + '"'
+
+
 def _is_h2(t: Token) -> bool:
-	return t.type == "heading_open" and t.tag == "h2"
+	"""A heading that starts an entry (R3.5): `## `; a setext one is content."""
+	return t.type == "heading_open" and t.markup == "##"
 
 
 _INLINE_SYNTAX = re.compile(
@@ -2272,10 +2358,10 @@ class Document:
 		self.refs: dict = {}
 		self.chunks: list[tuple[int, int]] = []
 		self.entries: list[Entry] = []
-		self._warns: list[tuple[int, str]] = []
-		self._cands = [
-			m.start() for m in re.finditer("^##(?=[ \t]|$)", text, re.MULTILINE)
-		]
+		# Each warning keyed (chunk, step, line), the order wudict says them in:
+		# per chunk, the header's, the swallowed lines', the heading groups'.
+		self._warns: list[tuple[tuple[int, int, int], str]] = []
+		self._cands = [m.start() for m in _CANDIDATE.finditer(text)]
 		self._title = ""  # its heading's content
 		self._desc = 0  # where the description ends, 0 for none
 		start, line = 0, 1
@@ -2292,7 +2378,8 @@ class Document:
 		self._name()
 		self._fold()
 		self.warnings = [
-			f"W-entry: {ln}: {msg}" for ln, msg in sorted(self._warns, key=lambda w: w[0])
+			f"W-entry: {key[2]}: {msg}"
+			for key, msg in sorted(self._warns, key=lambda w: w[0])
 		]
 		if self._desc:
 			tokens = parser().parse(text[: self._desc], {"references": self.refs})
@@ -2312,7 +2399,7 @@ class Document:
 			blocks = top_blocks(tokens)
 			line = text.count("\n", start, c)
 			t = tokens[blocks[-1][0]]
-			if _is_h2(t) and t.markup == "##" and t.map[0] == line:
+			if _is_h2(t) and t.map[0] == line:
 				g = len(blocks) - 1
 				while g > 0 and _is_h2(tokens[blocks[g - 1][0]]):
 					g -= 1
@@ -2334,6 +2421,16 @@ class Document:
 		blocks = top_blocks(tokens, stop)
 		lines = None
 		i = self._header(tokens, blocks, stop) if ci == 0 else 0
+		# R3.5: a line that would start an entry, inside an HTML block, is content
+		for a, _ in blocks:
+			if tokens[a].type == "html_block" and tokens[a].map[1] - tokens[a].map[0] > 1:
+				lines = lines or chunk.split("\n")
+				l0, l1 = tokens[a].map
+				for k in range(l0 + 1, l1):
+					if _CANDIDATE.match(lines[k]):
+						self._warns.append(
+							((ci, 1, line0 + k), _swallowed(lines[k], line0 + l0))
+						)
 		group = 0
 		while i < len(blocks):
 			at = tokens[blocks[i][0]]
@@ -2346,7 +2443,9 @@ class Document:
 				i += 1
 			line = line0 + at.map[0]
 			if body == i:
-				self._warns.append((line, "heading group without a body; skipped"))
+				self._warns.append(
+					((ci, 2, line), "heading group without a body; skipped")
+				)
 			else:
 				see = ""
 				t = tokens[blocks[body][0]]
@@ -2357,9 +2456,8 @@ class Document:
 					and tokens[blocks[body][0] + 1].content.startswith("see:")
 				):
 					lines = lines or chunk.split("\n")
-					m = re.match(
-						"see:[ \t](.*)", lines[t.map[0]]
-					)  # the line as written (R3.6)
+					# the line as written, without its indentation (R3.6)
+					m = re.match("see:[ \t](.*)", lines[t.map[0]].lstrip(" \t"))
 					see = m[1].strip(" \t") if m else ""
 				self.entries.append(Entry(heads, ci, group, line, see))
 			group += 1
@@ -2371,11 +2469,15 @@ class Document:
 		t = tokens[0]
 		if t.type != "heading_open" or t.tag != "h1":
 			raise FormatError("E-format", "line 1 must be `# ` and the dictionary title")
-		self._title = tokens[1].content
-		if not self._heading_text(
-			self._title
-		):  # read again once every definition is known
+		self._title = tokens[1].content  # read again once every definition is known
+		if not self._heading_text(self._title):
 			raise FormatError("E-format", "the title on line 1 is empty")
+		if len(blocks) > 1 and tokens[blocks[1][0]].markup in ("-", "="):
+			raise FormatError(
+				"E-format",
+				"the header must end at a blank line: "
+				"the `---` or `===` line under it makes it a heading",
+			)
 		if (
 			len(blocks) < 2
 			or (p := tokens[blocks[1][0]]).type != "paragraph_open"
@@ -2386,12 +2488,14 @@ class Document:
 			)
 		meta = self.meta
 		for i, ln in enumerate(head_lines(self.text, p.map[1])[1:], 2):
-			kv = parse_field(ln)
+			kv = parse_field(
+				ln.lstrip(" \t")
+			)  # a paragraph line, without its indentation
 			if not kv:
 				msg = (
 					f"header line {i} is not `key: value`; it and the rest of the header"
 				)
-				self._warns.append((i, msg + " are ignored"))
+				self._warns.append(((0, 0, i), msg + " are ignored"))
 				break
 			k, v = kv
 			if k in ("from", "to"):
@@ -2429,7 +2533,9 @@ class Document:
 				e.names = names
 				kept.append(e)
 			else:
-				self._warns.append((e.line, "entry without a headword; skipped"))
+				self._warns.append(
+					((e.chunk, 2, e.line), "entry without a headword; skipped")
+				)
 		self.entries = kept
 
 	def _fold(self) -> None:

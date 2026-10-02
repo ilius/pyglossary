@@ -2186,7 +2186,7 @@
 		}
 	},
 	{
-		"module": "wu_markdown",
+		"module": "wudict_md",
 		"lname": "wudict_md",
 		"name": "WudictMarkdown",
 		"description": "wudict markdown (.wudict.md)",

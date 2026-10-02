@@ -2,14 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-r"""
-wudict markdown: one dictionary in standard CommonMark (https://github.com/wuweidict/wudict/blob/master/docs/WUDICT-MARKDOWN.md).
-
-As a user plugin, this folder goes in pyglossary's plugin folder:
-~/Library/Preferences/PyGlossary/plugins/ on macOS, ~/.pyglossary/plugins/ on
-Linux, %APPDATA%\PyGlossary\plugins\ on Windows. Needs markdown-it-py.
-"""
-
 from __future__ import annotations
 
 from pyglossary.option import BoolOption, StrOption
