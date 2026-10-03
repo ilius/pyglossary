@@ -513,6 +513,7 @@ exclude_toplevel_module = [
 	"lzo",
 	"mako",
 	"marisa_trie",
+	"markdown_it",
 	"mistune",
 	"packaging",
 	"pip",

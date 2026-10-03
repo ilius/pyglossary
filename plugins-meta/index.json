@@ -2186,6 +2186,52 @@
 		}
 	},
 	{
+		"module": "wudict_md",
+		"lname": "wudict_md",
+		"name": "WudictMarkdown",
+		"description": "wudict markdown (.wudict.md)",
+		"extensions": [
+			".md"
+		],
+		"singleFile": true,
+		"optionsProp": {
+			"mode": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": false,
+				"values": [
+					"html",
+					"clean"
+				],
+				"comment": "html (default): each article's HTML kept; clean: markdown only, lossy"
+			},
+			"resources": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Read and write resources (<name>.wudict.files)"
+			}
+		},
+		"canRead": true,
+		"canWrite": true,
+		"readOptions": {
+			"resources": true
+		},
+		"writeOptions": {
+			"mode": "html",
+			"resources": true
+		},
+		"readDepends": {
+			"markdown_it": "markdown-it-py"
+		},
+		"writeDepends": {
+			"markdown_it": "markdown-it-py"
+		},
+		"readCompressions": [
+			"gz",
+			"dz"
+		]
+	},
+	{
 		"module": "xdxf",
 		"lname": "xdxf",
 		"name": "Xdxf",

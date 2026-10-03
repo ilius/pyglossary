@@ -49,6 +49,7 @@
 | WordFrequency.info COCA lemma list (.wordfrequency) | WordFrequency | [wordfrequency.md](./wordfrequency.md) |
 | WordNet | Wordnet | [wordnet.md](./wordnet.md) |
 | Wordset.org JSON directory | Wordset | [wordset.md](./wordset.md) |
+| wudict markdown (.wudict.md) | WudictMarkdown | [wudict_md.md](./wudict_md.md) |
 | XDXF (.xdxf) | Xdxf | [xdxf.md](./xdxf.md) |
 | XDXF with CSS and JS | XdxfCss | [xdxf_css.md](./xdxf_css.md) |
 | XDXF Lax (.xdxf) | XdxfLax | [xdxf_lax.md](./xdxf_lax.md) |
