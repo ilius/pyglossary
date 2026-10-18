@@ -16,7 +16,7 @@ __all__ = ["T_Collator", "T_Locale"]
 
 
 class T_Locale(typing.Protocol):
-	"""T Locale."""
+	"""Typing protocol for icu Locale."""
 
 	def __init__(self, _id: str) -> None: ...
 
@@ -24,7 +24,7 @@ class T_Locale(typing.Protocol):
 
 
 class T_Collator(typing.Protocol):
-	"""T Collator."""
+	"""Typing protocol for icu Collator."""
 
 	PRIMARY: int = 0
 	SECONDARY: int = 1
