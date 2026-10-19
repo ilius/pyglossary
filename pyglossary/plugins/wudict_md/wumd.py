@@ -14,17 +14,22 @@ it, markdown by markdown-it-py (CommonMark and tables).
 from __future__ import annotations
 
 import bisect
+import codecs
 import gzip
+import io
 import re
 import sys
+import tempfile
 import unicodedata
 import zlib
+from array import array
 from html.entities import html5
 from typing import TYPE_CHECKING
 from urllib.parse import quote, unquote_to_bytes
 
 if TYPE_CHECKING:
-	from collections.abc import Callable, Collection, Iterator
+	from collections.abc import Callable, Collection, Iterable, Iterator
+	from typing import IO, Self
 
 	from markdown_it import MarkdownIt
 	from markdown_it.token import Token
@@ -39,7 +44,7 @@ __all__ = [
 	"field_key",
 	"heading_esc",
 	"html_body",
-	"load",
+	"read_file",
 	"read_text",
 	"repair_name",
 ]
@@ -2046,16 +2051,24 @@ def parser() -> MarkdownIt:
 	Stock CommonMark with tables, where markdown-it departs from CommonMark:
 	headings and paragraphs are trimmed of spaces and tabs only (R3.4); HTML
 	blocks start as CommonMark says; the lines after a link reference
-	definition continue its paragraph; and an autolink's text is its URL as
-	written.
+	definition continue its paragraph; an autolink's text is its URL as
+	written; a destination is neither refused nor reparsed, only
+	percent-encoded (R4.1, R5.3); and blocks nest 100 deep, not 20.
 	"""
 	global _PARSER
 	if _PARSER is not None:
 		return _PARSER
+	import mdurl
 	from markdown_it import MarkdownIt
 
-	md = MarkdownIt("commonmark", {"html": True}).enable("table")
+	# 20 levels would drop what the writer nests deeper (R6.10: 16 lists are
+	# 32); markdown-it recurses per level, so a bound stays (R9.3).
+	md = MarkdownIt("commonmark", {"html": True, "maxNesting": 100}).enable("table")
 	md.normalizeLinkText = str  # type: ignore[method-assign]
+	# Its parse and format of a URL drop an empty user (`entry:@sub` would be
+	# `entry:sub`) and punycode hosts; goldmark only percent-encodes.
+	md.normalizeLink = mdurl.encode  # type: ignore[method-assign]
+	md.validateLink = lambda _: True  # type: ignore[method-assign]  # no sanitizing
 	rules = {r.name: r for r in md.block.ruler.__rules__}
 	heading, lheading, reference, paragraph = (
 		rules[k].fn for k in ("heading", "lheading", "reference", "paragraph")
@@ -2178,6 +2191,8 @@ def block_parse(text: str, refs: dict | None = None) -> list[Token]:
 
 MAX_MARKDOWN = 1 << 30  # what a compressed file may unpack to (R2.4)
 _INVALID_BYTE = re.compile("[\x00\udc80-\udcff]")  # one U+FFFD each, as Go decodes
+# What a broken gzip stream raises; any other OSError is the file system's.
+_GZIP_ERRORS = (gzip.BadGzipFile, EOFError, zlib.error)
 
 
 def decode(b: bytes) -> str:
@@ -2186,19 +2201,146 @@ def decode(b: bytes) -> str:
 	return _INVALID_BYTE.sub("\ufffd", s)
 
 
-def load(path: str) -> str:
-	"""The decoded text of a file, gzip-compressed (`.gz`, `.dz`) or not."""
-	if not path.lower().endswith((".gz", ".dz")):
-		with open(path, "rb") as f:
-			return decode(f.read())
+# Read file in chunks, decode once, one block at a
+# time, into a temporary file, or into memory. The pass
+# that reads it also finds where every candidate line starts (_CAND), as
+# UTF-8 offsets, and use these markers to cut the chunks.
+
+_READ_SIZE = 1 << 18  # chunk size; expose for tests to make it small
+HEAD_MAX = 64 << 10  # max chunk size
+_BOM = b"\xef\xbb\xbf"
+_CAND = re.compile(rb"\n##(?=[ \t\n])")  # delimiter: a LF + line that may start an entry
+
+
+class _Repair(Exception):  # noqa: N818
+	"""A plain file R2.1 changes: it is decoded, not read in place."""
+
+
+def _blocks(f: IO[bytes]) -> Iterator[bytes]:
+	while b := f.read(_READ_SIZE):
+		yield b
+
+
+def _gzip_blocks(f: IO[bytes]) -> Iterator[bytes]:
+	"""The decompressed blocks of f, bounded by MAX_MARKDOWN (R2.4)."""
+	n = 0
+	while True:
+		try:
+			b = f.read(_READ_SIZE)
+		except _GZIP_ERRORS as e:
+			raise FormatError("E-format", f"not a gzip stream: {e}") from e
+		if not b:
+			return
+		n += len(b)
+		if n > MAX_MARKDOWN:
+			raise FormatError(
+				"E-format", f"decompressed markdown over {MAX_MARKDOWN} bytes"
+			)
+		yield b
+
+
+def _decoded(blocks: Iterable[bytes]) -> Iterator[bytes]:
+	"""
+	decode, a block at a time, as UTF-8: a BOM, a UTF-8 sequence or a CR LF
+	cut by a block boundary is carried to the next block.
+	"""
+	dec = codecs.getincrementaldecoder("utf-8-sig")("surrogateescape")
+	cr = ""  # a CR ending the last block, which a LF may follow
+	for b in blocks:
+		s = cr + dec.decode(b)
+		s, cr = (s[:-1], "\r") if s.endswith("\r") else (s, "")
+		yield _INVALID_BYTE.sub("\ufffd", newlines(s)).encode()
+	yield _INVALID_BYTE.sub("\ufffd", newlines(cr + dec.decode(b"", True))).encode()
+
+
+def _in_place(blocks: Iterable[bytes]) -> Iterator[bytes]:
+	"""
+	The blocks as they are, raising _Repair at one R2.1 would change. A BOM
+	is not looked for: _open does, at the start of the file.
+	"""
+	dec = codecs.getincrementaldecoder("utf-8")()
+	for b in blocks:
+		if b"\r" in b or b"\0" in b:
+			raise _Repair
+		try:
+			dec.decode(b)
+		except UnicodeDecodeError:
+			raise _Repair from None
+		yield b
 	try:
-		with gzip.open(path, "rb") as f:
-			b = f.read(MAX_MARKDOWN + 1)
-	except (OSError, EOFError, zlib.error) as e:
-		raise FormatError("E-format", f"not a gzip stream: {e}") from e
-	if len(b) > MAX_MARKDOWN:
-		raise FormatError("E-format", f"decompressed markdown over {MAX_MARKDOWN} bytes")
-	return decode(b)
+		dec.decode(b"", True)
+	except UnicodeDecodeError:
+		raise _Repair from None
+
+
+def _index(blocks: Iterable[bytes], out: IO[bytes] | None = None) -> tuple[int, array]:
+	"""
+	The size of the text in blocks and where each of its candidate lines
+	starts, writing the text to out. The last three bytes of a block are
+	searched again with the next: a match is four bytes, so one starting in
+	them was not complete before.
+	"""
+	cands, tail, off, size = array("q"), b"\n", -1, 0  # the text starts a line
+	for b in blocks:
+		if out is not None:
+			out.write(b)
+		size += len(b)
+		buf = tail + b
+		cands.extend(m.start() + off + 1 for m in _CAND.finditer(buf))
+		tail = buf[-3:]
+		off += len(buf) - len(tail)
+	if tail.endswith(b"\n##"):  # a last line that is exactly `##`
+		cands.append(size - 2)
+	return size, cands
+
+
+def _spool(blocks: Iterable[bytes]) -> tuple[IO[bytes], int, array]:
+	"""_index, writing the text to a temporary file, or to memory without one."""
+	try:
+		f: IO[bytes] = tempfile.TemporaryFile()
+	except OSError:
+		f = io.BytesIO()
+	try:
+		return (f, *_index(blocks, f))
+	except BaseException:
+		f.close()
+		raise
+
+
+def _check_head(raw: bytes) -> None:
+	"""
+	check_header on the first HEAD_MAX bytes of a file, where they hold lines
+	1-2 whole: a file that is no wudict markdown is refused before it is read.
+	"""
+	b = b"".join(_decoded((raw,)))[:HEAD_MAX]
+	if b.count(b"\n") >= 2:
+		check_header(b.decode("utf-8", "replace"))
+
+
+def _open(path: str) -> tuple[IO[bytes], int, array]:
+	"""The decoded text of a file as a file, its size and its candidate lines."""
+	if path.lower().endswith((".gz", ".dz")):
+		with gzip.open(path, "rb") as z:
+			_check_head(next(_gzip_blocks(z), b"")[:HEAD_MAX])
+			z.seek(0)
+			return _spool(_decoded(_gzip_blocks(z)))
+	f = open(path, "rb")  # noqa: SIM115
+	try:
+		head = f.read(HEAD_MAX)
+		_check_head(head)
+		if not head.startswith(_BOM):
+			f.seek(0)
+			try:
+				return (f, *_index(_in_place(_blocks(f))))
+			except _Repair:
+				pass
+		f.seek(0)
+		text = _spool(_decoded(_blocks(f)))
+	except BaseException:
+		f.close()
+		raise
+	f.close()
+	return text
 
 
 def head_lines(s: str, n: int) -> list[str]:
@@ -2346,17 +2488,21 @@ class Document:
 	A dictionary read from decoded text: meta, warnings, and (names, HTML)
 	for each article.
 
-	As in the Go reader, the text is parsed in chunks of about CHUNK_SIZE, cut
-	where the parser confirms a top-level heading group starts: a top-level
+	As in the Go reader, the text is parsed in chunks of about CHUNK_SIZE bytes,
+	cut where the parser confirms a top-level heading group starts: a top-level
 	heading closes every block, so the chunks parse as the whole text does. The
 	first pass reads the block structure; headings are read when every link
 	reference definition is known, and each chunk is parsed again for its
 	bodies when iteration reaches it.
+
+	The text is never held whole: f holds it, as UTF-8 of size bytes, and a
+	chunk is read from f when it is parsed; cands are where its candidate
+	lines start (_index). Close the document when done with it.
 	"""
 
-	def __init__(self, text: str) -> None:
-		check_header(text)
-		self.text = text
+	def __init__(self, f: IO[bytes], size: int, cands: array) -> None:
+		self._f, self._size, self._cands = f, size, cands
+		check_header(self._head())
 		self.meta = {"name": "", "from": "", "to": "", "fields": [], "description": ""}
 		self.refs: dict = {}
 		self.chunks: list[tuple[int, int]] = []
@@ -2364,15 +2510,14 @@ class Document:
 		# Each warning keyed (chunk, step, line), the order wudict says them in:
 		# per chunk, the header's, the swallowed lines', the heading groups'.
 		self._warns: list[tuple[tuple[int, int, int], str]] = []
-		self._cands = [m.start() for m in _CANDIDATE.finditer(text)]
 		self._title = ""  # its heading's content
-		self._desc = 0  # where the description ends, 0 for none
+		self._desc = ""  # the description's markdown, "" for none
 		start, line = 0, 1
-		while start < len(text):
-			end, tokens, stop = self._next_chunk(start)
-			self._scan(len(self.chunks), tokens, stop, text[start:end], line)
+		while start < size:
+			end, tokens, stop, text, lines = self._next_chunk(start)
+			self._scan(len(self.chunks), tokens, stop, text, line)
 			self.chunks.append((start, end))
-			line += text.count("\n", start, end)
+			line += lines
 			start = end
 		# Headings read last, with every link reference definition known.
 		self.meta["name"] = self._heading_text(self._title)
@@ -2385,37 +2530,73 @@ class Document:
 			for key, msg in sorted(self._warns, key=lambda w: w[0])
 		]
 		if self._desc:
-			tokens = parser().parse(text[: self._desc], {"references": self.refs})
+			tokens = parser().parse(self._desc, {"references": self.refs})
 			self.meta["description"] = _render(tokens, top_blocks(tokens)[2:])
 
-	def _next_chunk(self, start: int) -> tuple[int, list[Token], int | None]:
+	def close(self) -> None:
+		self._f.close()
+
+	def __enter__(self) -> Self:
+		return self
+
+	def __exit__(self, *exc: object) -> None:
+		self.close()
+
+	def _read(self, lo: int, hi: int) -> bytes:
+		"""The text from offset lo to hi, as UTF-8."""
+		self._f.seek(lo)
+		b = self._f.read(hi - lo)
+		if len(b) != hi - lo:  # the file was cut short while read
+			raise OSError(f"wudict markdown: reading the text at {lo}: it ends early")
+		return b
+
+	def _text(self, lo: int, hi: int) -> str:
+		return self._read(lo, hi).decode("utf-8", "surrogatepass")
+
+	def _line_end(self, at: int) -> int:
+		"""The offset after the LF ending the line at at, or the text's size."""
+		self._f.seek(at)
+		while b := self._f.read(4096):
+			if (i := b.find(b"\n")) >= 0:
+				return at + i + 1
+			at += len(b)
+		return self._size
+
+	def _head(self) -> str:
+		"""Lines 1-2, of the first HEAD_MAX bytes, as Go reads them (R3.1)."""
+		b = self._read(0, min(self._size, HEAD_MAX))
+		if (i := b.find(b"\n")) >= 0 and (j := b.find(b"\n", i + 1)) >= 0:
+			return b[:j].decode("utf-8", "surrogatepass")
+		return b.decode("utf-8", "replace")  # cut short: maybe within a character
+
+	def _next_chunk(self, start: int) -> tuple[int, list[Token], int | None, str, int]:
 		"""
-		Where the chunk from start ends, the tokens it was confirmed with
-		(which may run on into the next chunk), and the token it stops at.
+		Where the chunk from start ends; the tokens it was confirmed with
+		(which may run on into the next chunk), the token it stops at and the
+		text they were parsed from; and how many lines the chunk has.
 		"""
-		text, cands = self.text, self._cands
+		cands = self._cands
 		k = bisect.bisect_left(cands, start + max(CHUNK_SIZE, 1))
 		while k < len(cands):
 			c = cands[k]
-			le = text.find("\n", c) + 1 or len(text)
-			tokens = block_parse(text[start:le], self.refs)
+			b = self._read(start, self._line_end(c))
+			text = b.decode("utf-8", "surrogatepass")
+			tokens = block_parse(text, self.refs)
 			blocks = top_blocks(tokens)
-			line = text.count("\n", start, c)
+			line = b.count(b"\n", 0, c - start)
 			t = tokens[blocks[-1][0]]
 			if _is_h2(t) and t.map[0] == line:
 				g = len(blocks) - 1
 				while g > 0 and _is_h2(tokens[blocks[g - 1][0]]):
 					g -= 1
 				if g > 0:  # the group starts after the chunk's start
-					return (
-						_offset(text, tokens[blocks[g][0]].map[0], start),
-						tokens,
-						blocks[g][0],
-					)
+					n = tokens[blocks[g][0]].map[0]
+					return start + _offset(b, n), tokens, blocks[g][0], text, n
 			# Inside a block, or not a group's first heading: the window
 			# doubles, so the work stays linear.
 			k = bisect.bisect_left(cands, max(c + 1, start + 2 * (c - start)))
-		return len(text), block_parse(text[start:], self.refs), None
+		text = self._text(start, self._size)
+		return self._size, block_parse(text, self.refs), None, text, text.count("\n")
 
 	def _scan(
 		self, ci: int, tokens: list[Token], stop: int | None, chunk: str, line0: int
@@ -2423,7 +2604,7 @@ class Document:
 		"""Read a chunk's heading groups (R3.5), and the header in the first."""
 		blocks = top_blocks(tokens, stop)
 		lines = None
-		i = self._header(tokens, blocks, stop) if ci == 0 else 0
+		i = self._header(tokens, blocks, stop, chunk) if ci == 0 else 0
 		# R3.5: a line that would start an entry, inside an HTML block, is content
 		for a, _ in blocks:
 			if tokens[a].type == "html_block" and tokens[a].map[1] - tokens[a].map[0] > 1:
@@ -2466,9 +2647,16 @@ class Document:
 			group += 1
 
 	def _header(
-		self, tokens: list[Token], blocks: list[tuple[int, int]], stop: int | None
+		self,
+		tokens: list[Token],
+		blocks: list[tuple[int, int]],
+		stop: int | None,
+		chunk: str,
 	) -> int:
-		"""Read the header (R3.1-R3.3); the index of the first entry's block."""
+		"""
+		Read the header (R3.1-R3.3) from the first chunk's tokens and text;
+		the index of the first entry's block.
+		"""
 		t = tokens[0]
 		if t.type != "heading_open" or t.tag != "h1":
 			raise FormatError("E-format", "line 1 must be `# ` and the dictionary title")
@@ -2490,7 +2678,7 @@ class Document:
 				"E-format", "line 2 must be `wudict: 1`, directly under the title"
 			)
 		meta = self.meta
-		for i, ln in enumerate(head_lines(self.text, p.map[1])[1:], 2):
+		for i, ln in enumerate(head_lines(chunk, p.map[1])[1:], 2):
 			kv = parse_field(
 				ln.lstrip(" \t")
 			)  # a paragraph line, without its indentation
@@ -2508,12 +2696,10 @@ class Document:
 		i = 2
 		while i < len(blocks) and not _is_h2(tokens[blocks[i][0]]):
 			i += 1
-		if i > 2:
+		if i > 2:  # the first chunk with no stop is the whole text
 			first = blocks[i][0] if i < len(blocks) else stop
 			self._desc = (
-				len(self.text)
-				if first is None
-				else _offset(self.text, tokens[first].map[0])
+				chunk if first is None else chunk[: _offset(chunk, tokens[first].map[0])]
 			)
 		return i
 
@@ -2572,7 +2758,7 @@ class Document:
 			if e.chunk != cur:
 				cur = e.chunk
 				s, end = self.chunks[cur]
-				tokens = parser().parse(self.text[s:end], {"references": self.refs})
+				tokens = parser().parse(self._text(s, end), {"references": self.refs})
 				groups = list(_bodies(tokens, top_blocks(tokens), cur == 0))
 			yield e.names, _render(*groups[e.group])
 
@@ -2580,10 +2766,11 @@ class Document:
 		return sum(not e.folded for e in self.entries)
 
 
-def _offset(s: str, line: int, at: int = 0) -> int:
-	"""Where the line-th line after offset at starts."""
+def _offset(s: str | bytes, line: int) -> int:
+	"""Where the line-th line of s starts, in s's units."""
+	lf, at = "\n" if isinstance(s, str) else b"\n", 0
 	for _ in range(line):
-		at = s.index("\n", at) + 1
+		at = s.index(lf, at) + 1  # type: ignore[arg-type]
 	return at
 
 
@@ -2617,4 +2804,18 @@ CHUNK_SIZE = 1 << 20
 
 def read_text(text: str) -> Document:
 	"""A dictionary from decoded text (decode); raises FormatError."""
-	return Document(text)
+	b = text.encode("utf-8", "surrogatepass")
+	return Document(io.BytesIO(b), *_index((b,)))
+
+
+def read_file(path: str) -> Document:
+	"""
+	A dictionary from a file, gzip-compressed (`.gz`, `.dz`) or not, its text
+	read a chunk at a time (_open); raises FormatError. Close it when done.
+	"""
+	f, size, cands = _open(path)
+	try:
+		return Document(f, size, cands)
+	except BaseException:
+		f.close()
+		raise

@@ -46,9 +46,10 @@ class Reader:
 
 	def open(self, filename: str) -> None:
 		try:
-			doc = wumd.read_text(wumd.load(filename))
+			doc = wumd.read_file(filename)
 		except wumd.FormatError as e:
 			raise ValueError(f"{filename}: {e}") from e
+		self._doc = doc  # closed by close(), whatever fails below
 		name = os.path.basename(filename)
 		for w in doc.warnings[:_MAX_WARNINGS]:
 			log.warning(f"{name}: {w}")
@@ -56,7 +57,6 @@ class Reader:
 			log.warning(
 				f"{name}: {len(doc.warnings) - _MAX_WARNINGS} more entry warnings"
 			)
-		self._doc = doc
 		glos, meta = self._glos, doc.meta
 		glos.setInfo("name", meta["name"])
 		# BCP 47 tags, as their primary language: pyglossary knows no regions
@@ -76,6 +76,8 @@ class Reader:
 				self._resZip = base + ".files.zip"
 
 	def close(self) -> None:
+		if self._doc is not None:
+			self._doc.close()  # its file, or the temporary file it was decoded into
 		self._doc = None
 
 	def __len__(self) -> int:
@@ -117,5 +119,5 @@ class Reader:
 					log.warning(f"{self._resZip}: skipping {info.filename!r}: too large")
 					continue
 				# `.` and `..` resolve at the container's root (R2.3)
-				name = posixpath.normpath("/" + info.filename)[1:]
-				yield self._glos.newDataEntry(name, z.read(info))
+				if name := posixpath.normpath("/" + info.filename)[1:]:
+					yield self._glos.newDataEntry(name, z.read(info))
