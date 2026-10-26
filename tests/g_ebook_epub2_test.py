@@ -4,7 +4,9 @@ import os
 import re
 import sys
 import unittest
+import zipfile
 from os.path import abspath, dirname
+from xml.etree import ElementTree
 
 from freezegun import freeze_time
 
@@ -104,7 +106,7 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			"100-en-fa",
 			testId="a1",
 			checkZipContents=False,
-			sha1sum="beb3ad8227dd9561223cd18d805aff8dd0aef27b",
+			sha1sum="f52af4681a38df88c2e2916938735499cd700521",
 		)
 
 	def test_convert_to_epub_1(self):
@@ -168,6 +170,38 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 			sqlite=False,
 			writeOptions={"group_by_prefix_length": 3},
 		)
+
+	def test_write_epub_ncx_links(self):
+		glos = self.glos = Glossary()
+		for term in ("apple", "banana", "cherry"):
+			glos.addEntry(glos.newEntry([term], f"{term} definition"))
+		outputFilename = self.newTempFilePath("ncx-links.epub")
+		glos.write(outputFilename, formatName="Epub2")
+
+		ns = {
+			"ncx": "http://www.daisy.org/z3986/2005/ncx/",
+			"x": "http://www.w3.org/1999/xhtml",
+		}
+		with zipfile.ZipFile(outputFilename) as zf:
+			ncx = ElementTree.fromstring(zf.read("OEBPS/toc.ncx"))
+			links = [
+				(
+					point.find("ncx:navLabel/ncx:text", ns).text,
+					point.find("ncx:content", ns).get("src"),
+				)
+				for point in ncx.iterfind("ncx:navMap/ncx:navPoint", ns)
+			]
+			self.assertEqual(
+				links,
+				[
+					("apple\u2013apple", "g000002.xhtml"),
+					("banana\u2013banana", "g000003.xhtml"),
+					("cherry\u2013cherry", "g000004.xhtml"),
+				],
+			)
+			for label, src in links:
+				page = ElementTree.fromstring(zf.read(f"OEBPS/{src}"))
+				self.assertEqual(page.find(".//x:h1", ns).text, label)
 
 
 if __name__ == "__main__":
