@@ -203,6 +203,39 @@ class TestGlossaryEPUB2(TestGlossaryBase):
 				page = ElementTree.fromstring(zf.read(f"OEBPS/{src}"))
 				self.assertEqual(page.find(".//x:h1", ns).text, label)
 
+	def test_write_epub_escape(self):
+		glos = self.glos = Glossary()
+		glos.addEntry(glos.newEntry(["AT&T"], "a company & a <brand>", defiFormat="m"))
+		glos.addEntry(glos.newEntry(["a<b"], "<b>bold</b>", defiFormat="h"))
+		outputFilename = self.newTempFilePath("escape.epub")
+		glos.write(outputFilename, formatName="Epub2")
+
+		with zipfile.ZipFile(outputFilename) as zf:
+			ncx = ElementTree.fromstring(zf.read("OEBPS/toc.ncx"))
+			pages = [
+				ElementTree.fromstring(zf.read(name))
+				for name in zf.namelist()
+				if name.endswith(".xhtml")
+			]
+
+		ns = {
+			"ncx": "http://www.daisy.org/z3986/2005/ncx/",
+			"x": "http://www.w3.org/1999/xhtml",
+		}
+		labels = [
+			text.text
+			for text in ncx.iterfind("ncx:navMap/ncx:navPoint/ncx:navLabel/ncx:text", ns)
+		]
+		self.assertEqual(sorted(labels), ["AT&T\u2013AT&T", "a<b\u2013a<b"])
+		entries = {
+			"".join(entry.find("x:h2", ns).itertext()): "".join(
+				entry.find("x:p", ns).itertext(),
+			)
+			for page in pages
+			for entry in page.iterfind(".//x:div[@class='groupEntry']", ns)
+		}
+		self.assertEqual(entries, {"AT&T": "a company & a <brand>", "a<b": "bold"})
+
 
 if __name__ == "__main__":
 	unittest.main()
