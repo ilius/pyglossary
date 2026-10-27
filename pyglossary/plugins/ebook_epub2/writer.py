@@ -213,12 +213,14 @@ p.groupDefinition {
 				),
 			)
 			index += 1
-		for group_label in group_labels:
+		for label_i, group_label in enumerate(group_labels):
 			ncx_items.append(
 				self.NCX_NAVPOINT_TEMPLATE.format(
 					index=index,
 					text=group_label,
-					src=self.get_group_xhtml_file_name_from_index(index),
+					src=self.get_group_xhtml_file_name_from_index(
+						self.GROUP_START_INDEX + label_i,
+					),
 				),
 			)
 			index += 1
