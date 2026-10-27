@@ -35,6 +35,7 @@ This module is used in plugins.
 
 from __future__ import annotations
 
+import html
 import logging
 import os
 import shutil
@@ -77,8 +78,13 @@ class GroupState:
 		return bool(self.last_prefix) and prefix != self.last_prefix
 
 	def add(self, entry: EntryType, prefix: str) -> None:
-		term = entry.s_term
-		defi = entry.defi.replace("<br>", "<br/>").replace("<BR>", "<BR/>")
+		# The term goes into XHTML text and the group labels (NCX, titles, index),
+		# so escape it, and plain text definitions too.
+		term = html.escape(entry.s_term, quote=False)
+		defi = entry.defi
+		if entry.detectDefiFormat() == "m":
+			defi = html.escape(defi, quote=False)
+		defi = defi.replace("<br>", "<br/>").replace("<BR>", "<BR/>")
 		if not self.first_word:
 			self.first_word = term
 		self.last_word = term
