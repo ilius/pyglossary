@@ -16,7 +16,7 @@ from .xdxf.py_transform import XdxfTransformer
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from .glossary_types import EntryType
+	from .stubs.glossary_types import EntryType
 
 __all__ = ["mergePlaintextEntriesWithSameHeadword"]
 

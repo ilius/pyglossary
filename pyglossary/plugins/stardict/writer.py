@@ -35,9 +35,9 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Generator
 
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
 	from pyglossary.langs import Lang
 	from pyglossary.plugins.stardict.sd_types import T_SdList
+	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
 
 __all__ = ["Writer"]

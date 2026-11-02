@@ -19,7 +19,7 @@ from pyglossary.plugins.yomichan.reader import Reader as YomichanReader
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 log = logging.getLogger("pyglossary")
 

@@ -29,7 +29,7 @@ from .format_entry import formatEntry
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from pyglossary.glossary_types import EntryType
+	from pyglossary.stubs.glossary_types import EntryType
 
 
 Glossary.init()

@@ -29,8 +29,8 @@ if TYPE_CHECKING:
 	from collections.abc import Iterator
 	from io import IOBase
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 
 __all__ = ["Reader"]

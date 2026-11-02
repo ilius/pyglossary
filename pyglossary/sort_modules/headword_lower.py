@@ -10,8 +10,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-	from pyglossary.icu_types import T_Collator
-	from pyglossary.sort_keys_types import (
+	from pyglossary.stubs.icu_types import T_Collator
+	from pyglossary.stubs.sort_keys_types import (
 		SortKeyMakerType,
 		SortKeyType,
 		SQLiteSortKeyMakerType,

@@ -53,8 +53,8 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-	from pyglossary.config_type import ConfigType
 	from pyglossary.logger import Logger
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["UI"]
 

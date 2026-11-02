@@ -10,7 +10,7 @@ import lxml.html
 from lxml import etree as ET
 
 if TYPE_CHECKING:
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.stubs.lxml_types import T_htmlfile
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)

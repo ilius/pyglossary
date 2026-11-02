@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 	from io import IOBase
 	from typing import Any
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 
 from pyglossary.compress import (

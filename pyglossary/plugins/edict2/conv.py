@@ -25,7 +25,7 @@ from .util import get_chinese_references
 if TYPE_CHECKING:
 	from collections.abc import Callable, Sequence
 
-	from pyglossary.lxml_types import T_htmlfile
+	from pyglossary.stubs.lxml_types import T_htmlfile
 
 
 __all__ = [

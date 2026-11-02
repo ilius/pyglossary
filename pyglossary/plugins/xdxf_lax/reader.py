@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 
 	from lxml.html import HtmlElement as Element
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 from pyglossary.compress import (
 	compressionOpen,

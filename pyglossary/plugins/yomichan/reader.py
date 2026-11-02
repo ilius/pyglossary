@@ -21,9 +21,9 @@ if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 	from zipfile import ZipInfo
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
-	from .types import (
+	from ._types import (
 		DefinitionObj,
 		StructuredContent,
 		YomichanDefinition,

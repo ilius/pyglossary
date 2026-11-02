@@ -466,7 +466,6 @@ exclude = [
 	"test.py",
 	"pyglossary/ui/",
 	"*_types.py",
-	"pyglossary/ui_type.py",
 	"doc/lib/examples/",
 	"pyglossary/plugin_lib/",
 ]

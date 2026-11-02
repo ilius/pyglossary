@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
-	from .glossary_types import (
+	from .stubs.glossary_types import (
 		EntryType,
 		WriterGlossaryType,
 	)

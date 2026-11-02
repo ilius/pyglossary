@@ -45,7 +45,7 @@ from .macos_icons import configure_macos_dock_icon
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from pyglossary.config_type import ConfigType
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["UI"]
 

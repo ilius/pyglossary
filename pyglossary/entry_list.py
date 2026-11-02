@@ -33,8 +33,8 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
 	from typing import Any
 
-	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
+	from .stubs.glossary_types import EntryType, RawEntryType
 
 from .entry import Entry
 

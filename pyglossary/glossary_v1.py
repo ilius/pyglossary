@@ -38,9 +38,9 @@ from .sort_keys import lookupSortKey
 if TYPE_CHECKING:
 	from typing import Any
 
-	from .glossary_types import EntryType
 	from .plugin_handler import DetectedFormat
-	from .ui_type import UIType
+	from .stubs.glossary_types import EntryType
+	from .stubs.ui_types import UIType
 
 
 __all__ = ["Glossary"]

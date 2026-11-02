@@ -18,7 +18,7 @@ from pyglossary.compress import (
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import (
+	from pyglossary.stubs.glossary_types import (
 		EntryType,
 		WriterGlossaryType,
 	)

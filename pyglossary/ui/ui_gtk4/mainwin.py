@@ -63,8 +63,8 @@ from .utils import (
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from pyglossary.config_type import ConfigType
-	from pyglossary.ui_type import UIType
+	from pyglossary.stubs.config_types import ConfigType
+	from pyglossary.stubs.ui_types import UIType
 
 __all__ = ["MainWindow"]
 

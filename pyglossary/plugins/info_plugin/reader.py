@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import (
+	from pyglossary.stubs.glossary_types import (
 		EntryType,
 		ReaderGlossaryType,
 	)

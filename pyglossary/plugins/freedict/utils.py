@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from typing import Any
 
-	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 
 __all__ = ["XMLLANG", "ReaderUtils"]

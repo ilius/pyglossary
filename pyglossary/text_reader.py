@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
 
 	from .entry_base import MultiStr
-	from .glossary_types import EntryType, ReaderGlossaryType
+	from .stubs.glossary_types import EntryType, ReaderGlossaryType
 
 
 __all__ = [

@@ -75,9 +75,9 @@ from .gtk3_utils.utils import (  # noqa: E402
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from pyglossary.config_type import ConfigType
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
+	from pyglossary.stubs.config_types import ConfigType
 
 # from gi.repository import GdkPixbuf
 

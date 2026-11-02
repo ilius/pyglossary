@@ -18,8 +18,8 @@ from pyglossary.text_utils import uint32ToBytes
 if TYPE_CHECKING:
 	from collections.abc import Callable, Generator
 
-	from pyglossary.glossary_types import EntryType
 	from pyglossary.plugins.stardict.sd_types import T_SdList
+	from pyglossary.stubs.glossary_types import EntryType
 
 
 __all__ = ["Writer"]

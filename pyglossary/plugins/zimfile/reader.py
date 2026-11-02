@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 	from libzim.reader import Archive
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 
 __all__ = ["Reader"]

@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 from pyglossary.sort_modules import ebook
 
 if TYPE_CHECKING:
-	from pyglossary.sort_keys_types import SortKeyType, SQLiteSortKeyType
+	from pyglossary.stubs.sort_keys_types import SortKeyType, SQLiteSortKeyType
 
 
 desc = "E-Book (prefix length: 3)"

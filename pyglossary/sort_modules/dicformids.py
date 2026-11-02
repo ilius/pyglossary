@@ -11,7 +11,7 @@ import re
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-	from pyglossary.sort_keys_types import SortKeyType, SQLiteSortKeyType
+	from pyglossary.stubs.sort_keys_types import SortKeyType, SQLiteSortKeyType
 
 
 desc = "DictionaryForMIDs"

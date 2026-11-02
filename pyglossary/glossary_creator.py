@@ -29,8 +29,8 @@ from .sq_entry_list import SqEntryList
 
 if TYPE_CHECKING:
 	from .entry_base import MultiStr
-	from .glossary_types import EntryType
 	from .plugin_prop import PluginProp
+	from .stubs.glossary_types import EntryType
 
 
 __all__ = ["GlossaryCreator"]

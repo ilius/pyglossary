@@ -46,7 +46,7 @@ from .websocket_handler import HTTPWebSocketHandler
 from .websocket_server import HttpWebsocketServer
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import EntryType
+	from pyglossary.stubs.glossary_types import EntryType
 
 	class ServerType(Protocol):
 		"""Server Type."""

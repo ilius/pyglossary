@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 	from lxml.etree import _Element
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 __all__ = ["Reader"]
 

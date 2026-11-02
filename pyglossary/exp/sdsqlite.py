@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Generator, Iterator
 
-	from pyglossary.glossary_types import (
+	from pyglossary.stubs.glossary_types import (
 		EntryType,
 		ReaderGlossaryType,
 		WriterGlossaryType,

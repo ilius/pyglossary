@@ -17,7 +17,7 @@ from pyglossary.text_utils import escapeNTB
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["Writer"]
 

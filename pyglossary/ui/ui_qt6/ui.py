@@ -71,7 +71,7 @@ from .qt_imports import (
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-	from pyglossary.config_type import ConfigType
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["UI"]
 

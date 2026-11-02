@@ -38,7 +38,7 @@ from .reader_data import Block, EntryWordData
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType
+	from pyglossary.stubs.glossary_types import EntryType
 
 __all__ = ["_BglReaderEntries"]
 

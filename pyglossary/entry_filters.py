@@ -22,8 +22,8 @@ from . import core
 from .text_utils import fixUtf8Str
 
 if TYPE_CHECKING:
-	from .glossary_types import Callable, EntryType
 	from .langs import Lang
+	from .stubs.glossary_types import Callable, EntryType
 
 
 __all__ = [

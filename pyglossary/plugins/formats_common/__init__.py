@@ -41,7 +41,6 @@ from pyglossary.flags import (
 	NEVER,
 	YesNoAlwaysNever,
 )
-from pyglossary.glossary_types import EntryType, ReaderGlossaryType, WriterGlossaryType
 from pyglossary.option import (
 	BoolOption,
 	DictOption,
@@ -55,6 +54,11 @@ from pyglossary.option import (
 	StrOption,
 )
 from pyglossary.os_utils import indir
+from pyglossary.stubs.glossary_types import (
+	EntryType,
+	ReaderGlossaryType,
+	WriterGlossaryType,
+)
 from pyglossary.text_utils import toStr
 
 if TYPE_CHECKING:

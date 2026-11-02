@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["Writer"]
 

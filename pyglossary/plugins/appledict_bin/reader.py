@@ -56,8 +56,8 @@ if TYPE_CHECKING:
 		HtmlProcessingInstruction,
 	)
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.lxml_types import Element
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.lxml_types import Element
 
 	from .appledict_properties import AppleDictProperties
 	from .key_data import RawKeyDataType

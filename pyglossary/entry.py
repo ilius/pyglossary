@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 	from typing import Any
 
 	from .entry_base import MultiStr
-	from .glossary_types import RawEntryType
+	from .stubs.glossary_types import RawEntryType
 
 
 __all__ = ["DataEntry", "Entry"]

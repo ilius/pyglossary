@@ -51,9 +51,9 @@ from .interactive_prompt import InteractivePrompt
 from .path_comp import MyPathCompleter
 
 if TYPE_CHECKING:
-	from pyglossary.config_type import ConfigType
 	from pyglossary.option import Option
 	from pyglossary.plugin_prop import PluginProp
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["UI"]
 

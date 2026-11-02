@@ -32,7 +32,7 @@ from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.text_reader import TextGlossaryReader
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import ReaderGlossaryType
 
 __all__ = ["Reader"]
 

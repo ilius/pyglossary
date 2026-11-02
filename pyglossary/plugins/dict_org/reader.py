@@ -17,7 +17,7 @@ from pyglossary.plugin_lib.dictdlib import DictDB
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 __all__ = ["Reader"]
 

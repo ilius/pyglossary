@@ -20,7 +20,7 @@ from pyglossary.ui.base import UIBase
 from .websocket_main import create_server
 
 if TYPE_CHECKING:
-	from pyglossary.config_type import ConfigType
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["WebUI"]
 

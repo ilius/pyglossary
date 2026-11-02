@@ -13,9 +13,9 @@ import os
 import sys
 from typing import TYPE_CHECKING, Any, cast
 
-from pyglossary.config_type import ConfigType
 from pyglossary.core import sysName
 from pyglossary.glossary_v2 import Error
+from pyglossary.stubs.config_types import ConfigType
 
 from .base import UIBase
 

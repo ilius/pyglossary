@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 	from collections.abc import Generator
 	from typing import Any
 
-	from .glossary_types import EntryType, WriterGlossaryType
+	from .stubs.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["EbookWriter"]
 

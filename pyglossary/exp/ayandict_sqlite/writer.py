@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Generator
 
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 	from pyglossary.xdxf.py_transform import XdxfTransformer
 
 

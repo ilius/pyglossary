@@ -34,9 +34,9 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
 	from typing import Any
 
-	from .glossary_types import EntryType, RawEntryType
 	from .sort_keys import NamedSortKey
-	from .sort_keys_types import SQLiteSortKeyType
+	from .stubs.glossary_types import EntryType, RawEntryType
+	from .stubs.sort_keys_types import SQLiteSortKeyType
 
 
 __all__ = ["SqEntryList"]

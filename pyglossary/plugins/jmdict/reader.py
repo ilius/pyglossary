@@ -25,11 +25,11 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Callable, Iterator
 
-	from pyglossary.glossary_types import (
+	from pyglossary.stubs.glossary_types import (
 		EntryType,
 		ReaderGlossaryType,
 	)
-	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 __all__ = ["Reader"]
 

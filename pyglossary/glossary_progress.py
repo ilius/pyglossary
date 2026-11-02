@@ -16,8 +16,8 @@ if TYPE_CHECKING:
 	from collections.abc import Iterable, Iterator
 	from typing import Protocol
 
-	from .glossary_types import EntryType
-	from .ui_type import UIType
+	from .stubs.glossary_types import EntryType
+	from .stubs.ui_types import UIType
 
 	class ReaderType(Protocol):
 		"""Reader Type."""

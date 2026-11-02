@@ -47,7 +47,7 @@ from .reader_io import _BglReaderIO
 from .reader_meta import _BglReaderMeta
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import ReaderGlossaryType
 
 __all__ = [
 	"Block",

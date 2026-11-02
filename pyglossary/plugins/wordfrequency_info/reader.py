@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 from pyglossary.text_reader import TextGlossaryReader
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import ReaderGlossaryType
 	from pyglossary.text_reader import nextBlockResultType
 
 __all__ = ["Reader"]

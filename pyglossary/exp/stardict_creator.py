@@ -19,7 +19,7 @@ from pyglossary.sort_keys import lookupSortKey
 from pyglossary.sq_entry_list import SqEntryList
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import EntryType, RawEntryType
+	from pyglossary.stubs.glossary_types import EntryType, RawEntryType
 
 __all__ = ["StarDictCreator"]
 

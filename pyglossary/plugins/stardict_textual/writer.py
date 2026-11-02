@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 	from lxml import builder
 
-	from pyglossary.glossary_types import EntryType, WriterGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
 
 from pyglossary.compress import (

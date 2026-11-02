@@ -18,7 +18,7 @@ from pyglossary.core import pip, rootDir
 if TYPE_CHECKING:
 	from lxml.etree import _XSLTResultTree
 
-	from pyglossary.lxml_types import Element
+	from pyglossary.stubs.lxml_types import Element
 
 
 log = logging.getLogger("pyglossary")

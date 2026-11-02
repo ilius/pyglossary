@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, cast
 from lxml.etree import _Element  # noqa: PLC2701
 
 if TYPE_CHECKING:
-	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 log = logging.getLogger("pyglossary")
 

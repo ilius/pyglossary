@@ -39,7 +39,7 @@ from .wcwidth import wcswidth
 if TYPE_CHECKING:
 	import logging
 
-	from pyglossary.config_type import ConfigType
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = [
 	"COMMAND",

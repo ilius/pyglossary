@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 	import argparse
 	import logging
 
-	from pyglossary.config_type import ConfigType
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["configFromArgs", "defineFlags", "validateFlags"]
 

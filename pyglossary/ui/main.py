@@ -39,7 +39,7 @@ from .argparse_main import configFromArgs, defineFlags, validateFlags
 from .base import UIBase
 
 if TYPE_CHECKING:
-	from pyglossary.config_type import ConfigType
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["main"]
 

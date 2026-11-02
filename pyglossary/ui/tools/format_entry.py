@@ -11,7 +11,7 @@ import os
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import EntryType
+	from pyglossary.stubs.glossary_types import EntryType
 
 __all__ = ["formatEntry"]
 

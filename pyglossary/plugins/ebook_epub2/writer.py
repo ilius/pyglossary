@@ -32,7 +32,7 @@ from typing import TYPE_CHECKING
 from pyglossary.ebook_base import EbookWriter
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import WriterGlossaryType
+	from pyglossary.stubs.glossary_types import WriterGlossaryType
 
 __all__ = ["Writer"]
 

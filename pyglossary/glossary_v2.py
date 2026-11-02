@@ -78,17 +78,17 @@ if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator
 	from typing import Any
 
-	from .config_type import ConfigType
 	from .entry_base import MultiStr
 	from .entry_filters import EntryFilterType
-	from .glossary_types import (
+	from .plugin_prop import PluginProp
+	from .sort_keys import NamedSortKey
+	from .stubs.config_types import ConfigType
+	from .stubs.glossary_types import (
 		EntryListType,
 		EntryType,
 		RawEntryType,
 	)
-	from .plugin_prop import PluginProp
-	from .sort_keys import NamedSortKey
-	from .ui_type import UIType
+	from .stubs.ui_types import UIType
 
 
 __all__ = [

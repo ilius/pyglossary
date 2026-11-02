@@ -22,8 +22,8 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.lxml_types import Element
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.lxml_types import Element
 	from pyglossary.xdxf.py_transform import XdxfTransformer
 
 

@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 	import io
 	from collections.abc import Iterator
 
-	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 	class XdxfTransformerType(Protocol):
 		"""Xdxf Transformer Type."""

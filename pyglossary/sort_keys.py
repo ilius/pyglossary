@@ -32,8 +32,8 @@ if TYPE_CHECKING:
 	from collections.abc import Callable
 	from types import ModuleType
 
-	from .icu_types import T_Collator, T_Locale
-	from .sort_keys_types import (
+	from .stubs.icu_types import T_Collator, T_Locale
+	from .stubs.sort_keys_types import (
 		LocaleSortKeyMakerType,
 		LocaleSQLiteSortKeyMakerType,
 		SortKeyMakerType,

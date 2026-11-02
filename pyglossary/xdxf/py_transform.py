@@ -33,7 +33,7 @@ from lxml import etree as ET
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary.lxml_types import Element
+	from pyglossary.stubs.lxml_types import Element
 
 log = logging.getLogger("pyglossary")
 

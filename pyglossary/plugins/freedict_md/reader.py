@@ -17,8 +17,8 @@ from pyglossary.plugins.freedict.reader import Reader as FreeDictReader
 from .md_emit import MdEmit
 
 if TYPE_CHECKING:
-	from pyglossary.glossary_types import EntryType
-	from pyglossary.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.glossary_types import EntryType
+	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 
 _NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
