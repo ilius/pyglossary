@@ -386,7 +386,7 @@ class LanguageCleanup(EntryFilter):
 			log.info("Using Persian filter")
 
 	def run_fa(self, entry: EntryType) -> EntryType | None:  # noqa: PLR6301
-		from .persian_utils import faEditStr
+		from .langs.persian_utils import faEditStr
 
 		entry.editFuncTerm(faEditStr)
 		entry.editFuncDefi(faEditStr)
