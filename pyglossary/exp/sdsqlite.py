@@ -1,9 +1,10 @@
 """
-SQLite reader and writer helpers for StarDict-style glossaries.
+Experimental SQLite-backed glossary reader and writer.
 
-Provides ``Writer`` and ``Reader`` classes that store headwords, definitions,
-and synonym rows in a temporary SQLite database used by the StarDict plugin and
-related tooling.
+This module is not currently used anywhere. It was an attempt to store glossary
+entries in a SQLite database that can be converted to StarDict directly, letting
+SQLite handle the sorting instead of loading all entries into RAM or writing a
+separate temporary SQLite file for sorting.
 """
 
 from __future__ import annotations
@@ -11,9 +12,9 @@ from __future__ import annotations
 from os.path import isfile
 from typing import TYPE_CHECKING
 
-from .core import log
-from .glossary_utils import Error
-from .text_utils import (
+from pyglossary.core import log
+from pyglossary.glossary_utils import Error
+from pyglossary.text_utils import (
 	joinByBar,
 	splitByBar,
 )
@@ -22,7 +23,11 @@ if TYPE_CHECKING:
 	import sqlite3
 	from collections.abc import Generator, Iterator
 
-	from .glossary_types import EntryType, ReaderGlossaryType, WriterGlossaryType
+	from pyglossary.glossary_types import (
+		EntryType,
+		ReaderGlossaryType,
+		WriterGlossaryType,
+	)
 
 
 class Writer:
