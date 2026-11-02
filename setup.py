@@ -175,7 +175,7 @@ setup(
 			"pyicu",
 			"PyYAML",
 			"marisa-trie",
-			"libzim",
+			"libzim>=4.0",
 			"python-lzo",
 			"html5lib",
 		],

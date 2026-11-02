@@ -4,7 +4,7 @@ biplist
 colorize-pinyin
 html5lib
 jaconv
-libzim>=1.0
+libzim>=4.0
 lxml
 marisa-trie
 markdown-it-py

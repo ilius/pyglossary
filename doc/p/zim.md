@@ -29,12 +29,12 @@ To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
 
 ### Dependencies for reading
 
-PyPI Links: [libzim>=1.0](https://pypi.org/project/libzim%3E=1.0)
+PyPI Links: [libzim>=4.0](https://pypi.org/project/libzim%3E=4.0)
 
 To install, run:
 
 ```sh
-pip3 install libzim>=1.0
+pip3 install libzim>=4.0
 ```
 
 ### Dictionary Applications/Tools

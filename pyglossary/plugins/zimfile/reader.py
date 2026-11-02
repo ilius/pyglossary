@@ -32,7 +32,7 @@ class Reader:
 	_html_unicode_errors = "replace"
 	useByteProgress = False
 	depends = {
-		"libzim": "libzim>=1.0",
+		"libzim": "libzim>=4.0",
 	}
 
 	resourceMimeTypes = {
@@ -109,7 +109,7 @@ class Reader:
 		html_unicode_errors = self._html_unicode_errors
 
 		for entryIndex in range(entryCount):
-			zEntry = zimfile._get_entry_by_id(entryIndex)
+			zEntry = zimfile.get_entry_by_id(entryIndex)
 			term = zEntry.title
 
 			if zEntry.is_redirect:

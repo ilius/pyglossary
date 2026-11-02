@@ -2466,7 +2466,7 @@
 			"html_unicode_errors": "replace"
 		},
 		"readDepends": {
-			"libzim": "libzim>=1.0"
+			"libzim": "libzim>=4.0"
 		}
 	}
 ]
