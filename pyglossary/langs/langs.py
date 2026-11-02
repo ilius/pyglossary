@@ -1,7 +1,7 @@
 """
 Language code metadata loaded from PyGlossary locale data.
 
-``Lang`` stores ISO codes, display names, title HTML tags, and RTL flags;
+``Lang`` stores ISO codes, display names and other metadata;
 ``langDict`` indexes all known languages for UI pickers and writers.
 """
 
@@ -19,7 +19,7 @@ log = logging.getLogger("pyglossary")
 
 
 class Lang:
-	"""Language code and display name."""
+	"""Language codes, names and metadata class."""
 
 	def __init__(
 		self,

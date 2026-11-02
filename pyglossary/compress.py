@@ -7,8 +7,6 @@ Opens files transparently with ``gzip``, ``bz2``, or ``lzma`` based on the filen
 extension, and provides ``compress`` / ``uncompress`` utilities plus
 ``zipFileOrDir`` for packaging dictionary output. Supported extensions are listed
 in ``stdCompressions``.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations

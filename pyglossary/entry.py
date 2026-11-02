@@ -1,7 +1,7 @@
 """
 Glossary entry and binary data entry types.
 
-Defines ``Entry`` (term + definition, with alternate terms and defi formats) and
+Defines ``Entry`` (term + definition, with alternate terms and definition formats) and
 ``DataEntry`` (embedded binary resources such as images or audio). Both extend
 ``BaseEntry`` and are the objects plugins and ``Glossary`` exchange during
 read/write.
@@ -179,7 +179,7 @@ class DataEntry(BaseEntry):  # noqa: PLR0904
 
 # Too many public methods (21 > 20)
 class Entry(BaseEntry):  # noqa: PLR0904
-	"""A single glossary entry with term and definition."""
+	"""A single glossary entry with term(s) and definition."""
 
 	xdxfPattern = re.compile("^<k>[^<>]*</k>", re.DOTALL | re.IGNORECASE)
 	htmlPattern = re.compile(

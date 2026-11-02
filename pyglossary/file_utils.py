@@ -5,8 +5,6 @@ Fast line counting for large text files.
 
 ``fileCountLines`` reads a file in chunks and counts newline bytes without
 loading the whole file into memory.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations

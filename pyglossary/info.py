@@ -6,8 +6,6 @@ Canonical glossary metadata key names and aliases.
 Defines standard info field constants (``c_name``, ``c_sourceLang``,
 ``c_targetLang``, etc.) and ``infoKeysAliasDict`` to map common variant keys
 from source formats onto those canonical names.
-
-This module is used in plugins.
 """
 
 __all__ = [

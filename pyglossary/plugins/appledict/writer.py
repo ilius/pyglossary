@@ -1,7 +1,7 @@
 #
 # Output to Apple Dictionary xml sources for Dictionary Development Kit.
 #
-# Copyright © 2016-2023 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
+# Copyright © 2016-2026 Saeed Rasooli <saeed.gnu@gmail.com> (ilius)
 # Copyright © 2016 ivan tkachenko <me@ratijas.tk>
 # Copyright © 2012-2015 Xiaoqiang Wang <xiaoqiangwang AT gmail DOT com>
 #
@@ -20,7 +20,7 @@
 """
 Write AppleDict Dictionary Development Kit XML sources.
 
-Emits ``.apple`` directory bundles with entry XML, CSS, plist metadata, and
+Emits the directory bundles with entry XML, CSS, plist metadata, and
 optional extended indexes. Normalizes HTML definitions and validates output
 against the Jing RELAX NG schema when enabled.
 """

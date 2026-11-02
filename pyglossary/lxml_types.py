@@ -144,7 +144,7 @@ class T_htmlfile(  # noqa: PGH003
 	# AsyncIncrementalFileWriter,
 	# AsyncContextManager[AsyncIncrementalFileWriter],
 ):
-	"""T htmlfile."""
+	"""Typing stub for htmlfile."""
 
 
 # typing.AsyncContextManager

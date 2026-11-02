@@ -1,12 +1,15 @@
 """
-Plugin configuration option types.
+Configuration option types.
 
 Defines the ``Option`` base class and typed subclasses (``BoolOption``,
-``StrOption``, ``EncodingOption``, ``FileSizeOption``, etc.) used in plugin
-``optionsProp`` dicts. Options carry display metadata, allowed values, CLI flag
-names, and validation for read/write plugin settings.
+``StrOption``, etc.).
+Options carry display metadata, allowed values, CLI flag
+names, and validation for user-defined values.
 
-Plugins and ``PluginProp`` deserialize options via ``optionFromDict``.
+Callers can deserialize options via ``optionFromDict``.
+
+This package is used for plugins' read/write options,
+as well of other configurations (via ui/config.py).
 
 This module is used in plugins.
 """

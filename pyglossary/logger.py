@@ -3,7 +3,7 @@ Logging configuration and helpers for PyGlossary.
 
 Sets up the root ``pyglossary`` logger with verbosity levels (including custom
 ``TRACE``), optional timestamps, terminal color formatting, and
-``StdLogHandler`` integration for UI log panes.
+``StdLogHandler`` integration for UI log console.
 """
 
 from __future__ import annotations

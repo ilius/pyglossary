@@ -6,8 +6,6 @@ Shared typing protocols for glossary entries and I/O.
 Defines ``EntryType``, ``RawEntryType``, ``EntryListType``, and reader/writer
 ``Protocol`` types that decouple core conversion logic from concrete ``Entry``
 and ``Glossary`` implementations.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations
@@ -178,7 +176,7 @@ class GlossaryInfoCommonType(Protocol):
 
 
 class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
-	"""Reader Glossary Type."""
+	"""Reader type for use in Glossary class."""
 
 	def newEntry(
 		self,
@@ -209,7 +207,7 @@ class ReaderGlossaryType(GlossaryInfoCommonType, Protocol):
 class WriterGlossaryType(GlossaryInfoCommonType, Protocol):
 	# def __len__(self) -> int: ...
 
-	"""Writer Glossary Type."""
+	"""Writer type for use in Glossary class."""
 
 	@property
 	def filename(self) -> str: ...

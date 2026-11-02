@@ -1,5 +1,5 @@
 """
-Entry filter plugins for glossary conversion.
+Entry filter classes for glossary conversion.
 
 Each filter subclasses ``EntryFilter`` and implements ``prepare()`` and
 ``run(entry)`` — returning a modified entry or ``None`` to skip it. Filters are

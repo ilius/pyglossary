@@ -6,8 +6,6 @@ Yes/no/always/never flag values for plugin options.
 ``StrWithDesc`` pairs each flag name with a human-readable description and
 registers it in ``flagsByName``. Predefined values include ``ALWAYS``,
 ``DEFAULT_YES``, ``DEFAULT_NO``, and ``NEVER``.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations
@@ -28,7 +26,7 @@ flagsByName: dict[str, StrWithDesc] = {}
 
 
 class StrWithDesc(str):
-	"""Str With Desc."""
+	"""String with `desc` attribute (description)."""
 
 	desc: str
 	__slots__ = ["desc"]

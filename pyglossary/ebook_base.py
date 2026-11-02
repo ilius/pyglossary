@@ -29,8 +29,6 @@ Shared base writer for ebook glossary formats (EPUB, MOBI, Kobo, etc.).
 ``EbookWriter`` groups entries by headword prefix, builds OPF/NCX/HTML (or
 format-specific) structure inside a temporary directory, and packages the result
 as a zip archive. Subclassed by individual ebook plugins.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations

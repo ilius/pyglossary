@@ -5,8 +5,6 @@ Write PyGlossary ``.info`` metadata sidecar files.
 
 ``InfoWriter`` streams glossary metadata (title, languages, author, entry count,
 and extra info keys) to a text info file alongside converted dictionary output.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations

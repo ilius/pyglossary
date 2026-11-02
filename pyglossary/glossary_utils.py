@@ -24,8 +24,6 @@ Shared glossary error types and filename helpers.
 Defines ``Error``, ``ReadError``, and ``WriteError`` as the common exception
 hierarchy for conversion failures, and ``splitFilenameExt`` to peel compression
 and format extensions from a dictionary path.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations

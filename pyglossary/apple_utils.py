@@ -20,8 +20,6 @@ Normalize Apple Dictionary CSS for broader HTML renderers.
 ``substituteAppleCSS`` strips WebKit-only properties, maps macOS system font
 names to portable alternatives, and rewrites other Apple-specific CSS so
 dictionary styling survives outside Dictionary.app.
-
-This module is used in plugins.
 """
 
 from __future__ import annotations

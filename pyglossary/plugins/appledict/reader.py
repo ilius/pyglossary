@@ -9,7 +9,7 @@
 """
 Read AppleDict Dictionary Development Kit XML sources.
 
-Loads ``.apple`` directory bundles with entry XML, CSS, and plist metadata.
+Loads the directory bundles with entry XML, CSS, and plist metadata.
 Parses DDK entry elements into glossary headwords with HTML definitions and
 optional extended index data.
 """
