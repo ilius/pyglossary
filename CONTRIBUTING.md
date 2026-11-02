@@ -164,6 +164,7 @@ Optional **`tools.toml`** next to `__init__.py` (for example [`pyglossary/plugin
 | Entry structure, filters | [ARCHITECTURE.md — Entry model and filters](ARCHITECTURE.md#entry-model-and-filters), [doc/entry-filters.md](doc/entry-filters.md) |
 | Configuration | [doc/config.rst](doc/config.rst) |
 | Using PyGlossary from Python | [doc/lib/usage.md](doc/lib/usage.md), [doc/lib/examples/](doc/lib/examples/) |
+| Third-party plugin API | [doc/plugin-api.md](doc/plugin-api.md) |
 | Direct / indirect mode, SQLite, sorting | [README.md](README.md) |
 | Plugin examples | [pyglossary/plugins/testformat/](pyglossary/plugins/testformat/), [pyglossary/plugins/csv_plugin/](pyglossary/plugins/csv_plugin/) |
 

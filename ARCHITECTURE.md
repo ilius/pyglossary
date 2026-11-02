@@ -93,6 +93,7 @@ Embedding PyGlossary in other Python code is described in [**doc/lib/usage.md**]
 | ----- | -------- |
 | Contributor setup, tests, Ruff, `scripts/gen` | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Entry filters (full list and flags) | [doc/entry-filters.md](doc/entry-filters.md) |
+| Third-party plugin API (allowed imports) | [doc/plugin-api.md](doc/plugin-api.md) |
 | Configuration reference | [doc/config.rst](doc/config.rst) |
 | Direct vs indirect mode, SQLite mode, sorting (user-oriented) | [README.md](README.md) |
 | Minimal plugin examples | [pyglossary/plugins/testformat/](pyglossary/plugins/testformat/), [pyglossary/plugins/csv_plugin/](pyglossary/plugins/csv_plugin/) |
