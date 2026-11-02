@@ -49,7 +49,7 @@ The internal shape of an entry (headword, alternates, definition text vs HTML/XD
 
 ## Library usage
 
-Embedding PyGlossary in other Python code is described in [**doc/lib-usage.md**](doc/lib-usage.md) and examples under [**doc/lib-examples/**](doc/lib-examples/).
+Embedding PyGlossary in other Python code is described in [**doc/lib/usage.md**](doc/lib/usage.md) and examples under [**doc/lib/examples/**](doc/lib/examples/).
 
 ## Further reading
 

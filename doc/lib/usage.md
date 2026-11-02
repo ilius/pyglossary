@@ -1,8 +1,8 @@
 # Using PyGlossary as a Python library
 
-There are a few examples in [doc/lib-examples](./doc/lib-examples) directory.
+There are a few examples in [doc/lib/examples](./examples) directory.
 
-Here is a basic script that converts any supported glossary format to [Tabfile](./doc/p/tabfile.md):
+Here is a basic script that converts any supported glossary format to [Tabfile](../p/tabfile.md):
 
 ```python
 import sys

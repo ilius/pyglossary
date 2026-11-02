@@ -6,7 +6,7 @@ it to any supported format. Unlike loading everything into ``Glossary`` and
 calling ``write()``, formats that always sort on write buffer entries in
 SQLite so large glossaries need not fit in memory.
 
-See ``doc/lib-examples/custom-writer-epub2.py`` for a minimal example.
+See ``doc/lib/examples/custom-writer-epub2.py`` for a minimal example.
 
 Note: entry filters (configured on ``Glossary``) do not apply to
 ``GlossaryCreator``.

@@ -324,7 +324,7 @@ you can place it in this directory:
 
 ## Using PyGlossary as a library
 
-See [doc/lib-usage.md](./doc/lib-usage.md) for how to use PyGlossary as a Python library.
+See [doc/lib/usage.md](./doc/lib/usage.md) for how to use PyGlossary as a Python library.
 
 ## Plugin development
 
