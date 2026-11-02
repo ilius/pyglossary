@@ -52,15 +52,15 @@ class Writer:
 		self._cur = self._con.cursor()
 		self._con.execute(
 			"CREATE TABLE dict ("
-			"word TEXT,"
-			"wordlower TEXT,"
+			"term TEXT,"
+			"termlower TEXT,"
 			"alts TEXT,"
 			"defi TEXT,"
 			"defiFormat CHAR(1),"
 			"bindata BLOB)",
 		)
 		self._con.execute(
-			"CREATE INDEX dict_sortkey ON dict(wordlower, word);",
+			"CREATE INDEX dict_sortkey ON dict(termlower, term);",
 		)
 
 	def write(self) -> Generator[None, EntryType, None]:
@@ -83,7 +83,7 @@ class Writer:
 				bindata = entry.data
 			cur.execute(
 				"insert into dict("
-				"word, wordlower, alts, "
+				"term, termlower, alts, "
 				"defi, defiFormat, bindata)"
 				" values (?, ?, ?, ?, ?, ?)",
 				(
@@ -139,7 +139,7 @@ class Reader:
 		if self._cur is None:
 			raise Error("SQLite cursor is closed")
 		self._cur.execute(
-			"select word, alts, defi, defiFormat from dict order by wordlower, word",
+			"select term, alts, defi, defiFormat from dict order by termlower, term",
 		)
 		for row in self._cur:
 			terms = [row[0]] + splitByBar(row[1])
