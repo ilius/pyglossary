@@ -97,7 +97,6 @@ CORE_PATHS = (
 	"pyglossary/compression.py",
 	"pyglossary/flags.py",
 	"pyglossary/os_utils.py",
-	"pyglossary/reverse.py",
 	"pyglossary/xdxf/",
 	"pyglossary/html_utils.py",
 	"pyglossary/io_utils.py",

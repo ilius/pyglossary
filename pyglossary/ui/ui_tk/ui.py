@@ -709,7 +709,6 @@ class UI(tk.Frame, UIBase):
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -744,9 +743,6 @@ class UI(tk.Frame, UIBase):
 				Glossary.plugins[outputFormat].description,
 			)
 			self.outputFormatChangedAuto()
-
-		if reverse:
-			log.error("Tkinter interface does not support Reverse feature")
 
 		pbar = ProgressBar(
 			self.statusBarFrame,
@@ -809,12 +805,3 @@ class UI(tk.Frame, UIBase):
 	def console_clear(self, _event: tk.Event | None = None) -> None:
 		self.console.delete("1.0", "end")
 		self.console.insert("end", "Console:\n")
-
-	# def reverseBrowseInput(self):
-	# 	pass
-
-	# def reverseBrowseOutput(self):
-	# 	pass
-
-	# def reverseLoad(self):
-	# 	pass

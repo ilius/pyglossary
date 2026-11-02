@@ -39,8 +39,6 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
             ${CMD} --version
         To Convert:
             ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>
-        To Reverse:
-            ${CMD} <u>INPUT_FILE</u> <u>OUTPUT_FILE</u>.txt --reverse
         Input and output formats will be detected from extensions if possible.
         If not, you need to specify input or output format, for example:
             ${CMD} test.utf8 test.ifo --read-format=tabfile
@@ -86,7 +84,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         [--json-read-options=<u>JSON</u>] [--json-write-options=<u>JSON</u>]
         [--source-lang=<u>LANGUAGE</u>] [--target-lang=<u>LANGUAGE</u>]
         ['--name=<u>GLOSSARY NAME</u>'] ['--license=LICENSE NAME'] ['--copyright=COPYRIGHT MESSAGE']
-        [--info] [--cleanup|--no-cleanup] [--reverse]
+        [--info] [--cleanup|--no-cleanup]
 
 <b>Direct and indirect modes</b>
     Indirect mode means the input glossary is completely read and loaded into RAM, then converted
@@ -157,7 +155,6 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
     --info                   save a .info JSON file alongside output file(s)
     --alts / --no-alts       enable or disable alternate terms (synonyms)
     --cleanup / --no-cleanup delete or keep cache/temporary files after conversion
-    --reverse                reverse source and target languages in definitions
 
 
 Command line arguments and options (and arguments for options) is parsed with GNU getopt method

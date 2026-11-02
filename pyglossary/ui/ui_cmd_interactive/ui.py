@@ -859,7 +859,6 @@ class UI(ui_cmd.UI):
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -871,11 +870,7 @@ class UI(ui_cmd.UI):
 
 		Unlike the base :meth:`pyglossary.ui.ui_cmd.UI.run`, this implementation
 		keeps the process alive: user may convert again or save edited config.
-		``reverse`` is not supported here.
 		"""
-		if reverse:
-			raise NotImplementedError("Reverse is not implemented in this UI")
-
 		self._session.inputFilename = inputFilename
 		self._session.outputFilename = outputFilename
 		self._session.inputFormat = inputFormat

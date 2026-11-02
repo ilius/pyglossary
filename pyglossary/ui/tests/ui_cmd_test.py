@@ -284,30 +284,5 @@ class TestUiCmdProgressHooks(unittest.TestCase):
 			log.removeHandler(std_handler)
 
 
-class TestUiCmdReverse(unittest.TestCase):
-	"""``run(..., reverse=True)`` without real glossary I/O."""
-
-	@classmethod
-	def setUpClass(cls) -> None:
-		Glossary.init()
-
-	def test_reverse_invokes_read_and_reverse_pipeline(self) -> None:
-		def empty_reverse(*_a, **_k):
-			yield from ()
-
-		def fake_read(_self, *_args, **_kwargs):
-			return True
-
-		with patch.object(Glossary, "read", fake_read, create=True):
-			with patch("pyglossary.reverse.reverseGlossary", empty_reverse):
-				with silence_pyglossary_log():
-					ok = UI().run(
-						reverse=True,
-						inputFilename="/tmp/in.txt",
-						outputFilename="/tmp/out.txt",
-					)
-		self.assertTrue(ok)
-
-
 if __name__ == "__main__":
 	unittest.main()

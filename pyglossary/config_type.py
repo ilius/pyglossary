@@ -46,9 +46,3 @@ class ConfigType(TypedDict):
 	# tk.progressbar.color.background: str
 	# tk.progressbar.color.text: str
 	# tk.progressbar.font: str
-	reverse_matchWord: NotRequired[bool]
-	reverse_showRel: NotRequired[str]
-	reverse_saveStep: NotRequired[int]
-	reverse_minRel: NotRequired[float]
-	reverse_maxNum: NotRequired[float]
-	reverse_includeDefs: NotRequired[bool]

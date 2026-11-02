@@ -627,7 +627,6 @@ class UI(UIBase):
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -659,9 +658,6 @@ class UI(UIBase):
 			self._setInputFormat(Glossary.plugins[inputFormat].description)
 		if outputFormat:
 			self._setOutputFormat(Glossary.plugins[outputFormat].description)
-
-		if reverse:
-			log.error("Slint interface does not support Reverse feature")
 
 		if readOptions:
 			self.readOptions = readOptions

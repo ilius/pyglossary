@@ -59,15 +59,12 @@ class WebUI(UIBase):
 		outputFilename: str,
 		inputFormat: str,
 		outputFormat: str,
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
 		convertOptions: dict[str, Any] | None = None,
 		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> bool:
-		if reverse:
-			raise ValueError("reverse is not supported")
 		self.inputFilename = inputFilename
 		self.outputFilename = outputFilename
 		self.inputFormat = inputFormat

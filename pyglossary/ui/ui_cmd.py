@@ -38,7 +38,6 @@ from .wcwidth import wcswidth
 
 if TYPE_CHECKING:
 	import logging
-	from collections.abc import Mapping
 
 	from pyglossary.config_type import ConfigType
 
@@ -251,40 +250,6 @@ class UI(UIBase):
 		if self._resetLogFormatter:
 			self._resetLogFormatter()
 
-	def reverseLoop(
-		self,
-		*_args: tuple[Any],
-		**kwargs: Mapping[Any],
-	) -> None:
-		from pyglossary.reverse import reverseGlossary
-
-		reverseKwArgs: dict[str, Any] = {}
-		for key in (
-			"words",
-			"matchWord",
-			"showRel",
-			"includeDefs",
-			"saveStep",
-			"maxNum",
-			"minRel",
-			"minWordLen",
-		):
-			try:
-				reverseKwArgs[key] = self.config["reverse_" + key]
-			except KeyError:
-				pass
-		reverseKwArgs.update(kwargs)
-
-		if not self._toPause:
-			log.info("Reversing glossary... (Press Ctrl+C to pause/stop)")
-		for _ in reverseGlossary(self.glos, **reverseKwArgs):
-			if self._toPause:
-				log.info(
-					"Reverse is paused. Press Enter to continue, and Ctrl+C to exit",
-				)
-				input()
-				self._toPause = False
-
 	# PLR0912 Too many branches (19 > 12)
 	def run(  # noqa: PLR0912, PLR0913
 		self,
@@ -292,7 +257,6 @@ class UI(UIBase):
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -325,9 +289,7 @@ class UI(UIBase):
 				log.error(f"try: {COMMAND} --help")
 				return False
 		if not outputFilename:
-			if reverse:
-				pass
-			elif outputFormat:
+			if outputFormat:
 				try:
 					ext = Glossary.plugins[outputFormat].extensions[0]
 				except (KeyError, IndexError):
@@ -346,23 +308,6 @@ class UI(UIBase):
 
 		for attr, value in glossarySetAttrs.items():
 			setattr(glos, attr, value)
-
-		if reverse:
-			import signal
-
-			signal.signal(signal.SIGINT, self.onSigInt)
-			readOptions["direct"] = True
-			if not glos.read(
-				inputFilename,
-				formatName=inputFormat,
-				**readOptions,
-			):
-				log.error("reading input file was failed!")
-				return False
-			self.setText("Reversing: ")
-			self.pbar.update_step = 0.1
-			self.reverseLoop(savePath=outputFilename)
-			return True
 
 		try:
 			finalOutputFile = self.glos.convert(

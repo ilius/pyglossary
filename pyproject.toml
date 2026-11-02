@@ -448,7 +448,6 @@ extension-pkg-allow-list = [
 ignore-paths = [
 	"^pyglossary/ui/ui_gtk4/ui.py$",
 	"^pyglossary/glossary_v1.py$",
-	"^pyglossary/reverse.py$",
 	"^tests/unused_test.py$",
 	"^pyglossary/ui/progressbar/.*",
 	"^pyglossary/ui/ui_gtk3.py$",
@@ -467,7 +466,6 @@ exclude = [
 	"pyglossary/ui/",
 	"*_types.py",
 	"pyglossary/ui_type.py",
-	"pyglossary/reverse.py",
 	"doc/lib-examples/",
 	"pyglossary/plugin_lib/",
 ]

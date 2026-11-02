@@ -763,7 +763,6 @@ class UI(UIBase):
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -807,9 +806,6 @@ class UI(UIBase):
 				self._out_format_display or "[Select Output Format]"
 			)
 			self.outputFormatChangedAuto()
-
-		if reverse:
-			log.error("Qt6 wizard interface does not support Reverse feature")
 
 		if readOptions:
 			self.readOptions = dict(readOptions)

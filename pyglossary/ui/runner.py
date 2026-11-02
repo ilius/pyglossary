@@ -127,7 +127,6 @@ def base_ui_run(  # noqa: PLR0913
 	outputFilename: str = "",
 	inputFormat: str = "",
 	outputFormat: str = "",
-	reverse: bool = False,
 	config: ConfigType | None = None,
 	readOptions: dict[str, Any] | None = None,
 	writeOptions: dict[str, Any] | None = None,
@@ -137,9 +136,6 @@ def base_ui_run(  # noqa: PLR0913
 	from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
 	assert log
-	if reverse:
-		log.error("--reverse does not work with --ui=none")
-		return False
 	ui = UIBase(progressbar=False)
 	ui.loadConfig(**cast("dict[str, Any]", config if config is not None else {}))
 	glos = Glossary(ui=ui)

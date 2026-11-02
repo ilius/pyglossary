@@ -79,7 +79,6 @@ __all__ = ["main"]
 
 # TODO
 # -v (verbose or version?)
-# -r (reverse or read-options)
 
 log: logger.Logger | None = None
 
@@ -123,7 +122,6 @@ class MainPrepareResult:
 	outputFilename: str
 	inputFormat: str | None
 	outputFormat: str | None
-	reverse: bool
 	config: ConfigType
 	readOptions: dict[str, Any]
 	writeOptions: dict[str, Any]
@@ -279,7 +277,6 @@ def mainPrepare(  # noqa: PLR0911
 		outputFilename=args.outputFilename,
 		inputFormat=args.inputFormat,
 		outputFormat=args.outputFormat,
-		reverse=args.reverse,
 		config=config,
 		readOptions=readOptions,
 		writeOptions=writeOptions,
@@ -307,7 +304,6 @@ def mainNoExit(argv: list[str]) -> int:  # noqa: PLR0912
 			outputFilename=res.outputFilename,
 			inputFormat=res.inputFormat,
 			outputFormat=res.outputFormat,
-			reverse=res.reverse,
 			config=res.config,
 			readOptions=res.readOptions,
 			writeOptions=res.writeOptions,

@@ -28,7 +28,6 @@ from __future__ import annotations
 from pyglossary.entry_filters import EntryFilter, entryFiltersRules
 from pyglossary.option import (
 	BoolOption,
-	FloatOption,
 	IntOption,
 	Option,
 	StrOption,
@@ -187,11 +186,4 @@ configDefDict: dict[str, Option] = {
 		hasFlag=False,
 		comment='Tkinter: progressbar text font. Example: "Sans", "Sans 15"',
 	),
-	# Reverse
-	"reverse_matchWord": BoolOption(hasFlag=False),
-	"reverse_showRel": StrOption(hasFlag=False),
-	"reverse_saveStep": IntOption(hasFlag=False),
-	"reverse_minRel": FloatOption(hasFlag=False),
-	"reverse_maxNum": IntOption(hasFlag=False),
-	"reverse_includeDefs": BoolOption(hasFlag=False),
 }

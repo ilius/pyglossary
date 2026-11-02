@@ -458,7 +458,6 @@ progressbar progress, trough {min-height: 0.6em;}
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -484,9 +483,6 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.inputFormatBox.setActive(inputFormat)
 		if outputFormat:
 			self.outputFormatBox.setActive(outputFormat)
-
-		if reverse:
-			log.error("Gtk interface does not support Reverse feature")
 
 		if readOptions:
 			self.readOptions = readOptions

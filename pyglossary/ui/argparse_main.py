@@ -328,11 +328,6 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 	# _______________________________
 
 	parser.add_argument(
-		"--reverse",
-		dest="reverse",
-		action="store_true",
-	)
-	parser.add_argument(
 		"--md-to-html",
 		dest="markdownToHtml",
 		action="store_true",

@@ -1563,7 +1563,6 @@ class MainWindow(gtk.Dialog):
 		outputFilename: str = "",
 		inputFormat: str = "",
 		outputFormat: str = "",
-		reverse: bool = False,
 		config: ConfigType | None = None,
 		readOptions: dict[str, Any] | None = None,
 		writeOptions: dict[str, Any] | None = None,
@@ -1589,9 +1588,6 @@ class MainWindow(gtk.Dialog):
 			self.inputFormatBox.setActive(inputFormat)
 		if outputFormat:
 			self.outputFormatBox.setActive(outputFormat)
-
-		if reverse:
-			log.error("Gtk interface does not support Reverse feature")
 
 		if readOptions:
 			self.inputFormatBox.setOptionsValues(readOptions)
