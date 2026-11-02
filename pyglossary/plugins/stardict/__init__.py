@@ -79,17 +79,19 @@ result:
   are lost,
 - ordered and unordered lists are not numbered or bulleted,
 - `blockquote` indentation is not applied,
-- the self-closing `<br/>` form is **not** recognized as a line break
-  (PyGlossary writes `<br/>`), so explicit line breaks are dropped as well,
+- the self-closing `<br/>` form is **not** recognized as a line break.
+  PyGlossary emits `<br/>` by default, so explicit line breaks are dropped
+  unless the `stardict_client` option is enabled, which rewrites them as
+  `<br>` before writing,
 - inline formatting (bold, italic, underline, sub/superscript, `font` color)
   is preserved.
 
 This matters for `sametypesequence=h` (HTML) and `sametypesequence=x` (XDXF)
 entries, which PyGlossary converts to HTML on read (see the `xdxf_to_html`
 option). That HTML relies on `div`, `ol`/`li` and `<br/>` for layout, so
-entries will look degraded in the StarDict program. Viewers that render HTML
-with a full web engine, such as GoldenDict or AyanDict, are recommended
-instead.
+entries will look degraded in the StarDict program even with `stardict_client`
+enabled (it only fixes line breaks). Viewers that support a larger HTML subset,
+such as GoldenDict or AyanDict, are recommended instead.
 
 See the
 [StarDict HTML parsing plugin source](https://github.com/huzheng001/stardict-3/blob/master/dict/stardict-plugins/stardict-html-parsedata-plugin/stardict_html_parsedata.cpp).
