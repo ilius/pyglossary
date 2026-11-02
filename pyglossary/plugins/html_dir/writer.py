@@ -170,7 +170,7 @@ class Writer:
 
 		filenameList = self._filenameList
 
-		fileByWord: dict[str, list[tuple[str, int]]] = {}
+		fileByTerm: dict[str, list[tuple[str, int]]] = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")  # noqa: PLW2901
 			if not line:
@@ -181,13 +181,13 @@ class Writer:
 			term = unescapeNTB(termEscaped)
 			if term not in linkTargetSet:
 				continue
-			if term in fileByWord:
-				fileByWord[term].append((filename, entryIndex))
+			if term in fileByTerm:
+				fileByTerm[term].append((filename, entryIndex))
 			else:
-				fileByWord[term] = [(filename, entryIndex)]
+				fileByTerm[term] = [(filename, entryIndex)]
 
-		# with open(join(dirn, "fileByWord.json"), "w") as fileByWordFile:
-		# 	json.dump(fileByWord, fileByWordFile, ensure_ascii=False, indent="\t")
+		# with open(join(dirn, "fileByTerm.json"), "w") as fileByTermFile:
+		# 	json.dump(fileByTerm, fileByTermFile, ensure_ascii=False, indent="\t")
 
 		@lru_cache(maxsize=10)
 		def getLinksByFile(fileIndex: int) -> io.TextIOBase:
@@ -204,10 +204,10 @@ class Writer:
 				continue
 			target, fileIndexStr, x_start, x_size = line.split("\t")
 			target = unescapeNTB(target)
-			if target not in fileByWord:
+			if target not in fileByTerm:
 				targetNew = ""
 			else:
-				targetFilename, targetEntryIndex = fileByWord[target][0]
+				targetFilename, targetEntryIndex = fileByTerm[target][0]
 				targetNew = f"{targetFilename}#entry{targetEntryIndex}"
 			file = getLinksByFile(int(fileIndexStr))
 			file.write(
@@ -216,7 +216,7 @@ class Writer:
 			file.flush()
 
 		linkTargetSet.clear()
-		del fileByWord, linkTargetSet
+		del fileByTerm, linkTargetSet
 		gc.collect()
 
 		if os.sep == "\\":
@@ -446,7 +446,7 @@ class Writer:
 			entryId = f"entry{entryIndex}"
 
 			if word_title:
-				terms = [html.escape(word) for word in entry.l_term]
+				terms = [html.escape(term) for term in entry.l_term]
 				title = glos.wordTitleStr(
 					termSep.join(terms),
 					sample=entry.l_term[0],
@@ -481,8 +481,8 @@ class Writer:
 			pos = fileObj.tell()
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			indexTxtFileObj.writelines(
-				f"{entryIndex}\t{escapeNTB(word)}\t{tmpFilename}\t{pos}\n"
-				for word in entry.l_term
+				f"{entryIndex}\t{escapeNTB(term)}\t{tmpFilename}\t{pos}\n"
+				for term in entry.l_term
 			)
 			del tmpFilename
 			text = replaceBword(text)

@@ -43,7 +43,7 @@ type nextBlockResultType = (
 	tuple[str | list[str], str, list[tuple[str, str]] | None] | None
 )
 # (
-# 	word: str | list[str],
+# 	term: str | list[str],
 # 	defi: str,
 # 	images: list[tuple[str, str]] | None
 # )
@@ -294,12 +294,12 @@ class TextGlossaryReader:
 			if not block:
 				yield None
 				continue
-			word, defi, resList = block
+			term, defi, resList = block
 
 			if resList:
 				yield from self._genDataEntries(resList, resPathSet)
 
-			yield self.newEntry(word, defi)
+			yield self.newEntry(term, defi)
 
 		resDir = self._resDir
 		for fname in listFilesRecursiveRelPath(resDir):

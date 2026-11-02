@@ -42,7 +42,7 @@ def getHtmlDefi(entry: EntryType) -> str:
 	# now assume it's html
 	defi = entry.defi
 	if len(entry.l_term) > 1:
-		defi = "".join(f"<b>{word}</b><br/>" for word in entry.l_term) + defi
+		defi = "".join(f"<b>{term}</b><br/>" for term in entry.l_term) + defi
 	return defi
 
 

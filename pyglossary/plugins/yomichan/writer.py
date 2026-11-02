@@ -134,8 +134,8 @@ class Writer:
 
 		alternates_from_word_pattern = self.alternates_from_word_pattern
 		if alternates_from_word_pattern:
-			for word in entry.l_term:
-				term_expressions += alternates_from_word_pattern.findall(word)
+			for term in entry.l_term:
+				term_expressions += alternates_from_word_pattern.findall(term)
 
 		if self.alternates_from_defi_pattern:
 			term_expressions += self.alternates_from_defi_pattern.findall(

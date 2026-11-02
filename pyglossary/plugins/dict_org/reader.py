@@ -78,12 +78,12 @@ class Reader:
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
-		for word in dictdb.getDefList():
-			b_defi = b"\n\n<hr>\n\n".join(dictdb.getDef(word))
+		for term in dictdb.getDefList():
+			b_defi = b"\n\n<hr>\n\n".join(dictdb.getDef(term))
 			try:
 				defi = b_defi.decode("utf_8", "ignore")
 				defi = self.prettifyDefinitionText(defi)
 			except Exception:
 				log.error(f"{b_defi = }")
 				raise
-			yield self._glos.newEntry(word, defi)
+			yield self._glos.newEntry(term, defi)

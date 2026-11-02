@@ -68,8 +68,8 @@ class GroupState:
 		self.reset()
 
 	def reset(self) -> None:
-		self.first_word = ""
-		self.last_word = ""
+		self.first_term = ""
+		self.last_term = ""
 		self.group_contents: list[str] = []
 
 	def is_new(self, prefix: str) -> bool:
@@ -83,9 +83,9 @@ class GroupState:
 		if entry.detectDefiFormat() == "m":
 			defi = html.escape(defi, quote=False)
 		defi = defi.replace("<br>", "<br/>").replace("<BR>", "<BR/>")
-		if not self.first_word:
-			self.first_word = term
-		self.last_word = term
+		if not self.first_term:
+			self.first_term = term
+		self.last_term = term
 		self.last_prefix = prefix
 		self.group_contents.append(self.writer.format_group_content(term, defi))
 
@@ -272,7 +272,7 @@ class EbookWriter:
 		index = state.group_index + self.GROUP_START_INDEX
 		group_label = state.last_prefix
 		if group_label != "SPECIAL":
-			group_label = state.first_word + "&#8211;" + state.last_word
+			group_label = state.first_term + "&#8211;" + state.last_term
 		log.debug(f"add_group: {state.group_index}, {state.last_prefix!r}")
 		group_labels.append(group_label)
 		previous_link = self.get_group_xhtml_file_name_from_index(index - 1)

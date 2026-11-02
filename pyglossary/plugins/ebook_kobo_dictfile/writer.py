@@ -41,8 +41,8 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def fixWord(word: str) -> str:
-	return word.replace("\n", " ")
+def fixWord(term: str) -> str:
+	return term.replace("\n", " ")
 
 
 def escapeDefi(defi: str) -> str:

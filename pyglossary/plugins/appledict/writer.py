@@ -229,11 +229,11 @@ class Writer:
 					continue
 
 				terms = entry.l_term
-				word, alts = terms[0], terms[1:]
+				term, alts = terms[0], terms[1:]
 				defi = entry.defi
 
 				long_title = normalize_title_long(
-					normalize_title(word, BeautifulSoup),
+					normalize_title(term, BeautifulSoup),
 				)
 				if not long_title:
 					continue

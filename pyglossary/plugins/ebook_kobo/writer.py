@@ -172,7 +172,7 @@ class Writer:
 				gzipFile.write(htmlContents.encode("utf-8"))
 			htmlContents = htmlHeader
 
-		allWords: list[str] = []
+		allTerms: list[str] = []
 		# TODO: switch to SQLite, like StarDict writer
 		data: list[tuple[str, bytes]] = []
 
@@ -184,18 +184,18 @@ class Writer:
 				dataEntryCount += 1
 				continue
 			l_term = entry.l_term
-			allWords += l_term
-			wordsByPrefix: dict[str, list[str]] = {}
-			for word in l_term:
-				prefix = self.get_prefix(word)
-				if prefix in wordsByPrefix:
-					wordsByPrefix[prefix].append(word)
+			allTerms += l_term
+			termsByPrefix: dict[str, list[str]] = {}
+			for term in l_term:
+				prefix = self.get_prefix(term)
+				if prefix in termsByPrefix:
+					termsByPrefix[prefix].append(term)
 				else:
-					wordsByPrefix[prefix] = [word]
+					termsByPrefix[prefix] = [term]
 			defi = self.fix_defi(entry.defi)
 			mainHeadword = l_term[0]
-			for prefix, p_words in wordsByPrefix.items():
-				headword, *variants = p_words
+			for prefix, p_terms in termsByPrefix.items():
+				headword, *variants = p_terms
 				if headword != mainHeadword:
 					headword = f"{mainHeadword}, {headword}"
 				data.append(
@@ -245,7 +245,7 @@ class Writer:
 				" and replaced '<img ...' tags in definitions with placeholders",
 			)
 
-		self._terms = allWords
+		self._terms = allTerms
 
 	def open(self, filename: str) -> None:
 		try:

@@ -113,9 +113,9 @@ def message_received(client: dict[str, Any], server: ServerType, message: str) -
 			log.warning(str(e))
 
 
-def browse_check_entry(entry: EntryType, wordQuery: str) -> str | None:
-	# get first max entries if no word or filter until max results
-	if wordQuery and not entry.s_term.lower().startswith(wordQuery.lower()):
+def browse_check_entry(entry: EntryType, termQuery: str) -> str | None:
+	# get first max entries if no term or filter until max results
+	if termQuery and not entry.s_term.lower().startswith(termQuery.lower()):
 		return None
 	html_entry = None
 	if entry.defiFormat in {"h", "m", "x"}:
@@ -143,7 +143,7 @@ def handle_browse_request(
 ) -> None:
 	log.debug(f"processing client #{client} message")
 	params = json.loads(message)
-	wordQuery = params.get("word")
+	termQuery = params.get("word")
 	glossary_path = os.path.expanduser(params.get("path"))
 	glossary_format = params.get("format")
 	max_results = int(params.get("max", DEFAULT_MAX_BROWSE_ENTRIES))
@@ -173,7 +173,7 @@ def handle_browse_request(
 
 	num_results = 0
 	for entry in glos:
-		html_entry = browse_check_entry(entry, wordQuery)
+		html_entry = browse_check_entry(entry, termQuery)
 		if not html_entry:
 			continue
 		num_results += 1

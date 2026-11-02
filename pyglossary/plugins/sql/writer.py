@@ -119,8 +119,8 @@ class Writer:
 		if fileObj is None:
 			raise ValueError("fileObj is None")
 
-		def fixStr(word: str) -> str:
-			return word.replace("'", "''").replace("\r", "").replace("\n", newline)
+		def fixStr(term: str) -> str:
+			return term.replace("'", "''").replace("\r", "").replace("\n", newline)
 
 		id_ = 1
 		while True:

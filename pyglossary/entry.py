@@ -226,7 +226,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		key: Callable[[list[str]], Any],
 	) -> Callable[[RawEntryType], Any]:
 		def newKey(x: RawEntryType) -> Any:
-			# x is rawEntry, so x[2:] is list[bytes]: list of words in bytes
+			# x is rawEntry, so x[2:] is list[bytes]: list of terms in bytes
 			return key([b.decode("utf-8") for b in x[2:]])
 
 		return newKey
@@ -242,7 +242,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		"""
 		Create a new Entry.
 
-		term: string or a list of strings (including alternate term/words)
+		term: string or a list of strings (including alternate terms)
 		defi: string or a list of strings (including alternate definitions)
 		defiFormat (optional): definition format:
 			"m": plain text
@@ -288,24 +288,24 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	@property
 	def s_term(self) -> str:
-		"""Returns string of word, and all the alternate words separated by "|"."""
+		"""Returns string of term, and all the alternate terms separated by "|"."""
 		if isinstance(self._term, str):
 			return self._term
 		return joinByBar(self._term)
 
 	@property
 	def l_term(self) -> list[str]:
-		"""Returns list of the word and all the alternate words."""
+		"""Returns list of the term and all the alternate terms."""
 		if isinstance(self._term, str):
 			return [self._term]
 		return self._term
 
 	@property
 	def lb_term(self) -> list[bytes]:
-		"""Returns list of the word and all the alternate words."""
+		"""Returns list of the term and all the alternate terms."""
 		if isinstance(self._term, str):
 			return [self._term.encode("utf-8")]
-		return [word.encode("utf-8") for word in self._term]
+		return [term.encode("utf-8") for term in self._term]
 
 	@property
 	def defi(self) -> str:
@@ -363,7 +363,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 
 	def editFuncTerm(self, func: Callable[[str], str]) -> None:
 		"""
-		Run function `func` on all the words.
+		Run function `func` on all the terms.
 
 		`func` must accept only one string as argument
 		and return the modified string.
@@ -390,13 +390,13 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		return s
 
 	def strip(self) -> None:
-		"""Strip whitespaces from all words and definitions."""
+		"""Strip whitespaces from all terms and definitions."""
 		self.editFuncTerm(str.strip)
 		self.editFuncDefi(str.strip)
 		self.editFuncDefi(self._stripTrailingBR)
 
 	def replaceInWord(self, source: str, target: str) -> None:
-		"""Replace string `source` with `target` in all words."""
+		"""Replace string `source` with `target` in all terms."""
 		if isinstance(self._term, str):
 			self._term = self._term.replace(source, target)
 			return
@@ -408,7 +408,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		self._defi = self._defi.replace(source, target)
 
 	def replace(self, source: str, target: str) -> None:
-		"""Replace string `source` with `target` in all words and definitions."""
+		"""Replace string `source` with `target` in all terms and definitions."""
 		self.replaceInWord(source, target)
 		self.replaceInDefi(source, target)
 
@@ -416,7 +416,7 @@ class Entry(BaseEntry):  # noqa: PLR0904
 		l_term = self.l_term
 		if len(l_term) == 1:
 			return
-		l_term = [word for word in l_term if word]
+		l_term = [term for term in l_term if term]
 		l_term = list(unique_everseen(l_term))
 		self._term = l_term
 

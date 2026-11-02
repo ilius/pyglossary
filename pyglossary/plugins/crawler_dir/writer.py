@@ -42,8 +42,8 @@ class Writer:
 			makedirs(filename)
 
 	@staticmethod
-	def filePathFromWord(b_word: bytes) -> str:
-		bw = b_word.lower()
+	def filePathFromWord(b_term: bytes) -> str:
+		bw = b_term.lower()
 		if len(bw) <= 2:
 			return bw.hex()
 		if len(bw) <= 4:
@@ -54,7 +54,7 @@ class Writer:
 		return join(
 			bw[:2].hex() + ".d",
 			bw[2:4].hex() + ".d",
-			bw[4:8].hex() + "-" + sha1(b_word).hexdigest()[:8],  # noqa: S324
+			bw[4:8].hex() + "-" + sha1(b_term).hexdigest()[:8],  # noqa: S324
 		)
 
 	def write(self) -> None:

@@ -94,9 +94,9 @@ def load_collates(path: str) -> CollateTable:
 	return collate
 
 
-def get_collated_key(word: str, collate: CollateTable) -> str:
-	"""Return the collated, uppercased form of *word*."""
-	return word.translate(collate).upper()
+def get_collated_key(term: str, collate: CollateTable) -> str:
+	"""Return the collated, uppercased form of *term*."""
+	return term.translate(collate).upper()
 
 
 def encode_body(text: str) -> bytes:
@@ -113,13 +113,13 @@ def encode_body(text: str) -> bytes:
 	return text.encode("utf-8")
 
 
-def _encode_entry(word: str, body_bytes: bytes) -> bytes:
+def _encode_entry(term: str, body_bytes: bytes) -> bytes:
 	r"""
 	Encode a single SDIC entry payload.
 
-	Returns: [uint16 total_size][word\\0][0x20][body][0x20 0x0A 0x00]
+	Returns: [uint16 total_size][term\\0][0x20][body][0x20 0x0A 0x00]
 	"""
-	key = word.encode("utf-8") + b"\x00"
+	key = term.encode("utf-8") + b"\x00"
 	payload = key + BODY_PREFIX + body_bytes + BODY_SUFFIX
 	total_size = 2 + len(payload)
 	return struct.pack("<H", total_size) + payload
@@ -187,16 +187,16 @@ def _pack_blocks(
 
 
 def _build_sparse_index(
-	words: list[str],
+	terms: list[str],
 	blocks: list[bytes],
 	counts: list[int],
 ) -> bytes:
-	r"""Build the raw sparse index: [uint16 size][first_word\\0] per block."""
+	r"""Build the raw sparse index: [uint16 size][first_term\\0] per block."""
 	buf = bytearray()
 	entry_start = 0
 	for block, count in zip(blocks, counts, strict=True):
 		buf += struct.pack("<H", len(block))
-		buf += words[entry_start].encode("utf-8")
+		buf += terms[entry_start].encode("utf-8")
 		buf += b"\x00"
 		entry_start += count
 	return bytes(buf)
@@ -424,9 +424,9 @@ class Writer:
 			if entry.isData():
 				data_count += 1
 				continue
-			word = entry.l_term[0] if entry.l_term else entry.s_term
+			term = entry.l_term[0] if entry.l_term else entry.s_term
 			defi = entry.defi
-			entries.append((word, defi))
+			entries.append((term, defi))
 
 		if data_count > 0:
 			log.warning(
@@ -439,7 +439,7 @@ class Writer:
 			log.warning("No entries to write")
 			return
 
-		# Sort by collated key, then raw word for determinism
+		# Sort by collated key, then raw term for determinism
 		entries.sort(
 			key=lambda e: (get_collated_key(e[0], collate), e[0]),
 		)
@@ -447,32 +447,32 @@ class Writer:
 		# Merge duplicate headwords
 		merged: list[tuple[str, str]] = [entries[0]]
 		sep = self._merge_separator
-		for word, defi in entries[1:]:
-			if word == merged[-1][0]:
-				merged[-1] = (word, merged[-1][1] + sep + defi)
+		for term, defi in entries[1:]:
+			if term == merged[-1][0]:
+				merged[-1] = (term, merged[-1][1] + sep + defi)
 			else:
-				merged.append((word, defi))
+				merged.append((term, defi))
 		if len(entries) != len(merged):
 			log.info(f"SDIC: merged {len(entries) - len(merged)} duplicate headwords")
 			entries = merged
 
 		# Encode entries
-		words: list[str] = []
+		terms: list[str] = []
 		payloads: list[bytes] = []
 		max_entry_size = 0
-		for word, defi in entries:
+		for term, defi in entries:
 			body_bytes = encode_body(defi)
 			try:
-				payload = _encode_entry(word, body_bytes)
+				payload = _encode_entry(term, body_bytes)
 			except struct.error:
 				# 'H' format requires 0 <= number <= 65535
 				log.warning(
-					f"SDIC: cannot encode entry for word {word!r}"
+					f"SDIC: cannot encode entry for term {term!r}"
 					f", body length: {len(body_bytes)}"
 				)
 				continue
 			max_entry_size = max(max_entry_size, len(payload))
-			words.append(word)
+			terms.append(term)
 			payloads.append(payload)
 
 		# Pack into compressed blocks
@@ -485,7 +485,7 @@ class Writer:
 			)
 
 		# Build sections
-		sparse_index_raw = _build_sparse_index(words, blocks, counts)
+		sparse_index_raw = _build_sparse_index(terms, blocks, counts)
 		collate_section = _prepare_collate_section(collate)
 		morphems_section = _prepare_morphems_section(morphems, collate)
 		keyboard_section = _prepare_keyboard_section(keyboard)

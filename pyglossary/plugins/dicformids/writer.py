@@ -145,12 +145,12 @@ class Writer:
 			)
 			for entry in entryList:
 				term = entry.s_term
-				n_word = self.normateTerm(term)
+				n_term = self.normateTerm(term)
 				defi = entry.defi
 				dicLine = term + "\t" + defi + "\n"
 				dicPos = dicFp.tell()
 				dicFp.write(dicLine)
-				indexData.append((n_word, dicIndex + 1, dicPos))
+				indexData.append((n_term, dicIndex + 1, dicPos))
 
 			dicMaxSize = max(dicMaxSize, dicFp.tell())
 			dicFp.close()
@@ -192,11 +192,11 @@ class Writer:
 
 		langSearchListFp.write(f"{indexData[0][0]}\t{self.indexIndex}\n")
 
-		for word, dicIndex, dicPos in indexData:
-			indexLine = f"{word}\t{dicIndex}-{dicPos}-B\n"
+		for term, dicIndex, dicPos in indexData:
+			indexLine = f"{term}\t{dicIndex}-{dicPos}-B\n"
 			if (self.indexFp.tell() + len(indexLine)) > self.indexFileMaxSize - 10:
 				self.nextIndex()
-				langSearchListFp.write(f"{word}\t{self.indexIndex}\n")
+				langSearchListFp.write(f"{term}\t{self.indexIndex}\n")
 			self.indexFp.write(indexLine)
 
 		self.indexFp.close()

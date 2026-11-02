@@ -120,14 +120,14 @@ class Writer:
 			terms = entry.l_term
 			if not terms:
 				continue
-			word, alts = terms[0], terms[1:]
+			term, alts = terms[0], terms[1:]
 			defi = entry.defi
 
 			if word_title:
 				defi = glos.wordTitleStr(terms[0]) + defi
 
 			row = [
-				word,
+				term,
 				defi,
 			]
 			if add_defi_format:

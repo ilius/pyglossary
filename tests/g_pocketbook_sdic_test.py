@@ -69,7 +69,7 @@ def _parse_sdic(path: str) -> SdicInfo:
 	# Parse all entries from data blocks
 	entries: list[tuple[str, str]] = []
 	file_offset = data_offset
-	for bsize, _first_word in block_info:
+	for bsize, _first_term in block_info:
 		block_raw = zlib.decompress(data[file_offset : file_offset + bsize])
 		entry_offset = 0
 		while entry_offset < len(block_raw):

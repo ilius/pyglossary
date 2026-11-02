@@ -69,7 +69,7 @@ class InfoWriter:
 		entryCount = 0
 		bwordCount = 0
 
-		nonLowercaseWordCount = 0
+		nonLowercaseTermCount = 0
 
 		styleByTagCounter: dict[str, int] = Counter()
 
@@ -88,9 +88,9 @@ class InfoWriter:
 			entryCount += 1
 			bwordCount += defi.count("bword://")
 
-			for word in entry.l_term:
-				if word.lower() != word:
-					nonLowercaseWordCount += 1
+			for term in entry.l_term:
+				if term.lower() != term:
+					nonLowercaseTermCount += 1
 
 			for m in re_style.finditer(defi):
 				tag = m.group(1)
@@ -116,7 +116,7 @@ class InfoWriter:
 			if ws:
 				wsName = ws.name
 			else:
-				log.debug(f"No script detected for word: {entry.s_term}")
+				log.debug(f"No script detected for term: {entry.s_term}")
 				wsName = "None"
 			sourceScriptCounter[wsName] += 1
 
@@ -125,7 +125,7 @@ class InfoWriter:
 		info: dict[str, Any] = dict(glos.iterInfo())
 		info["word_count"] = entryCount
 		info["bword_count"] = bwordCount
-		info["non_lowercase_word_count"] = nonLowercaseWordCount
+		info["non_lowercase_word_count"] = nonLowercaseTermCount
 		info["data_entry_count"] = data_entry_count
 		info["data_entry_extension_count"] = ", ".join(
 			f"{ext}={count}" for ext, count in dataEntryExtCounter.most_common()

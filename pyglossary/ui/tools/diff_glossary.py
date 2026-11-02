@@ -172,10 +172,10 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			charjunk=None,
 		)
 		if entry1.l_term[0] == entry2.l_term[0]:
-			firstWordLine = f">> {entry1.l_term[0]}\n"
+			firstTermLine = f">> {entry1.l_term[0]}\n"
 		else:
-			# firstWordLine = f">> {entry1.l_term[0]} (A)\n>> {entry2.l_term[0]} (B)"
-			firstWordLine = formatDiff(
+			# firstTermLine = f">> {entry1.l_term[0]} (A)\n>> {entry2.l_term[0]} (B)"
+			firstTermLine = formatDiff(
 				difflib.ndiff(
 					[f">> {entry1.l_term[0]}\n"],
 					[f">> {entry2.l_term[0]}\n"],
@@ -186,7 +186,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		entryFormatted = "\n".join(
 			[
 				header,
-				firstWordLine + formatDiff(altsDiff),
+				firstTermLine + formatDiff(altsDiff),
 				formatDiff(xmlDiff(entry1.defi, entry2.defi)),
 			],
 		)
@@ -239,12 +239,12 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			charjunk=None,
 		)
 		if entry1.l_term[0] == entry2.l_term[0]:
-			firstWordLine = f">> {entry1.l_term[0]}"
+			firstTermLine = f">> {entry1.l_term[0]}"
 		else:
-			firstWordLine = f">> {entry1.l_term[0]} (A)\n>> {entry2.l_term[0]} (B)"
+			firstTermLine = f">> {entry1.l_term[0]} (A)\n>> {entry2.l_term[0]} (B)"
 		entryFormatted = "\n".join(
 			[
-				firstWordLine,
+				firstTermLine,
 				formatDiff(altsDiff),
 				entry1.defi if showDefi else "",
 			],
@@ -263,9 +263,9 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 		if entry2 is None:
 			nextEntry2()
 
-		words1 = entry1.l_term
-		words2 = entry2.l_term
-		if words1 == words2:
+		terms1 = entry1.l_term
+		terms2 = entry2.l_term
+		if terms1 == terms2:
 			if entry1.defi == entry2.defi:
 				entry1, entry2 = None, None
 				return
@@ -273,7 +273,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			entry1, entry2 = None, None
 			return
 
-		if entry1.defi == entry2.defi and (words1[0] in words2 or words2[0] in words1):
+		if entry1.defi == entry2.defi and (terms1[0] in terms2 or terms2[0] in terms1):
 			printAltsChangedEntry(entry1, entry2)
 			entry1, entry2 = None, None
 			return
@@ -283,7 +283,7 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			entry1, entry2 = None, None
 			return
 
-		if words1 < words2:
+		if terms1 < terms2:
 			printEntry(red, "--- A", index1, entry1)
 			entry1 = None
 		else:

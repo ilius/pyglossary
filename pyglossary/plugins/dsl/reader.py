@@ -222,8 +222,8 @@ class Reader:
 		for entry in reader:
 			if entry.isData():
 				continue
-			for word in entry.l_term:
-				self._abbrevDict[word] = entry.defi
+			for term in entry.l_term:
+				self._abbrevDict[term] = entry.defi
 		reader.close()
 
 	def detectEncoding(self) -> str:

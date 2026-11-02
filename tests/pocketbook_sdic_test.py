@@ -293,8 +293,8 @@ class TestBuildSparseIndex(unittest.TestCase):
 		size = struct.unpack_from("<H", raw, 0)[0]
 		self.assertEqual(size, len(blocks[0]))
 		null_terminator_pos = raw.index(0, 2)
-		first_word = raw[2:null_terminator_pos].decode("utf-8")
-		self.assertEqual(first_word, "alpha")
+		first_term = raw[2:null_terminator_pos].decode("utf-8")
+		self.assertEqual(first_term, "alpha")
 
 	def test_multiple_blocks(self):
 		words = ["alpha", "beta", "gamma", "delta"]
