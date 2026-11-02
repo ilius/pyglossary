@@ -89,3 +89,7 @@ with open(os.path.join(imageDir, "a.jpeg")) as fp:
 ```
 
 The first argument to `newDataEntry` must be the relative path (that generally html codes of your definitions points to).
+
+## Experimental modules
+
+Modules under `pyglossary.exp` (for example `pyglossary.exp.glossary_creator`) are experimental host-program APIs. They are not part of the stable library API: their interfaces may change between releases, and modules may be removed without notice. Use them at your own risk.
