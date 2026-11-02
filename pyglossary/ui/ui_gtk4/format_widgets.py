@@ -32,8 +32,8 @@ from gi.repository import Gtk as gtk
 
 from pyglossary.core import pip
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.text_utils import escapeNRB, unescapeNRB
 from pyglossary.ui.dependency import checkDepends
+from pyglossary.utils.text_utils import escapeNRB, unescapeNRB
 
 from .utils import (
 	HBox,

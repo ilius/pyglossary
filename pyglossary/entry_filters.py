@@ -19,7 +19,7 @@ import typing
 from typing import TYPE_CHECKING
 
 from . import core
-from .text_utils import fixUtf8Str
+from .utils.text_utils import fixUtf8Str
 
 if TYPE_CHECKING:
 	from .langs import Lang
@@ -504,7 +504,7 @@ class UnescapeTermLinks(EntryFilter):
 	desc = "Unescape Term/Entry Links"
 
 	def __init__(self, glos: _GlossaryType) -> None:
-		from .html_utils import unescape_unicode
+		from .utils.html_utils import unescape_unicode
 
 		EntryFilter.__init__(self, glos)
 		self._pat = re.compile(

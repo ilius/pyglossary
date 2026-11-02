@@ -20,8 +20,8 @@ from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import cacheDir, log, tmpDir
 from pyglossary.glossary import Glossary
-from pyglossary.os_utils import rmtree
-from pyglossary.text_utils import crc32hex
+from pyglossary.utils.os_utils import rmtree
+from pyglossary.utils.text_utils import crc32hex
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

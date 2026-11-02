@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING
 
 from pyglossary.compress import compressionOpenFunc
 from pyglossary.core import log
-from pyglossary.text_utils import escapeNTB
+from pyglossary.utils.text_utils import escapeNTB
 
 if TYPE_CHECKING:
 	from pyglossary.stubs.glossary_types import WriterGlossaryType
@@ -58,7 +58,7 @@ class Writer:
 		)
 
 	def write(self) -> None:
-		from pyglossary.json_utils import dataToPrettyJson
+		from pyglossary.utils.json_utils import dataToPrettyJson
 
 		filename = self._filename
 

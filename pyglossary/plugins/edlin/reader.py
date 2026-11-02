@@ -11,8 +11,8 @@ from os.path import dirname, isdir, isfile, join
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
-from pyglossary.text_utils import (
+from pyglossary.utils.os_utils import countFilesRecursive, listFilesRecursiveRelPath
+from pyglossary.utils.text_utils import (
 	splitByBarUnescapeNTB,
 	unescapeNTB,
 )
@@ -47,7 +47,7 @@ class Reader:
 		self._resCount = 0
 
 	def open(self, filename: str) -> None:
-		from pyglossary.json_utils import jsonToData
+		from pyglossary.utils.json_utils import jsonToData
 
 		if isdir(filename):
 			infoFname = join(filename, "info.json")

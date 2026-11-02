@@ -21,8 +21,8 @@ from .compress import (
 	stdCompressions,
 )
 from .entry import DataEntry
-from .io_utils import nullTextIO
-from .os_utils import countFilesRecursive, listFilesRecursiveRelPath
+from .utils.io_utils import nullTextIO
+from .utils.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator

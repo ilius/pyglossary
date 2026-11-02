@@ -23,9 +23,9 @@ from typing import TYPE_CHECKING, Any, cast
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_utils import Error
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
-from pyglossary.os_utils import abspath2
-from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import UIBase, logo
+from pyglossary.utils.os_utils import abspath2
+from pyglossary.utils.text_utils import urlToPath
 
 from .about import exec_about_dialog
 from .constants import (

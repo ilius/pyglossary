@@ -35,9 +35,9 @@ import gi
 
 from pyglossary.core import homePage, pip
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.os_utils import abspath2
 from pyglossary.sort_keys import defaultSortKeyName, namedSortKeyList
-from pyglossary.text_utils import (
+from pyglossary.utils.os_utils import abspath2
+from pyglossary.utils.text_utils import (
 	escapeNRB,
 	unescapeNRB,
 	urlToPath,

@@ -34,9 +34,9 @@ from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.os_utils import abspath2
-from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import UIBase
+from pyglossary.utils.os_utils import abspath2
+from pyglossary.utils.text_utils import urlToPath
 
 from .about import createAboutFrame
 from .format_widgets import FormatButton, FormatOptionsDialog

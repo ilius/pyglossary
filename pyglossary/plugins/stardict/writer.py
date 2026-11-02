@@ -29,7 +29,7 @@ from pyglossary.core import log
 from pyglossary.glossary_utils import Error
 from pyglossary.plugins.stardict.memlist import MemSdList
 from pyglossary.plugins.stardict.sqlist import IdxSqList, SynSqList
-from pyglossary.text_utils import uint32ToBytes, uint64ToBytes
+from pyglossary.utils.text_utils import uint32ToBytes, uint64ToBytes
 
 if TYPE_CHECKING:
 	import io
@@ -296,7 +296,7 @@ class Writer:
 		partState: _MultipartState,
 		partFiles: _PartFiles,
 	) -> None:
-		from pyglossary.os_utils import runDictzip
+		from pyglossary.utils.os_utils import runDictzip
 
 		fileBasePath = self.partBasePath(partState.partIndex)
 		partFiles.dictFile.close()

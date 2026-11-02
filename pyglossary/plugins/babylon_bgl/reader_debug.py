@@ -33,7 +33,7 @@ from os.path import join
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.text_utils import (
+from pyglossary.utils.text_utils import (
 	toStr,
 	uintFromBytes,
 )

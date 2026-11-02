@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 from pyglossary.core import log
-from pyglossary.json_utils import jsonToData
+from pyglossary.utils.json_utils import jsonToData
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator

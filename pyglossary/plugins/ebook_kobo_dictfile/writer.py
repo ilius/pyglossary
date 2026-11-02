@@ -30,7 +30,7 @@ from os.path import isdir
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
+from pyglossary.utils.io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io

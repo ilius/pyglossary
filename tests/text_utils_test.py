@@ -7,7 +7,7 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.text_utils import (
+from pyglossary.utils.text_utils import (
 	crc32hex,
 	escapeNTB,
 	fixUtf8,

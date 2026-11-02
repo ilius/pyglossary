@@ -24,7 +24,7 @@ Headwords and definitions are written with backslash escapes so tabs and newline
 - `\\` for a literal backslash (written as `\\` in the file, i.e. doubled)
 - carriage returns are stripped on write
 
-Implementation: `escapeNTB` / `unescapeNTB` in `pyglossary/text_utils.py`.
+Implementation: `escapeNTB` / `unescapeNTB` in `pyglossary/utils/text_utils.py`.
 
 ## Alternative headwords (`alts`)
 

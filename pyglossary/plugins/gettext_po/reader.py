@@ -12,9 +12,9 @@ from os.path import isdir, join
 from typing import TYPE_CHECKING
 
 from pyglossary.core import exc_note, log, pip
-from pyglossary.io_utils import nullTextIO
-from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
-from pyglossary.text_utils import splitByBar
+from pyglossary.utils.io_utils import nullTextIO
+from pyglossary.utils.os_utils import countFilesRecursive, listFilesRecursiveRelPath
+from pyglossary.utils.text_utils import splitByBar
 
 if TYPE_CHECKING:
 	import io
@@ -64,7 +64,7 @@ class Reader:
 		self.clear()
 
 	def __len__(self) -> int:
-		from pyglossary.file_utils import fileCountLines
+		from pyglossary.utils.file_utils import fileCountLines
 
 		if self._entryCount is None:
 			log.debug("Try not to use len(reader) as it takes extra time")

@@ -52,9 +52,9 @@ import slint
 
 from pyglossary.core import homePage
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.os_utils import abspath2
-from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import UIBase, aboutText, authors, licenseText
+from pyglossary.utils.os_utils import abspath2
+from pyglossary.utils.text_utils import urlToPath
 
 from .alert_dialog import AlertDialog
 from .format_picker import FormatPicker

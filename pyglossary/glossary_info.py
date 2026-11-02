@@ -37,7 +37,7 @@ from .info import (
 	infoKeysAliasDict,
 )
 from .langs import Lang, langDict
-from .text_utils import fixUtf8
+from .utils.text_utils import fixUtf8
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator

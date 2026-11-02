@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pyglossary.core import log
 from pyglossary.text_reader import TextGlossaryReader
-from pyglossary.text_utils import (
+from pyglossary.utils.text_utils import (
 	splitByBarUnescapeNTB,
 	unescapeNTB,
 )

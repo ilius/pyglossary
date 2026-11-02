@@ -18,8 +18,8 @@ from os.path import dirname, getsize
 from typing import TYPE_CHECKING
 
 from .entry_base import BaseEntry
-from .iter_utils import unique_everseen
-from .text_utils import joinByBar
+from .utils.iter_utils import unique_everseen
+from .utils.text_utils import joinByBar
 
 if TYPE_CHECKING:
 	from collections.abc import Callable

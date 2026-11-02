@@ -35,7 +35,7 @@ from pickle import dumps, loads
 from typing import TYPE_CHECKING
 
 from pyglossary.core import exc_note, log, pip, trace
-from pyglossary.os_utils import indir
+from pyglossary.utils.os_utils import indir
 
 if TYPE_CHECKING:
 	from collections.abc import Generator

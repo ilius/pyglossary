@@ -67,17 +67,17 @@ repo-maintained plugins. Their names and behavior may change without notice.
 
 | Module | Notes |
 | ------ | ----- |
-| `pyglossary.text_utils` | Use standard library string/packing/regex helpers or plugin-local code. |
-| `pyglossary.json_utils` | Use `json` from the standard library. |
-| `pyglossary.html_utils` | Use `html`, `html.entities`, or plugin-local code. |
-| `pyglossary.xml_utils` | Use `xml.sax.saxutils` or plugin-local code. |
-| `pyglossary.file_utils` | Use `pathlib`, `os`, or plugin-local code. |
-| `pyglossary.os_utils` | Use `os`, `shutil`, `pathlib`, or plugin-local code. |
-| `pyglossary.io_utils` | Use `io` or your own null stream objects. |
-| `pyglossary.iter_utils` | Use `itertools` or plugin-local code. |
-| `pyglossary.queued_iter` | Internal pipeline helper. |
-| `pyglossary.image_utils` | Write extraction logic in the plugin if needed. |
-| `pyglossary.apple_utils` | Apple Dictionary-specific helper used by a repo plugin. |
+| `pyglossary.utils.text_utils` | Use standard library string/packing/regex helpers or plugin-local code. |
+| `pyglossary.utils.json_utils` | Use `json` from the standard library. |
+| `pyglossary.utils.html_utils` | Use `html`, `html.entities`, or plugin-local code. |
+| `pyglossary.utils.xml_utils` | Use `xml.sax.saxutils` or plugin-local code. |
+| `pyglossary.utils.file_utils` | Use `pathlib`, `os`, or plugin-local code. |
+| `pyglossary.utils.os_utils` | Use `os`, `shutil`, `pathlib`, or plugin-local code. |
+| `pyglossary.utils.io_utils` | Use `io` or your own null stream objects. |
+| `pyglossary.utils.iter_utils` | Use `itertools` or plugin-local code. |
+| `pyglossary.utils.queued_iter` | Internal pipeline helper. |
+| `pyglossary.utils.image_utils` | Write extraction logic in the plugin if needed. |
+| `pyglossary.utils.apple_utils` | Apple Dictionary-specific helper used by a repo plugin. |
 | `pyglossary.gregorian` | Use `datetime` or a dedicated dependency. |
 | `pyglossary.langs.persian_utils` | Language-specific helper used by repo plugins. |
 

@@ -19,7 +19,7 @@ import wx
 
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.option import IntOption
-from pyglossary.text_utils import escapeNTB, unescapeNTB
+from pyglossary.utils.text_utils import escapeNTB, unescapeNTB
 
 from .constants import PLUGIN_BY_DESC
 

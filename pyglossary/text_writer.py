@@ -16,7 +16,7 @@ from os.path import isdir
 from typing import TYPE_CHECKING, cast
 
 from .compress import compressionOpen as c_open
-from .io_utils import nullTextIO
+from .utils.io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, BinaryIO
 
 from pyglossary.core import log
 from pyglossary.plugins.stardict import Writer as StdWriter
-from pyglossary.text_utils import uint32ToBytes
+from pyglossary.utils.text_utils import uint32ToBytes
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Generator
@@ -40,7 +40,7 @@ class Writer(StdWriter):
 		fileBasePath: str,
 		partNumber: int | None,
 	) -> None:
-		from pyglossary.os_utils import runDictzip
+		from pyglossary.utils.os_utils import runDictzip
 
 		if not dictFile.closed:
 			dictFile.close()

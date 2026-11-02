@@ -53,13 +53,13 @@ from pyglossary.option import (
 	NewlineOption,
 	StrOption,
 )
-from pyglossary.os_utils import indir
 from pyglossary.stubs.glossary_types import (
 	EntryType,
 	ReaderGlossaryType,
 	WriterGlossaryType,
 )
-from pyglossary.text_utils import toStr
+from pyglossary.utils.os_utils import indir
+from pyglossary.utils.text_utils import toStr
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option

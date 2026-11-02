@@ -29,7 +29,7 @@ Used when the Babylon BGL reader resolves text encoding for each entry.
 from __future__ import annotations
 
 from pyglossary.core import log
-from pyglossary.text_utils import excMessage
+from pyglossary.utils.text_utils import excMessage
 
 from .bgl_text import (
 	removeControlChars,

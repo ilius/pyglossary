@@ -92,14 +92,14 @@ CORE_PATHS = (
 	"pyglossary/entry",
 	"pyglossary/core.py",
 	"pyglossary/option.py",
-	"pyglossary/text_utils.py",
+	"pyglossary/utils/text_utils.py",
 	"pyglossary/sort_keys.py",
 	"pyglossary/compression.py",
 	"pyglossary/flags.py",
-	"pyglossary/os_utils.py",
+	"pyglossary/utils/os_utils.py",
 	"pyglossary/xdxf/",
-	"pyglossary/html_utils.py",
-	"pyglossary/io_utils.py",
+	"pyglossary/utils/html_utils.py",
+	"pyglossary/utils/io_utils.py",
 )
 CLI_TOOL_PATHS = (
 	"pyglossary/ui/argparse",

@@ -18,10 +18,10 @@ from typing import TYPE_CHECKING, cast
 
 from pyglossary.compress import compressionOpen, stdCompressions
 from pyglossary.core import exc_note, log, pip
-from pyglossary.html_utils import unescape_unicode
-from pyglossary.io_utils import nullBinaryIO
 from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
+from pyglossary.utils.html_utils import unescape_unicode
+from pyglossary.utils.io_utils import nullBinaryIO
 
 from .utils import XMLLANG, ReaderUtils
 

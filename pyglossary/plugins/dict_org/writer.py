@@ -72,7 +72,7 @@ class Writer:
 		self._dictdb: DictDB | None = None
 
 	def finish(self) -> None:
-		from pyglossary.os_utils import runDictzip
+		from pyglossary.utils.os_utils import runDictzip
 
 		if self._dictdb is None:
 			raise RuntimeError("self._dictdb is None")

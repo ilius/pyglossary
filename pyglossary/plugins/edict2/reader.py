@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
+from pyglossary.utils.io_utils import nullTextIO
 
 from .conv import (
 	Article,

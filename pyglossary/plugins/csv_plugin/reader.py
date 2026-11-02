@@ -35,8 +35,8 @@ from pyglossary.compress import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
-from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
+from pyglossary.utils.io_utils import nullTextIO
+from pyglossary.utils.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	import io
@@ -137,7 +137,7 @@ class Reader:
 		return self._resCount
 
 	def __len__(self) -> int:
-		from pyglossary.file_utils import fileCountLines
+		from pyglossary.utils.file_utils import fileCountLines
 
 		if self._entryCount is not None:
 			return self._entryCount

@@ -13,7 +13,7 @@ import pathlib
 import zipfile
 from typing import IO, TYPE_CHECKING
 
-from pyglossary.html_utils import unescape_unicode
+from pyglossary.utils.html_utils import unescape_unicode
 
 from .quickdic import QuickDic
 from .read_funcs import (

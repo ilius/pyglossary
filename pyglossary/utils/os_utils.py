@@ -17,7 +17,7 @@ from os.path import isabs, join, normpath
 from pathlib import Path
 from typing import TYPE_CHECKING, Self
 
-from .core import TRACE, pip, trace
+from pyglossary.core import TRACE, pip, trace
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable

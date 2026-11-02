@@ -45,8 +45,8 @@ class Writer:
 		pass
 
 	def write(self) -> Generator[None, EntryType, None]:
-		from pyglossary.text_utils import escapeNTB, joinByBar
 		from pyglossary.text_writer import TextGlossaryWriter
+		from pyglossary.utils.text_utils import escapeNTB, joinByBar
 
 		writer = TextGlossaryWriter(
 			self._glos,

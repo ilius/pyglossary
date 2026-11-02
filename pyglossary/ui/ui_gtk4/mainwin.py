@@ -35,8 +35,6 @@ from gi.repository import Pango as pango
 
 from pyglossary.core import homePage
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
-from pyglossary.os_utils import abspath2
-from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import (
 	aboutText,
 	authors,
@@ -46,6 +44,8 @@ from pyglossary.ui.base import (
 from pyglossary.ui.ui_gtk4.general_options import GeneralOptionsDialog
 from pyglossary.ui.ui_gtk4.info import PreConvertInfoDialog
 from pyglossary.ui.version import getAboutHeader
+from pyglossary.utils.os_utils import abspath2
+from pyglossary.utils.text_utils import urlToPath
 
 from .about import AboutWidget
 from .console import ConvertConsole

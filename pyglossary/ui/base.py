@@ -85,7 +85,7 @@ class UIBase:
 		user: bool = True,
 		**options: Any,
 	) -> None:
-		from pyglossary.json_utils import jsonToData
+		from pyglossary.utils.json_utils import jsonToData
 
 		data = jsonToData(fread(rootConfJsonFile))
 		assert isinstance(data, dict), f"{data=}"
@@ -119,7 +119,7 @@ class UIBase:
 		log.debug(f"loaded config: {self.config}")
 
 	def saveConfig(self) -> None:
-		from pyglossary.json_utils import dataToPrettyJson
+		from pyglossary.utils.json_utils import dataToPrettyJson
 
 		config = {}
 		for key, option in configDefDict.items():

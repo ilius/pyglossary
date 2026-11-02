@@ -5,7 +5,7 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.xml_utils import xml_escape
+from pyglossary.utils.xml_utils import xml_escape
 
 
 class Test_xml_escape(unittest.TestCase):

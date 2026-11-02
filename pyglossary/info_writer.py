@@ -13,7 +13,7 @@ from os.path import splitext
 from typing import TYPE_CHECKING, Any
 
 from .core import log
-from .io_utils import nullTextIO
+from .utils.io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io
@@ -52,8 +52,8 @@ class InfoWriter:
 		import re
 		from collections import Counter
 
-		from .json_utils import dataToPrettyJson
 		from .langs.writing_system import getWritingSystemFromText
+		from .utils.json_utils import dataToPrettyJson
 
 		glos = self._glos
 

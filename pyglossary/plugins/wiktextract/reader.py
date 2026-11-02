@@ -29,7 +29,7 @@ from pyglossary.compress import (
 	stdCompressions,
 )
 from pyglossary.core import exc_note, log, pip
-from pyglossary.io_utils import nullBinaryIO
+from pyglossary.utils.io_utils import nullBinaryIO
 
 __all__ = ["Reader"]
 

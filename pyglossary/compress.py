@@ -92,8 +92,8 @@ def zipFileOrDir(filename: str) -> None:
 		split,
 	)
 
-	from .os_utils import indir
 	from .repro_zipfile import ReproducibleZipFile as ZipFile
+	from .utils.os_utils import indir
 
 	def _zipFileAdd(zf: ZipFile, filename: str) -> None:
 		if isfile(filename):

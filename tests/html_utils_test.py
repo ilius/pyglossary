@@ -5,7 +5,7 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.html_utils import unescape_unicode
+from pyglossary.utils.html_utils import unescape_unicode
 
 
 class UnescapeUnicodeTest(unittest.TestCase):

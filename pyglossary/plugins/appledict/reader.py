@@ -26,7 +26,7 @@ from lxml.etree import QName
 
 from pyglossary.core import log
 from pyglossary.info import c_author, c_copyright, c_name
-from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
+from pyglossary.utils.os_utils import countFilesRecursive, listFilesRecursiveRelPath
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator

@@ -68,11 +68,11 @@ from .glossary_info import GlossaryInfo
 from .glossary_progress import GlossaryProgress
 from .glossary_utils import Error, ReadError, WriteError, splitFilenameExt
 from .info import c_name
-from .os_utils import rmtree, showMemoryUsage
 from .plugin_handler import PluginHandler
-from .queued_iter import QueuedIterator
 from .sort_keys import defaultSortKeyName, lookupSortKey
 from .sq_entry_list import SqEntryList
+from .utils.os_utils import rmtree, showMemoryUsage
+from .utils.queued_iter import QueuedIterator
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterable, Iterator

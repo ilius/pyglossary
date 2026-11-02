@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 
 from pyglossary.compress import compressionOpenFunc
 from pyglossary.core import log
-from pyglossary.text_utils import splitByBarUnescapeNTB
+from pyglossary.utils.text_utils import splitByBarUnescapeNTB
 
 if TYPE_CHECKING:
 	from collections.abc import Generator, Iterator
@@ -36,7 +36,7 @@ class Reader:
 		self._entryCount = 0
 
 	def open(self, filename: str) -> None:
-		from pyglossary.json_utils import jsonToData
+		from pyglossary.utils.json_utils import jsonToData
 
 		self._filename = filename
 

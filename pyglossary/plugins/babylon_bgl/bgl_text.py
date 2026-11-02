@@ -31,7 +31,7 @@ from __future__ import annotations
 import re
 
 from pyglossary.core import isDebug, log
-from pyglossary.xml_utils import xml_escape
+from pyglossary.utils.xml_utils import xml_escape
 
 __all__ = [
 	"fixImgLinks",
@@ -66,7 +66,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: re.Match[str]) -> str:
 	Return the original string if conversion fails.
 	Use this as a replace function of re.sub.
 	"""
-	from pyglossary.html_utils import name2codepoint
+	from pyglossary.utils.html_utils import name2codepoint
 
 	u_text = u_match.group(0)
 	u_name = u_match.group(1)

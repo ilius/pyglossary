@@ -43,10 +43,10 @@ except ImportError:
 from pyglossary.core import confDir, homeDir, sysName
 from pyglossary.glossary_utils import Error
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
-from pyglossary.os_utils import abspath2
-from pyglossary.text_utils import urlToPath
 from pyglossary.ui.base import UIBase
 from pyglossary.ui.ui_tk.about import createAboutFrame
+from pyglossary.utils.os_utils import abspath2
+from pyglossary.utils.text_utils import urlToPath
 
 from .ui_tk.format_widgets import FormatButton, FormatOptionsDialog
 from .ui_tk.general_options import GeneralOptionsDialog

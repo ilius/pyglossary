@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import re
 
-from .core import log
+from pyglossary.core import log
 
 __all__ = ["substituteAppleCSS"]
 

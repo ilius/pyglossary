@@ -29,8 +29,8 @@ colors, images, links) into HTML.
 from __future__ import annotations
 
 from pyglossary.core import log
-from pyglossary.text_utils import uintFromBytes
-from pyglossary.xml_utils import xml_escape
+from pyglossary.utils.text_utils import uintFromBytes
+from pyglossary.utils.xml_utils import xml_escape
 
 from .bgl_pos import partOfSpeechByCode
 from .bgl_text import (

@@ -5,7 +5,7 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.apple_utils import substituteAppleCSS
+from pyglossary.utils.apple_utils import substituteAppleCSS
 
 
 class Test_substituteAppleCSS(unittest.TestCase):

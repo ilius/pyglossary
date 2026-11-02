@@ -5,7 +5,7 @@ from pathlib import Path
 
 from glossary_v2_errors_test import TestGlossaryErrorsBase
 
-from pyglossary.os_utils import runDictzip
+from pyglossary.utils.os_utils import runDictzip
 
 TEXT = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor

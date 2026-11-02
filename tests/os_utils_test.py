@@ -7,7 +7,7 @@ from os.path import abspath, dirname, join
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary.os_utils import (
+from pyglossary.utils.os_utils import (
 	countFilesRecursive,
 	listFilesRecursiveRelPath,
 	rmtree,

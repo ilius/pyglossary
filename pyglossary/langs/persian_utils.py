@@ -8,7 +8,7 @@ comma.
 
 from __future__ import annotations
 
-from pyglossary.text_utils import replacePostSpaceChar
+from pyglossary.utils.text_utils import replacePostSpaceChar
 
 __all__ = ["faEditStr"]
 

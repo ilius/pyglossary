@@ -32,7 +32,7 @@ import io
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import log
-from pyglossary.text_utils import uintFromBytes
+from pyglossary.utils.text_utils import uintFromBytes
 
 from .bgl_gzip import GzipFile
 from .bgl_text import unknownHtmlEntries

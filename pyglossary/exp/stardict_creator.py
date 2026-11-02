@@ -13,10 +13,10 @@ from typing import TYPE_CHECKING
 
 from pyglossary.entry import DataEntry, Entry
 from pyglossary.glossary_v2 import Glossary
-from pyglossary.os_utils import runDictzip
 from pyglossary.plugins.stardict import Writer
 from pyglossary.sort_keys import lookupSortKey
 from pyglossary.sq_entry_list import SqEntryList
+from pyglossary.utils.os_utils import runDictzip
 
 if TYPE_CHECKING:
 	from pyglossary.stubs.glossary_types import EntryType, RawEntryType

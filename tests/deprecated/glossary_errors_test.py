@@ -11,7 +11,7 @@ from glossary_test import TestGlossaryBase, appTmpDir
 
 from pyglossary.core_test import getMockLogger
 from pyglossary.glossary import Glossary
-from pyglossary.os_utils import rmtree
+from pyglossary.utils.os_utils import rmtree
 
 __all__ = ["TestGlossaryErrors"]
 

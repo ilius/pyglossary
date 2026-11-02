@@ -28,8 +28,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pyglossary.core import exc_note, pip
-from pyglossary.image_utils import extractInlineHtmlImages
 from pyglossary.text_reader import TextGlossaryReader
+from pyglossary.utils.image_utils import extractInlineHtmlImages
 
 if TYPE_CHECKING:
 	from pyglossary.stubs.glossary_types import ReaderGlossaryType

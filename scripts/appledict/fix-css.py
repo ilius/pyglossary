@@ -3,7 +3,7 @@ from os.path import dirname, realpath, splitext
 
 sys.path.insert(0, dirname(dirname(dirname(realpath(__file__)))))
 
-from pyglossary.apple_utils import substituteAppleCSS
+from pyglossary.utils.apple_utils import substituteAppleCSS
 
 for fpath in sys.argv[1:]:
 	if fpath.endswith("-fixed.css"):

@@ -32,7 +32,7 @@ from os.path import dirname, extsep, isfile, join, splitext
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.text_utils import toStr
+from pyglossary.utils.text_utils import toStr
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator

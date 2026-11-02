@@ -30,9 +30,9 @@ from struct import unpack
 from typing import TYPE_CHECKING, Any, cast
 from zlib import decompress
 
-from pyglossary.apple_utils import substituteAppleCSS
 from pyglossary.core import exc_note, log, pip, trace
-from pyglossary.io_utils import nullBinaryIO
+from pyglossary.utils.apple_utils import substituteAppleCSS
+from pyglossary.utils.io_utils import nullBinaryIO
 
 from .appledict_file_tools import (
 	APPLEDICT_FILE_OFFSET,

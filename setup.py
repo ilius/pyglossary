@@ -105,6 +105,7 @@ package_data = {
 		"plugin_lib/*.py",
 		"plugin_lib/py*/*.py",
 		"sort_modules/*.py",
+		"utils/*.py",
 		"ui/*.py",
 		"ui/progressbar/*.py",
 		"ui/gtk3_utils/*.py",

@@ -35,7 +35,7 @@ from os.path import basename, isdir, join
 from typing import TYPE_CHECKING, Any
 
 from pyglossary.core import log, pip
-from pyglossary.text_utils import toStr
+from pyglossary.utils.text_utils import toStr
 
 from ._content import prepare_content
 from ._dict import (

@@ -31,7 +31,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pyglossary.core import log
-from pyglossary.text_utils import uintFromBytes
+from pyglossary.utils.text_utils import uintFromBytes
 
 from .reader_data import Block, EntryWordData
 

@@ -37,9 +37,9 @@ from pyglossary.compress import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
-from pyglossary.os_utils import indir
 from pyglossary.text_reader import TextFilePosWrapper
+from pyglossary.utils.io_utils import nullTextIO
+from pyglossary.utils.os_utils import indir
 
 from .title import TitleTransformer
 from .transform import Transformer

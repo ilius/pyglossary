@@ -33,7 +33,7 @@ class Reader:
 		pass
 
 	def open(self, filename: str) -> None:
-		from pyglossary.json_utils import jsonToData
+		from pyglossary.utils.json_utils import jsonToData
 
 		with open(filename, encoding="utf-8") as infoFp:
 			info = jsonToData(infoFp.read())

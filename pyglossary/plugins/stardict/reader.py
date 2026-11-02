@@ -20,8 +20,8 @@ from os.path import (
 from typing import TYPE_CHECKING, Protocol
 
 from pyglossary.core import log
-from pyglossary.os_utils import countFilesRecursive, listFilesRecursiveRelPath
-from pyglossary.text_utils import (
+from pyglossary.utils.os_utils import countFilesRecursive, listFilesRecursiveRelPath
+from pyglossary.utils.text_utils import (
 	uint32FromBytes,
 	uint64FromBytes,
 )

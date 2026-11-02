@@ -29,7 +29,7 @@ Supplies glossary info and encoding hints to the Babylon BGL reader.
 from __future__ import annotations
 
 from pyglossary.core import log
-from pyglossary.text_utils import uintFromBytes
+from pyglossary.utils.text_utils import uintFromBytes
 
 from .bgl_info import (
 	charsetInfoDecode,

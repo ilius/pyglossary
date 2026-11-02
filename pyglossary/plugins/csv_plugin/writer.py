@@ -37,7 +37,7 @@ from pyglossary.compress import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.io_utils import nullTextIO
+from pyglossary.utils.io_utils import nullTextIO
 
 if TYPE_CHECKING:
 	import io

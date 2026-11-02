@@ -43,8 +43,8 @@ from datetime import datetime
 from os.path import join
 from typing import TYPE_CHECKING, cast
 
-from .os_utils import indir, rmtree
 from .repro_zipfile import ReproducibleZipFile as ZipFile
+from .utils.os_utils import indir, rmtree
 
 if TYPE_CHECKING:
 	import io

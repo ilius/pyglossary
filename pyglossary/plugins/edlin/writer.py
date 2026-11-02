@@ -12,7 +12,7 @@ import os
 from os.path import isdir, join
 from typing import TYPE_CHECKING
 
-from pyglossary.text_utils import escapeNTB
+from pyglossary.utils.text_utils import escapeNTB
 
 if TYPE_CHECKING:
 	from collections.abc import Generator
@@ -108,7 +108,7 @@ class Writer:
 			)
 
 	def write(self) -> Generator[None, EntryType, None]:
-		from pyglossary.json_utils import dataToPrettyJson
+		from pyglossary.utils.json_utils import dataToPrettyJson
 
 		thisEntry = yield
 		if thisEntry is None:

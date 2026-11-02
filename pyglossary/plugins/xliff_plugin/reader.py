@@ -21,7 +21,7 @@ from lxml import etree as ET
 
 from pyglossary.compress import compressionOpen, stdCompressions
 from pyglossary.core import log
-from pyglossary.io_utils import nullBinaryIO
+from pyglossary.utils.io_utils import nullBinaryIO
 
 __all__ = ["Reader"]
 

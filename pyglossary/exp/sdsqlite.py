@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.glossary_utils import Error
-from pyglossary.text_utils import (
+from pyglossary.utils.text_utils import (
 	joinByBar,
 	splitByBar,
 )

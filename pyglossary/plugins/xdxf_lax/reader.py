@@ -47,8 +47,8 @@ from pyglossary.compress import (
 	stdCompressions,
 )
 from pyglossary.core import log
-from pyglossary.io_utils import nullBinaryIO
-from pyglossary.text_utils import toStr
+from pyglossary.utils.io_utils import nullBinaryIO
+from pyglossary.utils.text_utils import toStr
 from pyglossary.xdxf.py_transform import XdxfTransformer
 from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 

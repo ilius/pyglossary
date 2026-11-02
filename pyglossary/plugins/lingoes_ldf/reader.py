@@ -12,9 +12,9 @@ from typing import TYPE_CHECKING
 
 from pyglossary.compress import stdCompressions
 from pyglossary.core import log
-from pyglossary.file_utils import fileCountLines
 from pyglossary.text_reader import TextGlossaryReader
-from pyglossary.text_utils import splitByBar
+from pyglossary.utils.file_utils import fileCountLines
+from pyglossary.utils.text_utils import splitByBar
 
 if TYPE_CHECKING:
 	from pyglossary.text_reader import nextBlockResultType
