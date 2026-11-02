@@ -1,6 +1,6 @@
 import sys
 
-from pyglossary.glossary_creator import GlossaryCreator
+from pyglossary.exp.glossary_creator import GlossaryCreator
 from pyglossary.glossary_v2 import Glossary
 
 Glossary.init()

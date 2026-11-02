@@ -19,18 +19,18 @@ from contextlib import suppress
 from os.path import abspath, basename, isfile, join
 from typing import TYPE_CHECKING, Any
 
-from .core import cacheDir
-from .flags import ALWAYS
-from .glossary_utils import WriteError
-from .glossary_v2 import Glossary
-from .plugin_handler import PluginHandler
-from .sort_keys import defaultSortKeyName, lookupSortKey
-from .sq_entry_list import SqEntryList
+from pyglossary.core import cacheDir
+from pyglossary.flags import ALWAYS
+from pyglossary.glossary_utils import WriteError
+from pyglossary.glossary_v2 import Glossary
+from pyglossary.plugin_handler import PluginHandler
+from pyglossary.sort_keys import defaultSortKeyName, lookupSortKey
+from pyglossary.sq_entry_list import SqEntryList
 
 if TYPE_CHECKING:
-	from .entry_base import MultiStr
-	from .plugin_prop import PluginProp
-	from .stubs.glossary_types import EntryType
+	from pyglossary.entry_base import MultiStr
+	from pyglossary.plugin_prop import PluginProp
+	from pyglossary.stubs.glossary_types import EntryType
 
 
 __all__ = ["GlossaryCreator"]
