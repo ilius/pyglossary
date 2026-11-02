@@ -1,7 +1,7 @@
 """
-PyGlossary AyanDict SQLite format plugin.
+Experimental AyanDict SQLite reader and writer.
 
-SQLite databases used by the AyanDict dictionary app. Registers ``Reader``
+SQLite databases used by the AyanDict dictionary app. Provides ``Reader``
 and ``Writer`` for bilingual tables stored in ``.db`` files.
 """
 
