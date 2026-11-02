@@ -33,4 +33,4 @@ jobs:
           python -m pip install mako
           ./scripts/gen
       - name: Check for changes
-        run: bash scripts/ci/no-diff.sh
+        run: bash scripts/ci/no-diff.sh doc/p

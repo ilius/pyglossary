@@ -6,9 +6,11 @@ if [ -n "$CHANGES" ]; then
 	exit 1
 fi
 
-UNTRACKED=$(GIT_PAGER= git ls-files --others --exclude-standard)
-if [ -n "$UNTRACKED" ]; then
-	echo "There are untracked files after running gen:"
-	echo "$UNTRACKED"
-	exit 1
+if [ "$#" -gt 0 ]; then
+	UNTRACKED=$(GIT_PAGER= git ls-files --others --exclude-standard -- "$@")
+	if [ -n "$UNTRACKED" ]; then
+		echo "There are untracked files after running gen:"
+		echo "$UNTRACKED"
+		exit 1
+	fi
 fi
