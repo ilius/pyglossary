@@ -188,11 +188,11 @@ p.groupDefinition {
 			glos,
 		)
 
-	def get_prefix(self, word: str) -> str:
-		if not word:
+	def get_prefix(self, term: str) -> str:
+		if not term:
 			return ""
 		length = self._group_by_prefix_length
-		prefix = word[:length].lower()
+		prefix = term[:length].lower()
 		if prefix[0] < "a":
 			return "SPECIAL"
 		return prefix

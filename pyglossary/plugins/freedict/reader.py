@@ -722,7 +722,7 @@ class Reader(ReaderUtils):
 			byteProgress=(file.tell(), self._fileSize) if self._progress else None,
 		)
 
-	def setWordCount(self, header: Element) -> None:
+	def setTermCount(self, header: Element) -> None:
 		extent_elem = header.find(".//extent", _NAMESPACE)
 		if extent_elem is None:
 			log.warning(
@@ -813,7 +813,7 @@ class Reader(ReaderUtils):
 		)
 
 	def setMetadata(self, header: Element) -> None:
-		self.setWordCount(header)
+		self.setTermCount(header)
 		title = header.find(".//title", _NAMESPACE)
 		if title is not None and title.text:
 			self.setGlosInfo("name", title.text)

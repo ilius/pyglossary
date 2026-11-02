@@ -42,19 +42,19 @@ class Writer:
 			makedirs(filename)
 
 	@staticmethod
-	def filePathFromWord(b_term: bytes) -> str:
-		bw = b_term.lower()
-		if len(bw) <= 2:
-			return bw.hex()
-		if len(bw) <= 4:
+	def filePathFromTerm(b_term: bytes) -> str:
+		b_term_lower = b_term.lower()
+		if len(b_term_lower) <= 2:
+			return b_term_lower.hex()
+		if len(b_term_lower) <= 4:
 			return join(
-				bw[:2].hex() + ".d",
-				bw[2:].hex(),
+				b_term_lower[:2].hex() + ".d",
+				b_term_lower[2:].hex(),
 			)
 		return join(
-			bw[:2].hex() + ".d",
-			bw[2:4].hex() + ".d",
-			bw[4:8].hex() + "-" + sha1(b_term).hexdigest()[:8],  # noqa: S324
+			b_term_lower[:2].hex() + ".d",
+			b_term_lower[2:4].hex() + ".d",
+			b_term_lower[4:8].hex() + "-" + sha1(b_term).hexdigest()[:8],  # noqa: S324
 		)
 
 	def write(self) -> None:
@@ -73,7 +73,7 @@ class Writer:
 				break
 			if entry.isData():
 				continue
-			fpath = join(filename, self.filePathFromWord(entry.b_term))
+			fpath = join(filename, self.filePathFromTerm(entry.b_term))
 			if compression:
 				fpath = f"{fpath}.{compression}"
 			parentDir = dirname(fpath)

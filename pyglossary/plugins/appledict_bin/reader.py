@@ -38,7 +38,7 @@ from .appledict_file_tools import (
 	APPLEDICT_FILE_OFFSET,
 	guessFileOffsetLimit,
 	read_2_bytes_here,
-	read_x_bytes_as_word,
+	read_x_bytes_as_term,
 	readInt,
 )
 from .appledict_properties import from_metadata
@@ -597,7 +597,7 @@ class Reader:
 					if word_form_len == 0:
 						keyTextFields.append("")
 						continue
-					word_form = read_x_bytes_as_word(buff, word_form_len)
+					word_form = read_x_bytes_as_term(buff, word_form_len)
 					keyTextFields.append(word_form)
 
 				entryKeyTextData: RawKeyDataType = (

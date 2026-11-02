@@ -104,30 +104,30 @@ class Writer:
 		# img tag has no closing
 		glos.stripFullHtml(errorHandler=self.stripFullHtmlError)
 
-	def get_prefix(self, word: str) -> str:  # noqa: PLR6301
-		if not word:
+	def get_prefix(self, term: str) -> str:  # noqa: PLR6301
+		if not term:
 			return "11"
-		wo = word[:2].strip().lower()
+		term_prefix = term[:2].strip().lower()
 
-		if not wo:
+		if not term_prefix:
 			return "11"
-		if wo[0] == "\x00":
+		if term_prefix[0] == "\x00":
 			return "11"
-		if len(wo) > 1 and wo[1] == "\x00":
-			wo = wo[:1]
+		if len(term_prefix) > 1 and term_prefix[1] == "\x00":
+			term_prefix = term_prefix[:1]
 		# Special case for CJK dictionaries: return single character kanji/hanzi prefix
-		if _is_han_char(wo[0]):
-			return wo[0]
+		if _is_han_char(term_prefix[0]):
+			return term_prefix[0]
 		# Normalize hiragana to katakana
-		if _is_kana(wo[0]):
-			return _to_katakana(wo)
-		if _is_cyrillic(wo[0]):
-			return wo
+		if _is_kana(term_prefix[0]):
+			return _to_katakana(term_prefix)
+		if _is_cyrillic(term_prefix[0]):
+			return term_prefix
 		# if either of the first 2 chars are not unicode letters, return "11"
-		for c in wo:
+		for c in term_prefix:
 			if not unicodedata.category(c).startswith("L"):
 				return "11"
-		return wo.ljust(2, "a")
+		return term_prefix.ljust(2, "a")
 
 	def fix_defi(self, defi: str) -> str:
 		# @pgaskin on https://github.com/ilius/pyglossary/issues/219

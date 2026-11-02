@@ -163,18 +163,18 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 		# FIXME: check if full html pages/documents as entry do work
 		# glos.stripFullHtml(errorHandler=None)
 
-	def get_prefix(self, word: str) -> str:
-		if not word:
+	def get_prefix(self, term: str) -> str:
+		if not term:
 			return ""
 		length = self._group_by_prefix_length
-		prefix = word[:length].lower()
+		prefix = term[:length].lower()
 		if prefix[0] < "a":
 			return "SPECIAL"
 		return prefix
 
 	def format_group_content(
 		self,
-		word: str,
+		term: str,
 		defi: str,
 		variants: list[str] | None = None,
 	) -> str:
@@ -192,7 +192,7 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 				iforms_str="\n".join(iforms_list),
 			)
 
-		headword = self.escape_if_needed(word)
+		headword = self.escape_if_needed(term)
 
 		defi = self.escape_if_needed(defi)
 

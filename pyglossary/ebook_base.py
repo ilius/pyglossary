@@ -304,7 +304,7 @@ class EbookWriter:
 				"text/css",
 			)
 
-	def get_prefix(self, word: str) -> str:
+	def get_prefix(self, term: str) -> str:
 		raise NotImplementedError
 
 	def write_groups(self) -> Generator[None, EntryType, None]:
@@ -335,12 +335,12 @@ class EbookWriter:
 
 	def format_group_content(
 		self,
-		word: str,
+		term: str,
 		defi: str,
 		variants: list[str] | None = None,  # noqa: ARG002
 	) -> str:
 		return self.GROUP_XHTML_WORD_DEFINITION_TEMPLATE.format(
-			headword=self.escape_if_needed(word),
+			headword=self.escape_if_needed(term),
 			definition=self.escape_if_needed(defi),
 		)
 

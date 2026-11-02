@@ -32,7 +32,7 @@ __all__ = [
 	"guessFileOffsetLimit",
 	"readInt",
 	"read_2_bytes_here",
-	"read_x_bytes_as_word",
+	"read_x_bytes_as_term",
 ]
 
 
@@ -52,7 +52,7 @@ def readInt(buffer: io.BufferedIOBase) -> int:
 	return unpack("i", buffer.read(4))[0]
 
 
-def read_x_bytes_as_word(buffer: io.BufferedIOBase, x: int) -> str:
+def read_x_bytes_as_term(buffer: io.BufferedIOBase, x: int) -> str:
 	return buffer.read(x).decode("UTF-16LE")
 
 

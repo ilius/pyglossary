@@ -90,8 +90,8 @@ def _ru(title: str, a: set[str], a_norm: set[str]) -> None:
 					a_norm.add(term_norm)
 
 
-def normalize(word: str) -> str:
-	return word.lower().replace("й", "и").replace("ё", "\u0435").replace("-", " ")
+def normalize(term: str) -> str:
+	return term.lower().replace("й", "и").replace("ё", "\u0435").replace("-", " ")
 
 
 languages["ru"] = ru

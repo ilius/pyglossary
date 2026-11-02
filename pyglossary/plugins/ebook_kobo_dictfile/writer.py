@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
-def fixWord(term: str) -> str:
+def fixTerm(term: str) -> str:
 	return term.replace("\n", " ")
 
 
@@ -94,7 +94,7 @@ class Writer:
 			if entry.defiFormat == "h":
 				defi = f"<html>{entry.defi}"
 
-			fileObj.write(f"@ {fixWord(terms[0])}\n")
+			fileObj.write(f"@ {fixTerm(terms[0])}\n")
 			for alt in terms[1:]:
-				fileObj.write(f"& {fixWord(alt)}\n")
+				fileObj.write(f"& {fixTerm(alt)}\n")
 			fileObj.write(f"{escapeDefi(defi)}\n\n")
