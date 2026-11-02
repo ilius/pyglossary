@@ -27,8 +27,9 @@ from pyglossary.plugins.aard2_slob.tags import (
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
-	from pyglossary import slob
 	from pyglossary.glossary_types import EntryType, ReaderGlossaryType
+
+	from ._slob_obj import Slob
 
 
 __all__ = ["Reader"]
@@ -57,7 +58,7 @@ class Reader:
 
 	def _clear(self) -> None:
 		self._filename = ""
-		self._slobObj: slob.Slob | None = None
+		self._slobObj: Slob | None = None
 
 	# TODO: PLR0912 Too many branches (13 > 12)
 	def open(self, filename: str) -> None:  # noqa: PLR0912
@@ -66,10 +67,10 @@ class Reader:
 		except ModuleNotFoundError as e:
 			exc_note(e, f"Run `{pip} install pyicu` to install")
 			raise
-		from pyglossary import slob
+		from ._slob_obj import Slob
 
 		self._filename = filename
-		self._slobObj = slob.Slob(filename)
+		self._slobObj = Slob(filename)
 		tags = dict(self._slobObj.tags.items())
 
 		if t_label in tags:
@@ -122,7 +123,7 @@ class Reader:
 		)
 
 	def __iter__(self) -> Iterator[EntryType | None]:
-		from pyglossary.slob import MIME_HTML, MIME_TEXT
+		from ._constants import MIME_HTML, MIME_TEXT
 
 		if self._slobObj is None:
 			raise RuntimeError("iterating over a reader while it's not open")

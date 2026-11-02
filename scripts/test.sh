@@ -15,5 +15,6 @@ for F in *_test.py; do
 	python -m unittest "$F"
 done
 
-cd "$rootDirAbs/pyglossary"
-python -m unittest slob.test
+cd "$rootDirAbs"
+
+python -m unittest pyglossary.plugins.aard2_slob.test

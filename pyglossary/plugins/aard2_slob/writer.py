@@ -27,8 +27,10 @@ from pyglossary.plugins.aard2_slob.tags import (
 if TYPE_CHECKING:
 	from collections.abc import Generator
 
-	from pyglossary import slob
 	from pyglossary.glossary_types import EntryType, WriterGlossaryType
+
+	from ._writer import Writer as SlobWriter
+	from ._writer import WriterEvent
 
 
 __all__ = ["Writer"]
@@ -91,21 +93,21 @@ class Writer:
 		self._glos = glos
 		self._filename = ""
 		self._resPrefix = ""
-		self._slobWriter: slob.Writer | None = None
+		self._slobWriter: SlobWriter | None = None
 
 	@staticmethod
 	def _slobObserver(
-		event: slob.WriterEvent,  # noqa: F401, F821
+		event: WriterEvent,
 	) -> None:
 		log.debug(f"slob: {event.name}{': ' + str(event.data) if event.data else ''}")
 
-	def _open(self, filepath: str, namePostfix: str) -> slob.Writer:
-		from pyglossary import slob
+	def _open(self, filepath: str, namePostfix: str) -> SlobWriter:
+		from ._writer import Writer as SlobWriter
 
 		if isfile(filepath):
 			shutil.move(filepath, f"{filepath}.bak")
 			log.warning(f"renamed existing {filepath!r} to {filepath + '.bak'!r}")
-		self._slobWriter = slobWriter = slob.Writer(
+		self._slobWriter = slobWriter = SlobWriter(
 			filepath,
 			observer=self._slobObserver,
 			workdir=cacheDir,
