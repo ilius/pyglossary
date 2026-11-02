@@ -1,5 +1,5 @@
 """
-Streamed StarDict glossary builder with bounded memory use.
+Experimental streamed StarDict glossary builder with bounded memory use.
 
 ``StarDictCreator`` accepts entries incrementally into a SQLite-backed list,
 then finishes a StarDict directory (``.ifo`` / ``.idx`` / ``.dict``) via the
