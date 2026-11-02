@@ -161,7 +161,7 @@ Optional **`tools.toml`** next to `__init__.py` (for example [`pyglossary/plugin
 
 | Topic | Document |
 | ----- | -------- |
-| Entry structure, filters | [doc/internals.md](doc/internals.md), [doc/entry-filters.md](doc/entry-filters.md) |
+| Entry structure, filters | [ARCHITECTURE.md — Entry model and filters](ARCHITECTURE.md#entry-model-and-filters), [doc/entry-filters.md](doc/entry-filters.md) |
 | Configuration | [doc/config.rst](doc/config.rst) |
 | Using PyGlossary from Python | [doc/lib/usage.md](doc/lib/usage.md), [doc/lib/examples/](doc/lib/examples/) |
 | Direct / indirect mode, SQLite, sorting | [README.md](README.md) |

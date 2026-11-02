@@ -32,7 +32,43 @@ Interfaces differ in how they collect paths, formats, and options, but they conv
 
 ## Entry model and filters
 
-The internal shape of an entry (headword, alternates, definition text vs HTML/XDXF, data blobs) is summarized in [**doc/internals.md**](doc/internals.md). Entry filters and flags are documented in [**doc/entry-filters.md**](doc/entry-filters.md) and configuration in [**doc/config.rst**](doc/config.rst).
+A glossary contains a number of entries. Each entry contains:
+
+- Headword (title or main term/phrase for lookup)
+- Alternates (some alternative terms/phrases for lookup)
+- Definition / article
+
+### Entry structure
+
+Headword and alternates together are accessible as a single Python list `entry.l_term`, and `entry.l_term[0]` is the headword.
+
+`entry.defi` is the definition as a Python Unicode `str`. Also `entry.b_defi` is definition in UTF-8 byte array (`bytes`).
+
+`entry.defiFormat` is definition format. If definition is plaintext (not rich text), the value is `m`. And if it's in HTML (containing any HTML tag), then `defiFormat` is `h`. The value `x` is also allowed for XDXF, although XDXF is not widely supported in dictionary applications.
+
+There is another type of entry which is called **Data Entry**, and generally contains an image, audio, css, or any other file that was included in input glossary. For data entries:
+
+- `entry.s_term` is file name (and `l_term` is still a list containing this string),
+- `entry.defiFormat` is `b`
+- `entry.data` gives the content of file in `bytes`.
+
+### Entry filters
+
+Entry filters are internal objects that modify terms/definition of entries,
+or remove entries (in some special cases).
+
+Like several filters in a pipe which connects a `reader` object to a `writer` object
+(with both of their classes defined in plugins and instantiated in `Glossary` class).
+
+You can enable/disable some of these filters using config parameters / command like flags, which
+are documented in [doc/config.rst](doc/config.rst).
+
+The full list of entry filters is also documented in [doc/entry-filters.md](doc/entry-filters.md).
+
+`--skip-term-regex=REGEX` skips entries where any term in `entry.l_term` fully
+matches the pattern. PyGlossary wraps the pattern with `^` and `$` automatically,
+so `skip-.*` matches a whole term like `skip-me`, not a substring inside a longer
+term. Data entries are passed through unchanged.
 
 ## Plugin system
 
@@ -56,7 +92,7 @@ Embedding PyGlossary in other Python code is described in [**doc/lib/usage.md**]
 | Topic | Document |
 | ----- | -------- |
 | Contributor setup, tests, Ruff, `scripts/gen` | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| Entry structure, filters (short internal reference) | [doc/internals.md](doc/internals.md), [doc/entry-filters.md](doc/entry-filters.md) |
+| Entry filters (full list and flags) | [doc/entry-filters.md](doc/entry-filters.md) |
 | Configuration reference | [doc/config.rst](doc/config.rst) |
 | Direct vs indirect mode, SQLite mode, sorting (user-oriented) | [README.md](README.md) |
 | Minimal plugin examples | [pyglossary/plugins/testformat/](pyglossary/plugins/testformat/), [pyglossary/plugins/csv_plugin/](pyglossary/plugins/csv_plugin/) |

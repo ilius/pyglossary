@@ -334,4 +334,4 @@ Whenever you add a new plugin, or change options/metedata of an existing plugin,
 
 ## Internals
 
-See [doc/internals.md](./doc/internals.md) for information about internal glossary structure and entry filters.
+See [ARCHITECTURE.md — Entry model and filters](./ARCHITECTURE.md#entry-model-and-filters) for information about internal glossary structure and entry filters.
