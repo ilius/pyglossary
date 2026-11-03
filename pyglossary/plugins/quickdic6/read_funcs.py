@@ -12,6 +12,7 @@ import io
 import struct
 from typing import IO, TYPE_CHECKING, TypeVar
 
+from pyglossary.core import log
 from pyglossary.plugin_lib import mutf8
 
 from .commons import (
@@ -156,9 +157,19 @@ def read_entry_index(fp: IO[bytes]) -> EntryIndexTuple:
 	stop_list_offset = fp.tell()
 	stop_list = read_hashset(fp)
 	pos = fp.tell()
-	assert pos == stop_list_offset + stop_list_size, (
-		f"{pos=}, {stop_list_offset=}, {stop_list_size=}"
-	)
+	stop_list_end = stop_list_offset + stop_list_size
+	if pos != stop_list_end:
+		# Some files written by older DictionaryPC versions record a stop-list
+		# size that does not account for multi-byte characters. The serialized
+		# set is self-delimiting, so trust the parsed position, but skip any
+		# extra bytes if the recorded size is larger.
+		log.warning(
+			"QuickDic: stop-list size mismatch: recorded %d, actual %d",
+			stop_list_size,
+			pos - stop_list_offset,
+		)
+		if pos < stop_list_end:
+			fp.seek(stop_list_end)
 
 	num_rows = read_int(fp)
 	row_size = read_int(fp)

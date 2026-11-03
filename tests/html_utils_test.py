@@ -26,6 +26,10 @@ class UnescapeUnicodeTest(unittest.TestCase):
 
 		self.case("/w&#601;&#720;ki&#331;ti&#720;m/", "/wəːkiŋtiːm/")
 
+		# Surrogate code points cannot be encoded as UTF-8
+		self.case("&#xdf70;", "\ufffd")
+		self.case("&#57200;", "\ufffd")
+
 		# Babylon dictionaries contain a lot of non-standard entity,
 		# references for example, csdot, fllig, nsm, cancer, thlig,
 		# tsdot, upslur...

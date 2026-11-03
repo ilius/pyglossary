@@ -349,6 +349,10 @@ def _sub_unescape_unicode(m: re.Match[str]) -> str:
 			char = chr(code)
 		except ValueError:
 			return text
+		if 0xD800 <= code <= 0xDFFF:
+			# Surrogate code points are invalid in HTML character references
+			# and cannot be encoded as UTF-8.
+			return "\ufffd"
 		if char not in special_chars:
 			return char
 		return text
