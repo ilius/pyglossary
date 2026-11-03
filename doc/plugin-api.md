@@ -36,8 +36,12 @@ These modules are the supported public surface for third-party plugins.
 | `pyglossary.xdxf.py_transform` | `XdxfTransformer` | XDXF transformation. |
 | `pyglossary.xdxf.xsl_transform` | `XslXdxfTransformer` | XSL-based XDXF transformation. |
 | `pyglossary.xdxf.css_js_transform` | `XdxfTransformer` | XDXF CSS/JS transformation. |
-| `pyglossary.plugin_lib` (`dictdlib`, `mutf8`, `pureSalsa20`, `readmdict`, `ripemd128`) | `dictdlib.DictDB`, `mutf8.encode_modified_utf8`, `mutf8.safe_decode_modified_utf8`, `pureSalsa20.Salsa20`, `readmdict.MDD`, `readmdict.MDX`, `ripemd128.ripemd128` | Vendored third-party helper libraries. |
+| `pyglossary.plugin_lib.dictdlib` | `DictDB` | Vendored third-party dictd database support. |
 | `pyglossary.plugin_lib.gregorian` | `isLeap`, `to_jd`, `jd_to` | Gregorian calendar and Julian day conversion helpers. |
+| `pyglossary.plugin_lib.mutf8` | `encode_modified_utf8`, `safe_decode_modified_utf8` | Vendored third-party modified UTF-8 encode/decode helpers. |
+| `pyglossary.plugin_lib.pureSalsa20` | `Salsa20` | Vendored third-party Salsa20 stream cipher. |
+| `pyglossary.plugin_lib.readmdict` | `MDD`, `MDX` | Vendored third-party MDict dictionary reader. |
+| `pyglossary.plugin_lib.ripemd128` | `ripemd128` | Vendored third-party RIPEMD-128 hash. |
 | `pyglossary.repro_zipfile` | `ReproducibleZipFile`, `__version__` | Reproducible ZIP archive writer. |
 | `pyglossary.info_writer` | `InfoWriter` | Base writer for `.info` metadata output. |
 | `pyglossary.ebook_base` | `EbookWriter` | Base writer for ebook formats. |
