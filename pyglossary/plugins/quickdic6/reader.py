@@ -119,34 +119,41 @@ class Reader:
 		self,
 		index: EntryIndexTuple,
 		i_entry: int,
-		recurse: list[int] | None = None,
 	) -> list[tuple[int, int]]:
-		recurse = recurse or []
-		recurse.append(i_entry)
 		_, _, _, _, _, _, index_entries, _, rows = index
-		token, start_index, count, _, html_indices = index_entries[i_entry]
-		block_rows = rows[start_index : start_index + count + 1]
-		assert block_rows[0][0] in {1, 3}, f"{block_rows[0][0]=}"
-		assert block_rows[0][1] == i_entry, f"{block_rows[0][1]=}"
 		e_rows: list[tuple[int, int]] = []
-		for entry_type, entry_idx in block_rows[1:]:
-			if entry_type in {1, 3}:
-				# avoid an endless recursion
-				if entry_idx not in recurse:
-					e_rows.extend(
-						self._extract_rows_from_indexentry(
-							index,
-							entry_idx,
-							recurse=recurse,
-						),
-					)
-			else:
+		visited: set[int] = set()
+		# (kind, entry_type, entry_idx, token); "header" and "html" use
+		# only entry_idx, while "row" uses all fields. The stack is used
+		# instead of recursion because some entries form very deep chains.
+		stack: list[tuple[str, int, int, str]] = [("header", 0, i_entry, "")]
+		while stack:
+			kind, entry_type, entry_idx, token = stack.pop()
+			if kind == "html":
+				if (4, entry_idx) not in e_rows:
+					e_rows.append((4, entry_idx))
+				continue
+			if kind == "row":
 				e_rows.append((entry_type, entry_idx))
 				if entry_type == 2 and entry_idx not in self._text_tokens:
 					self._text_tokens[entry_idx] = token
-		for idx in html_indices:
-			if (4, idx) not in e_rows:
-				e_rows.append((4, idx))
+				continue
+
+			if entry_idx in visited:
+				continue
+			visited.add(entry_idx)
+			token, start_index, count, _, html_indices = index_entries[entry_idx]
+			block_rows = rows[start_index : start_index + count + 1]
+			assert block_rows[0][0] in {1, 3}, f"{block_rows[0][0]=}"
+			assert block_rows[0][1] == entry_idx, f"{block_rows[0][1]=}"
+
+			stack.extend(("html", 0, idx, "") for idx in reversed(html_indices))
+			for row_type, row_idx in reversed(block_rows[1:]):
+				if row_type in {1, 3}:
+					# avoid an endless loop
+					stack.append(("header", 0, row_idx, ""))
+				else:
+					stack.append(("row", row_type, row_idx, token))
 		return e_rows
 
 	def close(self) -> None:
