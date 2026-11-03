@@ -5,7 +5,7 @@ from os.path import abspath, dirname
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from pyglossary import gregorian
+from pyglossary.plugin_lib import gregorian
 
 
 def getMonthLen(y: int, m: int) -> int:

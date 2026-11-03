@@ -32,8 +32,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from pyglossary import gregorian
 from pyglossary.core import log
+from pyglossary.plugin_lib import gregorian
 from pyglossary.utils.text_utils import uintFromBytes
 
 from .bgl_charset import charsetByCode

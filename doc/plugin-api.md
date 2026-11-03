@@ -37,6 +37,7 @@ These modules are the supported public surface for third-party plugins.
 | `pyglossary.xdxf.xsl_transform` | `XslXdxfTransformer` | XSL-based XDXF transformation. |
 | `pyglossary.xdxf.css_js_transform` | `XdxfTransformer` | XDXF CSS/JS transformation. |
 | `pyglossary.plugin_lib` (`dictdlib`, `mutf8`, `pureSalsa20`, `readmdict`, `ripemd128`) | `dictdlib.DictDB`, `mutf8.encode_modified_utf8`, `mutf8.safe_decode_modified_utf8`, `pureSalsa20.Salsa20`, `readmdict.MDD`, `readmdict.MDX`, `ripemd128.ripemd128` | Vendored third-party helper libraries. |
+| `pyglossary.plugin_lib.gregorian` | `isLeap`, `to_jd`, `jd_to` | Gregorian calendar and Julian day conversion helpers. |
 | `pyglossary.repro_zipfile` | `ReproducibleZipFile`, `__version__` | Reproducible ZIP archive writer. |
 | `pyglossary.info_writer` | `InfoWriter` | Base writer for `.info` metadata output. |
 | `pyglossary.ebook_base` | `EbookWriter` | Base writer for ebook formats. |
@@ -78,7 +79,6 @@ repo-maintained plugins. Their names and behavior may change without notice.
 | `pyglossary.utils.queued_iter` | Internal pipeline helper. |
 | `pyglossary.utils.image_utils` | Write extraction logic in the plugin if needed. |
 | `pyglossary.utils.apple_utils` | Apple Dictionary-specific helper used by a repo plugin. |
-| `pyglossary.gregorian` | Use `datetime` or a dedicated dependency. |
 | `pyglossary.langs.persian_utils` | Language-specific helper used by repo plugins. |
 
 ### Internal conversion machinery
