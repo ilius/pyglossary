@@ -17,7 +17,7 @@ When creating or editing `doc/releases/X.Y.Z.md`:
 ### Source material
 
 - Compare commits since the previous tag: `git log <prev-tag>..HEAD --no-merges`.
-- Follow the section layout in recent files (for example, `doc/releases/5.3.0.md` and `doc/releases/5.4.0.md`): Compatibility changes, Bug fixes (security / core / plugins / user interface), Features, Improvements, Other changes, New Contributors, Full Changelog link.
+- Follow the section layout in recent files (for example, `doc/releases/5.3.0.md` and `doc/releases/5.4.0.md`): Compatibility changes, Bug fixes (security / core / plugins / user interface), Features, Improvements, Documentation, Other changes, New Contributors, Full Changelog link.
 - End with: `**Full Changelog**: https://github.com/ilius/pyglossary/compare/<prev-tag>...<new-tag>`.
 
 ### Issue and pull request links
@@ -41,8 +41,8 @@ Use root-relative paths starting with `/` instead, for example `[Babylon BGL](/d
 For every new reader, writer, or format:
 
 1. **Link to plugin doc** — use root-relative links to `doc/p/`, for example `[Babylon BGL](/doc/p/babylon_bgl.md)`.
-2. **Brief description** — what the format is (file type, origin, typical tools).
-3. **Use case** — why someone would convert it with PyGlossary; prefix with *Use case:*.
+1. **Brief description** — what the format is (file type, origin, typical tools).
+1. **Use case** — why someone would convert it with PyGlossary; prefix with *Use case:*.
 
 Example:
 
@@ -68,6 +68,13 @@ Use `### Improvements` for enhancements to **existing** functionality (not wholl
 
 - Link to `/doc/p/` when naming an existing format plugin.
 - Do not put regressions or security fixes here — use the Bug fixes sections.
+
+### Documentation
+
+Use `### Documentation` for documentation-only changes, including `README.md`, `ARCHITECTURE.md`, files under `doc/`, plugin documentation, examples, docstrings, and documentation assets.
+
+- Place this section after `### Improvements` and before `### Other changes`.
+- Do not list behavior changes, bug fixes, or new format/UI features here.
 
 ### Bug fixes
 
