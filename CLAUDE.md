@@ -8,6 +8,22 @@
 
 - At the end of every task, run `ruff format` and `ruff check --fix`. Resolve any remaining Ruff errors before completing the task.
 
+## Test data
+
+Fixtures live under `tests/data/` and use this naming scheme:
+
+`<entry-count>-<source-lang>-<target-lang>[<variant>].<ext>`
+
+Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
+
+- Count: the numeric prefix must equal the actual entry count, including entries pulled in through XInclude. Do not copy another fixture's number.
+- Language codes: lowercase ISO 639 codes joined by a hyphen, in source-target order: `en-en`, `en-de`, `en-fa`, `ja-en`.
+- Variants: use a descriptive suffix for a test option or output behavior, for example `-remove_font_b`, `-sd`, or `-sd-merge-syns`.
+- Versions: never add `-v2`, `-v4`, or `-v6` merely because an output was regenerated. Replace the canonical expected output instead. Add a version suffix only when the reader itself is changed and its output changes accordingly, so the version identifies the expected output for that reader behavior; then update the test to reference the new version.
+- Derived fixtures: keep the source fixture's base name across conversions. For example, `14-en-en.tei` produces `14-en-en.txt`, `14-en-en.csv`, `14-en-en.json`, and `14-en-en.txt.quickdic`. Directory-based outputs follow the same pattern, for example `14-en-en-sd/14-en-en.ifo`.
+- Maintenance: when a fixture is added, renamed, or changed, regenerate all derived expected outputs, update test checksums, and remove obsolete files and references.
+- Provenance: do not claim a fixture is part of, published by, maintained by, or endorsed by an upstream project (for example FreeDict) unless that is true. Use neutral wording such as “synthetic sample for PyGlossary tests”, and do not use upstream project names as the fixture publisher or Home link.
+
 ## Release notes
 
 When creating or editing `doc/releases/X.Y.Z.md`:
