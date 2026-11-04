@@ -97,11 +97,11 @@ class Reader(FreeDictReader):
 				em.write("\n")
 
 			if usgList:
-				with em.element("div"):
-					for i, usg in enumerate(usgList):
-						if i > 0:
-							em.write(" ")
-						self.writeUsageTag(em_hf, usg)
+				for i, usg in enumerate(usgList):
+					if i > 0:
+						em.write(" ")
+					self.writeUsageTag(em_hf, usg)
+				em.write(" ")
 
 			self.writeGramGroupChildren(em_hf, entry)
 			self.writeSenseList(em_hf, senseList)

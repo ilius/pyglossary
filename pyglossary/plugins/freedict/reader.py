@@ -179,13 +179,15 @@ class Reader(ReaderUtils):
 		self,
 		hf: T_htmlfile,
 		elem: Element,
+		prefix: list[Element] | None = None,
 	) -> None:
-		self.writeWithDirection(hf, elem, "div")
+		self.writeWithDirection(hf, elem, "div", prefix=prefix)
 
 	def writeTransCit(
 		self,
 		hf: T_htmlfile,
 		elem: Element,
+		prefix: list[Element] | None = None,
 	) -> None:
 		from lxml import etree as ET
 
@@ -223,6 +225,15 @@ class Reader(ReaderUtils):
 				f"unknown tag {child.tag!r} inside translation <cit>"
 				f": {self.tostring(child)}",
 			)
+
+		# A quote is rendered as a block <div>, so a prefix written before
+		# it would end up on its own line. Put the prefix inside the first
+		# quote instead to keep labels inline with the translation.
+		if quotes and prefix:
+			self.writeQuote(hf, quotes[0], prefix)
+			quotes = quotes[1:]
+		elif prefix:
+			self.writeUsageTags(hf, prefix)
 
 		self.makeList(
 			hf,
@@ -293,6 +304,7 @@ class Reader(ReaderUtils):
 		hf: T_htmlfile,
 		child: Element,
 		tag: str,
+		prefix: list[Element] | None = None,
 	) -> None:
 		attrib: dict[str, str] = dict(child.attrib)
 
@@ -307,6 +319,10 @@ class Reader(ReaderUtils):
 				attrib["class"] = type_
 
 		with hf.element(tag, attrib=attrib):
+			# Render the prefix inside the block element so it shares the
+			# line with the content, rather than appearing on its own line.
+			if prefix:
+				self.writeUsageTags(hf, prefix)
 			self.writeRichText(hf, child)
 
 	def writeRichText(
@@ -353,7 +369,20 @@ class Reader(ReaderUtils):
 	) -> None:
 		style = self.tagStyle.format(self._usg_color or "transparent")
 		with hf.element("span", attrib={"class": "tag", "style": style}):
+			hf.write("[")
 			self.writeRichText(hf, usg)
+			hf.write("]")
+
+	def writeUsageTags(
+		self,
+		hf: T_htmlfile,
+		usages: list[Element],
+	) -> None:
+		for i, usg in enumerate(usages):
+			if i > 0:
+				hf.write(" ")
+			self.writeUsageTag(hf, usg)
+		hf.write(" ")
 
 	def parseSenseSense(  # noqa: PLR0912
 		self,
@@ -449,10 +478,19 @@ class Reader(ReaderUtils):
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
 		ps = self.parseSenseSense(sense)
+		usages = list(ps.usages)
+
+		def writeUsages() -> None:
+			if not usages:
+				return
+			self.writeUsageTags(hf, usages)
+			usages.clear()
 
 		for child in ps.langs:
 			self.writeLangTag(hf, child)
 
+		if ps.defs:
+			writeUsages()
 		self.makeList(
 			hf,
 			ps.defs,
@@ -467,24 +505,35 @@ class Reader(ReaderUtils):
 			if color:
 				attrib["color"] = color
 			with hf.element("div"):
+				writeUsages()
 				for i, gram in enumerate(ps.grams):
 					text = gram.text or ""
 					if i > 0:
 						hf.write(self.getCommaSep(text))
 					with hf.element("font", attrib=attrib):
 						hf.write(text)
+		if ps.notes:
+			writeUsages()
 		self.makeList(
 			hf,
 			ps.notes,
 			self.writeNote,
 			single_prefix="",
 		)
-		self.makeList(
-			hf,
-			ps.transCits,
-			self.writeTransCit,
-			single_prefix="",
-		)
+		if ps.transCits:
+
+			def writeFirstTransCit(hf_: T_htmlfile, elem: Element) -> None:
+				prefix = list(usages)
+				usages.clear()
+				self.writeTransCit(hf_, elem, prefix)
+
+			self.makeList(
+				hf,
+				ps.transCits,
+				writeFirstTransCit,
+				single_prefix="",
+			)
+		writeUsages()
 		if ps.refs:
 			with hf.element("div"):
 				hf.write("Related: ")
@@ -495,12 +544,6 @@ class Reader(ReaderUtils):
 		for xr in ps.xrList:
 			with hf.element("div"):
 				self.writeRichText(hf, xr)
-		if ps.usages:
-			with hf.element("div"):
-				for i, usg in enumerate(ps.usages):
-					if i > 0:
-						hf.write(" ")
-					self.writeUsageTag(hf, usg)
 		for cit in ps.exampleCits:
 			with hf.element(
 				"div",
@@ -734,11 +777,11 @@ class Reader(ReaderUtils):
 				hf_ = cast("T_htmlfile", hf)
 
 				if usgList:
-					with hf.element("div"):
-						for i, usg in enumerate(usgList):
-							if i > 0:
-								hf.write(" ")
-							self.writeUsageTag(hf_, usg)
+					for i, usg in enumerate(usgList):
+						if i > 0:
+							hf.write(" ")
+						self.writeUsageTag(hf_, usg)
+					hf.write(" ")
 
 				self.writeGramGroupChildren(hf_, entry)
 				self.writeSenseList(hf_, senseList)

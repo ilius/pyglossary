@@ -155,9 +155,9 @@ class MdEmit:
 			yield
 			return
 
-		self._effective_append("**[")
+		self._effective_append("**")
 		yield  # noqa: RUF075
-		self._effective_append("]**")
+		self._effective_append("**")
 
 	@contextmanager
 	def _ctx_p(self, attr: dict[str, Any]) -> Iterator[None]:
