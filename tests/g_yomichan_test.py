@@ -12,6 +12,7 @@ sys.path.insert(0, rootDir)
 from glossary_v2_test import TestGlossaryBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.plugins.yomichan.reader import _readSubStructuredContent
 
 testTimeEpoch = 1730579400
 testTime = datetime.datetime.fromtimestamp(testTimeEpoch, tz=datetime.UTC)
@@ -77,6 +78,37 @@ class TestGlossaryYomichan(TestGlossaryBase):
 			"02-yomichan-deinflection.txt",
 			sha1sum="2d4ca22a2bb93ba1830478dd68f0c75b8309f56f",
 			inputFormat="Yomichan",
+		)
+
+	def test_read_sub_structured_content_no_extra_spaces(self):
+		content = [
+			"盛る",
+			{
+				"tag": "span",
+				"data": {"class": "bracket paren_close"},
+				"content": "）",
+			},
+			"竹製の蓋",
+			{
+				"tag": "span",
+				"data": {"class": "furigana furigana_paren"},
+				"content": [
+					{
+						"tag": "span",
+						"data": {"class": "furigana_reading"},
+						"content": "ふた",
+					},
+				],
+			},
+			"付きの器",
+			"。",
+		]
+		self.assertEqual(
+			_readSubStructuredContent(content),
+			'盛る<span class="bracket paren_close" style="">）</span>'
+			'竹製の蓋<span class="furigana furigana_paren" style="">'
+			'<span class="furigana_reading" style="">ふた</span></span>'
+			"付きの器。",
 		)
 
 

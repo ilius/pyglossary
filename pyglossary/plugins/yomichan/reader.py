@@ -201,7 +201,7 @@ def _readSubStructuredContent(elem: StructuredContent) -> str:
 	if isinstance(elem, str):
 		return elem
 	if isinstance(elem, list):
-		return " ".join(map(_readSubStructuredContent, elem))
+		return "".join(map(_readSubStructuredContent, elem))
 	styles = []
 	additional_properties = [
 		f' {key}="{val}"' for key, val in elem.get("data", {}).items()
