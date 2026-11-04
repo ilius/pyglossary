@@ -1097,6 +1097,12 @@
 				"customValue": true,
 				"comment": "Grammar color"
 			},
+			"usg_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Usage label color"
+			},
 			"example_padding": {
 				"class": "IntOption",
 				"type": "int",
@@ -1114,6 +1120,7 @@
 			"word_title": false,
 			"pron_color": "gray",
 			"gram_color": "green",
+			"usg_color": "green",
 			"example_padding": 10
 		},
 		"readDepends": {
@@ -1180,6 +1187,12 @@
 				"customValue": true,
 				"comment": "Grammar color"
 			},
+			"usg_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Usage label color"
+			},
 			"example_padding": {
 				"class": "IntOption",
 				"type": "int",
@@ -1197,6 +1210,7 @@
 			"word_title": false,
 			"pron_color": "gray",
 			"gram_color": "green",
+			"usg_color": "green",
 			"example_padding": 10
 		},
 		"readDepends": {

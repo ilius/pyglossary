@@ -7,11 +7,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
+		self.dataFile |= {
+			"freedict-sample-2024-12-19-v3.txt",
+		}
 		self.dataFileCRC32 |= {
 			"100-en-de.tei": "542c210e",
 			"100-en-de-v5.txt": "0c5942cd",
 			"freedict-sample-2024-12-19.tei": "c33b89d5",
-			"freedict-sample-2024-12-19-v2.txt": "c5eeff32",
 		}
 
 	def convert_tei_txt(self, fname, fname2, **convertArgs):
@@ -37,7 +39,7 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 	def test_convert_tei_txt_2(self):
 		self.convert_tei_txt(
 			"freedict-sample-2024-12-19",
-			"freedict-sample-2024-12-19-v2",
+			"freedict-sample-2024-12-19-v3",
 		)
 
 

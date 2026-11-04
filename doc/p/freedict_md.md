@@ -31,6 +31,7 @@ To update, modify plugins/freedict_md/__init__.py file, then run ./scripts/gen
 | word_title | `False` | bool | Add headwords title to beginning of definition |
 | pron_color | `gray` | str | Pronunciation color |
 | gram_color | `green` | str | Grammar color |
+| usg_color | `green` | str | Usage label color |
 | example_padding | `10` | int | Padding for examples (in px) |
 
 ### Dependencies for reading

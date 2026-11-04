@@ -66,6 +66,10 @@ class Reader(FreeDictReader):
 			for pron in entry.findall("form/pron", _NAMESPACE)
 			if pron.text
 		]
+		usgList = entry.findall("usg", _NAMESPACE) + entry.findall(
+			"form/usg",
+			_NAMESPACE,
+		)
 		senseList = entry.findall("sense", _NAMESPACE)
 
 		em = MdEmit()
@@ -91,6 +95,13 @@ class Reader(FreeDictReader):
 					em.write("/")
 				em.write(br())
 				em.write("\n")
+
+			if usgList:
+				with em.element("div"):
+					for i, usg in enumerate(usgList):
+						if i > 0:
+							em.write(" ")
+						self.writeUsageTag(em_hf, usg)
 
 			self.writeGramGroupChildren(em_hf, entry)
 			self.writeSenseList(em_hf, senseList)

@@ -1,0 +1,16 @@
+##name	Selection from FreeDict dictionaries
+##input_file_size	6002
+##edition	0.0.1
+##copyright	Copyright (C) 1999-2024 by various authors listed below.\nAvailable under the terms of the <a href="https://www.gnu.org/licenses/gpl-2.0.html">GNU General Public License ver. 2.0 and any later version</a>.\nThis program is free software; you can redistribute it and/or modify it under the\nterms of the GNU General Public License as published by the Free Software\nFoundation; either version 2 of the License, or (at your option) any later\nversion.\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY\nWARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE. See the GNU General Public License for more details.\nYou should have received a copy of the GNU General Public License along with this\nprogram; if not, write to the Free Software Foundation, Inc., 59 Temple Place -\nSuite 330, Boston, MA 02111-1307, USA.
+##publisher	FreeDict
+##creationTime	2024-12-19
+##description	This dictionary comes to you through nice people making it available for free and for\ngood. It is part of the FreeDict project, <a href="http://freedict.org/">http://freedict.org/</a>. This project aims to make translating\ndictionaries available for free. Your contributions are welcome!
+Adán	<div><div>Adam</div></div>
+enye	<div><div><font class="grammar" color="green">cop, poss</font></div><ol><li>having</li><li>with</li></ol><div><font class="grammar" color="green">the forms of -enye display pronominal agreement</font></div></div>
+abeceda	<div><div><font class="grammar" color="green">noun, female, sg</font></div><div>alphabet</div><div class="example" style="padding: 10px 0px;"><div>Slovenska abeceda ima 25 črk.</div><div>The Slovenian alphabet has 25 letters.</div></div></div>
+adhuhuri	<div><div><font class="grammar" color="green">noun</font></div>middayperiod between noon and 2 p.m.</div>
+adui	<div><div><font class="grammar" color="green">noun</font></div><ol><li>enemy</li><li>opponentin games or sports</li></ol></div>
+agano	<div><div><font class="grammar" color="green">noun</font></div><ol><li>promise</li><li>agreement, contract<div>See also: <a href="#ahadi">ahadi</a>\n               </div></li></ol></div>
+明かん|あかん|アカン	<div><div><font class="grammar" color="green">expressions (phrases, clauses, etc.)</font></div>word usually written using kana alone<ol><li><div>useless</div></li><li><div>no good</div></li><li><div>hopeless</div></li></ol><div><span class="tag" style="color:white;background:green;padding-left:3px;padding-right:3px;border-radius:0.5ex;">Kansai-ben</span></div></div>
+お転婆|御転婆|おてんば	<div>Dutch: ontembaar<div><font class="grammar" color="green">adjectival nouns or quasi-adjectives (keiyodoshi)</font>, <font class="grammar" color="green">noun (common) (futsuumeishi)</font></div>word usually written using kana alone<div>tomboy</div></div>
+abolishment	<div>/<font color="gray">ə'bɔlıʃmənt</font>/<br>\n<div><font class="grammar" color="green">noun</font></div><div>panaikinimas</div><div>\n\t\t\t\t\t\t<a href="bword://abolition">abolition</a>\n\t\t\t\t\t</div></div>

@@ -73,6 +73,7 @@ class Reader(ReaderUtils):
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
+	_usg_color: str = "green"
 	_example_padding: int = 10
 
 	def _copyOptionsTo(self, other: Reader) -> None:
@@ -83,9 +84,17 @@ class Reader(ReaderUtils):
 		other._word_title = self._word_title
 		other._pron_color = self._pron_color
 		other._gram_color = self._gram_color
+		other._usg_color = self._usg_color
 		other._example_padding = self._example_padding
 
 	gramClass = "grammar"
+	tagStyle = (
+		"color:white;"
+		"background:{};"
+		"padding-left:3px;"
+		"padding-right:3px;"
+		"border-radius:0.5ex;"
+	)
 	supportedTags: set[str] = {
 		f"{_TEI}{tag}"
 		for tag in (
@@ -93,6 +102,7 @@ class Reader(ReaderUtils):
 			"form",  # entry.form
 			"orth",  # entry.form.orth
 			"pron",  # entry.form.pron
+			"usg",  # entry.form.usg, entry.sense.usg
 			"sense",  # entry.sense
 			"cit",  # entry.sense.cit
 			"quote",  # entry.sense.cit.quote
@@ -336,6 +346,15 @@ class Reader(ReaderUtils):
 	) -> None:
 		self.writeRichText(hf, note)
 
+	def writeUsageTag(
+		self,
+		hf: T_htmlfile,
+		usg: Element,
+	) -> None:
+		style = self.tagStyle.format(self._usg_color or "transparent")
+		with hf.element("span", attrib={"class": "tag", "style": style}):
+			self.writeRichText(hf, usg)
+
 	def parseSenseSense(  # noqa: PLR0912
 		self,
 		sense: Element,
@@ -478,12 +497,10 @@ class Reader(ReaderUtils):
 				self.writeRichText(hf, xr)
 		if ps.usages:
 			with hf.element("div"):
-				hf.write("Usage: ")
 				for i, usg in enumerate(ps.usages):
-					text = usg.text or ""
 					if i > 0:
-						hf.write(self.getCommaSep(text))
-					hf.write(text)
+						hf.write(" ")
+					self.writeUsageTag(hf, usg)
 		for cit in ps.exampleCits:
 			with hf.element(
 				"div",
@@ -685,17 +702,16 @@ class Reader(ReaderUtils):
 			for pron in entry.findall("form/pron", _NAMESPACE)
 			if pron.text
 		]
+		usgList = entry.findall("usg", _NAMESPACE) + entry.findall(
+			"form/usg",
+			_NAMESPACE,
+		)
 		senseList = entry.findall("sense", _NAMESPACE)
 
 		with ET.htmlfile(buff, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._word_title:
 					write_keywords_title(keywords)
-
-				# TODO: "form/usg"
-				# <usg type="geo">Brit</usg>
-				# <usg type="geo">US</usg>
-				# <usg type="hint">...</usg>
 
 				if pronList:
 					for i, pron in enumerate(pronList):
@@ -709,6 +725,14 @@ class Reader(ReaderUtils):
 					hf.write("\n")
 
 				hf_ = cast("T_htmlfile", hf)
+
+				if usgList:
+					with hf.element("div"):
+						for i, usg in enumerate(usgList):
+							if i > 0:
+								hf.write(" ")
+							self.writeUsageTag(hf_, usg)
+
 				self.writeGramGroupChildren(hf_, entry)
 				self.writeSenseList(hf_, senseList)
 

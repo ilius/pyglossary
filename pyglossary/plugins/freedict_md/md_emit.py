@@ -149,10 +149,15 @@ class MdEmit:
 		self._effective_append("\n")
 
 	@contextmanager
-	@staticmethod
-	def _ctx_span(attr: dict[str, Any]) -> Iterator[None]:
-		del attr
-		yield
+	def _ctx_span(self, attr: dict[str, Any]) -> Iterator[None]:
+		classes = (attr.get("class") or "").split()
+		if "tag" not in classes:
+			yield
+			return
+
+		self._effective_append("**[")
+		yield  # noqa: RUF075
+		self._effective_append("]**")
 
 	@contextmanager
 	def _ctx_p(self, attr: dict[str, Any]) -> Iterator[None]:
