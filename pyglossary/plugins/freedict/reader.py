@@ -195,7 +195,6 @@ class Reader(ReaderUtils):
 		self,
 		hf: T_htmlfile,
 		elem: Element,
-		prefix: list[Element] | None = None,
 	) -> None:
 		from lxml import etree as ET
 
@@ -234,8 +233,8 @@ class Reader(ReaderUtils):
 
 		def newTextBlock(text: str, cit: Element) -> Element:
 			# Loose text has no element of its own, but the block writers
-			# (writeQuote -> writeWithDirection) need an Element. Wrap the
-			# text in a new <quote> that copies the <cit> attributes, so
+			# (writeWithDirection) need an Element. Wrap the text in a new
+			# <quote> that copies the <cit> attributes, so
 			# xml:lang (lang/dir) and type (class) are applied to it as they
 			# are to real quotes. The source tree is not modified here.
 			quote = ET.Element(f"{_TEI}quote", attrib=dict(cit.attrib))
@@ -342,20 +341,17 @@ class Reader(ReaderUtils):
 
 		blocks = collectCit(elem)
 
-		if prefix:
-			if blocks:
-				quote, prefixOfFirst = blocks[0]
-				blocks[0] = (quote, prefix + prefixOfFirst)
-			else:
-				self.writeInlineTags(hf, prefix)
-
+		# Translation quotes are inline content, not block content. The
+		# enclosing list item or sense container already provides the block
+		# boundary, so a <div> here would force a line break before the
+		# translation and separate it from its usage labels.
 		if len(blocks) == 1:
-			self.writeQuote(hf, blocks[0][0], blocks[0][1])
+			self.writeWithDirection(hf, blocks[0][0], "span", blocks[0][1])
 		elif blocks:
 			with hf.element("ol"):
 				for quote, blockPrefix in blocks:
 					with hf.element("li"):
-						self.writeQuote(hf, quote, blockPrefix)
+						self.writeWithDirection(hf, quote, "span", blockPrefix)
 
 		if next(sense.iterchildren(), False) is not None:
 			self.writeSense(hf, sense)
@@ -702,16 +698,15 @@ class Reader(ReaderUtils):
 			single_prefix="",
 		)
 		if ps.transCits:
-
-			def writeFirstTransCit(hf_: T_htmlfile, elem: Element) -> None:
-				prefix = list(usages)
-				usages.clear()
-				self.writeTransCit(hf_, elem, prefix)
-
+			# Usage labels are written at the start of the sense, before the
+			# first translation, so they flow inline with it.
+			writeUsages()
+			if ps.langs or ps.defs or ps.grams or ps.notes:
+				hf.write(" ")
 			self.makeList(
 				hf,
 				ps.transCits,
-				writeFirstTransCit,
+				self.writeTransCit,
 				single_prefix="",
 			)
 		writeUsages()

@@ -1,0 +1,109 @@
+##name	Sample: English-Deutsch FreeDict+WikDict dictionary
+##input_file_size	43472
+##edition	2020.02.08
+##copyright	Licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/legalcode">Creative Commons Attribution-ShareAlike 3.0 Unported</a> license
+##publisher	Karl Bartel
+##creationTime	2020-02-08
+##description	Automatic creation of this bilingual dictionary by <a href="http://www.wikdict.com/">WikDict</a>.\nBase data from <a href="https://www.wiktionary.org/">Wiktionary.org</a> via <a href="http://kaiko.getalp.org/about-dbnary/">DBnary</a>.\nThis dictionary comes to you through nice people\nmaking it available for free and for good. It is part of\nthe FreeDict project, http://www.freedict.org/. This\nproject aims to make available many translating\ndictionaries for free. Your contributions are welcome!
+##sourceLang	English
+##targetLang	German
+&	<div><div><font class="grammar" color="green">conjunction</font></div><span>u.</span><div>abbreviation of and</div></div>
+-'s	<div>/<font color="gray">s</font>/, /<font color="gray">z</font>/, /<font color="gray">əz</font>/, /<font color="gray">ɪz</font>/<br>\n<div><font class="grammar" color="green">particle</font></div><ol><li><span>-s</span></li><li><span>der</span></li><li><span>des</span></li><li><span>von</span></li></ol><div>possessive marker</div></div>
+able	<div>/<font color="gray">ə.bl̩</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>bar</span></li><li><ol><li><span>bar</span></li><li><span>abel</span></li></ol><div>able to be done</div></li><li><span>wert</span><div>expressing capacity or worthiness in a passive sense</div></li></ol></div>
+aemia	<div><div><font class="grammar" color="green">suffix</font></div><span>ämie</span><div>condition of the blood</div></div>
+amine	<div><div><font class="grammar" color="green">suffix</font></div><span>amin</span><div>an amine</div></div>
+an	<div><div><font class="grammar" color="green">suffix</font></div><span>isch</span><div>of or pertaining to</div></div>
+ane	<div>/<font color="gray">eɪn</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>an</span><div>alkanes</div></div>
+ation	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>ation</span></li><li><span>ierung</span></li></ol><div>-ation (suffix)</div></div>
+caine	<div><div><font class="grammar" color="green">suffix</font></div><span>cain</span><div>a synthetic alkaloid used as an anesthetic</div></div>
+centric	<div><div><font class="grammar" color="green">suffix</font></div><span>zentrisch</span><div>having a specified number of centres</div></div>
+cide	<div>/<font color="gray">-saɪd</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>örder</span><div>killer of</div></li><li><ol><li><span>zid</span></li><li><span>ord</span></li></ol><div>killing of</div></li></ol></div>
+cracy	<div>/<font color="gray">-kɹəsi</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>kratie</span><div>rule</div></div>
+cratic	<div>/<font color="gray">ˈkɹætɪk</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>kratisch</span><div>suffix forming adjectives related to -cracy/-crat</div></div>
+cyte	<div>/<font color="gray">-saɪt</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>zyt</span><div>cell names and classifications</div></div>
+diene	<div><div><font class="grammar" color="green">suffix</font></div><span>dien</span><ol><li><div>diene</div></li><li><div>polymer of a diene</div></li></ol></div>
+ectomy	<div>/<font color="gray">-ˈɛktəmi</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>ektomie</span></li><li><span>[Amputation|-amputation]]</span></li><li><span>[Entfernung|-entfernung]]</span></li></ol><div>surgical removal of</div></div>
+ene	<div><div><font class="grammar" color="green">suffix</font></div><span>en</span><div>alkene</div></div>
+er	<div>/<font color="gray">ə</font>/, /<font color="gray">ɚ</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>er</span><ol><li><div>(used to form agent nouns) person or thing that does...</div></li><li><div>used to form the comparative of adjectives</div></li><li><div>used to form the comparative of adverbs</div></li></ol></div>
+ese	<div><div><font class="grammar" color="green">suffix</font></div><span>isch</span><div>forming adjectives and nouns describing things characteristic of a particular place</div></div>
+esque	<div>/<font color="gray">-ɛsk</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>esk</span><div>in the style of</div></div>
+ess	<div>/<font color="gray">-ɛs</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>in</span></li><li><span>trix</span></li><li><span>öse</span></li></ol><div>female suffix</div></div>
+est	<div>/<font color="gray">əst</font>/, /<font color="gray">ɪst</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><ol><li><span>ste</span></li><li><span>ster</span></li><li><span>m ...-sten</span></li></ol><div>superlative of adjectives and adverbs</div></li><li><span>st</span><div>second-person singular present tense of verbs</div></li></ol></div>
+fold	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><ol><li><span>fach</span></li><li><span>fache</span></li></ol><div>used to make adjectives</div></li><li><ol><li><span>fach</span></li><li><span>faltig</span></li></ol><div>used to make adverbs</div></li></ol></div>
+free	<div><div><font class="grammar" color="green">suffix</font></div><span>frei</span><div>free from; without</div></div>
+gate	<div><div><font class="grammar" color="green">suffix</font></div><span>gate</span><div>component in names of scandals</div></div>
+gen	<div><div><font class="grammar" color="green">suffix</font></div><span>gen</span><div>producer of something</div></div>
+gon	<div><div><font class="grammar" color="green">suffix</font></div><span>eck</span><div>plane figure</div></div>
+gram	<div><div><font class="grammar" color="green">suffix</font></div><span>gramm</span><div>something written</div></div>
+graph	<div><div><font class="grammar" color="green">suffix</font></div><span>graph</span><div>something related to writing etc.</div></div>
+graphy	<div>/<font color="gray">-ɡɹəfi</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>graphie</span><div>Suffix denoting a written or represented in the specified manner, or about a specified subject</div></div>
+hedron	<div><div><font class="grammar" color="green">suffix</font></div><span>eder</span><div>solid figure</div></div>
+hood	<div>/<font color="gray">hʊd</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><ol><li><span>heit</span></li><li><span>keit</span></li><li><span>schaft</span></li></ol><div>condition or state</div></li><li><span>schaft</span><div>group</div></li></ol></div>
+hour-old	<div><div><font class="grammar" color="green">suffix</font></div><span>stündig</span><div>suffix used to indicate the age of something or someone, in terms of hours</div></div>
+ian	<div>/<font color="gray">iːən</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>isch</span><div>related to</div></div>
+iatry	<div><div><font class="grammar" color="green">suffix</font></div><span>iatrie</span></div>
+ible	<div><div><font class="grammar" color="green">suffix</font></div><span>bar</span><div>able to be done</div></div>
+ic	<div><div><font class="grammar" color="green">suffix</font></div><span>isch</span><div>Note: these translations are a guide only. For more precise translations, see individual words ending in -ic</div></div>
+ics	<div><div><font class="grammar" color="green">suffix</font></div><span>ik</span><div>fields of knowledge or practice</div></div>
+ide	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>id</span><ol><li><div>any of a group of related compounds</div></li><li><div>binary compound of a nonmetal</div></li></ol></li><li><ol><li><span>id</span></li><li><span>oid</span></li></ol><div>any of a group of several elements</div></li></ol></div>
+ify	<div>/<font color="gray">ɪfaɪ</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>fizieren</span><div>to produce verbs meaning to make</div></div>
+-in-law	<div><div><font class="grammar" color="green">adjective</font></div><span>schwieger-</span><div>related through marriage</div></div>
+ing	<div>/<font color="gray">iːn</font>/, /<font color="gray">ɪŋ</font>/, /<font color="gray">ɪŋɡ</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>ung</span><div>act of doing something</div></li><li><span>u</span><div>to form gerunds</div></li><li><span>end</span><div>to form present participles</div></li></ol></div>
+ish	<div>/<font color="gray">ɪʃ</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>lich</span><div>appended to adjectives</div></li><li><span>isch</span><div>appended to roots denoting names of nations or regions</div></li><li><span>haft</span><div>appended to words</div></li></ol></div>
+ism	<div>/<font color="gray">ɪzəm</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>ismus</span><div>a principle, belief or movement</div></div>
+ist	<div>/<font color="gray">-əst</font>/, /<font color="gray">-ɪst</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>ist</span><div>One who follows a particular ideology, doctrine, belief system or theory</div></div>
+ite	<div>/<font color="gray">-aɪt</font>/, /<font color="gray">-ɪt</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>it</span><div>used to form names of minerals and rocks</div></div>
+itis	<div>/<font color="gray">-ˈaɪtɪs</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>itis</span><div>suffix denoting diseases characterized by inflammation</div></div>
+itude	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>itüde</span></li><li><span>tude</span></li></ol><div>suffix</div></div>
+ity	<div>/<font color="gray">[ɪti]</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>ität</span><div>Used to form nouns from adjectives.</div></div>
+ive	<div>/<font color="gray">ɪv</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>iv</span><div>adjectival suffix: of the nature of; tending to</div></div>
+ization	<div>/<font color="gray">-ˈaɪzeɪʃən</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>isierung</span></li><li><span>isation</span></li></ol><div>act, process, or result of doing something</div></div>
+ize	<div>/<font color="gray">-aɪz</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>ieren</span></li><li><span>isieren</span></li></ol><div>suffix used to form verbs</div></div>
+land	<div>/<font color="gray">lənd</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>land</span><div>territory, country or region (suffix)</div></div>
+less	<div>/<font color="gray">ləs</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>los</span><div>lacking</div></div>
+like	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>artig</span></li><li><span>ähnlich</span></li></ol><div>having some of the characteristics of (used to form adjectives from nouns)</div></div>
+ling	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>chen</span></li><li><span>erl</span></li><li><span>lein</span></li><li><span>ling</span></li></ol><div>Diminutive</div></div>
+lite	<div>/<font color="gray">lʌɪt</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>lith</span><div>forms names of rocks or minerals</div></div>
+logical	<div><div><font class="grammar" color="green">suffix</font></div><span>ogisch</span><div>used to form adjectival forms of nouns</div></div>
+logist	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>loge</span></li><li><span>login</span></li></ol><div>person who studies or is an expert in the related -logy</div></div>
+logy	<div>/<font color="gray">ləd͡ʒi</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><ol><li><span>logie</span></li><li><span>ik</span></li><li><span>kunde</span></li><li><span>ehre</span></li><li><span>issenschaft</span></li></ol><div>branch of learning</div></li><li><span>teiler</span><div>something said</div></li></ol></div>
+ly	<div>/<font color="gray">li</font>/, /<font color="gray">lɪ</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><ol><li><span>haft</span></li><li><span>ig</span></li><li><span>isch</span></li><li><span>lich</span></li></ol><div>forming adjectives from nouns, in the sense "similar to, like, characteristic of"</div></li><li><ol><li><span>erweise</span></li><li><span>lich</span></li></ol><div>used to form adverbs from adjectives</div></li></ol></div>
+mancy	<div><div><font class="grammar" color="green">suffix</font></div><span>mantie</span><div>specified forms of divination</div></div>
+mania	<div><div><font class="grammar" color="green">suffix</font></div><span>manie</span><div>indicating a compulsion or obsession</div></div>
+meter	<div><div><font class="grammar" color="green">suffix</font></div><span>meter</span><div>used to form a measuring device</div></div>
+metry	<div><div><font class="grammar" color="green">suffix</font></div><span>metrie</span><div>forming nouns relating to measures and measurement</div></div>
+ness	<div>/<font color="gray">nəs</font>/, /<font color="gray">nɛs</font>/, /<font color="gray">nɪs</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>heit</span></li><li><span>keit</span></li><li><span>nis</span></li></ol><div>appended to adjectives to form nouns meaning "the state of being...", "the quality of being...", or "the measure of being..."</div></div>
+nomy	<div><div><font class="grammar" color="green">suffix</font></div><span>nomie</span><div>system of rules, laws, or knowledge about a particular field</div></div>
+ol	<div><div><font class="grammar" color="green">suffix</font></div><span>ol</span><div>-OH group</div></div>
+ologist	<div><div><font class="grammar" color="green">suffix</font></div><span>ologe</span><div>alternative spelling of -logist</div></div>
+ology	<div><div><font class="grammar" color="green">suffix</font></div><span>ologie</span><div>branch of learning</div></div>
+one	<div><div><font class="grammar" color="green">suffix</font></div><span>on</span><div>ketone</div></div>
+osis	<div><div><font class="grammar" color="green">suffix</font></div><span>ose</span><div>suffix for functional disorders</div></div>
+otic	<div><div><font class="grammar" color="green">suffix</font></div><span>otisch</span></div>
+ous	<div>/<font color="gray">əs</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>haft</span></li><li><span>ös</span></li></ol><div>suffix to form adjectives</div></div>
+pathic	<div>/<font color="gray">pæθɪk</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>pathisch</span></div>
+penia	<div><div><font class="grammar" color="green">suffix</font></div><span>penie</span><div>deficiency</div></div>
+philia	<div><div><font class="grammar" color="green">suffix</font></div><span>philie</span><div>forming words denoting abnormal linking towards a given thing</div></div>
+phobia	<div>/<font color="gray">ˌfəʊbi.ə</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>phobie</span><div>used to form nouns meaning fear</div></div>
+proof	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>fest</span></li><li><span>sicher</span></li></ol><div>denoting an impervious quality</div></div>
+s	<div>/<font color="gray">s</font>/, /<font color="gray">z</font>/, /<font color="gray">ɨz</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>en</span><div>regular plurals of nouns</div></div>
+scope	<div><div><font class="grammar" color="green">suffix</font></div><span>skop</span><div>suffix to name viewing instruments</div></div>
+scopy	<div>/<font color="gray">-skəpi</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>skopie</span><div>observation, viewing</div></div>
+ship	<div><div><font class="grammar" color="green">suffix</font></div><span>schaft</span><div>Property or state of being</div></div>
+teen	<div><div><font class="grammar" color="green">suffix</font></div><span>ehn</span><div>to form numbers 13 - 19</div></div>
+th	<div>/<font color="gray">-θ</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>ste</span></li><li><span>te</span></li></ol><div>used to form the ordinal numeral</div></div>
+tion	<div>/<font color="gray">-ʃən</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><ol><li><span>tion</span></li><li><span>ung</span></li></ol><div>producing a noun meaning the action or effect of a verb</div></div>
+ty	<div><div><font class="grammar" color="green">suffix</font></div><span>ig</span><div>multiples of ten</div></div>
+um	<div>/<font color="gray">əm</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>um</span><div>Latinate singular grammatical number suffix</div></div>
+ward	<div>/<font color="gray">wɔɹd</font>/, /<font color="gray">wɔːd</font>/, /<font color="gray">wəd</font>/, /<font color="gray">wɚd</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>wärts</span><div>forming adverbs</div></div>
+wards	<div>/<font color="gray">wɔɹdz</font>/, /<font color="gray">wɔːdz</font>/, /<font color="gray">wədz</font>/, /<font color="gray">wɚdz</font>/<br>\n<div><font class="grammar" color="green">suffix</font></div><span>wärts</span><div>forming adverbs</div></div>
+worthy	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>wert</span></li><li><span>würdig</span></li></ol><div>of sufficient worth for</div></div>
+y	<div><div><font class="grammar" color="green">suffix</font></div><ol><li><span>ig</span><div>having the quality of</div></li><li><ol><li><span>chen</span></li><li><span>erl</span></li><li><span>i</span></li><li><span>lein</span></li></ol><div>forming diminutive nouns</div></li><li><ol><li><span>heit</span></li><li><span>keit</span></li><li><span>nis</span></li></ol><div>forming abstract nouns</div></li></ol></div>
+yne	<div><div><font class="grammar" color="green">suffix</font></div><span>in</span><div>hydrocarbon with triple bonds</div></div>
+zygous	<div><div><font class="grammar" color="green">suffix</font></div><span>zygot</span><div>having a specified zygotic constitution</div></div>
+0th	<div><div><font class="grammar" color="green">adjective</font></div><span>0.</span><div>abbreviation of zeroth</div></div>
+1 Chronicles	<div><div><font class="grammar" color="green">pronoun</font></div><span>1 Chronik</span><div>book of the Bible</div></div>
+1 Samuel	<div><div><font class="grammar" color="green">pronoun</font></div><span>1 Samuel</span><div>book of the Bible</div></div>
+1-up	<div><div><font class="grammar" color="green">noun</font></div><span>1-Up</span><div>An item that grants the player an extra life in the game, staving off game over by one more try.</div></div>
+1000th	<div><div><font class="grammar" color="green">adjective</font></div><span>1000.</span><div>abbreviation of thousandth</div></div>
+101	<div>/<font color="gray">ˈwʌnˌoʊ̯ˈwʌn</font>/<br>\n<div><font class="grammar" color="green">adjective</font></div><ol><li><span>Anfänger</span></li><li><span>Einführung</span></li><li><span>Einmaleins</span></li></ol><div>basic, beginner-</div></div>

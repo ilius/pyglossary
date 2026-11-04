@@ -9,9 +9,9 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 
 		self.dataFile |= {
 			"1-en-de-labels.tei",
-			"100-en-de-v6.txt",
-			"1-en-de-labels.txt",
-			"freedict-sample-2024-12-19-v3.txt",
+			"100-en-de-v7.txt",
+			"1-en-de-labels-v2.txt",
+			"freedict-sample-2024-12-19-v4.txt",
 		}
 		self.dataFileCRC32 |= {
 			"100-en-de.tei": "542c210e",
@@ -29,25 +29,25 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 	def test_convert_tei_txt_1(self):
 		self.convert_tei_txt(
 			"100-en-de",
-			"100-en-de-v6",
+			"100-en-de-v7",
 			readOptions={"auto_comma": False},
 		)
 		self.convert_tei_txt(
 			"100-en-de",
-			"100-en-de-v6",
+			"100-en-de-v7",
 			readOptions={"auto_comma": True},
 		)
 
 	def test_convert_tei_txt_2(self):
 		self.convert_tei_txt(
 			"freedict-sample-2024-12-19",
-			"freedict-sample-2024-12-19-v3",
+			"freedict-sample-2024-12-19-v4",
 		)
 
 	def test_convert_tei_txt_labels(self):
 		self.convert_tei_txt(
 			"1-en-de-labels",
-			"1-en-de-labels",
+			"1-en-de-labels-v2",
 		)
 
 
