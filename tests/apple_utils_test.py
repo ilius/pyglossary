@@ -51,6 +51,22 @@ vertical-align: -6%;
 		fixed_actual = substituteAppleCSS(css)
 		self.assertEqual(fixed_actual, fixed_expected)
 
+	def test_utf16(self):
+		css = """@charset "UTF-16";
+.test {
+	-webkit-column-width: 25em;
+	font: -apple-system-body;
+}
+""".encode("utf-16")
+		fixed_expected = b"""@charset "UTF-8";
+.test {
+	column-width: 25em;
+	font: "Helvetica Neue";
+}
+"""
+		fixed_actual = substituteAppleCSS(css)
+		self.assertEqual(fixed_actual, fixed_expected)
+
 
 if __name__ == "__main__":
 	unittest.main()

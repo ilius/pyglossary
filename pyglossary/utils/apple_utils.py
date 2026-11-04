@@ -119,6 +119,32 @@ def _subCSS(m: re.Match[bytes]) -> bytes:
 	return value.encode("ascii")
 
 
+def _toUTF8(css: bytes) -> bytes:
+	"""
+	Re-encode UTF-16 CSS (as shipped in many Apple dictionaries) to UTF-8.
+
+	Dictionary applications such as GoldenDict read resource CSS files as
+	UTF-8, so UTF-16 stylesheets are otherwise ignored.
+	"""
+	if css.startswith((b"\xff\xfe", b"\xfe\xff")):
+		text = css.decode("utf-16")
+	elif len(css) > 1 and (css[0] == 0 or css[1] == 0):
+		# UTF-16 without a byte order mark
+		text = css.decode("utf-16-be" if css[0] == 0 else "utf-16-le")
+	else:
+		return css
+
+	text = re.sub(
+		r"""(@charset\s+["'])utf-?16(?:le|be)?(["'])""",
+		r"\1UTF-8\2",
+		text,
+		count=1,
+		flags=re.IGNORECASE,
+	)
+	return text.encode("utf-8")
+
+
 def substituteAppleCSS(css: bytes) -> bytes:
+	css = _toUTF8(css)
 	css = cssKeyRemovePattern.sub(b"", css)
 	return cssParamPattern.sub(_subCSS, css)
