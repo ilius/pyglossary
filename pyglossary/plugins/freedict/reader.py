@@ -511,6 +511,13 @@ class Reader(ReaderUtils):
 			):
 				for quote in cit.findall("quote", _NAMESPACE):
 					self.writeWithDirection(hf, quote, "div")
+				usgList = cit.findall("usg", _NAMESPACE)
+				if usgList:
+					with hf.element("div"):
+						for i, usg in enumerate(usgList):
+							if i > 0:
+								hf.write(" ")
+							self.writeUsageTag(hf, usg)
 				for cit2 in cit.findall("cit", _NAMESPACE):
 					for quote in cit2.findall("quote", _NAMESPACE):
 						quote.attrib.update(cit2.attrib)
