@@ -26,7 +26,7 @@ from pyglossary.utils.io_utils import nullBinaryIO
 from .utils import XMLLANG, ReaderUtils
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
+	from collections.abc import Callable, Iterator
 	from io import IOBase
 
 	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
@@ -42,6 +42,11 @@ _INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 _NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
 
 
+def _elementText(elem: Element) -> str:
+	"""Return all text inside an element, including nested markup."""
+	return "".join(elem.itertext()).strip()
+
+
 @dataclass(slots=True)
 class _ParsedSense:
 	"""Internal parsed sense."""
@@ -52,6 +57,7 @@ class _ParsedSense:
 	notes: list[Element]
 	refs: list[Element]
 	usages: list[Element]
+	labels: list[Element]
 	xrList: list[Element]
 	exampleCits: list[Element]
 	langs: list[Element]
@@ -74,6 +80,7 @@ class Reader(ReaderUtils):
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
 	_usage_color: str = "green"
+	_label_color: str = "darkblue"
 	_example_padding: int = 10
 
 	def _copyOptionsTo(self, other: Reader) -> None:
@@ -85,6 +92,7 @@ class Reader(ReaderUtils):
 		other._pron_color = self._pron_color
 		other._gram_color = self._gram_color
 		other._usage_color = self._usage_color
+		other._label_color = self._label_color
 		other._example_padding = self._example_padding
 
 	gramClass = "grammar"
@@ -198,33 +206,77 @@ class Reader(ReaderUtils):
 
 		quotes: list[Element] = []
 		sense = ET.Element(f"{_TEI}sense")
-		for child in children:
-			if isinstance(child, str):
-				child = child.strip()  # noqa: PLW2901
-				if child:
-					hf.write(child)
-					log.warning(f"text directly inside <cit>: {child}")
-				continue
+		gramGrp: Element | None = None
 
-			if child.__class__.__name__ == "_Comment":
-				continue
+		def appendGramChild(child: Element) -> None:
+			nonlocal gramGrp
+			if gramGrp is None:
+				gramGrp = ET.SubElement(sense, f"{_TEI}gramGrp")
+			gramGrp.append(child)
 
-			if child.tag == f"{_TEI}quote":
-				quotes.append(child)
-				continue
+		def appendLabel(child: Element) -> None:
+			# Labels are rendered as inline bracketed tags.
+			if not _elementText(child):
+				return
+			sense.append(child)
 
-			if child.tag in {f"{_TEI}gramGrp", f"{_TEI}usg", f"{_TEI}note"}:
-				sense.append(child)
-				continue
+		def collect(cit: Element) -> None:  # noqa: PLR0912
+			for child in cit.xpath("child::node()"):
+				if isinstance(child, str):
+					text = child.strip()
+					if text:
+						hf.write(text)
+						log.warning(f"text directly inside <cit>: {text}")
+					continue
 
-			if child.tag == f"{_TEI}cit":
-				# TODO
-				continue
+				if child.__class__.__name__ == "_Comment":
+					continue
 
-			log.warning(
-				f"unknown tag {child.tag!r} inside translation <cit>"
-				f": {self.tostring(child)}",
-			)
+				if child.tag == f"{_TEI}quote":
+					quotes.append(child)
+					continue
+
+				if child.tag in {f"{_TEI}gramGrp", f"{_TEI}usg", f"{_TEI}note"}:
+					sense.append(child)
+					continue
+
+				if child.tag in {
+					f"{_TEI}pos",
+					f"{_TEI}gen",
+					f"{_TEI}number",
+					f"{_TEI}num",
+					f"{_TEI}subc",
+				}:
+					appendGramChild(child)
+					continue
+
+				if child.tag == f"{_TEI}lbl":
+					appendLabel(child)
+					continue
+
+				if child.tag == f"{_TEI}cit":
+					typ = child.attrib.get("type", "trans")
+					if typ in {"abbrev", "abbreviation"}:
+						for orth in child.findall("orth", _NAMESPACE):
+							text = _elementText(orth)
+							if text:
+								lbl = ET.SubElement(sense, f"{_TEI}lbl")
+								lbl.text = text
+						continue
+					# Nested translations/examples: keep their content.
+					collect(child)
+					continue
+
+				log.warning(
+					f"unknown tag {child.tag!r} inside translation <cit>"
+					f": {self.tostring(child)}",
+				)
+				text = _elementText(child)
+				if text:
+					note = ET.SubElement(sense, f"{_TEI}note")
+					note.text = text
+
+		collect(elem)
 
 		# A quote is rendered as a block <div>, so a prefix written before
 		# it would end up on its own line. Put the prefix inside the first
@@ -362,27 +414,57 @@ class Reader(ReaderUtils):
 	) -> None:
 		self.writeRichText(hf, note)
 
+	def writeTag(
+		self,
+		hf: T_htmlfile,
+		elem: Element,
+		color: str,
+	) -> None:
+		style = self.tagStyle.format(color or "transparent")
+		with hf.element("span", attrib={"class": "tag", "style": style}):
+			hf.write("[")
+			self.writeRichText(hf, elem)
+			hf.write("]")
+
 	def writeUsageTag(
 		self,
 		hf: T_htmlfile,
 		usg: Element,
 	) -> None:
-		style = self.tagStyle.format(self._usage_color or "transparent")
-		with hf.element("span", attrib={"class": "tag", "style": style}):
-			hf.write("[")
-			self.writeRichText(hf, usg)
-			hf.write("]")
+		self.writeTag(hf, usg, self._usage_color)
+
+	def writeLabelTag(
+		self,
+		hf: T_htmlfile,
+		lbl: Element,
+	) -> None:
+		self.writeTag(hf, lbl, self._label_color)
+
+	def writeTags(
+		self,
+		hf: T_htmlfile,
+		elems: list[Element],
+		writer: Callable[[T_htmlfile, Element], None],
+	) -> None:
+		for i, elem in enumerate(elems):
+			if i > 0:
+				hf.write(" ")
+			writer(hf, elem)
+		hf.write(" ")
 
 	def writeUsageTags(
 		self,
 		hf: T_htmlfile,
 		usages: list[Element],
 	) -> None:
-		for i, usg in enumerate(usages):
-			if i > 0:
-				hf.write(" ")
-			self.writeUsageTag(hf, usg)
-		hf.write(" ")
+		self.writeTags(hf, usages, self.writeUsageTag)
+
+	def writeLabelTags(
+		self,
+		hf: T_htmlfile,
+		labels: list[Element],
+	) -> None:
+		self.writeTags(hf, labels, self.writeLabelTag)
 
 	def parseSenseSense(  # noqa: PLR0912
 		self,
@@ -396,6 +478,7 @@ class Reader(ReaderUtils):
 		notes: list[Element] = []
 		refs: list[Element] = []
 		usages: list[Element] = []
+		labels: list[Element] = []
 		xrList: list[Element] = []
 		exampleCits: list[Element] = []
 		langs: list[Element] = []
@@ -408,8 +491,11 @@ class Reader(ReaderUtils):
 					exampleCits.append(child)
 				elif typ == "idiom":
 					transCits.append(child)  # FIXME
+				elif typ in {"abbrev", "abbreviation"}:
+					notes.append(child)
 				else:
 					log.warning(f"unknown cit type: {self.tostring(child)}")
+					notes.append(child)
 				continue
 
 			if child.tag == f"{_TEI}def":
@@ -440,6 +526,12 @@ class Reader(ReaderUtils):
 				usages.append(child)
 				continue
 
+			if child.tag == f"{_TEI}lbl":
+				if not _elementText(child):
+					continue
+				labels.append(child)
+				continue
+
 			if child.tag == f"{_TEI}lang":
 				langs.append(child)
 				continue
@@ -463,6 +555,7 @@ class Reader(ReaderUtils):
 			notes=notes,
 			refs=refs,
 			usages=usages,
+			labels=labels,
 			xrList=xrList,
 			exampleCits=exampleCits,
 			langs=langs,
@@ -479,12 +572,21 @@ class Reader(ReaderUtils):
 		# or 2nd-level
 		ps = self.parseSenseSense(sense)
 		usages = list(ps.usages)
+		labels = list(ps.labels)
+
+		# First-level senses already have their <gramGrp> rendered by
+		# writeSense; nested senses need it rendered here.
+		parent = sense.getparent()
+		if parent is not None and parent.tag != _ENTRY:
+			self.writeGramGroupChildren(hf, sense)
 
 		def writeUsages() -> None:
-			if not usages:
-				return
-			self.writeUsageTags(hf, usages)
-			usages.clear()
+			if usages:
+				self.writeUsageTags(hf, usages)
+				usages.clear()
+			if labels:
+				self.writeLabelTags(hf, labels)
+				labels.clear()
 
 		for child in ps.langs:
 			self.writeLangTag(hf, child)
@@ -507,7 +609,7 @@ class Reader(ReaderUtils):
 			with hf.element("div"):
 				writeUsages()
 				for i, gram in enumerate(ps.grams):
-					text = gram.text or ""
+					text = _elementText(gram)
 					if i > 0:
 						hf.write(self.getCommaSep(text))
 					with hf.element("font", attrib=attrib):
@@ -544,6 +646,28 @@ class Reader(ReaderUtils):
 		for xr in ps.xrList:
 			with hf.element("div"):
 				self.writeRichText(hf, xr)
+
+		def writeExampleCit(citElem: Element) -> None:
+			for quote in citElem.findall("quote", _NAMESPACE):
+				self.writeWithDirection(hf, quote, "div")
+			lblList = [
+				lbl for lbl in citElem.findall("lbl", _NAMESPACE) if _elementText(lbl)
+			]
+			if lblList:
+				with hf.element("div"):
+					self.writeLabelTags(hf, lblList)
+			usgList = citElem.findall("usg", _NAMESPACE)
+			if usgList:
+				with hf.element("div"):
+					for i, usg in enumerate(usgList):
+						if i > 0:
+							hf.write(" ")
+						self.writeUsageTag(hf, usg)
+			for cit2 in citElem.findall("cit", _NAMESPACE):
+				for quote in cit2.findall("quote", _NAMESPACE):
+					quote.attrib.update(cit2.attrib)
+				writeExampleCit(cit2)
+
 		for cit in ps.exampleCits:
 			with hf.element(
 				"div",
@@ -552,19 +676,7 @@ class Reader(ReaderUtils):
 					"style": f"padding: {self._example_padding}px 0px;",
 				},
 			):
-				for quote in cit.findall("quote", _NAMESPACE):
-					self.writeWithDirection(hf, quote, "div")
-				usgList = cit.findall("usg", _NAMESPACE)
-				if usgList:
-					with hf.element("div"):
-						for i, usg in enumerate(usgList):
-							if i > 0:
-								hf.write(" ")
-							self.writeUsageTag(hf, usg)
-				for cit2 in cit.findall("cit", _NAMESPACE):
-					for quote in cit2.findall("quote", _NAMESPACE):
-						quote.attrib.update(cit2.attrib)
-						self.writeWithDirection(hf, quote, "div")
+				writeExampleCit(cit)
 
 		return len(ps.transCits) + len(ps.exampleCits)
 
@@ -608,7 +720,11 @@ class Reader(ReaderUtils):
 		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
-		self.writeGramGroups(hf, elem.findall("gramGrp", _NAMESPACE))
+		gramGrpList = elem.findall("gramGrp", _NAMESPACE)
+		if elem.tag == _ENTRY:
+			# Some dictionaries put grammar info on the headword form.
+			gramGrpList += elem.findall("form/gramGrp", _NAMESPACE)
+		self.writeGramGroups(hf, gramGrpList)
 
 	@classmethod
 	def isMetaSense(cls, sense: Element) -> bool:
@@ -664,10 +780,9 @@ class Reader(ReaderUtils):
 	def normalizeGramGrpChild(self, elem: Element) -> str:  # noqa: PLR0912
 		# child can be "pos" or "gen"
 		tag = elem.tag
-		text = elem.text
+		text = _elementText(elem)
 		if not text:
 			return ""
-		text = text.strip()
 		if tag == f"{_TEI}pos":
 			return self.posMapping.get(text.lower(), text)
 		if tag == f"{_TEI}gen":
@@ -697,12 +812,12 @@ class Reader(ReaderUtils):
 			return text
 
 		if tag == f"{_TEI}colloc":
-			return ""
+			return text
 
 		log.warning(
 			f"unrecognize GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}",
 		)
-		return ""
+		return text
 
 	def getEntryByElem(  # noqa: PLR0912
 		self,
@@ -738,24 +853,32 @@ class Reader(ReaderUtils):
 		for form in entry.findall(".//form", _NAMESPACE):
 			inflected = form.get("type") == "infl"
 			for orth in form.findall("orth", _NAMESPACE):
-				if not orth.text:
+				text = _elementText(orth)
+				if not text:
 					continue
 				if inflected:
-					inflectedKeywords.append(orth.text)
+					inflectedKeywords.append(text)
 				else:
-					keywords.append(orth.text)
+					keywords.append(text)
 
 		keywords += inflectedKeywords
 
-		pronList = [
-			pron.text.strip("/")
-			for pron in entry.findall("form/pron", _NAMESPACE)
-			if pron.text
-		]
+		pronList: list[str] = []
+		for pron in entry.findall("form/pron", _NAMESPACE):
+			text = _elementText(pron).strip("/")
+			if text:
+				pronList.append(text)
 		usgList = entry.findall("usg", _NAMESPACE) + entry.findall(
 			"form/usg",
 			_NAMESPACE,
 		)
+		lblList = [
+			lbl
+			for lbl in (
+				entry.findall("lbl", _NAMESPACE) + entry.findall("form/lbl", _NAMESPACE)
+			)
+			if _elementText(lbl)
+		]
 		senseList = entry.findall("sense", _NAMESPACE)
 
 		with ET.htmlfile(buff, encoding="utf-8") as hf:
@@ -777,11 +900,9 @@ class Reader(ReaderUtils):
 				hf_ = cast("T_htmlfile", hf)
 
 				if usgList:
-					for i, usg in enumerate(usgList):
-						if i > 0:
-							hf.write(" ")
-						self.writeUsageTag(hf_, usg)
-					hf.write(" ")
+					self.writeUsageTags(hf_, usgList)
+				if lblList:
+					self.writeLabelTags(hf_, lblList)
 
 				self.writeGramGroupChildren(hf_, entry)
 				self.writeSenseList(hf_, senseList)

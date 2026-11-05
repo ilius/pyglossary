@@ -51,6 +51,9 @@ optionsProp: dict[str, Option] = {
 	"usage_color": StrOption(
 		comment="Usage label color",
 	),
+	"label_color": StrOption(
+		comment="Label color",
+	),
 	"example_padding": IntOption(
 		comment="Padding for examples (in px)",
 		minim=0,

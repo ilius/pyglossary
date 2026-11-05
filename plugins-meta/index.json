@@ -1103,6 +1103,12 @@
 				"customValue": true,
 				"comment": "Usage label color"
 			},
+			"label_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Label color"
+			},
 			"example_padding": {
 				"class": "IntOption",
 				"type": "int",
@@ -1121,6 +1127,7 @@
 			"pron_color": "gray",
 			"gram_color": "green",
 			"usage_color": "green",
+			"label_color": "darkblue",
 			"example_padding": 10
 		},
 		"readDepends": {
@@ -1193,6 +1200,12 @@
 				"customValue": true,
 				"comment": "Usage label color"
 			},
+			"label_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Label color"
+			},
 			"example_padding": {
 				"class": "IntOption",
 				"type": "int",
@@ -1211,6 +1224,7 @@
 			"pron_color": "gray",
 			"gram_color": "green",
 			"usage_color": "green",
+			"label_color": "darkblue",
 			"example_padding": 10
 		},
 		"readDepends": {

@@ -32,6 +32,7 @@ To update, modify plugins/freedict/__init__.py file, then run ./scripts/gen
 | pron_color | `gray` | str | Pronunciation color |
 | gram_color | `green` | str | Grammar color |
 | usage_color | `green` | str | Usage label color |
+| label_color | `darkblue` | str | Label color |
 | example_padding | `10` | int | Padding for examples (in px) |
 
 ### Dependencies for reading
