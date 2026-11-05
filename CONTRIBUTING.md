@@ -70,6 +70,14 @@ sh ./scripts/test-deps.sh
 
 This installs [requirements-test.txt](requirements-test.txt). Many tests also need optional libraries from [requirements.txt](requirements.txt) for specific formats; install those if your change touches those code paths.
 
+- **Glossary-aware Git diffs** (optional): enable the checked-in [.gitconfig](./.gitconfig) once per clone:
+
+```bash
+git config --local include.path ../.gitconfig
+```
+
+`git diff` shows added or deleted files with `view-glossary` and compares modified files entry by entry with `diff-glossary`. For `git show` and `git log -p`, pass `--ext-diff` to get the same output.
+
 - **Run from the repo** without installing the package: use `./main.py` (see [README.md](./README.md)) or add the repo root on `PYTHONPATH`. To install the `pyglossary` entry point into the venv:
 
 ```bash

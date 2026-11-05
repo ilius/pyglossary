@@ -1,0 +1,7 @@
+# Glossary-aware diffs for tests/data/*.txt (see .gitattributes).
+#
+# Enable once per clone with:
+#   git config --local include.path ../.gitconfig
+[diff "glossary-tabfile"]
+	command = scripts/git-diff-glossary
+	textconv = NO_COLOR=1 scripts/view-glossary --no-pager
