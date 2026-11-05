@@ -22,6 +22,7 @@ Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
 - Versions: never add `-v2`, `-v4`, or `-v6` merely because an output was regenerated. Replace the canonical expected output instead. Add a version suffix only when the reader itself is changed and its output changes accordingly, so the version identifies the expected output for that reader behavior; then update the test to reference the new version.
 - Derived fixtures: keep the source fixture's base name across conversions. For example, `14-en-en.tei` produces `14-en-en.txt`, `14-en-en.csv`, `14-en-en.json`, and `14-en-en.txt.quickdic`. Directory-based outputs follow the same pattern, for example `14-en-en-sd/14-en-en.ifo`.
 - Maintenance: when a fixture is added, renamed, or changed, regenerate all derived expected outputs, update test checksums, and remove obsolete files and references.
+- Formatting: always format new TEI or XML test data as indented XML, using tabs for indentation.
 - Provenance: do not claim a fixture is part of, published by, maintained by, or endorsed by an upstream project (for example FreeDict) unless that is true. Use neutral wording such as “synthetic sample for PyGlossary tests”, and do not use upstream project names as the fixture publisher or Home link.
 
 ## Release notes

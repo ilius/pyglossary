@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary labels and grammar test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text>
+		<body>
+			<entry>
+				<form type="lemma">
+					<orth>word<hi>s</hi>
+					</orth>
+					<pron>/wɜːd/</pron>
+					<gramGrp>
+						<pos>noun</pos>
+					</gramGrp>
+					<usg type="time">archaic</usg>
+				</form>
+				<sense n="1">
+					<def>a unit of language</def>
+					<cit type="trans" xml:lang="de">
+						<quote>Wort</quote>
+						<usg type="style">figurative</usg>
+						<lbl>literally</lbl>
+						<gramGrp>
+							<gen>n</gen>
+						</gramGrp>
+					</cit>
+					<cit type="trans" xml:lang="de">
+						<quote>Ding</quote>
+						<pos>noun</pos>
+						<number>pl</number>
+						<cit type="example" xml:lang="de">
+							<quote>ein Ding</quote>
+							<usg type="freq">rare</usg>
+						</cit>
+					</cit>
+					<cit type="trans" xml:lang="de">
+						<quote>Vokabel</quote>
+						<cit type="abbrev">
+							<orth>abbr</orth>
+						</cit>
+						<unknownTag>extra text</unknownTag>
+					</cit>
+					<cit type="example" xml:lang="en">
+						<quote>a short word</quote>
+						<usg type="register">informal</usg>
+					</cit>
+					<sense n="1.1">
+						<gramGrp>
+							<pos>verb</pos>
+						</gramGrp>
+						<def>to word something</def>
+					</sense>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>

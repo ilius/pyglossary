@@ -204,40 +204,91 @@ class Reader(ReaderUtils):
 			return
 		assert isinstance(children, list), f"{children=}"
 
-		quotes: list[Element] = []
+		# The writers below (writeSense, writeGramGroups, writeUsageTag, ...)
+		# only read from a <sense> tree, but the grammar, usage and note
+		# children of a translation <cit> sit next to its quotes. Moving
+		# them into a synthetic <sense> lets writeSense render them with
+		# the same code path as real senses, without duplicating that logic.
+		# The source <cit> is therefore consumed by this call: it must not
+		# be rendered again afterwards.
 		sense = ET.Element(f"{_TEI}sense")
 		gramGrp: Element | None = None
 
+		def moveToSense(parent: Element, child: Element) -> None:
+			# lxml moves an element together with its tail text. The tail is
+			# also collected as loose text by collectCit (it arrives there
+			# through the xpath "child::node()" snapshot), so clear it here to
+			# avoid rendering that text twice.
+			child.tail = None
+			parent.append(child)
+
 		def appendGramChild(child: Element) -> None:
 			nonlocal gramGrp
+			# Bare <pos>/<gen>/<number>/<num>/<subc> inside a translation <cit>
+			# are not wrapped in <gramGrp> in the TEI. writeGramGroups only
+			# reads <gramGrp> children, so create one in the synthetic sense
+			# and group these elements under it.
 			if gramGrp is None:
 				gramGrp = ET.SubElement(sense, f"{_TEI}gramGrp")
-			gramGrp.append(child)
+			moveToSense(gramGrp, child)
 
-		def appendLabel(child: Element) -> None:
-			# Labels are rendered as inline bracketed tags.
-			if not _elementText(child):
-				return
-			sense.append(child)
+		def newTextBlock(text: str, cit: Element) -> Element:
+			# Loose text has no element of its own, but the block writers
+			# (writeQuote -> writeWithDirection) need an Element. Wrap the
+			# text in a new <quote> that copies the <cit> attributes, so
+			# xml:lang (lang/dir) and type (class) are applied to it as they
+			# are to real quotes. The source tree is not modified here.
+			quote = ET.Element(f"{_TEI}quote", attrib=dict(cit.attrib))
+			quote.text = text
+			return quote
 
-		def collect(cit: Element) -> None:  # noqa: PLR0912
+		def collectCit(  # noqa: PLR0912
+			cit: Element,
+		) -> list[tuple[Element, list[Element]]]:
+			"""
+			Return render blocks (quote element, tags) for this <cit>.
+
+			Tags are <usg> and <lbl> elements of this <cit>. They are rendered
+			inline before the first block it produces, so they stay next to
+			the content they describe. Nested <cit> elements are collected
+			separately, so their tags stay with their own content.
+			"""
+			blocks: list[tuple[Element, list[Element]]] = []
+			# <usg> and <lbl> are both rendered as bracketed tags before the
+			# content, in document order. <usg> is kept here (not moved into
+			# the synthetic sense) because it gives the domain/context of the
+			# translation, e.g. "[archaic] word", so it must come first.
+			tags: list[Element] = []
+			pendingText: list[str] = []
+
+			def flushText() -> None:
+				if pendingText:
+					blocks.append((newTextBlock(" ".join(pendingText), cit), []))
+					pendingText.clear()
+
 			for child in cit.xpath("child::node()"):
 				if isinstance(child, str):
 					text = child.strip()
 					if text:
-						hf.write(text)
 						log.warning(f"text directly inside <cit>: {text}")
+						pendingText.append(text)
 					continue
 
 				if child.__class__.__name__ == "_Comment":
 					continue
 
 				if child.tag == f"{_TEI}quote":
-					quotes.append(child)
+					flushText()
+					blocks.append((child, []))
 					continue
 
-				if child.tag in {f"{_TEI}gramGrp", f"{_TEI}usg", f"{_TEI}note"}:
-					sense.append(child)
+				if child.tag in {f"{_TEI}gramGrp", f"{_TEI}note"}:
+					moveToSense(sense, child)
+					continue
+
+				if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"}:
+					if _elementText(child):
+						tags.append(child)
 					continue
 
 				if child.tag in {
@@ -250,49 +301,62 @@ class Reader(ReaderUtils):
 					appendGramChild(child)
 					continue
 
-				if child.tag == f"{_TEI}lbl":
-					appendLabel(child)
-					continue
-
 				if child.tag == f"{_TEI}cit":
 					typ = child.attrib.get("type", "trans")
 					if typ in {"abbrev", "abbreviation"}:
+						# An abbreviation <cit> only carries <orth> text that
+						# should be shown as a label. Create a detached <lbl>
+						# (not added to the tree) because writeLabelTag takes
+						# an Element.
 						for orth in child.findall("orth", _NAMESPACE):
 							text = _elementText(orth)
 							if text:
-								lbl = ET.SubElement(sense, f"{_TEI}lbl")
+								lbl = ET.Element(f"{_TEI}lbl")
 								lbl.text = text
+								tags.append(lbl)
 						continue
-					# Nested translations/examples: keep their content.
-					collect(child)
+					# A nested <cit> is collected into its own blocks, so its
+					# quotes and tags stay with its own content.
+					flushText()
+					blocks += collectCit(child)
 					continue
 
 				log.warning(
 					f"unknown tag {child.tag!r} inside translation <cit>"
 					f": {self.tostring(child)}",
 				)
+				# Keep the text of an unknown element as a <note> in the
+				# synthetic sense instead of dropping it.
 				text = _elementText(child)
 				if text:
 					note = ET.SubElement(sense, f"{_TEI}note")
 					note.text = text
 
-		collect(elem)
+			flushText()
+			if tags:
+				if not blocks:
+					blocks.append((newTextBlock("", cit), []))
+				quote, prefixOfFirst = blocks[0]
+				blocks[0] = (quote, tags + prefixOfFirst)
+			return blocks
 
-		# A quote is rendered as a block <div>, so a prefix written before
-		# it would end up on its own line. Put the prefix inside the first
-		# quote instead to keep labels inline with the translation.
-		if quotes and prefix:
-			self.writeQuote(hf, quotes[0], prefix)
-			quotes = quotes[1:]
-		elif prefix:
-			self.writeUsageTags(hf, prefix)
+		blocks = collectCit(elem)
 
-		self.makeList(
-			hf,
-			quotes,
-			self.writeQuote,
-			single_prefix="",
-		)
+		if prefix:
+			if blocks:
+				quote, prefixOfFirst = blocks[0]
+				blocks[0] = (quote, prefix + prefixOfFirst)
+			else:
+				self.writeInlineTags(hf, prefix)
+
+		if len(blocks) == 1:
+			self.writeQuote(hf, blocks[0][0], blocks[0][1])
+		elif blocks:
+			with hf.element("ol"):
+				for quote, blockPrefix in blocks:
+					with hf.element("li"):
+						self.writeQuote(hf, quote, blockPrefix)
+
 		if next(sense.iterchildren(), False) is not None:
 			self.writeSense(hf, sense)
 
@@ -374,7 +438,7 @@ class Reader(ReaderUtils):
 			# Render the prefix inside the block element so it shares the
 			# line with the content, rather than appearing on its own line.
 			if prefix:
-				self.writeUsageTags(hf, prefix)
+				self.writeInlineTags(hf, prefix)
 			self.writeRichText(hf, child)
 
 	def writeRichText(
@@ -465,6 +529,21 @@ class Reader(ReaderUtils):
 		labels: list[Element],
 	) -> None:
 		self.writeTags(hf, labels, self.writeLabelTag)
+
+	def writeInlineTags(
+		self,
+		hf: T_htmlfile,
+		elems: list[Element],
+	) -> None:
+		"""Write a mix of <usg> and <lbl> elements, each with its own color."""
+
+		def writeInline(hf_: T_htmlfile, elem: Element) -> None:
+			if elem.tag == f"{_TEI}lbl":
+				self.writeLabelTag(hf_, elem)
+			else:
+				self.writeUsageTag(hf_, elem)
+
+		self.writeTags(hf, elems, writeInline)
 
 	def parseSenseSense(  # noqa: PLR0912
 		self,
@@ -648,22 +727,29 @@ class Reader(ReaderUtils):
 				self.writeRichText(hf, xr)
 
 		def writeExampleCit(citElem: Element) -> None:
-			for quote in citElem.findall("quote", _NAMESPACE):
-				self.writeWithDirection(hf, quote, "div")
-			lblList = [
-				lbl for lbl in citElem.findall("lbl", _NAMESPACE) if _elementText(lbl)
+			# <usg> and <lbl> give the domain/context of the example, so they
+			# are written before its quote, in document order, like the tags
+			# of a translation <cit>. They share the first quote's block so
+			# they stay on the same line as the example text.
+			tags = [
+				child
+				for child in citElem.iterchildren()
+				if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"} and _elementText(child)
 			]
-			if lblList:
+			quotes = citElem.findall("quote", _NAMESPACE)
+			if quotes:
+				self.writeQuote(hf, quotes[0], tags)
+				for quote in quotes[1:]:
+					self.writeQuote(hf, quote)
+			elif tags:
 				with hf.element("div"):
-					self.writeLabelTags(hf, lblList)
-			usgList = citElem.findall("usg", _NAMESPACE)
-			if usgList:
-				with hf.element("div"):
-					for i, usg in enumerate(usgList):
-						if i > 0:
-							hf.write(" ")
-						self.writeUsageTag(hf, usg)
+					self.writeInlineTags(hf, tags)
 			for cit2 in citElem.findall("cit", _NAMESPACE):
+				# This mutates the source tree on purpose: writeWithDirection
+				# reads xml:lang and type from the quote itself, so the nested
+				# <cit> attributes (e.g. type="example") are copied onto each
+				# quote before it is written. It is safe to repeat because
+				# it only copies the same values again.
 				for quote in cit2.findall("quote", _NAMESPACE):
 					quote.attrib.update(cit2.attrib)
 				writeExampleCit(cit2)
@@ -738,18 +824,27 @@ class Reader(ReaderUtils):
 	) -> None:
 		# this <sense> element is 1st-level (directly under <entry>)
 		self.writeGramGroupChildren(hf, sense)
+		# Write this sense's own content first, then its sub-senses in
+		# document order, so a sub-sense never precedes its parent's text.
+		self.writeSenseSense(hf, sense)
 		subSenses = [
 			subSense
 			for subSense in sense.findall(".//sense", _NAMESPACE)
 			if not self.isMetaSense(subSense)
 		]
+
+		def writeSubSense(hf_: T_htmlfile, subSense: Element) -> None:
+			# Block wrapper keeps the sub-sense text from running into the
+			# text of the previous sense.
+			with hf_.element("div"):
+				self.writeSenseSense(hf_, subSense)
+
 		self.makeList(
 			hf,
 			subSenses,
-			self.writeSenseSense,
+			writeSubSense,
 			single_prefix="",
 		)
-		self.writeSenseSense(hf, sense)
 
 	def writeSenseList(
 		self,

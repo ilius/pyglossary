@@ -27,3 +27,4 @@ vulture.*
 uv.lock
 doc/releases/dev.md
 *.drawio.bkp
+*.hdir
