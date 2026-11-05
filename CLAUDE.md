@@ -3,6 +3,7 @@
 ## Git
 
 - Do not add files to `.gitignore` without explicit user approval. If a file is commonly ignored but is not already tracked, ask before committing it.
+- Never publish a security advisory unless the user explicitly asks to publish it.
 
 ## Quality checks
 
