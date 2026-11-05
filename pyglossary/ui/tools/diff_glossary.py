@@ -11,7 +11,6 @@ conversions.
 from __future__ import annotations
 
 import argparse
-import atexit
 import difflib
 import os
 import os.path
@@ -352,36 +351,6 @@ def diffGlossary(  # noqa: PLR0912, PLR0913
 			sys.stdout.flush()
 
 
-# NOTE: make sure to set GIT_PAGER or config core.pager
-# for example GIT_PAGER=less
-# or GIT_PAGER='less -R -S -N'
-def gitDiffMain() -> None:
-	# print(sys.argv[1:])
-	# arguments:
-	# path old_file old_hex old_mode new_file new_hex new_mode
-	old_hex = sys.argv[3][:7]
-	new_hex = sys.argv[6][:7]
-
-	filename1 = sys.argv[2]
-	filename2 = sys.argv[1]
-	header = f"{'_' * 80}\n\n### File: {filename2}  ({old_hex}..{new_hex})\n"
-
-	resDir = filename2 + "_res"
-	if os.path.isdir(resDir):
-		resDirTmp = filename1 + "_res"
-		os.symlink(os.path.realpath(resDir), resDirTmp)
-		atexit.register(os.remove, resDirTmp)
-
-	diffGlossary(
-		filename1,
-		filename2,
-		format1=None,
-		format2=None,
-		pager=False,
-		header=header,
-	)
-
-
 class _SingleUseAction(argparse.Action):
 	"""Store the option value, but reject repeated use of the same option."""
 
@@ -398,9 +367,6 @@ class _SingleUseAction(argparse.Action):
 
 
 def main() -> None:
-	if os.getenv("GIT_DIFF_PATH_COUNTER"):
-		return gitDiffMain()
-
 	parser = argparse.ArgumentParser(
 		prog=sys.argv[0],
 		add_help=True,
@@ -441,7 +407,6 @@ def main() -> None:
 		pager=True,
 		sameEntries=sameEntries,
 	)
-	return None
 
 
 if __name__ == "__main__":

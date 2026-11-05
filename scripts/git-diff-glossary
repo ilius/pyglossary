@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+myPath=$(realpath "$0")
+myDir1=$(dirname "$myPath")
+rootDir=$(dirname "$myDir1")
+
+# There is a bug in pyenv 'python' script that splits up a (quoted) argument that has spaces
+# So there is no way of passing a filename with spaces
+# That's why I changed `python` to `python3` to avoid pyenv
+
+PYTHONPATH=$rootDir python3 -m "pyglossary.ui.tools.git_diff" "$@"
