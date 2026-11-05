@@ -107,6 +107,7 @@ def viewGlossary(
 	formatName: str | None = None,
 	glos: Glossary | None = None,
 	noRes: bool = False,
+	pager: bool = True,
 ) -> None:
 	highlightEntry = getEntryHighlighter()
 
@@ -119,13 +120,25 @@ def viewGlossary(
 	if not glos.directRead(filename, formatName=formatName, **options):
 		return
 
-	pagerCmd = ["less", "-R"]
-	if os.getenv("PAGER"):
-		pagerCmd = shlex.split(os.getenv("PAGER"))
-	proc = Popen(
-		pagerCmd,
-		stdin=PIPE,
-	)
+	if pager:
+		pagerCmd = ["less", "-R"]
+		if os.getenv("PAGER"):
+			pagerCmd = shlex.split(os.getenv("PAGER"))
+		proc = Popen(
+			pagerCmd,
+			stdin=PIPE,
+		)
+
+		def write(text: str) -> None:
+			proc.stdin.write(text.encode("utf-8"))
+
+	else:
+		proc = None
+
+		def write(text: str) -> None:
+			sys.stdout.write(text)
+			sys.stdout.flush()
+
 	index = 0
 
 	entrySep = "_" * 50
@@ -139,9 +152,7 @@ def viewGlossary(
 		entryStr = (
 			f"{yellow}#{index}{reset} " + formatEntry(entry) + "\n" + entrySep + "\n\n"
 		)
-		proc.stdin.write(entryStr.encode("utf-8"))
-		if (index + 1) % 50 == 0:
-			sys.stdout.flush()
+		write(entryStr)
 		index += 1
 
 	try:
@@ -155,11 +166,16 @@ def viewGlossary(
 	except Exception as e:
 		print(e)
 	finally:
-		proc.communicate()
-		# proc.wait()
-		# proc.terminate()
-		sys.stdin.flush()
-		sys.stdout.flush()
+		if proc:
+			proc.communicate()
+			# proc.wait()
+			# proc.terminate()
+		try:
+			sys.stdin.flush()
+			sys.stdout.flush()
+		except BrokenPipeError:
+			devnull = os.open(os.devnull, os.O_WRONLY)
+			os.dup2(devnull, sys.stdout.fileno())
 
 
 def main() -> None:
@@ -182,6 +198,13 @@ def main() -> None:
 		help="do not automatically show resources / files",
 	)
 	parser.add_argument(
+		"--no-pager",
+		dest="pager",
+		action="store_false",
+		default=True,
+		help="write to stdout instead of using a pager",
+	)
+	parser.add_argument(
 		"filename",
 		action="store",
 		default="",
@@ -199,6 +222,7 @@ def main() -> None:
 		os.path.expanduser(args.filename[0]),
 		formatName=formatName,
 		noRes=args.noRes,
+		pager=args.pager,
 	)
 
 
