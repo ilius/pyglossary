@@ -7,6 +7,7 @@
 ## Quality checks
 
 - At the end of every task, run `ruff format` and `ruff check --fix`. Resolve any remaining Ruff errors before completing the task.
+- To run tests for a plugin, for example FreeDict, `cd tests` then run `python -m unittest g_freedict_test.py`.
 
 ## Test data
 
