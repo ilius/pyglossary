@@ -486,8 +486,27 @@
             consoleArea.scrollTop = consoleArea.scrollHeight;
         }
 
+        function loadToken() {
+            return fetch('/token', { cache: 'no-store' })
+                .then(response => {
+                    if (!response.ok) {
+                        return Promise.reject(`Failed to load token: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    window.pgToken = data.token;
+                });
+        }
+
         function initWsConnection() {
-            const socket = new WebSocket('/ws');
+            if (!window.pgToken) {
+                log('Cannot connect: missing auth token');
+                return;
+            }
+            const scheme = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${scheme}//${window.location.host}/ws?token=${encodeURIComponent(window.pgToken)}`;
+            const socket = new WebSocket(wsUrl);
             window.ws = socket;
 
             socket.addEventListener('open', () => {
@@ -617,6 +636,7 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'X-PyGlossary-Token': window.pgToken,
                             },
                             body: JSON.stringify({
                                 inputFilename,
@@ -750,9 +770,15 @@
         }
 
         window.onload = function () {
-            loadConfig();
+            loadToken()
+                .then(() => {
+                    loadConfig();
+                    initWsConnection();
+                })
+                .catch(error => {
+                    log(`Error loading auth token: ${error}`);
+                });
             attachListeners();
-            initWsConnection();
             initFilePicker();
             initAutocomplete();
         };

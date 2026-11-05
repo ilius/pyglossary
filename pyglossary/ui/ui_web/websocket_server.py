@@ -33,6 +33,7 @@ from __future__ import annotations
 
 # mypy: ignore-errors
 import json
+import secrets
 import sys
 import threading
 from http.server import HTTPServer
@@ -233,6 +234,7 @@ class HttpWebsocketServer(ThreadingMixIn, HTTPServer, API):
 		self.ui_controller = None
 		self.logger = logger
 		self._deny_clients = False
+		self.auth_token = secrets.token_urlsafe(32)
 
 	@property
 	def url(self) -> str:

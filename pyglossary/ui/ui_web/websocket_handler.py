@@ -37,6 +37,8 @@ import json
 import logging
 import os
 import posixpath
+import re
+import secrets
 import struct
 import threading
 from base64 import b64encode
@@ -45,7 +47,7 @@ from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import TYPE_CHECKING
-from urllib.parse import unquote
+from urllib.parse import parse_qs, unquote, urlsplit
 
 from pyglossary.glossary_v2 import Glossary
 
@@ -74,6 +76,8 @@ if TYPE_CHECKING:
 __all__ = ["HTTPWebSocketHandler"]
 
 log = logging.getLogger("pyglossary.web.server")
+
+_TOKEN_QUERY_RE = re.compile(r"(token=)[^\s&\"]+")
 
 
 class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
@@ -111,6 +115,43 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 			**kwargs,
 			directory=webroot,
 		)
+
+	@property
+	def _allowed_hostnames(self) -> set[str]:
+		return {"127.0.0.1", "localhost", "[::1]"}
+
+	def _host_is_allowed(self) -> bool:
+		host = self.headers.get("Host")
+		if not host:
+			return False
+		return host in {f"{name}:{self.server.port}" for name in self._allowed_hostnames}
+
+	def _origin_is_allowed(self, origin: str | None) -> bool:
+		if not origin:
+			return False
+		return origin in {
+			f"http://{name}:{self.server.port}" for name in self._allowed_hostnames
+		}
+
+	def _token_matches(self, token: str | None) -> bool:
+		if not token:
+			return False
+		return secrets.compare_digest(token, self.server.auth_token)
+
+	def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
+		# The WebSocket auth token is passed in the query string;
+		# never print it to the console/logs.
+		redacted = tuple(
+			_TOKEN_QUERY_RE.sub(r"\g<1>REDACTED", arg) if isinstance(arg, str) else arg
+			for arg in args
+		)
+		super().log_message(format, *redacted)
+
+	def end_headers(self) -> None:
+		self.send_header("X-Frame-Options", "DENY")
+		self.send_header("Content-Security-Policy", "frame-ancestors 'none'")
+		self.send_header("X-Content-Type-Options", "nosniff")
+		super().end_headers()
 
 	def translate_path(self, path: str) -> str:
 		"""
@@ -157,6 +198,8 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 	def do_GET(self) -> None:
 		if self.path == "/config":
 			self.send_config()
+		elif self.path == "/token":
+			self.send_token()
 		else:
 			super().do_GET()
 
@@ -176,20 +219,31 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		}
 		self.wfile.write(json.dumps(conversion_config).encode())
 
+	def send_token(self) -> None:
+		self.send_response(HTTPStatus.OK)
+		self.send_header("Content-Type", "application/json")
+		self.send_header("Cache-Control", "no-store")
+		self.end_headers()
+		self.wfile.write(json.dumps({"token": self.server.auth_token}).encode())
+
 	def do_POST(self) -> None:
 		# custom ajax action for /convert POST
 		if self.path == "/convert":
+			if not self._token_matches(self.headers.get("X-PyGlossary-Token")):
+				self.send_error(HTTPStatus.FORBIDDEN, "Forbidden")
+				return
 			self.handle_convert_job()
 			return
 
 		self.send_response(HTTPStatus.BAD_REQUEST)
 		self.send_header("Content-Type", "application/json")
 		self.end_headers()
-		json.dump(
-			{
-				"value": f"{self.path}: POST unsupported",
-			},
-			self.wfile,
+		self.wfile.write(
+			json.dumps(
+				{
+					"value": f"{self.path}: POST unsupported",
+				},
+			).encode(),
 		)
 
 	def setup(self) -> None:
@@ -248,7 +302,7 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		self.send_response(HTTPStatus.BAD_REQUEST)
 		self.send_header("Content-type", "application/json")
 		self.end_headers()
-		json.dump({"error": str(e)}, self.wfile)
+		self.wfile.write(json.dumps({"error": str(e)}).encode())
 
 	def json_decode_error(self) -> None:
 		self.send_response(HTTPStatus.BAD_REQUEST)
@@ -278,7 +332,21 @@ class HTTPWebSocketHandler(SimpleHTTPRequestHandler):
 		if not self.parse_request():
 			# An error code has been sent, just exit
 			return
+		if not self._host_is_allowed():
+			self.send_error(HTTPStatus.FORBIDDEN, "Forbidden host")
+			return
+		origin = self.headers.get("Origin")
+		if origin is not None and not self._origin_is_allowed(origin):
+			self.send_error(HTTPStatus.FORBIDDEN, "Forbidden origin")
+			return
 		if self.path.startswith("/ws") and self.headers.get("upgrade") == "websocket":
+			token = parse_qs(urlsplit(self.path).query).get("token", [""])[0]
+			if not self._origin_is_allowed(origin):
+				self.send_error(HTTPStatus.FORBIDDEN, "Forbidden origin")
+				return
+			if not self._token_matches(token):
+				self.send_error(HTTPStatus.FORBIDDEN, "Forbidden token")
+				return
 			self.handle_ws()
 			return
 

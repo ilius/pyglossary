@@ -257,7 +257,9 @@
 				form.max.value = params.get("max");
 
 				attachEventListeners(form);
-				initWsConnection();
+				loadToken()
+					.then(() => initWsConnection())
+					.catch((error) => log(`Error loading auth token: ${error}`));
 
 				// populate the format dropdown from the server, then restore
 				// the value from the URL ?format=... parameter (if any)
@@ -305,8 +307,27 @@
 				});
 			}
 
+			function loadToken() {
+				return fetch("/token", { cache: "no-store" })
+					.then((response) => {
+						if (!response.ok) {
+							return Promise.reject(`Failed to load token: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then((data) => {
+						window.pgToken = data.token;
+					});
+			}
+
 			function initWsConnection() {
-				window.socket = new WebSocket("/ws");
+				if (!window.pgToken) {
+					log("Cannot connect: missing auth token");
+					return;
+				}
+				const scheme = window.location.protocol === "https:" ? "wss:" : "ws:";
+				const wsUrl = `${scheme}//${window.location.host}/ws?token=${encodeURIComponent(window.pgToken)}`;
+				window.socket = new WebSocket(wsUrl);
 				const form = window.document.forms.searchform;
 
 				socket.addEventListener("open", () => {
