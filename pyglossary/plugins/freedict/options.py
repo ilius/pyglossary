@@ -48,7 +48,7 @@ optionsProp: dict[str, Option] = {
 	"gram_color": StrOption(
 		comment="Grammar color",
 	),
-	"usg_color": StrOption(
+	"usage_color": StrOption(
 		comment="Usage label color",
 	),
 	"example_padding": IntOption(

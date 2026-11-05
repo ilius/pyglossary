@@ -73,7 +73,7 @@ class Reader(ReaderUtils):
 	_word_title: bool = False
 	_pron_color: str = "gray"
 	_gram_color: str = "green"
-	_usg_color: str = "green"
+	_usage_color: str = "green"
 	_example_padding: int = 10
 
 	def _copyOptionsTo(self, other: Reader) -> None:
@@ -84,7 +84,7 @@ class Reader(ReaderUtils):
 		other._word_title = self._word_title
 		other._pron_color = self._pron_color
 		other._gram_color = self._gram_color
-		other._usg_color = self._usg_color
+		other._usage_color = self._usage_color
 		other._example_padding = self._example_padding
 
 	gramClass = "grammar"
@@ -367,7 +367,7 @@ class Reader(ReaderUtils):
 		hf: T_htmlfile,
 		usg: Element,
 	) -> None:
-		style = self.tagStyle.format(self._usg_color or "transparent")
+		style = self.tagStyle.format(self._usage_color or "transparent")
 		with hf.element("span", attrib={"class": "tag", "style": style}):
 			hf.write("[")
 			self.writeRichText(hf, usg)

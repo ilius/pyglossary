@@ -1097,7 +1097,7 @@
 				"customValue": true,
 				"comment": "Grammar color"
 			},
-			"usg_color": {
+			"usage_color": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
@@ -1120,7 +1120,7 @@
 			"word_title": false,
 			"pron_color": "gray",
 			"gram_color": "green",
-			"usg_color": "green",
+			"usage_color": "green",
 			"example_padding": 10
 		},
 		"readDepends": {
@@ -1187,7 +1187,7 @@
 				"customValue": true,
 				"comment": "Grammar color"
 			},
-			"usg_color": {
+			"usage_color": {
 				"class": "StrOption",
 				"type": "str",
 				"customValue": true,
@@ -1210,7 +1210,7 @@
 			"word_title": false,
 			"pron_color": "gray",
 			"gram_color": "green",
-			"usg_color": "green",
+			"usage_color": "green",
 			"example_padding": 10
 		},
 		"readDepends": {
