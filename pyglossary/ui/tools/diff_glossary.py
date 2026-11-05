@@ -382,6 +382,21 @@ def gitDiffMain() -> None:
 	)
 
 
+class _SingleUseAction(argparse.Action):
+	"""Store the option value, but reject repeated use of the same option."""
+
+	def __call__(
+		self,
+		parser: argparse.ArgumentParser,
+		namespace: argparse.Namespace,
+		values: object,
+		option_string: str | None = None,
+	) -> None:
+		if getattr(namespace, self.dest, None) is not None:
+			parser.error(f"multiple {option_string} not allowed")
+		setattr(namespace, self.dest, values)
+
+
 def main() -> None:
 	if os.getenv("GIT_DIFF_PATH_COUNTER"):
 		return gitDiffMain()
@@ -393,50 +408,36 @@ def main() -> None:
 	)
 	parser.add_argument(
 		"file1",
-		action="store",
-		nargs=1,
+		type=os.path.expanduser,
+		metavar="FILE1",
+		help="first glossary file",
 	)
 	parser.add_argument(
 		"file2",
-		action="store",
-		nargs=1,
+		type=os.path.expanduser,
+		metavar="FILE2",
+		help="second glossary file",
 	)
 	parser.add_argument(
 		"--format1",
-		action="append",
-		default=[],
-		help="Format name for file1 (optional)",
+		action=_SingleUseAction,
+		help="format name for file1 (optional)",
 	)
 	parser.add_argument(
 		"--format2",
-		action="append",
-		default=[],
-		help="Format name for file2 (optional)",
+		action=_SingleUseAction,
+		help="format name for file2 (optional)",
 	)
 
-	args = parser.parse_args(sys.argv[1:])
-
-	if len(args.format1) > 1:
-		parser.print_usage(sys.stderr)
-		print("multiple --format1 not allowed", file=sys.stderr)
-		sys.exit(1)
-	if len(args.format2) > 1:
-		parser.print_usage(sys.stderr)
-		print("multiple --format2 not allowed", file=sys.stderr)
-		sys.exit(1)
-
-	filename1 = os.path.expanduser(args.file1[0])
-	filename2 = os.path.expanduser(args.file2[0])
-	format1 = args.format1[0] if args.format1 else None
-	format2 = args.format2[0] if args.format2 else None
+	args = parser.parse_args()
 
 	sameEntries = os.getenv("SAME_ENTRIES") == "1"
 
 	diffGlossary(
-		filename1,
-		filename2,
-		format1=format1,
-		format2=format2,
+		args.file1,
+		args.file2,
+		format1=args.format1,
+		format2=args.format2,
 		pager=True,
 		sameEntries=sameEntries,
 	)
