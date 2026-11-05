@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <teiHeader xml:lang="en">
+    <fileDesc>
+      <titleStmt><title>Sample: English-English glossary</title></titleStmt>
+      <editionStmt><edition>2026.11.05</edition></editionStmt>
+      <extent>14 headwords</extent>
+      <publicationStmt>
+        <publisher>PyGlossary tests</publisher>
+        <availability status="free">
+          <p>Released under the <ref target="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</ref> public-domain dedication.</p>
+        </availability>
+        <date>2026-11-05</date>
+      </publicationStmt>
+      <sourceDesc>
+        <p>Compiled for PyGlossary.</p>
+        <p>Home: <ref target="https://github.com/ilius/pyglossary">PyGlossary</ref></p>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <projectDesc><p>Synthetic sample.</p></projectDesc>
+    </encodingDesc>
+  </teiHeader>
+  <text xml:lang="en">
+    <body>
+      <entry>
+        <form><orth>abandon</orth><pron>əˈbæn.dən</pron><usg>formal</usg></form>
+        <form type="infl"><orth>abandoned</orth></form>
+        <form type="infl"><orth>abandoning</orth></form>
+        <usg>literary</usg>
+        <gramGrp><pos>v</pos><subc>t</subc></gramGrp>
+        <sense xml:lang="en">
+          <def>to leave someone behind for good</def>
+          <cit type="trans">
+            <quote>desert</quote><quote>forsake</quote>
+            <gramGrp><pos>v</pos></gramGrp><usg>formal</usg>
+            <note>Stronger than <ref target="bword://leave">leave</ref>.</note>
+          </cit>
+          <ref target="bword://abandonment">abandonment</ref>
+          <xr><ref target="https://example.com/abandon">external</ref></xr>
+        </sense>
+        <sense>
+          <def>to give up an idea</def>
+          <cit type="trans"><quote>give up</quote></cit>
+        </sense>
+        <sense>
+          <def>lack of restraint</def>
+          <cit type="trans"><quote>recklessness</quote></cit>
+          <cit type="example">
+            <quote>They danced with abandon.</quote><usg>literary</usg>
+            <cit type="example"><quote>The crowd cheered.</quote></cit>
+          </cit>
+        </sense>
+      </entry>
+      <entry>
+        <form><orth>alumna</orth><pron>əˈlʌm.nə</pron></form>
+        <form type="infl"><orth>alumnae</orth></form>
+        <gramGrp><pos>n</pos><gram type="gen">f</gram><number>sg</number><note>chiefly US</note><colloc>alumnae association</colloc></gramGrp>
+        <sense><def>a female graduate</def><cit type="trans"><quote>graduate</quote></cit></sense>
+      </entry>
+      <entry>
+        <form><orth>alumnus</orth><pron>əˈlʌm.nəs</pron></form>
+        <gramGrp><pos>n</pos><gen>m</gen><number>sg</number></gramGrp>
+        <sense><def>a male graduate</def><cit type="trans"><quote>graduate</quote></cit></sense>
+      </entry>
+      <entry>
+        <form><orth>and</orth><pron>ænd</pron></form>
+        <gramGrp><pos>conj</pos></gramGrp>
+        <sense>
+          <def>used to join words</def>
+          <cit type="trans"><quote>plus</quote></cit>
+          <usg>informal</usg>
+          <note type="usage"><p>The final <span xml:lang="en">d</span> is often dropped.</p></note>
+        </sense>
+      </entry>
+      <entry>
+        <form><orth>big</orth><pron>bɪɡ</pron></form>
+        <form type="infl"><orth>bigger</orth></form>
+        <form type="infl"><orth>biggest</orth></form>
+        <gramGrp><pos>adj</pos></gramGrp>
+        <sense>
+          <def>of considerable size</def>
+          <cit type="trans"><quote>large</quote><quote>great</quote><usg>informal</usg></cit>
+          <cit type="example"><quote>The room was big.</quote></cit>
+        </sense>
+        <sense><def>important or significant</def><cit type="trans"><quote>major</quote></cit></sense>
+      </entry>
+      <entry>
+        <form><orth>child</orth><pron>tʃaɪld</pron></form>
+        <form type="infl"><orth>children</orth></form>
+        <gramGrp><pos>n</pos><number>sg</number></gramGrp>
+        <sense>
+          <def>a young person</def>
+          <cit type="trans"><quote>youngster</quote></cit>
+          <ref target="bword://adult">adult</ref>
+        </sense>
+        <sense><def>a son or daughter</def><cit type="trans"><quote>offspring</quote></cit></sense>
+      </entry>
+      <entry>
+        <form><orth>criteria</orth><pron>kraɪˈtɪə.ri.ə</pron></form>
+        <gramGrp><pos>n</pos><gram type="num">pl</gram></gramGrp>
+        <sense>
+          <def>standards for judging something</def><def>a standard</def>
+          <cit type="trans"><quote>standards</quote><quote>tests</quote></cit>
+          <note type="hint">The singular is <ref target="bword://criterion">criterion</ref>.</note>
+        </sense>
+      </entry>
+      <entry>
+        <form><orth>dog</orth><pron>dɒɡ</pron></form>
+        <sense>
+          <gramGrp><pos>n</pos></gramGrp>
+          <def>a domesticated mammal</def>
+          <cit type="trans"><quote>canine</quote></cit>
+          <cit type="example"><quote>The dog barked.</quote><usg>informal</usg></cit>
+          <xr><ref target="bword://puppy">puppy</ref></xr>
+        </sense>
+        <sense><def>an unpleasant person</def><cit type="trans"><quote>scoundrel</quote></cit><usg>archaic</usg><note type="pos">noun</note><note type="gram">dated</note><note type="status">dated</note><note type="editor">Use with care.</note></sense>
+      </entry>
+      <entry>
+        <form><orth>give</orth><pron>ɡɪv</pron></form>
+        <form type="infl"><orth>gave</orth></form>
+        <form type="infl"><orth>given</orth></form>
+        <gramGrp><pos>v</pos><subc>t</subc><subc>i</subc></gramGrp>
+        <sense>
+          <def>to hand something to someone</def>
+          <cit type="trans"><quote>hand</quote><quote>pass</quote></cit>
+          <lang xml:lang="fr">donner</lang><lang orig="Latin">donare</lang>
+        </sense>
+        <sense>
+          <def>to yield or bend under pressure</def>
+          <cit type="trans"><quote>yield</quote></cit>
+          <cit type="idiom"><quote>give way</quote><quote>give in</quote></cit>
+        </sense>
+      </entry>
+      <entry>
+        <form><orth>happy</orth><pron>ˈhæp.i</pron></form>
+        <gramGrp><pos>adj</pos></gramGrp>
+        <sense>
+          <sense><def>feeling pleasure</def><cit type="trans"><quote>glad</quote><quote>cheerful</quote></cit></sense>
+          <sense><def>lucky</def><cit type="trans"><quote>lucky</quote></cit></sense>
+        </sense>
+      </entry>
+      <entry>
+        <form><orth>quickly</orth><pron>ˈkwɪk.li</pron></form>
+        <gramGrp><gram type="pos">adv</gram></gramGrp>
+        <sense>
+          <def>at a fast speed</def>
+          <cit type="trans"><quote>rapidly</quote><quote>swiftly</quote></cit>
+          <cit type="example"><quote>She finished quickly.</quote></cit>
+        </sense>
+      </entry>
+      <entry>
+        <form><orth>run</orth><pron>rʌn</pron></form>
+        <form type="infl"><orth>ran</orth></form>
+        <form type="infl"><orth>running</orth></form>
+        <gramGrp><pos>v</pos><subc>i</subc><gram type="subc">t</gram></gramGrp>
+        <sense>
+          <def>to move quickly on foot</def>
+          <cit type="trans"><quote>sprint</quote><quote>jog</quote></cit>
+          <cit type="example">
+            <quote>He runs every morning.</quote><usg>informal</usg>
+            <cit type="example"><quote>They ran for the bus.</quote></cit>
+          </cit>
+        </sense>
+        <sense><def>to manage something</def><cit type="trans"><quote>manage</quote><quote>operate</quote></cit></sense>
+      </entry>
+      <entry>
+        <form><orth>salaam</orth><pron>səˈlɑːm</pron></form>
+        <gramGrp><pos>n</pos></gramGrp>
+        <sense xml:lang="en">
+          <def>a greeting meaning peace</def>
+          <cit type="trans">
+            <quote xml:lang="fa">سلام</quote><quote xml:lang="ar">السلام عليكم</quote>
+          </cit>
+          <cit type="example"><quote xml:lang="fa">سلام!</quote></cit>
+        </sense>
+      </entry>
+      <xi:include href="14-en-en-include.tei"/>
+    </body>
+  </text>
+</TEI>

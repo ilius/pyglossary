@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <text xml:lang="en">
+    <body>
+      <entry>
+        <form><orth>zero</orth><pron>ˈzɪə.rəʊ</pron></form>
+        <gramGrp><pos>n</pos><num>sg</num></gramGrp>
+        <sense>
+          <def>the number 0, or nothing at all</def>
+          <cit type="trans"><quote>nought</quote><quote>nil</quote></cit>
+          <cit type="example"><quote>The score was zero.</quote></cit>
+        </sense>
+      </entry>
+    </body>
+  </text>
+</TEI>

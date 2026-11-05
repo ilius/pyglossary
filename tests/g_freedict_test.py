@@ -11,6 +11,9 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-de-labels.tei",
 			"100-en-de-v6.txt",
 			"1-en-de-labels.txt",
+			"14-en-en.tei",
+			"14-en-en-include.tei",
+			"14-en-en.txt",
 			"freedict-sample-2024-12-19-v3.txt",
 		}
 		self.dataFileCRC32 |= {
@@ -42,6 +45,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"freedict-sample-2024-12-19",
 			"freedict-sample-2024-12-19-v3",
+		)
+
+	def test_convert_tei_txt_14_en_en(self):
+		self.convert_tei_txt(
+			"14-en-en",
+			"14-en-en",
+			readOptions={"auto_comma": True},
 		)
 
 	def test_convert_tei_txt_labels(self):
