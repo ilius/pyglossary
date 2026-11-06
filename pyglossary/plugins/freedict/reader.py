@@ -765,6 +765,13 @@ class Reader(ReaderUtils):
 			elif tags:
 				with hf.element("div"):
 					self.writeInlineTags(hf, tags)
+			# <note> holds the translation of the example, so it is written
+			# as its own block after the quote, like a second quote would be
+			for note in citElem.findall("note", _NAMESPACE):
+				if not _elementText(note):
+					continue
+				with hf.element("div"):
+					self.writeNote(hf, note)
 			for cit2 in citElem.findall("cit", _NAMESPACE):
 				# This mutates the source tree on purpose: writeWithDirection
 				# reads xml:lang and type from the quote itself, so the nested

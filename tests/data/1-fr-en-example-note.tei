@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary example note test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests, not published by the FreeDict project.</p>
+				<p>Entry text copied from the French-English FreeDict Dictionary (fra-eng, edition 0.4.1), which is available under the GNU General Public License ver. 2.0 and any later version.</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests. Contains one entry from the French-English FreeDict Dictionary (fra-eng).</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text>
+		<body>
+			<entry>
+				<form>
+					<orth>falloir</orth>
+					<pron>falwaʀ</pron>
+				</form>
+				<gramGrp>
+					<pos>v</pos>
+				</gramGrp>
+				<sense n="1">
+					<cit type="example">
+						<quote>Il faut quelque chose</quote>
+						<note type="def">We need something</note>
+					</cit>
+				</sense>
+				<sense n="2">
+					<cit type="example">
+						<quote>Il faut faire</quote>
+						<note type="def">You have to</note>
+					</cit>
+				</sense>
+				<sense n="3">
+					<cit type="example">
+						<quote>Il faut que</quote>
+						<note type="def">It is necessary that</note>
+					</cit>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>

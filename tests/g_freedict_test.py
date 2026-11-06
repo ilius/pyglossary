@@ -21,6 +21,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"14-en-en.tei",
 			"2-en-en-def-inline.tei",
 			"2-en-en-def-inline.txt",
+			"1-fr-en-example-note.tei",
+			"1-fr-en-example-note.txt",
 			"14-en-en-include.tei",
 			"14-en-en.txt",
 			"freedict-sample-2024-12-19-v3.txt",
@@ -88,6 +90,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"2-en-en-def-inline",
 			"2-en-en-def-inline",
+		)
+
+	def test_convert_tei_txt_example_note(self):
+		# <note> inside <cit type="example"> must not be dropped
+		self.convert_tei_txt(
+			"1-fr-en-example-note",
+			"1-fr-en-example-note",
 		)
 
 	def test_input_file_size_top_level_only(self):

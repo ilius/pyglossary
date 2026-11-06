@@ -6,9 +6,6 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 
 ## Confirmed bugs
 
-5. **Example `<note>` silently dropped** (medium)
-   - `writeExampleCit` (lines 729-755) renders only `usg`, `lbl`, `quote`, and nested `cit`. A `<note>` inside `<cit type="example">` is lost without a warning.
-
 6. **`<number>sg</number>` is not mapped, but `pl` is** (medium)
    - `numberMapping` (lines 146-149) has `pl` and `sing`, not `sg`. Fixtures expect the raw `sg` (for example `noun, sg` in `14-en-en.txt`), while `pl` renders as `plural`.
    - Fixing this changes expected outputs and requires regeneration.
