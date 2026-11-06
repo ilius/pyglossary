@@ -73,7 +73,6 @@ class Reader(ReaderUtils):
 		"lxml": "lxml",
 	}
 
-	_discover: bool = False
 	_auto_rtl: bool = True
 	_auto_comma: bool = True
 	_comma: str = ", "
@@ -85,7 +84,6 @@ class Reader(ReaderUtils):
 	_example_padding: int = 10
 
 	def _copyOptionsTo(self, other: Reader) -> None:
-		other._discover = self._discover
 		other._auto_rtl = self._auto_rtl
 		other._auto_comma = self._auto_comma
 		other._comma = self._comma
@@ -104,24 +102,6 @@ class Reader(ReaderUtils):
 		"padding-right:3px;"
 		"border-radius:0.5ex;"
 	)
-	supportedTags: set[str] = {
-		f"{_TEI}{tag}"
-		for tag in (
-			"entry",
-			"form",  # entry.form
-			"orth",  # entry.form.orth
-			"pron",  # entry.form.pron
-			"usg",  # entry.form.usg, entry.sense.usg
-			"sense",  # entry.sense
-			"cit",  # entry.sense.cit
-			"quote",  # entry.sense.cit.quote
-			"gramGrp",  # entry.sense.cit.gramGrp
-			"pos",  # entry.sense.cit.gramGrp.pos
-			"gen",  # entry.sense.cit.gramGrp.gen
-			"number",  # entry.sense.cit.gramGrp.number
-			"num",  # entry.sense.cit.gramGrp.num
-		)
-	}
 	posMapping: dict[str, str] = {
 		"n": "noun",
 		"v": "verb",
@@ -1024,11 +1004,6 @@ class Reader(ReaderUtils):
 		buff = BytesIO()
 		pron_color = self._pron_color
 
-		if self._discover:
-			for elem in entry.iter():
-				if elem.tag not in self.supportedTags:
-					self._discoveredTags[elem.tag] = elem
-
 		def br() -> Element:
 			return ET.Element("br")
 
@@ -1224,7 +1199,6 @@ class Reader(ReaderUtils):
 		self._fileSize = 0
 		self._progress = True
 		self._entryCount = 0
-		self._discoveredTags: dict[str, Element] = {}
 		# real paths of the files from the top-level file down to this one
 		self._includeChain: frozenset[str] = frozenset()
 
@@ -1342,8 +1316,3 @@ class Reader(ReaderUtils):
 				continue
 			while elem.getprevious() is not None:
 				del parent[0]
-
-		if self._discoveredTags:
-			log.info("Found unsupported tags")
-			for elem in self._discoveredTags.values():
-				log.info(f"{self.tostring(elem)}\n")

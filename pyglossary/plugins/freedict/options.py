@@ -25,9 +25,6 @@ optionsProp: dict[str, Option] = {
 	"resources": BoolOption(
 		comment="Enable resources / data files",
 	),
-	"discover": BoolOption(
-		comment="Find and show unsupported tags",
-	),
 	"auto_rtl": BoolOption(
 		comment="Auto-detect and mark Right-to-Left text",
 	),

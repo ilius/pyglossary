@@ -39,11 +39,6 @@ class Reader(FreeDictReader):
 		keywords: list[str] = []
 		pron_color = self._pron_color
 
-		if self._discover:
-			for elem in entry.iter():
-				if elem.tag not in self.supportedTags:
-					self._discoveredTags[elem.tag] = elem
-
 		def br() -> Element:
 			return ET.Element("br")
 
