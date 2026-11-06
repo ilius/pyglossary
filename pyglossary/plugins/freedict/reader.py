@@ -11,7 +11,8 @@ from __future__ import annotations
 
 # mypy: ignore-errors
 import re
-from dataclasses import dataclass
+from copy import deepcopy
+from dataclasses import dataclass, field
 from io import BytesIO
 from os.path import dirname, isfile, join, realpath
 from typing import TYPE_CHECKING, cast
@@ -62,6 +63,164 @@ class _ParsedSense:
 	xrList: list[Element]
 	exampleCits: list[Element]
 	langs: list[Element]
+
+
+@dataclass(slots=True)
+class _CitScan:
+	"""State while scanning the children of one translation <cit>."""
+
+	cit: Element
+	blocks: list[tuple[Element, list[Element]]] = field(default_factory=list)
+	# <usg> and <lbl> tags, rendered before the first block
+	tags: list[Element] = field(default_factory=list)
+	# loose text, joined into one block before the next quote or nested <cit>
+	pendingText: list[str] = field(default_factory=list)
+
+
+class _TransCitCollector:
+	"""
+	Split a translation <cit> into render blocks for Reader.writeTransCit.
+
+	Each block is a (quote element, tags) pair. The grammar, note and unknown
+	content of the <cit> is copied into `sense`, a synthetic <sense> that
+	writeSense renders with the same code path as real senses. The source
+	<cit> is left unchanged, so the same entry can be rendered again.
+	"""
+
+	def __init__(self, tostring: Callable[[Element], str]) -> None:
+		from lxml import etree as ET
+
+		self._ET = ET
+		self._tostring = tostring
+		# The writers (writeSense, writeGramGroups, writeUsageTag, ...) only
+		# read from a <sense> tree, but the grammar, usage and note children
+		# of a translation <cit> sit next to its quotes. Copying them into a
+		# synthetic <sense> lets writeSense render them with the same code
+		# path as real senses, without duplicating that logic.
+		self.sense: Element = ET.Element(f"{_TEI}sense")
+		self._gramGrp: Element | None = None
+
+	def collect(self, cit: Element) -> list[tuple[Element, list[Element]]]:
+		"""Return the render blocks (quote element, tags) of this <cit>."""
+		scan = _CitScan(cit)
+		for child in cit.xpath("child::node()"):
+			self._handleChild(scan, child)
+		self._flushText(scan)
+		if scan.tags:
+			if not scan.blocks:
+				scan.blocks.append((self._textBlock("", cit), []))
+			quote, prefixOfFirst = scan.blocks[0]
+			scan.blocks[0] = (quote, scan.tags + prefixOfFirst)
+		return scan.blocks
+
+	def _handleChild(self, scan: _CitScan, child: str | Element) -> None:
+		if isinstance(child, str):
+			text = child.strip()
+			if text:
+				log.warning(f"text directly inside <cit>: {text}")
+				scan.pendingText.append(text)
+			return
+
+		if child.__class__.__name__ == "_Comment":
+			return
+
+		if child.tag == f"{_TEI}quote":
+			self._flushText(scan)
+			scan.blocks.append((child, []))
+			return
+
+		if child.tag in {f"{_TEI}gramGrp", f"{_TEI}note"}:
+			self._copyToSense(self.sense, child)
+			return
+
+		if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"}:
+			# <usg> is kept here (not moved into the synthetic sense) because it
+			# gives the domain/context of the translation, e.g. "[archaic] word",
+			# so it must come first.
+			if _elementText(child):
+				scan.tags.append(child)
+			return
+
+		if child.tag in {
+			f"{_TEI}pos",
+			f"{_TEI}gen",
+			f"{_TEI}number",
+			f"{_TEI}num",
+			f"{_TEI}subc",
+		}:
+			self._appendGramChild(child)
+			return
+
+		if child.tag == f"{_TEI}cit":
+			self._handleNestedCit(scan, child)
+			return
+
+		self._handleUnknown(child)
+
+	def _handleNestedCit(self, scan: _CitScan, child: Element) -> None:
+		typ = child.attrib.get("type", "trans")
+		if typ in {"abbrev", "abbreviation"}:
+			# An abbreviation <cit> only carries <orth> text that should be
+			# shown as a label. Create detached <lbl> elements (not added to
+			# the tree) because writeLabelTag takes an Element.
+			for orth in child.findall("orth", _NAMESPACE):
+				text = _elementText(orth)
+				if text:
+					lbl = self._ET.Element(f"{_TEI}lbl")
+					lbl.text = text
+					scan.tags.append(lbl)
+			return
+		# A nested <cit> is collected into its own blocks, so its quotes and
+		# tags stay with its own content.
+		self._flushText(scan)
+		scan.blocks += self.collect(child)
+
+	def _handleUnknown(self, child: Element) -> None:
+		log.warning(
+			f"unknown tag {child.tag!r} inside translation <cit>"
+			f": {self._tostring(child)}",
+		)
+		# Keep the text of an unknown element as a <note> in the synthetic
+		# sense instead of dropping it.
+		text = _elementText(child)
+		if text:
+			note = self._ET.SubElement(self.sense, f"{_TEI}note")
+			note.text = text
+
+	def _flushText(self, scan: _CitScan) -> None:
+		if scan.pendingText:
+			text = " ".join(scan.pendingText)
+			scan.blocks.append((self._textBlock(text, scan.cit), []))
+			scan.pendingText.clear()
+
+	def _textBlock(self, text: str, cit: Element) -> Element:
+		# Loose text has no element of its own, but the block writers
+		# (writeQuote -> writeWithDirection) need an Element. Wrap the text in
+		# a new <quote> that copies the <cit> attributes, so xml:lang (lang/dir)
+		# and type (class) are applied to it as they are to real quotes. The
+		# source tree is not modified here.
+		quote = self._ET.Element(f"{_TEI}quote", attrib=dict(cit.attrib))
+		quote.text = text
+		return quote
+
+	def _copyToSense(self, parent: Element, child: Element) -> None:
+		# Copy instead of move: moving would detach the child from the source
+		# <cit>, so a second render of the same entry would lose it. The copy
+		# has no tail: collect already collects the tail text as loose text
+		# (through the xpath "child::node()" snapshot), so keeping it here
+		# would render that text twice.
+		copied = deepcopy(child)
+		copied.tail = None
+		parent.append(copied)
+
+	def _appendGramChild(self, child: Element) -> None:
+		# Bare <pos>/<gen>/<number>/<num>/<subc> inside a translation <cit>
+		# are not wrapped in <gramGrp> in the TEI. writeGramGroups only reads
+		# <gramGrp> children, so create one in the synthetic sense and group
+		# these elements under it.
+		if self._gramGrp is None:
+			self._gramGrp = self._ET.SubElement(self.sense, f"{_TEI}gramGrp")
+		self._copyToSense(self._gramGrp, child)
 
 
 class Reader(ReaderUtils):
@@ -182,154 +341,14 @@ class Reader(ReaderUtils):
 		elem: Element,
 		prefix: list[Element] | None = None,
 	) -> None:
-		from copy import deepcopy
-
-		from lxml import etree as ET
-
 		children = elem.xpath("child::node()")
 		if not children:
 			return
 		assert isinstance(children, list), f"{children=}"
 
-		# The writers below (writeSense, writeGramGroups, writeUsageTag, ...)
-		# only read from a <sense> tree, but the grammar, usage and note
-		# children of a translation <cit> sit next to its quotes. Copying
-		# them into a synthetic <sense> lets writeSense render them with
-		# the same code path as real senses, without duplicating that logic.
-		# The source <cit> is left unchanged, so the same entry can be
-		# rendered again.
-		sense = ET.Element(f"{_TEI}sense")
-		gramGrp: Element | None = None
-
-		def copyToSense(parent: Element, child: Element) -> None:
-			# Copy instead of move: moving would detach the child from the
-			# source <cit>, so a second render of the same entry would lose
-			# it. The copy has no tail: collectCit already collects the tail
-			# text as loose text (through the xpath "child::node()" snapshot),
-			# so keeping it here would render that text twice.
-			copied = deepcopy(child)
-			copied.tail = None
-			parent.append(copied)
-
-		def appendGramChild(child: Element) -> None:
-			nonlocal gramGrp
-			# Bare <pos>/<gen>/<number>/<num>/<subc> inside a translation <cit>
-			# are not wrapped in <gramGrp> in the TEI. writeGramGroups only
-			# reads <gramGrp> children, so create one in the synthetic sense
-			# and group these elements under it.
-			if gramGrp is None:
-				gramGrp = ET.SubElement(sense, f"{_TEI}gramGrp")
-			copyToSense(gramGrp, child)
-
-		def newTextBlock(text: str, cit: Element) -> Element:
-			# Loose text has no element of its own, but the block writers
-			# (writeQuote -> writeWithDirection) need an Element. Wrap the
-			# text in a new <quote> that copies the <cit> attributes, so
-			# xml:lang (lang/dir) and type (class) are applied to it as they
-			# are to real quotes. The source tree is not modified here.
-			quote = ET.Element(f"{_TEI}quote", attrib=dict(cit.attrib))
-			quote.text = text
-			return quote
-
-		def collectCit(  # noqa: PLR0912
-			cit: Element,
-		) -> list[tuple[Element, list[Element]]]:
-			"""
-			Return render blocks (quote element, tags) for this <cit>.
-
-			Tags are <usg> and <lbl> elements of this <cit>. They are rendered
-			inline before the first block it produces, so they stay next to
-			the content they describe. Nested <cit> elements are collected
-			separately, so their tags stay with their own content.
-			"""
-			blocks: list[tuple[Element, list[Element]]] = []
-			# <usg> and <lbl> are both rendered as bracketed tags before the
-			# content, in document order. <usg> is kept here (not moved into
-			# the synthetic sense) because it gives the domain/context of the
-			# translation, e.g. "[archaic] word", so it must come first.
-			tags: list[Element] = []
-			pendingText: list[str] = []
-
-			def flushText() -> None:
-				if pendingText:
-					blocks.append((newTextBlock(" ".join(pendingText), cit), []))
-					pendingText.clear()
-
-			for child in cit.xpath("child::node()"):
-				if isinstance(child, str):
-					text = child.strip()
-					if text:
-						log.warning(f"text directly inside <cit>: {text}")
-						pendingText.append(text)
-					continue
-
-				if child.__class__.__name__ == "_Comment":
-					continue
-
-				if child.tag == f"{_TEI}quote":
-					flushText()
-					blocks.append((child, []))
-					continue
-
-				if child.tag in {f"{_TEI}gramGrp", f"{_TEI}note"}:
-					copyToSense(sense, child)
-					continue
-
-				if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"}:
-					if _elementText(child):
-						tags.append(child)
-					continue
-
-				if child.tag in {
-					f"{_TEI}pos",
-					f"{_TEI}gen",
-					f"{_TEI}number",
-					f"{_TEI}num",
-					f"{_TEI}subc",
-				}:
-					appendGramChild(child)
-					continue
-
-				if child.tag == f"{_TEI}cit":
-					typ = child.attrib.get("type", "trans")
-					if typ in {"abbrev", "abbreviation"}:
-						# An abbreviation <cit> only carries <orth> text that
-						# should be shown as a label. Create a detached <lbl>
-						# (not added to the tree) because writeLabelTag takes
-						# an Element.
-						for orth in child.findall("orth", _NAMESPACE):
-							text = _elementText(orth)
-							if text:
-								lbl = ET.Element(f"{_TEI}lbl")
-								lbl.text = text
-								tags.append(lbl)
-						continue
-					# A nested <cit> is collected into its own blocks, so its
-					# quotes and tags stay with its own content.
-					flushText()
-					blocks += collectCit(child)
-					continue
-
-				log.warning(
-					f"unknown tag {child.tag!r} inside translation <cit>"
-					f": {self.tostring(child)}",
-				)
-				# Keep the text of an unknown element as a <note> in the
-				# synthetic sense instead of dropping it.
-				text = _elementText(child)
-				if text:
-					note = ET.SubElement(sense, f"{_TEI}note")
-					note.text = text
-
-			flushText()
-			if tags:
-				if not blocks:
-					blocks.append((newTextBlock("", cit), []))
-				quote, prefixOfFirst = blocks[0]
-				blocks[0] = (quote, tags + prefixOfFirst)
-			return blocks
-
-		blocks = collectCit(elem)
+		collector = _TransCitCollector(self.tostring)
+		blocks = collector.collect(elem)
+		sense = collector.sense
 
 		if prefix:
 			if blocks:
