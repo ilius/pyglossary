@@ -1,0 +1,5 @@
+##name	PyGlossary inline definitions test
+##input_file_size	784
+##description	Synthetic sample for PyGlossary tests
+alpha	<div>a letter <a class="external" href="bword://beta">beta</a> follows it</div>
+gamma	<div>to be sad today</div>

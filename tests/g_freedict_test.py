@@ -11,7 +11,11 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-de-labels.tei",
 			"100-en-de-v6.txt",
 			"1-en-de-labels.txt",
+			"1-en-en-comment.tei",
+			"1-en-en-comment.txt",
 			"14-en-en.tei",
+			"2-en-en-def-inline.tei",
+			"2-en-en-def-inline.txt",
 			"14-en-en-include.tei",
 			"14-en-en.txt",
 			"freedict-sample-2024-12-19-v3.txt",
@@ -58,6 +62,20 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"1-en-de-labels",
 			"1-en-de-labels",
+		)
+
+	def test_convert_tei_txt_comments(self):
+		# XML comments inside <gramGrp> and <sense> must be skipped
+		self.convert_tei_txt(
+			"1-en-en-comment",
+			"1-en-en-comment",
+		)
+
+	def test_convert_tei_txt_def_inline(self):
+		# inline markup inside <def> keeps its spacing, without separators
+		self.convert_tei_txt(
+			"2-en-en-def-inline",
+			"2-en-en-def-inline",
 		)
 
 

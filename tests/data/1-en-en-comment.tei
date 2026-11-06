@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary XML comments test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>comment</orth>
+				</form>
+				<gramGrp>
+					<pos>n</pos>
+					<!-- comment inside gramGrp -->
+					<gen>m</gen>
+				</gramGrp>
+				<sense>
+					<!-- comment inside sense -->
+					<def>a remark in the source file</def>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>

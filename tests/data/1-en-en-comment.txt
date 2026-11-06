@@ -1,0 +1,4 @@
+##name	PyGlossary XML comments test
+##input_file_size	723
+##description	Synthetic sample for PyGlossary tests
+comment	<div><div><font class="grammar" color="green">noun, male</font></div>a remark in the source file</div>

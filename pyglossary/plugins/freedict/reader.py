@@ -360,44 +360,61 @@ class Reader(ReaderUtils):
 		if next(sense.iterchildren(), False) is not None:
 			self.writeSense(hf, sense)
 
+	def iterDefPieces(self, node: Element) -> Iterator[str | Element]:
+		"""Yield the text and <ref> pieces of a <def>, recursing into other elements."""
+		for child in node.xpath("child::node()"):
+			if isinstance(child, str):
+				yield child
+				continue
+			if not isinstance(child.tag, str):
+				# comment or processing instruction
+				continue
+			if child.tag == f"{_TEI}ref":
+				if child.text:
+					yield child
+				else:
+					log.warning(f"ref without text: {self.tostring(child)}")
+				continue
+			yield from self.iterDefPieces(child)
+
+	def getDefPieces(self, elem: Element) -> list[str | Element]:
+		"""
+		Return the inline pieces of a <def>, ready to write.
+
+		Adjacent text is merged before whitespace is collapsed, so spacing
+		around skipped comments and inline elements is kept. Leading and
+		trailing whitespace of the whole definition is removed.
+		"""
+		merged: list[str | Element] = []
+		for piece in self.iterDefPieces(elem):
+			if isinstance(piece, str) and merged and isinstance(merged[-1], str):
+				merged[-1] += piece
+			else:
+				merged.append(piece)
+
+		for i, piece in enumerate(merged):
+			if isinstance(piece, str):
+				merged[i] = re.sub(r"\s+", " ", piece)
+		if merged and isinstance(merged[0], str):
+			merged[0] = merged[0].lstrip()
+		if merged and isinstance(merged[-1], str):
+			merged[-1] = merged[-1].rstrip()
+
+		return [piece for piece in merged if not (isinstance(piece, str) and not piece)]
+
 	def writeDef(
 		self,
 		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
-		# sep = None
-		# if self._cif_newline:
-		# 	sep = ET.Element("br")
-		count = 0
-
-		def writeChild(item: str | Element, depth: int) -> None:
-			nonlocal count
-			if isinstance(item, str):
-				item = item.strip()
-				if not item:
-					return
-				if count > 0:
-					hf.write(self.getCommaSep(item))
-				# with hf.element(self.getTitleTag(item)):
-				hf.write(item)
-				return
-
-			if item.tag == f"{_TEI}ref":
-				if item.text:
-					if count > 0:
-						hf.write(self.getCommaSep(item.text))
-					self.writeRef(hf, item)
-				else:
-					log.warning(f"ref without text: {self.tostring(item)}")
-				return
-
-			for child in item.xpath("child::node()"):
-				writeChild(child, depth + 1)
-			if depth < 1:
-				count += 1
-
-		for child in elem.xpath("child::node()"):
-			writeChild(child, 0)
+		# <def> has phrase-level content (TEI): text, <ref> links and inline
+		# elements such as <hi>. All of it stays inline, so no separator is
+		# inserted between pieces.
+		for piece in self.getDefPieces(elem):
+			if isinstance(piece, str):
+				hf.write(piece)
+			else:
+				self.writeRef(hf, piece)
 
 	def setAttribLangDir(
 		self,
@@ -562,6 +579,10 @@ class Reader(ReaderUtils):
 		exampleCits: list[Element] = []
 		langs: list[Element] = []
 		for child in sense.iterchildren():
+			if not isinstance(child.tag, str):
+				# comment or processing instruction
+				continue
+
 			if child.tag == f"{_TEI}cit":
 				typ = child.attrib.get("type", "trans")
 				if typ == "trans":
@@ -788,6 +809,9 @@ class Reader(ReaderUtils):
 		for gramGrp in gramGrpList:
 			parts: list[str] = []
 			for child in gramGrp.iterchildren():
+				if not isinstance(child.tag, str):
+					# comment or processing instruction
+					continue
 				part = self.normalizeGramGrpChild(child)
 				if part:
 					parts.append(part)
@@ -814,7 +838,9 @@ class Reader(ReaderUtils):
 
 	@classmethod
 	def isMetaSense(cls, sense: Element) -> bool:
-		childTagSet = {child.tag for child in sense.iterchildren()}
+		childTagSet = {
+			child.tag for child in sense.iterchildren() if isinstance(child.tag, str)
+		}
 		return childTagSet == {f"{_TEI}sense"}
 
 	def writeSense(
