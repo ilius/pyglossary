@@ -229,20 +229,6 @@
 		}
 	},
 	{
-		"module": "babylon_bdc",
-		"lname": "babylon_bdc",
-		"name": "BabylonBdc",
-		"description": "Babylon (bdc)",
-		"extensions": [
-			".bdc"
-		],
-		"singleFile": true,
-		"optionsProp": {},
-		"canRead": false,
-		"canWrite": false,
-		"enable": false
-	},
-	{
 		"module": "babylon_bgl",
 		"lname": "babylon_bgl",
 		"name": "BabylonBgl",
