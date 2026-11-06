@@ -6,24 +6,6 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 
 ## Confirmed bugs
 
-1. **Crash on XML comments inside `<gramGrp>`** (high, fixed: comments are now skipped in `writeGramGroups`, `parseSenseSense`, and `isMetaSense`; regression test `test_convert_tei_txt_comments`)
-   - `writeGramGroups` (reader.py:790) iterates `gramGrp.iterchildren()`, which includes comment nodes. `_elementText` (line 47) then raises `ValueError: Input object is not an XML element: lxml.etree._Comment`.
-   - The conversion aborts. Comments are valid XML, so real dictionaries can hit this.
-   - Comments in `<sense>` are not skipped either. They log `unknown tag <cyfunction Comment>` (line 628).
-
-2. **Spacing and separators wrong in `<def>` with inline markup** (high, common; fixed: `writeDef` keeps inline content inline and skips comments; regression test `test_convert_tei_txt_def_inline`)
-   - `writeDef` (reader.py:373-400) strips every text node (line 376) and adds a comma after every non-`<ref>` element (line 397).
-   - `<def>a <ref target="bword://zz">zz</ref> b</def>` renders as `a<a ...>zz</a>b`.
-   - `<def>to <hi>be</hi> sad</def>` renders as `tobe, sad`.
-   - `<def>first <!-- x --> def</def>` renders as `first, def`.
-
-3. **Self-including file recurses forever** (medium, fixed: includes of a file already in the include chain are skipped with an error; regression test `test_convert_tei_txt_include_cycle`)
-   - `loadInclude` (lines 1193-1205) and `__iter__` (lines 1219-1223) have no cycle check. A file that XIncludes itself ends in `RecursionError`.
-
-4. **`input_file_size` overwritten by included files** (medium)
-   - `open()` sets `input_file_size` (line 1171), and `loadInclude` calls `open()` for each include.
-   - For `tests/data/14-en-en.tei` (8169 bytes) the glossary info ends up as 522, the size of `14-en-en-include.tei`. The wrong value is written into output metadata.
-
 5. **Example `<note>` silently dropped** (medium)
    - `writeExampleCit` (lines 729-755) renders only `usg`, `lbl`, `quote`, and nested `cit`. A `<note>` inside `<cit type="example">` is lost without a warning.
 

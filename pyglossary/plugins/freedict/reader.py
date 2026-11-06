@@ -1190,6 +1190,8 @@ class Reader(ReaderUtils):
 
 		self._filename = filename
 		self._dirname = dirname(filename)
+		# an empty chain means this is the top-level file, not an XInclude
+		isTopLevel = not self._includeChain
 		self._includeChain = self._includeChain | {realpath(filename)}
 		cfile = compressionOpen(filename, mode="rb")
 
@@ -1197,7 +1199,10 @@ class Reader(ReaderUtils):
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			if isTopLevel:
+				# only the top-level file defines the glossary's input size,
+				# included files must not overwrite it
+				self._glos.setInfo("input_file_size", str(self._fileSize))
 		else:
 			log.warning("FreeDict Reader: file is not seekable")
 

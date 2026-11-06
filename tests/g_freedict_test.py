@@ -1,6 +1,9 @@
+import os
 import unittest
 
-from glossary_v2_test import TestGlossaryBase
+from glossary_v2_test import Glossary, TestGlossaryBase
+
+from pyglossary.plugins.freedict.reader import Reader
 
 
 class TestGlossaryFreeDict(TestGlossaryBase):
@@ -86,6 +89,25 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"2-en-en-def-inline",
 			"2-en-en-def-inline",
 		)
+
+	def test_input_file_size_top_level_only(self):
+		# 14-en-en.tei XIncludes 14-en-en-include.tei; the included file
+		# must not overwrite input_file_size of the top-level file
+		# (Glossary.convert() clears glossary info when writing, so read directly)
+		inputFilename = self.downloadFile("14-en-en.tei")
+		glos = Glossary()
+		reader = Reader(glos)
+		reader.open(inputFilename)
+		try:
+			# includes are opened while iterating
+			for _ in reader:
+				pass
+			self.assertEqual(
+				glos.getInfo("input_file_size"),
+				str(os.path.getsize(inputFilename)),
+			)
+		finally:
+			reader.close()
 
 
 if __name__ == "__main__":
