@@ -1015,42 +1015,43 @@ class Reader(ReaderUtils):
 			# list_type="A",
 		)
 
-	def normalizeGramGrpChild(self, elem: Element) -> str:  # noqa: PLR0912
-		# child can be "pos" or "gen"
-		tag = elem.tag
+	def _mappingByName(self) -> dict[str, dict[str, str]]:
+		# <pos>, <gen>, <num>, <number> and <subc> elements, and the "type"
+		# of a <gram> element, all name one of these mappings
+		return {
+			"pos": self.posMapping,
+			"gen": self.genderMapping,
+			"num": self.numberMapping,
+			"number": self.numberMapping,
+			"subc": self.subcMapping,
+		}
+
+	def _normalizeGram(self, elem: Element, text: str) -> str:
+		type_ = elem.get("type")
+		if not type_:
+			log.warning(f"<gram> with no type: {self.tostring(elem)}")
+			return text
+		mapping = self._mappingByName().get(type_)
+		if mapping is None:
+			log.warning(f"unrecognize type={type_!r}: {self.tostring(elem)}")
+			return text
+		return mapping.get(text.lower(), text)
+
+	def normalizeGramGrpChild(self, elem: Element) -> str:
+		# child can be <pos>, <gen>, <num>, <number>, <subc>, <gram>, <note>
+		# or <colloc>
 		text = _elementText(elem)
 		if not text:
 			return ""
-		if tag == f"{_TEI}pos":
-			return self.posMapping.get(text.lower(), text)
-		if tag == f"{_TEI}gen":
-			return self.genderMapping.get(text.lower(), text)
-		if tag in {f"{_TEI}num", f"{_TEI}number"}:
-			return self.numberMapping.get(text.lower(), text)
-		if tag == f"{_TEI}subc":
-			return self.subcMapping.get(text.lower(), text)
+		tag = elem.tag
 		if tag == f"{_TEI}gram":
-			type_ = elem.get("type")
-			if type_:
-				if type_ == "pos":
-					return self.posMapping.get(text.lower(), text)
-				if type_ == "gen":
-					return self.genderMapping.get(text.lower(), text)
-				if type_ in {"num", "number"}:
-					return self.numberMapping.get(text.lower(), text)
-				if type_ == "subc":
-					return self.subcMapping.get(text.lower(), text)
-				log.warning(f"unrecognize type={type_!r}: {self.tostring(elem)}")
-				return text
-
-			log.warning(f"<gram> with no type: {self.tostring(elem)}")
+			return self._normalizeGram(elem, text)
+		if tag in {f"{_TEI}note", f"{_TEI}colloc"}:
 			return text
-
-		if tag == f"{_TEI}note":
-			return text
-
-		if tag == f"{_TEI}colloc":
-			return text
+		if tag.startswith(_TEI):
+			mapping = self._mappingByName().get(tag.removeprefix(_TEI))
+			if mapping is not None:
+				return mapping.get(text.lower(), text)
 
 		log.warning(
 			f"unrecognize GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}",
