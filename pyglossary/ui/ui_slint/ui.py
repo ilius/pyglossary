@@ -1,42 +1,15 @@
-# Slint-based graphical interface for PyGlossary.
-#   - a `UI` class subclassing `UIBase`
-#   - a `run(...)` signature compatible with `pyglossary/ui/runner.py`
-#   - dispatched via `--ui=slint` (registered in runner.py / argparse_main.py)
-#
-# Threading model:
-#   Slint objects (ListModel rows, PyStructs such as slint.Color, component
-#   instances) are bound to the event-loop thread; touching them from any other
-#   thread trips pyo3's `unsendable` assertion and panics the interpreter.
-#   Therefore, *every* slint mutation must happen on the event-loop thread.
-#
-#   Blocking work (`Glossary.convert()`, the native file-dialog subprocess) runs
-#   on plain worker threads. Those threads never touch a slint object directly;
-#   they hand results back to the UI exclusively through Slint's canonical
-#   thread-safe primitive `slint.native.invoke_from_event_loop(cb)`, whose body
-#   runs on the event-loop thread. `UI._post` is the single funnel used
-#   everywhere (progress, log records, browse results, conversion-done).
-#
-#   `self` is safe to pass as `Glossary(ui=self)` because the only methods
-#   `Glossary` calls on its `ui` during conversion are `progressInit` /
-#   `progress` / `progressEnd`, and each of those only does plain-Python string
-#   work and a single `_post` -- no slint access on the worker thread.
-#
-#   Slint's event loop cannot be nested, so secondary windows are non-modal
-#   (`show()`) and report results through callbacks; only the main window calls
-#   `.run()`.
-#
-#   Slint's pyclasses are `unsendable` (bound to the event-loop thread). CPython's
-#   *cyclic* garbage collector is thread-agnostic: it fires on whichever thread
-#   crosses the allocation threshold, and `tp_clear`s every unreachable cycle it
-#   finds. If it ever clears an unreachable cycle containing a slint object on the
-#   conversion worker thread, pyo3's unsendable assertion panics the interpreter.
-
-
 """
-Slint-based graphical user interface for PyGlossary.
+Slint-based graphical user interface for PyGlossary (`--ui=slint`).
 
-Experimental/native-UI frontend using Slint markup for layout and Rust-backed
-widgets; exposes the same conversion pipeline as other ``ui_*`` backends.
+Threading model: slint's pyclasses are pyo3 `unsendable` (bound to the
+event-loop thread) and slint is built with `panic = "abort"`, so every slint
+access happens on the event-loop thread. Blocking work (conversion, native
+file-dialog subprocess) runs on worker threads that only hand plain data back
+through `UI._post` (`slint.native.invoke_from_event_loop`). `Glossary(ui=self)`
+is safe: during conversion it only calls `progressInit/progress/progressEnd`,
+which only `_post`. Slint's event loop can't nest, so secondary windows are
+non-modal `show()`n dialogs. The GC hazard behind `utils.load_slint`'s cache
+and `UI._shutdown` is documented on `load_slint`.
 """
 
 from __future__ import annotations
@@ -44,6 +17,7 @@ from __future__ import annotations
 import gc
 import logging
 import os
+import sys
 import threading
 from os.path import dirname, splitext
 from typing import TYPE_CHECKING, Any
@@ -65,67 +39,29 @@ from .options_dialog import FormatOptionsDialog
 from .theme_dialog import ThemeDialog
 from .utils import (
 	SLINT_STYLES,
+	clearSlintCache,
 	load_slint,
 	loadFcdDir,
+	pickFile,
 	saveFcdDir,
 	setSlintStyle,
 	weakCallback,
 )
 
 if TYPE_CHECKING:
+<<<<<<< HEAD
 	from pyglossary.stubs.config_types import ConfigType
+=======
+	from collections.abc import Callable
+
+	from pyglossary.config_type import ConfigType
+>>>>>>> 444c3dc6 (ui_slint: simplify UI code and mac build)
 
 __all__ = ["UI"]
 
 log = logging.getLogger("pyglossary")
 
-# The canonical, thread-safe way to run `cb` on the Slint event-loop thread from
-# any thread. Safe to call before the loop starts or after it quits (it is a
-# silent no-op in both cases), so worker threads can post updates without
-# worrying about the window having been closed mid-conversion.
-_invokeFromEventLoop = slint.native.invoke_from_event_loop
-
-# Nuitka injects a `__compiled__` global into every module it compiles; this
-# is its own recommended way to detect a compiled/standalone build from
-# within Python code (there is no such marker when running `python main.py`
-# from source).
-_isCompiledBuild = "__compiled__" in globals()
-
 _CONSOLE_CAP = 2000
-_NONE_INPUT_LABEL = "(choose input format)"
-_NONE_OUTPUT_LABEL = "(choose output format)"
-
-
-def _runConvert(
-	glos: Glossary,
-	convertArgs: ConvertArgs,
-	done: Any,
-) -> None:
-	"""
-	Background-thread entry point.
-
-	It references only plain pyglossary objects (`glos`, `convertArgs`) and a
-	plain callable (`done`); it never touches `self` or any slint object, so
-	nothing slint-bound can be dropped or accessed on this thread. Progress and
-	log updates flow back through `invoke_from_event_loop` (via the UI methods
-	on `glos.ui` and the log handler), and `done` is posted on the event-loop
-	thread when conversion finishes (or the loop has been quit).
-	"""
-	try:
-		glos.convert(convertArgs)
-	except Error as e:
-		log.critical(str(e))
-		try:
-			glos.cleanup()
-		except Exception:  # noqa: BLE001
-			log.exception("")
-	except Exception:  # noqa: BLE001
-		log.exception("Conversion failed")
-	finally:
-		try:
-			_invokeFromEventLoop(done)
-		except Exception:  # noqa: BLE001 loop already quit (window closed)
-			pass
 
 
 class UI(UIBase):
@@ -138,24 +74,16 @@ class UI(UIBase):
 		except Exception:  # noqa: BLE001 standalone without a config file
 			log.exception("could not load config; using defaults")
 
-		# Must happen before the first load_slint() call below (which compiles
-		# main_window.slint with this style baked in) -- see setSlintStyle.
+		# before the first load_slint(), which bakes the style in
 		setSlintStyle(self.config.get("slint.theme", ""))
 
-		if not Glossary.readFormats:
-			# idempotent: mainPrepare already calls Glossary.init() in normal
-			# flow; only init when running standalone.
+		if not Glossary.readFormats:  # standalone run (mainPrepare not called)
 			Glossary.init()
 
-		self.pluginByDesc = {
-			plugin.description: plugin for plugin in Glossary.plugins.values()
-		}
-		self.readDesc = [
-			plugin.description for plugin in Glossary.plugins.values() if plugin.canRead
-		]
-		self.writeDesc = [
-			plugin.description for plugin in Glossary.plugins.values() if plugin.canWrite
-		]
+		plugins = Glossary.plugins.values()
+		self.pluginByDesc = {p.description: p for p in plugins}
+		self.readDesc = [p.description for p in plugins if p.canRead]
+		self.writeDesc = [p.description for p in plugins if p.canWrite]
 
 		self.progressbar = progressbar
 		self.readOptions: dict[str, Any] = {}
@@ -170,33 +98,22 @@ class UI(UIBase):
 		self._outFormat = ""
 		self.fcd_dir = loadFcdDir()
 
-		# the thread that owns all slint objects (the event-loop thread)
-		self._uiThreadId = threading.get_ident()
-		self._dialogs: set[Any] = set()
-		self._converting = False
+		self._uiThreadId = threading.get_ident()  # the event-loop thread
+		self._dialogs: set[Any] = set()  # keeps non-modal windows alive
+		self._convertThread: threading.Thread | None = None
 		self._progressTitle = ""
 
+		levels = [f"{i} - {name}" for i, name in enumerate(log.levelNamesCap)]
 		self.console_lines = slint.ListModel([])
 		self.win = load_slint("main_window.slint").MainWindow()
 		self.win.console_lines = self.console_lines
-		self.win.verbosity = self._verbosityString()
+		self.win.verbosity_levels = slint.ListModel(levels)
+		self.win.verbosity = levels[log.getVerbosity()]
 		self.win.about_text = self._aboutText()
-		self.win.status_text = ""
 
-		# route pyglossary log records into the on-screen console. The handler
-		# marshals each record onto the event-loop thread via `_post`.
-		log.addHandler(SlintLogHandler(self))
+		self._logHandler = SlintLogHandler(self)
+		log.addHandler(self._logHandler)
 
-		self._bindCallbacks()
-
-		log.info("Slint UI initialized")
-
-	# -------------------------------------------------------------
-	# Setup helpers
-	# -------------------------------------------------------------
-	def _bindCallbacks(self) -> None:
-		# Bind weakly via utils.weakCallback so the main window is never part of
-		# a reference cycle with the UI.
 		w = self.win
 		w.browse_input_file = weakCallback(self._browseInput)
 		w.browse_output_file = weakCallback(self._browseOutput)
@@ -206,20 +123,13 @@ class UI(UIBase):
 		w.start_convert = weakCallback(self.convert)
 		w.clear_console = weakCallback(self._clearConsole)
 		w.verbosity_changed = weakCallback(self._verbosityChanged)
-		w.input_file_edited = weakCallback(self._inputEdited)
-		w.output_file_edited = weakCallback(self._outputEdited)
+		w.input_file_edited = weakCallback(self._applyInputPath)
+		w.output_file_edited = weakCallback(self._applyOutputPath)
 
-	def _verbosityString(self) -> str:
-		try:
-			v = log.getVerbosity()
-		except Exception:  # noqa: BLE001 logger may be a plain Logger standalone
-			v = 3
-		names = ("Critical", "Error", "Warning", "Info", "Debug", "Trace", "All")
-		if v < 0 or v >= len(names):
-			v = 3
-		return f"{v} - {names[v]}"
+		log.info("Slint UI initialized")
 
-	def _aboutText(self) -> str:
+	@staticmethod
+	def _aboutText() -> str:
 		try:
 			import importlib.metadata as md
 
@@ -228,162 +138,110 @@ class UI(UIBase):
 			slintVersion = ""
 		from pyglossary.ui.version import getAboutHeader
 
-		header = getAboutHeader("Slint", slintVersion)
-		authorsText = (
-			"\n".join(authors).replace("\u26ab\ufe0e", "-").replace("\t", "    ")
-		)
+		authorsText = "\n".join(authors).replace("⚫︎", "-").replace("\t", "    ")
 		return "\n\n".join(
 			[
-				header,
+				getAboutHeader("Slint", slintVersion),
 				f"{aboutText}\nHome page: {homePage}",
 				f"Authors:\n{authorsText}",
 				f"License:\n{licenseText}",
 			],
 		)
 
-	# -------------------------------------------------------------
-	# The single funnel for cross-thread UI updates (the Slint way)
-	# -------------------------------------------------------------
-	# `fn` mutates slint state and therefore MUST run on the event-loop thread.
-	# If we are already on it (e.g. a click callback, or pre-loop setup), run
-	# `fn` directly; otherwise hand it to `invoke_from_event_loop`, which
-	# schedules it on the event-loop thread. This is the only place that
-	# crosses the thread boundary, so it is the only place that needs to be
-	# correct about thread-safety.
-	def _post(self, fn: Any) -> None:
+	def _post(self, fn: Callable[[], None]) -> None:
+		"""
+		Run `fn` (which may touch slint) on the event-loop thread: directly if
+		already there, else via `invoke_from_event_loop`. Exceptions of posted
+		calls are logged, since slint would only `eprintln!` them.
+		"""
 		if threading.get_ident() == self._uiThreadId:
 			fn()
 			return
+
+		def run() -> None:
+			try:
+				fn()
+			except Exception:  # noqa: BLE001
+				log.exception("UI update failed")
+
 		try:
-			_invokeFromEventLoop(fn)
+			slint.native.invoke_from_event_loop(run)
 		except Exception:  # noqa: BLE001 loop not running / already quit
 			pass
 
-	# -------------------------------------------------------------
-	# Event-loop-thread mutators (called via `_post` or directly on the UI
-	# thread). These are the only methods that touch slint objects.
-	# -------------------------------------------------------------
+	# --- event-loop-thread mutators -------------------------------------
 	def _appendLog(self, msg: str, colorHex: str) -> None:
-		# slint.Color is a thread-bound pyclass, so it is built here, on the
-		# event-loop thread, never on the worker that produced the record.
-		self.console_lines.append(
-			{"text": msg, "text_color": slint.Color(colorHex)},
-		)
-		while len(self.console_lines) > _CONSOLE_CAP:
-			del self.console_lines[0]
+		model = self.console_lines
+		model.append({"text": msg, "text_color": slint.Color(colorHex)})
+		if len(model) > _CONSOLE_CAP:
+			del model[: len(model) - _CONSOLE_CAP]
 
 	def _setProgress(self, ratio: float, text: str) -> None:
 		self.win.progress = ratio
 		self.win.status_text = text
 
-	def _conversionDone(self) -> None:
-		self._converting = False
+	def _conversionDone(self, ok: bool) -> None:
+		self._convertThread = None
 		self.win.converting = False
-		self.win.status_text = "Done"
+		self.win.status_text = "Done" if ok else "Failed (see console)"
 
-	# -------------------------------------------------------------
-	# Progress callbacks (UIBase overrides). Called on the worker thread by
-	# `Glossary` during conversion (and never touch slint directly).
-	# -------------------------------------------------------------
+	def _clearConsole(self) -> None:
+		del self.console_lines[:]
+
+	def _verbosityChanged(self, value: str) -> None:  # noqa: PLR6301
+		log.setVerbosity(int(value.split(" ", 1)[0]))
+
+	# --- UIBase progress callbacks (worker thread; no slint access) ------
 	def progressInit(self, title: str) -> None:
 		self._progressTitle = title
 
 	def progress(self, ratio: float, text: str = "") -> None:
-		if not text:
-			text = "%" + str(int(ratio * 100))
-		text += " - " + self._progressTitle
+		text = (text or f"%{int(ratio * 100)}") + " - " + self._progressTitle
 		ratio = float(ratio)
 		self._post(lambda: self._setProgress(ratio, text))
 
 	def progressEnd(self) -> None:
-		title = self._progressTitle
-		self._post(lambda: self._setProgress(1.0, "%100 - " + title))
+		text = "%100 - " + self._progressTitle
+		self._post(lambda: self._setProgress(1.0, text))
 
-	# -------------------------------------------------------------
-	# Dialog reference management (keep non-modal windows alive)
-	# -------------------------------------------------------------
-	def _ref(self, dialog: Any) -> None:
-		self._dialogs.add(dialog)
-
-	def _unref(self, dialog: Any) -> None:
-		self._dialogs.discard(dialog)
-
-	# -------------------------------------------------------------
-	# Console / verbosity
-	# -------------------------------------------------------------
-	def _clearConsole(self) -> None:
-		self.console_lines = slint.ListModel([])
-		self.win.console_lines = self.console_lines
-
-	def _verbosityChanged(self, value: str) -> None:
-		try:
-			log.setVerbosity(int(value.split(" ", 1)[0]))
-		except Exception:  # noqa: BLE001
-			log.exception(f"invalid verbosity {value!r}")
-
-	# -------------------------------------------------------------
-	# File browsing
-	# -------------------------------------------------------------
-	# The native file dialog is an out-of-process subprocess (osascript on
-	# macOS, zenity/kdialog on Linux, powershell + WinForms on Windows) so it
-	# does NOT nest a second event loop inside Slint's winit loop (which would
-	# panic: "tried to handle event while another event is currently being
-	# handled"). `subprocess.run` blocks, so we run it on a short-lived worker
-	# thread and post the chosen path back through `_post`; the Slint window
-	# stays responsive while the native dialog is open.
+	# --- file browsing ---------------------------------------------------
+	# `pickFile` runs an out-of-process dialog (see utils) and blocks, so it
+	# runs on a short-lived worker thread.
 	def _browseInput(self) -> None:
-		self._runFilePicker("open", self._applyBrowsedInput)
+		self._browse(save=False)
 
 	def _browseOutput(self) -> None:
-		self._runFilePicker("save", self._applyBrowsedOutput)
+		self._browse(save=True)
 
-	def _runFilePicker(self, kind: str, apply: Any) -> None:
-		from .utils import pickOpenFile, pickSaveFile
-
-		picker = pickOpenFile if kind == "open" else pickSaveFile
+	def _browse(self, save: bool) -> None:
 		initialdir = self.fcd_dir
 
 		def worker() -> None:
-			path = picker(initialdir)
-			if not path:
-				return
-			self._post(lambda: apply(path))
+			path = pickFile(save, initialdir)
+			if path:
+				self._post(lambda: self._applyBrowsed(save, path))
 
 		threading.Thread(target=worker, daemon=True).start()
 
-	def _applyBrowsedInput(self, path: str) -> None:
-		self.win.input_file_path = path
+	def _applyBrowsed(self, save: bool, path: str) -> None:
 		self.fcd_dir = dirname(path)
 		saveFcdDir(path)
-		self._applyInputPath(path)
+		if save:
+			self.win.output_file_path = path
+			self._applyOutputPath(path)
+		else:
+			self.win.input_file_path = path
+			self._applyInputPath(path)
 
-	def _applyBrowsedOutput(self, path: str) -> None:
-		self.win.output_file_path = path
-		self.fcd_dir = dirname(path)
-		saveFcdDir(path)
-		self._applyOutputPath(path)
-
-	# -------------------------------------------------------------
-	# Path entry edits + auto-format detection
-	# -------------------------------------------------------------
-	def _inputEdited(self, value: str) -> None:
-		self._applyInputPath(value)
-
-	def _outputEdited(self, value: str) -> None:
-		self._applyOutputPath(value)
-
+	# --- path edits + auto-format detection -----------------------------
+	# A detected format always replaces the current one; when nothing is
+	# detected the current format stays.
 	def _applyInputPath(self, path: str) -> None:
 		if path.startswith("file://"):
 			path = urlToPath(path)
 			self.win.input_file_path = path
 		if self.pathI == path:
 			return
-		# No such thing as a "pinned" format: whatever is currently selected
-		# stays exactly as long as detection finds nothing for the new path
-		# (unrecognized/no extension); the moment a format IS detected, it
-		# always wins, regardless of whether the current one was picked
-		# manually or auto-detected earlier -- least surprise, and no need to
-		# track *why* the current format is what it is.
 		if self.config.get("ui_autoSetFormat"):
 			try:
 				inputArgs = Glossary.detectInputFormat(path)
@@ -419,149 +277,95 @@ class UI(UIBase):
 					self._setOutputFormat(plugin.description)
 		self.pathO = path
 
-	# -------------------------------------------------------------
-	# Format selection
-	# -------------------------------------------------------------
+	# --- format selection -------------------------------------------------
 	def _setInputFormat(self, desc: str) -> None:
 		self._inFormat = desc
-		self.win.input_format = desc or _NONE_INPUT_LABEL
-		self.readOptions.clear()  # reset options, DO NOT re-assign (matches tk)
+		self.win.input_format = desc
+		self.readOptions.clear()  # reset in place, never re-bind (matches tk)
 
 	def _setOutputFormat(self, desc: str) -> None:
 		self._outFormat = desc
-		self.win.output_format = desc or _NONE_OUTPUT_LABEL
+		self.win.output_format = desc
 		self.writeOptions.clear()
 
-		plugin = self.pluginByDesc.get(desc) if desc else None
+		ext = self.pluginByDesc[desc].extensionCreate
 		pathI = self.win.input_file_path
-		if (
-			pathI
-			and not self.win.output_file_path
-			and plugin is not None
-			and plugin.extensionCreate
-		):
-			pathNoExt, _ext = splitext(pathI)
-			self.win.output_file_path = pathNoExt + plugin.extensionCreate
-			self.pathO = self.win.output_file_path
+		if pathI and ext and not self.win.output_file_path:
+			self.win.output_file_path = self.pathO = splitext(pathI)[0] + ext
+
+	def _open(self, cls: Callable[..., Any], **kwargs: Any) -> None:
+		self._dialogs.add(cls(onClose=self._dialogs.discard, **kwargs))
 
 	def _chooseInputFormat(self) -> None:
-		picker = FormatPicker(
+		self._open(
+			FormatPicker,
 			descList=self.readDesc,
 			activeDesc=self._inFormat,
 			onSelect=self._setInputFormat,
-			onClose=self._unref,
 		)
-		self._ref(picker)
 
 	def _chooseOutputFormat(self) -> None:
-		picker = FormatPicker(
+		self._open(
+			FormatPicker,
 			descList=self.writeDesc,
 			activeDesc=self._outFormat,
 			onSelect=self._setOutputFormat,
-			onClose=self._unref,
 		)
-		self._ref(picker)
 
-	# -------------------------------------------------------------
-	# Options dropdown + sub-dialogs
-	# -------------------------------------------------------------
+	# --- options dropdown + sub-dialogs ------------------------------------
 	def _onOptionsSelected(self, value: str) -> None:
 		# keys must match the UpComboBox model in main_window.slint
-		handler = {
-			"Read Options": self._openReadOptions,
-			"Write Options": self._openWriteOptions,
-			"General Options": self._openGeneralOptions,
-			"Info / Metadata": self._openInfo,
-			"Theme": self._openTheme,
-		}.get(value)
-		if handler is None:
+		if value == "Read Options":
+			self._openFormatOptions("Read", self._inFormat, self.readOptions)
+		elif value == "Write Options":
+			self._openFormatOptions("Write", self._outFormat, self.writeOptions)
+		elif value == "General Options":
+			self._open(GeneralOptionsDialog, ui=self)
+		elif value == "Info / Metadata":
+			self._open(InfoDialog, info=self.infoOverride)
+		elif value == "Theme":
+			self._open(
+				ThemeDialog,
+				currentStyle=self.config.get("slint.theme", ""),
+				onOk=self._onThemeChosen,
+			)
+		else:
 			log.error(f"unknown Options entry {value!r}")
+
+	def _openFormatOptions(
+		self,
+		kind: str,
+		formatDesc: str,
+		values: dict[str, Any],
+	) -> None:
+		if not formatDesc:
+			log.error(
+				f"Choose {'an input' if kind == 'Read' else 'an output'} format first"
+			)
 			return
-		handler()
-
-	def _openReadOptions(self) -> None:
-		if not self._inFormat:
-			log.error("Choose an input format first")
-			return
-
-		def onOk(values: dict[str, Any]) -> None:
-			self.readOptions.clear()
-			self.readOptions.update(values)
-
-		dialog = FormatOptionsDialog(
-			formatDesc=self._inFormat,
-			kind="Read",
-			values=self.readOptions,
-			onOk=onOk,
-			onClose=self._unref,
+		self._open(
+			FormatOptionsDialog,
+			plugin=self.pluginByDesc[formatDesc],
+			kind=kind,
+			values=values,
 		)
-		self._ref(dialog)
-
-	def _openWriteOptions(self) -> None:
-		if not self._outFormat:
-			log.error("Choose an output format first")
-			return
-
-		def onOk(values: dict[str, Any]) -> None:
-			self.writeOptions.clear()
-			self.writeOptions.update(values)
-
-		dialog = FormatOptionsDialog(
-			formatDesc=self._outFormat,
-			kind="Write",
-			values=self.writeOptions,
-			onOk=onOk,
-			onClose=self._unref,
-		)
-		self._ref(dialog)
-
-	def _openGeneralOptions(self) -> None:
-		dialog = GeneralOptionsDialog(
-			ui=self,
-			onOk=lambda: None,
-			onClose=self._unref,
-		)
-		self._ref(dialog)
-
-	def _openInfo(self) -> None:
-		dialog = InfoDialog(
-			info=self.infoOverride,
-			onOk=lambda _info: None,
-			onClose=self._unref,
-		)
-		self._ref(dialog)
-
-	def _openTheme(self) -> None:
-		dialog = ThemeDialog(
-			currentStyle=self.config.get("slint.theme", ""),
-			onOk=self._onThemeChosen,
-			onClose=self._unref,
-		)
-		self._ref(dialog)
 
 	def _onThemeChosen(self, style: str) -> None:
 		if style == self.config.get("slint.theme", ""):
 			return
 		self.config["slint.theme"] = style
 		self.saveConfig()
-		label = next(
-			(label for label, value in SLINT_STYLES if value == style),
-			style or "System default",
-		)
+		label = next(label for label, value in SLINT_STYLES if value == style)
 		log.info(f"Theme changed to {label!r}; restart the app for it to take effect")
-		dialog = AlertDialog(
-			message=(
-				f"Theme changed to “{label}”.\nRestart PyGlossary for it to take effect."
-			),
-			onClose=self._unref,
+		self._open(
+			AlertDialog,
+			message=f"Theme changed to “{label}”.\n"
+			"Restart PyGlossary for it to take effect.",
 		)
-		self._ref(dialog)
 
-	# -------------------------------------------------------------
-	# Conversion (background thread)
-	# -------------------------------------------------------------
+	# --- conversion ---------------------------------------------------------
 	def convert(self) -> None:
-		if self._converting:
+		if self._convertThread is not None:
 			log.warning("Conversion already in progress")
 			return
 
@@ -585,10 +389,6 @@ class UI(UIBase):
 		if self.convertOptions:
 			log.info(f"convertOptions: {self.convertOptions}")
 
-		# `self` is safe as the Glossary UI: the only methods `Glossary` calls
-		# on it during conversion are progressInit/progress/progressEnd, each of
-		# which only does plain-Python work + a `_post`. The worker thread never
-		# touches a slint object; all UI mutation is marshalled by `_post`.
 		glos = Glossary(ui=self)
 		glos.config = dict(self.config)
 		glos.progressbar = self.progressbar
@@ -606,21 +406,28 @@ class UI(UIBase):
 			**self.convertOptions,
 		)
 
-		self._converting = True
+		def work() -> None:  # worker thread: no slint access
+			ok = False
+			try:
+				ok = bool(glos.convert(convertArgs))
+			except Error as e:
+				log.critical(str(e))
+				try:
+					glos.cleanup()
+				except Exception:  # noqa: BLE001
+					log.exception("")
+			except Exception:  # noqa: BLE001
+				log.exception("Conversion failed")
+			finally:
+				self._post(lambda: self._conversionDone(ok))
+
 		self.win.converting = True
 		self.win.progress = 0.0
 		self.win.status_text = "Starting…"
+		self._convertThread = threading.Thread(target=work, daemon=True)
+		self._convertThread.start()
 
-		thread = threading.Thread(
-			target=_runConvert,
-			args=(glos, convertArgs, self._conversionDone),
-			daemon=True,
-		)
-		thread.start()
-
-	# -------------------------------------------------------------
-	# run() — entry point called by runner.py (same signature as ui_tk)
-	# -------------------------------------------------------------
+	# --- entry point (called by runner.py, same signature as ui_tk) -----------
 	def run(  # noqa: PLR0913
 		self,
 		inputFilename: str = "",
@@ -633,10 +440,7 @@ class UI(UIBase):
 		convertOptions: dict[str, Any] | None = None,
 		glossarySetAttrs: dict[str, Any] | None = None,
 	) -> None:
-		# Only replace the config loaded in __init__ when the caller (main.py)
-		# actually passes one (the full, file-loaded + CLI-flag-merged config).
-		# `config or {}` would wipe the already-loaded config on a standalone
-		# run (config=None), losing ui_autoSetFormat / slint.theme etc.
+		# keep the config loaded in __init__ on standalone runs (config=None)
 		if config:
 			self.config = config
 
@@ -671,66 +475,42 @@ class UI(UIBase):
 
 		self._glossarySetAttrs = glossarySetAttrs or {}
 
-		# blocks on the Slint event loop until the window is closed. All worker
-		# updates arrive through `invoke_from_event_loop`.
-		self.win.run()
-		if _isCompiledBuild:
-			self._teardownAndExit()
+		self.win.run()  # blocks until the main window is closed
+		self._shutdown()
 
-	# -------------------------------------------------------------
-	# Shutdown
-	# -------------------------------------------------------------
-	def _teardownAndExit(self) -> None:
+	def _shutdown(self) -> None:
 		"""
-		Run right after `self.win.run()` returns (window closed), compiled
-		builds only -- see `_isCompiledBuild`.
-
-		Nuitka-standalone builds (unlike `python main.py` from source) have been
-		observed to panic on exit with pyo3's "unsendable, but ... dropped on
-		another thread" for a slint `PyStruct`/`ComponentDefinition`, even though
-		no code here ever touches a slint object off the event-loop thread. The
-		panic happens during normal CPython interpreter finalization (clearing
-		`sys.modules` / module globals), which is not guaranteed to run on this
-		thread in a nuitka-standalone build, and/or races a slint-internal
-		(non-Python) thread that independently drops its own last handle to a
-		wrapped Python object around the same time. Running from source has
-		never reproduced this, so this workaround (which forgoes a clean
-		interpreter shutdown) is scoped to compiled builds only.
-
-		Two-part mitigation, both required:
-		1. Explicitly drop every slint object this module still holds (main
-			window, console list model, secondary dialog controllers) here, on
-			the event-loop thread, while it's still safe to do so -- so nothing
-			slint-related is left for CPython's normal finalization to clear
-			later on a different/unknown thread.
-		2. Bypass normal CPython interpreter finalization entirely via
-			`os._exit()`, since we're quitting anyway -- this skips
-			`sys.modules` clearing, GC finalization and atexit handlers, so
-			nothing can run (safely or not) after this point.
+		Leave no slint object for a GC on another thread to clear (see
+		`utils.load_slint`). A conversion still running cannot be cancelled and
+		keeps allocating, so then exit at once (output is incomplete); else drop
+		every slint reference and collect the garbage here, with automatic GC
+		paused so no other thread collects it first.
 		"""
-		for handler in list(log.handlers):
-			try:
-				handler.flush()
-			except Exception:  # noqa: BLE001
-				pass
+		log.removeHandler(self._logHandler)
 
-		self._dialogs.clear()
-		self.console_lines = None
-		self.win = None
+		thread = self._convertThread
+		if thread is not None and thread.is_alive():
+			log.warning("Window closed during conversion; output is incomplete")
+			logging.shutdown()
+			for stream in (sys.stdout, sys.stderr):
+				if stream is not None:
+					stream.flush()
+			os._exit(1)
 
-		gc.collect()
-
-		os._exit(0)
+		gcWasEnabled = gc.isenabled()
+		gc.disable()
+		try:
+			self._dialogs.clear()
+			self.win = None
+			self.console_lines = None
+			clearSlintCache()
+			gc.collect()
+		finally:
+			if gcWasEnabled:
+				gc.enable()
 
 
 if __name__ == "__main__":  # standalone launch for development/testing
-	import sys
-
-	# minimal logger setup so standalone runs still print to stderr + console
-	handler = logging.StreamHandler(sys.stderr)
-	handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
-	log.addHandler(handler)
-	log.setLevel(logging.INFO)
-
-	ui = UI()
-	ui.run()
+	log.addHandler(logging.StreamHandler(sys.stderr))
+	log.setVerbosity(3)
+	UI().run()

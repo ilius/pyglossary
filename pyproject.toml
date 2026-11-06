@@ -33,7 +33,7 @@ wx = [
 	"pyobjc-framework-Cocoa>=11; sys_platform=='darwin'",
 ]
 slint = [
-	"slint>=1.17.0b2"
+	"slint>=1.18.1b1"
 ]
 # File drag-and-drop in the Tk wizard (``pyglossary --ui=tk``).
 tk-wizard-dnd = ["tkinterdnd2"]

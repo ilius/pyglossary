@@ -23,7 +23,7 @@ jobs:
       APPNAME: PyGlossarySlint
       DIST_DIR: dist.nuitka.slint
       DEFAULT_UI: slint
-      SLINT_VERSION: 1.17.0b2
+      SLINT_VERSION: 1.18.1b1
       MAIN_SCRIPT: main.py
       RESOURCE_DIR: "resources"
 

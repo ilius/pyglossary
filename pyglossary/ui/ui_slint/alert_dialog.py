@@ -1,9 +1,4 @@
-"""
-Alert and error dialog for the Slint UI.
-
-Shows blocking confirmation and error messages during Slint-driven conversion
-flows.
-"""
+"""Single-button informational alert for the Slint UI."""
 
 from __future__ import annotations
 
@@ -18,13 +13,7 @@ __all__ = ["AlertDialog"]
 
 
 class AlertDialog:
-	"""
-	Non-modal, single-button informational alert.
-
-	Backed by Slint's built-in `Dialog` element + `StandardButton { kind: ok; }`
-	(see `dialogs.slint`), which places the button per the host platform's
-	convention rather than a hand-laid-out `Button`.
-	"""
+	"""Non-modal message box (slint `Dialog` + `StandardButton`)."""
 
 	def __init__(
 		self,
@@ -32,12 +21,8 @@ class AlertDialog:
 		onClose: Callable[[AlertDialog], None],
 	) -> None:
 		self._onClose = onClose
-
-		comp = load_slint("dialogs.slint").AlertDialog
-		self.dialog = comp()
+		self.dialog = load_slint("dialogs.slint").AlertDialog()
 		self.dialog.message = message
-		# Bind weakly (see utils.weakCallback) so the Slint component is never
-		# part of a reference cycle with this controller.
 		self.dialog.ok_clicked = weakCallback(self._close)
 		self.dialog.show()
 

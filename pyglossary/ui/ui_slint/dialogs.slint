@@ -1,16 +1,6 @@
-// dialogs.slint
-//
-// Secondary (non-modal) windows used by the Slint UI:
-//   - FormatPickerDialog : searchable list to pick an input/output format
-//   - OptionsDialog      : generic Read/Write format-options editor
-//   - GeneralOptionsDialog : sort / sqlite / general config toggles
-//   - InfoDialog         : name / sourceLang / targetLang metadata editor
-//   - ThemeDialog        : pick built-in Slint widget style (radio buttons)
-//   - AlertDialog        : single-button informational message box
-//
-// All are opened from Python with `.show()` (non-blocking); results are
-// delivered back through callbacks or read back from in-out properties on OK.
-// Loaded together via `slint.load_file("dialogs.slint")`.
+// Secondary (non-modal) windows of the Slint UI, loaded via utils.load_slint.
+// Opened from Python with `.show()`; results come back through callbacks or
+// are read from in-out properties on OK.
 
 import {
     Button,
@@ -19,27 +9,17 @@ import {
     Switch,
     SpinBox,
     ComboBox,
-    VerticalBox,
     Palette,
     RadioGroup,
     StandardButton,
 } from "std-widgets.slint";
 
-// ============================================================
-// DialogKeys
-// ============================================================
-// Shared keyboard shell for the simple OK/Cancel dialogs: Return fires
-// `submit` (wire to root.ok()), Escape fires `dismiss` (wire to
-// root.cancel()); anything else is left to the focused widget. Grabs focus on
-// init and forwards it to whatever element the dialog names via
-// `forward-focus`, so the shortcuts work immediately without a per-dialog
-// `init => { ....focus(); }` line. FormatPickerDialog keeps its own
-// FocusScope because it additionally drives Up/Down list navigation.
+// Keyboard shell for the dialogs: Return -> submit, Escape -> dismiss, other
+// keys are offered to `other-key` (e.g. Up/Down list navigation). Takes focus
+// on init and forwards it via `forward-focus`.
 component DialogKeys inherits FocusScope {
     callback submit();
     callback dismiss();
-    // any key other than Return/Escape is offered to the dialog first (e.g.
-    // Up/Down list navigation in ThemeDialog); default: leave it unhandled
     callback other-key(event: KeyEvent) -> EventResult;
     other-key(event) => { return EventResult.reject; }
 
@@ -60,8 +40,29 @@ component DialogKeys inherits FocusScope {
     @children
 }
 
+component OkCancelRow {
+    callback ok();
+    callback cancel();
+    forward-focus: ok-btn;
+
+    HorizontalLayout {
+        spacing: 8px;
+        alignment: end;
+        Button {
+            text: "Cancel";
+            clicked => { root.cancel(); }
+        }
+
+        ok-btn := Button {
+            text: "  OK  ";
+            primary: true;
+            clicked => { root.ok(); }
+        }
+    }
+}
+
 // ============================================================
-// FormatPickerDialog
+// FormatPickerDialog: type to filter, Up/Down to move, Return to accept
 // ============================================================
 export component FormatPickerDialog inherits Window {
     title: "Select Format";
@@ -72,46 +73,51 @@ export component FormatPickerDialog inherits Window {
 
     in-out property <[string]> shown-formats: [];
     in-out property <int> current-index: -1;
-    in-out property <string> query: "";
 
     callback search-edited(string);
-    callback item-clicked(int);
-    callback item-double-clicked(int);
     callback ok();
     callback cancel();
 
-    function clamp-index(i: int) -> int {
-        return i < 0 ? 0 : (i >= root.shown-formats.length ? root.shown-formats.length - 1 : i);
+    // No scroll-into-view API in slint: nudge `content-y` so row `i` is
+    // visible. Rows are 24px with 1px spacing and 4px list padding. Call only
+    // from callback context (key handler, timer), never from a `changed`
+    // handler during layout (re-enters layout; panicked with 1.17.0b2).
+    function reveal-index(i: int) {
+        if (i < 0) {
+            return;
+        }
+        let top = 4px + i * 25px;
+        if (top < -format-scroll.content-y) {
+            format-scroll.content-y = -top;
+        } else if (top + 24px > -format-scroll.content-y + format-scroll.visible-height) {
+            format-scroll.content-y = format-scroll.visible-height - (top + 24px);
+        }
     }
 
-    // Wraps the whole dialog so Up/Down/Enter/Escape work no matter where
-    // focus is, while `forward-focus` keeps actual text-input focus (and
-    // therefore typing) on the search box -- the standard "quick open" /
-    // command-palette pattern (type to filter, arrow keys to move the
-    // selection, Enter to accept), rather than making each row its own tab
-    // stop.
-    FocusScope {
-        forward-focus: search-input;
+    function step(delta: int) {
+        if (root.shown-formats.length > 0) {
+            root.current-index = clamp(root.current-index + delta, 0, root.shown-formats.length - 1);
+            root.reveal-index(root.current-index);
+        }
+    }
 
-        key-pressed(event) => {
-            if (event.text == Key.DownArrow) {
-                root.current-index = root.shown-formats.length > 0
-                    ? clamp-index(root.current-index + 1)
-                    : -1;
-                return EventResult.accept;
-            }
-            if (event.text == Key.UpArrow) {
-                root.current-index = root.shown-formats.length > 0
-                    ? clamp-index(root.current-index - 1)
-                    : -1;
-                return EventResult.accept;
-            }
-            if (event.text == Key.Return) {
-                root.ok();
-                return EventResult.accept;
-            }
-            if (event.text == Key.Escape) {
-                root.cancel();
+    // post-layout: bring the active format into view (geometry is 0 at init)
+    Timer {
+        interval: 50ms;
+        running: true;
+        triggered => {
+            self.running = false;
+            root.reveal-index(root.current-index);
+        }
+    }
+
+    DialogKeys {
+        forward-focus: search-input;
+        submit => { root.ok(); }
+        dismiss => { root.cancel(); }
+        other-key(event) => {
+            if (event.text == Key.DownArrow || event.text == Key.UpArrow) {
+                root.step(event.text == Key.DownArrow ? 1 : -1);
                 return EventResult.accept;
             }
             return EventResult.reject;
@@ -122,14 +128,8 @@ export component FormatPickerDialog inherits Window {
             padding: 8px;
 
             search-input := LineEdit {
-                // two-way, not one-way + write-back: a one-way binding gets
-                // detached as soon as the widget writes to `text` (typing),
-                // after which external writes to `query` would be invisible
-                text <=> root.query;
                 placeholder-text: "Search formats…";
-                edited(v) => {
-                    root.search-edited(v);
-                }
+                edited(v) => { root.search-edited(v); }
             }
 
             Rectangle {
@@ -138,7 +138,7 @@ export component FormatPickerDialog inherits Window {
                 border-color: Palette.border;
                 background: Palette.background;
 
-                ScrollView {
+                format-scroll := ScrollView {
                     VerticalLayout {
                         padding: 4px;
                         spacing: 1px;
@@ -162,13 +162,10 @@ export component FormatPickerDialog inherits Window {
                             }
 
                             item-touch := TouchArea {
-                                clicked => {
-                                    root.current-index = i;
-                                    root.item-clicked(i);
-                                }
+                                clicked => { root.current-index = i; }
                                 double-clicked => {
                                     root.current-index = i;
-                                    root.item-double-clicked(i);
+                                    root.ok();
                                 }
                             }
                         }
@@ -176,107 +173,68 @@ export component FormatPickerDialog inherits Window {
                 }
             }
 
-            HorizontalLayout {
-                spacing: 8px;
-                alignment: end;
-                Button {
-                    text: "Cancel";
-                    clicked => { root.cancel(); }
-                }
-
-                Button {
-                    text: "  OK  ";
-                    primary: true;
-                    clicked => { root.ok(); }
-                }
+            OkCancelRow {
+                ok => { root.ok(); }
+                cancel => { root.cancel(); }
             }
         }
-    }
-
-    // Autofocus the search box as soon as the dialog is shown.
-    init => {
-        search-input.focus();
     }
 }
 
 // ============================================================
-// ThemeDialog  (pick a built-in Slint widget style; applied on next launch)
+// ThemeDialog: built-in widget style, applied on next launch
 // ============================================================
 export component ThemeDialog inherits Window {
     title: "Theme";
     preferred-width: 320px;
     preferred-height: 260px;
 
-    // `theme-names` and `theme-values` are parallel arrays: `theme-names` are
-    // the human-readable labels shown in the list, `theme-values` are the
-    // corresponding slint style identifiers (see utils.py / ui.py); the caller
-    // reads back the chosen style via `current-index`.
-    in-out property <[string]> theme-names: [];
+    in-out property <[string]> theme-names: [];  // labels of utils.SLINT_STYLES
     in-out property <int> current-index: -1;
 
     callback ok();
     callback cancel();
 
-    function clamp-index(i: int) -> int {
-        return i < 0 ? 0 : (i >= root.theme-names.length ? root.theme-names.length - 1 : i);
-    }
-
-    // ScrollView has no built-in scroll-into-view; nudge `viewport-y` just
-    // enough that row `i` is fully visible, with a small margin so the next
-    // row peeks through. Row geometry is derived arithmetically (uniform
-    // GridLayout rows with 8px spacing, 8px list padding) rather than read
-    // from the buttons: mutating `viewport-y` from a per-button `changed`
-    // handler re-enters layout and panics this slint version, so this must
-    // only be called from plain callback context (key handler, timer).
+    // Same as FormatPickerDialog.reveal-index; rows are uniform GridLayout
+    // rows with 8px spacing and 8px list padding.
     function reveal-index(i: int) {
-        if (i < 0 || root.theme-names.length == 0) {
+        if (i < 0) {
             return;
         }
-        row-h = (theme-group.height - (root.theme-names.length - 1) * 8px)
-            / root.theme-names.length;
-        row-top = 8px + i * (row-h + 8px);
-        if (row-top - 4px < -theme-scroll.viewport-y) {
-            theme-scroll.viewport-y = -(row-top - 4px);
-        } else if (row-top + row-h + 4px > -theme-scroll.viewport-y + theme-scroll.visible-height) {
-            theme-scroll.viewport-y = theme-scroll.visible-height - (row-top + row-h + 4px);
+        let n = root.theme-names.length;
+        let h = (theme-group.height - (n - 1) * 8px) / n;
+        let top = 8px + i * (h + 8px);
+        if (top - 4px < -theme-scroll.content-y) {
+            theme-scroll.content-y = -(top - 4px);
+        } else if (top + h + 4px > -theme-scroll.content-y + theme-scroll.visible-height) {
+            theme-scroll.content-y = theme-scroll.visible-height - (top + h + 4px);
         }
     }
 
-    property <length> row-h;
-    property <length> row-top;
-    property <bool> armed: false;
+    function step(delta: int) {
+        if (root.theme-names.length > 0) {
+            root.current-index = clamp(root.current-index + delta, 0, root.theme-names.length - 1);
+            root.reveal-index(root.current-index);
+        }
+    }
 
-    // one-shot, post-layout: check the initially selected theme (see `want`)
-    // and bring it into view (geometry is all zeros at `init` time)
-    reveal-timer := Timer {
+    Timer {
         interval: 50ms;
         running: true;
         triggered => {
             self.running = false;
-            root.armed = true;
             root.reveal-index(root.current-index);
         }
     }
 
     DialogKeys {
-        forward-focus: ok-btn;
+        forward-focus: buttons;
         submit => { root.ok(); }
         dismiss => { root.cancel(); }
-        // radio-group keyboard convention: the list is not a tab stop of its
-        // own; Up/Down move the selection no matter which button has focus
+        // radio-group convention: Up/Down move the selection from anywhere
         other-key(event) => {
-            if (event.text == Key.DownArrow) {
-                root.current-index = root.theme-names.length > 0
-                    ? clamp-index(root.current-index + 1)
-                    : -1;
-                root.reveal-index(root.current-index);
-                return EventResult.accept;
-            }
-            if (event.text == Key.UpArrow) {
-                root.current-index = root.theme-names.length > 0
-                    ? clamp-index(root.current-index - 1)
-                    : -1;
-                root.reveal-index(root.current-index);
+            if (event.text == Key.DownArrow || event.text == Key.UpArrow) {
+                root.step(event.text == Key.DownArrow ? 1 : -1);
                 return EventResult.accept;
             }
             return EventResult.reject;
@@ -298,37 +256,27 @@ export component ThemeDialog inherits Window {
                 background: Palette.background;
 
                 theme-scroll := ScrollView {
-                    theme-list := VerticalLayout {
+                    VerticalLayout {
                         padding: 8px;
                         alignment: start;
 
-                        // Native std-widgets radio buttons. This slint version
-                        // (1.17.0b2) exposes neither the group's `current-index`
-                        // element property nor its `select()` function (both
-                        // arrived in 1.17.0 final), so the dialog's
-                        // `current-index` stays the master and selection is
-                        // pushed into the group per button.
-                        //
-                        // Do NOT bind `checked:` to `current-index` directly:
-                        // the group *writes* to `checked` when reverting or
-                        // bridging state, which would silently detach such a
-                        // binding — after that, moving the selection back onto
-                        // this button (Up/Down keys) has no visual effect.
-                        // Instead `want` (a private property the group never
-                        // writes) tracks the dialog selection, and its change
-                        // handler forwards it through the supported push path
-                        // (an explicit `checked = true` write, which the
-                        // group's bridge keeps in sync from then on).
-                        // `toggled` mirrors mouse / Space selections back.
+                        // The public RadioGroup (up to slint 1.18.1b1) has no
+                        // `current-index`/`select()`, so `root.current-index`
+                        // is the master and is pushed per button. Never bind
+                        // `checked:` -- the group writes `checked`, which would
+                        // detach the binding. `want` (never written by the
+                        // group) is pushed via `checked = true`: in `init` for
+                        // the initial value (no `changed` fires for it), in
+                        // `changed want` later; `toggled` mirrors clicks back.
                         theme-group := RadioGroup {
                             for theme[i] in root.theme-names: RadioButton {
                                 text: theme;
-                                // gated on `armed`: a `changed` handler only
-                                // fires on transitions, so a want that is
-                                // already true at first evaluation would never
-                                // push the initial selection; flipping `armed`
-                                // post-layout forces that first transition
-                                property <bool> want: root.armed && i == root.current-index;
+                                property <bool> want: i == root.current-index;
+                                init => {
+                                    if (self.want) {
+                                        self.checked = true;
+                                    }
+                                }
                                 changed want => {
                                     if (self.want && !self.checked) {
                                         self.checked = true;
@@ -345,33 +293,17 @@ export component ThemeDialog inherits Window {
                 }
             }
 
-            HorizontalLayout {
-                spacing: 8px;
-                alignment: end;
-
-                Button {
-                    text: "Cancel";
-                    clicked => { root.cancel(); }
-                }
-
-                ok-btn := Button {
-                    text: "  OK  ";
-                    primary: true;
-                    clicked => { root.ok(); }
-                }
+            buttons := OkCancelRow {
+                ok => { root.ok(); }
+                cancel => { root.cancel(); }
             }
         }
     }
 }
 
 // ============================================================
-// AlertDialog  (single-button informational message box)
+// AlertDialog: built-in `Dialog` + `StandardButton` (platform button order)
 // ============================================================
-// Uses Slint's built-in `Dialog` element (not a std-widgets import) paired
-// with `StandardButton`: Slint places the button per the host platform's
-// convention and auto-generates a `<kind>_clicked` callback per button
-// (here: `ok_clicked`) -- no custom button layout/callback needed, unlike
-// the other dialogs in this file.
 export component AlertDialog inherits Dialog {
     title: "Notice";
     preferred-width: 360px;
@@ -379,9 +311,8 @@ export component AlertDialog inherits Dialog {
 
     in property <string> message: "";
 
-    // declared explicitly (same name the Dialog would auto-generate for the
-    // ok StandardButton, and what alert_dialog.py binds) so Return/Escape can
-    // invoke it too
+    // declared explicitly (same name Dialog generates for the ok button) so
+    // Return/Escape can invoke it too
     callback ok-clicked();
 
     DialogKeys {
@@ -404,22 +335,17 @@ export component AlertDialog inherits Dialog {
 }
 
 // ============================================================
-// OptionsDialog  (generic Read/Write format options editor)
+// OptionsDialog: Read/Write format options; `kind` picks the widget
+// ("bool" Switch, "int" SpinBox, "choice" ComboBox, "str" LineEdit)
 // ============================================================
-// One OptionItem per option. `kind` selects the widget:
-//   "bool"   -> Switch
-//   "int"    -> SpinBox  (also used for FileSizeOption)
-//   "choice" -> ComboBox (options with a fixed .values list)
-//   "str"    -> LineEdit (default)
 export struct OptionItem {
     name: string,
     comment: string,
     kind: string,
     bool-value: bool,
-    str-value: string,
+    str-value: string,  // also the current value of "choice"
     int-value: int,
     choices: [string],
-    current-choice: string,
 }
 
 export component OptionsDialog inherits Window {
@@ -435,12 +361,11 @@ export component OptionsDialog inherits Window {
     callback set-bool(int, bool);
     callback set-str(int, string);
     callback set-int(int, int);
-    callback set-choice(int, string);
     callback ok();
     callback cancel();
 
     DialogKeys {
-        forward-focus: ok-btn;
+        forward-focus: buttons;
         submit => { root.ok(); }
         dismiss => { root.cancel(); }
 
@@ -454,113 +379,69 @@ export component OptionsDialog inherits Window {
                 font-weight: 700;
             }
 
-            Rectangle {
-                vertical-stretch: 1;
-                ScrollView {
-                    VerticalLayout {
-                        spacing: 10px;
-                        padding: 4px;
-                        alignment: start;
+            ScrollView {
+                VerticalLayout {
+                    spacing: 10px;
+                    padding: 4px;
+                    alignment: start;
 
-                        for opt[i] in root.options: VerticalLayout {
-                            spacing: 4px;
+                    for opt[i] in root.options: VerticalLayout {
+                        spacing: 4px;
 
+                        Text {
+                            text: opt.comment;
+                            font-size: 12px;
+                            color: Palette.foreground.transparentize(0.25);
+                        }
+
+                        if opt.kind == "bool": Switch {
+                            text: opt.name;
+                            checked: opt.bool-value;
+                            toggled => { root.set-bool(i, self.checked); }
+                        }
+
+                        // fixed height: ComboBox would otherwise stretch vertically
+                        if opt.kind != "bool": HorizontalLayout {
+                            spacing: 8px;
+                            height: 32px;
                             Text {
-                                text: opt.comment;
-                                font-size: 12px;
-                                // theme-aware (was hardcoded #444444, unreadable
-                                // in dark mode); slightly dimmed vs. normal text
-                                color: Palette.foreground.transparentize(0.25);
+                                text: opt.name;
+                                vertical-alignment: center;
+                                width: 180px;
                             }
 
-                            if opt.kind == "bool": HorizontalLayout {
-                                spacing: 8px;
-                                Switch {
-                                    text: opt.name;
-                                    checked: opt.bool-value;
-                                    toggled => { root.set-bool(i, self.checked); }
-                                }
+                            if opt.kind == "int": SpinBox {
+                                value: opt.int-value;
+                                minimum: 0;
+                                maximum: 1000000000;
+                                edited(v) => { root.set-int(i, v); }
+                                horizontal-stretch: 1;
                             }
-
-                            if opt.kind == "int": HorizontalLayout {
-                                spacing: 8px;
-                                // pin the cross-axis height so the control keeps its
-                                // natural size instead of stretching vertically
-                                height: 32px;
-                                Text {
-                                    text: opt.name;
-                                    vertical-alignment: center;
-                                    width: 180px;
-                                }
-
-                                SpinBox {
-                                    value: opt.int-value;
-                                    minimum: 0;
-                                    maximum: 1000000000;
-                                    edited(v) => { root.set-int(i, v); }
-                                    horizontal-stretch: 1;
-                                }
+                            if opt.kind == "choice": ComboBox {
+                                model: opt.choices;
+                                current-value: opt.str-value;
+                                selected(v) => { root.set-str(i, v); }
                             }
-
-                            if opt.kind == "choice": HorizontalLayout {
-                                spacing: 8px;
-                                // pin the cross-axis height: ComboBox has no bounded
-                                // max-height and would otherwise stretch vertically
-                                height: 32px;
-                                Text {
-                                    text: opt.name;
-                                    vertical-alignment: center;
-                                    width: 180px;
-                                }
-
-                                ComboBox {
-                                    model: opt.choices;
-                                    current-value: opt.current-choice;
-                                    selected(v) => { root.set-choice(i, v); }
-                                }
-                            }
-
-                            if opt.kind == "str": HorizontalLayout {
-                                spacing: 8px;
-                                height: 32px;
-                                Text {
-                                    text: opt.name;
-                                    vertical-alignment: center;
-                                    width: 180px;
-                                }
-
-                                LineEdit {
-                                    text: opt.str-value;
-                                    edited(v) => { root.set-str(i, v); }
-                                    horizontal-stretch: 1;
-                                }
+                            if opt.kind == "str": LineEdit {
+                                text: opt.str-value;
+                                edited(v) => { root.set-str(i, v); }
+                                horizontal-stretch: 1;
                             }
                         }
                     }
                 }
             }
 
-            HorizontalLayout {
-                spacing: 8px;
-                alignment: end;
-
-                Button {
-                    text: "Cancel";
-                    clicked => { root.cancel(); }
-                }
-
-                ok-btn := Button {
-                    text: "  OK  ";
-                    primary: true;
-                    clicked => { root.ok(); }
-                }
+            buttons := OkCancelRow {
+                ok => { root.ok(); }
+                cancel => { root.cancel(); }
             }
         }
     }
 }
 
 // ============================================================
-// GeneralOptionsDialog
+// GeneralOptionsDialog: scalar fields are two-way; Python reads them on OK
 // ============================================================
 export struct ConfigCheck {
     comment: string,
@@ -574,23 +455,21 @@ export component GeneralOptionsDialog inherits Window {
     min-width: 420px;
     min-height: 360px;
 
-    // scalar fields use two-way binding (<=>); Python reads them on OK
-	in-out property <bool> sort-enabled: false;
+    in-out property <bool> sort-enabled: false;
     in-out property <[string]> sort-key-descs: [];
     in-out property <string> current-sort-key: "";
     in-out property <bool> sort-encoding-enabled: false;
     in-out property <string> sort-encoding: "utf-8";
     in-out property <string> sort-locale: "";
     in-out property <bool> sqlite-enabled: false;
-	// list of config toggles (updated via callback)
-	in-out property <[ConfigCheck]> config-checks: [];
+    in-out property <[ConfigCheck]> config-checks: [];
 
     callback set-config(int, bool);
     callback ok();
     callback cancel();
 
     DialogKeys {
-        forward-focus: ok-btn;
+        forward-focus: buttons;
         submit => { root.ok(); }
         dismiss => { root.cancel(); }
 
@@ -661,27 +540,16 @@ export component GeneralOptionsDialog inherits Window {
                 }
             }
 
-            HorizontalLayout {
-                spacing: 8px;
-                alignment: end;
-
-                Button {
-                    text: "Cancel";
-                    clicked => { root.cancel(); }
-                }
-
-                ok-btn := Button {
-                    text: "  OK  ";
-                    primary: true;
-                    clicked => { root.ok(); }
-                }
+            buttons := OkCancelRow {
+                ok => { root.ok(); }
+                cancel => { root.cancel(); }
             }
         }
     }
 }
 
 // ============================================================
-// InfoDialog  (name / sourceLang / targetLang)
+// InfoDialog: name / sourceLang / targetLang
 // ============================================================
 export component InfoDialog inherits Window {
     title: "Set Info / Metadata";
@@ -751,19 +619,9 @@ export component InfoDialog inherits Window {
                 vertical-stretch: 1;
             }
 
-            HorizontalLayout {
-                spacing: 8px;
-                alignment: end;
-                Button {
-                    text: "Cancel";
-                    clicked => { root.cancel(); }
-                }
-
-                Button {
-                    text: "  OK  ";
-                    primary: true;
-                    clicked => { root.ok(); }
-                }
+            OkCancelRow {
+                ok => { root.ok(); }
+                cancel => { root.cancel(); }
             }
         }
     }

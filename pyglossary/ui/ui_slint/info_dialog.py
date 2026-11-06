@@ -1,8 +1,4 @@
-"""
-Glossary metadata dialog for the Slint UI.
-
-Displays info-dictionary fields from the loaded glossary in a Slint window.
-"""
+"""Glossary metadata (name / languages) dialog for the Slint UI."""
 
 from __future__ import annotations
 
@@ -15,48 +11,36 @@ if TYPE_CHECKING:
 
 __all__ = ["InfoDialog"]
 
+# (info key, dialog property)
+_FIELDS = (
+	("name", "name_value"),
+	("sourceLang", "source_lang"),
+	("targetLang", "target_lang"),
+)
+
 
 class InfoDialog:
-	"""
-	Non-modal editor for glossary name / sourceLang / targetLang. On OK it
-	updates the `info` dict (only non-empty fields) and calls `onOk(info)`.
-	"""
+	"""Non-modal; on OK stores the non-empty fields into `info` in place."""
 
 	def __init__(
 		self,
 		info: dict[str, Any],
-		onOk: Callable[[dict[str, Any]], None],
 		onClose: Callable[[InfoDialog], None],
 	) -> None:
 		self.info = info
-		self._onOk = onOk
 		self._onClose = onClose
-
-		comp = load_slint("dialogs.slint").InfoDialog
-		self.dialog = comp()
-		self.dialog.name_value = info.get("name", "")
-		self.dialog.source_lang = info.get("sourceLang", "")
-		self.dialog.target_lang = info.get("targetLang", "")
-		# Bind weakly (see utils.weakCallback) so the Slint component is never
-		# part of a reference cycle with this controller.
-		self.dialog.ok = weakCallback(self._onOkCb)
-		self.dialog.cancel = weakCallback(self._onCancel)
+		self.dialog = load_slint("dialogs.slint").InfoDialog()
+		for key, prop in _FIELDS:
+			setattr(self.dialog, prop, info.get(key, ""))
+		self.dialog.ok = weakCallback(self._onOk)
+		self.dialog.cancel = weakCallback(self._close)
 		self.dialog.show()
 
-	def _onOkCb(self) -> None:
-		name = self.dialog.name_value
-		if name:
-			self.info["name"] = name
-		sourceLang = self.dialog.source_lang
-		if sourceLang:
-			self.info["sourceLang"] = sourceLang
-		targetLang = self.dialog.target_lang
-		if targetLang:
-			self.info["targetLang"] = targetLang
-		self._onOk(self.info)
-		self._close()
-
-	def _onCancel(self) -> None:
+	def _onOk(self) -> None:
+		for key, prop in _FIELDS:
+			value = getattr(self.dialog, prop)
+			if value:
+				self.info[key] = value
 		self._close()
 
 	def _close(self) -> None:

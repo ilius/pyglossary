@@ -1,13 +1,8 @@
-"""
-Global conversion options panel for the Slint UI.
-
-Binds glossary-wide configuration fields to Slint property models.
-"""
+"""General conversion options dialog (sort, sqlite, config toggles) for the Slint UI."""
 
 from __future__ import annotations
 
-import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import slint
 
@@ -23,8 +18,6 @@ if TYPE_CHECKING:
 
 __all__ = ["GeneralOptionsDialog"]
 
-log = logging.getLogger("pyglossary")
-
 sortKeyDescList = [sk.desc for sk in namedSortKeyList]
 sortKeyNameByDesc = {sk.desc: sk.name for sk in namedSortKeyList}
 sortKeyDescByName = {sk.name: sk.desc for sk in namedSortKeyList}
@@ -39,113 +32,76 @@ _CONFIG_PARAMS: dict[str, bool] = {
 	"cleanup": True,
 	"remove_html_all": True,
 }
+_PARAM_NAMES = tuple(_CONFIG_PARAMS)
 
 
 class GeneralOptionsDialog:
-	"""
-	Non-modal general-options editor. On OK it mutates `ui.convertOptions`
-	(sort / sortKeyName / sortEncoding / sqlite) and `ui.config` (the bool
-	toggles) in place, then calls `onOk()`. The owner must keep a reference.
-	"""
+	"""Non-modal; on OK updates `ui.convertOptions` and `ui.config` in place."""
 
 	def __init__(
 		self,
 		ui: UI,
-		onOk: Callable[[], None],
 		onClose: Callable[[GeneralOptionsDialog], None],
 	) -> None:
 		self.ui = ui
-		self._onOk = onOk
 		self._onClose = onClose
-		self._configParams = list(_CONFIG_PARAMS.keys())
-		self._configValues: dict[str, bool] = {}
-
 		convertOptions = ui.convertOptions
-		config = ui.config
+		self._configValues = {
+			param: bool(ui.config.get(param, default))
+			for param, default in _CONFIG_PARAMS.items()
+		}
 
-		# sort box state
-		sortEnabled = bool(convertOptions.get("sort", False))
-		sortKeyName = convertOptions.get("sortKeyName") or ""
-		sortLocale = ""
-		if sortKeyName:
-			base, _, locale = sortKeyName.partition(":")
-			sortKeyName = base
-			sortLocale = locale
-		currentSortKeyDesc = sortKeyDescByName.get(sortKeyName, sortKeyDescList[0])
-		sortEncodingEnabled = "sortEncoding" in convertOptions
-		sortEncoding = convertOptions.get("sortEncoding", "utf-8") or "utf-8"
-
-		# config checks
-		checkRows: list[dict[str, Any]] = []
-		for param in self._configParams:
-			default = _CONFIG_PARAMS[param]
-			value = bool(config.get(param, default))
-			self._configValues[param] = value
-			comment = (configDefDict[param].comment or "").split("\n")[0]
-			checkRows.append({"comment": comment, "value": value})
-
-		comp = load_slint("dialogs.slint").GeneralOptionsDialog
-		self.dialog = comp()
-		self.dialog.sort_enabled = sortEnabled
-		self.dialog.sort_key_descs = slint.ListModel(list(sortKeyDescList))
-		self.dialog.current_sort_key = currentSortKeyDesc
-		self.dialog.sort_encoding_enabled = sortEncodingEnabled
-		self.dialog.sort_encoding = sortEncoding
-		self.dialog.sort_locale = sortLocale
-		self.dialog.sqlite_enabled = self._getSQLite()
-		self.dialog.config_checks = slint.ListModel(checkRows)
-
-		# Bind weakly (see utils.weakCallback) so the Slint component is never
-		# part of a reference cycle with this controller.
-		self.dialog.set_config = weakCallback(self._setConfig)
-		self.dialog.ok = weakCallback(self._onOkCb)
-		self.dialog.cancel = weakCallback(self._onCancel)
-
-		self.dialog.show()
-
-	def _getSQLite(self) -> bool:
-		convertOptions = self.ui.convertOptions
+		sortKeyName, _, sortLocale = (convertOptions.get("sortKeyName") or "").partition(
+			":"
+		)
 		sqlite = convertOptions.get("sqlite")
-		if sqlite is not None:
-			return bool(sqlite)
-		return bool(self.ui.config.get("auto_sqlite", True))
 
-	# ----------------------------------------------------------
-	# callbacks (Slint event-loop thread)
-	# ----------------------------------------------------------
-	def _setConfig(self, i: int, v: bool) -> None:
-		self._configValues[self._configParams[i]] = bool(v)
+		d = self.dialog = load_slint("dialogs.slint").GeneralOptionsDialog()
+		d.sort_enabled = bool(convertOptions.get("sort", False))
+		d.sort_key_descs = slint.ListModel(sortKeyDescList)
+		d.current_sort_key = sortKeyDescByName.get(sortKeyName, sortKeyDescList[0])
+		d.sort_encoding_enabled = "sortEncoding" in convertOptions
+		d.sort_encoding = convertOptions.get("sortEncoding") or "utf-8"
+		d.sort_locale = sortLocale
+		d.sqlite_enabled = (
+			bool(ui.config.get("auto_sqlite", True)) if sqlite is None else bool(sqlite)
+		)
+		d.config_checks = slint.ListModel(
+			[
+				{
+					"comment": (configDefDict[param].comment or "").split("\n")[0],
+					"value": value,
+				}
+				for param, value in self._configValues.items()
+			],
+		)
+		d.set_config = weakCallback(self._setConfig)
+		d.ok = weakCallback(self._onOk)
+		d.cancel = weakCallback(self._close)
+		d.show()
 
-	def _onOkCb(self) -> None:
+	def _setConfig(self, i: int, value: bool) -> None:
+		self._configValues[_PARAM_NAMES[i]] = value
+
+	def _onOk(self) -> None:
+		d = self.dialog
 		convertOptions = self.ui.convertOptions
-		config = self.ui.config
-
-		sort = self.dialog.sort_enabled
-		if not sort:
-			for param in ("sort", "sortKeyName", "sortEncoding"):
-				convertOptions.pop(param, None)
-		else:
-			sortKeyDesc = self.dialog.current_sort_key
-			sortKeyName = sortKeyNameByDesc.get(sortKeyDesc, "")
-			sortLocale = (self.dialog.sort_locale or "").strip()
+		if d.sort_enabled:
+			sortKeyName = sortKeyNameByDesc.get(d.current_sort_key, "")
+			sortLocale = d.sort_locale.strip()
 			if sortLocale:
 				sortKeyName = f"{sortKeyName}:{sortLocale}"
 			convertOptions["sort"] = True
 			convertOptions["sortKeyName"] = sortKeyName
-			if self.dialog.sort_encoding_enabled:
-				convertOptions["sortEncoding"] = self.dialog.sort_encoding or "utf-8"
+			if d.sort_encoding_enabled:
+				convertOptions["sortEncoding"] = d.sort_encoding or "utf-8"
 			else:
 				convertOptions.pop("sortEncoding", None)
-
-		convertOptions["sqlite"] = bool(self.dialog.sqlite_enabled)
-
-		for param, value in self._configValues.items():
-			config[param] = bool(value)
-
-		self._onOk()
-		self._close()
-
-	def _onCancel(self) -> None:
+		else:
+			for param in ("sort", "sortKeyName", "sortEncoding"):
+				convertOptions.pop(param, None)
+		convertOptions["sqlite"] = d.sqlite_enabled
+		self.ui.config.update(self._configValues)
 		self._close()
 
 	def _close(self) -> None:
