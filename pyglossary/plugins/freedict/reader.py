@@ -1058,78 +1058,23 @@ class Reader(ReaderUtils):
 		)
 		return text
 
-	def getEntryByElem(  # noqa: PLR0912
+	def getEntryByElem(
 		self,
 		entry: Element,
 	) -> EntryType:
 		from lxml import etree as ET
 
-		glos = self._glos
-		keywords: list[str] = []
-		buff = BytesIO()
-		pron_color = self._pron_color
-
-		def br() -> Element:
-			return ET.Element("br")
-
-		def write_keywords_title(keywords: list[str]) -> None:
-			for keyword in keywords:
-				titleTag = glos.titleTag(keyword)
-				if titleTag:
-					with hf.element(titleTag):
-						hf.write(keyword)
-				else:
-					hf.write(keyword)
-				hf.write(br())
-
-		inflectedKeywords: list[str] = []
-
-		for form in entry.findall(".//form", _NAMESPACE):
-			inflected = form.get("type") == "infl"
-			for orth in form.findall("orth", _NAMESPACE):
-				text = _elementText(orth)
-				if not text:
-					continue
-				if inflected:
-					inflectedKeywords.append(text)
-				else:
-					keywords.append(text)
-
-		keywords += inflectedKeywords
-
-		pronList: list[str] = []
-		for pron in entry.findall("form/pron", _NAMESPACE):
-			text = _elementText(pron).strip("/")
-			if text:
-				pronList.append(text)
-		usgList = entry.findall("usg", _NAMESPACE) + entry.findall(
-			"form/usg",
-			_NAMESPACE,
-		)
-		lblList = [
-			lbl
-			for lbl in (
-				entry.findall("lbl", _NAMESPACE) + entry.findall("form/lbl", _NAMESPACE)
-			)
-			if _elementText(lbl)
-		]
+		keywords = self._entryKeywords(entry)
+		pronList = self._entryPronunciations(entry)
+		usgList, lblList = self._entryTags(entry)
 		senseList = entry.findall("sense", _NAMESPACE)
 
+		buff = BytesIO()
 		with ET.htmlfile(buff, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._word_title:
-					write_keywords_title(keywords)
-
-				if pronList:
-					for i, pron in enumerate(pronList):
-						if i > 0:
-							hf.write(self.getCommaSep(pron))
-						hf.write("/")
-						with hf.element("font", color=pron_color):
-							hf.write(pron)
-						hf.write("/")
-					hf.write(br())
-					hf.write("\n")
+					self._writeKeywordsTitle(hf, keywords)
+				self._writePronunciations(hf, pronList)
 
 				hf_ = cast("T_htmlfile", hf)
 
@@ -1150,6 +1095,85 @@ class Reader(ReaderUtils):
 			defiFormat="h",
 			byteProgress=(file.tell(), self._fileSize) if self._progress else None,
 		)
+
+	@staticmethod
+	def _entryKeywords(entry: Element) -> list[str]:
+		"""Return the headwords, then the inflected forms, of an entry."""
+		keywords: list[str] = []
+		inflectedKeywords: list[str] = []
+		for form in entry.findall(".//form", _NAMESPACE):
+			inflected = form.get("type") == "infl"
+			for orth in form.findall("orth", _NAMESPACE):
+				text = _elementText(orth)
+				if not text:
+					continue
+				if inflected:
+					inflectedKeywords.append(text)
+				else:
+					keywords.append(text)
+
+		keywords += inflectedKeywords
+		return keywords
+
+	@staticmethod
+	def _entryPronunciations(entry: Element) -> list[str]:
+		pronList: list[str] = []
+		for pron in entry.findall("form/pron", _NAMESPACE):
+			text = _elementText(pron).strip("/")
+			if text:
+				pronList.append(text)
+		return pronList
+
+	@staticmethod
+	def _entryTags(entry: Element) -> tuple[list[Element], list[Element]]:
+		"""Return the entry-level <usg> and non-empty <lbl> elements."""
+		usgList = entry.findall("usg", _NAMESPACE) + entry.findall(
+			"form/usg",
+			_NAMESPACE,
+		)
+		lblList = [
+			lbl
+			for lbl in (
+				entry.findall("lbl", _NAMESPACE) + entry.findall("form/lbl", _NAMESPACE)
+			)
+			if _elementText(lbl)
+		]
+		return usgList, lblList
+
+	def _writeKeywordsTitle(
+		self,
+		hf: T_htmlfile,
+		keywords: list[str],
+	) -> None:
+		from lxml import etree as ET
+
+		for keyword in keywords:
+			titleTag = self._glos.titleTag(keyword)
+			if titleTag:
+				with hf.element(titleTag):
+					hf.write(keyword)
+			else:
+				hf.write(keyword)
+			hf.write(ET.Element("br"))
+
+	def _writePronunciations(
+		self,
+		hf: T_htmlfile,
+		pronList: list[str],
+	) -> None:
+		from lxml import etree as ET
+
+		if not pronList:
+			return
+		for i, pron in enumerate(pronList):
+			if i > 0:
+				hf.write(self.getCommaSep(pron))
+			hf.write("/")
+			with hf.element("font", color=self._pron_color):
+				hf.write(pron)
+			hf.write("/")
+		hf.write(ET.Element("br"))
+		hf.write("\n")
 
 	def setTermCount(self, header: Element) -> None:
 		extent_elem = header.find(".//extent", _NAMESPACE)
