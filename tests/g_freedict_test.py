@@ -24,8 +24,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-fr-en-example-note.tei",
 			"1-fr-en-example-note.txt",
 			"14-en-en-include.tei",
-			"14-en-en.txt",
-			"freedict-sample-2024-12-19-v3.txt",
+			"14-en-en-v2.txt",
+			"freedict-sample-2024-12-19-v4.txt",
 		}
 		self.dataFileCRC32 |= {
 			"100-en-de.tei": "542c210e",
@@ -55,13 +55,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 	def test_convert_tei_txt_2(self):
 		self.convert_tei_txt(
 			"freedict-sample-2024-12-19",
-			"freedict-sample-2024-12-19-v3",
+			"freedict-sample-2024-12-19-v4",
 		)
 
 	def test_convert_tei_txt_14_en_en(self):
 		self.convert_tei_txt(
 			"14-en-en",
-			"14-en-en",
+			"14-en-en-v2",
 			readOptions={"auto_comma": True},
 		)
 

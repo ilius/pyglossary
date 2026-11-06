@@ -6,10 +6,6 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 
 ## Confirmed bugs
 
-6. **`<number>sg</number>` is not mapped, but `pl` is** (medium)
-   - `numberMapping` (lines 146-149) has `pl` and `sing`, not `sg`. Fixtures expect the raw `sg` (for example `noun, sg` in `14-en-en.txt`), while `pl` renders as `plural`.
-   - Fixing this changes expected outputs and requires regeneration.
-
 7. **Invalid `xml:lang` on `<p>`** (low-medium)
    - `writeRichText` passes `**child.attrib` (line 462). The output is `<p xmlns:ns0="http://www.w3.org/XML/1998/namespace" ns0:lang="de">` rather than `lang="de"`.
    - `setAttribLangDir` already performs this mapping for other elements.
@@ -45,7 +41,7 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 - **`auto_comma` is not tested**: `test_convert_tei_txt_1` runs with `auto_comma` False and True against the same expected output. The two runs produce identical output for `100-en-de`, so the option is not exercised. No fixture covers non-Latin separators.
 - **Uncovered options and paths**: `discover`, `word_title`, colour options, `example_padding`, `auto_rtl`, comments, and include cycles have no tests.
 - **Naming rules in CLAUDE.md**:
-  - `100-en-de-v6.txt` and `freedict-sample-2024-12-19-v3.txt` carry version suffixes for regenerated outputs.
+  - `100-en-de-v6.txt` and `freedict-sample-2024-12-19-v4.txt` carry version suffixes for regenerated outputs.
   - `freedict-sample-2024-12-19.tei` does not follow `<count>-<src>-<tgt>`.
 - **Remote inputs**: `100-en-de.tei` and `freedict-sample-2024-12-19.tei` are not in `tests/data`. They are fetched from GitHub by CRC32 and cached in `~/.cache/pyglossary/test`, so a first run needs network access. The `100-en-de.tei` sample is a third-party file ("Sample: English-Deutsch FreeDict+WikDict dictionary"), so the provenance rule applies.
 - **Stale generated doc**: `doc/p/freedict.md` has no `resources` row, while csv and tabfile docs do. Regenerate it with `./scripts/gen` after the options are settled.

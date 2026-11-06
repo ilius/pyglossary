@@ -145,6 +145,7 @@ class Reader(ReaderUtils):
 	}
 	numberMapping: dict[str, str] = {
 		"pl": "plural",
+		"sg": "singular",
 		"sing": "singular",
 	}
 	subcMapping: dict[str, str] = {

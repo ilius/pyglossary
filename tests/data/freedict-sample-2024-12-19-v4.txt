@@ -7,7 +7,7 @@
 ##description	This dictionary comes to you through nice people making it available for free and for\ngood. It is part of the FreeDict project, <a href="http://freedict.org/">http://freedict.org/</a>. This project aims to make translating\ndictionaries available for free. Your contributions are welcome!
 Adán	<div><div>Adam</div></div>
 enye	<div><div><font class="grammar" color="green">cop, poss</font></div><ol><li>having</li><li>with</li></ol><div><font class="grammar" color="green">the forms of -enye display pronominal agreement</font></div></div>
-abeceda	<div><div><font class="grammar" color="green">noun, female, sg</font></div><div>alphabet</div><div class="example" style="padding: 10px 0px;"><div>Slovenska abeceda ima 25 črk.</div><div>The Slovenian alphabet has 25 letters.</div></div></div>
+abeceda	<div><div><font class="grammar" color="green">noun, female, singular</font></div><div>alphabet</div><div class="example" style="padding: 10px 0px;"><div>Slovenska abeceda ima 25 črk.</div><div>The Slovenian alphabet has 25 letters.</div></div></div>
 adhuhuri	<div><div><font class="grammar" color="green">noun</font></div>middayperiod between noon and 2 p.m.</div>
 adui	<div><div><font class="grammar" color="green">noun</font></div><ol><li>enemy</li><li>opponentin games or sports</li></ol></div>
 agano	<div><div><font class="grammar" color="green">noun</font></div><ol><li>promise</li><li>agreement, contract<div>See also: <a href="#ahadi">ahadi</a>\n               </div></li></ol></div>
