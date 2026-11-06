@@ -66,6 +66,14 @@ class _ParsedSense:
 
 
 @dataclass(slots=True)
+class _PendingTags:
+	"""<usg> and <lbl> elements of a sense that are not written yet."""
+
+	usages: list[Element]
+	labels: list[Element]
+
+
+@dataclass(slots=True)
 class _CitScan:
 	"""State while scanning the children of one translation <cit>."""
 
@@ -729,9 +737,7 @@ class Reader(ReaderUtils):
 			langs=langs,
 		)
 
-	# TODO: break it down
-	# PLR0912 Too many branches (16 > 12)
-	def writeSenseSense(  # noqa: PLR0912
+	def writeSenseSense(
 		self,
 		hf: T_htmlfile,
 		sense: Element,
@@ -739,8 +745,7 @@ class Reader(ReaderUtils):
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
 		ps = self.parseSenseSense(sense)
-		usages = list(ps.usages)
-		labels = list(ps.labels)
+		pending = _PendingTags(usages=list(ps.usages), labels=list(ps.labels))
 
 		# First-level senses already have their <gramGrp> rendered by
 		# writeSense; nested senses need it rendered here.
@@ -748,19 +753,11 @@ class Reader(ReaderUtils):
 		if parent is not None and parent.tag != _ENTRY:
 			self.writeGramGroupChildren(hf, sense)
 
-		def writeUsages() -> None:
-			if usages:
-				self.writeUsageTags(hf, usages)
-				usages.clear()
-			if labels:
-				self.writeLabelTags(hf, labels)
-				labels.clear()
-
 		for child in ps.langs:
 			self.writeLangTag(hf, child)
 
 		if ps.defs:
-			writeUsages()
+			self._writePendingTags(hf, pending)
 		self.makeList(
 			hf,
 			ps.defs,
@@ -768,22 +765,9 @@ class Reader(ReaderUtils):
 			single_prefix="",
 		)
 		if ps.grams:
-			color = self._gram_color
-			attrib = {
-				"class": self.gramClass,
-			}
-			if color:
-				attrib["color"] = color
-			with hf.element("div"):
-				writeUsages()
-				for i, gram in enumerate(ps.grams):
-					text = _elementText(gram)
-					if i > 0:
-						hf.write(self.getCommaSep(text))
-					with hf.element("font", attrib=attrib):
-						hf.write(text)
+			self._writeGrams(hf, ps.grams, pending)
 		if ps.notes:
-			writeUsages()
+			self._writePendingTags(hf, pending)
 		self.makeList(
 			hf,
 			ps.notes,
@@ -791,65 +775,12 @@ class Reader(ReaderUtils):
 			single_prefix="",
 		)
 		if ps.transCits:
-
-			def writeFirstTransCit(hf_: T_htmlfile, elem: Element) -> None:
-				prefix = list(usages)
-				usages.clear()
-				self.writeTransCit(hf_, elem, prefix)
-
-			self.makeList(
-				hf,
-				ps.transCits,
-				writeFirstTransCit,
-				single_prefix="",
-			)
-		writeUsages()
-		if ps.refs:
-			with hf.element("div"):
-				hf.write("Related: ")
-				for i, ref in enumerate(ps.refs):
-					if i > 0:
-						hf.write(" | ")
-					self.writeRef(hf, ref)
+			self._writeTransCits(hf, ps.transCits, pending)
+		self._writePendingTags(hf, pending)
+		self._writeRelated(hf, ps.refs)
 		for xr in ps.xrList:
 			with hf.element("div"):
 				self.writeRichText(hf, xr)
-
-		def writeExampleCit(citElem: Element) -> None:
-			# <usg> and <lbl> give the domain/context of the example, so they
-			# are written before its quote, in document order, like the tags
-			# of a translation <cit>. They share the first quote's block so
-			# they stay on the same line as the example text.
-			tags = [
-				child
-				for child in citElem.iterchildren()
-				if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"} and _elementText(child)
-			]
-			quotes = citElem.findall("quote", _NAMESPACE)
-			if quotes:
-				self.writeQuote(hf, quotes[0], tags)
-				for quote in quotes[1:]:
-					self.writeQuote(hf, quote)
-			elif tags:
-				with hf.element("div"):
-					self.writeInlineTags(hf, tags)
-			# <note> holds the translation of the example, so it is written
-			# as its own block after the quote, like a second quote would be
-			for note in citElem.findall("note", _NAMESPACE):
-				if not _elementText(note):
-					continue
-				with hf.element("div"):
-					self.writeNote(hf, note)
-			for cit2 in citElem.findall("cit", _NAMESPACE):
-				# This mutates the source tree on purpose: writeWithDirection
-				# reads xml:lang and type from the quote itself, so the nested
-				# <cit> attributes (e.g. type="example") are copied onto each
-				# quote before it is written. It is safe to repeat because
-				# it only copies the same values again.
-				for quote in cit2.findall("quote", _NAMESPACE):
-					quote.attrib.update(cit2.attrib)
-				writeExampleCit(cit2)
-
 		for cit in ps.exampleCits:
 			with hf.element(
 				"div",
@@ -858,9 +789,116 @@ class Reader(ReaderUtils):
 					"style": f"padding: {self._example_padding}px 0px;",
 				},
 			):
-				writeExampleCit(cit)
+				self.writeExampleCit(hf, cit)
 
 		return len(ps.transCits) + len(ps.exampleCits)
+
+	def _writePendingTags(
+		self,
+		hf: T_htmlfile,
+		pending: _PendingTags,
+	) -> None:
+		"""Write the pending usage and label tags, then forget them."""
+		if pending.usages:
+			self.writeUsageTags(hf, pending.usages)
+			pending.usages.clear()
+		if pending.labels:
+			self.writeLabelTags(hf, pending.labels)
+			pending.labels.clear()
+
+	def _writeGrams(
+		self,
+		hf: T_htmlfile,
+		grams: list[Element],
+		pending: _PendingTags,
+	) -> None:
+		color = self._gram_color
+		attrib = {
+			"class": self.gramClass,
+		}
+		if color:
+			attrib["color"] = color
+		with hf.element("div"):
+			self._writePendingTags(hf, pending)
+			for i, gram in enumerate(grams):
+				text = _elementText(gram)
+				if i > 0:
+					hf.write(self.getCommaSep(text))
+				with hf.element("font", attrib=attrib):
+					hf.write(text)
+
+	def _writeTransCits(
+		self,
+		hf: T_htmlfile,
+		transCits: list[Element],
+		pending: _PendingTags,
+	) -> None:
+		def writeFirstTransCit(hf_: T_htmlfile, elem: Element) -> None:
+			# the first translation <cit> takes the pending usage tags as its
+			# prefix, so they share its line; later ones get none
+			prefix = list(pending.usages)
+			pending.usages.clear()
+			self.writeTransCit(hf_, elem, prefix)
+
+		self.makeList(
+			hf,
+			transCits,
+			writeFirstTransCit,
+			single_prefix="",
+		)
+
+	def _writeRelated(
+		self,
+		hf: T_htmlfile,
+		refs: list[Element],
+	) -> None:
+		if not refs:
+			return
+		with hf.element("div"):
+			hf.write("Related: ")
+			for i, ref in enumerate(refs):
+				if i > 0:
+					hf.write(" | ")
+				self.writeRef(hf, ref)
+
+	def writeExampleCit(
+		self,
+		hf: T_htmlfile,
+		citElem: Element,
+	) -> None:
+		# <usg> and <lbl> give the domain/context of the example, so they
+		# are written before its quote, in document order, like the tags
+		# of a translation <cit>. They share the first quote's block so
+		# they stay on the same line as the example text.
+		tags = [
+			child
+			for child in citElem.iterchildren()
+			if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"} and _elementText(child)
+		]
+		quotes = citElem.findall("quote", _NAMESPACE)
+		if quotes:
+			self.writeQuote(hf, quotes[0], tags)
+			for quote in quotes[1:]:
+				self.writeQuote(hf, quote)
+		elif tags:
+			with hf.element("div"):
+				self.writeInlineTags(hf, tags)
+		# <note> holds the translation of the example, so it is written
+		# as its own block after the quote, like a second quote would be
+		for note in citElem.findall("note", _NAMESPACE):
+			if not _elementText(note):
+				continue
+			with hf.element("div"):
+				self.writeNote(hf, note)
+		for cit2 in citElem.findall("cit", _NAMESPACE):
+			# This mutates the source tree on purpose: writeWithDirection
+			# reads xml:lang and type from the quote itself, so the nested
+			# <cit> attributes (e.g. type="example") are copied onto each
+			# quote before it is written. It is safe to repeat because
+			# it only copies the same values again.
+			for quote in cit2.findall("quote", _NAMESPACE):
+				quote.attrib.update(cit2.attrib)
+			self.writeExampleCit(hf, cit2)
 
 	def getCommaSep(self, sample: str) -> str:
 		if sample and self._auto_comma:
