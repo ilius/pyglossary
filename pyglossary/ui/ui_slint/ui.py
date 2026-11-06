@@ -49,13 +49,9 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-<<<<<<< HEAD
-	from pyglossary.stubs.config_types import ConfigType
-=======
 	from collections.abc import Callable
 
-	from pyglossary.config_type import ConfigType
->>>>>>> 444c3dc6 (ui_slint: simplify UI code and mac build)
+	from pyglossary.stubs.config_types import ConfigType
 
 __all__ = ["UI"]
 
