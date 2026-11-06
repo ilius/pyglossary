@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary inline definitions test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>alpha</orth>
+				</form>
+				<sense>
+					<def>a letter <ref target="bword://beta">beta</ref> follows it</def>
+				</sense>
+			</entry>
+			<entry>
+				<form>
+					<orth>gamma</orth>
+				</form>
+				<sense>
+					<def>to <hi>be</hi> sad <!-- comment inside def --> today</def>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>

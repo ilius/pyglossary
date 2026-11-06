@@ -1,0 +1,4 @@
+##name	PyGlossary empty ref test
+##input_file_size	652
+##description	Synthetic sample for PyGlossary tests
+baby	<div><div>infant</div><div>See also</div></div>

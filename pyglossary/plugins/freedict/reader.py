@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from io import BytesIO
-from os.path import dirname, isfile, join
+from os.path import dirname, isfile, join, realpath
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.compress import compressionOpen, stdCompressions
@@ -40,6 +40,7 @@ _TEI = "{http://www.tei-c.org/ns/1.0}"
 _ENTRY = f"{_TEI}entry"
 _INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 _NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
+_whitespaceRun = re.compile(r"\s+")
 
 
 def _elementText(elem: Element) -> str:
@@ -72,7 +73,6 @@ class Reader(ReaderUtils):
 		"lxml": "lxml",
 	}
 
-	_discover: bool = False
 	_auto_rtl: bool = True
 	_auto_comma: bool = True
 	_comma: str = ", "
@@ -84,7 +84,6 @@ class Reader(ReaderUtils):
 	_example_padding: int = 10
 
 	def _copyOptionsTo(self, other: Reader) -> None:
-		other._discover = self._discover
 		other._auto_rtl = self._auto_rtl
 		other._auto_comma = self._auto_comma
 		other._comma = self._comma
@@ -103,24 +102,6 @@ class Reader(ReaderUtils):
 		"padding-right:3px;"
 		"border-radius:0.5ex;"
 	)
-	supportedTags: set[str] = {
-		f"{_TEI}{tag}"
-		for tag in (
-			"entry",
-			"form",  # entry.form
-			"orth",  # entry.form.orth
-			"pron",  # entry.form.pron
-			"usg",  # entry.form.usg, entry.sense.usg
-			"sense",  # entry.sense
-			"cit",  # entry.sense.cit
-			"quote",  # entry.sense.cit.quote
-			"gramGrp",  # entry.sense.cit.gramGrp
-			"pos",  # entry.sense.cit.gramGrp.pos
-			"gen",  # entry.sense.cit.gramGrp.gen
-			"number",  # entry.sense.cit.gramGrp.number
-			"num",  # entry.sense.cit.gramGrp.num
-		)
-	}
 	posMapping: dict[str, str] = {
 		"n": "noun",
 		"v": "verb",
@@ -141,10 +122,10 @@ class Reader(ReaderUtils):
 		"n": "neutral",
 		"neut": "neutral",
 		# "m;f"
-		"adj": "adjective",
 	}
 	numberMapping: dict[str, str] = {
 		"pl": "plural",
+		"sg": "singular",
 		"sing": "singular",
 	}
 	subcMapping: dict[str, str] = {
@@ -179,6 +160,10 @@ class Reader(ReaderUtils):
 			if "://" in target:
 				attrib["class"] = "external"
 		else:
+			if not ref.text:
+				# no target to link to and no text to show
+				log.warning("ref without target or text, skipped")
+				return
 			target = f"bword://{ref.text}"
 		with hf.element("a", href=target, attrib=attrib):
 			hf.write(ref.text or "")
@@ -197,6 +182,8 @@ class Reader(ReaderUtils):
 		elem: Element,
 		prefix: list[Element] | None = None,
 	) -> None:
+		from copy import deepcopy
+
 		from lxml import etree as ET
 
 		children = elem.xpath("child::node()")
@@ -206,21 +193,23 @@ class Reader(ReaderUtils):
 
 		# The writers below (writeSense, writeGramGroups, writeUsageTag, ...)
 		# only read from a <sense> tree, but the grammar, usage and note
-		# children of a translation <cit> sit next to its quotes. Moving
+		# children of a translation <cit> sit next to its quotes. Copying
 		# them into a synthetic <sense> lets writeSense render them with
 		# the same code path as real senses, without duplicating that logic.
-		# The source <cit> is therefore consumed by this call: it must not
-		# be rendered again afterwards.
+		# The source <cit> is left unchanged, so the same entry can be
+		# rendered again.
 		sense = ET.Element(f"{_TEI}sense")
 		gramGrp: Element | None = None
 
-		def moveToSense(parent: Element, child: Element) -> None:
-			# lxml moves an element together with its tail text. The tail is
-			# also collected as loose text by collectCit (it arrives there
-			# through the xpath "child::node()" snapshot), so clear it here to
-			# avoid rendering that text twice.
-			child.tail = None
-			parent.append(child)
+		def copyToSense(parent: Element, child: Element) -> None:
+			# Copy instead of move: moving would detach the child from the
+			# source <cit>, so a second render of the same entry would lose
+			# it. The copy has no tail: collectCit already collects the tail
+			# text as loose text (through the xpath "child::node()" snapshot),
+			# so keeping it here would render that text twice.
+			copied = deepcopy(child)
+			copied.tail = None
+			parent.append(copied)
 
 		def appendGramChild(child: Element) -> None:
 			nonlocal gramGrp
@@ -230,7 +219,7 @@ class Reader(ReaderUtils):
 			# and group these elements under it.
 			if gramGrp is None:
 				gramGrp = ET.SubElement(sense, f"{_TEI}gramGrp")
-			moveToSense(gramGrp, child)
+			copyToSense(gramGrp, child)
 
 		def newTextBlock(text: str, cit: Element) -> Element:
 			# Loose text has no element of its own, but the block writers
@@ -283,7 +272,7 @@ class Reader(ReaderUtils):
 					continue
 
 				if child.tag in {f"{_TEI}gramGrp", f"{_TEI}note"}:
-					moveToSense(sense, child)
+					copyToSense(sense, child)
 					continue
 
 				if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"}:
@@ -360,44 +349,61 @@ class Reader(ReaderUtils):
 		if next(sense.iterchildren(), False) is not None:
 			self.writeSense(hf, sense)
 
+	def iterDefPieces(self, node: Element) -> Iterator[str | Element]:
+		"""Yield the text and <ref> pieces of a <def>, recursing into other elements."""
+		for child in node.xpath("child::node()"):
+			if isinstance(child, str):
+				yield child
+				continue
+			if not isinstance(child.tag, str):
+				# comment or processing instruction
+				continue
+			if child.tag == f"{_TEI}ref":
+				if child.text:
+					yield child
+				else:
+					log.warning(f"ref without text: {self.tostring(child)}")
+				continue
+			yield from self.iterDefPieces(child)
+
+	def getDefPieces(self, elem: Element) -> list[str | Element]:
+		"""
+		Return the inline pieces of a <def>, ready to write.
+
+		Adjacent text is merged before whitespace is collapsed, so spacing
+		around skipped comments and inline elements is kept. Leading and
+		trailing whitespace of the whole definition is removed.
+		"""
+		merged: list[str | Element] = []
+		for piece in self.iterDefPieces(elem):
+			if isinstance(piece, str) and merged and isinstance(merged[-1], str):
+				merged[-1] += piece
+			else:
+				merged.append(piece)
+
+		for i, piece in enumerate(merged):
+			if isinstance(piece, str):
+				merged[i] = re.sub(r"\s+", " ", piece)
+		if merged and isinstance(merged[0], str):
+			merged[0] = merged[0].lstrip()
+		if merged and isinstance(merged[-1], str):
+			merged[-1] = merged[-1].rstrip()
+
+		return [piece for piece in merged if not (isinstance(piece, str) and not piece)]
+
 	def writeDef(
 		self,
 		hf: T_htmlfile,
 		elem: Element,
 	) -> None:
-		# sep = None
-		# if self._cif_newline:
-		# 	sep = ET.Element("br")
-		count = 0
-
-		def writeChild(item: str | Element, depth: int) -> None:
-			nonlocal count
-			if isinstance(item, str):
-				item = item.strip()
-				if not item:
-					return
-				if count > 0:
-					hf.write(self.getCommaSep(item))
-				# with hf.element(self.getTitleTag(item)):
-				hf.write(item)
-				return
-
-			if item.tag == f"{_TEI}ref":
-				if item.text:
-					if count > 0:
-						hf.write(self.getCommaSep(item.text))
-					self.writeRef(hf, item)
-				else:
-					log.warning(f"ref without text: {self.tostring(item)}")
-				return
-
-			for child in item.xpath("child::node()"):
-				writeChild(child, depth + 1)
-			if depth < 1:
-				count += 1
-
-		for child in elem.xpath("child::node()"):
-			writeChild(child, 0)
+		# <def> has phrase-level content (TEI): text, <ref> links and inline
+		# elements such as <hi>. All of it stays inline, so no separator is
+		# inserted between pieces.
+		for piece in self.getDefPieces(elem):
+			if isinstance(piece, str):
+				hf.write(piece)
+			else:
+				self.writeRef(hf, piece)
 
 	def setAttribLangDir(
 		self,
@@ -459,7 +465,11 @@ class Reader(ReaderUtils):
 				hf.write(ET.Element("br"))
 				continue
 			if child.tag == f"{_TEI}p":
-				with hf.element("p", **child.attrib):
+				# map xml:lang to lang (and dir), like writeWithDirection does;
+				# passing the raw attribute would emit an ns0:lang attribute
+				attrib: dict[str, str] = dict(child.attrib)
+				self.setAttribLangDir(attrib)
+				with hf.element("p", attrib=attrib):
 					self.writeRichText(hf, child)
 					continue
 			if child.tag == f"{_TEI}div":
@@ -485,10 +495,62 @@ class Reader(ReaderUtils):
 		color: str,
 	) -> None:
 		style = self.tagStyle.format(color or "transparent")
+		content = self.normalizeTagContent(elem)
 		with hf.element("span", attrib={"class": "tag", "style": style}):
 			hf.write("[")
-			self.writeRichText(hf, elem)
+			self.writeRichText(hf, content)
 			hf.write("]")
+
+	@staticmethod
+	def normalizeTagContent(elem: Element) -> Element:
+		"""
+		Return a copy of a <usg> or <lbl> element for writing inside a tag.
+
+		Line breaks and indentation in the source are not meaningful, so runs
+		of whitespace are collapsed to one space and the content is trimmed at
+		both ends. The copy is used so the source tree is not modified.
+		"""
+		from copy import deepcopy
+
+		copied = deepcopy(elem)
+		copied.tail = None
+
+		# text slots (element .text and child .tail) in document order, so a
+		# space at the end of one slot is seen when the next slot starts
+		slots: list[tuple[Element, str]] = []
+
+		def collect(node: Element) -> None:
+			if not isinstance(node.tag, str):
+				return  # comments are not written
+			slots.append((node, "text"))
+			for child in node:
+				collect(child)
+				slots.append((child, "tail"))
+
+		collect(copied)
+
+		atSpace = True  # True at the start, so leading whitespace is dropped
+		for node, attr in slots:
+			text = getattr(node, attr)
+			if not text:
+				continue
+			text = _whitespaceRun.sub(" ", text)
+			if atSpace:
+				text = text.lstrip(" ")
+			if text:
+				atSpace = text.endswith(" ")
+			setattr(node, attr, text or None)
+
+		# drop trailing whitespace, continuing backwards over whitespace-only slots
+		for node, attr in reversed(slots):
+			text = getattr(node, attr)
+			if not text:
+				continue
+			text = text.rstrip(" ")
+			setattr(node, attr, text or None)
+			if text:
+				break
+		return copied
 
 	def writeUsageTag(
 		self,
@@ -562,6 +624,10 @@ class Reader(ReaderUtils):
 		exampleCits: list[Element] = []
 		langs: list[Element] = []
 		for child in sense.iterchildren():
+			if not isinstance(child.tag, str):
+				# comment or processing instruction
+				continue
+
 			if child.tag == f"{_TEI}cit":
 				typ = child.attrib.get("type", "trans")
 				if typ == "trans":
@@ -595,11 +661,15 @@ class Reader(ReaderUtils):
 				continue
 
 			if child.tag == f"{_TEI}ref":
+				if not child.get("target") and not child.text:
+					log.warning("empty <ref> in <sense> without target, skipped")
+					continue
 				refs.append(child)
 				continue
 
 			if child.tag == f"{_TEI}usg":
-				if not child.text:
+				# check the full text, including nested markup such as <lang>
+				if not _elementText(child):
 					log.warning(f"empty usg: {self.tostring(child)}")
 					continue
 				usages.append(child)
@@ -744,6 +814,13 @@ class Reader(ReaderUtils):
 			elif tags:
 				with hf.element("div"):
 					self.writeInlineTags(hf, tags)
+			# <note> holds the translation of the example, so it is written
+			# as its own block after the quote, like a second quote would be
+			for note in citElem.findall("note", _NAMESPACE):
+				if not _elementText(note):
+					continue
+				with hf.element("div"):
+					self.writeNote(hf, note)
 			for cit2 in citElem.findall("cit", _NAMESPACE):
 				# This mutates the source tree on purpose: writeWithDirection
 				# reads xml:lang and type from the quote itself, so the nested
@@ -788,6 +865,9 @@ class Reader(ReaderUtils):
 		for gramGrp in gramGrpList:
 			parts: list[str] = []
 			for child in gramGrp.iterchildren():
+				if not isinstance(child.tag, str):
+					# comment or processing instruction
+					continue
 				part = self.normalizeGramGrpChild(child)
 				if part:
 					parts.append(part)
@@ -814,7 +894,9 @@ class Reader(ReaderUtils):
 
 	@classmethod
 	def isMetaSense(cls, sense: Element) -> bool:
-		childTagSet = {child.tag for child in sense.iterchildren()}
+		childTagSet = {
+			child.tag for child in sense.iterchildren() if isinstance(child.tag, str)
+		}
 		return childTagSet == {f"{_TEI}sense"}
 
 	def writeSense(
@@ -856,6 +938,7 @@ class Reader(ReaderUtils):
 			return
 
 		if self._auto_rtl and self.isRTL(senseList[0]):
+			# Use unordered list for just 2 items
 			with hf.element("div", dir="rtl"):
 				self.makeList(
 					hf,
@@ -924,11 +1007,6 @@ class Reader(ReaderUtils):
 		keywords: list[str] = []
 		buff = BytesIO()
 		pron_color = self._pron_color
-
-		if self._discover:
-			for elem in entry.iter():
-				if elem.tag not in self.supportedTags:
-					self._discoveredTags[elem.tag] = elem
 
 		def br() -> Element:
 			return ET.Element("br")
@@ -1125,7 +1203,8 @@ class Reader(ReaderUtils):
 		self._fileSize = 0
 		self._progress = True
 		self._entryCount = 0
-		self._discoveredTags: dict[str, Element] = {}
+		# real paths of the files from the top-level file down to this one
+		self._includeChain: frozenset[str] = frozenset()
 
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",
@@ -1162,13 +1241,19 @@ class Reader(ReaderUtils):
 
 		self._filename = filename
 		self._dirname = dirname(filename)
+		# an empty chain means this is the top-level file, not an XInclude
+		isTopLevel = not self._includeChain
+		self._includeChain = self._includeChain | {realpath(filename)}
 		cfile = compressionOpen(filename, mode="rb")
 
 		if cfile.seekable():
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
 			cfile.seek(0)
-			self._glos.setInfo("input_file_size", str(self._fileSize))
+			if isTopLevel:
+				# only the top-level file defines the glossary's input size,
+				# included files must not overwrite it
+				self._glos.setInfo("input_file_size", str(self._fileSize))
 		else:
 			log.warning("FreeDict Reader: file is not seekable")
 
@@ -1199,8 +1284,12 @@ class Reader(ReaderUtils):
 		if not isfile(filename):
 			log.error(f"no such file {filename!r} from {elem}")
 			return None
+		if realpath(filename) in self._includeChain:
+			log.error(f"include cycle: {filename!r} from {elem}, skipping")
+			return None
 		reader = Reader(self._glos)
 		self._copyOptionsTo(reader)
+		reader._includeChain = self._includeChain
 		reader.open(filename)
 		return reader
 
@@ -1231,8 +1320,3 @@ class Reader(ReaderUtils):
 				continue
 			while elem.getprevious() is not None:
 				del parent[0]
-
-		if self._discoveredTags:
-			log.info("Found unsupported tags")
-			for elem in self._discoveredTags.values():
-				log.info(f"{self.tostring(elem)}\n")

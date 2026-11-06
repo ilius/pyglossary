@@ -26,6 +26,7 @@ Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
 - Maintenance: when a fixture is added, renamed, or changed, regenerate all derived expected outputs, update test checksums, and remove obsolete files and references.
 - Formatting: always format new TEI or XML test data as indented XML, using tabs for indentation.
 - Provenance: do not claim a fixture is part of, published by, maintained by, or endorsed by an upstream project (for example FreeDict) unless that is true. Use neutral wording such as “synthetic sample for PyGlossary tests”, and do not use upstream project names as the fixture publisher or Home link.
+- Source credit: when a fixture contains one or more entries copied from an upstream dictionary, name the original dictionary (title, language pair, and edition or version when known) and its license in the TEI header, in `sourceDesc` and `publicationStmt` `<p>` elements. Do not add a `<publisher>` element for the upstream project, and state that the fixture is not published by it.
 
 ## Release notes
 

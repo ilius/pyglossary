@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary paragraph language test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>hello</orth>
+				</form>
+				<sense>
+					<def>a greeting</def>
+					<note><p xml:lang="fa">سلام دنیا</p></note>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>
