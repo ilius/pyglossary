@@ -6,9 +6,6 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 
 ## Confirmed bugs
 
-9. **Empty `<ref/>` produces `bword://None`** (low)
-   - `writeRef` (lines 176-182) does not handle a missing `ref.text`. The `writeRichText` path (line 455) reaches it.
-
 10. **Entries without `<orth>` yielded with no headword** (low)
     - `getEntryByElem` yields `Entry([], ...)`. The CSV output silently omitted it. It should warn and skip.
 

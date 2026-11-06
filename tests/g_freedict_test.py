@@ -16,6 +16,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-de-labels.txt",
 			"1-en-en-comment.tei",
 			"1-en-en-comment.txt",
+			"1-en-en-empty-ref.tei",
+			"1-en-en-empty-ref.txt",
 			"1-en-en-include-cycle.tei",
 			"1-en-en-include-cycle.txt",
 			"14-en-en.tei",
@@ -124,6 +126,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"1-en-en-usg-whitespace",
 			"1-en-en-usg-whitespace",
+		)
+
+	def test_convert_tei_txt_empty_ref(self):
+		# <ref/> without target or text must not produce bword://None
+		self.convert_tei_txt(
+			"1-en-en-empty-ref",
+			"1-en-en-empty-ref",
 		)
 
 	def test_input_file_size_top_level_only(self):

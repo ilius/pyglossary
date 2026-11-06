@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary empty ref test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>baby</orth>
+				</form>
+				<sense>
+					<ref/>
+					<xr><lbl>See also</lbl><ref/></xr>
+					<cit type="trans">
+						<quote>infant</quote>
+					</cit>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>

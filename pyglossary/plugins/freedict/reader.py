@@ -181,6 +181,10 @@ class Reader(ReaderUtils):
 			if "://" in target:
 				attrib["class"] = "external"
 		else:
+			if not ref.text:
+				# no target to link to and no text to show
+				log.warning("ref without target or text, skipped")
+				return
 			target = f"bword://{ref.text}"
 		with hf.element("a", href=target, attrib=attrib):
 			hf.write(ref.text or "")
@@ -674,6 +678,9 @@ class Reader(ReaderUtils):
 				continue
 
 			if child.tag == f"{_TEI}ref":
+				if not child.get("target") and not child.text:
+					log.warning("empty <ref> in <sense> without target, skipped")
+					continue
 				refs.append(child)
 				continue
 
