@@ -142,7 +142,6 @@ class Reader(ReaderUtils):
 		"n": "neutral",
 		"neut": "neutral",
 		# "m;f"
-		"adj": "adjective",
 	}
 	numberMapping: dict[str, str] = {
 		"pl": "plural",

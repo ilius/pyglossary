@@ -4,15 +4,9 @@ Scope: `reader.py`, `utils.py`, `options.py`, `__init__.py` in this directory, t
 
 Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is clean. Each bug below was reproduced with a small TEI file.
 
-## Confirmed bugs
-
-10. **Entries without `<orth>` yielded with no headword** (low)
-    - `getEntryByElem` yields `Entry([], ...)`. The CSV output silently omitted it. It should warn and skip.
-
 ## Design and code-quality notes
 
 - **RTL list style differs from LTR**: the RTL branch uses `ordered=(len(senseList) > 3)` (line 864). The LTR branch always uses `ol`. Confirm whether this is intentional.
-- **Suspicious mapping**: `genderMapping` contains `"adj": "adjective"` (line 144). That is a part of speech, not a gender.
 - **`writeTransCit` mutates the source tree**: it moves `gramGrp` and `note` children and clears `tail` (lines 217-222). `writeExampleCit` also mutates `quote.attrib` (line 754). The comment "safe to repeat" is misleading. The code works today but is fragile.
 - **Blanket type suppression**: `reader.py:12` has `# mypy: ignore-errors` for a 1,238-line file, so the type checker is effectively off here.
 - **Unused or no-op pieces**:
