@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from io import BytesIO
-from os.path import dirname, isfile, join
+from os.path import dirname, isfile, join, realpath
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.compress import compressionOpen, stdCompressions
@@ -1152,6 +1152,8 @@ class Reader(ReaderUtils):
 		self._progress = True
 		self._entryCount = 0
 		self._discoveredTags: dict[str, Element] = {}
+		# real paths of the files from the top-level file down to this one
+		self._includeChain: frozenset[str] = frozenset()
 
 		self._p_pattern = re.compile(
 			"<p( [^<>]*?)?>(.*?)</p>",
@@ -1188,6 +1190,7 @@ class Reader(ReaderUtils):
 
 		self._filename = filename
 		self._dirname = dirname(filename)
+		self._includeChain = self._includeChain | {realpath(filename)}
 		cfile = compressionOpen(filename, mode="rb")
 
 		if cfile.seekable():
@@ -1225,8 +1228,12 @@ class Reader(ReaderUtils):
 		if not isfile(filename):
 			log.error(f"no such file {filename!r} from {elem}")
 			return None
+		if realpath(filename) in self._includeChain:
+			log.error(f"include cycle: {filename!r} from {elem}, skipping")
+			return None
 		reader = Reader(self._glos)
 		self._copyOptionsTo(reader)
+		reader._includeChain = self._includeChain
 		reader.open(filename)
 		return reader
 

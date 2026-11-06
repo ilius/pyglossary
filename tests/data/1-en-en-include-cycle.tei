@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary include cycle test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>loop</orth>
+				</form>
+				<sense>
+					<def>a file that includes itself</def>
+				</sense>
+			</entry>
+			<xi:include href="1-en-en-include-cycle.tei"/>
+		</body>
+	</text>
+</TEI>

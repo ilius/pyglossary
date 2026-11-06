@@ -13,6 +13,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-de-labels.txt",
 			"1-en-en-comment.tei",
 			"1-en-en-comment.txt",
+			"1-en-en-include-cycle.tei",
+			"1-en-en-include-cycle.txt",
 			"14-en-en.tei",
 			"2-en-en-def-inline.tei",
 			"2-en-en-def-inline.txt",
@@ -69,6 +71,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"1-en-en-comment",
 			"1-en-en-comment",
+		)
+
+	def test_convert_tei_txt_include_cycle(self):
+		# a file that XIncludes itself must not recurse forever
+		self.convert_tei_txt(
+			"1-en-en-include-cycle",
+			"1-en-en-include-cycle",
 		)
 
 	def test_convert_tei_txt_def_inline(self):
