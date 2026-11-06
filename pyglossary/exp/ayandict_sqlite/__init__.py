@@ -3,6 +3,11 @@ Experimental AyanDict SQLite reader and writer.
 
 SQLite databases used by the AyanDict dictionary app. Provides ``Reader``
 and ``Writer`` for bilingual tables stored in ``.db`` files.
+
+To use this plugin, create a symbolic link from this directory to user plugins
+directory, which is ~/.pyglossary/plugins/ on Linux or *BSD
+See User Plugins section of README.md or
+https://github.com/ilius/pyglossary#user-plugins
 """
 
 from __future__ import annotations
