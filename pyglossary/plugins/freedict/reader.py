@@ -634,108 +634,111 @@ class Reader(ReaderUtils):
 
 		self.writeTags(hf, elems, writeInline)
 
-	def parseSenseSense(  # noqa: PLR0912
+	def parseSenseSense(
 		self,
 		sense: Element,
 	) -> _ParsedSense:
 		# this <sense> element can be 1st-level (directly under <entry>)
 		# or 2nd-level
-		transCits: list[Element] = []
-		defs: list[Element] = []
-		grams: list[Element] = []
-		notes: list[Element] = []
-		refs: list[Element] = []
-		usages: list[Element] = []
-		labels: list[Element] = []
-		xrList: list[Element] = []
-		exampleCits: list[Element] = []
-		langs: list[Element] = []
+		ps = _ParsedSense(
+			transCits=[],
+			defs=[],
+			grams=[],
+			notes=[],
+			refs=[],
+			usages=[],
+			labels=[],
+			xrList=[],
+			exampleCits=[],
+			langs=[],
+		)
 		for child in sense.iterchildren():
 			if not isinstance(child.tag, str):
 				# comment or processing instruction
 				continue
+			self._addSenseChild(ps, child)
+		return ps
 
-			if child.tag == f"{_TEI}cit":
-				typ = child.attrib.get("type", "trans")
-				if typ == "trans":
-					transCits.append(child)
-				elif typ == "example":
-					exampleCits.append(child)
-				elif typ == "idiom":
-					transCits.append(child)  # FIXME
-				elif typ in {"abbrev", "abbreviation"}:
-					notes.append(child)
-				else:
-					log.warning(f"unknown cit type: {self.tostring(child)}")
-					notes.append(child)
-				continue
-
-			if child.tag == f"{_TEI}def":
-				defs.append(child)
-				continue
-
-			if child.tag == f"{_TEI}note":
-				type_ = child.attrib.get("type")
-				if not type_:
-					notes.append(child)
-				elif type_ in {"pos", "gram"}:
-					grams.append(child)
-				elif type_ in self.noteTypes:
-					notes.append(child)
-				else:
-					log.warning(f"unknown note type {type_}")
-					notes.append(child)
-				continue
-
-			if child.tag == f"{_TEI}ref":
-				if not child.get("target") and not child.text:
-					log.warning("empty <ref> in <sense> without target, skipped")
-					continue
-				refs.append(child)
-				continue
-
-			if child.tag == f"{_TEI}usg":
-				# check the full text, including nested markup such as <lang>
-				if not _elementText(child):
-					log.warning(f"empty usg: {self.tostring(child)}")
-					continue
-				usages.append(child)
-				continue
-
-			if child.tag == f"{_TEI}lbl":
-				if not _elementText(child):
-					continue
-				labels.append(child)
-				continue
-
-			if child.tag == f"{_TEI}lang":
-				langs.append(child)
-				continue
-
-			if child.tag in {f"{_TEI}sense", f"{_TEI}gramGrp"}:
-				continue
-
-			if child.tag == f"{_TEI}xr":
-				xrList.append(child)
-				continue
-
-			if child.tag == f"{_TEI}form":
-				continue
-
+	def _addSenseChild(
+		self,
+		ps: _ParsedSense,
+		child: Element,
+	) -> None:
+		if child.tag == f"{_TEI}cit":
+			self._addSenseCit(ps, child)
+		elif child.tag == f"{_TEI}def":
+			ps.defs.append(child)
+		elif child.tag == f"{_TEI}note":
+			self._addSenseNote(ps, child)
+		elif child.tag == f"{_TEI}ref":
+			self._addSenseRef(ps, child)
+		elif child.tag == f"{_TEI}usg":
+			self._addSenseUsg(ps, child)
+		elif child.tag == f"{_TEI}lbl":
+			if _elementText(child):
+				ps.labels.append(child)
+		elif child.tag == f"{_TEI}lang":
+			ps.langs.append(child)
+		elif child.tag == f"{_TEI}xr":
+			ps.xrList.append(child)
+		elif child.tag not in {f"{_TEI}sense", f"{_TEI}gramGrp", f"{_TEI}form"}:
 			log.warning(f"unknown tag {child.tag} in <sense>: {self.tostring(child)}")
 
-		return _ParsedSense(
-			transCits=transCits,
-			defs=defs,
-			grams=grams,
-			notes=notes,
-			refs=refs,
-			usages=usages,
-			labels=labels,
-			xrList=xrList,
-			exampleCits=exampleCits,
-			langs=langs,
-		)
+	@staticmethod
+	def _addSenseRef(
+		ps: _ParsedSense,
+		ref: Element,
+	) -> None:
+		# a <ref> without target or text has nothing to link to
+		if not ref.get("target") and not ref.text:
+			log.warning("empty <ref> in <sense> without target, skipped")
+			return
+		ps.refs.append(ref)
+
+	def _addSenseUsg(
+		self,
+		ps: _ParsedSense,
+		usg: Element,
+	) -> None:
+		# check the full text, including nested markup such as <lang>
+		if not _elementText(usg):
+			log.warning(f"empty usg: {self.tostring(usg)}")
+			return
+		ps.usages.append(usg)
+
+	def _addSenseCit(
+		self,
+		ps: _ParsedSense,
+		cit: Element,
+	) -> None:
+		typ = cit.attrib.get("type", "trans")
+		if typ == "trans":
+			ps.transCits.append(cit)
+		elif typ == "example":
+			ps.exampleCits.append(cit)
+		elif typ == "idiom":
+			ps.transCits.append(cit)  # FIXME
+		elif typ in {"abbrev", "abbreviation"}:
+			ps.notes.append(cit)
+		else:
+			log.warning(f"unknown cit type: {self.tostring(cit)}")
+			ps.notes.append(cit)
+
+	def _addSenseNote(
+		self,
+		ps: _ParsedSense,
+		note: Element,
+	) -> None:
+		type_ = note.attrib.get("type")
+		if not type_:
+			ps.notes.append(note)
+		elif type_ in {"pos", "gram"}:
+			ps.grams.append(note)
+		elif type_ in self.noteTypes:
+			ps.notes.append(note)
+		else:
+			log.warning(f"unknown note type {type_}")
+			ps.notes.append(note)
 
 	def writeSenseSense(
 		self,
