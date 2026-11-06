@@ -17,6 +17,7 @@ from __future__ import annotations
 import atexit
 import os
 import os.path
+import subprocess
 import sys
 
 from .diff_glossary import diffGlossary
@@ -33,6 +34,16 @@ def gitDiffMain() -> None:
 	# arguments:
 	# path old_file old_hex old_mode new_file new_hex new_mode
 	path = sys.argv[1]
+
+	# Git passes only the path for unmerged entries. Fall back to Git's
+	# normal text diff instead of parsing a conflicted file as a glossary.
+	if len(sys.argv) < 7:
+		subprocess.run(
+			["git", "diff", "--no-ext-diff", "--no-textconv", "--", path],
+			check=False,
+		)
+		return
+
 	oldFile = sys.argv[2]
 	oldHex = sys.argv[3][:7]
 	newFile = sys.argv[5]
