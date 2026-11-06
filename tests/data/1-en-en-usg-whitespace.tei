@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary usage label whitespace test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>baby</orth>
+				</form>
+				<sense>
+					<usg type="label">
+						<lang>US</lang> informal</usg>
+					<cit type="trans">
+						<quote>infant</quote>
+					</cit>
+				</sense>
+				<sense>
+					<usg type="reg">
+						<hi>fam</hi>
+						<lbl>
+							plural  form</lbl>
+					</usg>
+					<cit type="trans">
+						<quote>kid</quote>
+					</cit>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>

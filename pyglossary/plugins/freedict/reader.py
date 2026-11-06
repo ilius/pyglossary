@@ -40,6 +40,7 @@ _TEI = "{http://www.tei-c.org/ns/1.0}"
 _ENTRY = f"{_TEI}entry"
 _INCLUDE = "{http://www.w3.org/2001/XInclude}include"
 _NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
+_whitespaceRun = re.compile(r"\s+")
 
 
 def _elementText(elem: Element) -> str:
@@ -507,10 +508,62 @@ class Reader(ReaderUtils):
 		color: str,
 	) -> None:
 		style = self.tagStyle.format(color or "transparent")
+		content = self.normalizeTagContent(elem)
 		with hf.element("span", attrib={"class": "tag", "style": style}):
 			hf.write("[")
-			self.writeRichText(hf, elem)
+			self.writeRichText(hf, content)
 			hf.write("]")
+
+	@staticmethod
+	def normalizeTagContent(elem: Element) -> Element:
+		"""
+		Return a copy of a <usg> or <lbl> element for writing inside a tag.
+
+		Line breaks and indentation in the source are not meaningful, so runs
+		of whitespace are collapsed to one space and the content is trimmed at
+		both ends. The copy is used so the source tree is not modified.
+		"""
+		from copy import deepcopy
+
+		copied = deepcopy(elem)
+		copied.tail = None
+
+		# text slots (element .text and child .tail) in document order, so a
+		# space at the end of one slot is seen when the next slot starts
+		slots: list[tuple[Element, str]] = []
+
+		def collect(node: Element) -> None:
+			if not isinstance(node.tag, str):
+				return  # comments are not written
+			slots.append((node, "text"))
+			for child in node:
+				collect(child)
+				slots.append((child, "tail"))
+
+		collect(copied)
+
+		atSpace = True  # True at the start, so leading whitespace is dropped
+		for node, attr in slots:
+			text = getattr(node, attr)
+			if not text:
+				continue
+			text = _whitespaceRun.sub(" ", text)
+			if atSpace:
+				text = text.lstrip(" ")
+			if text:
+				atSpace = text.endswith(" ")
+			setattr(node, attr, text or None)
+
+		# drop trailing whitespace, continuing backwards over whitespace-only slots
+		for node, attr in reversed(slots):
+			text = getattr(node, attr)
+			if not text:
+				continue
+			text = text.rstrip(" ")
+			setattr(node, attr, text or None)
+			if text:
+				break
+		return copied
 
 	def writeUsageTag(
 		self,

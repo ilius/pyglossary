@@ -27,6 +27,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-fa-p-lang.txt",
 			"1-en-en-usg-nested.tei",
 			"1-en-en-usg-nested.txt",
+			"1-en-en-usg-whitespace.tei",
+			"1-en-en-usg-whitespace.txt",
 			"14-en-en-include.tei",
 			"14-en-en-v2.txt",
 			"freedict-sample-2024-12-19-v4.txt",
@@ -115,6 +117,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"1-en-en-usg-nested",
 			"1-en-en-usg-nested",
+		)
+
+	def test_convert_tei_txt_usg_whitespace(self):
+		# line breaks and indentation inside <usg>/<lbl> must not leak into the tag
+		self.convert_tei_txt(
+			"1-en-en-usg-whitespace",
+			"1-en-en-usg-whitespace",
 		)
 
 	def test_input_file_size_top_level_only(self):
