@@ -34,6 +34,7 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"14-en-en-include.tei",
 			"14-en-en-v2.txt",
 			"freedict-sample-2024-12-19-v4.txt",
+			"1-en-en-trans-cit-rerender.tei",
 		}
 		self.dataFileCRC32 |= {
 			"100-en-de.tei": "542c210e",
@@ -134,6 +135,33 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-en-empty-ref",
 			"1-en-en-empty-ref",
 		)
+
+	def test_trans_cit_render_same_entry_twice(self):
+		# Rendering the same entry element twice must give the same output,
+		# and the source <cit> must be left unchanged: the grammar and note
+		# children of a translation <cit> are copied, not moved out of the tree.
+		from lxml import etree as ET
+
+		tei = "{http://www.tei-c.org/ns/1.0}"
+		inputFilename = self.downloadFile("1-en-en-trans-cit-rerender.tei")
+		reader = Reader(Glossary())
+		reader.open(inputFilename)
+		try:
+			with open(inputFilename, mode="rb") as file:
+				context = ET.iterparse(file, events=("end",), tag=f"{tei}entry")
+				_, entry = next(iter(context))
+				cit = entry.find(f".//{tei}cit")
+				citBefore = ET.tostring(cit)
+
+				first = reader.getEntryByElem(entry).defi
+				second = reader.getEntryByElem(entry).defi
+
+				self.assertIn("interj", first)
+				self.assertIn("a note", first)
+				self.assertEqual(first, second)
+				self.assertEqual(ET.tostring(cit), citBefore)
+		finally:
+			reader.close()
 
 	def test_input_file_size_top_level_only(self):
 		# 14-en-en.tei XIncludes 14-en-en-include.tei; the included file

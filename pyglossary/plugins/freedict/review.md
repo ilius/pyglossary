@@ -2,33 +2,34 @@
 
 Scope: `reader.py`, `utils.py`, `options.py`, `__init__.py` in this directory, the FreeDictMarkdown subclass (`pyglossary/plugins/freedict_md/reader.py`), `doc/p/freedict.md`, and `tests/g_freedict_test.py`.
 
-Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is clean. Each bug below was reproduced with a small TEI file.
+Status: `tests/g_freedict_test.py` passes (14/14), `ruff check` is clean. Items 1 and 4 are resolved; the rest are open or partly resolved as marked. Item 1 was reproduced with a small TEI file before it was fixed.
 
 ## Design and code-quality notes
 
-1. **`writeTransCit` mutates the source tree**: it moves `gramGrp` and `note` children and clears `tail` (lines 217-222). `writeExampleCit` also mutates `quote.attrib` (line 754). The comment "safe to repeat" is misleading. The code works today but is fragile.
-2. **Blanket type suppression**: `reader.py:12` has `# mypy: ignore-errors` for a 1,238-line file, so the type checker is effectively off here.
-3. **Unused or no-op pieces**:
-   - `resources` option (`options.py:25`). `countResourceFiles()` returns 0 and nothing reads the option.
-   - `writeSenseSense` return value (line 767) is unused.
-   - `_progress` is typed `bool` but holds an int (line 1175).
+1. `writeExampleCit` mutates `quote.attrib` (`reader.py:831`). Repeating it gives the same result today, so it is harmless for now, but the comment "safe to repeat" is misleading and the side effect is untested.
+2. **blanket type suppression**: `reader.py:12` has `# mypy: ignore-errors` for a 1,322-line file, so the type checker is effectively off here.
+3. **unused or no-op pieces**:
+   - `resources` option (`options.py:25`). `countResourceFiles()` (`reader.py:1220`) returns 0 and nothing reads the option.
+   - `writeSenseSense` return value (`reader.py:844`) is unused; both callers (`reader.py:911`, `reader.py:922`) ignore it.
+   - `_progress` is assigned `True` (`reader.py:1204`) and then an int (`reader.py:1260`), with no annotation.
    - `open()` and `loadInclude` do not close files on exceptions.
-4. **Discovery**: `_discoveredTags` is keyed by tag, so only the last instance is kept. Comment nodes (whose tag is a function) get stored too.
-5. **Typos in log messages**: "metedata" and "progress bar will not word" (around line 1018), "unrecognize" (lines 900, 913).
-6. **Stale docstring**: `reader.py:6-7` and `__init__.py:5` claim `.dct` support. `extensions = (".tei",)`, and nothing handles `.dct`.
-7. **FreeDictMarkdown coupling**: `freedict_md/reader.py` subclasses this reader and overrides `getEntryByElem`. Fixes to the shared `writeDef`, `writeRichText`, and `writeGramGroups` affect both plugins, and the TEI traversal is duplicated.
+5. **typos in log messages**: "metedata" and "progress bar will not word" (`reader.py:1097`), "unrecognize" (`reader.py:983`, `reader.py:996`).
+6. **stale docstring**: `reader.py:6-7` and `__init__.py:5` claim `.dct` support. `extensions = (".tei",)`, and nothing handles `.dct`.
+7. **FreeDictMarkdown coupling**: `freedict_md/reader.py` subclasses this reader and overrides `getEntryByElem`. Fixes to the shared `writeDef`, `writeRichText`, and `writeGramGroups` affect both plugins, and the TEI traversal is duplicated. `freedict_md` has no tests.
 
 ## Tests and docs
 
-8. **`auto_comma` is not tested**: `test_convert_tei_txt_1` runs with `auto_comma` False and True against the same expected output. The two runs produce identical output for `100-en-de`, so the option is not exercised. No fixture covers non-Latin separators.
-9. **Uncovered options and paths**: `discover`, `word_title`, colour options, `example_padding`, `auto_rtl`, comments, and include cycles have no tests.
-10. **Naming rules in CLAUDE.md**:
+8. **Open (`auto_comma` is not tested)**: `test_convert_tei_txt_1` runs with `auto_comma` False and True against the same expected output. The two runs produce identical output for `100-en-de`, so the option is not exercised. No fixture covers non-Latin separators.
+9. **Partly resolved (uncovered options and paths)**: comments (`test_convert_tei_txt_comments`) and include cycles (`test_convert_tei_txt_include_cycle`) are now covered. `discover` is gone. Still without tests: `word_title`, colour options, `example_padding`, `auto_rtl`.
+10. **Open (naming rules in CLAUDE.md)**:
     - `100-en-de-v6.txt` and `freedict-sample-2024-12-19-v4.txt` carry version suffixes for regenerated outputs.
     - `freedict-sample-2024-12-19.tei` does not follow `<count>-<src>-<tgt>`.
-11. **Remote inputs**: `100-en-de.tei` and `freedict-sample-2024-12-19.tei` are not in `tests/data`. They are fetched from GitHub by CRC32 and cached in `~/.cache/pyglossary/test`, so a first run needs network access. The `100-en-de.tei` sample is a third-party file ("Sample: English-Deutsch FreeDict+WikDict dictionary"), so the provenance rule applies.
-12. **Stale generated doc**: `doc/p/freedict.md` has no `resources` row, while csv and tabfile docs do. Regenerate it with `./scripts/gen` after the options are settled.
+11. **Open (remote inputs)**: `100-en-de.tei` and `freedict-sample-2024-12-19.tei` are not in `tests/data`. They are fetched from GitHub by CRC32 and cached in `~/.cache/pyglossary/test`, so a first run needs network access. The `100-en-de.tei` sample is a third-party file ("Sample: English-Deutsch FreeDict+WikDict dictionary"), so the provenance rule applies.
+12. **Resolved (stale generated doc)**: `doc/p/freedict.md` now has a `resources` row, regenerated by `./scripts/gen`. Regenerate again if item 3 removes the option.
 
 ## Suggested order
 
 1. Add a non-Latin `auto_comma` fixture and tests for the uncovered options (8, 9). Rename fixtures per CLAUDE.md and regenerate outputs (10, 11).
 2. Remove the blanket mypy suppression (2) and the no-op `resources` option (3), then regenerate `doc/p/freedict.md` (12).
+3. Finish item 1 by copying `quote.attrib` in `writeExampleCit` instead of mutating it, and close files on exceptions in `open()` and `loadInclude` (3).
+4. Add tests for `freedict_md` and reduce the duplicated traversal (7).

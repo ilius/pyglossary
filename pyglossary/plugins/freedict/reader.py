@@ -182,6 +182,8 @@ class Reader(ReaderUtils):
 		elem: Element,
 		prefix: list[Element] | None = None,
 	) -> None:
+		from copy import deepcopy
+
 		from lxml import etree as ET
 
 		children = elem.xpath("child::node()")
@@ -191,21 +193,23 @@ class Reader(ReaderUtils):
 
 		# The writers below (writeSense, writeGramGroups, writeUsageTag, ...)
 		# only read from a <sense> tree, but the grammar, usage and note
-		# children of a translation <cit> sit next to its quotes. Moving
+		# children of a translation <cit> sit next to its quotes. Copying
 		# them into a synthetic <sense> lets writeSense render them with
 		# the same code path as real senses, without duplicating that logic.
-		# The source <cit> is therefore consumed by this call: it must not
-		# be rendered again afterwards.
+		# The source <cit> is left unchanged, so the same entry can be
+		# rendered again.
 		sense = ET.Element(f"{_TEI}sense")
 		gramGrp: Element | None = None
 
-		def moveToSense(parent: Element, child: Element) -> None:
-			# lxml moves an element together with its tail text. The tail is
-			# also collected as loose text by collectCit (it arrives there
-			# through the xpath "child::node()" snapshot), so clear it here to
-			# avoid rendering that text twice.
-			child.tail = None
-			parent.append(child)
+		def copyToSense(parent: Element, child: Element) -> None:
+			# Copy instead of move: moving would detach the child from the
+			# source <cit>, so a second render of the same entry would lose
+			# it. The copy has no tail: collectCit already collects the tail
+			# text as loose text (through the xpath "child::node()" snapshot),
+			# so keeping it here would render that text twice.
+			copied = deepcopy(child)
+			copied.tail = None
+			parent.append(copied)
 
 		def appendGramChild(child: Element) -> None:
 			nonlocal gramGrp
@@ -215,7 +219,7 @@ class Reader(ReaderUtils):
 			# and group these elements under it.
 			if gramGrp is None:
 				gramGrp = ET.SubElement(sense, f"{_TEI}gramGrp")
-			moveToSense(gramGrp, child)
+			copyToSense(gramGrp, child)
 
 		def newTextBlock(text: str, cit: Element) -> Element:
 			# Loose text has no element of its own, but the block writers
@@ -268,7 +272,7 @@ class Reader(ReaderUtils):
 					continue
 
 				if child.tag in {f"{_TEI}gramGrp", f"{_TEI}note"}:
-					moveToSense(sense, child)
+					copyToSense(sense, child)
 					continue
 
 				if child.tag in {f"{_TEI}usg", f"{_TEI}lbl"}:

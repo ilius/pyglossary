@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>PyGlossary translation cit re-render test</title>
+			</titleStmt>
+			<publicationStmt>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Synthetic sample for PyGlossary tests</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+			<entry>
+				<form>
+					<orth>hello</orth>
+				</form>
+				<gramGrp>
+					<pos>noun</pos>
+				</gramGrp>
+				<sense>
+					<cit type="trans" xml:lang="de">
+						<quote>hallo</quote>
+						<gramGrp>
+							<pos>interj</pos>
+						</gramGrp>
+						<usg type="hint">informal</usg>
+						<note>a note</note>
+					</cit>
+				</sense>
+			</entry>
+		</body>
+	</text>
+</TEI>
