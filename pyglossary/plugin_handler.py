@@ -125,7 +125,7 @@ class PluginLoader:
 		moduleNames = [
 			moduleName
 			for _, moduleName, _ in pkgutil.iter_modules([directory])
-			if moduleName not in cls.loadedModules and moduleName != "formats_common"
+			if moduleName not in cls.loadedModules
 		]
 		moduleNames.sort()
 

@@ -148,7 +148,7 @@ class FileSignals:
 		for raw in files:
 			f = raw.replace("\\", "/")
 			m = PLUGIN_PATH_RE.search(f)
-			if m and m.group(1) != "formats_common":
+			if m:
 				sig.plugin_files = True
 				sig.plugin_modules.add(m.group(1))
 				continue
@@ -311,9 +311,7 @@ def plugins_at_ref(ref: str) -> set[str]:
 		output = run_git("ls-tree", "-d", "--name-only", f"{ref}:pyglossary/plugins")
 	except subprocess.CalledProcessError:
 		return set()
-	return {
-		line.strip() for line in output.splitlines() if line.strip() != "formats_common"
-	}
+	return {line.strip() for line in output.splitlines()}
 
 
 def collect_commits(prev_tag: str, end_ref: str) -> list[Commit]:
@@ -353,7 +351,7 @@ def plugin_modules_in_files(files: list[str]) -> set[str]:
 	modules: set[str] = set()
 	for path in files:
 		match = PLUGIN_PATH_RE.search(path.replace("\\", "/"))
-		if match and match.group(1) != "formats_common":
+		if match:
 			modules.add(match.group(1))
 	return modules
 

@@ -48,7 +48,6 @@ These modules are the supported public surface for third-party plugins.
 | `pyglossary.entry_list` | `EntryList` | In-memory entry storage for sorted output. |
 | `pyglossary.sq_entry_list` | `SqEntryList` | SQLite-backed entry storage for sorted output. |
 | `pyglossary.sort_keys` | `NamedSortKey`, `LocaleNamedSortKey`, `defaultSortKeyName`, `lookupSortKey`, `namedSortKeyList` | Sort-key registry used by `Glossary`. |
-| `pyglossary.plugins.formats_common` | Public names in its `__all__` | Shared imports and defaults for format plugins. |
 | `pyglossary.stubs.glossary_types` | `EntryType`, `ReaderGlossaryType`, `WriterGlossaryType`, `RawEntryType`, `EntryListType` | Type-checking only. |
 | `pyglossary.stubs.lxml_types` | `Element`, `T_htmlfile` | Type-checking only; plugins that use `lxml`. |
 | `pyglossary.stubs.icu_types` | `T_Collator`, `T_Locale` | Type-checking only; plugins that use PyICU. |
