@@ -23,6 +23,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"2-en-en-def-inline.txt",
 			"1-fr-en-example-note.tei",
 			"1-fr-en-example-note.txt",
+			"1-en-fa-p-lang.tei",
+			"1-en-fa-p-lang.txt",
 			"14-en-en-include.tei",
 			"14-en-en-v2.txt",
 			"freedict-sample-2024-12-19-v4.txt",
@@ -97,6 +99,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"1-fr-en-example-note",
 			"1-fr-en-example-note",
+		)
+
+	def test_convert_tei_txt_p_lang(self):
+		# xml:lang on <p> must become lang, not a namespaced ns0:lang attribute
+		self.convert_tei_txt(
+			"1-en-fa-p-lang",
+			"1-en-fa-p-lang",
 		)
 
 	def test_input_file_size_top_level_only(self):

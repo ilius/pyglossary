@@ -477,7 +477,11 @@ class Reader(ReaderUtils):
 				hf.write(ET.Element("br"))
 				continue
 			if child.tag == f"{_TEI}p":
-				with hf.element("p", **child.attrib):
+				# map xml:lang to lang (and dir), like writeWithDirection does;
+				# passing the raw attribute would emit an ns0:lang attribute
+				attrib: dict[str, str] = dict(child.attrib)
+				self.setAttribLangDir(attrib)
+				with hf.element("p", attrib=attrib):
 					self.writeRichText(hf, child)
 					continue
 			if child.tag == f"{_TEI}div":

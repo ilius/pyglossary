@@ -6,10 +6,6 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 
 ## Confirmed bugs
 
-7. **Invalid `xml:lang` on `<p>`** (low-medium)
-   - `writeRichText` passes `**child.attrib` (line 462). The output is `<p xmlns:ns0="http://www.w3.org/XML/1998/namespace" ns0:lang="de">` rather than `lang="de"`.
-   - `setAttribLangDir` already performs this mapping for other elements.
-
 8. **Nested markup inside `<usg>` rejected** (low)
    - Line 602 checks `child.text`, not `_elementText`. `<usg><hi>x</hi> y</usg>` logs "empty usg" and the tag is dropped.
    - Labels (line 609) use `_elementText`, so the two are inconsistent.
