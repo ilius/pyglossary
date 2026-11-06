@@ -23,7 +23,6 @@
 | Kobo E-Reader Dictfile (.df) | Dictfile | [kobo_dictfile.md](./kobo_dictfile.md) |
 | Mobipocket (.mobi) E-Book | Mobi | [mobi.md](./mobi.md) |
 | EDICT2 (CEDICT) (.u8) | EDICT2 | [edict2.md](./edict2.md) |
-| EDLIN | Edlin | [edlin.md](./edlin.md) |
 | EPWING | EPWING | [epwing.md](./epwing.md) |
 | FreeDict (.tei) | FreeDict | [freedict.md](./freedict.md) |
 | FreeDict Markdown (.tei) (text output) | FreeDictMarkdown | [freedict_md.md](./freedict_md.md) |

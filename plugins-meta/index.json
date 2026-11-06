@@ -981,38 +981,6 @@
 		}
 	},
 	{
-		"module": "edlin",
-		"lname": "edlin",
-		"name": "Edlin",
-		"description": "EDLIN",
-		"extensions": [
-			".edlin"
-		],
-		"singleFile": false,
-		"optionsProp": {
-			"encoding": {
-				"class": "EncodingOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "Encoding/charset"
-			},
-			"prev_link": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Enable link to previous entry"
-			}
-		},
-		"canRead": true,
-		"canWrite": true,
-		"readOptions": {
-			"encoding": "utf-8"
-		},
-		"writeOptions": {
-			"encoding": "utf-8",
-			"prev_link": true
-		}
-	},
-	{
 		"module": "epwing",
 		"lname": "epwing",
 		"name": "EPWING",

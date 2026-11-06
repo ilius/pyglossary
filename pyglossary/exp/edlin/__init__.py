@@ -1,9 +1,13 @@
 """
-PyGlossary EDLIN format plugin.
+Experimental EDLIN format plugin.
 
-EDLIN line-oriented dictionary interchange (``.edlin/`` directory). Registers
-``Reader`` and ``Writer`` for the EDLIN text package used in some community
-dictionaries.
+This format was designed to use for implementing a fast glossary editor
+that can handle large glossaries. But the tool was never implemented.
+
+To use this plugin, create a symbolic link from this directory to user plugins
+directory, which is ~/.pyglossary/plugins/ on Linux or *BSD
+See User Plugins section of README.md or
+https://github.com/ilius/pyglossary#user-plugins
 """
 
 from __future__ import annotations
