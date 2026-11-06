@@ -1,3 +1,4 @@
+import os
 import sys
 import tempfile
 import unittest
@@ -9,6 +10,7 @@ sys.path.insert(0, rootDir)
 from glossary_v2_test import TestGlossaryBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
+from pyglossary.plugins.dsl.reader import Reader
 
 
 class TestGlossaryDSL(TestGlossaryBase):
@@ -119,6 +121,74 @@ class TestGlossaryDSL(TestGlossaryBase):
 		self.assertEqual(glos.sourceLangName, "English")
 		self.assertEqual(glos.targetLangName, "English")
 		self.assertEqual(terms, ["test 2", "test"])
+
+	def test_include_outside_dict_dir_is_not_read(self):
+		outsideDir = join(self.tempDir, "outside")
+		dictDir = join(self.tempDir, "dict")
+		os.makedirs(join(dictDir, "sub"))
+		os.makedirs(outsideDir)
+		outsideDsl = join(outsideDir, "secret.dsl")
+		with open(outsideDsl, "w", encoding="utf-8") as file:
+			file.write('#NAME "secret"\n\nsecret term\n\tsecret def\n')
+		with open(join(dictDir, "sub", "ok.dsl"), "w", encoding="utf-8") as file:
+			file.write('#NAME "ok"\n\nok term\n\tok def\n')
+		with open(join(dictDir, "sub", "mid.dsl"), "w", encoding="utf-8") as file:
+			file.write('#INCLUDE "../../outside/secret.dsl"\n\nmid term\n\tmid def\n')
+		main = join(dictDir, "main.dsl")
+		with open(main, "w", encoding="utf-8") as file:
+			file.write(
+				'#NAME "main"\n#INDEX_LANGUAGE "English"\n'
+				'#CONTENTS_LANGUAGE "English"\n'
+				'#INCLUDE "../outside/secret.dsl"\n'
+				f'#INCLUDE "{outsideDsl}"\n'
+				'#INCLUDE "sub/ok.dsl"\n'
+				'#INCLUDE "sub/mid.dsl"\n\n'
+				"main term\n\tmain def\n"
+			)
+
+		glos = self.glos = Glossary()
+		glos.directRead(main)
+		terms = sorted(entry.s_term for entry in glos if not entry.isData())
+		self.assertNotIn("secret term", terms)
+		self.assertIn("ok term", terms)
+		self.assertIn("main term", terms)
+		self.assertIn("mid term", terms)
+
+	def test_resource_outside_dict_dir_is_not_read(self):
+		secretPath = join(self.tempDir, "secret.txt")
+		with open(secretPath, "w", encoding="utf-8") as file:
+			file.write("TOP SECRET")
+		dictDir = join(self.tempDir, "dict")
+		os.makedirs(join(dictDir, "sub"))
+		with open(join(dictDir, "sub", "ok.png"), "wb") as file:
+			file.write(b"\x89PNG-ok")
+		try:
+			os.symlink(secretPath, join(dictDir, "link.png"))
+		except (OSError, NotImplementedError):
+			pass  # symlinks not supported here, skip that case
+		dslPath = join(dictDir, "poc.dsl")
+		dsl = (
+			'#NAME "poc"\n#INDEX_LANGUAGE "English"\n'
+			'#CONTENTS_LANGUAGE "English"\n\n'
+			"hello\n"
+			"\t[s]../secret.txt[/s]\n"
+			f"\t[s]{secretPath}[/s]\n"
+			"\t[s]link.png[/s]\n"
+			"\t[s]sub/ok.png[/s]\n"
+		)
+		with open(dslPath, "w", encoding="utf-8") as file:
+			file.write(dsl)
+
+		reader = Reader(Glossary())
+		reader.open(dslPath)
+		try:
+			dataEntries = {
+				entry.getFileName(): entry.data for entry in reader if entry.isData()
+			}
+		finally:
+			reader.close()
+
+		self.assertEqual(dataEntries, {"sub/ok.png": b"\x89PNG-ok"})
 
 	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(

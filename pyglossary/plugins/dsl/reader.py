@@ -29,7 +29,16 @@ from __future__ import annotations
 import html.entities
 import re
 import zipfile
-from os.path import abspath, dirname, isfile, join, splitext
+from os.path import (
+	abspath,
+	commonpath,
+	dirname,
+	isabs,
+	isfile,
+	join,
+	realpath,
+	splitext,
+)
 from typing import TYPE_CHECKING, cast
 
 from pyglossary.compress import (
@@ -39,7 +48,6 @@ from pyglossary.compress import (
 from pyglossary.core import log
 from pyglossary.text_reader import TextFilePosWrapper
 from pyglossary.utils.io_utils import nullTextIO
-from pyglossary.utils.os_utils import indir
 
 from .title import TitleTransformer
 from .transform import Transformer
@@ -90,6 +98,30 @@ def _unwrap_quotes(s: str) -> str:
 	return _re_wrapped_in_quotes.sub("\\2", s)
 
 
+def _resolveWithin(root: str, baseDir: str, relPath: str) -> str | None:
+	"""
+	Return the real path of `relPath`, resolved against `baseDir`, if it is inside `root`.
+
+	Returns None if `relPath` is absolute, contains a NUL byte, or resolves
+	(following symlinks) to a location outside `root`, or to `root` itself.
+	`relPath` comes from the dictionary text, so it must be treated as untrusted.
+	"""
+	if not relPath or "\0" in relPath:
+		return None
+	if isabs(relPath) or relPath.startswith(("/", "\\")):
+		return None
+	rootReal = realpath(root or ".")
+	fpath = realpath(join(baseDir or ".", relPath))
+	if fpath == rootReal:
+		return None
+	try:
+		if commonpath([rootReal, fpath]) != rootReal:
+			return None
+	except ValueError:  # for example, different drives on Windows
+		return None
+	return fpath
+
+
 class Reader:
 	"""Read Dsl glossary files."""
 
@@ -111,6 +143,8 @@ class Reader:
 		self._resFileSet: set[str] = set()
 		self._resCount = 0
 		self._includes: list[Reader] = []
+		# top-level dictionary directory, #INCLUDE paths must stay inside it
+		self._includeRoot = ""
 		self._abbrevDict: dict[str, str] = {}
 		# the main DSL file can #INCLUDE other DSL files and _abrv.dsl
 		# -- the headers in this files MUST NOT overwrite the glossary info
@@ -269,12 +303,17 @@ class Reader:
 			self._glos.targetLangName = _unwrap_quotes(line[19:].strip())
 
 	def processInclude(self, filename: str) -> None:
+		root = self._includeRoot or self._dirPath
+		fpath = _resolveWithin(root, self._dirPath, filename)
+		if fpath is None:
+			log.warning(f"refusing #INCLUDE outside dictionary dir: {filename!r}")
+			return
 		reader = Reader(self._glos)
 		reader._isSub = True
 		reader._audio = self._audio
 		reader._example_color = self._example_color
-		with indir(self._dirPath):
-			reader.open(filename)
+		reader._includeRoot = root
+		reader.open(fpath)
 		self._includes.append(reader)
 
 	def _iterLines(self) -> Iterator[str]:
@@ -331,13 +370,18 @@ class Reader:
 					yield self._glos.newDataEntry(fname, data)
 
 		resDir = dirname(self._filename)
-		looseCount = sum(1 for fname in resFileSet if isfile(join(resDir, fname)))
-		self._resCount = zipCount + looseCount
+		looseFiles: dict[str, str] = {}
 		for fname in sorted(resFileSet):
-			fpath = join(resDir, fname)
+			fpath = _resolveWithin(resDir, resDir, fname)
+			if fpath is None:
+				log.warning(f"refusing resource file outside dictionary dir: {fname!r}")
+				continue
 			if not isfile(fpath):
 				log.warning(f"resource file not found: {fname}")
 				continue
+			looseFiles[fname] = fpath
+		self._resCount = zipCount + len(looseFiles)
+		for fname, fpath in looseFiles.items():
 			with open(fpath, mode="rb") as file:
 				data = file.read()
 			yield self._glos.newDataEntry(fname, data)
