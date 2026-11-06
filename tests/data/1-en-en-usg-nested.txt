@@ -1,0 +1,4 @@
+##name	PyGlossary nested usage label test
+##input_file_size	787
+##description	Synthetic sample for PyGlossary tests
+hello	<div><ol><li><div><span class="tag" style="color:white;background:green;padding-left:3px;padding-right:3px;border-radius:0.5ex;">[US informal]</span> hi</div></li><li><div><span class="tag" style="color:white;background:green;padding-left:3px;padding-right:3px;border-radius:0.5ex;">[fam.]</span> bye</div></li></ol></div>

@@ -25,6 +25,8 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-fr-en-example-note.txt",
 			"1-en-fa-p-lang.tei",
 			"1-en-fa-p-lang.txt",
+			"1-en-en-usg-nested.tei",
+			"1-en-en-usg-nested.txt",
 			"14-en-en-include.tei",
 			"14-en-en-v2.txt",
 			"freedict-sample-2024-12-19-v4.txt",
@@ -106,6 +108,13 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		self.convert_tei_txt(
 			"1-en-fa-p-lang",
 			"1-en-fa-p-lang",
+		)
+
+	def test_convert_tei_txt_usg_nested(self):
+		# <usg> whose text is inside child elements (<lang>, <hi>) must be kept
+		self.convert_tei_txt(
+			"1-en-en-usg-nested",
+			"1-en-en-usg-nested",
 		)
 
 	def test_input_file_size_top_level_only(self):

@@ -6,10 +6,6 @@ Status at review time: `tests/g_freedict_test.py` passes (4/4), `ruff check` is 
 
 ## Confirmed bugs
 
-8. **Nested markup inside `<usg>` rejected** (low)
-   - Line 602 checks `child.text`, not `_elementText`. `<usg><hi>x</hi> y</usg>` logs "empty usg" and the tag is dropped.
-   - Labels (line 609) use `_elementText`, so the two are inconsistent.
-
 9. **Empty `<ref/>` produces `bword://None`** (low)
    - `writeRef` (lines 176-182) does not handle a missing `ref.text`. The `writeRichText` path (line 455) reaches it.
 

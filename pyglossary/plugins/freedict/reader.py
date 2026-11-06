@@ -625,7 +625,8 @@ class Reader(ReaderUtils):
 				continue
 
 			if child.tag == f"{_TEI}usg":
-				if not child.text:
+				# check the full text, including nested markup such as <lang>
+				if not _elementText(child):
 					log.warning(f"empty usg: {self.tostring(child)}")
 					continue
 				usages.append(child)
