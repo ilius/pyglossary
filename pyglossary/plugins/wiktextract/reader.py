@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 	from typing import Any
 
 	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
-	from pyglossary.stubs.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.lxml_types import T_htmlfile
 
 
 from pyglossary.compress import (
@@ -132,39 +132,13 @@ class Reader:
 	def warning(self, msg: str) -> None:
 		self._warnings[msg] += 1
 
-	def makeEntry(self, data: dict[str, Any]) -> EntryType:  # noqa: PLR0912
-		from lxml import etree as ET
-
-		glos = self._glos
-		f = BytesIO()
-
-		def br() -> Element:
-			return ET.Element("br")
-
-		def write_keywords_title(keywords: list[str]) -> None:
-			for keyword in keywords:
-				titleTag = glos.titleTag(keyword)
-				if titleTag:
-					with hf.element(titleTag):
-						hf.write(keyword)
-				else:
-					hf.write(keyword)
-				hf.write(br())
-
+	def _makeKeywords(self, data: dict[str, Any]) -> list[str]:
 		keywords: list[str] = []
 		inflectedKeywords: list[str] = []
 
 		term = data.get("word")
 		if term:
 			keywords.append(term)
-
-		# Check if the entry is need preprocessing
-		lang = data.get("lang")
-		langCode = data.get("lang_code")
-		if lang == "Chinese" or langCode == "zh":
-			from .zh_utils import processChinese
-
-			data = processChinese(data)
 
 		for formDict in data.get("forms", []):
 			form: str = formDict.get("form", "")
@@ -180,26 +154,102 @@ class Reader:
 			else:
 				keywords.append(form)
 
-		keywords += inflectedKeywords
+		return keywords + inflectedKeywords
+
+	@staticmethod
+	def _preprocessEntry(data: dict[str, Any]) -> dict[str, Any]:
+		# Check if the entry is need preprocessing
+		lang = data.get("lang")
+		langCode = data.get("lang_code")
+		if lang == "Chinese" or langCode == "zh":
+			from .zh_utils import processChinese
+
+			data = processChinese(data)
+		return data
+
+	def _writeKeywordsTitle(
+		self,
+		hf: T_htmlfile,
+		keywords: list[str],
+	) -> None:
+		from lxml import etree as ET
+
+		for keyword in keywords:
+			titleTag = self._glos.titleTag(keyword)
+			if titleTag:
+				with hf.element(titleTag):
+					hf.write(keyword)
+			else:
+				hf.write(keyword)
+			hf.write(ET.Element("br"))
+
+	def _writeSounds(  # noqa: PLR6301
+		self,
+		hf: T_htmlfile,
+		data: dict[str, Any],
+	) -> None:
+		lang = data.get("lang")
+		langCode = data.get("lang_code")
+		# TODO: change this
+		if lang == "Chinese" or langCode == "zh":
+			self.writeSoundsChinese(hf, data.get("sounds"))
+		else:
+			self.writeSoundList(hf, data.get("sounds"))
+
+	def _writePos(
+		self,
+		hf: T_htmlfile,
+		data: dict[str, Any],
+	) -> None:
+		pos: str | None = data.get("pos")
+		if not pos:
+			return
+		with hf.element("div", attrib={"class": "pos"}):
+			with hf.element("font", color=self._gram_color):
+				hf.write(pos)
+
+	def _writeEtymology(  # noqa: PLR6301
+		self,
+		hf: T_htmlfile,
+		data: dict[str, Any],
+	) -> None:
+		from lxml import etree as ET
+
+		etymology: str = data.get("etymology_text", "")
+		if not etymology:
+			return
+		hf.write(ET.Element("br"))
+		with hf.element("div"):
+			hf.write(f"Etymology: {etymology}")
+
+	@staticmethod
+	def _collectCategories(
+		senses: list[dict[str, Any]],
+	) -> list[dict[str, Any]]:
+		categories = []
+		for sense in senses:
+			senseCats = sense.get("categories")
+			if senseCats:
+				categories += senseCats
+		return categories
+
+	def makeEntry(self, data: dict[str, Any]) -> EntryType:
+		from lxml import etree as ET
+
+		f = BytesIO()
+		keywords = self._makeKeywords(data)
+		data = self._preprocessEntry(data)
 
 		with ET.htmlfile(f, encoding="utf-8") as hf:
 			with hf.element("div"):
 				if self._word_title:
-					write_keywords_title(keywords)
+					self._writeKeywordsTitle(hf, keywords)
 
 				hf_ = cast("T_htmlfile", hf)
 
-				# TODO: change this
-				if lang == "Chinese" or langCode == "zh":
-					self.writeSoundsChinese(hf_, data.get("sounds"))
-				else:
-					self.writeSoundList(hf_, data.get("sounds"))
+				self._writeSounds(hf_, data)
 
-				pos: str | None = data.get("pos")
-				if pos:
-					with hf.element("div", attrib={"class": "pos"}):
-						with hf.element("font", color=self._gram_color):
-							hf.write(pos)
+				self._writePos(hf_, data)
 
 				senses = data.get("senses") or []
 
@@ -213,19 +263,13 @@ class Reader:
 				# list[dict[str, str]]
 				# dict keys: code, "lang", "sense", "word"
 
-				etymology: str = data.get("etymology_text", "")
-				if etymology:
-					hf.write(br())
-					with hf.element("div"):
-						hf.write(f"Etymology: {etymology}")
+				self._writeEtymology(hf_, data)
 
 				if self._categories:
-					categories = []
-					for sense in senses:
-						senseCats = sense.get("categories")
-						if senseCats:
-							categories += senseCats
-					self.writeSenseCategories(hf_, categories)
+					self.writeSenseCategories(
+						hf_,
+						self._collectCategories(senses),
+					)
 
 		defi = f.getvalue().decode("utf-8")
 		# defi = defi.replace("\xa0", "&nbsp;")  # do we need to do this?
@@ -423,11 +467,61 @@ class Reader:
 			hf.write("Categories: ")
 			self.makeList(hf, categories, self.writeSenseCategory)
 
-	def writeSenseExample(  # noqa: PLR6301, PLR0912
+	def _applyRuby(self, example: dict[str, str | list]) -> None:  # noqa: PLR6301
+		# Implement rudimentary ruby text handler by simply put them in "()"
+		# TODO: implement correctly formatted ruby text (i.e., as small script on top)
+		textValue: str = example.get("text", "")
+		ruby = example.pop("ruby", None)
+		if not textValue or not ruby:
+			return
+		for word, phon in ruby:
+			textValue = textValue.replace(word, f"{word}({phon})")
+		example["text"] = textValue
+
+	def _addExampleItems(
 		self,
-		hf: T_htmlfile,
-		example: dict[str, str | list],
+		textList: list[tuple[str | None, str]],
+		key: str,
+		prefix: str | None,
+		value: list,
 	) -> None:
+		if key in self._badExampleKeys:
+			return
+		for item in value:
+			if isinstance(item, str):
+				textList.append((prefix, item))
+				continue
+			if isinstance(item, list):
+				self._addExampleItems(textList, key, prefix, item)
+				continue
+
+			log.warning(f"writeSenseExample: bad item {item=} in {key=}")
+			self._badExampleKeys.add(key)
+			return
+
+	def _addExampleValue(
+		self,
+		textList: list[tuple[str | None, str]],
+		key: str,
+		value: str | list,
+	) -> None:
+		if not value:
+			return
+
+		prefix: str | None = key
+		if prefix in ("text",):  # noqa: PLR6201, FURB171
+			prefix = None
+		if isinstance(value, str):
+			textList.append((prefix, value))
+		elif isinstance(value, list):
+			self._addExampleItems(textList, key, prefix, value)
+		else:
+			log.error(f"writeSenseExample: invalid type for {value=}")
+
+	def _getExampleTextList(
+		self,
+		example: dict[str, str | list],
+	) -> list[tuple[str | None, str]]:
 		# example keys: text, "english", "ref", "type"
 
 		example.pop("ref", "")
@@ -436,69 +530,48 @@ class Reader:
 		example.pop("bold_roman_offsets", "")
 		example.pop("bold_translation_offsets", "")
 
-		# Implement rudimentary ruby text handler by simply put them in "()"
-		# TODO: implement correctly formatted ruby text (i.e., as small script on top)
-
 		textList: list[tuple[str | None, str]] = []
 		exampleValue: str | list = example.pop("example", "")
-		textValue: str = example.get("text", "")
-		ruby = example.pop("ruby", None)
 		if exampleValue:
 			assert isinstance(exampleValue, str), f"{exampleValue=}"
 			textList.append((None, exampleValue))
-		if textValue and ruby:
-			for word, phon in ruby:
-				textValue = textValue.replace(word, f"{word}({phon})")
-			example["text"] = textValue
-
-		def addList(key: str, prefix: str | None, value: list) -> None:
-			if key in self._badExampleKeys:
-				return
-			for item in value:
-				if isinstance(item, str):
-					textList.append((prefix, item))
-					continue
-				if isinstance(item, list):
-					addList(key, prefix, item)
-					continue
-
-				log.warning(f"writeSenseExample: bad item {item=} in {key=}")
-				self._badExampleKeys.add(key)
-				return
+		self._applyRuby(example)
 
 		for key, value in example.items():
-			if not value:
-				continue
+			self._addExampleValue(textList, key, value)
 
-			prefix: str | None = key
-			if prefix in ("text",):  # noqa: PLR6201, FURB171
-				prefix = None
-			if isinstance(value, str):
-				textList.append((prefix, value))
-			elif isinstance(value, list):
-				addList(key, prefix, value)
-			else:
-				log.error(f"writeSenseExample: invalid type for {value=}")
+		return textList
 
+	@staticmethod
+	def _writeExamplePair(
+		hf: T_htmlfile,
+		prefix: str | None,
+		text: str,
+	) -> None:
+		if prefix:
+			with hf.element("b"):
+				hf.write(prefix)
+			hf.write(": ")
+		hf.write(text)
+
+	def writeSenseExample(  # noqa: PLR6301
+		self,
+		hf: T_htmlfile,
+		example: dict[str, str | list],
+	) -> None:
+		textList = self._getExampleTextList(example)
 		if not textList:
 			return
 
-		def writePair(prefix: str | None, text: str) -> None:
-			if prefix:
-				with hf.element("b"):
-					hf.write(prefix)
-				hf.write(": ")
-			hf.write(text)
-
 		if len(textList) == 1:
 			prefix, text = textList[0]
-			writePair(prefix, text)
+			self._writeExamplePair(hf, prefix, text)
 			return
 
 		with hf.element("ul"):
 			for prefix, text in textList:
 				with hf.element("li"):
-					writePair(prefix, text)
+					self._writeExamplePair(hf, prefix, text)
 
 	def writeSenseExamples(
 		self,
