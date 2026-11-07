@@ -6,6 +6,7 @@ freezegun
 html5lib
 jaconv
 lxml>=6.1.0
+markdown-it-py
 marisa-trie
 mistune
 polib
