@@ -207,10 +207,13 @@ class _BglReaderDefi:
 				break
 		return index
 
-	# TODO: break it down
-	# PLR0912 Too many branches (41 > 12)
-	# PLR0915 Too many statements (121 > 50)
-	def collectDefiFields(  # noqa: PLR0912, PLR0915
+	def _logDefiField(self, b_defi: bytes, b_key: bytes, message: str) -> None:
+		log.debug(
+			f"collecting definition fields, b_defi = {b_defi!r}\n"
+			f"b_key = {b_key!r}:\n{message}",
+		)
+
+	def collectDefiFields(
 		self,
 		b_defi: bytes,
 		b_key: bytes,
@@ -236,239 +239,259 @@ class _BglReaderDefi:
 			if self.metadata2:
 				self.metadata2.defiTrailingFields[b_defi[i]] += 1
 
-			if b_defi[i] == 0x02:
-				# part of speech # "\x02" <one char - part of speech>
-				if fields.partOfSpeech:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}"
-						":\nduplicate part of speech item",
-					)
-				if i + 1 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nb_defi ends after \\x02",
-					)
-					return
-
-				posCode = b_defi[i + 1]
-
-				try:
-					fields.partOfSpeech = partOfSpeechByCode[posCode]
-				except KeyError:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}"
-						f":\nunknown part of speech code = {posCode:#02x}",
-					)
-					return
-				i += 2
-			elif b_defi[i] == 0x06:  # \x06<one byte>
-				if fields.b_field_06:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nduplicate type 6",
-					)
-				if i + 1 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nb_defi ends after \\x06",
-					)
-					return
-				fields.b_field_06 = b_defi[i + 1]
-				i += 2
-			elif b_defi[i] == 0x07:  # \x07<two bytes>
-				# Found in 4 Hebrew dictionaries. I do not understand.
-				if i + 3 > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x07",
-					)
-					return
-				fields.b_field_07 = b_defi[i + 1 : i + 3]
-				i += 3
-			elif b_defi[i] == 0x13:  # "\x13"<one byte - length><data>
-				# known values:
-				# 03 06 0D C7
-				# 04 00 00 00 44
-				# ...
-				# 04 00 00 00 5F
-				if i + 1 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x13",
-					)
-					return
-				Len = b_defi[i + 1]
-				i += 2
-				if Len == 0:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}\n"
-						f"b_key = {b_key!r}:\nblank data after \\x13",
-					)
-					continue
-				if i + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}\n"
-						f"b_key = {b_key!r}:\ntoo few data after \\x13",
-					)
-					return
-				fields.b_field_13 = b_defi[i : i + Len]
-				i += Len
-			elif b_defi[i] == 0x18:
-				# \x18<one byte - title length><entry title>
-				if fields.b_title:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"b_key = {b_key!r}:\nduplicate entry title item",
-					)
-				if i + 1 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}\n"
-						f"b_key = {b_key!r}:\nb_defi ends after \\x18",
-					)
-					return
-				i += 1
-				Len = b_defi[i]
-				i += 1
-				if Len == 0:
-					# log.debug(
-					# 	f"collecting definition fields, b_defi = {b_defi!r}\n"
-					# 	f"b_key = {b_key!r}:\nblank entry title"
-					# )
-					continue
-				if i + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}\n"
-						f"b_key = {b_key!r}:\ntitle is too long",
-					)
-					return
-				fields.b_title = b_defi[i : i + Len]
-				i += Len
-			elif b_defi[i] == 0x1A:  # "\x1a"<one byte - length><text>
-				# found only in Hebrew dictionaries, I do not understand.
-				if i + 1 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key}:\ntoo few data after \\x1a",
-					)
-					return
-				Len = b_defi[i + 1]
-				i += 2
-				if Len == 0:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nblank data after \\x1a",
-					)
-					continue
-				if i + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x1a",
-					)
-					return
-				fields.b_field_1a = b_defi[i : i + Len]
-				i += Len
-			elif b_defi[i] == 0x28:  # "\x28" <two bytes - length><html text>
-				# title with transcription?
-				if i + 2 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x28",
-					)
-					return
-				i += 1
-				Len = uintFromBytes(b_defi[i : i + 2])
-				i += 2
-				if Len == 0:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nblank data after \\x28",
-					)
-					continue
-				if i + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x28",
-					)
-					return
-				fields.b_title_trans = b_defi[i : i + Len]
-				i += Len
-			elif 0x40 <= b_defi[i] <= 0x4F:  # [\x41-\x4f] <one byte> <text>
-				# often contains digits as text:
-				# 56
-				# &#0230;lps - key Alps
-				# 48@i
-				# has no apparent influence on the article
-				code = b_defi[i]
-				Len = b_defi[i] - 0x3F
-				if i + 2 + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x40+",
-					)
-					return
-				i += 2
-				b_text = b_defi[i : i + Len]
-				i += Len
-				log.debug(
-					f"unknown definition field {code:#02x}, b_text={b_text!r}",
-				)
-			elif b_defi[i] == 0x50:
-				# \x50 <one byte> <one byte - length><data>
-				if i + 2 >= len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x50",
-					)
-					return
-				fields.code_transcription_50 = b_defi[i + 1]
-				Len = b_defi[i + 2]
-				i += 3
-				if Len == 0:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nblank data after \\x50",
-					)
-					continue
-				if i + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x50",
-					)
-					return
-				fields.b_transcription_50 = b_defi[i : i + Len]
-				i += Len
-			elif b_defi[i] == 0x60:
-				# "\x60" <one byte> <two bytes - length> <text>
-				if i + 4 > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x60",
-					)
-					return
-				fields.code_transcription_60 = b_defi[i + 1]
-				i += 2
-				Len = uintFromBytes(b_defi[i : i + 2])
-				i += 2
-				if Len == 0:
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\nblank data after \\x60",
-					)
-					continue
-				if i + Len > len(b_defi):
-					log.debug(
-						f"collecting definition fields, b_defi = {b_defi!r}"
-						f"\nb_key = {b_key!r}:\ntoo few data after \\x60",
-					)
-					return
-				fields.b_transcription_60 = b_defi[i : i + Len]
-				i += Len
+			code = b_defi[i]
+			if 0x40 <= code <= 0x4F:
+				next_i = self._collectField40(b_defi, b_key, fields, i)
 			else:
-				log.debug(
-					f"collecting definition fields, b_defi = {b_defi!r}"
-					f"\nb_key = {b_key!r}"
-					f":\nunknown control char. Char code = {b_defi[i]:#02x}",
-				)
+				handler = self._defiFieldHandlers.get(code)
+				if handler is None:
+					self._logDefiField(
+						b_defi,
+						b_key,
+						f"unknown control char. Char code = {code:#02x}",
+					)
+					return
+				next_i = handler(self, b_defi, b_key, fields, i)
+
+			if next_i is None:
 				return
+			i = next_i
+
+	def _collectPartOfSpeech(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# "\x02" <one char - part of speech>
+		if fields.partOfSpeech:
+			self._logDefiField(b_defi, b_key, "duplicate part of speech item")
+		if i + 1 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "b_defi ends after \\x02")
+			return None
+
+		posCode = b_defi[i + 1]
+
+		try:
+			fields.partOfSpeech = partOfSpeechByCode[posCode]
+		except KeyError:
+			self._logDefiField(
+				b_defi,
+				b_key,
+				f"unknown part of speech code = {posCode:#02x}",
+			)
+			return None
+		return i + 2
+
+	def _collectField06(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# \x06<one byte>
+		if fields.b_field_06:
+			self._logDefiField(b_defi, b_key, "duplicate type 6")
+		if i + 1 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "b_defi ends after \\x06")
+			return None
+		fields.b_field_06 = b_defi[i + 1]
+		return i + 2
+
+	def _collectField07(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# \x07<two bytes>
+		# Found in 4 Hebrew dictionaries. I do not understand.
+		if i + 3 > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x07")
+			return None
+		fields.b_field_07 = b_defi[i + 1 : i + 3]
+		return i + 3
+
+	def _collectField13(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# "\x13"<one byte - length><data>
+		# known values:
+		# 03 06 0D C7
+		# 04 00 00 00 44
+		# ...
+		# 04 00 00 00 5F
+		if i + 1 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x13")
+			return None
+		length = b_defi[i + 1]
+		i += 2
+		if length == 0:
+			self._logDefiField(b_defi, b_key, "blank data after \\x13")
+			return i
+		if i + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x13")
+			return None
+		fields.b_field_13 = b_defi[i : i + length]
+		return i + length
+
+	def _collectTitle(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# \x18<one byte - title length><entry title>
+		if fields.b_title:
+			self._logDefiField(b_defi, b_key, "duplicate entry title item")
+		if i + 1 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "b_defi ends after \\x18")
+			return None
+		i += 1
+		length = b_defi[i]
+		i += 1
+		if length == 0:
+			return i
+		if i + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "title is too long")
+			return None
+		fields.b_title = b_defi[i : i + length]
+		return i + length
+
+	def _collectField1a(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# "\x1a"<one byte - length><text>
+		# found only in Hebrew dictionaries, I do not understand.
+		if i + 1 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x1a")
+			return None
+		length = b_defi[i + 1]
+		i += 2
+		if length == 0:
+			self._logDefiField(b_defi, b_key, "blank data after \\x1a")
+			return i
+		if i + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x1a")
+			return None
+		fields.b_field_1a = b_defi[i : i + length]
+		return i + length
+
+	def _collectTitleTrans(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# "\x28" <two bytes - length><html text>
+		# title with transcription?
+		if i + 2 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x28")
+			return None
+		i += 1
+		length = uintFromBytes(b_defi[i : i + 2])
+		i += 2
+		if length == 0:
+			self._logDefiField(b_defi, b_key, "blank data after \\x28")
+			return i
+		if i + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x28")
+			return None
+		fields.b_title_trans = b_defi[i : i + length]
+		return i + length
+
+	def _collectField40(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		_fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# [\x41-\x4f] <one byte> <text>
+		# often contains digits as text:
+		# 56
+		# &#0230;lps - key Alps
+		# 48@i
+		# has no apparent influence on the article
+		code = b_defi[i]
+		length = code - 0x3F
+		if i + 2 + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x40+")
+			return None
+		i += 2
+		b_text = b_defi[i : i + length]
+		i += length
+		log.debug(f"unknown definition field {code:#02x}, b_text={b_text!r}")
+		return i
+
+	def _collectTranscription50(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# \x50 <one byte> <one byte - length><data>
+		if i + 2 >= len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x50")
+			return None
+		fields.code_transcription_50 = b_defi[i + 1]
+		length = b_defi[i + 2]
+		i += 3
+		if length == 0:
+			self._logDefiField(b_defi, b_key, "blank data after \\x50")
+			return i
+		if i + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x50")
+			return None
+		fields.b_transcription_50 = b_defi[i : i + length]
+		return i + length
+
+	def _collectTranscription60(
+		self,
+		b_defi: bytes,
+		b_key: bytes,
+		fields: DefinitionFields,
+		i: int,
+	) -> int | None:
+		# "\x60" <one byte> <two bytes - length> <text>
+		if i + 4 > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x60")
+			return None
+		fields.code_transcription_60 = b_defi[i + 1]
+		i += 2
+		length = uintFromBytes(b_defi[i : i + 2])
+		i += 2
+		if length == 0:
+			self._logDefiField(b_defi, b_key, "blank data after \\x60")
+			return i
+		if i + length > len(b_defi):
+			self._logDefiField(b_defi, b_key, "too few data after \\x60")
+			return None
+		fields.b_transcription_60 = b_defi[i : i + length]
+		return i + length
+
+	_defiFieldHandlers = {
+		0x02: _collectPartOfSpeech,
+		0x06: _collectField06,
+		0x07: _collectField07,
+		0x13: _collectField13,
+		0x18: _collectTitle,
+		0x1A: _collectField1a,
+		0x28: _collectTitleTrans,
+		0x50: _collectTranscription50,
+		0x60: _collectTranscription60,
+	}
