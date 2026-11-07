@@ -234,8 +234,128 @@ class Reader:
 		self._writeSenseMisc(hf, sense)
 		self._writeSenseExamples(hf, sense)
 
-	# TODO: break it down
-	def getEntryByElem(  # noqa: PLR0912
+	def _readKanjiElements(
+		self,
+		entry: Element,
+		keywords: list[str],
+	) -> tuple[list[str], list[str]]:
+		translit = self._translitation
+		kebList: list[str] = []
+		kebDisplayList: list[str] = []
+		for k_ele in entry.findall("k_ele"):
+			keb = k_ele.find("keb")
+			if keb is None:
+				continue
+			if not keb.text:
+				continue
+			keb_text = keb.text
+			keb_text_norm = unicodedata.normalize("NFKC", keb_text)
+			keywords.append(keb_text_norm)
+			if keb_text != keb_text_norm:
+				keywords.append(keb_text)
+			kebList.append(keb_text)
+			keb_display = keb_text
+			if translit:
+				import romkan
+
+				t_keb = romkan.to_roma(keb_text)
+				if t_keb and t_keb.isascii():
+					keywords.append(t_keb)
+					keb_display += f" ({t_keb})"
+			kebDisplayList.append(keb_display)
+			# for elem in k_ele.findall("ke_pri"):
+			# 	log.info(elem.text)
+		return kebList, kebDisplayList
+
+	def _readReadingElements(
+		self,
+		entry: Element,
+		keywords: list[str],
+	) -> tuple[list[str], list[tuple[str, list[str]]]]:
+		translit = self._translitation
+		rebList: list[str] = []
+		rebDisplayList: list[tuple[str, list[str]]] = []
+		for r_ele in entry.findall("r_ele"):
+			reb = r_ele.find("reb")
+			if reb is None:
+				continue
+			if not reb.text:
+				continue
+			props: list[str] = []
+			if r_ele.find("re_nokanji") is not None:
+				props.append("no kanji")
+			inf = r_ele.find("re_inf")
+			if inf is not None and inf.text:
+				props.append(
+					self.re_inf_mapping.get(inf.text, inf.text),
+				)
+			keywords.append(reb.text)
+			reb_text = reb.text
+			rebList.append(reb_text)
+			reb_display = reb_text
+			if translit:
+				import romkan
+
+				t_reb = romkan.to_roma(reb.text)
+				if t_reb and t_reb.isascii():
+					keywords.append(t_reb)
+					reb_display += f" ({t_reb})"
+			rebDisplayList.append((reb_display, props))
+			# for elem in r_ele.findall("re_pri"):
+			# 	log.info(elem.text)
+		return rebList, rebDisplayList
+
+	def _addCombinedKeywords(
+		self,
+		keywords: list[str],
+		kebList: list[str],
+		rebList: list[str],
+	) -> None:
+		# this is for making internal links valid
+		# this makes too many alternates!
+		# but we don't seem to have a choice
+		# except for scanning and indexing all words once
+		# and then starting over and fixing/optimizing links
+		for s_keb in kebList:
+			for s_reb in rebList:
+				keywords.append(f"{s_keb}・{s_reb}")  # noqa: PERF401
+
+	def _writeKanjiDisplay(
+		self,
+		hf: T_htmlfile,
+		kebDisplayList: list[str],
+	) -> None:
+		if not kebDisplayList:
+			return
+		with hf.element("big"):
+			for i, s_keb in enumerate(kebDisplayList):
+				if i > 0:
+					with hf.element("font", color="red"):
+						hf.write(" | ")
+				hf.write(s_keb)
+		hf.write(self._br())
+
+	def _writeReadingDisplay(
+		self,
+		hf: T_htmlfile,
+		rebDisplayList: list[tuple[str, list[str]]],
+	) -> None:
+		if not rebDisplayList:
+			return
+		for i, (s_reb, props) in enumerate(rebDisplayList):
+			if i > 0:
+				with hf.element("font", color="red"):
+					hf.write(" | ")
+			with hf.element("font", color="green"):
+				hf.write(s_reb)
+			for prop in props:
+				hf.write(" ")
+				with hf.element("small"):
+					with hf.element("span", style=self.tagStyle):
+						hf.write(prop)
+		hf.write(self._br())
+
+	def getEntryByElem(
 		self,
 		entry: Element,
 	) -> EntryType:
@@ -243,103 +363,16 @@ class Reader:
 
 		keywords: list[str] = []
 		f = BytesIO()
-		translit = self._translitation
 
-		def br() -> Element:
-			return ET.Element("br")
+		with ET.htmlfile(f, encoding="utf-8") as hf:
+			hf_ = cast("T_htmlfile", hf)
+			kebList, kebDisplayList = self._readKanjiElements(entry, keywords)
+			rebList, rebDisplayList = self._readReadingElements(entry, keywords)
+			self._addCombinedKeywords(keywords, kebList, rebList)
 
-		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
-			kebList: list[str] = []
-			rebList: list[str] = []
-			kebDisplayList: list[str] = []
-			rebDisplayList: list[tuple[str, list[str]]] = []
-			with hf.element("div"):
-				for k_ele in entry.findall("k_ele"):
-					keb = k_ele.find("keb")
-					if keb is None:
-						continue
-					if not keb.text:
-						continue
-					keb_text = keb.text
-					keb_text_norm = unicodedata.normalize("NFKC", keb_text)
-					keywords.append(keb_text_norm)
-					if keb_text != keb_text_norm:
-						keywords.append(keb_text)
-					kebList.append(keb_text)
-					keb_display = keb_text
-					if translit:
-						import romkan
-
-						t_keb = romkan.to_roma(keb_text)
-						if t_keb and t_keb.isascii():
-							keywords.append(t_keb)
-							keb_display += f" ({t_keb})"
-					kebDisplayList.append(keb_display)
-					# for elem in k_ele.findall("ke_pri"):
-					# 	log.info(elem.text)
-
-				for r_ele in entry.findall("r_ele"):
-					reb = r_ele.find("reb")
-					if reb is None:
-						continue
-					if not reb.text:
-						continue
-					props: list[str] = []
-					if r_ele.find("re_nokanji") is not None:
-						props.append("no kanji")
-					inf = r_ele.find("re_inf")
-					if inf is not None and inf.text:
-						props.append(
-							self.re_inf_mapping.get(inf.text, inf.text),
-						)
-					keywords.append(reb.text)
-					reb_text = reb.text
-					rebList.append(reb_text)
-					reb_display = reb_text
-					if translit:
-						import romkan
-
-						t_reb = romkan.to_roma(reb.text)
-						if t_reb and t_reb.isascii():
-							keywords.append(t_reb)
-							reb_display += f" ({t_reb})"
-					rebDisplayList.append((reb_display, props))
-					# for elem in r_ele.findall("re_pri"):
-					# 	log.info(elem.text)
-
-				# this is for making internal links valid
-				# this makes too many alternates!
-				# but we don't seem to have a choice
-				# except for scanning and indexing all words once
-				# and then starting over and fixing/optimizing links
-				for s_keb in kebList:
-					for s_reb in rebList:
-						keywords.append(f"{s_keb}・{s_reb}")  # noqa: PERF401
-
-				if kebDisplayList:
-					with hf.element("big"):
-						for i, s_keb in enumerate(kebDisplayList):
-							if i > 0:
-								with hf.element("font", color="red"):
-									hf.write(" | ")
-							hf.write(s_keb)
-					hf.write(br())
-
-				if rebDisplayList:
-					for i, (s_reb, props) in enumerate(rebDisplayList):
-						if i > 0:
-							with hf.element("font", color="red"):
-								hf.write(" | ")
-						with hf.element("font", color="green"):
-							hf.write(s_reb)
-						for prop in props:
-							hf.write(" ")
-							with hf.element("small"):
-								with hf.element("span", style=self.tagStyle):
-									hf.write(prop)
-					hf.write(br())
-
-				hf_ = cast("T_htmlfile", hf)
+			with hf_.element("div"):
+				self._writeKanjiDisplay(hf_, kebDisplayList)
+				self._writeReadingDisplay(hf_, rebDisplayList)
 				self.makeList(
 					hf_,
 					entry.findall("sense"),
