@@ -1,0 +1,32 @@
+##name	29-en-de.txt
+##sourceLang	English
+##targetLang	German
+house	Haus {n}
+Świnoujście	Swinemünde {n}
+café	Kaffeehaus {n}
+spaced	too many spaces
+ampersand	A &amp; B &lt;tag&gt; &quot;quote&quot; &#x27;apos&#x27;
+run	müde  laufen  rennen  Lauf {m}  schnell
+dupe	zeta  alpha
+foobar|baz	shared
+something	etwas  jemand oder etwas
+sth.	etwas
+sb.	jemand
+somebody	jemand  jemand oder etwas
+sb.'s|somebody's	jemandes
+sb./sth.|somebody/something	jemand oder etwas
+to run	laufen
+be free|free	kostenlos
+foo bar [baz]|foo	qux
+word	Wort {n}
+weight/weight	Gewichtsprozent {n}
+sourcecurly	Quellwort {n}
+anybody	jd.
+anybody's	jds.
+somebody-dat	jdm.
+somebody-acc	jdn.
+anything	etw.
+somebody-or-anything	jd./etw.
+somebody's-or-anything	jds./etw.
+somebody-dat-or-anything	jdm./etw.
+somebody-acc-or-anything	jdn./etw.

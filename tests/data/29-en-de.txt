@@ -1,0 +1,53 @@
+# EN-DE synthetic sample for PyGlossary tests
+# Covers comments, blank/invalid rows, HTML entities, NFC normalization,
+# whitespace folding, word-class ordering, deduplication, brackets and abbreviations.
+
+# A mid-file comment is skipped.
+
+single-field-only
+empty target		noun
+[]	[]	noun
+
+house	Haus {n}	noun	[arch.]
+&#346;winouj&#347;cie	Swinemünde {n}	noun	[geogr.]
+café	Kaffeehaus {n}	noun
+spaced	 too    many   spaces 	adv
+ampersand	A & B <tag> "quote" 'apos'	noun
+
+run	müde	adj
+run	rennen	verb
+run	Lauf {m}	noun
+run	schnell	adv
+
+dupe	zeta	adj
+dupe	alpha	adj
+dupe	alpha	verb
+dupe	alpha
+
+foobar	shared	noun
+baz	shared	noun
+
+sth.	etwas	pron
+sb.	jemand	pron
+sb.'s	jemandes	pron
+sb./sth.	jemand oder etwas	pron
+
+to run	laufen	verb
+
+(be) free	kostenlos	adj
+
+foo (bar [baz])	qux	noun
+
+word [coll.]	Wort {n}	noun
+weight/weight <% w/w>	Gewichtsprozent {n}	noun
+sourcecurly {m}	Quellwort {n}	noun
+
+anybody	jd.	pron
+anybody's	jds.	pron
+somebody-dat	jdm.	pron
+somebody-acc	jdn.	pron
+anything	etw.	pron
+somebody-or-anything	jd./etw.	pron
+somebody's-or-anything	jds./etw.	pron
+somebody-dat-or-anything	jdm./etw.	pron
+somebody-acc-or-anything	jdn./etw.	pron

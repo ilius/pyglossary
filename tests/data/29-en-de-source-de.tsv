@@ -1,0 +1,32 @@
+##name	29-en-de.txt
+##sourceLang	German
+##targetLang	English
+Haus	house
+Swinemünde	Świnoujście
+Kaffeehaus	café
+too many spaces	spaced
+A & B "quote" 'apos'	ampersand
+schnell|Lauf|müde|rennen	run
+alpha|zeta	dupe
+shared	baz  foobar
+etwas	anything  somebody&#x27;s-or-anything  somebody-acc-or-anything  somebody-dat-or-anything  somebody-or-anything  sth.
+jemand	anybody  sb.  somebody-or-anything
+jemandes	anybody&#x27;s  sb.&#x27;s  somebody&#x27;s-or-anything
+jemand oder etwas	sb./sth.
+laufen	to run
+kostenlos	(be) free
+qux	foo (bar [baz])
+Wort	word [coll.]
+Gewichtsprozent	weight/weight &lt;% w/w&gt;
+Quellwort	sourcecurly {m}
+jd.	anybody
+jds.	anybody&#x27;s
+jdm.	somebody-dat
+jemandem	somebody-dat  somebody-dat-or-anything
+jdn.	somebody-acc
+jemanden	somebody-acc  somebody-acc-or-anything
+etw.	anything
+jd./etw.|jemand/etwas	somebody-or-anything
+jds./etw.|jemandes/etwas	somebody&#x27;s-or-anything
+jdm./etw.|jemandem/etwas	somebody-dat-or-anything
+jdn./etw.|jemanden/etwas	somebody-acc-or-anything
