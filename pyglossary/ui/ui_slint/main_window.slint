@@ -1,18 +1,6 @@
-// main_window.slint
-//
-// Slint UI definition for the PyGlossary "Slint" front-end.
-// Visually mirrors the Tkinter UI (pyglossary/ui/ui_tk/ui.py): a Convert
-// tab with Input/Output file + format pickers, a black console log view and
-// a bottom status/progress bar; plus an About tab.
-//
-// Loaded from Python via:
-//   import slint
-//   ui = slint.load_file("main_window.slint")
-//   win = ui.MainWindow()
-//
-// Property / callback names use kebab-case (Slint convention). On the Python
-// side they are accessed with underscores, e.g. `input-file-path` ->
-// `win.input_file_path`.
+// Main window of the Slint UI (mirrors ui_tk): Convert tab with file/format
+// pickers, console and status bar; About tab. Loaded via utils.load_slint;
+// kebab-case names are snake_case on the Python side.
 
 import {
     Button,
@@ -28,27 +16,16 @@ export struct ConsoleLine {
     text-color: color,
 }
 
-// A ComboBox whose popup opens *upward*.
-// Workaround for https://github.com/slint-ui/slint/issues/4870 (still open)
-// TODO: replace with stock ComboBox when #4870 is fixed
-// It is used for the verbosity selector in the bottom status bar. This Slint
-// build renders PopupWindow embedded in (and clipped to) the parent window, so a
-// stock ComboBox flush against the bottom edge can only open downward and gets
-// clipped. This component keeps the selector at the bottom edge by growing the
-// popup upward instead. Color comes from `Palette`, so it follows the active
-// Slint theme (light/dark) automatically.
+// A ComboBox whose popup opens upward, for selectors at the window's bottom
+// edge (a stock ComboBox popup is clipped to the window and opens downward).
+// TODO: replace with stock ComboBox once slint #4870 (popup anchoring) is fixed.
 component UpComboBox inherits Rectangle {
     in-out property <[string]> model;
     in-out property <string> current-value;
     callback selected(string);
 
-    // `popup-shown` is tracked by hand: this Slint version's PopupWindow has
-    // no `closed` callback, so a click-outside auto-close cannot be observed;
-    // the flag is re-synced by the trigger's click toggle. `highlight` is the
-    // keyboard cursor inside the open popup; each row syncs it to the current
-    // value on popup open (rows are instantiated on show, so their `init`
-    // runs then).
-    property <bool> popup-shown: false;
+    // keyboard cursor inside the open popup; rows sync it on open (their
+    // `init` runs when the popup is shown)
     property <int> highlight: 0;
 
     forward-focus: fs;
@@ -62,16 +39,10 @@ component UpComboBox inherits Rectangle {
     background: Palette.background;
 
     function open-popup() {
-        root.popup-shown = true;
         popup.show();
         // showing the popup moves keyboard focus into it; take it back so
         // the arrow/Return/Escape handling below keeps working while open
         fs.focus();
-    }
-
-    function close-popup() {
-        popup.close();
-        root.popup-shown = false;
     }
 
     function commit(index: int) {
@@ -80,7 +51,7 @@ component UpComboBox inherits Rectangle {
             root.current-value = root.model[index];
             root.selected(root.model[index]);
         }
-        root.close-popup();
+        popup.close();
     }
 
     HorizontalLayout {
@@ -104,7 +75,7 @@ component UpComboBox inherits Rectangle {
 
     fs := FocusScope {
         key-pressed(event) => {
-            if (!root.popup-shown) {
+            if (!popup.is-open) {
                 if (event.text == Key.Return || event.text == " "
                         || event.text == Key.DownArrow || event.text == Key.UpArrow) {
                     root.open-popup();
@@ -125,24 +96,17 @@ component UpComboBox inherits Rectangle {
                 return EventResult.accept;
             }
             if (event.text == Key.Escape) {
-                root.close-popup();
+                popup.close();
                 return EventResult.accept;
             }
             return EventResult.reject;
         }
     }
 
+    // a press outside the open popup closes it and is consumed, so this only
+    // ever fires while the popup is closed
     TouchArea {
-        clicked => {
-            fs.focus();
-            // toggle; also re-syncs `popup-shown` after a click-outside
-            // auto-close (which the flag cannot observe)
-            if (root.popup-shown) {
-                root.close-popup();
-            } else {
-                root.open-popup();
-            }
-        }
+        clicked => { root.open-popup(); }
     }
 
     popup := PopupWindow {
@@ -207,40 +171,20 @@ export component MainWindow inherits Window {
     preferred-height: 520px;
     min-width: 760px;
     min-height: 440px;
-    // background: #ececec;
-
-    // ---------------------------------------------------------------
-	// State - read/written from Python (ui.py)
-	// ---------------------------------------------------------------
-	in-out property <string> input-file-path: "";
+    // state, read/written from Python (ui.py)
+    in-out property <string> input-file-path: "";
     in-out property <string> output-file-path: "";
     in-out property <string> input-format: "(choose input format)";
     in-out property <string> output-format: "(choose output format)";
-
-    in-out property <[string]> verbosity-levels: [
-        "0 - Critical",
-        "1 - Error",
-        "2 - Warning",
-        "3 - Info",
-        "4 - Debug",
-        "5 - Trace",
-        "6 - All",
-    ];
-    in-out property <string> verbosity: "3 - Info";
-
+    in-out property <[string]> verbosity-levels;  // from log.levelNamesCap
+    in-out property <string> verbosity;
     in-out property <[ConsoleLine]> console-lines: [];
-
     in-out property <float> progress: 0.0;
     in-out property <string> status-text: "";
     in-out property <bool> converting: false;
+    in-out property <string> about-text;
 
-    // About tab content (plain text, set from Python)
-	in-out property <string> about-text;
-
-    // ---------------------------------------------------------------
-	// Callbacks - bound in Python by assigning callables
-	// ---------------------------------------------------------------
-	callback browse-input-file();
+    callback browse-input-file();
     callback browse-output-file();
     callback choose-input-format();
     callback choose-output-format();
@@ -248,9 +192,8 @@ export component MainWindow inherits Window {
     callback start-convert();
     callback clear-console();
     callback verbosity-changed(string);
-	// Emitted when the user types in the input/output path fields, so Python
-	// can run auto-format-detection (mirrors ui_tk.anyEntryChanged).
-	callback input-file-edited(string);
+    // typing in a path field triggers auto format detection
+    callback input-file-edited(string);
     callback output-file-edited(string);
 
     VerticalLayout {
@@ -274,14 +217,9 @@ export component MainWindow inherits Window {
                         }
 
                         LineEdit {
-                            // Two-way (not `text: root.input-file-path;` +
-                            // manual write-back in `edited`): a one-way
-                            // binding on an in-out widget property gets
-                            // silently detached once the widget itself
-                            // writes to it (e.g. the user typing), so later
-                            // external (Python-side) assignments -- like
-                            // setting this after the Browse dialog returns
-                            // -- stop being reflected in the widget.
+                            // two-way: a one-way binding is detached once the
+                            // widget writes `text` (typing), after which
+                            // Python-side updates would no longer show
                             text <=> root.input-file-path;
                             placeholder-text: "Path to input glossary file";
                             edited(value) => {
@@ -324,8 +262,6 @@ export component MainWindow inherits Window {
                         }
 
                         LineEdit {
-                            // See the input-file-path LineEdit above for why
-                            // this must be two-way, not one-way + write-back.
                             text <=> root.output-file-path;
                             placeholder-text: "Path to output glossary file";
                             edited(value) => {
@@ -454,10 +390,6 @@ export component MainWindow inherits Window {
 
             UpComboBox {
                 model: root.verbosity-levels;
-                // Two-way for the same reason as the file-path LineEdits
-                // above: UpComboBox writes to its own `current-value` when an
-                // item is picked, which would detach a one-way binding and
-                // make later Python-side writes to `root.verbosity` invisible.
                 current-value <=> root.verbosity;
                 selected(value) => {
                     root.verbosity-changed(value);

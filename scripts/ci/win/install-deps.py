@@ -37,7 +37,7 @@ default_ui = os.getenv("DEFAULT_UI", "tk")
 if default_ui == "wx":
 	install("wxPython")
 elif default_ui == "slint":
-	slintVer = os.getenv("SLINT_VERSION", "1.17.0b2")
+	slintVer = os.getenv("SLINT_VERSION", "1.18.1b1")
 	install("--pre", f"slint=={slintVer}")
 else:
 	# Tk wizard: drag-and-drop from Explorer (see pyglossary/ui/ui_tk_wizard.py)

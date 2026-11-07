@@ -29,6 +29,7 @@ def main() -> None:
 			"--nofollow-import-to=pyglossary.ui.ui_tk_wizard",
 			"--nofollow-import-to=pyglossary.ui.ui_wx",
 			"--nofollow-import-to=tkinter",
+			"--nofollow-import-to=tkinterdnd2",
 			"--nofollow-import-to=wx",
 		]
 	else:
@@ -65,6 +66,13 @@ def main() -> None:
 		"--include-module=icu",
 		"--include-module=colorize_pinyin",
 		"--include-package-data=pyglossary",
+		# dev-only files inside the package (notes, screenshots, tool caches);
+		# Nuitka fnmatch-es the target path, so "*" also spans "/"
+		"--noinclude-data-files=pyglossary/*.md",
+		"--noinclude-data-files=pyglossary/*.sh",
+		"--noinclude-data-files=pyglossary/*.DS_Store",
+		"--noinclude-data-files=pyglossary/*/.ruff_cache/*",
+		"--noinclude-data-files=pyglossary/ui/ui_slint/*.png",
 		"--include-data-files=about=about",
 		"--include-data-files=_license-dialog=_license-dialog",
 		"--include-data-files=_license-dialog=license-dialog",

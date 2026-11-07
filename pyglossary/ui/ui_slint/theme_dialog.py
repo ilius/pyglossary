@@ -1,9 +1,4 @@
-"""
-Theme and appearance settings for the Slint UI.
-
-Lets users pick Slint styles and related visual preferences for the native UI
-frontend.
-"""
+"""Widget-style (theme) picker for the Slint UI; applies on next launch."""
 
 from __future__ import annotations
 
@@ -18,17 +13,11 @@ if TYPE_CHECKING:
 
 __all__ = ["ThemeDialog"]
 
+_STYLE_IDS = [style for _label, style in SLINT_STYLES]
+
 
 class ThemeDialog:
-	"""
-	Non-modal picker for the built-in Slint widget style (see
-	`utils.SLINT_STYLES`). Slint bakes a style into the compiled
-	`ComponentDefinition` of each `.slint` file at load time (see
-	`utils.load_slint`), so a newly picked style cannot be hot-applied to the
-	already-running window -- it is persisted to config.json (by the caller,
-	via `onOk`) and takes effect on the next launch (see `utils.setSlintStyle`,
-	called once at startup in `UI.__init__`).
-	"""
+	"""Non-modal; calls `onOk(style)` on OK (see `utils.setSlintStyle`)."""
 
 	def __init__(
 		self,
@@ -36,32 +25,21 @@ class ThemeDialog:
 		onOk: Callable[[str], None],
 		onClose: Callable[[ThemeDialog], None],
 	) -> None:
-		self._onOk = onOk
+		self._onOkCb = onOk
 		self._onClose = onClose
-
-		comp = load_slint("dialogs.slint").ThemeDialog
-		self.dialog = comp()
-		self.dialog.theme_names = slint.ListModel(
-			[label for label, _style in SLINT_STYLES],
-		)
-		styles = [style for _label, style in SLINT_STYLES]
+		self.dialog = load_slint("dialogs.slint").ThemeDialog()
+		self.dialog.theme_names = slint.ListModel([label for label, _ in SLINT_STYLES])
 		self.dialog.current_index = (
-			styles.index(currentStyle) if currentStyle in styles else 0
+			_STYLE_IDS.index(currentStyle) if currentStyle in _STYLE_IDS else 0
 		)
-		# Bind weakly (see utils.weakCallback) so the Slint component is never
-		# part of a reference cycle with this controller.
-		self.dialog.ok = weakCallback(self._onOkCb)
-		self.dialog.cancel = weakCallback(self._onCancel)
+		self.dialog.ok = weakCallback(self._onOk)
+		self.dialog.cancel = weakCallback(self._close)
 		self.dialog.show()
 
-	def _onOkCb(self) -> None:
+	def _onOk(self) -> None:
 		i = self.dialog.current_index
-		styles = [style for _label, style in SLINT_STYLES]
-		if 0 <= i < len(styles):
-			self._onOk(styles[i])
-		self._close()
-
-	def _onCancel(self) -> None:
+		if 0 <= i < len(_STYLE_IDS):
+			self._onOkCb(_STYLE_IDS[i])
 		self._close()
 
 	def _close(self) -> None:

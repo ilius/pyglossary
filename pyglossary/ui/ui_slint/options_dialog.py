@@ -1,9 +1,4 @@
-"""
-Per-format plugin options dialog for the Slint UI.
-
-Edits ``Option`` values for the selected read/write format inside a Slint
-modal.
-"""
+"""Read/Write format options dialog for the Slint UI."""
 
 from __future__ import annotations
 
@@ -19,138 +14,90 @@ from .utils import load_slint, weakCallback
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
+	from pyglossary.plugin_prop import PluginProp
+
 __all__ = ["FormatOptionsDialog"]
 
 log = logging.getLogger("pyglossary")
 
 
-def _kindForOption(opt: Any) -> str:
-	cls = opt.__class__.__name__
-	if cls == "BoolOption":
-		return "bool"
-	if cls in ("IntOption", "FileSizeOption"):
-		return "int"
-	if getattr(opt, "values", None):
-		return "choice"
-	return "str"
+def _widgetKind(opt: Any) -> str:
+	if opt.typ in {"bool", "int"}:  # FileSizeOption.typ is "int" too
+		return opt.typ
+	return "choice" if opt.values else "str"
 
 
 class FormatOptionsDialog:
-	"""
-	Non-modal editor for the read or write options of a single format.
-	`onOk(dict)` is invoked on OK with the (possibly evaluated) option values;
-	on cancel nothing happens. The owner must keep a reference (see
-	`UI._ref_dialog`).
-	"""
-
-	_kindFormatsOptions = {
-		"Read": Glossary.formatsReadOptions,
-		"Write": Glossary.formatsWriteOptions,
-	}
+	"""Non-modal; on OK replaces the contents of `values` in place."""
 
 	def __init__(
 		self,
-		formatDesc: str,
+		plugin: PluginProp,
 		kind: str,  # "Read" or "Write"
 		values: dict[str, Any],
-		onOk: Callable[[dict[str, Any]], None],
 		onClose: Callable[[FormatOptionsDialog], None],
 	) -> None:
-		pluginByDesc = {p.description: p for p in Glossary.plugins.values()}
-		plugin = pluginByDesc.get(formatDesc)
-		if plugin is None:
-			log.error(f"FormatOptionsDialog: unknown format {formatDesc!r}")
-			onClose(self)
-			return
-		formatName = plugin.name
-		optionsDefaults: dict[str, Any] = self._kindFormatsOptions[kind].get(
-			formatName,
-			{},
-		)
-		optionsProp = plugin.optionsProp
-
-		self._onOk = onOk
+		defaults = (
+			Glossary.formatsReadOptions
+			if kind == "Read"
+			else Glossary.formatsWriteOptions
+		).get(plugin.name, {})
+		self._valuesOut = values
 		self._onClose = onClose
-		self._optNames: list[str] = []
-		self._opts: list[Any] = []
-		self._values: dict[str, Any] = {}
+		self._opts = [
+			(name, plugin.optionsProp[name])
+			for name in defaults
+			if name in plugin.optionsProp
+		]
+		self._values = {name: values.get(name, defaults[name]) for name, _ in self._opts}
 
-		rows: list[dict[str, Any]] = []
-		for optName, default in optionsDefaults.items():
-			prop = optionsProp.get(optName)
-			if prop is None:
-				continue
-			current = values.get(optName, default)
-			self._optNames.append(optName)
-			self._opts.append(prop)
-			self._values[optName] = current
-			# do NOT reuse the name `kind` here: that would shadow the
-			# "Read"/"Write" parameter still needed for title_text below
-			optKind = _kindForOption(prop)
-			row: dict[str, Any] = {
-				"name": prop.displayName,
-				"comment": prop.longComment,
-				"kind": optKind,
-				"bool-value": bool(current) if optKind == "bool" else False,
-				"str-value": str(current) if optKind == "str" else "",
-				"int-value": int(current) if optKind == "int" else 0,
-				"choices": slint.ListModel(
-					[str(v) for v in (prop.values or [])],
-				)
-				if optKind == "choice"
-				else slint.ListModel([]),
-				"current-choice": str(current) if optKind == "choice" else "",
-			}
-			rows.append(row)
+		rows = []
+		for name, prop in self._opts:
+			current = self._values[name]
+			widget = _widgetKind(prop)
+			rows.append(
+				{
+					"name": prop.displayName,
+					"comment": prop.longComment,
+					"kind": widget,
+					"bool-value": widget == "bool" and bool(current),
+					"str-value": str(current) if widget in {"str", "choice"} else "",
+					"int-value": int(current) if widget == "int" else 0,
+					"choices": slint.ListModel(
+						[str(v) for v in prop.values or []] if widget == "choice" else []
+					),
+				},
+			)
 
-		comp = load_slint("dialogs.slint").OptionsDialog
-		self.dialog = comp()
-		self.dialog.title_text = f"{formatDesc} {kind} Options"
+		self.dialog = load_slint("dialogs.slint").OptionsDialog()
+		self.dialog.title_text = f"{plugin.description} {kind} Options"
 		self.dialog.options = slint.ListModel(rows)
-
-		# Bind weakly (see utils.weakCallback) so the Slint component is never
-		# part of a reference cycle with this controller.
-		self.dialog.set_bool = weakCallback(self._setBool)
-		self.dialog.set_str = weakCallback(self._setStr)
-		self.dialog.set_int = weakCallback(self._setInt)
-		self.dialog.set_choice = weakCallback(self._setChoice)
-		self.dialog.ok = weakCallback(self._onOkCb)
-		self.dialog.cancel = weakCallback(self._onCancel)
-
+		setValue = weakCallback(self._setValue)
+		self.dialog.set_bool = setValue
+		self.dialog.set_int = setValue
+		self.dialog.set_str = setValue
+		self.dialog.ok = weakCallback(self._onOk)
+		self.dialog.cancel = weakCallback(self._close)
 		self.dialog.show()
 
-	# ----------------------------------------------------------
-	# callbacks (Slint event-loop thread)
-	# ----------------------------------------------------------
-	def _setBool(self, i: int, v: bool) -> None:
-		self._values[self._optNames[i]] = bool(v)
+	def _setValue(self, i: int, value: Any) -> None:
+		self._values[self._opts[i][0]] = value
 
-	def _setInt(self, i: int, v: int) -> None:
-		self._values[self._optNames[i]] = int(v)
-
-	def _setStr(self, i: int, v: str) -> None:
-		self._values[self._optNames[i]] = v
-
-	def _setChoice(self, i: int, v: str) -> None:
-		self._values[self._optNames[i]] = v
-
-	def _onOkCb(self) -> None:
+	def _onOk(self) -> None:
 		result: dict[str, Any] = {}
-		for optName, opt in zip(self._optNames, self._opts, strict=True):
-			raw = self._values.get(optName)
+		for name, opt in self._opts:
+			raw = self._values[name]
 			try:
 				value, isValid = opt.evaluate(raw)
 			except Exception:
-				log.exception(f"failed to evaluate option {optName!r}={raw!r}")
+				log.exception(f"failed to evaluate option {name!r}={raw!r}")
 				continue
 			if not isValid:
-				log.warning(f"invalid value {raw!r} for option {optName!r}")
+				log.warning(f"invalid value {raw!r} for option {name!r}")
 				continue
-			result[optName] = value
-		self._onOk(result)
-		self._close()
-
-	def _onCancel(self) -> None:
+			result[name] = value
+		self._valuesOut.clear()
+		self._valuesOut.update(result)
 		self._close()
 
 	def _close(self) -> None:

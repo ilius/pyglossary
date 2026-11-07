@@ -20,6 +20,24 @@ if not dist_dir_path.exists():
 
 target_path = dist_dir_path / f"{app_name}.dist"
 
+_ignoreJunk = shutil.ignore_patterns(
+	"__pycache__",
+	"*.pyc",
+	".ruff_cache",
+	".DS_Store",
+	"*.md",
+	"*.sh",
+)
+
+
+def ignoreDevFiles(dirpath: str, names: list[str]) -> set[str]:
+	"""Skip dev-only files inside the pyglossary package (notes, caches, screenshots)."""
+	ignored = set(_ignoreJunk(dirpath, names))
+	if Path(dirpath).name == "ui_slint":
+		ignored.update(name for name in names if name.endswith(".png"))
+	return ignored
+
+
 sources = [
 	"about",
 	"AUTHORS",
@@ -45,16 +63,11 @@ for source in sources:
 				dirs_exist_ok=True,
 				symlinks=True,
 				ignore_dangling_symlinks=True,
+				ignore=ignoreDevFiles if source == "pyglossary" else None,
 			)
 		else:
 			copied_to = shutil.copy(src, target_path, follow_symlinks=False)
 		sys.stdout.write(f"Copied {src} -> {copied_to}")
-	except FileNotFoundError:
-		sys.stderr.write(f"No such file: {src}")
-		sys.exit(1)
-	except PermissionError:
-		sys.stderr.write(f"Cannot access file: {src}")
-		sys.exit(1)
-	except Exception as e:
-		sys.stderr.write(f"Error copying file {src}: {e}")
+	except Exception as e:  # noqa: BLE001
+		sys.stderr.write(f"Error copying {src}: {e}")
 		sys.exit(1)

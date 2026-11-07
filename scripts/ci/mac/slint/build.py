@@ -12,6 +12,7 @@ so it does not depend on a prior GitHub Actions step exporting them into
 $GITHUB_ENV -- it also runs standalone locally via `make -C scripts/ci/mac/slint`.
 """
 
+import functools
 import os
 import platform
 import shutil
@@ -25,7 +26,7 @@ REPO_ROOT = SCRIPT_DIR / ".." / ".." / ".." / ".."
 APPNAME = os.getenv("APPNAME", "PyGlossarySlint")
 DIST_DIR = os.getenv("DIST_DIR", "dist.nuitka.slint")
 MAIN_SCRIPT = os.getenv("MAIN_SCRIPT", "main.py")
-SLINT_VERSION = os.getenv("SLINT_VERSION", "1.17.0b2")
+SLINT_VERSION = os.getenv("SLINT_VERSION", "1.18.1b1")
 PYTHON_VERSION = os.getenv("PYTHON_VERSION", "3.13")
 
 ARCH = platform.machine()
@@ -60,6 +61,25 @@ def step_venv() -> None:
 			["uv", "venv", ".venv", "--python", PYTHON_VERSION],
 			check=True,
 		)
+	check_venv_python()
+
+
+# An existing .venv is reused as-is, so without this check a stale venv
+# silently overrides PYTHON_VERSION (and the bundled libpython with it).
+@functools.cache
+def check_venv_python() -> None:
+	python = REPO_ROOT / ".venv" / "bin" / "python"
+	if not python.exists():
+		raise SystemExit(f"{python} not found; run: build.py venv")
+	actual = subprocess.check_output(
+		[str(python), "-c", "import sys; print('%d.%d' % sys.version_info[:2])"],
+		text=True,
+	).strip()
+	if actual != PYTHON_VERSION:
+		raise SystemExit(
+			f".venv is Python {actual}, but PYTHON_VERSION={PYTHON_VERSION}: "
+			f"remove .venv, or set PYTHON_VERSION={actual}",
+		)
 
 
 # Only the native-toolchain deps required to build PyICU/python-lzo from
@@ -73,18 +93,16 @@ def step_deps_brew() -> None:
 	)
 
 
-# Returns compiler/linker flags for the brew-installed native deps
-# (icu4c, lzo, libffi) needed to build PyICU / python-lzo from source
-# and to link them into the nuitka standalone binary.
+# Compiler/linker flags for the brew-installed native deps (icu4c, lzo,
+# libffi) needed to build PyICU / python-lzo from source and link them into
+# the nuitka standalone binary.
+@functools.cache
 def resolve_brew_env() -> dict:
 	brew_prefix = subprocess.check_output(["brew", "--prefix"], text=True).strip()
-	prefix_icu4c = subprocess.check_output(
-		["brew", "--prefix", "icu4c"], text=True
-	).strip()
-	prefix_lzo = subprocess.check_output(["brew", "--prefix", "lzo"], text=True).strip()
-	prefix_libffi = subprocess.check_output(
-		["brew", "--prefix", "libffi"], text=True
-	).strip()
+	# same paths `brew --prefix <formula>` prints (opt/ symlinks)
+	prefix_icu4c = f"{brew_prefix}/opt/icu4c"
+	prefix_lzo = f"{brew_prefix}/opt/lzo"
+	prefix_libffi = f"{brew_prefix}/opt/libffi"
 
 	env = dict(os.environ)
 	env["PKG_CONFIG_PATH"] = (
@@ -107,6 +125,7 @@ def resolve_brew_env() -> dict:
 
 
 def venv_env(env: dict | None = None) -> dict:
+	check_venv_python()
 	env = dict(env or os.environ)
 	venv_bin = REPO_ROOT / ".venv" / "bin"
 	env["VIRTUAL_ENV"] = str(REPO_ROOT / ".venv")
@@ -145,14 +164,15 @@ def step_deps_python() -> None:
 
 def step_patch() -> None:
 	log("Patching sources for nuitka build...")
-	if not (MAIN_SCRIPT and APPNAME):
-		raise SystemExit("Missing env vars MAIN_SCRIPT/APPNAME")
-	shutil.copyfile(MAIN_SCRIPT, f"{APPNAME}.py")
-	Path("__init__.py").unlink(missing_ok=True)
-	arg_main = Path("pyglossary/ui/argparse_main.py")
-	arg_main.write_text(
-		arg_main.read_text(encoding="utf-8").replace('default="auto"', 'default="slint"'),
-		encoding="utf-8",
+	subprocess.run(
+		[sys.executable, str(SCRIPT_DIR.parent / "patch_sources.py")],
+		check=True,
+		env={
+			**os.environ,
+			"MAIN_SCRIPT": MAIN_SCRIPT,
+			"APPNAME": APPNAME,
+			"DEFAULT_UI": "slint",
+		},
 	)
 
 
@@ -186,6 +206,7 @@ def step_nuitka_build() -> None:
 		"--nofollow-import-to=pyglossary.ui.ui_tk_wizard",
 		"--nofollow-import-to=pyglossary.ui.ui_wx",
 		"--nofollow-import-to=tkinter",
+		"--nofollow-import-to=tkinterdnd2",
 		"--nofollow-import-to=gi",
 		"--nofollow-import-to=gtk",
 		"--nofollow-import-to=wx",
@@ -206,6 +227,7 @@ def step_nuitka_build() -> None:
 		"--include-module=icu",
 		"--include-module=colorize_pinyin",
 		"--include-package-data=pyglossary",
+		*NOINCLUDE_DEV_DATA,
 		"--include-data-files=about=about",
 		"--include-module=_json",
 		"--include-module=_bisect",
@@ -218,6 +240,18 @@ def step_nuitka_build() -> None:
 		f"{APPNAME}.py",
 	]
 	subprocess.check_call(cmd, env=env)
+
+
+# Dev-only files inside the pyglossary package (notes, screenshots, tool
+# caches) that --include-package-data would ship; nuitka fnmatch-es the target
+# path, so "*" also spans "/".
+NOINCLUDE_DEV_DATA = [
+	"--noinclude-data-files=pyglossary/*.md",
+	"--noinclude-data-files=pyglossary/*.sh",
+	"--noinclude-data-files=pyglossary/*.DS_Store",
+	"--noinclude-data-files=pyglossary/*/.ruff_cache/*",
+	"--noinclude-data-files=pyglossary/ui/ui_slint/*.png",
+]
 
 
 def step_copy_assets() -> None:
@@ -234,19 +268,15 @@ def step_copy_assets() -> None:
 		"plugins-meta",
 		"help",
 		"res",
-		"pyglossary",
 	):
 		src = Path(name)
 		if not src.exists():
 			sys.stderr.write(f"source not found: {name}\n")
 			continue
 		if src.is_dir():
-			shutil.copytree(
-				src,
-				target / src.name,
-				dirs_exist_ok=True,
-				symlinks=True,
-			)
+			# fresh copy (nuitka writes none of these dirs): re-runnable
+			shutil.rmtree(target / src.name, ignore_errors=True)
+			shutil.copytree(src, target / src.name, symlinks=True)
 		else:
 			shutil.copy(src, target, follow_symlinks=False)
 
@@ -276,7 +306,6 @@ def step_dmg() -> None:
 
 
 def step_all() -> None:
-	step_uv()
 	step_venv()
 	step_deps_brew()
 	step_deps_python()
@@ -304,10 +333,7 @@ def main() -> None:
 	stage = sys.argv[1] if len(sys.argv) > 1 else "all"
 	if stage not in STAGES:
 		sys.stderr.write(f"Unknown stage: {stage}\n")
-		sys.stderr.write(
-			"Usage: build.py [uv|venv|deps-brew|deps-python|patch|"
-			"nuitka-build|copy-assets|dmg|all]\n"
-		)
+		sys.stderr.write(f"Usage: build.py [{'|'.join(STAGES)}]\n")
 		raise SystemExit(1)
 	STAGES[stage]()
 
