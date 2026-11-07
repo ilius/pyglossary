@@ -279,6 +279,28 @@ _REF = re.compile(r"&(?:#[xX]([0-9A-Fa-f]+)|#([0-9]+)|([A-Za-z0-9]+))(;?)")
 _CP1252 = {x: bytes((x,)).decode("cp1252", "ignore") or chr(x) for x in range(0x80, 0xA0)}
 
 
+def _unescape_numeric(hexa: str | None, deci: str | None) -> str:
+	x = int(hexa, 16) if hexa else int(deci)
+	if 0x80 <= x <= 0x9F:
+		return _CP1252[x]
+	if x == 0 or 0xD800 <= x <= 0xDFFF or x > 0x10FFFF:
+		return "\ufffd"
+	return chr(x)
+
+
+def _unescape_name(name: str, semi: str, attr: bool, tail: str) -> str | None:
+	if attr and not semi and tail == "=":
+		return None
+	if (c := html5.get(name + semi)) is not None:
+		return c
+	if attr:
+		return None
+	for j in range(min(len(name + semi) - 1, 6), 1, -1):
+		if (c := html5.get(name[:j])) is not None:
+			return c + name[j:] + semi
+	return None
+
+
 def unescape(s: str, attr: bool = False) -> str:
 	"""Character references in text or, attr, an attribute value."""
 	if "&" not in s:
@@ -287,19 +309,10 @@ def unescape(s: str, attr: bool = False) -> str:
 	def ref(m: re.Match[str]) -> str:
 		hexa, deci, name, semi = m.groups()
 		if name is None:
-			x = int(hexa, 16) if hexa else int(deci)
-			if 0x80 <= x <= 0x9F:
-				return _CP1252[x]
-			return "\ufffd" if x == 0 or 0xD800 <= x <= 0xDFFF or x > 0x10FFFF else chr(x)
-		if attr and not semi and m.string[m.end() : m.end() + 1] == "=":
-			return m[0]
-		if (c := html5.get(name + semi)) is not None:
-			return c
-		if not attr:
-			for j in range(min(len(name + semi) - 1, 6), 1, -1):
-				if (c := html5.get(name[:j])) is not None:
-					return c + name[j:] + semi
-		return m[0]
+			return _unescape_numeric(hexa, deci)
+		tail = m.string[m.end() : m.end() + 1]
+		c = _unescape_name(name, semi, attr, tail)
+		return m[0] if c is None else c
 
 	return _REF.sub(ref, s)
 
@@ -361,6 +374,16 @@ class Tok:
 		self.name, self.attrs, self.self_closing = name, attrs, self_closing
 
 
+def _tag_attr(m: re.Match[str]) -> tuple[str, str, int]:
+	key = ascii_lower(m[1])
+	g = 2 if m[2] is not None else 4 if m[4] is not None else 6
+	v = m[g] or ""
+	if "&" in v or "\r" in v:
+		v = unescape(newlines(v), attr=True)
+	vend = m.end(g) if m[g] is not None else m.end(1)
+	return key, v, vend
+
+
 def _tag(s: str, i: int) -> tuple[int, str, list[tuple[str, str]], int] | None:
 	"""
 	Read a tag as x/net/html does, from its name at s[i]: its end, name,
@@ -385,15 +408,11 @@ def _tag(s: str, i: int) -> tuple[int, str, list[tuple[str, str]], int] | None:
 		k = m.end()
 		if k >= n or m[3] == "" or m[5] == "":  # EOF, or an unclosed quote
 			return None
-		key = ascii_lower(m[1])
+		key, v, vd = _tag_attr(m)
 		if key not in seen:
 			seen.add(key)
-			g = 2 if m[2] is not None else 4 if m[4] is not None else 6
-			v = m[g] or ""
-			if "&" in v or "\r" in v:
-				v = unescape(newlines(v), attr=True)
 			attrs.append((key, v))
-			vend = m.end(g) if m[g] is not None else m.end(1)
+			vend = vd
 		k = _HSPACES.match(s, k).end()
 	return None
 
@@ -422,7 +441,81 @@ def _close_angle(s: str, i: int) -> int:
 	return len(s) if k < 0 else k + 1
 
 
-def tokens(s: str, plain: Callable[[], bool] | None = None) -> Iterator[Tok]:  # noqa: PLR0912
+def _token_slash(s: str, j: int, n: int) -> Iterator[Tok]:
+	c = s[j + 2 : j + 3]
+	if not c:
+		yield Tok(TEXT, j, n)
+		return n
+	if c == ">":
+		i = j + 3
+		yield Tok(COMMENT, j, i)
+		return i
+	if c.isascii() and c.isalpha():
+		t = _tag(s, j + 2)
+		if t is None:
+			yield Tok(ERROR, j, n)
+			return n
+		i = t[0]
+		yield Tok(END, j, i, t[1])
+		return i
+	i = _close_angle(s, j + 2)
+	yield Tok(COMMENT, j, i)
+	return i
+
+
+def _token_bang(s: str, j: int, n: int) -> Iterator[Tok]:
+	if s.startswith("<!--", j):
+		e = _COMMENT_OPEN_END.match(s, j + 4) or _COMMENT_END.search(s, j + 4)
+		i = e.end() if e else n
+		yield Tok(COMMENT, j, i)
+		return i
+	i = _close_angle(s, j + 2)
+	doctype = s[j + 2 : j + 9].isascii() and s[j + 2 : j + 9].lower() == "doctype"
+	yield Tok(DOCTYPE if doctype else COMMENT, j, i)
+	return i
+
+
+def _raw_end(s: str, name: str, i: int, n: int) -> int:
+	if name == "plaintext":
+		return n
+	if name == "script":
+		return _script_end(s, i)
+	e = _RAW_END[name].search(s, i)
+	return e.start() if e else n
+
+
+def _token_start(
+	s: str, j: int, n: int, plain: Callable[[], bool] | None
+) -> Iterator[Tok]:
+	t = _tag(s, j + 1)
+	if t is None:
+		yield Tok(ERROR, j, n)
+		return n
+	i, name, attrs, vend = t
+	sc = s[i - 2] == "/" and (not attrs or i - 2 != vend - 1)
+	yield Tok(START, j, i, name, attrs, sc)
+	if name in _RAW_TEXT and not (plain and plain()):
+		e = _raw_end(s, name, i, n)
+		if e > i:
+			yield Tok(TEXT, i, e, name)
+		i = e
+	return i
+
+
+def _token_at(s: str, j: int, n: int, plain: Callable[[], bool] | None) -> Iterator[Tok]:
+	c = s[j + 1]
+	if c == "/":
+		return (yield from _token_slash(s, j, n))
+	if c == "!":
+		return (yield from _token_bang(s, j, n))
+	if c == "?":
+		i = _close_angle(s, j + 2)
+		yield Tok(COMMENT, j, i)
+		return i
+	return (yield from _token_start(s, j, n, plain))
+
+
+def tokens(s: str, plain: Callable[[], bool] | None = None) -> Iterator[Tok]:
 	"""
 	The tokens of s, as x/net/html cuts them. plain() is a tree builder
 	saying the raw-text element just started is not one (foreign content).
@@ -436,57 +529,7 @@ def tokens(s: str, plain: Callable[[], bool] | None = None) -> Iterator[Tok]:  #
 		j = m.start()
 		if j > i:
 			yield Tok(TEXT, i, j)
-		c = s[j + 1]
-		if c == "/":
-			c = s[j + 2 : j + 3]
-			if not c:
-				yield Tok(TEXT, j, n)
-				return
-			if c == ">":
-				i = j + 3
-				yield Tok(COMMENT, j, i)
-			elif c.isascii() and c.isalpha():
-				t = _tag(s, j + 2)
-				if t is None:
-					yield Tok(ERROR, j, n)
-					return
-				i = t[0]
-				yield Tok(END, j, i, t[1])
-			else:
-				i = _close_angle(s, j + 2)
-				yield Tok(COMMENT, j, i)
-		elif c == "!":
-			if s.startswith("<!--", j):
-				e = _COMMENT_OPEN_END.match(s, j + 4) or _COMMENT_END.search(s, j + 4)
-				i = e.end() if e else n
-				yield Tok(COMMENT, j, i)
-			else:
-				i = _close_angle(s, j + 2)
-				doctype = (
-					s[j + 2 : j + 9].isascii() and s[j + 2 : j + 9].lower() == "doctype"
-				)
-				yield Tok(DOCTYPE if doctype else COMMENT, j, i)
-		elif c == "?":
-			i = _close_angle(s, j + 2)
-			yield Tok(COMMENT, j, i)
-		else:
-			t = _tag(s, j + 1)
-			if t is None:
-				yield Tok(ERROR, j, n)
-				return
-			i, name, attrs, vend = t
-			sc = s[i - 2] == "/" and (not attrs or i - 2 != vend - 1)
-			yield Tok(START, j, i, name, attrs, sc)
-			if name in _RAW_TEXT and not (plain and plain()):
-				if name == "plaintext":
-					e = n
-				elif name == "script":
-					e = _script_end(s, i)
-				else:
-					e = ((m := _RAW_END[name].search(s, i)) and m.start()) or n
-				if e > i:
-					yield Tok(TEXT, i, e, name)
-				i = e
+		i = yield from _token_at(s, j, n, plain)
 
 
 # ---------------------------------------------------------------------------
@@ -773,101 +816,161 @@ class _Builder:
 		while self.active and self.active.pop() is not _MARKER:
 			pass
 
-	def start(self, tag: str, attrs: list[tuple[str, str]], self_closing: bool) -> None:  # noqa: PLR0912
-		stack, active = self.stack, self.active
-		cur = stack[-1]
-		if _foreign(cur) and not _integration(cur, tag):
-			breakout = tag in _BREAKOUT or (
-				tag == "font" and any(k in ("color", "face", "size") for k, _ in attrs)
-			)
-			if not breakout:
-				svg = cur.tag == "svg" or cur.tag.startswith("#svg-")
-				self._add(("#svg-" if svg else "#math-") + tag, attrs, not self_closing)
-				return
-			while _foreign(self.cur) and not _integration(self.cur, tag):
-				stack.pop()
-		if tag in ("html", "body", "head", "frame", "frameset"):
-			return
-		if tag == "image":
-			tag = "img"
+	def _start_foreign(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> bool:
+		cur = self.stack[-1]
+		if not _foreign(cur) or _integration(cur, tag):
+			return False
+		breakout = tag in _BREAKOUT or (
+			tag == "font" and any(k in ("color", "face", "size") for k, _ in attrs)
+		)
+		if not breakout:
+			svg = cur.tag == "svg" or cur.tag.startswith("#svg-")
+			self._add(("#svg-" if svg else "#math-") + tag, attrs, not self_closing)
+			return True
+		while _foreign(self.cur) and not _integration(self.cur, tag):
+			self.stack.pop()
+		return False
+
+	def _start_mode(self, tag: str) -> str:
 		mode = self._mode()
 		if mode == "template" and tag not in _IN_HEAD:
 			# The first start tag in a template sets its mode, kept in its data.
-			tmpl = next(n for n in reversed(stack) if n.tag == "template")
+			tmpl = next(n for n in reversed(self.stack) if n.tag == "template")
 			tmpl.data = _TEMPLATE_MODE.get(tag, "body")
 			mode = self._mode()
-		if (
+		return mode
+
+	def _start_li(self, tag: str) -> None:
+		same = ("li",) if tag == "li" else ("dd", "dt")
+		stack = self.stack
+		for i in range(len(stack) - 1, 0, -1):
+			t = stack[i].tag
+			if t in same:
+				del stack[i:]
+				break
+			if t in _SPECIAL and t not in ("address", "div", "p"):
+				break
+
+	def _start_option(self, tag: str) -> None:
+		if self._scope(("select",)) > 0:
+			self._implied_end("optgroup" if tag == "option" else "")
+		elif tag != "hr" and self.cur.tag == "option":
+			self.stack.pop()
+
+	def _start_a(self) -> None:
+		stack, active = self.stack, self.active
+		for e in reversed(active):
+			if e is _MARKER:
+				break
+			if e.tag == "a":
+				self._adopt("a")
+				if e in stack:
+					stack.remove(e)
+				if e in active:
+					active.remove(e)
+				break
+
+	def _start_formatting(
+		self, tag: str, attrs: list[tuple[str, str]]
+	) -> list[tuple[str, str]]:
+		if tag not in _FORMATTING:
+			return attrs
+		attrs = sorted(attrs)
+		k = 0
+		for e in reversed(self.active[:]):  # Noah's ark: three of a kind at most
+			if e is _MARKER:
+				break
+			if e.tag == tag and e.attrs == attrs:
+				k += 1
+				if k >= 3:
+					self.active.remove(e)
+		return attrs
+
+	def _start_append(self, tag: str, node: Node) -> None:
+		if tag in _FORMATTING:
+			self.active.append(node)
+		elif tag in _MARKER_TAGS:
+			self.active.append(_MARKER)
+		elif tag == "form" and not self._in("template"):
+			self.form = node
+
+	def _start_specific(self, tag: str) -> bool:
+		if tag in _HEADINGS:
+			if self.cur.tag in _HEADINGS:
+				self.stack.pop()
+			return False
+		if tag in ("li", "dd", "dt"):
+			self._start_li(tag)
+			return False
+		if tag == "button":
+			self._pop_until(("button",))
+			return False
+		if tag == "select":
+			return self._pop_until(("select",))
+		if tag == "input":
+			self._pop_until(("select",))
+			return False
+		return self._start_specific_other(tag)
+
+	def _start_specific_other(self, tag: str) -> bool:
+		if tag in ("option", "optgroup", "hr"):
+			self._start_option(tag)
+		elif tag in ("rb", "rtc", "rp", "rt"):
+			if self._scope(("ruby",)) > 0:
+				self._implied_end("rtc" if tag in ("rp", "rt") else "")
+		elif tag == "a":
+			self._start_a()
+		return False
+
+	def _start_table(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> bool:
+		mode = self._start_mode(tag)
+		return bool(
 			mode
 			and mode != "template"
 			and self._table_start(tag, attrs, self_closing, mode)
-		):
-			return
-		if tag in _TABLE_PART:  # in body (a caption's <th> too, as x/net/html), ignored
-			return
-		if tag == "form" and self.form is not None and not self._in("template"):
-			return
-		if tag in _P_CLOSERS:
-			self._pop_until(("p",), _BUTTON_SCOPE)
-		if tag in _HEADINGS and self.cur.tag in _HEADINGS:
-			stack.pop()
-		elif tag in ("li", "dd", "dt"):
-			same = ("li",) if tag == "li" else ("dd", "dt")
-			for i in range(len(stack) - 1, 0, -1):
-				t = stack[i].tag
-				if t in same:
-					del stack[i:]
-					break
-				if t in _SPECIAL and t not in ("address", "div", "p"):
-					break
-		elif tag == "button":
-			self._pop_until(("button",))
-		elif tag == "select":
-			if self._pop_until(("select",)):
-				return
-		elif tag == "input":
-			self._pop_until(("select",))
-		elif tag in ("option", "optgroup", "hr"):
-			if self._scope(("select",)) > 0:
-				self._implied_end("optgroup" if tag == "option" else "")
-			elif tag != "hr" and self.cur.tag == "option":
-				stack.pop()
-		elif tag in ("rb", "rtc", "rp", "rt") and self._scope(("ruby",)) > 0:
-			self._implied_end("rtc" if tag in ("rp", "rt") else "")
-		elif tag == "a":
-			for e in reversed(active):
-				if e is _MARKER:
-					break
-				if e.tag == "a":
-					self._adopt("a")
-					if e in stack:
-						stack.remove(e)
-					if e in active:
-						active.remove(e)
-					break
+		)
+
+	def _start_form_block(self, tag: str) -> bool:
+		return tag == "form" and self.form is not None and not self._in("template")
+
+	def _start_reconstruct(self, tag: str) -> None:
 		if tag not in _NO_RECONSTRUCT:
 			self._reconstruct()
 		if tag == "nobr" and self._scope(("nobr",)) >= 0:
 			self._adopt("nobr")
 			self._reconstruct()
-		if tag in _FORMATTING:
-			attrs = sorted(attrs)
-			k = 0
-			for e in reversed(active[:]):  # Noah's ark: three of a kind at most
-				if e is _MARKER:
-					break
-				if e.tag == tag and e.attrs == attrs:
-					k += 1
-					if k >= 3:
-						active.remove(e)
-		node = self._add(
-			tag, attrs, tag not in _VOID and not (self_closing and tag in ("svg", "math"))
-		)
-		if tag in _FORMATTING:
-			active.append(node)
-		elif tag in _MARKER_TAGS:
-			active.append(_MARKER)
-		elif tag == "form" and not self._in("template"):
-			self.form = node
+
+	def _start_node(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> None:
+		attrs = self._start_formatting(tag, attrs)
+		push = tag not in _VOID and not (self_closing and tag in ("svg", "math"))
+		node = self._add(tag, attrs, push)
+		self._start_append(tag, node)
+
+	def start(self, tag: str, attrs: list[tuple[str, str]], self_closing: bool) -> None:
+		if self._start_foreign(tag, attrs, self_closing):
+			return
+		if tag in ("html", "body", "head", "frame", "frameset"):
+			return
+		if tag == "image":
+			tag = "img"
+		if self._start_table(tag, attrs, self_closing):
+			return
+		if tag in _TABLE_PART:  # in body (a caption's <th> too, as x/net/html), ignored
+			return
+		if self._start_form_block(tag):
+			return
+		if tag in _P_CLOSERS:
+			self._pop_until(("p",), _BUTTON_SCOPE)
+		if self._start_specific(tag):
+			return
+		self._start_reconstruct(tag)
+		self._start_node(tag, attrs, self_closing)
 
 	def _implied_end(self, keep: str) -> None:
 		while self.cur.tag in _IMPLIED_END and self.cur.tag != keep:
@@ -876,72 +979,80 @@ class _Builder:
 	def _in(self, tag: str) -> bool:
 		return any(n.tag == tag for n in self.stack)
 
-	def _table_start(  # noqa: PLR0911, PLR0912
+	def _table_start_cell(
 		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool, mode: str
 	) -> bool:
-		"""In a table mode: whether the start tag was dealt with."""
-		stack = self.stack
-		if mode in ("td", "th", "caption"):
-			# x/net/html's caption mode lets th through
-			if tag not in _TABLE_PART or (mode == "caption" and tag == "th"):
-				return False
-			if self._pop_until(
-				("caption",) if mode == "caption" else ("td", "th"), _TABLE_SCOPE
-			):
-				self._clear_to_marker()
+		# x/net/html's caption mode lets th through
+		if tag not in _TABLE_PART or (mode == "caption" and tag == "th"):
+			return False
+		if self._pop_until(
+			("caption",) if mode == "caption" else ("td", "th"), _TABLE_SCOPE
+		):
+			self._clear_to_marker()
+			self.start(tag, attrs, self_closing)
+		return True
+
+	def _table_start_colgroup(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> bool:
+		if tag == "col":
+			self._add(tag, attrs, False)
+			return True
+		if tag == "template":
+			return False
+		if self.cur.tag == "colgroup":
+			self.stack.pop()
+			self.start(tag, attrs, self_closing)
+		return True
+
+	def _table_start_tr(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> bool:
+		if tag in ("td", "th"):
+			self._clear(_ROW_CTX)
+			self._add(tag, attrs)
+			self.active.append(_MARKER)
+			return True
+		if tag in _TABLE_PART:
+			if self._pop_until(("tr",), _TABLE_SCOPE):
 				self.start(tag, attrs, self_closing)
 			return True
-		if mode == "colgroup":
-			if tag == "col":
-				self._add(tag, attrs, False)
-				return True
-			if tag == "template":
-				return False
-			if self.cur.tag == "colgroup":
-				stack.pop()
-				self.start(tag, attrs, self_closing)
-			return True
-		if mode == "tr":
-			if tag in ("td", "th"):
-				self._clear(_ROW_CTX)
-				self._add(tag, attrs)
-				self.active.append(_MARKER)
-				return True
-			if tag in _TABLE_PART:
-				if self._pop_until(("tr",), _TABLE_SCOPE):
-					self.start(tag, attrs, self_closing)
-				return True
-		elif mode in _TBODY:
-			if tag == "tr":
-				self._clear(_TBODY_CTX)
-				self._add(tag, attrs)
-				return True
-			if tag in ("td", "th"):
-				self._clear(_TBODY_CTX)
-				self._add("tr", [])
-				self.start(tag, attrs, self_closing)
-				return True
-			if tag in _TABLE_PART:
-				if self._scope(_TBODY, _TABLE_SCOPE) > 0:
-					self._clear(_TBODY_CTX)
-					stack.pop()
-					self.start(tag, attrs, self_closing)
-				return True
-		if tag in ("caption", "colgroup", *_TBODY):
-			self._clear(_TABLE_CTX_STOP)
-			if tag == "caption":
-				self.active.append(_MARKER)
+		return False
+
+	def _table_start_tbody(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> bool:
+		if tag == "tr":
+			self._clear(_TBODY_CTX)
 			self._add(tag, attrs)
 			return True
-		if tag in ("col", "td", "th", "tr"):
-			self._clear(_TABLE_CTX_STOP)
-			self._add("colgroup" if tag == "col" else "tbody", [])
+		if tag in ("td", "th"):
+			self._clear(_TBODY_CTX)
+			self._add("tr", [])
 			self.start(tag, attrs, self_closing)
 			return True
-		if tag == "table":
-			if self._pop_until(("table",), _TABLE_SCOPE):
+		if tag in _TABLE_PART:
+			if self._scope(_TBODY, _TABLE_SCOPE) > 0:
+				self._clear(_TBODY_CTX)
+				self.stack.pop()
 				self.start(tag, attrs, self_closing)
 			return True
+		return False
+
+	def _table_start_section(self, tag: str, attrs: list[tuple[str, str]]) -> None:
+		self._clear(_TABLE_CTX_STOP)
+		if tag == "caption":
+			self.active.append(_MARKER)
+		self._add(tag, attrs)
+
+	def _table_start_implied(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool
+	) -> None:
+		self._clear(_TABLE_CTX_STOP)
+		self._add("colgroup" if tag == "col" else "tbody", [])
+		self.start(tag, attrs, self_closing)
+
+	def _table_start_misc(self, tag: str, attrs: list[tuple[str, str]]) -> bool:
 		if tag == "input" and ascii_lower(dict(attrs).get("type", "")) == "hidden":
 			self._add(tag, attrs, False, False)
 			return True
@@ -951,67 +1062,123 @@ class _Builder:
 			return True
 		return False
 
-	def end(self, tag: str) -> None:  # noqa: PLR0912
+	def _table_start(
+		self, tag: str, attrs: list[tuple[str, str]], self_closing: bool, mode: str
+	) -> bool:
+		"""In a table mode: whether the start tag was dealt with."""
+		if mode in ("td", "th", "caption"):
+			return self._table_start_cell(tag, attrs, self_closing, mode)
+		if mode == "colgroup":
+			return self._table_start_colgroup(tag, attrs, self_closing)
+		if mode == "tr":
+			if self._table_start_tr(tag, attrs, self_closing):
+				return True
+		elif mode in _TBODY and self._table_start_tbody(tag, attrs, self_closing):
+			return True
+		if tag in ("caption", "colgroup", *_TBODY):
+			self._table_start_section(tag, attrs)
+			return True
+		if tag in ("col", "td", "th", "tr"):
+			self._table_start_implied(tag, attrs, self_closing)
+			return True
+		if tag == "table":
+			if self._pop_until(("table",), _TABLE_SCOPE):
+				self.start(tag, attrs, self_closing)
+			return True
+		return self._table_start_misc(tag, attrs)
+
+	def _end_foreign(self, tag: str) -> bool:
 		stack = self.stack
-		if _foreign(self.cur):
-			if tag in ("br", "p"):
-				while _foreign(self.cur) and not _integration(self.cur, None):
-					stack.pop()
-			else:
-				for i in range(len(stack) - 1, 0, -1):
-					n = stack[i]
-					if not _foreign(n):
-						break
-					if n.tag.rpartition("-")[2] == tag or n.tag == tag:
-						del stack[i:]
-						return
-		mode = self._mode()
-		if mode == "template" and tag != "template":
-			return
-		if mode == "colgroup" and tag != "template":
-			if tag != "col" and self.cur.tag == "colgroup":
+		if not _foreign(self.cur):
+			return False
+		if tag in ("br", "p"):
+			while _foreign(self.cur) and not _integration(self.cur, None):
 				stack.pop()
-				if tag != "colgroup":
-					self.end(tag)
-		elif tag in _TABLE_END and mode and mode != "template":
-			self._table_end(tag, mode)
-		elif tag in _CLOSE_BLOCK:
-			self._pop_until((tag,))
-		elif tag == "p":
-			if self._scope(("p",), _BUTTON_SCOPE) < 0:
-				self.start("p", [], False)
-			self._pop_until(("p",), _BUTTON_SCOPE)
+			return False
+		for i in range(len(stack) - 1, 0, -1):
+			n = stack[i]
+			if not _foreign(n):
+				break
+			if n.tag.rpartition("-")[2] == tag or n.tag == tag:
+				del stack[i:]
+				return True
+		return False
+
+	def _end_colgroup(self, tag: str) -> None:
+		if tag != "col" and self.cur.tag == "colgroup":
+			self.stack.pop()
+			if tag != "colgroup":
+				self.end(tag)
+
+	def _end_p(self) -> None:
+		if self._scope(("p",), _BUTTON_SCOPE) < 0:
+			self.start("p", [], False)
+		self._pop_until(("p",), _BUTTON_SCOPE)
+
+	def _end_form(self) -> None:
+		if self._in("template"):
+			if self._scope(("form",)) > 0:
+				self._implied_end("")
+				self._pop_until(("form",))
+		else:
+			node, self.form = self.form, None
+			i = self._scope(("form",))
+			if node is not None and i > 0 and self.stack[i] is node:
+				self._implied_end("")
+				self.stack.remove(node)
+
+	def _end_template(self) -> None:
+		i = next(
+			(
+				i
+				for i in range(len(self.stack) - 1, 0, -1)
+				if self.stack[i].tag == "template"
+			),
+			0,
+		)
+		if i:
+			del self.stack[i:]
+			self._clear_to_marker()
+
+	def _end_body(self, tag: str) -> None:
+		if tag == "p":
+			self._end_p()
 		elif tag == "li":
 			self._pop_until(("li",), _LIST_SCOPE)
 		elif tag in _HEADINGS:
 			self._pop_until(_HEADINGS)
 		elif tag in _FORMATTING:
 			self._adopt(tag)
-		elif tag in ("applet", "marquee", "object"):
-			if self._pop_until((tag,)):
-				self._clear_to_marker()
 		elif tag == "br":
 			self.start("br", [], False)
-		elif tag == "form":
-			if self._in("template"):
-				if self._scope(("form",)) > 0:
-					self._implied_end("")
-					self._pop_until(("form",))
-			else:
-				node, self.form = self.form, None
-				i = self._scope(("form",))
-				if node is not None and i > 0 and stack[i] is node:
-					self._implied_end("")
-					stack.remove(node)
-		elif tag == "template":
-			i = next(
-				(i for i in range(len(stack) - 1, 0, -1) if stack[i].tag == "template"), 0
-			)
-			if i:
-				del stack[i:]
+		else:
+			self._end_misc(tag)
+
+	def _end_misc(self, tag: str) -> None:
+		if tag in ("applet", "marquee", "object"):
+			if self._pop_until((tag,)):
 				self._clear_to_marker()
+		elif tag == "form":
+			self._end_form()
+		elif tag == "template":
+			self._end_template()
 		elif tag not in ("html", "body"):
 			self._end_other(tag)
+
+	def end(self, tag: str) -> None:
+		if self._end_foreign(tag):
+			return
+		mode = self._mode()
+		if mode == "template" and tag != "template":
+			return
+		if mode == "colgroup" and tag != "template":
+			self._end_colgroup(tag)
+		elif tag in _TABLE_END and mode and mode != "template":
+			self._table_end(tag, mode)
+		elif tag in _CLOSE_BLOCK:
+			self._pop_until((tag,))
+		else:
+			self._end_body(tag)
 
 	def _end_other(self, tag: str) -> None:
 		for i in range(len(self.stack) - 1, 0, -1):
@@ -1022,119 +1189,167 @@ class _Builder:
 			if t in _SPECIAL:
 				return
 
-	def _table_end(self, tag: str, mode: str) -> None:  # noqa: PLR0912
+	def _table_end_cell(self, tag: str) -> None:
+		if tag in ("td", "th"):
+			if self._pop_until((tag,), _TABLE_SCOPE):
+				self._clear_to_marker()
+		elif (
+			tag not in ("caption", "col", "colgroup")
+			and self._scope((tag,), _TABLE_SCOPE) > 0
+		):
+			self._pop_until(("td", "th"), _TABLE_SCOPE)
+			self._clear_to_marker()
+			self.end(tag)
+
+	def _table_end_tr(self, tag: str) -> None:
+		if tag == "tr":
+			self._pop_until(("tr",), _TABLE_SCOPE)
+		elif (
+			tag == "table" or (tag in _TBODY and self._scope((tag,), _TABLE_SCOPE) > 0)
+		) and self._pop_until(("tr",), _TABLE_SCOPE):
+			self.end(tag)
+
+	def _table_end_body(self, tag: str) -> None:
+		if tag in _TBODY:
+			self._pop_until((tag,), _TABLE_SCOPE)
+		elif tag == "table" and self._pop_until(_TBODY, _TABLE_SCOPE):
+			self.end(tag)
+
+	def _table_end_caption(self, tag: str) -> None:
+		if tag == "caption":
+			if self._pop_until(("caption",), _TABLE_SCOPE):
+				self._clear_to_marker()
+		elif tag == "table" and self._pop_until(("caption",), _TABLE_SCOPE):
+			self._clear_to_marker()
+			self.end(tag)
+
+	def _table_end(self, tag: str, mode: str) -> None:
 		"""A table end tag in the insertion mode of mode, a table element."""
-
-		def close(tags: Collection[str]) -> bool:
-			return self._pop_until(tags, _TABLE_SCOPE)
-
 		if mode in ("td", "th"):
-			if tag in ("td", "th"):
-				if close((tag,)):
-					self._clear_to_marker()
-			elif (
-				tag not in ("caption", "col", "colgroup")
-				and self._scope((tag,), _TABLE_SCOPE) > 0
-			):
-				close(("td", "th"))
-				self._clear_to_marker()
-				self.end(tag)
+			self._table_end_cell(tag)
 		elif mode == "tr":
-			if tag == "tr":
-				close(("tr",))
-			elif (
-				tag == "table"
-				or (tag in _TBODY and self._scope((tag,), _TABLE_SCOPE) > 0)
-			) and close(("tr",)):
-				self.end(tag)
+			self._table_end_tr(tag)
 		elif mode in _TBODY:
-			if tag in _TBODY:
-				close((tag,))
-			elif tag == "table" and close(_TBODY):
-				self.end(tag)
+			self._table_end_body(tag)
 		elif mode == "caption":
-			if tag == "caption":
-				if close(("caption",)):
-					self._clear_to_marker()
-			elif tag == "table" and close(("caption",)):
-				self._clear_to_marker()
-				self.end(tag)
+			self._table_end_caption(tag)
 		elif tag == "table":
-			close(("table",))
+			self._pop_until(("table",), _TABLE_SCOPE)
 
-	def _adopt(self, tag: str) -> None:  # noqa: PLR0912
-		"""The adoption agency algorithm, for the end tag of formatting element tag."""
+	def _adopt_lookup(self, tag: str) -> Node | None:
+		for e in reversed(self.active):
+			if e is _MARKER:
+				break
+			if e.tag == tag:
+				return e
+		return None
+
+	def _adopt_forget(self, node: Node, bookmark: int) -> int:
+		active = self.active
+		ni = active.index(node)
+		active.remove(node)
+		return bookmark - 1 if ni <= bookmark else bookmark
+
+	def _adopt_clone(self, node: Node) -> Node:
+		clone = Node("el", node.tag, node.attrs)
+		active = self.active
+		active[active.index(node)] = clone
+		self.stack[self.stack.index(node)] = clone
+		return clone
+
+	def _adopt_climb(self, fe: Node, fb: Node, bookmark: int) -> tuple[Node, int]:
 		stack, active = self.stack, self.active
-		cur = stack[-1]
-		if cur.tag == tag and cur not in active:
-			stack.pop()
+		last = fb
+		x = stack.index(fb)
+		j = 0
+		while True:
+			j += 1
+			x -= 1
+			node = stack[x]
+			if node is fe:
+				break
+			if j > 3 and node in active:
+				bookmark = self._adopt_forget(node, bookmark)
+				continue
+			if node not in active:
+				stack.remove(node)
+				continue
+			node = self._adopt_clone(node)
+			if last is fb:
+				bookmark = active.index(node) + 1
+			_append(node, last)
+			last = node
+		return last, bookmark
+
+	def _adopt_insert(self, fe: Node, fb: Node, bookmark: int) -> None:
+		active, stack = self.active, self.stack
+		clone = Node("el", fe.tag, fe.attrs)
+		for k in fb.children:
+			k.parent = clone
+		clone.children, fb.children = fb.children, []
+		_append(fb, clone)
+		if fe in active and active.index(fe) < bookmark:
+			bookmark -= 1
+		active.remove(fe)
+		active.insert(bookmark, clone)
+		stack.remove(fe)
+		stack.insert(stack.index(fb) + 1, clone)
+
+	def _adopt_finish(self, fe: Node, fb: Node, fi: int) -> None:
+		stack, active = self.stack, self.active
+		common = stack[fi - 1]
+		bookmark = active.index(fe)
+		last, bookmark = self._adopt_climb(fe, fb, bookmark)
+		_detach(last)
+		if common.tag in _TABLE_CTX:
+			self._foster(last)
+		else:
+			_append(common, last)
+		self._adopt_insert(fe, fb, bookmark)
+
+	def _adopt_once(self, tag: str) -> bool:
+		fe = self._adopt_lookup(tag)
+		if fe is None:
+			self._end_other(tag)
+			return True
+		stack, active = self.stack, self.active
+		if fe not in stack:
+			active.remove(fe)
+			return True
+		if self._scope((tag,)) < 0:
+			return True
+		fi = stack.index(fe)
+		fb = next((e for e in stack[fi:] if e.tag in _SPECIAL), None)
+		if fb is None:
+			del stack[fi:]
+			active.remove(fe)
+			return True
+		self._adopt_finish(fe, fb, fi)
+		return False
+
+	def _adopt(self, tag: str) -> None:
+		"""The adoption agency algorithm, for the end tag of formatting element tag."""
+		cur = self.stack[-1]
+		if cur.tag == tag and cur not in self.active:
+			self.stack.pop()
 			return
 		for _ in range(8):
-			fe = None
-			for e in reversed(active):
-				if e is _MARKER:
-					break
-				if e.tag == tag:
-					fe = e
-					break
-			if fe is None:
-				self._end_other(tag)
+			if self._adopt_once(tag):
 				return
-			if fe not in stack:
-				active.remove(fe)
-				return
-			if self._scope((tag,)) < 0:
-				return
-			fi = stack.index(fe)
-			fb = next((e for e in stack[fi:] if e.tag in _SPECIAL), None)
-			if fb is None:
-				del stack[fi:]
-				active.remove(fe)
-				return
-			common = stack[fi - 1]
-			bookmark = active.index(fe)
-			last = node = fb
-			x = stack.index(fb)
-			j = 0
-			while True:
-				j += 1
-				x -= 1
-				node = stack[x]
-				if node is fe:
-					break
-				if j > 3 and node in active:
-					ni = active.index(node)
-					active.remove(node)
-					if ni <= bookmark:
-						bookmark -= 1
-					continue
-				if node not in active:
-					stack.remove(node)
-					continue
-				clone = Node("el", node.tag, node.attrs)
-				active[active.index(node)] = clone
-				stack[stack.index(node)] = clone
-				node = clone
-				if last is fb:
-					bookmark = active.index(node) + 1
-				_append(node, last)
-				last = node
-			_detach(last)
-			if common.tag in _TABLE_CTX:
-				self._foster(last)
-			else:
-				_append(common, last)
-			clone = Node("el", fe.tag, fe.attrs)
-			for k in fb.children:
-				k.parent = clone
-			clone.children, fb.children = fb.children, []
-			_append(fb, clone)
-			if fe in active and active.index(fe) < bookmark:
-				bookmark -= 1
-			active.remove(fe)
-			active.insert(bookmark, clone)
-			stack.remove(fe)
-			stack.insert(stack.index(fb) + 1, clone)
+
+	def _text_colgroup(self, data: str, cur: Node) -> tuple[str, Node] | None:
+		rest = data.lstrip(_HSPACE)
+		if rest != data:
+			self._insert(Node("text", data=data[: len(data) - len(rest)]))
+		if not rest or cur.tag != "colgroup":
+			return None
+		self.stack.pop()
+		return rest, self.cur
+
+	def _text_reconstruct(self, cur: Node, data: str) -> bool:
+		return not (cur.tag in _TABLE_CTX and not data.strip(_HSPACE)) and (
+			not _foreign(cur) or _integration(cur, None)
+		)
 
 	def text(self, data: str) -> None:
 		cur = self.cur
@@ -1144,20 +1359,14 @@ class _Builder:
 			and data[:1] == "\n"
 		):
 			data = data[1:]  # a newline that starts a pre, listing or textarea
-		mode = self._mode()
-		if mode == "colgroup":
-			rest = data.lstrip(_HSPACE)
-			if rest != data:
-				self._insert(Node("text", data=data[: len(data) - len(rest)]))
-			if not rest or cur.tag != "colgroup":
+		if self._mode() == "colgroup":
+			r = self._text_colgroup(data, cur)
+			if r is None:
 				return
-			self.stack.pop()
-			data, cur, mode = rest, self.cur, self._mode()
+			data, cur = r
 		if not data:
 			return
-		if not (cur.tag in _TABLE_CTX and not data.strip(_HSPACE)) and (
-			not _foreign(cur) or _integration(cur, None)
-		):
+		if self._text_reconstruct(cur, data):
 			self._reconstruct()
 		self._insert(Node("text", data=data))
 
@@ -1348,7 +1557,7 @@ def cell_align(c: Node) -> str:
 	return ""
 
 
-def table(t: Node, st: dict[str, int] | None) -> str:
+def _table_rows(t: Node, st: dict[str, int] | None) -> list[list[Node]]:
 	rows: list[list[Node]] = []
 
 	def walk(n: Node) -> None:
@@ -1363,27 +1572,38 @@ def table(t: Node, st: dict[str, int] | None) -> str:
 				walk(k)
 
 	walk(t)
+	return rows
+
+
+def _table_line(r: list[Node], cols: int, st: dict[str, int] | None) -> str:
+	out = "|"
+	for i in range(cols):
+		md = ""
+		if i < len(r) and not skipped(st, r[i]):
+			w = Inline(IN_CELL, st)
+			w.nodes(r[i].children)
+			md = w.done()
+		out += " " + md + " |" if md else " |"
+	return out
+
+
+def table(t: Node, st: dict[str, int] | None) -> str:
+	rows = _table_rows(t, st)
 	cols = max(map(len, rows), default=0)
 	if cols == 0:
 		return ""
-
-	def line(r: list[Node]) -> str:
-		out = "|"
-		for i in range(cols):
-			md = ""
-			if i < len(r) and not skipped(st, r[i]):
-				w = Inline(IN_CELL, st)
-				w.nodes(r[i].children)
-				md = w.done()
-			out += " " + md + " |" if md else " |"
-		return out
-
 	head = rows[0]
 	delim = "".join(
 		" " + _ALIGN[cell_align(head[i]) if i < len(head) else ""] + " |"
 		for i in range(cols)
 	)
-	return "\n".join([line(head), "|" + delim, *map(line, rows[1:])])
+	return "\n".join(
+		[
+			_table_line(head, cols, st),
+			"|" + delim,
+			*(_table_line(r, cols, st) for r in rows[1:]),
+		]
+	)
 
 
 class Converter:
@@ -1408,79 +1628,97 @@ class Converter:
 			self.holds[id(n)] = v
 		return v
 
-	def flow(self, nodes: list[Node], depth: int) -> list[Block]:
+	def _flow_add(self, out: list[Block], b: Block) -> None:
+		if b.kind == K_LIST and out:
+			p = out[-1]
+			if (
+				p.kind == K_LIST
+				and p.list == b.list
+				and list_mark(p.md) == list_mark(b.md)
+			):
+				b.md = alternate(b.md)
+		out.append(b)
+
+	def _flow_add_all(self, out: list[Block], blocks: list[Block]) -> None:
+		for b in blocks:
+			self._flow_add(out, b)
+
+	def _flow_flush(self, para: Inline, out: list[Block]) -> Inline:
+		if md := para.done():
+			out.append(Block(md, K_PARA))
+		return Inline(IN_PARA, self.st)
+
+	def _flow_styled(self, n: Node, depth: int, para: Inline, out: list[Block]) -> Inline:
+		para = self._flow_flush(para, out)
+		if formatting(n):
+			para.node(n)
+			return self._flow_flush(para, out)
+		self._flow_add_all(out, self.flow(n.children, depth))
+		return para
+
+	def _flow_node(self, n: Node, depth: int, para: Inline, out: list[Block]) -> Inline:
 		st = self.st
+		if skipped(st, n):
+			return para
+		if styled_block(st, n):
+			return self._flow_styled(n, depth, para, out)
+		if not block_elem(n):
+			if n.kind == "el" and not formatting(n) and self.holds_block(n):
+				# block-in-inline: its content joins this flow
+				return self._flow_walk(n.children, depth, para, out)
+			para.node(n)
+			return para
+		if n.tag in _UNWRAP or (
+			n.tag in ("ul", "ol", "blockquote") and depth >= MAX_NEST
+		):
+			para = self._flow_flush(para, out)
+			self._flow_add_all(out, self.flow(n.children, depth))
+			return para
+		para = self._flow_flush(para, out)
+		if b := self.block_of(n, depth):
+			self._flow_add(out, b)
+		return para
+
+	def _flow_walk(
+		self, nodes: list[Node], depth: int, para: Inline, out: list[Block]
+	) -> Inline:
+		for n in nodes:
+			para = self._flow_node(n, depth, para, out)
+		return para
+
+	def flow(self, nodes: list[Node], depth: int) -> list[Block]:
 		out: list[Block] = []
-		para = Inline(IN_PARA, st)
-
-		def flush() -> None:
-			nonlocal para
-			if md := para.done():
-				out.append(Block(md, K_PARA))
-			para = Inline(IN_PARA, st)
-
-		def add(b: Block) -> None:
-			if b.kind == K_LIST and out:
-				p = out[-1]
-				if (
-					p.kind == K_LIST
-					and p.list == b.list
-					and list_mark(p.md) == list_mark(b.md)
-				):
-					b.md = alternate(b.md)
-			out.append(b)
-
-		def walk(nodes: list[Node]) -> None:  # noqa: PLR0912
-			for n in nodes:
-				if skipped(st, n):
-					continue
-				if styled_block(st, n):
-					flush()
-					if formatting(n):
-						para.node(n)
-						flush()
-					else:
-						for b in self.flow(n.children, depth):
-							add(b)
-				elif not block_elem(n):
-					if n.kind == "el" and not formatting(n) and self.holds_block(n):
-						walk(n.children)  # block-in-inline: its content joins this flow
-					else:
-						para.node(n)
-				elif n.tag in _UNWRAP or (
-					n.tag in ("ul", "ol", "blockquote") and depth >= MAX_NEST
-				):
-					flush()
-					for b in self.flow(n.children, depth):
-						add(b)
-				else:
-					flush()
-					if b := self.block_of(n, depth):
-						add(b)
-
-		walk(nodes)
-		flush()
+		para = Inline(IN_PARA, self.st)
+		para = self._flow_walk(nodes, depth, para, out)
+		if md := para.done():
+			out.append(Block(md, K_PARA))
 		return out
 
-	def block_of(self, n: Node, depth: int) -> Block | None:  # noqa: PLR0911
+	def _block_heading(self, n: Node) -> Block | None:
+		w = Inline(IN_HEADING, self.st)
+		w.nodes(n.children)
+		t = w.done()
+		return (
+			Block("#" * max(int(n.tag[1]), 3) + " " + esc_closing(t), K_OTHER)
+			if t
+			else None
+		)
+
+	def _block_quote(self, n: Node, depth: int) -> Block | None:
+		inner = "\n\n".join(b.md for b in self.flow(n.children, depth + 1))
+		lines = (">" + (" " + line if line else "") for line in inner.split("\n"))
+		return Block("\n".join(lines), K_OTHER) if inner else None
+
+	def block_of(self, n: Node, depth: int) -> Block | None:
 		tag = n.tag
 		if tag in _HEADINGS:
-			w = Inline(IN_HEADING, self.st)
-			w.nodes(n.children)
-			t = w.done()
-			return (
-				Block("#" * max(int(tag[1]), 3) + " " + esc_closing(t), K_OTHER)
-				if t
-				else None
-			)
+			return self._block_heading(n)
 		if tag == "hr":
 			return Block("***", K_OTHER)
 		if tag == "pre":
 			return Block(code_block(n), K_OTHER)
 		if tag == "blockquote":
-			inner = "\n\n".join(b.md for b in self.flow(n.children, depth + 1))
-			lines = (">" + (" " + line if line else "") for line in inner.split("\n"))
-			return Block("\n".join(lines), K_OTHER) if inner else None
+			return self._block_quote(n, depth)
 		if tag in ("ul", "ol"):
 			md, interrupts = self.list_block(n, depth + 1)
 			return Block(md, K_LIST, tag, interrupts) if md else None
@@ -1491,7 +1729,7 @@ class Converter:
 			return Block(self.details(n, depth), K_OTHER)
 		return None
 
-	def list_block(self, n: Node, depth: int) -> tuple[str, bool]:
+	def _list_groups(self, n: Node) -> list[list[Node]]:
 		groups: list[list[Node]] = []
 		for k in n.children:
 			if skipped(self.st, k) or (k.kind == "text" and not go_trim_space(k.data)):
@@ -1502,30 +1740,40 @@ class Converter:
 				groups[-1].append(k)
 			else:
 				groups.append([k])
-		items = [bs for bs in (self.flow(g, depth) for g in groups) if bs]
-		if not items:
-			return "", False
-		tight = all(
+		return groups
+
+	def _list_tight(self, items: list[list[Block]]) -> bool:
+		return all(
 			b.kind == K_LIST and it[0].kind == K_PARA and b.interrupts
 			for it in items
 			for b in it[1:]
 		)
-		start = 1
-		if n.tag == "ol":
-			v = go_trim_space(n.attr("start") or "")
-			if re.fullmatch("[+-]?[0-9]+", v) and 0 <= int(v) <= 999999999:
-				start = int(v)
+
+	def _list_start(self, n: Node) -> int:
+		if n.tag != "ol":
+			return 1
+		v = go_trim_space(n.attr("start") or "")
+		if re.fullmatch("[+-]?[0-9]+", v) and 0 <= int(v) <= 999999999:
+			return int(v)
+		return 1
+
+	def _list_item(self, marker: str, it: list[Block], sep: str) -> str:
+		pad = " " * (len(marker) + 1)
+		first, *rest = sep.join(b.md for b in it).split("\n")
+		return "\n".join([marker + " " + first, *(pad + ln if ln else ln for ln in rest)])
+
+	def list_block(self, n: Node, depth: int) -> tuple[str, bool]:
+		groups = self._list_groups(n)
+		items = [bs for bs in (self.flow(g, depth) for g in groups) if bs]
+		if not items:
+			return "", False
+		tight = self._list_tight(items)
+		start = self._list_start(n)
 		sep = "\n" if tight else "\n\n"
 		out = []
 		for i, it in enumerate(items):
 			marker = f"{start + i}." if n.tag == "ol" else "-"
-			pad = " " * (len(marker) + 1)
-			first, *rest = sep.join(b.md for b in it).split("\n")
-			out.append(
-				"\n".join(
-					[marker + " " + first, *(pad + ln if ln else ln for ln in rest)]
-				)
-			)
+			out.append(self._list_item(marker, it, sep))
 		return sep.join(out), n.tag == "ul" or start == 1
 
 	def details(self, n: Node, depth: int) -> str:
@@ -1665,89 +1913,110 @@ class Inline:
 			else:
 				self._element(n)
 
-	def _element(self, n: Node) -> None:  # noqa: PLR0912
+	def _element_emphasis(self, n: Node) -> None:
+		d, name = ("**", "strong") if n.tag in ("strong", "b") else ("*", "em")
+		sub = self.sub(n.children)
+		inner = sub.done()
+		self.hoist(sub, True)
+		if inner:
+			self.pending()
+			if (
+				marked(inner[0])
+				and marked(inner[-1])
+				and self.last() != "*"
+				and not _STAR.search(inner)
+			):
+				self.syntax(d + inner + d)
+			else:
+				self.syntax(f"<{name}>{inner}</{name}>")
+		self.hoist(sub, False)
+
+	def _element_inline(self, n: Node) -> None:
+		name = "del" if n.tag in ("s", "strike") else n.tag
+		sub = self.sub(n.children)
+		self.hoist(sub, True)
+		if inner := sub.done():
+			self.syntax(f"<{name}>{inner}</{name}>")
+		self.hoist(sub, False)
+
+	def _element_code(self, n: Node) -> None:
+		t = squash(text_content(n))
+		if not t:
+			return
+		self.pending()
+		if self.last() == "`":
+			self.syntax("<code>")
+			self.text(t)
+			self.syntax("</code>")
+			return
+		if self.mode == IN_CELL:
+			t = t.replace("|", "\\|")
+		runs = set(map(len, _BACKTICKS.findall(t)))
+		f = "`" * next(k for k in range(1, len(runs) + 2) if k not in runs)
+		if t[0] == "`" or t[-1] == "`":
+			t = " " + t + " "
+		self.syntax(f + t + f)
+
+	def _element_link(self, n: Node) -> None:
+		href = link_href(n)
+		if not href:
+			self.nodes(n.children)
+			return
+		sub = self.sub(n.children)
+		text = sub.done()
+		self.hoist(sub, True)
+		self.bang_guard()
+		self.syntax("[" + text + "](" + self.cell_safe(dest(href), title(n)) + ")")
+		self.hoist(sub, False)
+
+	def _element_img(self, n: Node) -> None:
+		src = link_target(n.attr("src") or "")
+		alt = (
+			squash(n.attr("alt") or "")
+			.replace("\\", "\\\\")
+			.replace("[", "\\[")
+			.replace("]", "\\]")
+		)
+		if self.mode == IN_CELL:
+			alt = alt.replace("|", "\\|")
+		if src:
+			self.bang_guard()
+			self.syntax("![" + alt + "](" + self.cell_safe(dest(src), title(n)) + ")")
+		elif alt:
+			self.text(alt)
+
+	def _element_media(self, n: Node) -> None:
+		if s := media_src(n):
+			self.bang_guard()
+			self.syntax("[▶](" + self.cell_safe(dest(link_target(s)), "") + ")")
+
+	def _element_other(self, n: Node) -> None:
+		block = block_elem(n)
+		if block and self.n:
+			self.brk = True
+		self.nodes(n.children)
+		if block:
+			self.brk = True
+
+	def _element(self, n: Node) -> None:
 		tag = n.tag
 		if tag == "br":
 			if self.n:
 				self.brk = True
 		elif tag in ("em", "i", "strong", "b"):
-			d, name = ("**", "strong") if tag in ("strong", "b") else ("*", "em")
-			sub = self.sub(n.children)
-			inner = sub.done()
-			self.hoist(sub, True)
-			if inner:
-				self.pending()
-				if (
-					marked(inner[0])
-					and marked(inner[-1])
-					and self.last() != "*"
-					and not _STAR.search(inner)
-				):
-					self.syntax(d + inner + d)
-				else:
-					self.syntax(f"<{name}>{inner}</{name}>")
-			self.hoist(sub, False)
+			self._element_emphasis(n)
 		elif tag in ("sup", "sub", "u", "small", "del", "s", "strike", "ins", "kbd"):
-			name = "del" if tag in ("s", "strike") else tag
-			sub = self.sub(n.children)
-			self.hoist(sub, True)
-			if inner := sub.done():
-				self.syntax(f"<{name}>{inner}</{name}>")
-			self.hoist(sub, False)
+			self._element_inline(n)
 		elif tag in ("code", "samp", "tt"):
-			t = squash(text_content(n))
-			if not t:
-				return
-			self.pending()
-			if self.last() == "`":
-				self.syntax("<code>")
-				self.text(t)
-				self.syntax("</code>")
-				return
-			if self.mode == IN_CELL:
-				t = t.replace("|", "\\|")
-			runs = set(map(len, _BACKTICKS.findall(t)))
-			f = "`" * next(k for k in range(1, len(runs) + 2) if k not in runs)
-			if t[0] == "`" or t[-1] == "`":
-				t = " " + t + " "
-			self.syntax(f + t + f)
+			self._element_code(n)
 		elif tag == "a":
-			href = link_href(n)
-			if not href:
-				self.nodes(n.children)
-				return
-			sub = self.sub(n.children)
-			text = sub.done()
-			self.hoist(sub, True)
-			self.bang_guard()
-			self.syntax("[" + text + "](" + self.cell_safe(dest(href), title(n)) + ")")
-			self.hoist(sub, False)
+			self._element_link(n)
 		elif tag == "img":
-			src = link_target(n.attr("src") or "")
-			alt = (
-				squash(n.attr("alt") or "")
-				.replace("\\", "\\\\")
-				.replace("[", "\\[")
-				.replace("]", "\\]")
-			)
-			if self.mode == IN_CELL:
-				alt = alt.replace("|", "\\|")
-			if src:
-				self.bang_guard()
-				self.syntax("![" + alt + "](" + self.cell_safe(dest(src), title(n)) + ")")
-			elif alt:
-				self.text(alt)
+			self._element_img(n)
 		elif tag in ("audio", "video", "source", "object"):
-			if s := media_src(n):
-				self.bang_guard()
-				self.syntax("[▶](" + self.cell_safe(dest(link_target(s)), "") + ")")
+			self._element_media(n)
 		else:
-			block = block_elem(n)
-			if block and self.n:
-				self.brk = True
-			self.nodes(n.children)
-			if block:
-				self.brk = True
+			self._element_other(n)
 
 	def bang_guard(self) -> None:
 		"""Escape a `!` the next `[` would turn into an image."""
@@ -1812,13 +2081,7 @@ _TYPE6 = frozenset((
 _BLANK_LINE = re.compile("^[ \t]*$", re.MULTILINE)
 
 
-def _wrapped(s: str) -> bool:
-	"""Whether s is one element that starts a type-6 HTML block, and nothing else."""
-	m = _TYPE6_START.match(s)
-	if not m or (tag := m[1].lower()) not in _TYPE6:
-		return False
-	b = _Builder()
-	kids = b.root.children
+def _wrapped_kids(s: str, b: _Builder, kids: list[Node], tag: str) -> bool:
 	try:
 		for t in tokens(s, b.plain):
 			b.feed(t, s)
@@ -1834,13 +2097,17 @@ def _wrapped(s: str) -> bool:
 	return len(only) == 1 and only[0].kind == "el" and only[0].tag == tag
 
 
-def _no_blank_lines(s: str) -> str:
-	"""
-	Remove blank lines from s; one inside pre, textarea or listing text becomes
-	`&#10;` at the start of the next line.
-	"""
-	if not _BLANK_LINE.search(s):
-		return s
+def _wrapped(s: str) -> bool:
+	"""Whether s is one element that starts a type-6 HTML block, and nothing else."""
+	m = _TYPE6_START.match(s)
+	if not m or (tag := m[1].lower()) not in _TYPE6:
+		return False
+	b = _Builder()
+	return _wrapped_kids(s, b, b.root.children, tag)
+
+
+def _pre_texts(s: str) -> list[tuple[int, int]]:
+	"""Where the text of each pre, textarea or listing element lies."""
 	keep, depth = [], 0
 	for t in tokens(s):
 		if (t.kind == END or (t.kind == START and not t.self_closing)) and t.name in (
@@ -1851,6 +2118,17 @@ def _no_blank_lines(s: str) -> str:
 			depth = depth + 1 if t.kind == START else max(depth - 1, 0)
 		elif t.kind == TEXT and depth:
 			keep.append((t.start, t.end))
+	return keep
+
+
+def _no_blank_lines(s: str) -> str:
+	"""
+	Remove blank lines from s; one inside pre, textarea or listing text becomes
+	`&#10;` at the start of the next line.
+	"""
+	if not _BLANK_LINE.search(s):
+		return s
+	keep = _pre_texts(s)
 	out, at = [], 0
 	for line in s.split("\n"):
 		if line.strip(" \t"):
@@ -1861,6 +2139,33 @@ def _no_blank_lines(s: str) -> str:
 	return "".join(out).rstrip("\n")
 
 
+def _canon_raw_start(t: Tok, raw: str) -> bool:
+	return (
+		not raw and t.name in _RAW_TEXT and t.name != "plaintext" and not t.self_closing
+	)
+
+
+def _canon_start(t: Tok) -> str | None:
+	attrs = [(k, _canon_attr(k, v)) for k, v in t.attrs]
+	if attrs == t.attrs:
+		return None
+	tag = t.name + "".join(f' {k}="{v.translate(_XNET_ESC)}"' for k, v in attrs)
+	return "<" + tag + ("/>" if t.self_closing else ">")
+
+
+def _canon_token(doc: str, t: Tok, raw: str) -> tuple[str, str]:
+	chunk = doc[t.start : t.end]
+	if t.kind == START:
+		if _canon_raw_start(t, raw):
+			raw = t.name
+		chunk = _canon_start(t) or chunk
+	elif t.kind == END and t.name == raw:
+		raw = ""
+	elif t.kind == TEXT and raw == "style":
+		chunk = _rewrite_css(chunk)
+	return chunk, raw
+
+
 def canon_links(doc: str) -> str:
 	"""htmlref.CanonLinks: every lookup link in its canonical spelling."""
 	low = doc.lower()
@@ -1868,25 +2173,7 @@ def canon_links(doc: str) -> str:
 		return doc
 	out, raw = [], ""
 	for t in tokens(doc):
-		chunk = doc[t.start : t.end]
-		if t.kind == START:
-			if (
-				not raw
-				and t.name in _RAW_TEXT
-				and t.name != "plaintext"
-				and not t.self_closing
-			):
-				raw = t.name
-			attrs = [(k, _canon_attr(k, v)) for k, v in t.attrs]
-			if attrs != t.attrs:
-				tag = t.name + "".join(
-					f' {k}="{v.translate(_XNET_ESC)}"' for k, v in attrs
-				)
-				chunk = "<" + tag + ("/>" if t.self_closing else ">")
-		elif t.kind == END and t.name == raw:
-			raw = ""
-		elif t.kind == TEXT and raw == "style":
-			chunk = _rewrite_css(chunk)
+		chunk, raw = _canon_token(doc, t, raw)
 		out.append(chunk)
 	return "".join(out)
 
@@ -1997,22 +2284,17 @@ def _html_ends(kind: int, line: str) -> bool:
 	return _HTML_END[kind] in line
 
 
-def html_block_start(line: str, in_paragraph: bool, eof: bool) -> int:  # noqa: PLR0911, PLR0912
-	"""
-	The kind of HTML block line starts, 0 for none, as goldmark decides it:
-	CommonMark 4.6 but for `<pre/>` (type 1), `</textarea>`, `</ span>` (type
-	7), `meta` (a type-6 name), a tab after the tag or before `>` and a bare
-	`<div` line but the last (none), `<!doctype` (none). in_paragraph: a
-	paragraph is open; eof: the line ends the text without a newline.
-	"""
-	if len(line) < 2 or line[0] != "<":
-		return 0
+def _html_block_type1(line: str) -> int:
 	for name in ("textarea", "script", "style", "pre"):
 		if line[1 : len(name) + 1].lower() == name:
 			rest = line[len(name) + 1 :]
 			if rest[:1] in ("", " ", "\t", "\r", ">") or rest.startswith("/>"):
 				return 1
 			break
+	return 0
+
+
+def _html_block_marker(line: str) -> int:
 	if line.startswith("<!--"):
 		return 2
 	if line[1] == "?":
@@ -2021,11 +2303,12 @@ def html_block_start(line: str, in_paragraph: bool, eof: bool) -> int:  # noqa: 
 		return 4
 	if line.startswith("<![CDATA["):
 		return 5
-	closing = line[1] == "/"
-	m = _TAG.match(line, len(line) - len(line[2:].lstrip(" ")) if closing else 1)
-	if not m:
-		return 0
-	name, rest = m[0].lower(), line[m.end() :]
+	return 0
+
+
+def _html_block_tag(
+	name: str, rest: str, closing: bool, in_paragraph: bool, eof: bool
+) -> int:
 	if t7 := _TYPE7_REST.match(rest):
 		if name in _HTML6:
 			return 6
@@ -2042,8 +2325,140 @@ def html_block_start(line: str, in_paragraph: bool, eof: bool) -> int:  # noqa: 
 	return 0
 
 
+def html_block_start(line: str, in_paragraph: bool, eof: bool) -> int:
+	"""
+	The kind of HTML block line starts, 0 for none, as goldmark decides it:
+	CommonMark 4.6 but for `<pre/>` (type 1), `</textarea>`, `</ span>` (type
+	7), `meta` (a type-6 name), a tab after the tag or before `>` and a bare
+	`<div` line but the last (none), `<!doctype` (none). in_paragraph: a
+	paragraph is open; eof: the line ends the text without a newline.
+	"""
+	if len(line) < 2 or line[0] != "<":
+		return 0
+	if kind := _html_block_type1(line):
+		return kind
+	if kind := _html_block_marker(line):
+		return kind
+	closing = line[1] == "/"
+	m = _TAG.match(line, len(line) - len(line[2:].lstrip(" ")) if closing else 1)
+	if not m:
+		return 0
+	name, rest = m[0].lower(), line[m.end() :]
+	return _html_block_tag(name, rest, closing, in_paragraph, eof)
+
+
 _UNDERLINE = re.compile("(?:=+|-+)[ \t]*")
 _PARSER: MarkdownIt | None = None
+
+
+class _Rules:
+	"""The parser rules markdown-it is given, with the originals they wrap."""
+
+	def __init__(self, md: MarkdownIt) -> None:
+		self.md = md
+		rules = {r.name: r for r in md.block.ruler.__rules__}
+		self.heading = rules["heading"].fn
+		self.lheading = rules["lheading"].fn
+		self.reference = rules["reference"].fn
+		self.paragraph = rules["paragraph"].fn
+
+	def atx(self, state, start, end, silent):  # noqa: ANN001, ANN202
+		ok = self.heading(state, start, end, silent)
+		if ok and not silent:
+			at = state.bMarks[start] + state.tShift[start] + len(state.tokens[-1].markup)
+			s = state.src[at : state.eMarks[start]].rstrip(" \t")
+			t = s.rstrip("#")
+			state.tokens[-2].content = (
+				t if t != s and t.endswith((" ", "\t")) else s
+			).strip(" \t")
+		return ok
+
+	def setext(self, state, start, end, silent):  # noqa: ANN001, ANN202
+		ok = self.lheading(state, start, end, silent)
+		if ok and not silent:
+			text = state.getLines(start, state.line - 1, state.blkIndent, False)
+			state.tokens[-2].content = text.strip(" \t")
+		return ok
+
+	def para(self, state, start, end, silent):  # noqa: ANN001, ANN202
+		ok = self.paragraph(state, start, end, silent)
+		if ok and not silent:
+			# markdown-it strips any whitespace; refill only when an edge has some
+			last = state.line - 1
+			first = state.src[state.bMarks[start] + state.tShift[start]]
+			tail = state.src[state.bMarks[last] : state.eMarks[last]].rstrip(" \t")
+			if first.isspace() or tail[-1:].isspace():
+				text = state.getLines(start, state.line, state.blkIndent, False)
+				state.tokens[-2].content = text.strip(" \t")
+		return ok
+
+	def _html_block_end(self, state, kind, line, start, end):  # noqa: ANN001, ANN202
+		ends, k = kind < 6, start + 1
+		if ends and _html_ends(kind, line):
+			return k
+		while k < end and state.sCount[k] >= state.blkIndent:
+			text = state.src[state.bMarks[k] + state.tShift[k] : state.eMarks[k]]
+			if not ends and not text:
+				break
+			k += 1
+			if ends and _html_ends(kind, text):
+				break
+		return k
+
+	def html_block(self, state, start, end, silent):  # noqa: ANN001, ANN202
+		# A rule is called silently to ask whether its block interrupts a paragraph.
+		if state.is_code_block(start):
+			return False
+		line = state.src[state.bMarks[start] + state.tShift[start] : state.eMarks[start]]
+		kind = html_block_start(line, silent, state.eMarks[start] >= len(state.src))
+		if not kind or silent:
+			return bool(kind)
+		k = self._html_block_end(state, kind, line, start, end)
+		state.line = k
+		token = state.push("html_block", "", 0)
+		token.map = [start, k]
+		token.content = state.getLines(start, k, state.blkIndent, True)
+		return True
+
+	def ref(self, state, start, end, silent):  # noqa: ANN001, ANN202
+		# A definition ends before a setext underline: `[a]:` over `===` is a heading.
+		if not state.src.startswith("[", state.bMarks[start] + state.tShift[start]):
+			return False
+		k, top = start + 1, state.lineMax
+		while k < top and not state.isEmpty(k):
+			if state.sCount[k] - state.blkIndent < 4 and _UNDERLINE.fullmatch(
+				state.src, state.bMarks[k] + state.tShift[k], state.eMarks[k]
+			):
+				break
+			k += 1
+		state.lineMax = k
+		try:
+			ok = self.reference(state, start, end, silent)
+		finally:
+			state.lineMax = top
+		if ok and not silent:
+			state.env["_wumd_ref"] = state.line
+		return ok
+
+	def continued(self, state, start, end, silent):  # noqa: ANN001, ANN202
+		if silent or state.env.get("_wumd_ref") != start:
+			return False
+		if (
+			0 <= state.sCount[start] - state.blkIndent <= 3
+		):  # else a lazy continuation line
+			parent, state.parentType = state.parentType, "paragraph"
+			stop = any(
+				r(state, start, end, True)
+				for r in self.md.block.ruler.getRules("paragraph")
+			)
+			state.parentType = parent
+			if stop:
+				return False
+		return (
+			self.ref(state, start, end, False)
+			or self.setext(state, start, end, False)
+			or self.para(state, start, end, False)
+		)
 
 
 def parser() -> MarkdownIt:
@@ -2070,111 +2485,16 @@ def parser() -> MarkdownIt:
 	md.normalizeLink = mdurl.encode  # type: ignore[method-assign]
 	md.validateLink = lambda _: True  # type: ignore[method-assign]  # no sanitizing
 	rules = {r.name: r for r in md.block.ruler.__rules__}
-	heading, lheading, reference, paragraph = (
-		rules[k].fn for k in ("heading", "lheading", "reference", "paragraph")
-	)
-
-	def atx(state, start, end, silent):  # noqa: ANN001, ANN202
-		ok = heading(state, start, end, silent)
-		if ok and not silent:
-			at = state.bMarks[start] + state.tShift[start] + len(state.tokens[-1].markup)
-			s = state.src[at : state.eMarks[start]].rstrip(" \t")
-			t = s.rstrip("#")
-			state.tokens[-2].content = (
-				t if t != s and t.endswith((" ", "\t")) else s
-			).strip(" \t")
-		return ok
-
-	def setext(state, start, end, silent):  # noqa: ANN001, ANN202
-		ok = lheading(state, start, end, silent)
-		if ok and not silent:
-			text = state.getLines(start, state.line - 1, state.blkIndent, False)
-			state.tokens[-2].content = text.strip(" \t")
-		return ok
-
-	def para(state, start, end, silent):  # noqa: ANN001, ANN202
-		ok = paragraph(state, start, end, silent)
-		if ok and not silent:
-			# markdown-it strips any whitespace; refill only when an edge has some
-			last = state.line - 1
-			first = state.src[state.bMarks[start] + state.tShift[start]]
-			tail = state.src[state.bMarks[last] : state.eMarks[last]].rstrip(" \t")
-			if first.isspace() or tail[-1:].isspace():
-				text = state.getLines(start, state.line, state.blkIndent, False)
-				state.tokens[-2].content = text.strip(" \t")
-		return ok
-
-	def html_block(state, start, end, silent):  # noqa: ANN001, ANN202
-		# A rule is called silently to ask whether its block interrupts a paragraph.
-		if state.is_code_block(start):
-			return False
-		line = state.src[state.bMarks[start] + state.tShift[start] : state.eMarks[start]]
-		kind = html_block_start(line, silent, state.eMarks[start] >= len(state.src))
-		if not kind or silent:
-			return bool(kind)
-		ends, k = kind < 6, start + 1
-		if not (ends and _html_ends(kind, line)):
-			while k < end and state.sCount[k] >= state.blkIndent:
-				text = state.src[state.bMarks[k] + state.tShift[k] : state.eMarks[k]]
-				if not ends and not text:
-					break
-				k += 1
-				if ends and _html_ends(kind, text):
-					break
-		state.line = k
-		token = state.push("html_block", "", 0)
-		token.map = [start, k]
-		token.content = state.getLines(start, k, state.blkIndent, True)
-		return True
-
-	def ref(state, start, end, silent):  # noqa: ANN001, ANN202
-		# A definition ends before a setext underline: `[a]:` over `===` is a heading.
-		if not state.src.startswith("[", state.bMarks[start] + state.tShift[start]):
-			return False
-		k, top = start + 1, state.lineMax
-		while k < top and not state.isEmpty(k):
-			if state.sCount[k] - state.blkIndent < 4 and _UNDERLINE.fullmatch(
-				state.src, state.bMarks[k] + state.tShift[k], state.eMarks[k]
-			):
-				break
-			k += 1
-		state.lineMax = k
-		try:
-			ok = reference(state, start, end, silent)
-		finally:
-			state.lineMax = top
-		if ok and not silent:
-			state.env["_wumd_ref"] = state.line
-		return ok
-
-	def continued(state, start, end, silent):  # noqa: ANN001, ANN202
-		if silent or state.env.get("_wumd_ref") != start:
-			return False
-		if (
-			0 <= state.sCount[start] - state.blkIndent <= 3
-		):  # else a lazy continuation line
-			parent, state.parentType = state.parentType, "paragraph"
-			stop = any(
-				r(state, start, end, True) for r in md.block.ruler.getRules("paragraph")
-			)
-			state.parentType = parent
-			if stop:
-				return False
-		return (
-			ref(state, start, end, False)
-			or setext(state, start, end, False)
-			or para(state, start, end, False)
-		)
-
+	rule = _Rules(md)
 	for k, fn in (
-		("heading", atx),
-		("lheading", setext),
-		("html_block", html_block),
-		("reference", ref),
-		("paragraph", para),
+		("heading", rule.atx),
+		("lheading", rule.setext),
+		("html_block", rule.html_block),
+		("reference", rule.ref),
+		("paragraph", rule.para),
 	):
 		md.block.ruler.at(k, fn, {"alt": rules[k].alt})
-	md.block.ruler.before("table", "wumd_continued", continued)
+	md.block.ruler.before("table", "wumd_continued", rule.continued)
 	_PARSER = md
 	return md
 
@@ -2598,14 +2918,16 @@ class Document:
 		text = self._text(start, self._size)
 		return self._size, block_parse(text, self.refs), None, text, text.count("\n")
 
-	def _scan(
-		self, ci: int, tokens: list[Token], stop: int | None, chunk: str, line0: int
-	) -> None:  # noqa: PLR0913
-		"""Read a chunk's heading groups (R3.5), and the header in the first."""
-		blocks = top_blocks(tokens, stop)
+	def _scan_swallowed(
+		self,
+		ci: int,
+		tokens: list[Token],
+		blocks: list[tuple[int, int]],
+		chunk: str,
+		line0: int,
+	) -> None:
+		"""R3.5: a line that would start an entry, inside an HTML block, is content."""
 		lines = None
-		i = self._header(tokens, blocks, stop, chunk) if ci == 0 else 0
-		# R3.5: a line that would start an entry, inside an HTML block, is content
 		for a, _ in blocks:
 			if tokens[a].type == "html_block" and tokens[a].map[1] - tokens[a].map[0] > 1:
 				lines = lines or chunk.split("\n")
@@ -2615,6 +2937,37 @@ class Document:
 						self._warns.append(
 							((ci, 1, line0 + k), _swallowed(lines[k], line0 + l0))
 						)
+
+	def _scan_see(
+		self,
+		tokens: list[Token],
+		blocks: list[tuple[int, int]],
+		body: int,
+		i: int,
+		chunk: str,
+	) -> str:
+		t = tokens[blocks[body][0]]
+		if not (
+			i - body == 1
+			and t.type == "paragraph_open"
+			and t.map[1] - t.map[0] == 1
+			and tokens[blocks[body][0] + 1].content.startswith("see:")
+		):
+			return ""
+		lines = chunk.split("\n")
+		# the line as written, without its indentation (R3.6)
+		m = re.match("see:[ \t](.*)", lines[t.map[0]].lstrip(" \t"))
+		return m[1].strip(" \t") if m else ""
+
+	def _scan_groups(  # noqa: PLR0913
+		self,
+		ci: int,
+		tokens: list[Token],
+		blocks: list[tuple[int, int]],
+		chunk: str,
+		line0: int,
+		i: int,
+	) -> None:
 		group = 0
 		while i < len(blocks):
 			at = tokens[blocks[i][0]]
@@ -2631,32 +2984,20 @@ class Document:
 					((ci, 2, line), "heading group without a body; skipped")
 				)
 			else:
-				see = ""
-				t = tokens[blocks[body][0]]
-				if (
-					i - body == 1
-					and t.type == "paragraph_open"
-					and t.map[1] - t.map[0] == 1
-					and tokens[blocks[body][0] + 1].content.startswith("see:")
-				):
-					lines = lines or chunk.split("\n")
-					# the line as written, without its indentation (R3.6)
-					m = re.match("see:[ \t](.*)", lines[t.map[0]].lstrip(" \t"))
-					see = m[1].strip(" \t") if m else ""
+				see = self._scan_see(tokens, blocks, body, i, chunk)
 				self.entries.append(Entry(heads, ci, group, line, see))
 			group += 1
 
-	def _header(
-		self,
-		tokens: list[Token],
-		blocks: list[tuple[int, int]],
-		stop: int | None,
-		chunk: str,
-	) -> int:
-		"""
-		Read the header (R3.1-R3.3) from the first chunk's tokens and text;
-		the index of the first entry's block.
-		"""
+	def _scan(
+		self, ci: int, tokens: list[Token], stop: int | None, chunk: str, line0: int
+	) -> None:
+		"""Read a chunk's heading groups (R3.5), and the header in the first."""
+		blocks = top_blocks(tokens, stop)
+		i = self._header(tokens, blocks, stop, chunk) if ci == 0 else 0
+		self._scan_swallowed(ci, tokens, blocks, chunk, line0)
+		self._scan_groups(ci, tokens, blocks, chunk, line0, i)
+
+	def _header_check(self, tokens: list[Token], blocks: list[tuple[int, int]]) -> Token:
 		t = tokens[0]
 		if t.type != "heading_open" or t.tag != "h1":
 			raise FormatError("E-format", "line 1 must be `# ` and the dictionary title")
@@ -2677,6 +3018,9 @@ class Document:
 			raise FormatError(
 				"E-format", "line 2 must be `wudict: 1`, directly under the title"
 			)
+		return p
+
+	def _header_fields(self, chunk: str, p: Token) -> None:
 		meta = self.meta
 		for i, ln in enumerate(head_lines(chunk, p.map[1])[1:], 2):
 			kv = parse_field(
@@ -2693,6 +3037,14 @@ class Document:
 				meta[k] = meta[k] or v
 			elif k != "wudict":
 				meta["fields"].append((k, v))
+
+	def _header_desc(
+		self,
+		tokens: list[Token],
+		blocks: list[tuple[int, int]],
+		stop: int | None,
+		chunk: str,
+	) -> int:
 		i = 2
 		while i < len(blocks) and not _is_h2(tokens[blocks[i][0]]):
 			i += 1
@@ -2702,6 +3054,21 @@ class Document:
 				chunk if first is None else chunk[: _offset(chunk, tokens[first].map[0])]
 			)
 		return i
+
+	def _header(
+		self,
+		tokens: list[Token],
+		blocks: list[tuple[int, int]],
+		stop: int | None,
+		chunk: str,
+	) -> int:
+		"""
+		Read the header (R3.1-R3.3) from the first chunk's tokens and text;
+		the index of the first entry's block.
+		"""
+		p = self._header_check(tokens, blocks)
+		self._header_fields(chunk, p)
+		return self._header_desc(tokens, blocks, stop, chunk)
 
 	def _heading_text(self, content: str) -> str:
 		if not _INLINE_SYNTAX.search(content):

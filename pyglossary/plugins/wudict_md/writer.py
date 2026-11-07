@@ -56,17 +56,16 @@ class Writer:
 		self.repaired += r != s.strip(" ")
 		return r
 
-	def _header(self, stem: str) -> str:
-		"""R6.1: the title, the header fields and the description."""
-		glos = self._glos
-		name = (
-			self._repair(glos.getInfo("name") or "") or self._repair(stem) or "dictionary"
-		)
-		out = ["# " + wumd.heading_esc(name), "wudict: 1"]
-		for key, lang in (("from", glos.sourceLang), ("to", glos.targetLang)):
+	def _header_langs(self) -> list[str]:
+		out = []
+		for key, lang in (("from", self._glos.sourceLang), ("to", self._glos.targetLang)):
 			if lang and (code := self._repair(lang.code)):
 				out.append(f"{key}: {code}")
-		for key, value in glos.iterInfo():
+		return out
+
+	def _header_fields(self) -> list[str]:
+		out = []
+		for key, value in self._glos.iterInfo():
 			if key.lower() in _OWN_KEYS or not (v := self._repair(value)):
 				continue
 			if key == "meta":  # this format's own escape, read back as is
@@ -75,14 +74,29 @@ class Writer:
 				out.append(f"{k}: {v}")
 			elif k := self._repair(key):
 				out.append(f"meta: {k}: {v}")
+		return out
+
+	def _header_desc(self) -> str:
+		desc = self._glos.getInfo("description")
+		if not desc:
+			return ""
+		try:
+			return self._body(desc if "<" in desc and ">" in desc else _text_html(desc))
+		except wumd.CleanError as e:
+			raise ValueError(f"the description: {e}") from e
+
+	def _header(self, stem: str) -> str:
+		"""R6.1: the title, the header fields and the description."""
+		glos = self._glos
+		name = (
+			self._repair(glos.getInfo("name") or "") or self._repair(stem) or "dictionary"
+		)
+		out = ["# " + wumd.heading_esc(name), "wudict: 1"]
+		out.extend(self._header_langs())
+		out.extend(self._header_fields())
 		text = "\n".join(out)
-		if desc := glos.getInfo("description"):
-			try:
-				md = self._body(desc if "<" in desc and ">" in desc else _text_html(desc))
-			except wumd.CleanError as e:
-				raise ValueError(f"the description: {e}") from e
-			if md:
-				text += "\n\n" + md
+		if desc := self._header_desc():
+			text += "\n\n" + desc
 		return text
 
 	def open(self, filename: str) -> None:
