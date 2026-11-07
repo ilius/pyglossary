@@ -87,18 +87,13 @@ class Reader:
 				with hf.element("li"):
 					processor(hf, el)
 
-	# TODO: break it down
-	# PLR0912 Too many branches (23 > 12)
-	def writeSense(  # noqa: PLR0912
-		self,
-		hf: T_htmlfile,
-		sense: Element,
-	) -> None:
+	@staticmethod
+	def _br() -> Element:
 		from lxml import etree as ET
 
-		def br() -> Element:
-			return ET.Element("br")
+		return ET.Element("br")
 
+	def _writeSensePos(self, hf: T_htmlfile, sense: Element) -> None:
 		for elem in sense.findall("pos"):
 			if not elem.text:
 				continue
@@ -107,55 +102,63 @@ class Reader:
 				continue
 			with hf.element("i"):
 				hf.write(desc.capitalize())
-			hf.write(br())
+			hf.write(self._br())
 
+	def _writeSenseGloss(self, hf: T_htmlfile, sense: Element) -> None:
 		glossList = [elem.text.strip() for elem in sense.findall("gloss") if elem.text]
-		if glossList:
-			for i, gloss in enumerate(glossList):
-				if i > 0:
-					hf.write(", ")
-				hf.write(gloss)
-			hf.write(br())
+		if not glossList:
+			return
+		for i, gloss in enumerate(glossList):
+			if i > 0:
+				hf.write(", ")
+			hf.write(gloss)
+		hf.write(self._br())
 
-		relatedWords: list[str] = []
-		for elem in sense.findall("xref"):
+	def _senseLinkTerms(self, sense: Element, tag: str) -> list[str]:
+		terms: list[str] = []
+		for elem in sense.findall(tag):
 			if not elem.text:
 				continue
 			term = elem.text.strip()
 			term = self._link_number_postfix.sub("", term)
-			relatedWords.append(term)
+			terms.append(term)
+		return terms
 
-		if relatedWords:
-			hf.write("Related: ")
-			for i, term in enumerate(relatedWords):
-				if i > 0:
-					with hf.element("big"):
-						hf.write(" | ")
-				with hf.element("a", href=f"bword://{term}"):
-					hf.write(term)
-			hf.write(br())
+	def _writeLinkWords(
+		self,
+		hf: T_htmlfile,
+		label: str,
+		terms: list[str],
+		cssClass: str = "",
+	) -> None:
+		if not terms:
+			return
+		hf.write(label)
+		for i, term in enumerate(terms):
+			if i > 0:
+				with hf.element("big"):
+					hf.write(" | ")
+			attrib = {"class": cssClass} if cssClass else None
+			with hf.element("a", href=f"bword://{term}", attrib=attrib):
+				hf.write(term)
+		hf.write(self._br())
 
-		antonymWords: list[str] = []
-		for elem in sense.findall("ant"):
-			if not elem.text:
-				continue
-			term = elem.text.strip()
-			term = self._link_number_postfix.sub("", term)
-			antonymWords.append(term)
-		if antonymWords:
-			hf.write("Antonym: ")
-			for i, term in enumerate(antonymWords):
-				if i > 0:
-					with hf.element("big"):
-						hf.write(" | ")
-				with hf.element(
-					"a",
-					href=f"bword://{term}",
-					attrib={"class": "antonym"},
-				):
-					hf.write(term)
-			hf.write(br())
+	def _writeSenseXref(self, hf: T_htmlfile, sense: Element) -> None:
+		self._writeLinkWords(
+			hf,
+			"Related: ",
+			self._senseLinkTerms(sense, "xref"),
+		)
 
+	def _writeSenseAntonym(self, hf: T_htmlfile, sense: Element) -> None:
+		self._writeLinkWords(
+			hf,
+			"Antonym: ",
+			self._senseLinkTerms(sense, "ant"),
+			cssClass="antonym",
+		)
+
+	def _writeSenseField(self, hf: T_htmlfile, sense: Element) -> None:
 		for i, elem in enumerate(sense.findall("field")):
 			if not elem.text:
 				continue
@@ -164,8 +167,9 @@ class Reader:
 			desc = elem.text
 			with hf.element("span", style=self.tagStyle):
 				hf.write(desc)
-			hf.write(br())
+			hf.write(self._br())
 
+	def _writeSenseMisc(self, hf: T_htmlfile, sense: Element) -> None:
 		for i, elem in enumerate(sense.findall("misc")):
 			if not elem.text:
 				continue
@@ -175,46 +179,60 @@ class Reader:
 			with hf.element("small"):
 				with hf.element("span", style=self.tagStyle):
 					hf.write(desc)
-			hf.write(br())
+			hf.write(self._br())
 
+	def _writeSenseExamples(self, hf: T_htmlfile, sense: Element) -> None:
 		examples = sense.findall("example")
-		# TODO: move to a method
-		if examples:  # noqa: PLR1702
-			with hf.element(
-				"div",
-				attrib={
-					"class": "example",
-					"style": f"padding: {self._example_padding}px 0px;",
-				},
-			):
-				hf.write("Examples:")
-				with hf.element("ul"):
-					for i, elem in enumerate(examples):
-						if not elem.text:
+		if not examples:
+			return
+		with hf.element(
+			"div",
+			attrib={
+				"class": "example",
+				"style": f"padding: {self._example_padding}px 0px;",
+			},
+		):
+			hf.write("Examples:")
+			with hf.element("ul"):
+				for i, elem in enumerate(examples):
+					if not elem.text:
+						continue
+					if i > 0:
+						hf.write(" ")
+					# one ex_srce (id?), one ex_text, and two ex_sent tags
+					textElem = elem.find("ex_text")
+					if textElem is None:
+						continue
+					if not textElem.text:
+						continue
+					text = textElem.text
+					sentList: list[str] = []
+					for sentElem in elem.findall("ex_sent"):
+						if not sentElem.text:
 							continue
-						if i > 0:
-							hf.write(" ")
-						# one ex_srce (id?), one ex_text, and two ex_sent tags
-						textElem = elem.find("ex_text")
-						if textElem is None:
-							continue
-						if not textElem.text:
-							continue
-						text = textElem.text
-						sentList: list[str] = []
-						for sentElem in elem.findall("ex_sent"):
-							if not sentElem.text:
-								continue
-							sentList.append(sentElem.text)
-						with hf.element("li"):
-							style: dict[str, str] = {}
-							if self._example_color:
-								style["color"] = self._example_color
-							with hf.element("font", attrib=style):
-								hf.write(text)
-								for sent in sentList:
-									hf.write(br())
-									hf.write(sent)
+						sentList.append(sentElem.text)
+					with hf.element("li"):
+						style: dict[str, str] = {}
+						if self._example_color:
+							style["color"] = self._example_color
+						with hf.element("font", attrib=style):
+							hf.write(text)
+							for sent in sentList:
+								hf.write(self._br())
+								hf.write(sent)
+
+	def writeSense(
+		self,
+		hf: T_htmlfile,
+		sense: Element,
+	) -> None:
+		self._writeSensePos(hf, sense)
+		self._writeSenseGloss(hf, sense)
+		self._writeSenseXref(hf, sense)
+		self._writeSenseAntonym(hf, sense)
+		self._writeSenseField(hf, sense)
+		self._writeSenseMisc(hf, sense)
+		self._writeSenseExamples(hf, sense)
 
 	# TODO: break it down
 	def getEntryByElem(  # noqa: PLR0912
