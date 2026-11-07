@@ -1,0 +1,22 @@
+# 004-bar.txt
+wudict: 1
+
+## a
+
+neg1
+
+## a
+## b
+
+neg2
+
+## a|b
+## c
+
+pos1
+
+## a\\|a
+## b
+## c
+
+pos2
