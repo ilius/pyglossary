@@ -37,6 +37,11 @@ __all__ = ["Writer"]
 _nbsp = "\xa0"
 # _nbsp = "&nbsp;"
 
+_fixedLinkPattern = re.compile(
+	r'<a (?:[^<>]*? )?href="#([^<>"]+?)">[^<>]+?</a>',
+	re.IGNORECASE,
+)
+
 _darkStyle = """
 body {{
 	background-color: #373737;
@@ -285,33 +290,137 @@ class Writer:
 		url = "res/" + url
 		return f' src="{url}"'
 
-	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912
+	def _getEntryWebLink(self, entry: EntryType) -> str:
+		entry_url_fmt = self._glos.getInfo("entry_url")
+		if not entry_url_fmt:
+			return ""
+		url = entry_url_fmt.format(word=html.escape(entry.l_term[0]))
+		return f'{_nbsp}<a class="no_ul" href="{url}">&#127759;</a>'
+
+	def _formatEntry(self, entry: EntryType, entryIndex: int, title: str) -> str:
+		termSep = ' <font color="red">|</font> '
+
+		entry.detectDefiFormat()
+		defi = entry.defi
+		defiFormat = entry.defiFormat
+
+		if defi.startswith("<!DOCTYPE html>") and defiFormat != "h":
+			log.error(f"bad {defiFormat=}")
+			defiFormat = "h"
+
+		if defiFormat == "m":
+			defi = html.escape(defi)
+			if "\n" in defi:
+				# could be markdown or unformatted plaintext
+				# FIXME: this changes the font to a monospace
+				defi = f"<pre>{defi}</pre>"
+		elif defiFormat == "h":
+			defi = self._resSrcPattern.sub(self._subResSrc, defi)
+			if self._escape_defi:
+				defi = html.escape(defi)
+
+		entryId = f"entry{entryIndex}"
+
+		if self._word_title:
+			terms = [html.escape(term) for term in entry.l_term]
+			title = self._glos.wordTitleStr(
+				termSep.join(terms),
+				sample=entry.l_term[0],
+				class_="headword",
+			)
+
+		if not title:
+			title = f"Entry {entryIndex}"
+
+		# entry_link_sym = "&#182;"
+		entry_link_sym = "&#128279;"
+		return (
+			f'<div id="{entryId}">{title}{_nbsp}{_nbsp}'
+			f'<a class="no_ul" class="entry_link" href="#{entryId}">'
+			f"{entry_link_sym}</a>"
+			f"{self._getEntryWebLink(entry)}"
+			f"<br>\n{defi}"
+			"</div>\n"
+			"<hr>\n"
+		)
+
+	@staticmethod
+	def _replaceBword(text: str) -> str:
+		return text.replace(
+			' href="bword://',
+			' href="#',
+		)
+
+	def _addLinks(
+		self,
+		text: str,
+		pos: int,
+		linksTxtFileObj: io.TextIOBase,
+		linkTargetSet: set[str],
+	) -> None:
+		encoding = self._encoding
+		for m in _fixedLinkPattern.finditer(text):
+			if ' class="entry_link"' in m.group(0):
+				continue
+			if m.group(0).count("href=") != 1:
+				log.error(f"unexpected match: {m.group(0)}")
+			target = html.unescape(m.group(1))
+			linkTargetSet.add(target)
+			start = m.start()
+			b_start = len(text[:start].encode(encoding))
+			b_size = len(text[start : m.end()].encode(encoding))
+			linksTxtFileObj.write(
+				f"{escapeNTB(target)}\t"
+				f"{len(self._filenameList) - 1}\t"
+				f"{pos + b_start:x}\t"
+				f"{b_size:x}\n",
+			)
+			linksTxtFileObj.flush()
+
+	def _makeHeader(self) -> str:
+		style = _darkStyle if self._dark else ""
+		cssLink = '<link rel="stylesheet" href="style.css" />' if self._css else ""
+		return (
+			"<!DOCTYPE html>\n"
+			"<html><head>"
+			"<title>{pageTitle}</title>"
+			f'<meta charset="{self._encoding}">'
+			f'<style type="text/css">{style}{{customStyle}}</style>{cssLink}'
+			"</meta></head><body>\n"
+		)
+
+	@staticmethod
+	def _pageHeader(header: str, title: str, n: int) -> str:
+		return header.format(
+			pageTitle=f"Page {n} of {title}",
+			customStyle="",
+		)
+
+	def _navBar(self) -> str:
+		links: list[str] = []
+		if len(self._filenameList) > 1:
+			links.append(f'<a href="./{self._filenameList[-2]}">&#9664;</a>')
+		links.extend(
+			[
+				f'<a href="./{self.getNextFilename()}">&#9654;</a>',
+				'<a href="./info.html">ℹ️</a></div>',  # noqa: RUF001
+			],
+		)
+		return (
+			'<nav style="text-align: center; font-size: 2.5em;">'
+			+ f"{_nbsp}{_nbsp}{_nbsp}".join(links)
+			+ "</nav>"
+		)
+
+	def write(self) -> Generator[None, EntryType, None]:
 		encoding = self._encoding
 		resources = self._resources
 		max_file_size = self._max_file_size
-		filename_format = self._filename_format
-		escape_defi = self._escape_defi
-
-		termSep = ' <font color="red">|</font> '
 
 		initFileSizeMax = 100
 
 		glos = self._glos
-
 		filename = self._filename
-		self._encoding = encoding
-		self._filename_format = filename_format
-
-		entry_url_fmt = glos.getInfo("entry_url")
-
-		def getEntryWebLink(entry: EntryType) -> str:
-			if not entry_url_fmt:
-				return ""
-			url = entry_url_fmt.format(word=html.escape(entry.l_term[0]))
-			return f'{_nbsp}<a class="no_ul" href="{url}">&#127759;</a>'
-
-		# from math import log2, ceil
-		# maxPosHexLen = int(ceil(log2(max_file_size) / 4))
 
 		indexTxtFileObj = open(
 			join(filename, "index.txt"),
@@ -325,42 +434,7 @@ class Writer:
 		)
 
 		title = glos.getInfo("name")
-		style = ""
-		if self._dark:
-			style = _darkStyle
-
-		cssLink = '<link rel="stylesheet" href="style.css" />' if self._css else ""
-
-		header = (
-			"<!DOCTYPE html>\n"
-			"<html><head>"
-			"<title>{pageTitle}</title>"
-			f'<meta charset="{encoding}">'
-			f'<style type="text/css">{style}{{customStyle}}</style>{cssLink}'
-			"</meta></head><body>\n"
-		)
-
-		def pageHeader(n: int) -> str:
-			return header.format(
-				pageTitle=f"Page {n} of {title}",
-				customStyle="",
-			)
-
-		def navBar() -> str:
-			links: list[str] = []
-			if len(self._filenameList) > 1:
-				links.append(f'<a href="./{self._filenameList[-2]}">&#9664;</a>')
-			links.extend(
-				[
-					f'<a href="./{self.getNextFilename()}">&#9654;</a>',
-					'<a href="./info.html">ℹ️</a></div>',  # noqa: RUF001
-				],
-			)
-			return (
-				'<nav style="text-align: center; font-size: 2.5em;">'
-				+ f"{_nbsp}{_nbsp}{_nbsp}".join(links)
-				+ "</nav>"
-			)
+		header = self._makeHeader()
 
 		tailSize = len(self._tail.encode(encoding))
 
@@ -369,50 +443,17 @@ class Writer:
 
 		max_file_size -= tailSize
 
-		if not isdir(self._filename):
-			os.mkdir(self._filename)
+		if not isdir(filename):
+			os.mkdir(filename)
 
-		fileObj = self.nextFile()
-		fileObj.write(pageHeader(0))
-		fileObj.write(navBar())
+		self._fileObj = self.nextFile()
+		self._fileObj.write(self._pageHeader(header, title, 0))
+		self._fileObj.write(self._navBar())
 
-		re_fixed_link = re.compile(
-			r'<a (?:[^<>]*? )?href="#([^<>"]+?)">[^<>]+?</a>',
-			re.IGNORECASE,
-		)
-
-		linkTargetSet = set()
-
-		def replaceBword(text: str) -> str:
-			return text.replace(
-				' href="bword://',
-				' href="#',
-			)
-
-		def addLinks(text: str, pos: int) -> None:
-			for m in re_fixed_link.finditer(text):
-				if ' class="entry_link"' in m.group(0):
-					continue
-				if m.group(0).count("href=") != 1:
-					log.error(f"unexpected match: {m.group(0)}")
-				target = html.unescape(m.group(1))
-				linkTargetSet.add(target)
-				start = m.start()
-				b_start = len(text[:start].encode(encoding))
-				b_size = len(text[start : m.end()].encode(encoding))
-				linksTxtFileObj.write(
-					f"{escapeNTB(target)}\t"
-					f"{len(self._filenameList) - 1}\t"
-					f"{pos + b_start:x}\t"
-					f"{b_size:x}\n",
-				)
-				linksTxtFileObj.flush()
+		linkTargetSet: set[str] = set()
 
 		self.writeInfo(filename, header)
 
-		word_title = self._word_title
-
-		resDir = self._resDir
 		entryIndex = -1
 		while True:
 			entryIndex += 1
@@ -421,75 +462,35 @@ class Writer:
 				break
 			if entry.isData():
 				if resources:
-					entry.save(resDir)
+					entry.save(self._resDir)
 				continue
 
-			entry.detectDefiFormat()
-			defi = entry.defi
-			defiFormat = entry.defiFormat
-
-			if defi.startswith("<!DOCTYPE html>") and defiFormat != "h":
-				log.error(f"bad {defiFormat=}")
-				defiFormat = "h"
-
-			if defiFormat == "m":
-				defi = html.escape(defi)
-				if "\n" in defi:
-					# could be markdown or unformatted plaintext
-					# FIXME: this changes the font to a monospace
-					defi = f"<pre>{defi}</pre>"
-			elif defiFormat == "h":
-				defi = self._resSrcPattern.sub(self._subResSrc, defi)
-				if escape_defi:
-					defi = html.escape(defi)
-
-			entryId = f"entry{entryIndex}"
-
-			if word_title:
-				terms = [html.escape(term) for term in entry.l_term]
-				title = glos.wordTitleStr(
-					termSep.join(terms),
-					sample=entry.l_term[0],
-					class_="headword",
-				)
-
-			if not title:
-				title = f"Entry {entryIndex}"
-
-			# entry_link_sym = "&#182;"
-			entry_link_sym = "&#128279;"
-			text = (
-				f'<div id="{entryId}">{title}{_nbsp}{_nbsp}'
-				f'<a class="no_ul" class="entry_link" href="#{entryId}">'
-				f"{entry_link_sym}</a>"
-				f"{getEntryWebLink(entry)}"
-				f"<br>\n{defi}"
-				"</div>\n"
-				"<hr>\n"
-			)
-			pos = fileObj.tell()
+			text = self._formatEntry(entry, entryIndex, title)
+			pos = self._fileObj.tell()
 			if pos > initFileSizeMax and pos > max_file_size - len(
 				text.encode(encoding),
 			):
-				fileObj = self.nextFile()
-				fileObj.write(
-					pageHeader(
+				self._fileObj = self.nextFile()
+				self._fileObj.write(
+					self._pageHeader(
+						header,
+						title,
 						len(self._filenameList) - 1,
 					),
 				)
-				fileObj.write(navBar())
-			pos = fileObj.tell()
+				self._fileObj.write(self._navBar())
+			pos = self._fileObj.tell()
 			tmpFilename = escapeNTB(self._filenameList[-1])
 			indexTxtFileObj.writelines(
 				f"{entryIndex}\t{escapeNTB(term)}\t{tmpFilename}\t{pos}\n"
 				for term in entry.l_term
 			)
 			del tmpFilename
-			text = replaceBword(text)
-			addLinks(text, pos)
-			fileObj.write(text)
+			text = self._replaceBword(text)
+			self._addLinks(text, pos, linksTxtFileObj, linkTargetSet)
+			self._fileObj.write(text)
 
-		fileObj.close()
+		self._fileObj.close()
 		self._fileObj = None
 		indexTxtFileObj.close()
 
