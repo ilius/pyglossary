@@ -11,4 +11,5 @@ marisa-trie
 mistune
 polib
 prompt_toolkit
+pyparsing
 python-idzip

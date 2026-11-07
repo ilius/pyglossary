@@ -76,6 +76,8 @@ class Reader:
 
 		self._from_lang = from_lang
 		self._to_lang = lang_pair_to if not self._inverse_langs else lang_pair_from
+		self._glos.sourceLangName = self._from_lang
+		self._glos.targetLangName = self._to_lang
 
 	def close(self) -> None:
 		pass
@@ -118,10 +120,14 @@ class Reader:
 			if not target:
 				continue
 
-			for possible_source_word in field_parser.get_possible_source_words(
+			possible_source_words = field_parser.get_possible_source_words(
 				src,
 				word_class,
 				from_lang,
+			)
+			for possible_source_word in sorted(
+				possible_source_words,
+				key=lambda word: word.word,
 			):
 				assert isinstance(possible_source_word, SourceWord)
 				entry = dictionary[possible_source_word.word]
@@ -209,7 +215,7 @@ class Reader:
 
 			longest_src_word_without_replacements = min(
 				src_words,
-				key=lambda x: (x[1], -len(x[0])),
+				key=lambda x: (x[1], -len(x[0]), x[0]),
 			)
 			src_words_mut = set(src_words)
 			src_words_mut.remove(longest_src_word_without_replacements)
@@ -221,7 +227,7 @@ class Reader:
 			definition += " "
 
 			entry = self._glos.newEntry(headword, definition, defiFormat="h")
-			for other_src_word, _ in src_words_mut:
+			for other_src_word, _ in sorted(src_words_mut):
 				entry.addAlt(other_src_word)
 
 			yield entry
