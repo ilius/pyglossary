@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -15,6 +15,28 @@ if TYPE_CHECKING:
 	from typing import Any
 
 __all__ = ["FieldParser", "SourceWord", "get_language_pair"]
+
+_OPTIONAL_ABBREVIATIONS: dict[str, dict[str, dict[str, set[str]]]] = {
+	"en": {
+		"any": {"start_or_end": {"sth.", "sb.", "sb.'s", "sb./sth."}},
+		"verb": {"start": {"to"}},
+	},
+	"de": {
+		"any": {
+			"start_or_end": {
+				"jd.",
+				"jds.",
+				"jdm.",
+				"jdn.",
+				"etw.",
+				"jd./etw.",
+				"jds./etw.",
+				"jdm./etw.",
+				"jdn./etw.",
+			},
+		},
+	},
+}
 
 
 def get_language_pair(input_file: str) -> str:
@@ -35,6 +57,15 @@ class SourceWord:
 		if not isinstance(other, SourceWord):
 			return NotImplemented
 		return self.word == other.word
+
+
+@dataclass
+class _SourceWordsBuilder:
+	possible_abbreviations: dict[str, set[str]]
+	last_word_index: int | None
+	source_words: set[str] | None = None
+	finished_words: set[str] = field(default_factory=set)
+	already_encountered_word: bool = False
 
 
 class FieldParser:
@@ -174,183 +205,221 @@ class FieldParser:
 	def parse_tokens(self, s: str) -> Any:
 		return self.expr.parse_string(s)
 
-	def get_possible_source_words(  # noqa: PLR0912, PLR0913
+	def _get_optional_abbreviations(
 		self,
-		field: str,
-		word_class: str | None,
 		lang: str,
-		make_abbreviations_optional: bool = True,
-		replace_abbreviations: bool = True,
-		as_str: bool = False,
-	) -> set[str] | set[SourceWord]:
-		if make_abbreviations_optional:
-			optional_abbreviations = {
-				"en": {
-					"any": {"start_or_end": {"sth.", "sb.", "sb.'s", "sb./sth."}},
-					"verb": {"start": {"to"}},
-				},
-				"de": {
-					"any": {
-						"start_or_end": {
-							"jd.",
-							"jds.",
-							"jdm.",
-							"jdn.",
-							"etw.",
-							"jd./etw.",
-							"jds./etw.",
-							"jdm./etw.",
-							"jdn./etw.",
-						},
-					},
-				},
-			}
+		word_class: str | None,
+	) -> dict[str, set[str]]:
+		lang_abbreviations = _OPTIONAL_ABBREVIATIONS.get(lang, {})
+		possible_abbreviations = {
+			where: set(values)
+			for where, values in lang_abbreviations.get("any", {}).items()
+		}
+		for where, values in lang_abbreviations.get(word_class, {}).items():
+			if where in possible_abbreviations:
+				possible_abbreviations[where].update(values)
+			else:
+				possible_abbreviations[where] = set(values)
 
-			lang_abbreviations = optional_abbreviations.get(lang, {})
-			possible_abbreviations = dict(lang_abbreviations.get("any", {}))
+		start_or_end = possible_abbreviations.pop("start_or_end", None)
+		if start_or_end is not None:
+			possible_abbreviations.setdefault("start", set()).update(start_or_end)
+			possible_abbreviations.setdefault("end", set()).update(start_or_end)
 
-			for where, values in lang_abbreviations.get(word_class, {}).items():
-				if where in possible_abbreviations:
-					possible_abbreviations[where].update(values)
-				else:
-					possible_abbreviations[where] = values
+		return possible_abbreviations
 
-			if "start_or_end" in possible_abbreviations:
-				start_or_end_abbreviations = possible_abbreviations.pop("start_or_end")
+	def _last_word_index(self, tokens: Any) -> int | None:
+		last_word_index = None
+		for index, token in enumerate(tokens):
+			if type(token) == self.word:
+				last_word_index = index
+		return last_word_index
 
-				if "start" in possible_abbreviations:
-					possible_abbreviations["start"].update(start_or_end_abbreviations)
-				else:
-					possible_abbreviations["start"] = start_or_end_abbreviations
+	def _add_word(self, source_words: set[str] | None, value: str) -> set[str]:
+		if source_words is None:
+			return {value}
+		return {f"{word} {value}" for word in source_words}
 
-				if "end" in possible_abbreviations:
-					possible_abbreviations["end"].update(start_or_end_abbreviations)
-				else:
-					possible_abbreviations["end"] = start_or_end_abbreviations
+	def _add_optional_word(
+		self,
+		source_words: set[str] | None,
+		value: str,
+	) -> set[str]:
+		return self._add_word(source_words, value) | {value, ""}
+
+	def _add_word_variant(
+		self,
+		source_words: set[str] | None,
+		value: str,
+	) -> set[str]:
+		words = self._add_word(source_words, value)
+		if source_words is None:
+			words.add("")
 		else:
-			possible_abbreviations = {}
+			words |= source_words
+		return words
 
-		tokens = self.parse_tokens(field)
-		source_words: set[str] | None = None
-		finished_words: set[str] = set()
-		already_encountered_word = False
-		try:
-			last_word_index = [
-				i for i, token in enumerate(tokens) if type(token) == self.word
-			][-1]
-		except IndexError:
-			last_word_index = None
+	def _handle_abbreviation_token(
+		self,
+		builder: _SourceWordsBuilder,
+		token: Any,
+		index: int,
+	) -> bool:
+		possible_abbreviations = builder.possible_abbreviations
+		if index == builder.last_word_index and token.value in possible_abbreviations.get(
+			"end",
+			set(),
+		):
+			if builder.source_words is not None:
+				builder.finished_words |= builder.source_words
+			builder.source_words = self._add_word(builder.source_words, token.value)
+			builder.already_encountered_word = True
+			return True
+
+		if (
+			not builder.already_encountered_word
+			and token.value in possible_abbreviations.get("start", set())
+		):
+			builder.source_words = self._add_optional_word(
+				builder.source_words,
+				token.value,
+			)
+			builder.already_encountered_word = True
+			return True
+
+		return False
+
+	def _get_source_words(
+		self,
+		field_value: str,
+		possible_abbreviations: dict[str, set[str]],
+		make_abbreviations_optional: bool,
+	) -> set[str]:
+		tokens = self.parse_tokens(field_value)
+		builder = _SourceWordsBuilder(
+			possible_abbreviations=possible_abbreviations,
+			last_word_index=self._last_word_index(tokens),
+		)
 
 		for index, token in enumerate(tokens):
 			if (
 				make_abbreviations_optional
 				and possible_abbreviations
 				and type(token) == self.word
+				and self._handle_abbreviation_token(builder, token, index)
 			):
-				if index == last_word_index and token.value in possible_abbreviations.get(
-					"end",
-					set(),
-				):
-					if source_words is None:
-						source_words = {token.value}
-					else:
-						finished_words |= set(source_words)
-						source_words = {f"{word} {token.value}" for word in source_words}
-
-					already_encountered_word = True
-					continue
-
-				if (
-					not already_encountered_word
-					and token.value
-					in possible_abbreviations.get(
-						"start",
-						set(),
-					)
-				):
-					if source_words is None:
-						source_words = {token.value, ""}
-					else:
-						source_words = {
-							f"{word} {token.value}" for word in source_words
-						} | {
-							token.value,
-							"",
-						}
-
-					already_encountered_word = True
-					continue
+				continue
 
 			if type(token) == self.word:
-				if source_words is None:
-					source_words = {token.value}
-				else:
-					source_words = {f"{word} {token.value}" for word in source_words}
-
-				already_encountered_word = True
+				builder.source_words = self._add_word(
+					builder.source_words,
+					token.value,
+				)
+				builder.already_encountered_word = True
 			elif type(token) == self.round:
-				if source_words is None:
-					source_words = {token.value, ""}
-				else:
-					source_words |= {f"{word} {token.value}" for word in source_words}
+				builder.source_words = self._add_word_variant(
+					builder.source_words,
+					token.value,
+				)
 
-		if source_words is None:
-			source_words = set()
-
-		return_words: set[SourceWord] = set()
-		source_words = {
+		return {
 			stripped
-			for word in (source_words | finished_words)
+			for word in (builder.source_words or set()) | builder.finished_words
 			if (stripped := " ".join(word.split()))
 		}
 
+	def _expand_abbreviations_in_word(
+		self,
+		word: str,
+		replacements_for_lang: dict[str, set[str]],
+		find_abbreviations_expr: Any,
+	) -> set[SourceWord]:
+		split_word = find_abbreviations_expr.parse_string(word)
+		build_words: set[SourceWord] | None = None
+
+		for sub_word in split_word:
+			if type(sub_word) != self.abbreviation:
+				if build_words is None:
+					build_words = {SourceWord(sub_word, False)}
+				else:
+					for build_word in build_words:
+						build_word.word = f"{build_word.word}{sub_word}"
+				continue
+
+			current_replacements = [
+				*(
+					(replacement, True)
+					for replacement in replacements_for_lang[sub_word.value]
+				),
+				(sub_word.value, False),
+			]
+
+			if build_words is None:
+				build_words = {
+					SourceWord(replacement, is_replacement)
+					for replacement, is_replacement in current_replacements
+				}
+				continue
+
+			old_build_words = set(build_words)
+			build_words.clear()
+			for build_word in old_build_words:
+				for replacement, is_replacement in current_replacements:
+					build_words.add(
+						SourceWord(
+							f"{build_word.word}{replacement}",
+							build_word.has_replacements or is_replacement,
+						),
+					)
+
+		return build_words or set()
+
+	def _replace_abbreviations(
+		self,
+		source_words: set[str],
+		lang: str,
+	) -> set[SourceWord]:
+		replacements_for_lang = self.abbreviations_synonyms[lang]
+		find_abbreviations_expr = self.find_abbreviations_exprs[lang]
+		return_words: set[SourceWord] = set()
+
+		for word in source_words:
+			return_words.update(
+				self._expand_abbreviations_in_word(
+					word,
+					replacements_for_lang,
+					find_abbreviations_expr,
+				),
+			)
+
+		for word in return_words:
+			word.word = " ".join(word.word.split())
+
+		return return_words
+
+	def get_possible_source_words(  # noqa: PLR0913
+		self,
+		field_value: str,
+		word_class: str | None,
+		lang: str,
+		make_abbreviations_optional: bool = True,
+		replace_abbreviations: bool = True,
+		as_str: bool = False,
+	) -> set[str] | set[SourceWord]:
+		possible_abbreviations = (
+			self._get_optional_abbreviations(lang, word_class)
+			if make_abbreviations_optional
+			else {}
+		)
+		source_words = self._get_source_words(
+			field_value,
+			possible_abbreviations,
+			make_abbreviations_optional,
+		)
+
 		if replace_abbreviations and lang in self.find_abbreviations_exprs:
-			replacements_for_lang = self.abbreviations_synonyms[lang]
-			find_abbreviations_expr = self.find_abbreviations_exprs[lang]
-
-			for word in source_words:
-				split_word = find_abbreviations_expr.parse_string(word)
-				build_words: set[SourceWord] | None = None
-
-				for sub_word in split_word:
-					if type(sub_word) != self.abbreviation:
-						if build_words is None:
-							build_words = {SourceWord(sub_word, False)}
-						else:
-							for build_word in build_words:
-								build_word.word = f"{build_word.word}{sub_word}"
-					else:
-						current_replacements = list(
-							map(
-								lambda x: (x, True), replacements_for_lang[sub_word.value]
-							),
-						) + [(sub_word.value, False)]
-
-						if build_words is None:
-							build_words = {
-								SourceWord(replacement, is_replacement)
-								for replacement, is_replacement in current_replacements
-							}
-						else:
-							old_build_words = set(build_words)
-							build_words.clear()
-
-							for build_word in old_build_words:
-								for replacement, is_replacement in current_replacements:
-									build_words.add(
-										SourceWord(
-											f"{build_word.word}{replacement}",
-											build_word.has_replacements or is_replacement,
-										),
-									)
-
-				if build_words is not None:
-					return_words.update(build_words)
-
-			for word in return_words:
-				word.word = " ".join(word.word.split())
+			return_words = self._replace_abbreviations(source_words, lang)
 		else:
 			return_words = {SourceWord(word, False) for word in source_words}
 
-		result = {word.word if as_str else word for word in return_words if word.word}
-		return result
+		return {word.word if as_str else word for word in return_words if word.word}
