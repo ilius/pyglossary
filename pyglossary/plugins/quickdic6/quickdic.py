@@ -18,6 +18,9 @@ from .comparator import Comparator
 if TYPE_CHECKING:
 	from .commons import EntryIndexTuple, IndexEntryType
 
+	TokenType = tuple[str, str, int, int]
+	RowType = tuple[int, int]
+
 __all__ = ["QuickDic"]
 
 
@@ -44,26 +47,11 @@ class QuickDic:
 		self.indices = [] if indices is None else indices
 		self.created = dt.datetime.now() if created is None else created
 
-	def add_index(  # noqa: PLR0913
+	def _init_tokens(
 		self,
-		short_name: str,
-		long_name: str,
-		iso: str,
-		normalizer_rules: str,
-		synonyms: dict[str, str] | None = None,
-	) -> None:
-		swap_flag = False
-		comparator = Comparator(iso, normalizer_rules, self.version)
-
-		synonyms = synonyms or {}
-		n_synonyms = sum(len(v) for v in synonyms.values())
-		log.info(f"Adding an index for {iso} with {n_synonyms} synonyms ...")
-
-		# since we don't tokenize, the stop list is always empty
-		stop_list: list[str] = []
-		if self.indices is None:
-			self.indices = []
-
+		comparator: Comparator,
+		swap_flag: bool,
+	) -> list[TokenType]:
 		log.info("Initialize token list ...")
 		tokens1 = [
 			(pair[1 if swap_flag else 0], 0, idx)
@@ -77,30 +65,46 @@ class QuickDic:
 		tokens1 = [(t.strip(), ttype, tidx) for t, ttype, tidx in tokens1]
 
 		log.info("Normalize tokens ...")
-		tokens = [
+		return [
 			(t, comparator.normalize(t), ttype, tidx) for t, ttype, tidx in tokens1 if t
 		]
 
-		if synonyms:
-			log.info(
-				f"Insert synonyms into token list ({len(tokens)} entries) ...",
-			)
-			tokens.extend(
-				[
-					(s, comparator.normalize(s)) + t[2:]
-					for t in tokens
-					if t[0] in synonyms
-					for s in synonyms[t[0]]
-					if s
-				],
-			)
+	@staticmethod
+	def _insert_synonyms(
+		tokens: list[TokenType],
+		comparator: Comparator,
+		synonyms: dict[str, str],
+	) -> None:
+		if not synonyms:
+			return
+		log.info(
+			f"Insert synonyms into token list ({len(tokens)} entries) ...",
+		)
+		tokens.extend(
+			[
+				(s, comparator.normalize(s)) + t[2:]
+				for t in tokens
+				if t[0] in synonyms
+				for s in synonyms[t[0]]
+				if s
+			],
+		)
 
+	@staticmethod
+	def _sort_tokens(
+		tokens: list[TokenType],
+		comparator: Comparator,
+	) -> None:
 		log.info(f"Sort tokens with synonyms ({len(tokens)} entries) ...")
 		key_fun = functools.cmp_to_key(comparator.compare)
 		tokens.sort(key=lambda t: key_fun((t[0], t[1])))
 
+	@staticmethod
+	def _build_index(
+		tokens: list[TokenType],
+	) -> tuple[list[IndexEntryType], list[RowType]]:
 		log.info("Build mid-layer index ...")
-		rows: list[tuple[int, int]] = []
+		rows: list[RowType] = []
 		index_entries: list[IndexEntryType] = []
 		for token, token_norm, ttype, tidx in tokens:
 			prev_token = index_entries[-1][0] if index_entries else ""
@@ -129,6 +133,32 @@ class QuickDic:
 			index_entries.append(
 				(token, index_start, count, token_norm, html_indices),
 			)
+		return index_entries, rows
+
+	def add_index(  # noqa: PLR0913
+		self,
+		short_name: str,
+		long_name: str,
+		iso: str,
+		normalizer_rules: str,
+		synonyms: dict[str, str] | None = None,
+	) -> None:
+		swap_flag = False
+		comparator = Comparator(iso, normalizer_rules, self.version)
+
+		synonyms = synonyms or {}
+		n_synonyms = sum(len(v) for v in synonyms.values())
+		log.info(f"Adding an index for {iso} with {n_synonyms} synonyms ...")
+
+		# since we don't tokenize, the stop list is always empty
+		stop_list: list[str] = []
+		if self.indices is None:
+			self.indices = []
+
+		tokens = self._init_tokens(comparator, swap_flag)
+		self._insert_synonyms(tokens, comparator, synonyms)
+		self._sort_tokens(tokens, comparator)
+		index_entries, rows = self._build_index(tokens)
 
 		# the exact meaning of this parameter is unknown,
 		# and it seems to be ignored by readers
