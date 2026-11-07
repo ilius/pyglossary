@@ -82,74 +82,65 @@ class Reader:
 			return self._glos.newEntry(splitByBar(word), defi)
 		return self._glos.newEntry(word, defi)
 
-	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
+	@staticmethod
+	def _unquote(value: str) -> str:
+		if not value.startswith('"'):
+			return value
+		if len(value) < 2 or value[-1] != '"':
+			raise ValueError("invalid po line: line")
+		return value[1:-1]
+
+	def _iterPoEntries(self) -> Iterator[EntryType]:
 		try:
 			from polib import unescape as po_unescape
 		except ModuleNotFoundError as e:
 			exc_note(e, f"Run `{pip} install polib` to install")
 			raise
 
-		file = self._file
-
 		term = ""
 		defi = ""
 		msgstr = False
-		entryCount = 0
-		for line_ in file:
+		for line_ in self._file:
 			line = line_.strip()  # noqa: PLW2901
-			if not line:
-				continue
-			if line.startswith("#"):
+			if not line or line.startswith("#"):
 				continue
 			if line.startswith("msgid "):
 				if term:
 					yield self.makeEntry(term, defi)
-					entryCount += 1
 					term = ""
 					defi = ""
-				else:
-					pass
-					# TODO: parse defi and set glos info?
-					# but this should be done in self.open
-				term = po_unescape(line[6:])
-				if term.startswith('"'):
-					if len(term) < 2 or term[-1] != '"':
-						raise ValueError("invalid po line: line")
-					term = term[1:-1]
+				# TODO: parse defi and set glos info?
+				# but this should be done in self.open
+				term = self._unquote(po_unescape(line[6:]))
 				msgstr = False
 				continue
 			if line.startswith("msgstr "):
 				if msgstr:
 					log.error("msgid omitted!")
-				defi = po_unescape(line[7:])
-				if defi.startswith('"'):
-					if len(defi) < 2 or defi[-1] != '"':
-						raise ValueError("invalid po line: line")
-					defi = defi[1:-1]
+				defi = self._unquote(po_unescape(line[7:]))
 				msgstr = True
 				continue
 
-			line = po_unescape(line)
-			if line.startswith('"'):
-				if len(line) < 2 or line[-1] != '"':
-					raise ValueError("invalid po line: line")
-				line = line[1:-1]
-
+			line = self._unquote(po_unescape(line))
 			if msgstr:
 				defi += line
 			else:
 				term += line
 		if term:
 			yield self.makeEntry(term, defi)
-			entryCount += 1
 
+	def _iterResourceEntries(self) -> Iterator[EntryType]:
 		resDir = self._resDir
 		for fname in listFilesRecursiveRelPath(resDir):
 			with open(join(resDir, fname), "rb") as file:
-				entryCount += 1
-				yield self._glos.newDataEntry(
-					fname,
-					file.read(),
-				)
+				yield self._glos.newDataEntry(fname, file.read())
 
+	def __iter__(self) -> Iterator[EntryType]:
+		entryCount = 0
+		for entry in self._iterPoEntries():
+			entryCount += 1
+			yield entry
+		for entry in self._iterResourceEntries():
+			entryCount += 1
+			yield entry
 		self._entryCount = entryCount
