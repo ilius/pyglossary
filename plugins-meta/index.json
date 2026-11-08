@@ -2415,7 +2415,7 @@
 		]
 	},
 	{
-		"module": "zimfile",
+		"module": "zim",
 		"lname": "zim",
 		"name": "Zim",
 		"description": "Zim (.zim, for Kiwix)",
