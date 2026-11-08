@@ -261,6 +261,47 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 
+	def test_process_tag(self):
+		dsl = (
+			"headword\n"
+			" [*]section[/*]\n"
+			" [ex]example[/ex]\n"
+			" [t]transcript[/t]\n"
+			" [i]italic[/i]\n"
+			" [b]bold[/b]\n"
+			" [u]underline[/u]\n"
+			" [']accent[/']\n"
+			" [sup]sup[/sup]\n"
+			" [sub]sub[/sub]\n"
+			" [trn]translation[/trn][!trn]not trn[/!trn]"
+			"[trs]trans[/trs][!trs]not trs[/!trs]\n"
+			" [lang]lang[/lang][com]comment[/com]\n"
+			" [ref]ref target[/ref][url]example.com[/url]\n"
+			" [c]green[/c][c red]red text[/c]\n"
+			" [m]default[/m][m0]zero[/m][m2]two[/m]\n"
+			" [p]label[/p]\n"
+			" [unknown]mystery[/unknown]\n"
+		)
+		txt = (
+			"headword\t"
+			'<span class="sec">section</span><br/>'
+			'<span class="ex"><font color="steelblue">example</font></span><br/>'
+			'<font face="Helvetica" class="dsl_t">transcript</font><br/>'
+			"<i>italic</i><br/><b>bold</b><br/><u>underline</u><br/>"
+			'<u class="accent">accent</u><br/><sup>sup</sup><br/><sub>sub</sub><br/>'
+			"translationnot trntransnot trs<br/>"
+			"langcomment<br/>"
+			'<a href="bword://ref target">ref target</a>'
+			'<a href="http://example.com">example.com</a><br/>'
+			'<font color="green">green</font><font color="red">red text</font>'
+			'<p style="padding-left:0.3em;margin:0">default</p>'
+			'<p style="padding-left:0.3em;margin:0">zero</p>'
+			'<p style="padding-left:2em;margin:0">two</p><br/>'
+			'<i class="p"><font color="green">label</font></i><br/>'
+			"mystery"
+		)
+		self.convert_string_dsl_txt(dsl, txt)
+
 	def test_headword_paran(self):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
