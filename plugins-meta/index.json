@@ -2100,6 +2100,11 @@
 		"extensions": [],
 		"singleFile": false,
 		"optionsProp": {
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add headwords title to beginning of definition"
+			},
 			"gram_color": {
 				"class": "StrOption",
 				"type": "str",
@@ -2110,7 +2115,8 @@
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
-			"gram_color": "green"
+			"gram_color": "green",
+			"word_title": false
 		}
 	},
 	{

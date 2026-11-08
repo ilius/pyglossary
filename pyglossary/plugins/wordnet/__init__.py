@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.option import StrOption
+from pyglossary.option import BoolOption, StrOption
 
 from .reader import Reader
 
@@ -47,6 +47,9 @@ website = (
 
 # key is option/argument name, value is instance of Option
 optionsProp: dict[str, Option] = {
+	"word_title": BoolOption(
+		comment="Add headwords title to beginning of definition",
+	),
 	"gram_color": StrOption(
 		comment="Grammar color",
 	),

@@ -25,3 +25,4 @@ To update, modify plugins/wordnet/__init__.py file, then run ./scripts/gen
 | Name | Default | Type | Comment |
 | ---- | ------- | ---- | ------- |
 | gram_color | `green` | str | Grammar color |
+| word_title | `False` | bool | Add headwords title to beginning of definition |

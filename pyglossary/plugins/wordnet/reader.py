@@ -184,7 +184,8 @@ class Pointer:
 class WordNet:
 	"""Word Net."""
 
-	article_template = "<h1>%s</h1><span>%s</span>"
+	article_template = "<span>%s</span>"
+	title_template = "<h1>%s</h1>"
 	synSetTypes = {
 		"n": "n.",
 		"v": "v.",
@@ -200,9 +201,15 @@ class WordNet:
 		"data.verb": ["v"],
 	}
 
-	def __init__(self, wordnetdir: str, gram_color: str) -> None:
+	def __init__(
+		self,
+		wordnetdir: str,
+		gram_color: str,
+		word_title: bool = False,
+	) -> None:
 		self.wordnetdir = wordnetdir
 		self.gram_color = gram_color
+		self.word_title = word_title
 		self.collector: dict[str, list[str]] = defaultdict(list)
 
 	@staticmethod
@@ -307,22 +314,23 @@ class WordNet:
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
-	def process(self) -> Iterator[tuple[str, str]]:
-		article_template = self.article_template
+	def renderArticle(self, title: str, article: str) -> str:
+		title_html = self.title_template % title if self.word_title else ""
+		return title_html + self.article_template % article
 
+	def process(self) -> Iterator[tuple[str, str]]:
 		for title, articles in self.collector.items():
 			if not articles:
 				log.warning(f"empty articles: {title=}")
 				continue
 
 			if len(articles) == 1:
-				yield title, article_template % (title, articles[0])
+				yield title, self.renderArticle(title, articles[0])
 				continue
 
 			yield (
 				title,
-				article_template
-				% (
+				self.renderArticle(
 					title,
 					"<ol>" + "".join(f"<li>{ap}</li>" for ap in articles) + "</ol>",
 				),
@@ -334,6 +342,7 @@ class Reader:
 
 	useByteProgress = False
 	_gram_color: str = "green"
+	_word_title: bool = False
 
 	def __init__(self, glos: ReaderGlossaryType) -> None:
 		self._glos = glos
@@ -371,7 +380,11 @@ class Reader:
 			else:
 				self._glos.setInfo("creationTime", f"{year}-01-01")
 
-		self.wordnet = WordNet(filename, gram_color=self._gram_color)
+		self.wordnet = WordNet(
+			filename,
+			gram_color=self._gram_color,
+			word_title=self._word_title,
+		)
 		log.info("Running wordnet.prepare()")
 		self.wordnet.prepare()
 
