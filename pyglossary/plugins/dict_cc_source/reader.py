@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 __all__ = ["Reader"]
 
 _TranslationsBucket = dict[tuple[str, ...], set[tuple[str, bool]]]
+_ParsedLine = tuple[str, str, str | None]
 
 
 @dataclass
@@ -85,6 +86,64 @@ class Reader:
 	def __len__(self) -> int:
 		return self._entryCount
 
+	def _parse_line(
+		self,
+		raw_line: str,
+		inverse_langs: bool,
+	) -> _ParsedLine | None:
+		line_stripped = raw_line.strip()
+		if not line_stripped or line_stripped[0] == "#":
+			return None
+
+		fields = line_stripped.split("\t")
+		if len(fields) < 2:
+			return None
+
+		src, target = (
+			unicodedata.normalize("NFC", html.unescape(field)) for field in fields[:2]
+		)
+		word_class = fields[2].strip().lower() if len(fields) > 2 else None
+		word_class = word_class or None
+
+		if inverse_langs:
+			src, target = target, src
+
+		target = " ".join(target.split())
+		if not target:
+			return None
+
+		return src, target, word_class
+
+	def _add_translations(
+		self,
+		dictionary: dict[str, _DictEntry],
+		field_parser: FieldParser,
+		from_lang: str,
+		parsed_line: _ParsedLine,
+	) -> None:
+		src, target, word_class = parsed_line
+		possible_source_words = field_parser.get_possible_source_words(
+			src,
+			word_class,
+			from_lang,
+		)
+		for possible_source_word in sorted(
+			possible_source_words,
+			key=lambda word: word.word,
+		):
+			assert isinstance(possible_source_word, SourceWord)
+			entry = dictionary[possible_source_word.word]
+			entry.translations.append((word_class, target))
+
+			if entry.source_word_is_replacement is None:
+				has_rep = possible_source_word.has_replacements
+				entry.source_word_is_replacement = has_rep
+			else:
+				entry.source_word_is_replacement = (
+					entry.source_word_is_replacement
+					or possible_source_word.has_replacements
+				)
+
 	def _fill_dictionary(
 		self,
 		field_parser: FieldParser,
@@ -99,48 +158,16 @@ class Reader:
 		for index, raw_line in enumerate(lines, start=1):
 			if index % 50_000 == 0:
 				log.info(f"dict_cc_source: parsing line {index}/{num_lines}")
-			line_stripped = raw_line.strip()
-			if not line_stripped or line_stripped[0] == "#":
+			parsed = self._parse_line(raw_line, inverse_langs)
+			if parsed is None:
 				continue
 
-			fields = line_stripped.split("\t")
-			if len(fields) < 2:
-				continue
-
-			src, target = (
-				unicodedata.normalize("NFC", html.unescape(field)) for field in fields[:2]
-			)
-			word_class = fields[2].strip().lower() if len(fields) > 2 else None
-			word_class = word_class or None
-
-			if inverse_langs:
-				src, target = target, src
-
-			target = " ".join(target.split())
-			if not target:
-				continue
-
-			possible_source_words = field_parser.get_possible_source_words(
-				src,
-				word_class,
+			self._add_translations(
+				dictionary,
+				field_parser,
 				from_lang,
+				parsed,
 			)
-			for possible_source_word in sorted(
-				possible_source_words,
-				key=lambda word: word.word,
-			):
-				assert isinstance(possible_source_word, SourceWord)
-				entry = dictionary[possible_source_word.word]
-				entry.translations.append((word_class, target))
-
-				if entry.source_word_is_replacement is None:
-					has_rep = possible_source_word.has_replacements
-					entry.source_word_is_replacement = has_rep
-				else:
-					entry.source_word_is_replacement = (
-						entry.source_word_is_replacement
-						or possible_source_word.has_replacements
-					)
 
 		return dictionary
 
