@@ -1,0 +1,8 @@
+  WordNet 3.1 subset for PyGlossary tests.
+  Copyright 2011 by Princeton University.  All rights reserved.
+  Distributed under the WordNet license; see https://wordnet.princeton.edu/.
+  Not published, maintained, or endorsed by Princeton University.
+00000250 03 n 01 entity 0 0 | that which is perceived or known or inferred to have its own distinct existence
+00000360 03 n 02 object 0 whole 0 0 | a tangible and visible entity
+00000428 03 n 02 whole 0 unit 0 23 ! 00000250 n 0101 @ 00000250 n 0000 @i 00000250 n 0000 ~ 00000250 n 0000 ~i 00000250 n 0000 #m 00000250 n 0000 #s 00000250 n 0000 #p 00000250 n 0000 %m 00000250 n 0000 %s 00000250 n 0000 %p 00000250 n 0000 = 00000250 n 0000 + 00000250 v 0101 + 00000250 v 0101 ;c 00000250 n 0000 -c 00000250 n 0000 ;r 00000250 n 0000 -r 00000250 n 0000 ;u 00000250 n 0000 -u 00000250 n 0000 \ 00000250 n 0000 ^ 00000250 n 0000 ! 00000250 n 0201 | an assemblage of parts regarded as a single entity; "a whole"; see `entity'
+

@@ -1,0 +1,6 @@
+  WordNet 3.1 subset for PyGlossary tests.
+  Copyright 2011 by Princeton University.  All rights reserved.
+  Distributed under the WordNet license; see https://wordnet.princeton.edu/.
+  Not published, maintained, or endorsed by Princeton University.
+00000250 02 r 01 well 0 0 | in a good or proper manner
+00000305 02 r 01 badly 0 6 ! 00000250 r 0101 + 00000250 a 0000 \ 00000250 a 0101 ;c 00000250 r 0000 ;r 00000250 r 0000 ;u 00000250 r 0000 | in a poor or improper manner; "he did badly"

@@ -1,0 +1,6 @@
+  WordNet 3.1 subset for PyGlossary tests.
+  Copyright 2011 by Princeton University.  All rights reserved.
+  Distributed under the WordNet license; see https://wordnet.princeton.edu/.
+  Not published, maintained, or endorsed by Princeton University.
+00000250 29 v 01 breathe 0 0 | draw air into, and expel out of, the lungs
+00000324 29 v 01 respire 0 11 ! 00000250 v 0101 @ 00000250 v 0000 ~ 00000250 v 0000 * 00000250 v 0000 > 00000250 v 0000 ^ 00000250 v 0000 $ 00000250 v 0000 + 00000250 n 0000 ;c 00000250 v 0000 ;r 00000250 v 0000 ;u 00000250 v 0000 | undergo respiration; "to respire"

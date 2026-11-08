@@ -1,0 +1,8 @@
+  WordNet 3.1 subset for PyGlossary tests.
+  Copyright 2011 by Princeton University.  All rights reserved.
+  Distributed under the WordNet license; see https://wordnet.princeton.edu/.
+  Not published, maintained, or endorsed by Princeton University.
+entity n 1 0 1 0 00000250
+object n 1 0 1 0 00000360
+unit n 1 21 ! @ @i ~ ~i #m #s #p %m %s %p = + ;c -c ;r -r ;u -u \ ^ 1 0 00000428
+whole n 2 21 ! @ @i ~ ~i #m #s #p %m %s %p = + ;c -c ;r -r ;u -u \ ^ 2 0 00000360 00000428
