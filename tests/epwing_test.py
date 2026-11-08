@@ -115,6 +115,63 @@ def make_book(path: Path) -> None:
 	data_dir.joinpath("HONMON").write_bytes(b"".join(pages))
 
 
+def make_book_from_entries(
+	path: Path,
+	entries: list[tuple[bytes, bytes]],
+) -> None:
+	"""
+	Write a minimal one-subbook EPWING book for the given raw articles.
+
+	Each entry is a ``(heading, text)`` pair of raw EPWING byte strings.
+	Article data begins on page 3, immediately after the index and leaf pages.
+	"""
+	title = jis("テスト")
+	catalog = bytearray(16 + 2 * 164)
+	catalog[:2] = (1).to_bytes(2, "big")
+	catalog[2:4] = (3).to_bytes(2, "big")
+	record = memoryview(catalog)[16:180]
+	record[2 : 2 + len(title)] = title
+	record[82:90] = b"TEST    "
+	record[94:96] = (1).to_bytes(2, "big")
+	extra = memoryview(catalog)[180:344]
+	extra[4:12] = b"HONMON  "
+	path.joinpath("CATALOGS").write_bytes(catalog)
+
+	first_data_page = 3
+
+	def to_position(blob_offset: int) -> tuple[int, int]:
+		return (
+			first_data_page + blob_offset // PAGE_SIZE,
+			blob_offset % PAGE_SIZE,
+		)
+
+	blob = bytearray()
+	positions = []
+	for heading, text in entries:
+		heading_offset = len(blob)
+		blob += heading
+		text_offset = len(blob)
+		blob += text
+		positions.append((to_position(text_offset), to_position(heading_offset)))
+
+	pages = [bytearray(PAGE_SIZE) for _ in range(2)]
+	pages[0][1] = 1
+	pages[0][16] = 0x92
+	pages[0][18:22] = (2).to_bytes(4, "big")
+	pages[1][0] = 0xA0
+	pages[1][2:4] = len(entries).to_bytes(2, "big")
+	offset = 4
+	for text_pos, heading_pos in positions:
+		pages[1][offset] = 0
+		put_position(pages[1], offset + 1, text_pos)
+		put_position(pages[1], offset + 7, heading_pos)
+		offset += 13
+
+	data_dir = path / "TEST" / "DATA"
+	data_dir.mkdir(parents=True)
+	data_dir.joinpath("HONMON").write_bytes(bytes(pages[0]) + bytes(pages[1]) + blob)
+
+
 class EpwingTest(unittest.TestCase):
 	def test_uncompressed_entries(self) -> None:
 		with tempfile.TemporaryDirectory() as temp_dir:
@@ -130,6 +187,83 @@ class EpwingTest(unittest.TestCase):
 					{"heading": "あ", "text": "説明\nA!後先{{w_41249}}"},
 				],
 			)
+
+	def test_entries_handle_content_control_codes(self) -> None:
+		heading = b"\x1f\x02" + jis("見出") + b"\x1f\x0a"
+		text = (
+			b"\x1f\x02"  # default control code
+			b"\x1f\x14\x00\x00"  # begin inline skip until 0x15
+			b"AB"  # skipped narrow characters
+			b"\x1f\x15"  # end inline skip
+			b"\x1f\x35"  # begin skip until 0x55
+			b"CD"  # skipped narrow characters
+			b"\x1f\x55"  # end skip
+			b"\x1f\xe4"  # begin skip until 0xe5
+			b"\x00\x00"  # skipped narrow characters
+			b"\x1f\xe5"  # end skip
+			b"\x1f\x42\x00\x00"  # four-byte control argument
+			b"\x1f\x45\x1f\x02"  # two-byte control followed by another code
+			b"\x1f\x04"  # switch to narrow characters
+			b"\x23\x61"  # narrow lowercase letter
+			b"\x23\x3b"  # narrow character with no ASCII mapping
+			b"\x24\x41"  # narrow character outside the ASCII table
+			b"\xa1\x21"  # narrow gaiji
+			b"\x1f\x05"  # switch to wide characters
+			b"\xa1\x21"  # wide gaiji
+			b"XY"  # wide ASCII
+			b"\x1f\x4b\x00\x00\x00\x00\x00\x00\x1f\x6b"  # soft stop
+			b"\x1f\x03"  # end of content
+		)
+		end_heading = b"\x1f\x02" + jis("本文見出") + b"\x1f\x0a"
+		end_text = b"\x1f\x02" + jis("本文") + b"\x1f\x03"
+		with tempfile.TemporaryDirectory() as temp_dir:
+			path = Path(temp_dir)
+			make_book_from_entries(path, [(heading, text), (end_heading, end_text)])
+			book = EpwingBook(str(path))
+
+			self.assertEqual(
+				list(book.subbooks[0].entries()),
+				[
+					{
+						"heading": "見出",
+						"text": "a�擦�{{n_41249}}{{w_41249}}慵",
+					},
+					{"heading": "本文見出", "text": "本文"},
+				],
+			)
+
+	def test_entries_at_end_of_file(self) -> None:
+		heading = b"\x1f\x02" + jis("見出") + b"\x1f\x0a"
+		for name, text in (("character", b"\x41"), ("control", b"\x1f")):
+			with self.subTest(name), tempfile.TemporaryDirectory() as temp_dir:
+				path = Path(temp_dir)
+				make_book_from_entries(path, [(heading, text)])
+				book = EpwingBook(str(path))
+
+				self.assertEqual(
+					list(book.subbooks[0].entries()),
+					[{"heading": "見出", "text": ""}],
+				)
+
+	def test_entries_invalid_character_is_rejected(self) -> None:
+		heading = b"\x1f\x02" + jis("見出") + b"\x1f\x0a"
+		with tempfile.TemporaryDirectory() as temp_dir:
+			path = Path(temp_dir)
+			make_book_from_entries(path, [(heading, b"\x01\x20")])
+			book = EpwingBook(str(path))
+
+			with self.assertRaisesRegex(ValueError, "Invalid EPWING character"):
+				list(book.subbooks[0].entries())
+
+	def test_entries_truncated_control_code_is_rejected(self) -> None:
+		heading = b"\x1f\x02" + jis("見出") + b"\x1f\x0a"
+		with tempfile.TemporaryDirectory() as temp_dir:
+			path = Path(temp_dir)
+			make_book_from_entries(path, [(heading, b"\x1f\x39")])
+			book = EpwingBook(str(path))
+
+			with self.assertRaisesRegex(ValueError, "Truncated EPWING control code"):
+				list(book.subbooks[0].entries())
 
 	def test_compressed_honmon_is_rejected(self) -> None:
 		subbook = EpwingSubbook("unused", "unused", 1, "HONMON", 0x11)
