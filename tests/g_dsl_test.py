@@ -302,6 +302,41 @@ class TestGlossaryDSL(TestGlossaryBase):
 		)
 		self.convert_string_dsl_txt(dsl, txt)
 
+	def test_subentries_and_no_terms(self):
+		dsl = (
+			"headword\n"
+			"  main def\n"
+			"  @ first\n"
+			"  text one\n"
+			"  @ second\n"
+			"  text two\n"
+			"  @\n"
+			"  main after\n"
+			"  @ final\n"
+			"  final text\n"
+			"\n"
+			"badtitle {[unclosed}\n"
+			"  ignored\n"
+			"\n"
+			"goodheadword\n"
+			"  good def\n"
+		)
+		txt = (
+			"headword\tmain def"
+			'<p style="padding-left:2em;margin:0">'
+			'<a href="bword://first">first</a>'
+			'<p style="padding-left:2em;margin:0">'
+			'<a href="bword://second">second</a>'
+			"<br/>main after"
+			'<p style="padding-left:2em;margin:0">'
+			'<a href="bword://final">final</a>\n'
+			"first\ttext one\n"
+			"second\ttext two\n"
+			"final\tfinal text\n"
+			"goodheadword\tgood def"
+		)
+		self.convert_string_dsl_txt(dsl, txt)
+
 	def test_headword_paran(self):
 		self.convert_string_dsl_txt(
 			"headword with (parenthesis)\n    test",
