@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<stardict xmlns:xi="http://www.w3.org/2003/XInclude">
+<info>
+	<version>3.0.0</version>
+	<bookname>StarDict textual branch coverage sample</bookname>
+	<author>Test Author</author>
+	<email>test@example.com</email>
+	<website>https://example.com</website>
+	<description>Synthetic sample for PyGlossary tests</description>
+	<date>2021-01-02</date>
+	<dicttype></dicttype>
+</info>
+
+<article>
+	<key>Entry 1: mixed formats with xdxf</key>
+	<definition type="h"><![CDATA[<b>HTML text</b>]]></definition>
+	<definition type="m"><![CDATA[Plain text line 1
+Plain text line 2]]></definition>
+	<definition type="x"><![CDATA[<k>XDXF text</k>
+<dtrn>modelado <abr>m</abr> 3-D</dtrn>]]></definition>
+</article>
+
+<article>
+	<key>Entry 2: no definition</key>
+	<synonym>synonym without definition</synonym>
+</article>
+
+<article>
+	<key>Entry 3: empty definition</key>
+	<definition type="h"></definition>
+</article>
+
+<article>
+	<key>Entry 4: unsupported type and unknown tag</key>
+	<definition type="z">unsupported type text</definition>
+	<comment>this tag is ignored</comment>
+</article>
+
+<article>
+	<key>Entry 5: default definition type</key>
+	<definition>default plain text</definition>
+</article>
+
+<article>
+	<key>Entry 6: xdxf definition</key>
+	<definition type="x"><![CDATA[<k>XDXF text</k>
+<dtrn>modelado <abr>m</abr> 3-D</dtrn>]]></definition>
+</article>
+
+</stardict>

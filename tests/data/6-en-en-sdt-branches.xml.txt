@@ -1,0 +1,10 @@
+##name	StarDict textual branch coverage sample
+##author	Test Author
+##email	test@example.com
+##website	https://example.com
+##description	Synthetic sample for PyGlossary tests
+##creationTime	2021-01-02
+Entry 1: mixed formats with xdxf	<b>HTML text</b>\n<hr>\n<pre>Plain text line 1<br/>Plain text line 2</pre>\n<hr>\n<div class="article"><div class="k"><b>XDXF text</b></div>modelado <span class="abr"><font color="green"><i>m</i></font></span> 3-D</div>
+Entry 4: unsupported type and unknown tag	unsupported type text
+Entry 5: default definition type	default plain text
+Entry 6: xdxf definition	<div class="article"><div class="k"><b>XDXF text</b></div>modelado <span class="abr"><font color="green"><i>m</i></font></span> 3-D</div>

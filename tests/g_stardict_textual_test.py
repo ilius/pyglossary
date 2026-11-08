@@ -10,6 +10,9 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 		self.dataFile |= {
 			"stardict-mixed-types-2.xml.txt",
 			"stardict-xdxf-2.xml-h.txt",
+			"6-en-en-sdt-branches.xml",
+			"6-en-en-sdt-branches.xml.txt",
+			"6-en-en-sdt-branches.xml-xdxf-raw.txt",
 		}
 		self.dataFileCRC32 |= {
 			"100-en-fa-sdt.xml": "48cb3336",
@@ -66,6 +69,19 @@ class TestGlossaryStarDictTextual(TestGlossaryBase):
 		self.convert_sdxml_txt(
 			"stardict-xdxf-2",
 			"stardict-xdxf-2.xml-x",
+			readOptions={"xdxf_to_html": False},
+		)
+
+	def test_convert_sdxml_txt_5(self):
+		self.convert_sdxml_txt(
+			"6-en-en-sdt-branches",
+			"6-en-en-sdt-branches.xml",
+		)
+
+	def test_convert_sdxml_txt_6(self):
+		self.convert_sdxml_txt(
+			"6-en-en-sdt-branches",
+			"6-en-en-sdt-branches.xml-xdxf-raw",
 			readOptions={"xdxf_to_html": False},
 		)
 
