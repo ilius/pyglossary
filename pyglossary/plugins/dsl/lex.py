@@ -318,8 +318,46 @@ def lexTagC(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	return lexRoot, None
 
 
-# PLR0912 Too many branches (19 > 12)
-def processTag(  # noqa: PLR0912
+_tagHtml = {
+	"*": '<span class="sec">',
+	"t": '<font face="Helvetica" class="dsl_t">',
+	"i": "<i>",
+	"b": "<b>",
+	"u": "<u>",
+	"'": '<u class="accent">',
+	"sup": "<sup>",
+	"sub": "<sub>",
+}
+
+_ignoredTags = frozenset(
+	(
+		"trn",
+		"!trn",
+		"trs",
+		"!trs",
+		"lang",
+		"com",
+	)
+)
+
+
+def processTagOpen(tr: TransformerType, tag: str) -> None:
+	if tag in _ignoredTags:
+		return
+
+	if tag == "ex":
+		tr.addHtml(f'<span class="ex"><font color="{tr.exampleColor}">')
+		return
+
+	html = _tagHtml.get(tag)
+	if html is None:
+		log.warning(f"unknown tag {tag!r}")
+		return
+
+	tr.addHtml(html)
+
+
+def processTag(
 	tr: TransformerType,
 	tag: str,
 ) -> tuple[LexType, ErrorType]:
@@ -354,36 +392,7 @@ def processTag(  # noqa: PLR0912
 		tr.resetBuf()
 		return lexRoot, None
 
-	if tag == "*":
-		tr.addHtml('<span class="sec">')
-	elif tag == "ex":
-		tr.addHtml(f'<span class="ex"><font color="{tr.exampleColor}">')
-	elif tag == "t":
-		tr.addHtml('<font face="Helvetica" class="dsl_t">')
-	elif tag == "i":
-		tr.addHtml("<i>")
-	elif tag == "b":
-		tr.addHtml("<b>")
-	elif tag == "u":
-		tr.addHtml("<u>")
-	elif tag == "'":
-		tr.addHtml('<u class="accent">')
-	elif tag == "sup":
-		tr.addHtml("<sup>")
-	elif tag == "sub":
-		tr.addHtml("<sub>")
-	elif tag in {
-		"trn",
-		"!trn",
-		"trs",
-		"!trs",
-		"lang",
-		"com",
-	}:
-		pass
-	else:
-		log.warning(f"unknown tag {tag!r}")
-
+	processTagOpen(tr, tag)
 	tr.resetBuf()
 	return lexRoot, None
 
