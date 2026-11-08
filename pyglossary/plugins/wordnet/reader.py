@@ -214,7 +214,7 @@ class WordNet:
 
 	@staticmethod
 	def iterlines(dict_dir: str) -> Iterator[str]:
-		for name in os.listdir(dict_dir):
+		for name in sorted(os.listdir(dict_dir)):
 			if not name.startswith("data."):
 				continue
 			with open(os.path.join(dict_dir, name), encoding="utf-8") as f:
