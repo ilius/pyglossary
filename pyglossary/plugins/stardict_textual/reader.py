@@ -126,9 +126,6 @@ class Reader:
 		if (elem := header.find("./bookname")) is not None and elem.text:
 			self.setGlosInfo("name", elem.text)
 
-		if (elem := header.find("./bookname")) is not None and elem.text:
-			self.setGlosInfo("name", elem.text)
-
 		if (elem := header.find("./date")) is not None and elem.text:
 			self.setGlosInfo("creationTime", elem.text)
 
