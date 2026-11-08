@@ -136,10 +136,9 @@ class XdxfTransformer:
 				trail = True
 			if not hasPrev:
 				child = child.lstrip()
-		elif child.startswith("\n"):
+		elif child.startswith("\n") and hasPrev:
 			# child = child.lstrip()
-			if hasPrev:
-				addSep()
+			addSep()
 
 		lines = [line for line in child.split("\n") if line]
 		for index, line in enumerate(lines):

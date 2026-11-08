@@ -163,8 +163,10 @@ def pickFile(save: bool, initialdir: str) -> str:
 			[
 				"osascript",
 				"-e",
-				f'POSIX path of ({verb} with prompt "Select {what} file"'
-				f' default location (POSIX file "{escaped}"))',
+				(
+					f'POSIX path of ({verb} with prompt "Select {what} file"'
+					f' default location (POSIX file "{escaped}"))'
+				),
 			],
 		)
 	if sysName == "windows":
@@ -175,12 +177,14 @@ def pickFile(save: bool, initialdir: str) -> str:
 				"powershell.exe",
 				"-NoProfile",
 				"-Command",
-				"Add-Type -AssemblyName System.Windows.Forms;"
-				f"$d = New-Object System.Windows.Forms.{cls};"
-				f"$d.Title = 'Select {what} file';"
-				"$d.Filter = 'All files (*.*)|*.*';"
-				f"$d.InitialDirectory = '{escaped}';"
-				"if ($d.ShowDialog() -eq 'OK') { $d.FileName }",
+				(
+					"Add-Type -AssemblyName System.Windows.Forms;"
+					f"$d = New-Object System.Windows.Forms.{cls};"
+					f"$d.Title = 'Select {what} file';"
+					"$d.Filter = 'All files (*.*)|*.*';"
+					f"$d.InitialDirectory = '{escaped}';"
+					"if ($d.ShowDialog() -eq 'OK') { $d.FileName }"
+				),
 			],
 		)
 	if shutil.which("zenity"):
