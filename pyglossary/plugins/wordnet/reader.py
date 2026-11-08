@@ -22,6 +22,7 @@ derived from WordNet relations.
 
 from __future__ import annotations
 
+import html
 import os
 import re
 import sys
@@ -224,7 +225,8 @@ class WordNet:
 
 	@staticmethod
 	def href(word: str) -> str:
-		return f'<a href="{word}">{word}</a>'
+		word_html = html.escape(word)
+		return f'<a href="{word_html}">{word_html}</a>'
 
 	def _openDataFiles(self) -> dict[str, io.TextIOWrapper]:
 		files: dict[str, io.TextIOWrapper] = {}
@@ -247,14 +249,15 @@ class WordNet:
 	def _renderGloss(self, synset: SynSet) -> str:
 		gloss_with_examples, _ = _re_quotedText.subn(
 			lambda x: f'<cite class="ex">{x.group(1)}</cite>',
-			synset.gloss,
+			html.escape(synset.gloss, quote=False),
 		)
 		gloss_with_examples, _ = _re_ref.subn(
 			lambda x: self.href(x.group(1)),
 			gloss_with_examples,
 		)
 		gram = self.synSetTypes[synset.ss_type]
-		gram_html = f'<font class="pos grammar" color="{self.gram_color}">{gram}</font>'
+		gram_color = html.escape(self.gram_color)
+		gram_html = f'<font class="pos grammar" color="{gram_color}">{gram}</font>'
 		return gram_html + gloss_with_examples
 
 	def _pointerDescription(self, synset: SynSet, symbol: str) -> str:
@@ -303,7 +306,7 @@ class WordNet:
 
 	def _renderPointers(self, pointers: dict[str, list[str]]) -> str:
 		return "".join(
-			f'<br/><small class="co">{symbol_desc}:</small> '
+			f'<br/><small class="co">{html.escape(symbol_desc)}:</small> '
 			+ ", ".join(self.href(w) for w in referenced_words)
 			for symbol_desc, referenced_words in pointers.items()
 			if referenced_words
@@ -351,7 +354,7 @@ class WordNet:
 		sys.stdout.flush()
 
 	def renderArticle(self, title: str, article: str) -> str:
-		title_html = self.title_template % title if self.word_title else ""
+		title_html = self.title_template % html.escape(title) if self.word_title else ""
 		return title_html + self.article_template % article
 
 	def process(self) -> Iterator[tuple[str, str]]:

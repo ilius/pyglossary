@@ -88,6 +88,27 @@ class TestGlossaryWordNet(TestGlossaryBase):
 		pointer = Pointer("~", "00001740", "n", "0101")
 		self.assertIn("Pointer", repr(pointer))
 
+	def test_html_escaping(self):
+		inputDir = join(self.tempDir, "escaping")
+		os.makedirs(inputDir)
+		header = "  Copyright 2011 by Princeton University.  All rights reserved.\n"
+		offset = len(header)
+		line = (
+			f'{offset:08d} 03 n 02 A&B 0 C<D 0 0 | rock & roll <tag>; "quoted example"\n'
+		)
+		with open(join(inputDir, "data.noun"), "w", encoding="utf-8") as file:
+			file.write(header + line)
+		wordnet = WordNet(inputDir, "green", word_title=True)
+		with contextlib.redirect_stdout(io.StringIO()):
+			wordnet.prepare()
+		articles = dict(wordnet.process())
+		article = articles["A&B"]
+		self.assertIn("<h1>A&amp;B</h1>", article)
+		self.assertIn('<a href="C&lt;D">C&lt;D</a>', article)
+		self.assertIn("rock &amp; roll &lt;tag&gt;", article)
+		self.assertIn('<cite class="ex">quoted example</cite>', article)
+		self.assertNotIn("<tag>", article)
+
 	def test_prepare_progress_output(self):
 		inputDir = join(self.tempDir, "many-synsets")
 		os.makedirs(inputDir)
