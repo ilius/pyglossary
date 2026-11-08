@@ -222,98 +222,131 @@ class WordNet:
 					if not line.startswith("  "):
 						yield line
 
-	# PLR0912 Too many branches (16 > 12)
-	def prepare(self) -> None:  # noqa: PLR0912
-		synSetTypes = self.synSetTypes
-		file2pos = self.file2pos
+	@staticmethod
+	def href(word: str) -> str:
+		return f'<a href="{word}">{word}</a>'
 
-		dict_dir = self.wordnetdir
-		gram_color = self.gram_color
-
+	def _openDataFiles(self) -> dict[str, io.TextIOWrapper]:
 		files: dict[str, io.TextIOWrapper] = {}
-		for name in os.listdir(dict_dir):
-			if name.startswith("data.") and name in file2pos:
-				f = open(os.path.join(dict_dir, name), encoding="utf-8")  # noqa: SIM115
-				for key in file2pos[name]:
-					files[key] = f
+		for name in os.listdir(self.wordnetdir):
+			if not name.startswith("data.") or name not in self.file2pos:
+				continue
+			f = open(  # noqa: SIM115
+				os.path.join(self.wordnetdir, name),
+				encoding="utf-8",
+			)
+			for key in self.file2pos[name]:
+				files[key] = f
+		return files
 
-		def href(word: str) -> str:
-			return f'<a href="{word}">{word}</a>'
+	@staticmethod
+	def _closeDataFiles(files: dict[str, io.TextIOWrapper]) -> None:
+		for file_ in set(files.values()):
+			file_.close()
 
-		for lineIndex, line in enumerate(self.iterlines(dict_dir)):
+	def _renderGloss(self, synset: SynSet) -> str:
+		gloss_with_examples, _ = _re_quotedText.subn(
+			lambda x: f'<cite class="ex">{x.group(1)}</cite>',
+			synset.gloss,
+		)
+		gloss_with_examples, _ = _re_ref.subn(
+			lambda x: self.href(x.group(1)),
+			gloss_with_examples,
+		)
+		gram = self.synSetTypes[synset.ss_type]
+		gram_html = f'<font class="pos grammar" color="{self.gram_color}">{gram}</font>'
+		return gram_html + gloss_with_examples
+
+	def _pointerDescription(self, synset: SynSet, symbol: str) -> str:
+		try:
+			return getattr(PointerSymbols, synset.ss_type)[symbol]
+		except KeyError:
+			log.warning(
+				f"unknown pointer symbol {symbol} for {synset.ss_type} ",
+			)
+			return symbol
+
+	@staticmethod
+	def _readSynset(
+		files: dict[str, io.TextIOWrapper],
+		pointer: Pointer,
+	) -> SynSet:
+		data_file = files[pointer.pos]
+		data_file.seek(pointer.offset)
+		return SynSet(data_file.readline())
+
+	def _collectPointers(
+		self,
+		synset: SynSet,
+		wordIndex: int,
+		files: dict[str, io.TextIOWrapper],
+	) -> dict[str, list[str]]:
+		words = synset.words
+		pointers: dict[str, list[str]] = defaultdict(list)
+		for pointer in synset.pointers:
+			if pointer.source and pointer.target and pointer.source - 1 != wordIndex:
+				continue
+			symbol = pointer.symbol
+			if symbol and symbol[:1] in {";", "-"}:
+				continue
+			symbol_desc = self._pointerDescription(synset, symbol)
+			referenced_synset = self._readSynset(files, pointer)
+			if pointer.source == pointer.target == 0:
+				pointers[symbol_desc] = [
+					w for w in referenced_synset.words if w not in words
+				]
+			else:
+				referenced_word = referenced_synset.words[pointer.target - 1]
+				if referenced_word not in pointers[symbol_desc]:
+					pointers[symbol_desc].append(referenced_word)
+		return pointers
+
+	def _renderPointers(self, pointers: dict[str, list[str]]) -> str:
+		return "".join(
+			f'<br/><small class="co">{symbol_desc}:</small> '
+			+ ", ".join(self.href(w) for w in referenced_words)
+			for symbol_desc, referenced_words in pointers.items()
+			if referenced_words
+		)
+
+	def _prepareWord(
+		self,
+		synset: SynSet,
+		wordIndex: int,
+		word: str,
+		gloss: str,
+		files: dict[str, io.TextIOWrapper],
+	) -> None:
+		words = synset.words
+		synonyms_links = ", ".join(self.href(w) for w in words if w != word)
+		synonyms_str = (
+			f'<br/><small class="co">Synonyms:</small> {synonyms_links}'
+			if synonyms_links
+			else ""
+		)
+		pointers = self._collectPointers(synset, wordIndex, files)
+		pointers_str = self._renderPointers(pointers)
+		self.collector[word].append(gloss + synonyms_str + pointers_str)
+
+	def _prepareSynset(
+		self,
+		files: dict[str, io.TextIOWrapper],
+		synset: SynSet,
+	) -> None:
+		gloss = self._renderGloss(synset)
+		for wordIndex, word in enumerate(synset.words):
+			self._prepareWord(synset, wordIndex, word, gloss, files)
+
+	def prepare(self) -> None:
+		files = self._openDataFiles()
+		for lineIndex, line in enumerate(self.iterlines(self.wordnetdir)):
 			if lineIndex % 100 == 0 and lineIndex > 0:
 				sys.stdout.write(".")
 				sys.stdout.flush()
 			if not line or not line.strip():
 				continue
-			synset = SynSet(line)
-			gloss_with_examples, _ = _re_quotedText.subn(
-				lambda x: f'<cite class="ex">{x.group(1)}</cite>',
-				synset.gloss,
-			)
-			gloss_with_examples, _ = _re_ref.subn(
-				lambda x: href(x.group(1)),
-				gloss_with_examples,
-			)
-
-			words = synset.words
-
-			gram = synSetTypes[synset.ss_type]
-			gram_html = f'<font class="pos grammar" color="{gram_color}">{gram}</font>'
-			gloss_with_examples = gram_html + gloss_with_examples
-
-			for wordIndex, word in enumerate(words):
-				# TODO: move this block to a func
-				synonyms_links = ", ".join(href(w) for w in words if w != word)
-				synonyms_str = (
-					f'<br/><small class="co">Synonyms:</small> {synonyms_links}'
-					if synonyms_links
-					else ""
-				)
-				pointers = defaultdict(list)
-				for pointer in synset.pointers:
-					if (
-						pointer.source
-						and pointer.target
-						and pointer.source - 1 != wordIndex
-					):
-						continue
-					symbol = pointer.symbol
-					if symbol and symbol[:1] in {";", "-"}:
-						continue
-					try:
-						symbol_desc = getattr(PointerSymbols, synset.ss_type)[symbol]
-					except KeyError:
-						log.warning(
-							f"unknown pointer symbol {symbol} for {synset.ss_type} ",
-						)
-						symbol_desc = symbol
-
-					data_file = files[pointer.pos]
-					data_file.seek(pointer.offset)
-					referenced_synset = SynSet(data_file.readline())
-					if pointer.source == pointer.target == 0:
-						pointers[symbol_desc] = [
-							w for w in referenced_synset.words if w not in words
-						]
-					else:
-						referenced_word = referenced_synset.words[pointer.target - 1]
-						if referenced_word not in pointers[symbol_desc]:
-							pointers[symbol_desc].append(referenced_word)
-
-				pointers_str = "".join(
-					f'<br/><small class="co">{symbol_desc}:</small> '
-					+ ", ".join(href(w) for w in referenced_words)
-					for symbol_desc, referenced_words in pointers.items()
-					if referenced_words
-				)
-
-				text = gloss_with_examples + synonyms_str + pointers_str
-				self.collector[word].append(text)
-
-		for file_ in set(files.values()):
-			file_.close()
-
+			self._prepareSynset(files, SynSet(line))
+		self._closeDataFiles(files)
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
