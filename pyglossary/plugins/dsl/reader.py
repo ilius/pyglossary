@@ -386,11 +386,10 @@ class Reader:
 				data = file.read()
 			yield self._glos.newDataEntry(fname, data)
 
-	def parseEntryBlock(  # noqa: PLR0912 Too many branches (14 > 12)
+	def _parseTermLines(
 		self,
 		term_lines: list[str],
-		text_lines: list[str],
-	) -> Iterator[EntryType]:
+	) -> tuple[list[str], list[str]]:
 		terms: list[str] = []
 		defiTitles: list[str] = []
 		for line in term_lines:
@@ -410,7 +409,12 @@ class Reader:
 			title = tr.title.strip()
 			if title != term:
 				defiTitles.append("<b>" + title + "</b>")
+		return terms, defiTitles
 
+	def _parseTextLines(
+		self,
+		text_lines: list[str],
+	) -> tuple[str, list[tuple[str, str]]]:
 		main_text: str = ""
 		subglos_list: list[tuple[str, str]] = []
 		subglos_key, subglos_text = "", ""
@@ -438,6 +442,15 @@ class Reader:
 			main_text += line
 		if subglos_key:
 			add_subglos()
+		return main_text, subglos_list
+
+	def parseEntryBlock(
+		self,
+		term_lines: list[str],
+		text_lines: list[str],
+	) -> Iterator[EntryType]:
+		terms, defiTitles = self._parseTermLines(term_lines)
+		main_text, subglos_list = self._parseTextLines(text_lines)
 
 		if not terms:
 			log.warning(f"No terms: {main_text=}")
