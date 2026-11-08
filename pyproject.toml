@@ -57,6 +57,10 @@ exclude = [
 	"pyglossary/ui/progressbar/__init__.py",
 	"pyglossary/ui/progressbar/progressbar.py",
 	"pyglossary/ui/progressbar/widgets.py",
+	# Repair tests: these fixtures intentionally contain invalid UTF-8.
+	"tests/data/13-en-en-invalid.wudict.md",
+	"tests/data/13-en-en-repair.wudict.md",
+	"tests/data/13-en-en-truncated.wudict.md",
 ]
 
 [tool.ruff]

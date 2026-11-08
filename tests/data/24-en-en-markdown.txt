@@ -1,0 +1,27 @@
+##name	Markdown Edges icon code
+##sourceLang	en
+##targetLang	en
+m001 icon code	<textarea>x\n\ny</textarea>\n<p>text</p>
+m002	<script>x</script>\n<p>text</p>
+m003	<!-- c\n\n-->\n<p>text</p>
+m004	<?pi?>\n<p>text</p>
+m005	<!DOCTYPE html>\n<p>text</p>
+m006	<![CDATA[x]]>\n<p>text</p>
+m007	<div>\n<p>x</p>\n</div>\n<p>text</p>
+m008	<pre>\n\nx\n\n</pre>\n<p>text</p>
+m009	<meta>\n<p>text</p>
+m010	<p><span>a</span></p>\n<p>text</p>
+m011	<p><a href="https://x">a</a></p>
+m012	<p>more</p>\n<p><a href="https://x">a</a></p>
+m013	<p>a</p>
+m014	<p>===</p>
+m015	<scriptx>
+m016	<foo>
+m017	<p>&lt;div</p>
+m018	<p>&lt;/&gt;</p>
+m019	<pre><code>&lt;div&gt;\n</code></pre>
+m020	<h1>h</h1>
+m021	<p>a</p>
+m022	<p>a</p>
+m023	<p>a</p>\n<div>\n## "\\\t\n</div>
+m024	<div

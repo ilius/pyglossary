@@ -1,0 +1,92 @@
+q1	</>
+q2	</ x>
+q3	<div a="b
+q4	<script><!--<script></script>--></script>
+q5	<textarea>\n\nx</textarea>
+q6	<plaintext>x</plaintext>
+q7	<div a='x&amp;y' b="x&#13;y">
+q8	</
+q9	</a
+q10	<script>abc
+q11	<script><!--x--!>y</script>
+q12	<table><caption>cap<th>x</table>
+q13	<table><tr><td>a<td>b</table>
+q14	<table><tr><td>x</td></tr><caption>c</caption></table>
+q15	<table><colgroup><col></colgroup><col></table>
+q16	<table><input type=hidden><form><input></form></table>
+q17	<div><h3>a</h3><h4>b</h4><hr><pre><code class="language-py">x</code></pre><blockquote><p>q</p></blockquote></div>
+q18	<ol start="3"><li>a<li>b</ol>
+q19	<form><input type=hidden><button>x</button><select><option>a<option>b<optgroup><option>c</select></form>
+q20	<svg><g><rect/></g><foreignObject><div>x</div></foreignObject></svg>
+q21	<svg><b>x</b></svg>
+q22	<math><mi><mglyph/></mi><annotation-xml encoding="text/html"><div>z</div></annotation-xml></math>
+q23	<nobr>1<nobr>2</nobr>
+q24	<ruby>a<rt>b<rp>c</ruby>
+q25	<!DOCTYPE html><!--c--><![CDATA[y]]><?pi?><div>x</div>
+q26	<b>a*</b><i> b </i>
+q27	<code>a`b</code><code>`b`</code><samp>x&#124;y</samp>
+q28	<img alt="x"><img src="bword://x y.png" alt="[a]">
+q29	<object type="audio/ogg" data="c.ogg"></object><object data="d"></object>
+q30	<ul></ul><table></table><blockquote></blockquote>
+q31	<input type=hidden><input><meta><link><base><frame><canvas>
+q32	<p>see: x</p>
+q33	<a><b><i><u><s><div>1</a>2</s></u></i></b></div>
+q34	<table><colgroup>text<col></colgroup></table>
+q35	<table><colgroup><col><tr><td>x</table>
+q36	<table><tr><tr><td>x</table>
+q37	<table><tbody><td>x</table>
+q38	<table><tbody><div>x</table>
+q39	<table><table><tr><td>x</table></table>
+q40	<template><form></form></template>
+q41	<form><form>x</form></form>
+q42	<b><b><b><b>x
+q43	<select><select>
+q44	<option>a<option>b
+q45	<pre>a<br>b</pre>
+q46	<ul><div>x</div><li>a</li></ul>
+q47	<code> </code><code></code>
+q48	<p>a<div>b</div>c</p>
+q49	<table><tr><td>a<br>b</td></tr></table>
+q50	<table><tr><td><a href="x&#124;y">t</a></td></tr></table>
+q51	<table><tr><td><img src="x" alt="a&#124;b"></td></tr></table>
+q52	<div>a<table>b</table></div>
+q53	<h1><h2>x
+q54	<image src=x>
+q55	<table><colgroup><template></template></colgroup></table>
+q56	<table><tr><div>x</div></tr></table>
+q57	a</br>b
+q58	<table><colgroup>   </colgroup></table>
+q59	<textarea>\n</textarea>
+q60	<template></div></template>
+q61	<b><span><div>1</b>2</div></span>
+q62	<b>a<div>b</div>c</b>
+q63	<ul><li>a</li><div>x</div></ul>
+q64	<ul><li>a</li></ul><ul><li>b</li></ul>
+q65	<code>`b`</code>
+q66	<span>!<a href="x">y</a></span>
+q67	<img src="bword://x y.png" srcset="bword://a 1x, b.png 2x">
+q68	<div style="background:URL('bword://x' )"></div>
+q69	<style>a{background:url(bword://x y)}</style>
+q70	<a href="bword://x">t</a><div style="color:red"></div>
+q71	<a href="bword://x">t</a><div style="background:url(a.png)"></div>
+q72	<table><tr><td align="left">a</td><td style="text-align:center">b</td><td style="text-align: right">c</td><td align="bad">d</td></tr></table>
+q73	<table><tr><td><code>a&#124;b</code></td></tr></table>
+q74	<a href="a%FF">bad</a>
+q75	<a href="entry://@foo">at</a>
+q76	<a href="sound://a.ogg">s</a>
+q77	<div title="&#x80;">&#0;&#xD800;&#x110000;</div>
+q78	<div title="&amp=">&notit;&zzzz;</div>
+q79	<a><b><a>n</a></b></a>
+q80	<svg><g></p></g></svg>
+q81	<table><b><div>x</b>y</div></table>
+q82	<b><table><tr><td><div>1</b>2</div></td></tr></table>
+q83	<div style='background:url("bword://a b")'></div>
+q84	<div title="&zzzz;">x</div>
+q85	<a><b><i><a>n</a></i></b></a>
+q86	<table><template><tr><td></td><div></table>
+q87	<table><tr><td><a></td></a></td></tr></table>
+q88	<a><b><i><table><a></i></b></a>
+q89	<table><template><tr><td><svg></colgroup></table>
+q90	<a><b><i></b><div></i></b></a>
+q91	<table><div></a><colgroup>
+q92	<b><b><b><b>x</b></b></b></b>

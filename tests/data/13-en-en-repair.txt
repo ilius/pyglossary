@@ -1,0 +1,22 @@
+##name	Rich Sample
+##sourceLang	en
+##targetLang	en
+##author	Test Author
+##license	CC0-1.0
+##meta	custom meta value
+##x-custom-key	custom value
+##description	<p>A <strong>rich</strong> synthetic sample for PyGlossary tests, with a <a href="https://example.com">link</a>.</p>\n
+apple|Apfel|redirect|redirect-alias	<p>An <strong>apple</strong> is a <em>fruit</em>.��</p>
+banana	<p>A yellow fruit.</p>\n<!-- a comment -->
+cherry	<p>A red fruit with a <a href="https://example.com/cherry" title="Cherry page">link</a> and an image <img src="images/cherry.png" alt="cherry" title="Cherry" />.</p>
+date|Dattel	<p>A sweet fruit with <code>code</code> and <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p>
+bold name|bold alias	<p>A headword with markup.</p>
+redirect-missing	<p><a href="entry://nowhere">nowhere</a></p>
+html-block	<div>\n## swallowed\n</div>
+lists	<ul>\n<li>one</li>\n<li>two\n<ul>\n<li>nested</li>\n</ul>\n</li>\n</ul>\n<ol>\n<li>first</li>\n<li>second</li>\n</ol>
+table	<table>\n<thead>\n<tr>\n<th style="text-align:left">left</th>\n<th style="text-align:center">center</th>\n<th style="text-align:right">right</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td style="text-align:left">a</td>\n<td style="text-align:center">b</td>\n<td style="text-align:right">c</td>\n</tr>\n<tr>\n<td style="text-align:left">1</td>\n<td style="text-align:center">2</td>\n<td style="text-align:right">3</td>\n</tr>\n</tbody>\n</table>
+code	<pre><code class="language-python">print(&quot;hello&quot;)\n</code></pre>\n<p>Text with a hard break<br />\nand a soft\nbreak.</p>
+quote	<blockquote>\n<p>A quote</p>\n<p>with two paragraphs.</p>\n</blockquote>
+details	<details>\n<summary>More</summary>\n<p>Hidden <strong>text</strong>.</p>\n</details>
+media	<p><img src="images/icon.png" alt="icon" /></p>\n<p><audio controls src="audio/sound.mp3"></audio></p>\n<p><video src="video/clip.mp4"></video></p>
+empty-heading-group|another-empty	<p>�</p>
