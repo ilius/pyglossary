@@ -640,78 +640,14 @@ class EpwingSubbook:
 			int.from_bytes(page[offset + 4 : offset + 6], "big"),
 		)
 
-	def _read_content(  # noqa: PLR0912
+	def _read_content(
 		self,
 		data: mmap.mmap,
 		position: tuple[int, int],
 		*,
 		heading: bool,
 	) -> str:
-		offset = (position[0] - 1) * _EPWING_PAGE_SIZE + position[1]
-		output = bytearray()
-		narrow = False
-		skip_code = None
-		auto_stop_code = None
-		printable_count = 0
-
-		while offset < len(data):
-			first = data[offset]
-			if first == 0x1F:
-				if offset + 1 >= len(data):
-					break
-				code = data[offset + 1]
-				if code == 0x03:
-					break
-				if code == 0x41 and offset + 3 < len(data):
-					argument = int.from_bytes(data[offset + 2 : offset + 4], "big")
-					if not heading and printable_count and argument == auto_stop_code:
-						break
-					if auto_stop_code is None:
-						auto_stop_code = argument
-				if code == 0x0A:
-					if heading:
-						break
-					if skip_code is None:
-						output.append(0x0A)
-				elif code == 0x04:
-					narrow = True
-				elif code == 0x05:
-					narrow = False
-
-				soft_stop = code == 0x6C or (
-					code == 0x4B
-					and offset + 9 < len(data)
-					and data[offset + 8 : offset + 10] == b"\x1f\x6b"
-				)
-				step, new_skip = self._control_step(data, offset, code)
-				if new_skip is not None:
-					skip_code = new_skip
-				elif skip_code == code:
-					skip_code = None
-				offset += step
-				if soft_stop:
-					break
-				continue
-
-			if offset + 1 >= len(data):
-				break
-			second = data[offset + 1]
-			printable_count += 1
-			if skip_code is None:
-				if 0x20 < first < 0x7F and 0x20 < second < 0x7F:
-					ascii_byte = self._narrow_ascii(first, second) if narrow else None
-					if ascii_byte is None:
-						output.extend((first | 0x80, second | 0x80))
-					else:
-						output.append(ascii_byte)
-				elif 0xA0 < first < 0xFF and 0x20 < second < 0x7F:
-					mode = "n" if narrow else "w"
-					output.extend(f"{{{{{mode}_{first << 8 | second}}}}}".encode())
-				else:
-					raise ValueError(f"Invalid EPWING character at offset {offset}")
-			offset += 2
-
-		return output.decode("euc_jp", errors="replace")
+		return _ContentReader(self, data, position, heading=heading).read()
 
 	@staticmethod
 	def _control_step(data: mmap.mmap, offset: int, code: int) -> tuple[int, int | None]:
@@ -822,6 +758,127 @@ class EpwingSubbook:
 			0x76: 0x2A,
 			0x77: 0x40,
 		}.get(second)
+
+
+class _ContentReader:
+	"""Decode one EPWING article's raw bytes into text."""
+
+	__slots__ = (
+		"auto_stop_code",
+		"data",
+		"heading",
+		"narrow",
+		"offset",
+		"output",
+		"printable_count",
+		"skip_code",
+		"stopped",
+		"subbook",
+	)
+
+	def __init__(
+		self,
+		subbook: EpwingSubbook,
+		data: mmap.mmap,
+		position: tuple[int, int],
+		*,
+		heading: bool,
+	) -> None:
+		self.subbook = subbook
+		self.data = data
+		self.heading = heading
+		self.offset = (position[0] - 1) * _EPWING_PAGE_SIZE + position[1]
+		self.output = bytearray()
+		self.narrow = False
+		self.skip_code = None
+		self.auto_stop_code = None
+		self.printable_count = 0
+		self.stopped = False
+
+	def read(self) -> str:
+		while not self.stopped and self.offset < len(self.data):
+			if self.data[self.offset] == 0x1F:
+				self._read_control()
+			else:
+				self._read_character()
+		return self.output.decode("euc_jp", errors="replace")
+
+	def _read_control(self) -> None:
+		offset = self.offset
+		if offset + 1 >= len(self.data):
+			self.stopped = True
+			return
+		code = self.data[offset + 1]
+		if code == 0x03:
+			self.stopped = True
+			return
+		if self._auto_stop(code, offset):
+			self.stopped = True
+			return
+		if code == 0x0A and self.heading:
+			self.stopped = True
+			return
+		self._apply_mode_control(code)
+
+		soft_stop = code == 0x6C or (
+			code == 0x4B
+			and offset + 9 < len(self.data)
+			and self.data[offset + 8 : offset + 10] == b"\x1f\x6b"
+		)
+		step, new_skip = self.subbook._control_step(self.data, offset, code)
+		if new_skip is not None:
+			self.skip_code = new_skip
+		elif self.skip_code == code:
+			self.skip_code = None
+		self.offset += step
+		if soft_stop:
+			self.stopped = True
+
+	def _auto_stop(self, code: int, offset: int) -> bool:
+		if code != 0x41 or offset + 3 >= len(self.data):
+			return False
+		argument = int.from_bytes(self.data[offset + 2 : offset + 4], "big")
+		if not self.heading and self.printable_count and argument == self.auto_stop_code:
+			return True
+		if self.auto_stop_code is None:
+			self.auto_stop_code = argument
+		return False
+
+	def _apply_mode_control(self, code: int) -> None:
+		if code == 0x0A:
+			if self.skip_code is None:
+				self.output.append(0x0A)
+		elif code == 0x04:
+			self.narrow = True
+		elif code == 0x05:
+			self.narrow = False
+
+	def _read_character(self) -> None:
+		offset = self.offset
+		if offset + 1 >= len(self.data):
+			self.stopped = True
+			return
+		first = self.data[offset]
+		second = self.data[offset + 1]
+		self.printable_count += 1
+		if self.skip_code is None:
+			self._append_character(first, second, offset)
+		self.offset += 2
+
+	def _append_character(self, first: int, second: int, offset: int) -> None:
+		if 0x20 < first < 0x7F and 0x20 < second < 0x7F:
+			ascii_byte = (
+				self.subbook._narrow_ascii(first, second) if self.narrow else None
+			)
+			if ascii_byte is None:
+				self.output.extend((first | 0x80, second | 0x80))
+			else:
+				self.output.append(ascii_byte)
+		elif 0xA0 < first < 0xFF and 0x20 < second < 0x7F:
+			mode = "n" if self.narrow else "w"
+			self.output.extend(f"{{{{{mode}_{first << 8 | second}}}}}".encode())
+		else:
+			raise ValueError(f"Invalid EPWING character at offset {offset}")
 
 
 class MeikyouExtractor(KoujienExtractor):
