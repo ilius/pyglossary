@@ -311,6 +311,9 @@ class WordNet:
 				text = gloss_with_examples + synonyms_str + pointers_str
 				self.collector[word].append(text)
 
+		for file_ in set(files.values()):
+			file_.close()
+
 		sys.stdout.write("\n")
 		sys.stdout.flush()
 
