@@ -80,7 +80,7 @@ def replaceHtmlEntryNoEscapeCB(u_match: re.Match[str]) -> str:
 			code = int(u_name, 16) if u_text[:3].lower() == "&#x" else int(u_name)
 		except (ValueError, OverflowError):
 			return chr(0xFFFD)  # replacement character
-		if code <= 0:
+		if code <= 0 or code > 0x10FFFF or 0xD800 <= code <= 0xDFFF:
 			return chr(0xFFFD)  # replacement character
 		return chr(code)
 
