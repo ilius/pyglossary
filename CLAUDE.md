@@ -10,6 +10,14 @@
 - At the end of every task, run `ruff format` and `ruff check --fix`. Resolve any remaining Ruff errors before completing the task.
 - To run tests for a plugin, for example FreeDict, `cd tests` then run `python -m unittest g_freedict_test.py`.
 
+## Tests
+
+- Prioritize high-level tests over tests of internal helpers.
+- Most importantly, avoid calling private methods or functions directly; call the public user-facing function that uses them instead.
+- For plugins, cover as much code as possible through glossary conversion tests (like `test_convert_*` in `tests/g_*`).
+- Keep each test fixture under 16 KB and the overall fixture size under 100 KB.
+- Use `en-en` (English to English) fixtures unless asked otherwise.
+
 ## Test data
 
 Fixtures live under `tests/data/` and use this naming scheme:
@@ -19,7 +27,7 @@ Fixtures live under `tests/data/` and use this naming scheme:
 Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
 
 - Count: the numeric prefix must equal the actual entry count, including entries pulled in through XInclude. Do not copy another fixture's number.
-- Language codes: lowercase ISO 639 codes joined by a hyphen, in source-target order: `en-en`, `en-de`, `en-fa`, `ja-en`. When generating test data, use `en-en` (English to English) unless asked otherwise.
+- Language codes: lowercase ISO 639 codes joined by a hyphen, in source-target order: `en-en`, `en-de`, `en-fa`, `ja-en`.
 - Variants: use a descriptive suffix for a test option or output behavior, for example `-remove_font_b`, `-sd`, or `-sd-merge-syns`.
 - Versions: never add `-v2`, `-v4`, or `-v6` merely because an output was regenerated. Replace the canonical expected output instead. Add a version suffix only when the reader itself is changed and its output changes accordingly, so the version identifies the expected output for that reader behavior; then update the test to reference the new version.
 - Derived fixtures: keep the source fixture's base name across conversions. For example, `14-en-en.tei` produces `14-en-en.txt`, `14-en-en.csv`, `14-en-en.json`, and `14-en-en.txt.quickdic`. Directory-based outputs follow the same pattern, for example `14-en-en-sd/14-en-en.ifo`.
@@ -34,10 +42,12 @@ When creating or editing `doc/releases/X.Y.Z.md`:
 
 - Include **uncommitted** user-facing changes from `git diff` / `git status` before tagging, not only merged commits since the previous tag.
 
+- **Do not list bug fixes, improvements or any changes for features (plugins, UI types etc) that did NOT exist in the previous tag.**
+
 ### Source material
 
 - Compare commits since the previous tag: `git log <prev-tag>..HEAD --no-merges`.
-- Follow the section layout in recent files (for example, `doc/releases/5.3.0.md` and `doc/releases/5.4.0.md`): Compatibility changes, Bug fixes (security / core / plugins / user interface), Features, Improvements, Documentation, Other changes, New Contributors, Full Changelog link.
+- Follow the section layout in recent files (for example, `doc/releases/5.3.0.md` and `doc/releases/5.4.0.md`): Compatibility changes, Bug fixes (security / core / plugins / user interface), Features, Improvements, Documentation, Refactoring and cleanup, Other changes, New Contributors, Full Changelog link.
 - End with: `**Full Changelog**: https://github.com/ilius/pyglossary/compare/<prev-tag>...<new-tag>`.
 
 ### Issue and pull request links
@@ -97,8 +107,6 @@ Use `### Documentation` for documentation-only changes, including `README.md`, `
 - Do not list behavior changes, bug fixes, or new format/UI features here.
 
 ### Bug fixes
-
-**Do not list bug fixes for formats or features that did not exist in the previous tag.**
 
 - Fixes during development of a new plugin, writer, or UI belong in the feature bullet, not under Bug fixes.
 - Omit implementation/refactor notes for brand-new code from Bug fixes and Other changes unless they fix pre-existing behavior.
