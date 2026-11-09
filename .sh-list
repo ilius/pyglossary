@@ -2,7 +2,6 @@ run-with-docker.sh
 scripts/docker-deb-setup.sh
 scripts/get-unlisted-formats.sh
 scripts/mypy-deps.sh
-scripts/test-cover-html-plugin.sh
 scripts/test-cover-html.sh
 scripts/test-deps.sh
 scripts/test-glossary.sh
