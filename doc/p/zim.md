@@ -14,9 +14,11 @@ To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
 | Description | Zim (.zim, for Kiwix) |
 | Extensions | `.zim` |
 | Read support | Yes |
-| Write support | No |
+| Write support | Yes |
 | Single-file | Yes |
 | Kind | 🔢 binary |
+| Sort-on-write | Internal (format-defined order, --sort is ignored) |
+| Sort key | (format-defined order) |
 | Wiki | [ZIM (file format)](<https://en.wikipedia.org/wiki/ZIM_(file_format)>) |
 | Website | [OpenZIM](https://wiki.openzim.org/wiki/OpenZIM) |
 
@@ -27,7 +29,18 @@ To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
 | text_unicode_errors | `replace` | str | Unicode Errors for plaintext, values: `strict`, `ignore`, `replace` |
 | html_unicode_errors | `replace` | str | Unicode Errors for HTML, values: `strict`, `ignore`, `replace` |
 
-### Dependencies for reading
+### Write options
+
+| Name | Default | Type | Comment |
+| ---- | ------- | ---- | ------- |
+| compress | `True` | bool | Compress ZIM content (zstd) |
+| indexing | `True` | bool | Build the ZIM full-text/index metadata |
+| language |  | str | ZIM language code (ISO 639-3), overrides glossary source language |
+| word_title | `False` | bool | Add headword title to beginning of definition |
+| front_article | `True` | bool | Include entries in random and suggestion indices |
+| verbose | `False` | bool | Enable verbose output from libzim |
+
+### Dependencies for reading and writing
 
 PyPI Links: [libzim>=4.0](https://pypi.org/project/libzim%3E=4.0)
 
@@ -36,6 +49,14 @@ To install, run:
 ```sh
 pip3 install libzim>=4.0
 ```
+
+### Sorting
+
+Entries are always stored in libzim's order: `A/` followed by the percent-encoded
+headword, compared byte by byte. `--sort` and `--sort-key` do not change the output.
+Duplicate headwords are stored as `A/word_2`, `A/word_3`, and so on, and aliases
+(`word|alias`) are read back as separate entries. The order after a round trip can
+therefore differ from the source order.
 
 ### Dictionary Applications/Tools
 

@@ -2424,6 +2424,37 @@
 		],
 		"singleFile": true,
 		"optionsProp": {
+			"compress": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Compress ZIM content (zstd)"
+			},
+			"indexing": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Build the ZIM full-text/index metadata"
+			},
+			"language": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "ZIM language code (ISO 639-3), overrides glossary source language"
+			},
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add headword title to beginning of definition"
+			},
+			"front_article": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Include entries in random and suggestion indices"
+			},
+			"verbose": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Enable verbose output from libzim"
+			},
 			"text_unicode_errors": {
 				"class": "UnicodeErrorsOption",
 				"type": "str",
@@ -2436,12 +2467,24 @@
 			}
 		},
 		"canRead": true,
-		"canWrite": false,
+		"canWrite": true,
+		"sortOnWrite": "internal",
 		"readOptions": {
 			"text_unicode_errors": "replace",
 			"html_unicode_errors": "replace"
 		},
+		"writeOptions": {
+			"compress": true,
+			"indexing": true,
+			"language": "",
+			"word_title": false,
+			"front_article": true,
+			"verbose": false
+		},
 		"readDepends": {
+			"libzim": "libzim>=4.0"
+		},
+		"writeDepends": {
 			"libzim": "libzim>=4.0"
 		}
 	}

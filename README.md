@@ -83,7 +83,7 @@ Web interface
 | [Wiktextract](./doc/p/wiktextract.md) | 📝 | .jsonl | ✅ | ❌ |
 | [XDXF](./doc/p/xdxf.md) | 📝 | .xdxf | ✅ | ❌ |
 | [XLIFF](./doc/p/xliff.md) | 📝 | .xlf, .xliff | ✅ | |
-| [Zim (Kiwix)](./doc/p/zim.md) | 🔢 | .zim | ✅ | |
+| [Zim (Kiwix)](./doc/p/zim.md) | 🔢 | .zim | ✅ | ✅ |
 | [ABBYY Lingvo DSL](./doc/p/dsl.md) 🇷🇺 | 📝 | .dsl | ✅ | ❌ |
 | [Almaany.com](./doc/p/almaany.md) (Arabic) | 🛢️ | .db | ✅ | ❌ |
 | [cc-kedict](./doc/p/cc_kedict.md) 🇰🇷 | 📝 | | ✅ | ❌ |
