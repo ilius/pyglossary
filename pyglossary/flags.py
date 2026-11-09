@@ -5,7 +5,7 @@ Yes/no/always/never flag values for plugin options.
 
 ``StrWithDesc`` pairs each flag name with a human-readable description and
 registers it in ``flagsByName``. Predefined values include ``ALWAYS``,
-``DEFAULT_YES``, ``DEFAULT_NO``, and ``NEVER``.
+``DEFAULT_YES``, ``DEFAULT_NO``, ``NEVER``, and ``INTERNAL``.
 """
 
 from __future__ import annotations
@@ -16,6 +16,7 @@ __all__ = [
 	"ALWAYS",
 	"DEFAULT_NO",
 	"DEFAULT_YES",
+	"INTERNAL",
 	"NEVER",
 	"StrWithDesc",
 	"YesNoAlwaysNever",
@@ -42,6 +43,10 @@ ALWAYS = StrWithDesc("always", "Always")
 DEFAULT_YES = StrWithDesc("default_yes", "Yes (by default)")
 DEFAULT_NO = StrWithDesc("default_no", "No (by default)")
 NEVER = StrWithDesc("never", "Never")
+INTERNAL = StrWithDesc(
+	"internal",
+	"Internal (format-defined order, --sort is ignored)",
+)
 
 # to satisfy mypy:
 type YesNoAlwaysNever = StrWithDesc

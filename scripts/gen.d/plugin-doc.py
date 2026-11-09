@@ -12,6 +12,7 @@ rootDir = dirname(dirname(dirname(abspath(__file__))))
 sys.path.insert(0, rootDir)
 
 from pyglossary.core import userPluginsDir
+from pyglossary.flags import INTERNAL
 from pyglossary.glossary_v2 import Glossary
 from pyglossary.sort_keys import defaultSortKeyName
 
@@ -144,6 +145,8 @@ def makeDependsDoc(cls):
 
 
 def sortKeyName(p):
+	if p.sortOnWrite == INTERNAL:
+		return "(format-defined order)"
 	value = p.sortKeyName
 	if value:
 		return codeValue(value)

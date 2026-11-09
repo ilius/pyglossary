@@ -62,6 +62,7 @@ from .entry_list import EntryList
 from .flags import (
 	ALWAYS,
 	DEFAULT_YES,
+	INTERNAL,
 	NEVER,
 )
 from .glossary_info import GlossaryInfo
@@ -1073,6 +1074,14 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 			if sort:
 				log.warning(
 					"Plugin prevents sorting before write"
+					", ignoring user sort=True option",
+				)
+			return False
+
+		if sortOnWrite == INTERNAL:
+			if sort:
+				log.warning(
+					f"{plugin.name} writes entries in a format-defined order"
 					", ignoring user sort=True option",
 				)
 			return False

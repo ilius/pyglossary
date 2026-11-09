@@ -25,7 +25,7 @@ These modules are the supported public surface for third-party plugins.
 | `pyglossary.glossary_v2` | `Glossary`, `GlossaryCommon`, `ConvertArgs`, `Error`, `ReadError`, `WriteError` | Current glossary/conversion API and public exceptions. |
 | `pyglossary.entry` | `Entry`, `DataEntry` | Entry and data-entry types passed between readers, filters, and writers. |
 | `pyglossary.option` | `Option`, `BoolOption`, `DictOption`, `EncodingOption`, `FileSizeOption`, `FloatOption`, `HtmlColorOption`, `IntOption`, `ListOption`, `NewlineOption`, `StrOption`, `UnicodeErrorsOption`, `optionFromDict` | Option classes used in a plugin's `optionsProp`. |
-| `pyglossary.flags` | `ALWAYS`, `DEFAULT_YES`, `DEFAULT_NO`, `NEVER`, `StrWithDesc`, `YesNoAlwaysNever`, `flagsByName` | Values used by the documented `sortOnWrite` plugin metadata. |
+| `pyglossary.flags` | `ALWAYS`, `DEFAULT_YES`, `DEFAULT_NO`, `INTERNAL`, `NEVER`, `StrWithDesc`, `YesNoAlwaysNever`, `flagsByName` | Values used by the documented `sortOnWrite` plugin metadata. |
 | `pyglossary.core` (limited set) | `log`, `pip`, `exc_note`, `trace`, `VERSION`, `isDebug`, `rootDir`, `dataDir`, `appResDir`, `confDir`, `cacheDir`, `pluginsDir`, `userPluginsDir`, `tmpDir`, `homeDir`, `confJsonFile`, `rootConfJsonFile` | Logging, version, dependency-install hints, and read-only path constants. Do not use `checkCreateConfDir` or other setup internals. |
 | `pyglossary.info` | `c_name`, `c_sourceLang`, `c_targetLang`, `c_author`, `c_copyright`, `c_publisher`, `c_creationTime`, `infoKeysAliasDict` | Canonical glossary metadata key names. |
 | `pyglossary.compress` | `compressionOpen`, `compressionOpenFunc`, `stdCompressions`, `compress`, `uncompress` | Open glossary files with standard compression extensions. |
