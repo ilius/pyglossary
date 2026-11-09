@@ -1455,7 +1455,7 @@
 		"readOptions": {}
 	},
 	{
-		"module": "octopus_mdict_new",
+		"module": "octopus_mdict",
 		"lname": "octopus_mdict",
 		"name": "OctopusMdict",
 		"description": "Octopus MDict (.mdx)",
