@@ -17,8 +17,8 @@ To update, modify plugins/kobo/__init__.py file, then run ./scripts/gen
 | Write support | Yes |
 | Single-file | No |
 | Kind | 📦 package |
-| Sort-on-write | Never |
-| Sort key | (`headword_lower`) |
+| Sort-on-write | Internal (format-defined order, --sort is ignored) |
+| Sort key | (format-defined order) |
 | Wiki | [Kobo eReader](https://en.wikipedia.org/wiki/Kobo_eReader) |
 | Website | [www.kobo.com](https://www.kobo.com) |
 

@@ -794,7 +794,7 @@
 		"optionsProp": {},
 		"canRead": false,
 		"canWrite": true,
-		"sortOnWrite": "never",
+		"sortOnWrite": "internal",
 		"writeOptions": {},
 		"writeDepends": {
 			"jaconv": "jaconv",
@@ -1547,7 +1547,7 @@
 		},
 		"canRead": false,
 		"canWrite": true,
-		"sortOnWrite": "never",
+		"sortOnWrite": "internal",
 		"writeOptions": {
 			"metadata_dir": "",
 			"collates_path": "",
@@ -1577,7 +1577,7 @@
 		},
 		"canRead": true,
 		"canWrite": true,
-		"sortOnWrite": "never",
+		"sortOnWrite": "internal",
 		"readOptions": {},
 		"writeOptions": {
 			"normalizer_rules": ""

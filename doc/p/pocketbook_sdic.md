@@ -17,8 +17,8 @@ To update, modify plugins/pocketbook_sdic/__init__.py file, then run ./scripts/g
 | Write support | Yes |
 | Single-file | Yes |
 | Kind | 🔢 binary |
-| Sort-on-write | Never |
-| Sort key | (`headword_lower`) |
+| Sort-on-write | Internal (format-defined order, --sort is ignored) |
+| Sort key | (format-defined order) |
 | Wiki | ― |
 | Website | ― |
 

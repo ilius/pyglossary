@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.flags import NEVER
+from pyglossary.flags import INTERNAL
 from pyglossary.option import StrOption
 
 from .writer import Writer
@@ -39,7 +39,7 @@ description = "PocketBook SDIC (.dic)"
 extensions = (".dic",)
 extensionCreate = ".dic"
 singleFile = True
-sortOnWrite = NEVER
+sortOnWrite = INTERNAL
 kind = "binary"
 wiki = ""
 website = None

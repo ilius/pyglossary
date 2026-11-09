@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.flags import NEVER
+from pyglossary.flags import INTERNAL
 
 from .writer import Writer
 
@@ -40,7 +40,7 @@ extensions = (".kobo",)
 extensionCreate = ".kobo.zip"
 singleFile = False
 kind = "package"
-sortOnWrite = NEVER
+sortOnWrite = INTERNAL
 wiki = "https://en.wikipedia.org/wiki/Kobo_eReader"
 website = (
 	"https://www.kobo.com",
