@@ -10,6 +10,11 @@
 - At the end of every task, run `ruff format` and `ruff check --fix`. Resolve any remaining Ruff errors before completing the task.
 - To run tests for a plugin, for example FreeDict, `cd tests` then run `python -m unittest g_freedict_test.py`.
 
+## Supported formats table
+
+- When adding a new reader or writer, update the "Supported formats" table in `README.md` in the same change: add a row for a new format, and set its Read or Write cell to ✅.
+- Leave a Read/Write cell blank for "not yet supported". Use ❌ only for "will not be supported".
+
 ## Tests
 
 - Prioritize high-level tests over tests of internal helpers.
