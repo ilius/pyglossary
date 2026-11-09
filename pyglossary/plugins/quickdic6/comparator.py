@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Literal
+	from typing import Any, Literal
 
 __all__ = ["Comparator"]
 
@@ -63,6 +63,17 @@ class Comparator:
 		s1 = self._without_dash(a)
 		s2 = self._without_dash(b)
 		return self._comparator.compare(s1, s2)
+
+	def sort_key_parts(self, term: str) -> tuple[Any, ...]:
+		"""Return sort-key parts preserving the order of ``compare``."""
+		normalized = self.normalize(term)
+		if self.version < 7:
+			return (self._comparator.getSortKey(normalized),)
+		return (
+			self._comparator.getSortKey(self._without_dash(normalized)),
+			self._comparator.getSortKey(normalized),
+			self._comparator.getSortKey(term),
+		)
 
 	@staticmethod
 	def _without_dash(a: str) -> str:

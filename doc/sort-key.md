@@ -13,6 +13,7 @@ To update, modify plugins/*/__init__.py or pyglossary/sort_keys.py, then run ./s
 | `headword_lower`       | Lowercase Headword        | All other formats (given `--sort`)                                                      | Yes             |
 | `headword_bytes_lower` | ASCII-Lowercase Headword  |                                                                                         | No              |
 | `stardict`             | StarDict                  | [StarDict (.ifo)](./p/stardict.md), [StarDict (Merge Syns)](./p/stardict_merge_syns.md) | No              |
+| `quickdic6`            | QuickDic 6                |                                                                                         | No              |
 | `zim`                  | Zim (libzim path order)   | [Zim (.zim, for Kiwix)](./p/zim.md)                                                     | No              |
 | `ebook`                | E-Book (prefix length: 2) | [EPUB-2 E-Book](./p/epub2.md), [Mobipocket (.mobi) E-Book](./p/mobi.md)                 | No              |
 | `ebook_length3`        | E-Book (prefix length: 3) |                                                                                         | No              |

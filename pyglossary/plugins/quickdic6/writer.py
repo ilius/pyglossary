@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 
+from .commons import defaultNormalizerRules, defaultNormalizerRulesDE
 from .quickdic import QuickDic
 from .write_funcs import (
 	write_entry_html,
@@ -33,12 +34,6 @@ if TYPE_CHECKING:
 	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
 __all__ = ["Writer"]
-
-
-_defaultNormalizerRulesDE = ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
-_defaultNormalizerRules = (
-	":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
-)
 
 
 class Writer:
@@ -139,7 +134,7 @@ class Writer:
 
 		short_name = long_name = iso = sourceLangCode
 		normalizer_rules = self._normalizer_rules or (
-			_defaultNormalizerRulesDE if iso == "DE" else _defaultNormalizerRules
+			defaultNormalizerRulesDE if iso == "DE" else defaultNormalizerRules
 		)
 		self._dic.add_index(
 			short_name,

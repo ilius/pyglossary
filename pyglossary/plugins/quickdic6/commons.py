@@ -14,7 +14,15 @@ __all__ = [
 	"LINKED_HASH_SET_INIT",
 	"EntryIndexTuple",
 	"IndexEntryType",
+	"defaultNormalizerRules",
+	"defaultNormalizerRulesDE",
 ]
+
+
+defaultNormalizerRulesDE = ":: Lower; 'ae' > 'ä'; 'oe' > 'ö'; 'ue' > 'ü'; 'ß' > 'ss'; "
+defaultNormalizerRules = (
+	":: Any-Latin; ' ' > ; :: Lower; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC ;"
+)
 
 
 HASH_SET_INIT = (

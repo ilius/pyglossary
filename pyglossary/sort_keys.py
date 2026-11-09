@@ -108,6 +108,12 @@ def _load_stardict() -> ModuleType:
 	return stardict
 
 
+def _load_quickdic6() -> ModuleType:
+	from pyglossary.sort_modules import quickdic6
+
+	return quickdic6
+
+
 def _load_zim() -> ModuleType:
 	from pyglossary.sort_modules import zim
 
@@ -168,6 +174,11 @@ namedSortKeyList = [
 		name="stardict",
 		desc="StarDict",
 		load=_load_stardict,
+	),
+	LocaleNamedSortKey(
+		name="quickdic6",
+		desc="QuickDic 6",
+		load=_load_quickdic6,
 	),
 	LocaleNamedSortKey(
 		name="zim",
