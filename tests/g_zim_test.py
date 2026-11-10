@@ -1,4 +1,5 @@
 import os
+import random
 import sys
 import unittest
 from os.path import abspath, dirname, join
@@ -161,6 +162,46 @@ class TestGlossaryZimWrite(TestGlossaryBase):
 		sortedPaths = entryPaths(sortedFilename)
 		self.assertEqual(plainPaths, sortedPaths)
 		self.assertEqual(sortedPaths, sorted(sortedPaths, key=lambda p: p.encode()))
+
+	@unittest.skipUnless(Archive, "libzim is not installed")
+	def test_convert_txt_zim_random_input_order(self):
+		# ASCII-only terms: ZIM sorts by percent-encoded path, which
+		# matches plain code point order for these.
+		terms = [
+			"apple",
+			"Banana",
+			"cherry",
+			"date",
+			"elderberry",
+			"fig",
+			"grape",
+			"honeydew",
+			"kiwi",
+			"lemon",
+		]
+		expected = sorted(terms)
+		for seed in range(3):
+			shuffled = terms[:]
+			random.Random(seed).shuffle(shuffled)
+			self.assertNotEqual(shuffled, expected)
+
+			inputFilename = self.newTempFilePath(f"zim-random-order-{seed}.txt")
+			with open(inputFilename, mode="w", encoding="utf-8") as file:
+				file.writelines(f"{term}\tdefinition of {term}\n" for term in shuffled)
+			outputFilename = self.newTempFilePath(f"zim-random-order-{seed}.zim")
+			glos = self.glos = Glossary()
+			glos.convert(
+				ConvertArgs(
+					inputFilename=inputFilename,
+					outputFilename=outputFilename,
+					writeOptions={"indexing": False},
+				),
+			)
+			self.assertEqual(
+				self._zimArticleHeadwords(outputFilename),
+				expected,
+				msg=f"{seed=}",
+			)
 
 	@unittest.skipUnless(Archive, "libzim is not installed")
 	def test_sort_key_zim_matches_zim_order(self):
