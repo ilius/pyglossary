@@ -239,53 +239,54 @@ See [doc/config.rst](./doc/config.rst).
 
 ## Direct and indirect modes
 
-Indirect mode means that input glossary is completely read and loaded into RAM, then converted
-into output format. This was the only method available in old versions (before [3.0.0](https://github.com/ilius/pyglossary/releases/tag/3.0.0)).
+PyGlossary has two ways to convert a glossary:
 
-Direct mode means entries are one-at-a-time read, processed and written into output glossary.
+- **Direct mode** streams entries: each entry is read from the input, processed and written
+  to the output one at a time. This keeps memory usage low, and is the default whenever the
+  output format does not need sorted entries.
+- **Indirect mode** reads the whole input first, then writes the output. Entries are kept in
+  memory or, in [SQLite mode](#sqlite-mode), in temporary storage until writing. It is needed
+  when entries must be sorted before writing (see [Sorting](#sorting)), because sorting
+  requires all entries to be available at once.
 
-Direct mode was added to limit memory usage for large glossaries; But it may reduce the
-conversion time for most cases as well.
+Use `--direct` to request direct mode, or `--indirect` to force indirect mode. Direct mode is
+not possible when entries must be sorted, so PyGlossary automatically uses indirect mode in
+that case (and ignores `--direct`).
 
-Converting glossaries into these formats requires [sorting](#sorting) entries:
+These output formats always require sorted entries:
 
 - [StarDict](./doc/p/stardict.md)
+- [StarDict (Merge Syns)](./doc/p/stardict_merge_syns.md)
 - [EPUB-2](./doc/p/epub2.md)
-- [Mobipocket E-Book](./doc/p/mobi.md)
+- [EPWING](./doc/p/epwing.md)
 - [Yomichan](./doc/p/yomichan.md)
 - [DictionaryForMIDs](./doc/p/dicformids.md)
 
-That's why direct mode will not work for these formats, and PyGlossary has to
-switch to indirect mode (or it previously had to, see [SQLite mode](#sqlite-mode)).
-
-For other formats, direct mode will be default. You may override this by `--indirect` flag.
+[Mobipocket E-Book](./doc/p/mobi.md) is sorted by default, but you can disable sorting with
+`--no-sort` to allow direct mode.
 
 ## SQLite mode
 
-As mentioned above, converting glossaries to some specific formats will
-need them to loaded into RAM.
+When entries must be sorted (see above), PyGlossary needs to hold all of them until sorting
+is done. SQLite mode stores them in a temporary SQLite database on disk instead of keeping
+them in RAM, so memory usage stays low even for very large glossaries. Depending on your
+storage, it may also reduce conversion time.
 
-This can be problematic if the glossary is too big to fit into RAM. That's when
-you should try adding `--sqlite` flag to your command. Then it uses SQLite3 as intermediate
-storage for storing, sorting and then fetching entries. This fixes the memory issue, and may
-even reduce running time of conversion (depending on your home directory storage).
-
-The temporary SQLite file is stored in [cache directory](#cache-directory) then
-deleted after conversion (unless you pass `--no-cleanup` flag).
-
-SQLite mode is automatically enabled for writing these formats if `auto_sqlite`
-[config parameter](./doc/config.rst) is `true` (which is default).
-This also applies to when you pass `--sort` flag for any format.
-You may use `--no-sqlite` to override this and switch to indirect mode.
-
-Currently you can not disable alternates in SQLite mode (`--no-alts` is ignored).
+- SQLite mode is only used when sorting is needed; it has no effect on direct conversions.
+- It is enabled automatically when sorting is needed, unless the `auto_sqlite`
+  [config parameter](./doc/config.rst) is `false`.
+- Pass `--sqlite` to force it on, or `--no-sqlite` to turn it off. With `--no-sqlite`,
+  sorting uses an in-memory SQLite database, so all entries still occupy RAM.
+- `--sqlite` and `--direct` cannot be used together.
+- The temporary database is stored in the [cache directory](#cache-directory) and is deleted
+  after conversion unless you pass `--no-cleanup`.
 
 ## Sorting
 
-There are two things than can activate sorting entries:
+Entries are sorted before writing when:
 
-- Output format requires sorting (as explained [above](#direct-and-indirect-modes))
-- You pass `--sort` flag in command line.
+- the output format requires it (as explained [above](#direct-and-indirect-modes)), or
+- you pass the `--sort` flag.
 
 In the case of passing `--sort`, you can also pass:
 

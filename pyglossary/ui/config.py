@@ -73,14 +73,14 @@ configDefDict: dict[str, Option] = {
 	"auto_sqlite": BoolOption(
 		hasFlag=False,
 		comment=(
-			"Auto-enable --sqlite to limit RAM usage when direct\n"
-			"mode is not possible. Can override with --no-sqlite"
+			"Auto-enable --sqlite to limit RAM usage when sorting\n"
+			"is needed. Can override with --no-sqlite"
 		),
 	),
 	"enable_alts": BoolOption(
 		hasFlag=True,
 		customFlag="alts",
-		comment="Enable alternates",
+		comment="Enable alternates (forced on in SQLite mode)",
 		falseComment="Disable alternates",
 	),
 	# TODO: version 6.0: replace with "resources"

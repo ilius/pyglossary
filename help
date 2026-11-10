@@ -87,28 +87,37 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
         [--info] [--cleanup|--no-cleanup]
 
 <b>Direct and indirect modes</b>
-    Indirect mode means the input glossary is completely read and loaded into RAM, then converted
-    into the output format. This was the only method available in old versions (before 3.0.0).
-    Direct mode means entries are one-at-a-time read, processed and written into the output
-    glossary. Direct mode was added to limit the memory usage for large glossaries; But it
-    may reduce the conversion time for most cases as well.
-    Converting glossaries into some formats like StarDict and EPUB-2 requires sorting entries.
-    That's why direct mode will not work for these format, and PyGlossary will use indirect
-    mode. Otherwise direct mode will be the default. You may override this by --indirect flag.
+    PyGlossary has two ways to convert a glossary:
+    Direct mode streams entries: each entry is read from the input, processed and written
+    to the output one at a time. This keeps memory usage low, and is the default whenever
+    the output format does not need sorted entries.
+    Indirect mode reads the whole input first, then writes the output. Entries are kept in
+    memory or, in SQLite mode, in temporary storage until writing. It is needed when entries
+    must be sorted before writing (see Sorting below), because sorting requires all entries
+    to be available at once.
+    Use --direct to request direct mode, or --indirect to force indirect mode. Direct mode is
+    not possible when entries must be sorted, so PyGlossary automatically uses indirect mode
+    in that case (and ignores --direct).
+    These output formats always require sorted entries: StarDict, StarDict (Merge Syns),
+    EPUB-2, EPWING, Yomichan, DictionaryForMIDs.
+    Mobipocket E-Book is sorted by default, but you can disable sorting with --no-sort to
+    allow direct mode.
 
 
 <b>SQLite mode</b>:
-    As mentioned above, converting glossaries into some formats like StarDict will need
-    them to loaded into RAM.
-    This can be problematic if the glossary is too big to fit into RAM. That's when
-    you should try adding --sqlite flag to your command. Then it uses SQLite as intermediate
-    storage for sorting then fetching entries. This fixes the memory issue, and may even
-    reduce running time of conversion (depending on your home directory storage).
-    PyGlossary may also auto-enable SQLite mode when direct mode is not possible (see
-    auto_sqlite in config.json). Use --no-sqlite to disable SQLite mode entirely.
+    When entries must be sorted, PyGlossary needs to hold all of them until sorting is done.
+    SQLite mode stores them in a temporary SQLite database on disk instead of keeping them
+    in RAM, so memory usage stays low even for very large glossaries. Depending on your
+    storage, it may also reduce conversion time.
+    SQLite mode is only used when sorting is needed; it has no effect on direct conversions.
+    It is enabled automatically when sorting is needed, unless auto_sqlite in config.json
+    is false.
+    Use --sqlite to force it on, or --no-sqlite to turn it off. With --no-sqlite, sorting
+    uses an in-memory SQLite database, so all entries still occupy RAM.
+    --sqlite and --direct cannot be used together.
     The temporary SQLite file is stored in ~/.cache/pyglossary/ then deleted after
     conversion, unless you pass --no-cleanup flag.
-    Currently you can not disable alternates in SQLite mode (--no-alts is ignored).
+    Alternates are forced on in SQLite mode (--no-alts is ignored).
 
 
 <b>Read and write options</b>:
@@ -153,7 +162,7 @@ PyGlossary is a tool for working with dictionary databases (glossaries)
 
 <b>Other conversion options</b>:
     --info                   save a .info JSON file alongside output file(s)
-    --alts / --no-alts       enable or disable alternate terms (synonyms)
+    --alts / --no-alts       enable or disable alternate terms (always on in SQLite mode)
     --cleanup / --no-cleanup delete or keep cache/temporary files after conversion
 
 

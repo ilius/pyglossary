@@ -63,38 +63,19 @@ def codeValue(x):
 	return ""
 
 
-def tableRowSep(width, c="-"):
-	return "+" + c + f"{c}+{c}".join([c * w for w in width]) + c + "+"
-
-
 def renderTable(rows):
 	"""rows[0] must be headers."""
-	colN = len(rows[0])
-	width = [
-		max(max(len(line) for line in row[i].split("\n")) for row in rows)
-		for i in range(colN)
-	]
-	rowSep = tableRowSep(width, "-")
-	headerSep = tableRowSep(width, "=")
-
-	lines = [rowSep]
-	for rowI, row in enumerate(rows):
-		newRows = []
+	lines = [".. list-table::", "   :header-rows: 1", ""]
+	cellIndent = "       "
+	for _rowI, row in enumerate(rows):
 		for colI, cell in enumerate(row):
-			for lineI, line in enumerate(cell.split("\n")):
-				if lineI >= len(newRows):
-					newRows.append([" " * width[colI] for colI in range(colN)])
-				newRows[lineI][colI] = line.ljust(width[colI], " ")
-		lines += ["| " + " | ".join(row) + " |" for row in newRows]
-		if rowI == 0:
-			lines.append(headerSep)
-		else:
-			lines.append(rowSep)
-
-	# widthsStr = ", ".join([str(w) for w in width])
-	# header = f".. table:: my table\n\t:widths: {widthsStr}\n\n"
-	# return header + "\n".join(["\t" + line for line in lines])
-
+			prefix = "   * -" if colI == 0 else "     -"
+			cellLines = cell.split("\n")
+			if cellLines[0]:
+				lines.append(f"{prefix} {cellLines[0]}")
+			else:
+				lines.append(prefix)
+			lines.extend(cellIndent + line for line in cellLines[1:] if line.strip())
 	return "\n".join(lines)
 
 
@@ -152,27 +133,31 @@ title += "\n" + len(title) * "-" + "\n"
 
 images = []
 
-paramsTable = title + renderTable(
-	[
-		(
-			"Name",
-			"Command Flags",
-			"Type",
-			"Default",
-			"Comment",
-		),
-	]
-	+ [
-		(
-			codeValue(name),
-			getCommandFlagsMD(name, opt),
-			opt.typ,
-			defaultOptionValue(name, opt, images),
-			optionComment(name, opt),
-		)
-		for name, opt in configDefDict.items()
-		if not opt.disabled
-	],
+paramsTable = (
+	title
+	+ "\n"
+	+ renderTable(
+		[
+			(
+				"Name",
+				"Command Flags",
+				"Type",
+				"Default",
+				"Comment",
+			),
+		]
+		+ [
+			(
+				codeValue(name),
+				getCommandFlagsMD(name, opt),
+				opt.typ,
+				defaultOptionValue(name, opt, images),
+				optionComment(name, opt),
+			)
+			for name, opt in configDefDict.items()
+			if not opt.disabled
+		],
+	)
 )
 
 text = template.render(

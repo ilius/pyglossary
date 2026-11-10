@@ -224,8 +224,8 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		action="store_false",
 		default=None,
 		help=(
-			"disable `direct` mode, load full data into memory before writing"
-			", this is default"
+			"disable `direct` mode,"
+			" load full data into memory or temporary storage before writing"
 		),
 	)
 	parser.add_argument(
@@ -234,8 +234,8 @@ def defineFlags(parser: argparse.ArgumentParser, config: ConfigType) -> None:
 		action="store_true",
 		default=None,
 		help=(
-			"use SQLite as middle storage instead of RAM in direct mode,"
-			"for very large glossaries"
+			"use SQLite as middle storage instead of RAM when sorting,"
+			" for very large glossaries"
 		),
 	)
 	parser.add_argument(
