@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import random
 import struct
 import sys
 import tempfile
@@ -256,6 +257,35 @@ class TestPocketBookSdicWriter(unittest.TestCase):
 		result = _parse_sdic(outpath)
 		words = [e[0] for e in result.entries]
 		self.assertEqual(words, ["apple", "mango", "zebra"])
+
+	def test_random_input_order_written_sorted(self):
+		"""Shuffled input is written in collated order regardless of input order."""
+		terms = [
+			"apple",
+			"Banana",
+			"cherry",
+			"date",
+			"elderberry",
+			"fig",
+			"grape",
+			"honeydew",
+			"kiwi",
+			"lemon",
+		]
+		expected = sorted(terms, key=str.upper)
+		for seed in range(3):
+			shuffled = terms[:]
+			random.Random(seed).shuffle(shuffled)
+			self.assertNotEqual(shuffled, expected)
+
+			outpath = self._write_sdic(
+				[(term, f"definition of {term}") for term in shuffled],
+			)
+			result = _parse_sdic(outpath)
+			words = [e[0] for e in result.entries]
+			self.assertEqual(words, expected, msg=f"{seed=}")
+			self.glos.cleanup()
+			self.glos.clear()
 
 	def test_default_metadata_no_options(self):
 		"""Writer works with zero configuration using built-in defaults."""
