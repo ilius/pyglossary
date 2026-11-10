@@ -1,4 +1,5 @@
 import os
+import random
 import unittest
 from os.path import join
 
@@ -94,6 +95,56 @@ class TestGlossaryQuickDic6(TestGlossaryBase):
 			),
 		)
 		self.assertEqual(self._readTxtHeadwords(outputFilename), expected)
+
+	def test_convert_txt_quickdic6_random_input_order_preserved(self):
+		# QuickDic 6 sorts its index, not the stored entries, so the
+		# round-trip output follows the source order for any input order.
+		terms = [
+			"apple",
+			"Banana",
+			"cherry",
+			"date",
+			"elderberry",
+			"fig",
+			"grape",
+			"honeydew",
+			"kiwi",
+			"lemon",
+		]
+		for seed in range(3):
+			shuffled = terms[:]
+			random.Random(seed).shuffle(shuffled)
+			self.assertNotEqual(shuffled, sorted(terms))
+
+			inputFilename = self.newTempFilePath(f"quickdic6-random-order-{seed}.txt")
+			with open(inputFilename, mode="w", encoding="utf-8") as file:
+				file.writelines(f"{term}\tdefinition of {term}\n" for term in shuffled)
+			quickdicFilename = self.newTempFilePath(
+				f"quickdic6-random-order-{seed}.quickdic",
+			)
+			glos = self.glos = Glossary()
+			glos.convert(
+				ConvertArgs(
+					inputFilename=inputFilename,
+					outputFilename=quickdicFilename,
+				),
+			)
+
+			outputFilename = self.newTempFilePath(
+				f"quickdic6-random-order-{seed}-roundtrip.txt",
+			)
+			glos = self.glos = Glossary()
+			glos.convert(
+				ConvertArgs(
+					inputFilename=quickdicFilename,
+					outputFilename=outputFilename,
+				),
+			)
+			self.assertEqual(
+				self._readTxtHeadwords(outputFilename),
+				shuffled,
+				msg=f"{seed=}",
+			)
 
 	def test_convert_txt_quickdic6_sort_writes_sorted_entries(self):
 		# With --sort, entries are sorted before writing, so the stored
