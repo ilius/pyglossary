@@ -3,8 +3,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import runpy
+from pathlib import Path
 
 
 def main() -> int:
@@ -20,9 +20,10 @@ def main() -> int:
 		"plugin-doc.py",
 		"config-doc.py",
 		"entry-filters-doc.py",
+		"sort-key-doc.py",
 		"requirements.py",
 	):
-		print(name)
+		print(name)  # noqa: T201
 		runpy.run_path(str(gen_d / name))
 	return 0
 
