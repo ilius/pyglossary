@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.flags import INTERNAL
+from pyglossary.flags import DEFAULT_NO
 from pyglossary.option import StrOption
 
 from .reader import Reader
@@ -42,7 +42,7 @@ description = "QuickDic version 6 (.quickdic)"
 extensions = (".quickdic", ".quickdic.v006.zip")
 extensionCreate = ".quickdic"
 singleFile = True
-sortOnWrite = INTERNAL
+sortOnWrite = DEFAULT_NO
 
 kind = "binary"
 wiki = ""

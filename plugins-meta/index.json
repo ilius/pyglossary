@@ -1577,7 +1577,6 @@
 		},
 		"canRead": true,
 		"canWrite": true,
-		"sortOnWrite": "internal",
 		"readOptions": {},
 		"writeOptions": {
 			"normalizer_rules": ""
