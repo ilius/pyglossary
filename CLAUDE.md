@@ -45,9 +45,11 @@ Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
 
 When creating or editing `doc/releases/X.Y.Z.md`:
 
-- Include **uncommitted** user-facing changes from `git diff` / `git status` before tagging, not only merged commits since the previous tag.
+- Ignore **uncommitted** changes; base release notes only on commits since the previous tag.
 
 - **Do not list bug fixes, improvements or any changes for features (plugins, UI types etc) that did NOT exist in the previous tag.**
+
+- Do **not** list changes under `doc/dev/`; these are internal development notes.
 
 ### Source material
 
