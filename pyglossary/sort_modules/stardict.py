@@ -31,16 +31,15 @@ def sqlite(sortEncoding: str = "utf-8", **_options: Any) -> SQLiteSortKeyType:
 	def headword(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace")
 
-	type_ = "TEXT" if sortEncoding == "utf-8" else "BLOB"
 	return [
 		(
 			"headword_lower",
-			type_,
+			"BLOB",
 			headword_lower,
 		),
 		(
 			"headword",
-			type_,
+			"BLOB",
 			headword,
 		),
 	]

@@ -58,7 +58,7 @@ def sqlite(
 	return [
 		(
 			"headword_lower",
-			"TEXT" if sortEncoding == "utf-8" else "BLOB",
+			"BLOB",
 			sortKey,
 		),
 	]

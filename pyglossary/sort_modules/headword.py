@@ -53,7 +53,7 @@ def sqlite(sortEncoding: str = "utf-8", **_options: Any) -> SQLiteSortKeyType:
 	return [
 		(
 			"headword",
-			"TEXT" if sortEncoding == "utf-8" else "BLOB",
+			"BLOB",
 			sortKey,
 		),
 	]
