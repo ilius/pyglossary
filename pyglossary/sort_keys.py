@@ -108,6 +108,12 @@ def _load_stardict() -> ModuleType:
 	return stardict
 
 
+def _load_zim() -> ModuleType:
+	from pyglossary.sort_modules import zim
+
+	return zim
+
+
 @dataclass(slots=True)  # not frozen because of mod
 class LocaleNamedSortKey:
 	"""Locale-aware named sort key."""
@@ -162,6 +168,11 @@ namedSortKeyList = [
 		name="stardict",
 		desc="StarDict",
 		load=_load_stardict,
+	),
+	LocaleNamedSortKey(
+		name="zim",
+		desc="Zim (libzim path order)",
+		load=_load_zim,
 	),
 	LocaleNamedSortKey(
 		name="ebook",

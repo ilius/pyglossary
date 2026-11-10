@@ -1,7 +1,8 @@
 import os
 import sys
 import unittest
-from os.path import abspath, dirname
+from os.path import abspath, dirname, join
+from urllib.parse import unquote
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -22,6 +23,26 @@ class TestGlossaryZimWrite(TestGlossaryBase):
 
 	def setUp(self):
 		TestGlossaryBase.setUp(self)
+
+	@staticmethod
+	def _readTxtHeadwords(filename: str) -> list[str]:
+		glos = Glossary()
+		try:
+			glos.directRead(filename)
+			return [entry.s_term for entry in glos if not entry.isData()]
+		finally:
+			glos.cleanup()
+			glos.clear()
+
+	@staticmethod
+	def _zimArticleHeadwords(filename: str) -> list[str]:
+		archive = Archive(filename)
+		headwords = []
+		for entryId in range(archive.entry_count):
+			path = archive.get_entry_by_id(entryId).path
+			if path.startswith("A/"):
+				headwords.append(unquote(path[len("A/") :]))
+		return headwords
 
 	@unittest.skipUnless(Archive, "libzim is not installed")
 	def test_convert_txt_zim_1(self):
@@ -140,6 +161,84 @@ class TestGlossaryZimWrite(TestGlossaryBase):
 		sortedPaths = entryPaths(sortedFilename)
 		self.assertEqual(plainPaths, sortedPaths)
 		self.assertEqual(sortedPaths, sorted(sortedPaths, key=lambda p: p.encode()))
+
+	@unittest.skipUnless(Archive, "libzim is not installed")
+	def test_sort_key_zim_matches_zim_order(self):
+		# This fixture has no duplicate headwords or alternate terms.
+		fname = "100-en-de-v4"
+		self.convert(
+			f"{fname}.txt",
+			f"{fname}-sort-key.zim",
+			writeOptions={"indexing": False},
+		)
+		expected = self._zimArticleHeadwords(
+			join(self.tempDir, f"{fname}-sort-key.zim"),
+		)
+		self.assertEqual(len(expected), 100)
+		self.assertEqual(len(expected), len(set(expected)))
+
+		for sqlite in (None, True, False):
+			outputName = f"{fname}-sort-key-{sqlite}.txt"
+			self.convert(
+				f"{fname}.txt",
+				outputName,
+				sort=True,
+				sortKeyName="zim",
+				sqlite=sqlite,
+			)
+			self.assertEqual(
+				self._readTxtHeadwords(join(self.tempDir, outputName)),
+				expected,
+				msg=f"{sqlite=}",
+			)
+
+		os.environ["NO_SQLITE"] = "1"
+		try:
+			outputName = f"{fname}-sort-key-nosqlite.txt"
+			self.convert(
+				f"{fname}.txt",
+				outputName,
+				sort=True,
+				sortKeyName="zim",
+				sqlite=False,
+			)
+			self.assertEqual(
+				self._readTxtHeadwords(join(self.tempDir, outputName)),
+				expected,
+			)
+		finally:
+			del os.environ["NO_SQLITE"]
+
+	@unittest.skipUnless(Archive, "libzim is not installed")
+	def test_convert_txt_zim_txt_matches_zim_sort_key(self):
+		# This fixture has no duplicate headwords or alternate terms.
+		fname = "100-en-de-v4"
+
+		sortedName = f"{fname}-sort-key.txt"
+		self.convert(
+			f"{fname}.txt",
+			sortedName,
+			sort=True,
+			sortKeyName="zim",
+		)
+		expected = self._readTxtHeadwords(join(self.tempDir, sortedName))
+
+		zimName = f"{fname}-roundtrip.zim"
+		self.convert(
+			f"{fname}.txt",
+			zimName,
+			writeOptions={"indexing": False},
+		)
+
+		outputFilename = self.newTempFilePath(f"{fname}-roundtrip.txt")
+		glos = self.glos = Glossary()
+		glos.convert(
+			ConvertArgs(
+				inputFilename=join(self.tempDir, zimName),
+				outputFilename=outputFilename,
+			),
+		)
+		self.assertEqual(self._readTxtHeadwords(outputFilename), expected)
 
 
 if __name__ == "__main__":
