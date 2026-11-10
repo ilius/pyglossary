@@ -39,14 +39,14 @@ def normal(
 def sqlite(sortEncoding: str = "utf-8", **options: Any) -> SQLiteSortKeyType:
 	length = options.get("group_by_prefix_length", 2)
 
-	def getPrefix(words: list[str]) -> str:
+	def getPrefix(words: list[str]) -> bytes:
 		term = words[0]
 		if not term:
-			return ""
+			return b""
 		prefix = term[:length].lower()
 		if prefix[0] < "a":
-			return "SPECIAL"
-		return prefix
+			prefix = "SPECIAL"
+		return prefix.encode(sortEncoding, errors="replace")
 
 	def headword(words: list[str]) -> Any:
 		return words[0].encode(sortEncoding, errors="replace")
