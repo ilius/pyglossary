@@ -145,11 +145,11 @@ def makeDependsDoc(cls):
 
 
 def sortKeyName(p):
-	if p.sortOnWrite == INTERNAL:
-		return "(format-defined order)"
 	value = p.sortKeyName
 	if value:
 		return codeValue(value)
+	if p.sortOnWrite == INTERNAL:
+		return "(format-defined order)"
 	return "(" + codeValue(defaultSortKeyName) + ")"
 
 

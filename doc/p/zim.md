@@ -18,7 +18,7 @@ To update, modify plugins/zim/__init__.py file, then run ./scripts/gen
 | Single-file | Yes |
 | Kind | 🔢 binary |
 | Sort-on-write | Internal (format-defined order, --sort is ignored) |
-| Sort key | (format-defined order) |
+| Sort key | `zim` |
 | Wiki | [ZIM (file format)](<https://en.wikipedia.org/wiki/ZIM_(file_format)>) |
 | Website | [OpenZIM](https://wiki.openzim.org/wiki/OpenZIM) |
 

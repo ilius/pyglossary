@@ -2469,6 +2469,7 @@
 		"canRead": true,
 		"canWrite": true,
 		"sortOnWrite": "internal",
+		"sortKeyName": "zim",
 		"readOptions": {
 			"text_unicode_errors": "replace",
 			"html_unicode_errors": "replace"

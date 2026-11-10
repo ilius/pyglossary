@@ -8,6 +8,11 @@
 | `headword_lower`       | Lowercase Headword        | All other formats (given `--sort`)                | Yes             |
 | `headword_bytes_lower` | ASCII-Lowercase Headword  |                                                   | No              |
 | `stardict`             | StarDict                  | [StarDict](./p/stardict.md)                       | No              |
+<<<<<<< HEAD
+=======
+| `quickdic6`            | QuickDic 6                |                                                   | No              |
+| `zim`                  | Zim (libzim path order)   | [Zim](./p/zim.md)                                 | No              |
+>>>>>>> 531513a0 (zim: set sortKeyName and show it in plugin doc)
 | `ebook`                | E-Book (prefix length: 2) | [EPUB-2](./p/epub2.md), [Mobipocket](./p/mobi.md) | No              |
 | `ebook_length3`        | E-Book (prefix length: 3) |                                                   | No              |
 | `dicformids`           | DictionaryForMIDs         | [DictionaryForMIDs](./p/dicformids.md)            | No              |

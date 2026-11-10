@@ -48,6 +48,7 @@ extensions = (".zim",)
 extensionCreate = ".zim"
 singleFile = True
 sortOnWrite = INTERNAL
+sortKeyName = "zim"
 kind = "binary"
 wiki = "https://en.wikipedia.org/wiki/ZIM_(file_format)"
 website = (
