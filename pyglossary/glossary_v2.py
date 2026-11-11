@@ -1100,7 +1100,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		"""
 		sortKeyName: see doc/sort-key.md.
 
-		returns (sort, direct)
+		returns (direct, sort)
 		"""
 		if args.direct and args.sqlite:
 			raise ValueError(
