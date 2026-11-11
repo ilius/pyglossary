@@ -8,14 +8,14 @@
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/pyglossary)](https://pypi.org/project/pyglossary/)
 [![tests](https://github.com/ilius/pyglossary/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/ilius/pyglossary/actions/workflows/test.yml?query=branch%3Amaster)
 
-A tool for converting dictionary files aka glossaries.
+A tool for converting dictionary files, also known as glossaries.
 
-The primary purpose is to be able to use our offline glossaries in any Open
-Source dictionary we like on any OS/device.
+Its primary purpose is to let you use offline glossaries in any Open Source
+dictionary application, on any operating system or device.
 
-There are countless formats, and my time is limited, so I implement formats that
-seem more useful for myself, or for Open Source community. Also diversity of
-languages is taken into account. Pull requests are welcome.
+There are countless formats and limited time, so PyGlossary implements the
+formats that seem most useful to the author or to the Open Source community,
+while also taking language diversity into account. Pull requests are welcome.
 
 ## Screenshots
 
@@ -90,7 +90,7 @@ Web interface
 | [Dict.cc](./doc/p/dict_cc.md) 🇩🇪 | 🛢️ | .db | ✅ | |
 | [DigitalNK](./doc/p/digitalnk.md) 🇰🇵 | 🛢️ | .db | ✅ | |
 | [EDICT2 (CEDICT)](./doc/p/edict2.md) 🇨🇳 | 📝 | (.u8) | ✅ | ❌ |
-| [EPWING](./epwing.md) 🇯🇵 | 📁 | | ✅ | ❌ |
+| [EPWING](./doc/p/epwing.md) 🇯🇵 | 📁 | | ✅ | ❌ |
 | [JMDict](./doc/p/jmdict.md) 🇯🇵 | 📝 | | ✅ | ❌ |
 | [JMnedict](./doc/p/jmnedict.md) 🇯🇵 | 📝 | | ✅ | ❌ |
 | [WordNet](./doc/p/wordnet.md) 🇬🇧 | 📁 | | ✅ | ❌ |
@@ -108,101 +108,106 @@ Legend:
 - ✅ Supported
 - ❌ Will not be supported
 
-**Note**: SQLite-based formats are not detected by extension (`.db`);
-So you need to select the format (with UI or `--read-format` flag).
-**Also don't confuse SQLite-based formats with [SQLite mode](#sqlite-mode).**
+**Note**: SQLite-based formats are not detected by their `.db` extension, so you
+must select the format yourself, either in the UI or with the `--read-format` flag.
+Do not confuse SQLite-based formats with [SQLite mode](#sqlite-mode), which is a
+separate feature.
 
 ## Requirements
 
-PyGlossary requires **Python 3.12 or higher**, and works in practically all
-mainstream operating systems, including *GNU/Linux*, *Windows*, *Mac OS*,
-*FreeBSD* and other common Unix-based operating systems.
+PyGlossary requires **Python 3.12 or higher**. It works on practically all
+mainstream operating systems, including *GNU/Linux*, *Windows*, *macOS*,
+*FreeBSD*, and other common Unix-based systems.
 
-As shown in screenshots, there are multiple User Interface types (multiple
-ways to use the program).
+As the screenshots show, PyGlossary has several user interfaces, which are
+different ways to use the program.
 
-- **Gtk3-based interface**, uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html)+Gtk3.
-  Best option for most Linux users.
-  See [doc/gtk3.md](./doc/gtk3.md) for how to install it on Linux and Mac OS X.
+- **Gtk3-based interface** uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html) with Gtk3.
+  It is the best option for most Linux users.
+  See [doc/gtk3.md](./doc/gtk3.md) for installation instructions on Linux and macOS.
 
-- **Gtk4-based interface**, uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html)+Gtk4.
+- **Gtk4-based interface** uses [PyGI](http://pygobject.readthedocs.io/en/latest/getting_started.html) with Gtk4.
   See [doc/gtk4.md](./doc/gtk4.md).
 
-- **Qt6-based interface**, good native-looking interface for all operating systems.
-  Requires either PySide6 or PyQt6. Uses a wizard-based UI flow for simplicity of use.
+- **Qt6-based interface** is a native-looking interface for all operating systems.
+  It requires either PySide6 or PyQt6, and uses a wizard-based flow for simplicity.
 
-- **wxPython-based interface**, wizard-style GUI using wxPython. Install with
-  `pip install pyglossary[wx]` (or install `wxPython` separately).
+- **wxPython-based interface** is a wizard-style GUI built with wxPython. Install it with
+  `pip install pyglossary[wx]`, or install `wxPython` separately.
 
-- **Tkinter-based interface**, meant to be used in the lack of more modern UI. Specially on
-  Windows where Tkinter library is installed with Python itself.
-  You can [install Tkinter](./doc/tkinter.md) on Linux or Mac OS X.
+- **Tkinter-based interface** is meant for situations where no more modern UI is available.
+  It is especially useful on Windows, where Tkinter is installed with Python itself.
+  You can [install Tkinter](./doc/tkinter.md) on Linux or macOS.
 
-- **Command-line interface**, works in all operating systems without
-  any specific requirements, just type `./main.py --help` or `pyglossary --help`
+- **Command-line interface** works on all operating systems without special requirements.
+  Run `./main.py --help` or `pyglossary --help` to see its options.
 
   - **Interactive command-line interface**
-    - Requires: `pip install prompt_toolkit`
-    - Perfect for mobile devices (like Termux on Android) where no GUI is available
-    - Automatically selected if output file argument is not passed **and** one of these:
-      - On Linux and `$DISPLAY` environment variable is empty or not set
-        - For example when you are using a remote Linux machine over SSH
-      - On Mac and no `tkinter` module is found
-    - Manually select with `--cmd` or `--ui=cmd`
-      - Minimally: `./main.py --cmd`
-      - You can still pass input file, or any flag/option
-    - If both input and output files are passed, non-interactive cmd ui will be default.
-      - Pass `--interactive` to change it.
-    - If you are writing a script, you can pass `--no-interactive` to force disable interactive ui
-      - Then you have to pass both input and output file arguments
-    - Don't forget to use *Up/Down* or *Tab* keys in prompts!
-      - Up/Down key shows you recent values you have used
-      - Tab key shows available values/options
-    - You can press Control+C (on Linux/Windows) at any prompt to exit
+    - Requires `prompt_toolkit`: `pip install prompt_toolkit`
+    - Well suited to mobile devices, such as Termux on Android, where no GUI is available
+    - Selected automatically when no output file argument is passed, and either:
+      - On Linux, the `$DISPLAY` environment variable is empty or not set
+        (for example, when using a remote Linux machine over SSH)
+      - On macOS, no `tkinter` module is found
+    - Select it manually with `--cmd` or `--ui=cmd`, for example `./main.py --cmd`
+      - You can still pass an input file, or any flag or option
+    - If both input and output files are passed, the non-interactive command-line UI is used by default.
+      Pass `--interactive` to change this.
+    - When writing a script, pass `--no-interactive` to force non-interactive mode.
+      You must then pass both input and output file arguments.
+    - In prompts, use the *Up/Down* keys to see recently used values,
+      and the *Tab* key to see available values and options
+    - Press Control+C (on Linux and Windows) at any prompt to exit
 
 ## UI (User Interface) selection
 
-When you run PyGlossary without any command-line arguments or options/flags, PyGlossary will try to run the first available interface:
+When you run PyGlossary without any command-line arguments, flags, or options, it tries each interface in turn and starts the first one it can:
 
-- It tries to find PyGI+Gtk3 and open **Gtk3-based** interface.
-- It tries to find PyGI+Gtk4 and open **Gtk4-based** interface.
-- It tries to find PySide6 or PyQt6 and open **Qt 6** interface.
-- It tries to find wxPython and open **wxPython-based** interface.
-- It tries to find Tkinter and open the **classic Tkinter** interface.
-- It tries to open the **Tk wizard** interface (also Tkinter-based).
-- If it's run in command line (with stdin connected to a terminal) it tries to find `prompt_toolkit` and run **interactive command-line** interface.
-- It runs a HTTP server and opens the **web interface** in your browser.
+- It looks for PyGI with Gtk3 and opens the **Gtk3-based** interface.
+- It looks for PyGI with Gtk4 and opens the **Gtk4-based** interface.
+- It looks for PySide6 or PyQt6 and opens the **Qt 6** interface.
+- It looks for wxPython and opens the **wxPython-based** interface.
+- It looks for Tkinter and opens the **classic Tkinter** interface.
+- It opens the **Tk wizard** interface (also Tkinter-based).
+- If stdin is connected to a terminal, it looks for `prompt_toolkit` and runs the **interactive command-line** interface.
+- Otherwise, it starts an HTTP server and opens the **web interface** in your browser.
 
-The order depends on operating system. On **GNU/Linux** the default order is Gtk3, Gtk4, Qt 6, wxPython, Tkinter (classic), Tk wizard, then web. On **Mac OS** and **Windows**, Qt 6, wxPython, and the Tk wizard are tried before classic Tkinter and Gtk.
+The order depends on the operating system. On **GNU/Linux**, the default order is Gtk3, Gtk4, Qt 6, wxPython, Tkinter (classic), Tk wizard, then web. On **macOS** and **Windows**, Qt 6, wxPython, and the Tk wizard are tried before classic Tkinter and Gtk.
 
-You can explicitly select user interface type using `--ui`
+To choose a user interface explicitly, use `--ui`:
 
 - `./main.py --ui=gtk3`
 - `./main.py --ui=gtk4`
-- `./main.py --ui=gtk` which currently selects `gtk3`
+- `./main.py --ui=gtk`, which currently selects `gtk3`
 - `./main.py --ui=qt6` or `./main.py --ui=qt`: Qt 6 wizard-based interface
 - `./main.py --ui=wx` or `./main.py --wx`: wxPython wizard-based interface
 - `./main.py --ui=tk`
-- `./main.py --ui=tk_wizard`: new wizard-based Tkinter interface
+- `./main.py --ui=tk_wizard`: wizard-based Tkinter interface
   - Shortcut: `./main.py --tkw`
 - `./main.py --ui=web`
-- `./main.py --ui=cmd` with no extra arguments opens interactive command-line interface
+- `./main.py --ui=cmd`: interactive command-line interface, when no extra arguments are passed
 
 ## Installation on Windows
 
-You can either download the latest `setup.exe` from [Releases](https://github.com/ilius/pyglossary/releases) and install it via a wizard, or install it using Python and `pip`:
+You can either download the latest `setup.exe` from [Releases](https://github.com/ilius/pyglossary/releases) and install it with the setup wizard, or install PyGlossary with Python and `pip`:
 
-- [Download and install latest Python](https://www.python.org/downloads/windows/)
-- Open Start -> type Command -> right-click on Command Prompt -> Run as administrator
-- To ensure you have `pip`, run: `python -m ensurepip --upgrade`
-- To install, run: `pip install --upgrade pyglossary`
-- Now you should be able to run `pyglossary` command
-- If command was not found, make sure Python environment variables are set up:
+- [Download and install the latest Python](https://www.python.org/downloads/windows/)
+
+- Open Start, type `Command`, right-click Command Prompt, and select Run as administrator
+
+- To make sure `pip` is available, run: `python -m ensurepip --upgrade`
+
+- To install PyGlossary, run: `pip install --upgrade pyglossary`
+
+- You should now be able to run the `pyglossary` command
+
+- If the command is not found, make sure the Python environment variables are set up:
+
   <img src="https://raw.githubusercontent.com/wiki/ilius/pyglossary/screenshots/windows-python39-env-vars.png" width="50%" height="50%"/>
 
-## Installation on Mac OS (14 & 15)
+## Installation on macOS (14 & 15)
 
-If you download the DMG file from [Releases](https://github.com/ilius/pyglossary/releases) and install it, Mac may refuse to run it, showing **the app is damaged and cannot be opened** error. In that case, move the unpacked bundle to `/Applications`, and run this from the Terminal:
+If you download the DMG file from [Releases](https://github.com/ilius/pyglossary/releases) and install it, macOS may refuse to open the app and show the error **the app is damaged and cannot be opened**. In that case, move the unpacked bundle to `/Applications`, and run one of these commands in Terminal:
 
 ```
 /usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryWX.app
@@ -214,24 +219,24 @@ Or
 /usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossaryTK.app
 ```
 
-Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossary.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
+Then open the app: right-click the app in Finder, select **Open**, and confirm that you want to run an app not signed by Apple. You only need to do this once.
 
 ## Feature-specific requirements
 
-- Using [Sort by Locale](#sorting) feature requires [PyICU](./doc/pyicu.md)
+- The [Sort by Locale](#sorting) feature requires [PyICU](./doc/pyicu.md).
 
-- Using `--remove-html-all` flag requires:
+- The `--remove-html-all` flag requires `lxml` and `beautifulsoup4`:
 
   `pip install lxml beautifulsoup4`
 
-Some formats have additional requirements.
-If you have trouble with any format, please check the [link given for that format](#supported-formats) to see its documentations.
+Some formats have additional requirements. If you have trouble with a format,
+see its documentation via the link in the [supported formats](#supported-formats) table.
 
-The **Qt 6 wizard** GUI (`--ui=qt`, `--ui=qt6`, `--qt`, or `--qt6`) needs PySide6 or PyQt6: `pip install pyglossary[qt6]` (or install `PySide6` separately). On macOS, that extra also installs **`pyobjc-framework-Cocoa`** so the Dock and app switcher can show PyGlossary’s icon (standalone `python`/CLI runs do not ship an `.app` bundle icon otherwise).
+The **Qt 6 wizard** GUI (`--ui=qt`, `--ui=qt6`, `--qt`, or `--qt6`) needs PySide6 or PyQt6: `pip install pyglossary[qt6]` (or install `PySide6` separately). On macOS, this extra also installs **`pyobjc-framework-Cocoa`**, so the Dock and app switcher can show the PyGlossary icon. Otherwise, runs started with plain `python` have no app bundle icon.
 
-The **wxPython wizard** GUI (`--ui=wx` or `--wx`) needs wxPython: `pip install pyglossary[wx]` (or install `wxPython` separately). On macOS, that extra also installs **`pyobjc-framework-Cocoa`** for the same Dock icon behaviour as the Qt extra.
+The **wxPython wizard** GUI (`--ui=wx` or `--wx`) needs wxPython: `pip install pyglossary[wx]` (or install `wxPython` separately). On macOS, this extra also installs **`pyobjc-framework-Cocoa`** for the same Dock icon behavior as the Qt extra.
 
-**Using Termux on Android?** See [doc/termux.md](./doc/termux.md)
+**Using Termux on Android?** See [doc/termux.md](./doc/termux.md).
 
 ## Configuration
 
@@ -241,17 +246,17 @@ See [doc/config.rst](./doc/config.rst).
 
 PyGlossary has two ways to convert a glossary:
 
-- **Direct mode** streams entries: each entry is read from the input, processed and written
-  to the output one at a time. This keeps memory usage low, and is the default whenever the
-  output format does not need sorted entries.
-- **Indirect mode** reads the whole input first, then writes the output. Entries are kept in
-  memory or, in [SQLite mode](#sqlite-mode), in temporary storage until writing. It is needed
-  when entries must be sorted before writing (see [Sorting](#sorting)), because sorting
-  requires all entries to be available at once.
+- **Direct mode** streams entries: each entry is read from the input, processed, and written
+  to the output one at a time. This keeps memory usage low. It is the default when the output
+  format does not require sorted entries.
+- **Indirect mode** reads the whole input before writing the output. Entries are kept in
+  memory or, in [SQLite mode](#sqlite-mode), in temporary storage until writing. It is required
+  when entries must be sorted before writing (see [Sorting](#sorting)), because sorting needs
+  all entries available at once.
 
 Use `--direct` to request direct mode, or `--indirect` to force indirect mode. Direct mode is
-not possible when entries must be sorted, so PyGlossary automatically uses indirect mode in
-that case (and ignores `--direct`).
+not possible when entries must be sorted, so PyGlossary uses indirect mode automatically in
+that case and ignores `--direct`.
 
 These output formats always require sorted entries:
 
@@ -279,7 +284,7 @@ storage, it may also reduce conversion time.
   sorting uses an in-memory SQLite database, so all entries still occupy RAM.
 - `--sqlite` and `--direct` cannot be used together.
 - The temporary database is stored in the [cache directory](#cache-directory) and is deleted
-  after conversion unless you pass `--no-cleanup`.
+  after conversion, unless you pass `--no-cleanup`.
 
 ## Sorting
 
@@ -288,22 +293,23 @@ Entries are sorted before writing when:
 - the output format requires it (as explained [above](#direct-and-indirect-modes)), or
 - you pass the `--sort` flag.
 
-In the case of passing `--sort`, you can also pass:
+When sorting, you can also use:
 
-- `--sort-key` to select sort key aka sorting order (including locale), see [doc/sort-key.md](./doc/sort-key.md)
+- `--sort-key` to choose the sort key, which determines the sort order (including locale).
+  See [doc/sort-key.md](./doc/sort-key.md).
 
-- `--sort-encoding` to change the encoding used for sort
+- `--sort-encoding` to change the encoding used for sorting.
 
-  - UTF-8 is the default encoding for all sort keys and all output formats (unless mentioned otherwise)
-  - This will only effect the order of entries, and will not corrupt words / definition
-  - Non-encodable characters are replaced with `?` byte (*only for sorting*)
+  - UTF-8 is the default encoding for all sort keys and output formats, unless stated otherwise.
+  - This only affects the order of entries. It does not corrupt words or definitions.
+  - Characters that cannot be encoded are replaced with a `?` byte (*only for sorting*).
 
 ## Cache directory
 
-Cache directory is used for storing temporary files which are either moved or deleted
-after conversion. You can pass `--no-cleanup` flag in order to keep them.
+The cache directory stores temporary files, which are either moved or deleted
+after conversion. Pass `--no-cleanup` to keep them.
 
-The path for cache directory:
+The cache directory is located at:
 
 - Linux or BSD: `~/.cache/pyglossary/`
 - Mac: `~/Library/Caches/PyGlossary/`
@@ -311,9 +317,8 @@ The path for cache directory:
 
 ## User plugins
 
-If you want to add your own plugin without adding it to source code directory,
-or you want to use a plugin that has been removed from repository,
-you can place it in this directory:
+To add your own plugin without modifying the source code, or to use a plugin that has
+been removed from the repository, place it in this directory:
 
 - Linux or BSD: `~/.pyglossary/plugins/`
 - Mac: `~/Library/Preferences/PyGlossary/plugins/`
@@ -329,11 +334,11 @@ See [doc/lib/usage.md](./doc/lib/usage.md) for how to use PyGlossary as a Python
 
 ## Plugin development
 
-To learn how to develop plugins, see [test plugin](./pyglossary/plugins/testformat/) as a basic example, or [CSV plugin](./pyglossary/plugins/csv_plugin) for example.
+To learn how to develop plugins, see the [test plugin](./pyglossary/plugins/testformat/), a basic example, or the [CSV plugin](./pyglossary/plugins/csv_plugin).
 
-Third-party and user plugins should only import the modules listed in [Third-party plugin API](./doc/plugin-api.md).
+Third-party and user plugins should only import the modules listed in the [Third-party plugin API](./doc/plugin-api.md).
 
-Whenever you add a new plugin, or change options/metedata of an existing plugin, make sure to run [`./scripts/gen`](./scripts/gen) script to update generated files (index and documentation) that we keep.
+Whenever you add a plugin, or change the options or metadata of an existing plugin, run the [`./scripts/gen`](./scripts/gen) script to update the generated files (index and documentation) that the project keeps.
 
 ## Internals
 
