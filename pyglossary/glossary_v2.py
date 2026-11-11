@@ -1104,7 +1104,7 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		"""
 		if args.direct and args.sqlite:
 			raise ValueError(
-				f"Conflictng arguments: direct={args.direct}, sqlite={args.sqlite}",
+				f"Conflicting arguments: direct={args.direct}, sqlite={args.sqlite}",
 			)
 
 		sort = self._checkSortFlag(plugin, args.sort)

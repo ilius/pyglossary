@@ -760,7 +760,7 @@ class TestGlossary(TestGlossaryBase):
 				sqlite=True,
 			)
 		except ValueError as e:
-			self.assertEqual(str(e), "Conflictng arguments: direct=True, sqlite=True")
+			self.assertEqual(str(e), "Conflicting arguments: direct=True, sqlite=True")
 		else:
 			self.fail("must raise a ValueError")
 
