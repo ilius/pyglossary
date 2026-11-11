@@ -189,6 +189,11 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			config={"auto_sqlite": True},
 			direct=True,
 		)
+		self.assertLogWarning(
+			"Ignoring --direct,"
+			" direct mode is not possible when sorting is needed,"
+			" falling back to indirect mode",
+		)
 
 	def test_convert_txt_stardict_1(self):
 		for sqlite in (None, False, True):

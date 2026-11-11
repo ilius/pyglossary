@@ -1110,11 +1110,23 @@ class GlossaryCommon(GlossaryInfo, GlossaryProgress):  # noqa: PLR0904
 		sort = self._checkSortFlag(plugin, args.sort)
 
 		if not sort:
+			if args.sqlite is not None:
+				log.warning(
+					"Ignoring --sqlite/--no-sqlite,"
+					" SQLite mode is only used when sorting is needed",
+				)
 			if args.direct is None:
 				return True, False
 			return args.direct, False
 
 		# from this point we can assume sort == True and direct == False
+
+		if args.direct:
+			log.warning(
+				"Ignoring --direct,"
+				" direct mode is not possible when sorting is needed,"
+				" falling back to indirect mode",
+			)
 
 		sqlite = args.sqlite
 		if sqlite is None:
