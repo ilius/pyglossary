@@ -20,6 +20,7 @@ REPO = "ilius/pyglossary"
 GITHUB = f"https://github.com/{REPO}"
 ROOT = Path(__file__).resolve().parent.parent.parent
 PLUGINS_META = ROOT / "plugins-meta" / "index.json"
+PYPROJECT = ROOT / "pyproject.toml"
 RELEASES_DIR = ROOT / "doc" / "releases"
 GITHUB_REFS_CACHE = ROOT / "scripts" / "create-release" / "github-refs.csv"
 LEGACY_GITHUB_REFS_CACHE = GITHUB_REFS_CACHE.with_suffix(".json")
@@ -29,10 +30,25 @@ SKIP_SUBJECT_RE = re.compile(
 	r"fix ruff|fix mypy|remove unused type ignore)",
 	re.IGNORECASE,
 )
+SKIP_FILES_RE = re.compile(r"^(?:doc/dev/|doc/releases/|\.cursor/)")
 MAINTENANCE_SUBJECT_RE = re.compile(
-	r"\b(?:refactor(?:ing)?|reformat|minor cleanup|e2e test|fix ruff)\b|"
-	r"^change issue refs to urls$|^change config param\b|^remove unused\b|"
-	r"^update scripts/create-release/|\bvalid__all__\b",
+	r"\b(?:fix ruff|fix mypy|ignore ruff|remove unused type ignore)\b",
+	re.IGNORECASE,
+)
+# Conventional Commits: type(scope): subject
+CONVENTIONAL_RE = re.compile(
+	r"^(?P<type>feat|fix|docs?|test|refactor|perf|style|chore|build|ci|revert)"
+	r"(?:\((?P<scope>[^)]*)\))?!?:\s*(?P<desc>.+)$",
+	re.IGNORECASE,
+)
+DOCUMENTATION_SCOPES = frozenset({"doc", "docs", "documentation"})
+REFACTOR_RE = re.compile(
+	r"\brefactor(?:ing)?\b|\breformat\b|\bcleanup\b|\bclean up\b|\brename\b",
+	re.IGNORECASE,
+)
+LINT_RE = re.compile(
+	r"\bruff\b|\bmypy\b|\bimport-analyzer\b|\b__all__\b|"
+	r"\blint(?:ing)?\b|\btyping\b|\be2e test\b",
 	re.IGNORECASE,
 )
 ISSUE_PR_RE = re.compile(r"(?<![`\w])#(\d+)(?![`\w])")
@@ -147,6 +163,9 @@ class FileSignals:
 		sig = cls()
 		for raw in files:
 			f = raw.replace("\\", "/")
+			if "/tests/" in f or f.endswith("_test.py") or f.startswith("tests/"):
+				sig.test_files = True
+				continue
 			m = PLUGIN_PATH_RE.search(f)
 			if m:
 				sig.plugin_files = True
@@ -220,6 +239,8 @@ SECTIONS: list[tuple[str, str | None]] = [
 	("feature_cli", "New command-line features"),
 	("feature_ui", "New user interface features"),
 	("improvements", None),
+	("documentation", None),
+	("refactoring", None),
 	("other", None),
 	("contributors", None),
 ]
@@ -232,6 +253,8 @@ SECTION_HEADINGS = {
 	"bug_ui": "### Bug fixes (user interface)",
 	"features": "### Features",
 	"improvements": "### Improvements",
+	"documentation": "### Documentation",
+	"refactoring": "### Refactoring and cleanup",
 	"other": "### Other changes",
 	"contributors": "## New Contributors",
 }
@@ -259,13 +282,29 @@ def git_ref_exists(ref: str) -> bool:
 	return result.returncode == 0
 
 
-def resolve_prev_tag(version: str, prev_tag: str | None) -> str:
+def resolve_prev_tag(version: str, prev_tag: str | None, end_ref: str) -> str:
 	if prev_tag:
 		return prev_tag
 	if git_ref_exists(f"{version}^"):
 		return run_git("describe", "--abbrev=0", "--tags", f"{version}^").strip()
+	# For a non-tag target such as "dev", find the latest semver tag reachable
+	# from the end ref instead of trusting version sorting.
+	try:
+		tag = run_git(
+			"describe",
+			"--abbrev=0",
+			"--tags",
+			"--match=[0-9]*.[0-9]*.[0-9]*",
+			end_ref,
+		).strip()
+	except subprocess.CalledProcessError:
+		tag = ""
+	if tag:
+		return tag
 	tags = [
-		t.strip() for t in run_git("tag", "--sort=-v:refname").splitlines() if t.strip()
+		t.strip()
+		for t in run_git("tag", "--sort=-v:refname").splitlines()
+		if re.fullmatch(r"\d+\.\d+\.\d+", t.strip())
 	]
 	for tag in tags:
 		if tag != version:
@@ -530,21 +569,25 @@ def plugin_role(meta: PluginMeta) -> str:
 	return "plugin"
 
 
+def plugin_use_case(meta: PluginMeta) -> str:
+	name = meta.name
+	if meta.can_read and meta.can_write:
+		return (
+			f"read existing {name} dictionaries and convert them to other formats, "
+			f"or write PyGlossary entries as {name}"
+		)
+	if meta.can_read:
+		return f"import existing {name} dictionaries for conversion to other formats"
+	return f"export PyGlossary entries to {name} for use in its target applications"
+
+
 def format_new_plugin_bullet(meta: PluginMeta, _subject: str, issue_links: str) -> str:
 	role = plugin_role(meta)
-	wiki_part = ""
-	if meta.wiki_title and meta.wiki_url:
-		wiki_part = f"[{meta.wiki_title}]({meta.wiki_url}) "
-	desc = meta.description
-	if wiki_part and wiki_part not in desc:
-		desc = (
-			f"{wiki_part}({desc.split('(', 1)[-1]}"
-			if "(" in desc
-			else f"{wiki_part}{desc}"
-		)
+	desc = meta.description.rstrip(".")
 	link = f"**{plugin_doc_link(meta)}**"
 	suffix = f", {issue_links}" if issue_links else ""
-	return f"- {link} {role}{suffix} — {desc.rstrip('.')}"
+	use_case = plugin_use_case(meta)
+	return f"- {link} {role}{suffix} — {desc}. *Use case:* {use_case}."
 
 
 # Relative paths starting with a known top-level directory
@@ -574,6 +617,158 @@ CAMEL_CASE_RE = re.compile(
 	r"(?<![`\w/.])"
 	r"([a-zA-Z][a-z]+(?:[A-Z][a-z]*)+\w*)"
 	r"(?![`\w/.])",
+)
+# All-uppercase English words (constants such as INTERNAL) are code identifiers.
+# Initialisms and abbreviations stay plain text.
+ALLCAPS_WORD_RE = re.compile(
+	r"(?<![`\w/.-])"
+	r"([A-Z][A-Z0-9]+)"
+	r"(?![`\w/])(?!\.[A-Za-z0-9])",
+)
+ABBREVIATIONS = frozenset(
+	{
+		"AAC",
+		"ANSI",
+		"API",
+		"APP",
+		"ASCII",
+		"AVIF",
+		"AZW",
+		"BGL",
+		"BMP",
+		"BSD",
+		"CD",
+		"CI",
+		"CLI",
+		"CPU",
+		"CSS",
+		"CSV",
+		"DICT",
+		"DLL",
+		"DNS",
+		"DSL",
+		"DVD",
+		"EPUB",
+		"EXE",
+		"FIXME",
+		"FTP",
+		"GIF",
+		"GPL",
+		"GPU",
+		"GUI",
+		"GUID",
+		"HTML",
+		"HTTP",
+		"HTTPS",
+		"ID",
+		"IME",
+		"IP",
+		"ISO",
+		"JPEG",
+		"JPG",
+		"JSON",
+		"KFX",
+		"LGPL",
+		"LFS",
+		"MDD",
+		"MDX",
+		"MIT",
+		"M4A",
+		"M4B",
+		"MOBI",
+		"MP3",
+		"MP4",
+		"OCR",
+		"OGG",
+		"OS",
+		"PDF",
+		"PNG",
+		"PR",
+		"RAM",
+		"README",
+		"ROM",
+		"SDIC",
+		"SQL",
+		"SSH",
+		"SSL",
+		"SVG",
+		"SVGZ",
+		"TCP",
+		"TEI",
+		"TIFF",
+		"TLS",
+		"TMX",
+		"TODO",
+		"TOML",
+		"TSV",
+		"TTS",
+		"UDP",
+		"UI",
+		"URI",
+		"URL",
+		"USB",
+		"UTF",
+		"UUID",
+		"WAV",
+		"WIP",
+		"XLIFF",
+		"XML",
+		"XSL",
+		"XSLT",
+		"YAML",
+		"ZIM",
+	},
+)
+
+# Tokens such as "import-analyzer" that come from pyproject.toml section names.
+PYPROJECT_TOKEN_RE = re.compile(
+	r"(?<![`\w/.-])"
+	r"([A-Za-z][\w-]*)"
+	r"(?![`\w/-])",
+)
+
+
+def load_pyproject_tokens() -> frozenset[str]:
+	if not PYPROJECT.is_file():
+		return frozenset()
+	tokens: set[str] = set()
+	for section in re.findall(
+		r"^\[([^\[\]]+)\]\s*$",
+		PYPROJECT.read_text(encoding="utf-8"),
+		re.MULTILINE,
+	):
+		for raw_part in section.split("."):
+			part = raw_part.strip()
+			if part and ("-" in part or "_" in part):
+				tokens.add(part)
+	return frozenset(tokens)
+
+
+PYPROJECT_TOKENS = load_pyproject_tokens()
+
+# Identifier immediately followed by "method", "func", or "function"
+CALLABLE_WORD_RE = re.compile(
+	r"(?<![`\w/.-])"
+	r"([A-Za-z_][\w.]*)"
+	r"(?=\s+(?:method|func|function)\b)",
+	re.IGNORECASE,
+)
+_CALLABLE_STOPWORDS = frozenset(
+	{
+		"a",
+		"an",
+		"any",
+		"each",
+		"every",
+		"given",
+		"new",
+		"same",
+		"that",
+		"the",
+		"these",
+		"this",
+		"those",
+	}
 )
 
 
@@ -614,12 +809,75 @@ def _file_stems(files: list[str]) -> set[str]:
 	return stems
 
 
+def parse_conventional(subject: str) -> tuple[str | None, str | None, str]:
+	"""Return (type, scope, description) for a Conventional Commits subject."""
+	match = CONVENTIONAL_RE.match(subject.strip())
+	if not match:
+		return None, None, subject.strip()
+	type_ = (match.group("type") or "").lower()
+	type_ = "docs" if type_ == "doc" else type_
+	scope = (match.group("scope") or "").strip() or None
+	return type_, scope, match.group("desc").strip()
+
+
+def resolve_scope_module(
+	scope: str | None,
+	plugins_meta: dict[str, dict[str, PluginMeta]],
+) -> str | None:
+	if not scope:
+		return None
+	for module in (scope, scope.replace("-", "_")):
+		if module in plugins_meta["module"]:
+			return module
+	meta = plugins_meta["lname"].get(scope)
+	return meta.module if meta else None
+
+
+def _backtick_allcaps_words(text: str) -> str:
+	def repl(match: re.Match[str]) -> str:
+		word = match.group(1)
+		if match.string[: match.start()].count("`") % 2:
+			return word
+		if word in ABBREVIATIONS:
+			return word
+		return f"`{word}`"
+
+	return ALLCAPS_WORD_RE.sub(repl, text)
+
+
+def _backtick_pyproject_tokens(text: str) -> str:
+	def repl(match: re.Match[str]) -> str:
+		word = match.group(1)
+		if match.string[: match.start()].count("`") % 2:
+			return word
+		if word in PYPROJECT_TOKENS:
+			return f"`{word}`"
+		return word
+
+	return PYPROJECT_TOKEN_RE.sub(repl, text)
+
+
+def _backtick_callable_words(text: str) -> str:
+	def repl(match: re.Match[str]) -> str:
+		word = match.group(1)
+		if match.string[: match.start()].count("`") % 2:
+			return word
+		if word.lower() in _CALLABLE_STOPWORDS or word in _PASSTHROUGH_WORDS:
+			return word
+		return f"`{word}`"
+
+	return CALLABLE_WORD_RE.sub(repl, text)
+
+
 def normalize_subject(
 	subject: str,
 	files: list[str] | None = None,
 	refs: dict[str, GitHubReference] | None = None,
 ) -> str:
 	text = subject.strip()
+	type_, _scope, desc = parse_conventional(text)
+	if type_ is not None:
+		text = desc
 	text = re.sub(r"^[a-f0-9]{8}\s+", "", text)
 	# Format trailing commit references as part of the sentence rather than a
 	# parenthetical aside, e.g. "Fix parsing (#123)" → "Fix parsing, #123".
@@ -664,6 +922,9 @@ def normalize_subject(
 
 	text = UNDERSCORE_IDENT_RE.sub(_backtick_ident, text)
 	text = CAMEL_CASE_RE.sub(_backtick_ident, text)
+	text = _backtick_callable_words(text)
+	text = _backtick_allcaps_words(text)
+	text = _backtick_pyproject_tokens(text)
 
 	if (
 		text
@@ -681,15 +942,12 @@ def normalize_subject(
 def is_skip_commit(commit: Commit) -> bool:
 	if SKIP_SUBJECT_RE.match(commit.subject):
 		return True
-	# Exclude implementation-only maintenance, including module-prefixed lint
-	# commits such as "kobo: fix ruff errors".
 	if MAINTENANCE_SUBJECT_RE.search(commit.subject):
 		return True
 	return bool(
 		commit.files
 		and all(
-			f.startswith(("doc/releases/", ".cursor/", ".github/workflows/"))
-			or f == "doc/releases"
+			SKIP_FILES_RE.match(f.replace("\\", "/")) or f == "doc/releases"
 			for f in commit.files
 		)
 	)
@@ -720,13 +978,17 @@ def is_doc_or_meta_commit(files: list[str], subject: str) -> bool:
 def categorize_commit(  # noqa: C901, PLR0912, PLR0911
 	commit: Commit,
 	plugins_before: set[str],
-	_plugins_meta: dict[str, dict[str, PluginMeta]],
+	plugins_meta: dict[str, dict[str, PluginMeta]],
 ) -> tuple[str, str | None]:
 	subject = commit.subject
 	files = commit.files
 	sig = FileSignals.from_files(files)
+	ctype, cscope, _desc = parse_conventional(subject)
 
 	modules = sig.plugin_modules | plugin_modules_in_files(files)
+	scope_module = resolve_scope_module(cscope, plugins_meta)
+	if scope_module:
+		modules.add(scope_module)
 	new_modules = modules - plugins_before
 	existing_modules = modules & plugins_before
 
@@ -736,6 +998,23 @@ def categorize_commit(  # noqa: C901, PLR0912, PLR0911
 	cli_files = sig.cli_files
 
 	if is_doc_or_meta_commit(files, subject):
+		return "documentation", None
+
+	if ctype == "docs" or (cscope or "").lower() in DOCUMENTATION_SCOPES:
+		return "documentation", None
+
+	if ctype == "test" or (
+		sig.test_files and not (plugin_files or core_files or cli_files)
+	):
+		return "other", None
+
+	if ctype == "refactor" or REFACTOR_RE.search(subject):
+		return "refactoring", None
+
+	if LINT_RE.search(subject):
+		return "other", None
+
+	if ctype in {"style", "chore", "build", "ci", "perf", "revert"}:
 		return "other", None
 
 	# Pure meta/CI/tooling commits detected by file paths
@@ -753,7 +1032,7 @@ def categorize_commit(  # noqa: C901, PLR0912, PLR0911
 	# Broad documentation sweeps touch many plugin files but are release-note
 	# metadata, not improvements to every affected plugin.
 	if re.search(r"\bdocstrings?\b", subject, re.IGNORECASE):
-		return "other", None
+		return "documentation", None
 
 	if SECURITY_RE.search(subject):
 		return "bug_security", None
@@ -765,6 +1044,8 @@ def categorize_commit(  # noqa: C901, PLR0912, PLR0911
 			re.IGNORECASE,
 		):
 			return "bug_core", None
+		if plugin_files and new_modules and not existing_modules:
+			return "skip", None
 		if plugin_files and existing_modules and not new_modules:
 			return "bug_plugins", None
 		# File-path-based UI detection (even if subject doesn't mention UI)
@@ -773,7 +1054,7 @@ def categorize_commit(  # noqa: C901, PLR0912, PLR0911
 		if core_files or cli_files:
 			return "bug_core", None
 		if plugin_files and new_modules:
-			return "feature_formats", "New read/write format functionalities"
+			return "bug_plugins", None
 		if plugin_files:
 			return "bug_plugins", None
 		# Fallback: use file paths to pick the best bug-fix bucket
@@ -857,6 +1138,51 @@ def categorize_commit(  # noqa: C901, PLR0912, PLR0911
 	return "other", None
 
 
+def scope_prefix(
+	scope: str | None,
+	plugins_meta: dict[str, dict[str, PluginMeta]],
+) -> str:
+	if not scope:
+		return ""
+	module = resolve_scope_module(scope, plugins_meta)
+	meta = plugins_meta["module"].get(module) if module else None
+	if meta:
+		return f"{plugin_doc_link(meta)}: "
+	return f"`{scope}`: "
+
+
+def refactoring_to_entries(
+	commit: Commit,
+	section: str,
+	subsection: str | None,
+	plugins_meta: dict[str, dict[str, PluginMeta]],
+	refs: dict[str, GitHubReference],
+) -> list[NoteEntry]:
+	modules = plugin_modules_in_files(commit.files)
+	_ctype, cscope, _desc = parse_conventional(commit.subject)
+	module = resolve_scope_module(cscope, plugins_meta)
+	if module is None and len(modules) == 1:
+		module = next(iter(modules))
+	meta = plugins_meta["module"].get(module) if module else None
+	if meta:
+		prefix = f"{plugin_doc_link(meta)}: "
+	elif cscope:
+		prefix = f"`{cscope}`: "
+	elif module:
+		prefix = f"`{module}`: "
+	else:
+		prefix = ""
+	text = normalize_subject(commit.subject, commit.files, refs)
+	return [
+		NoteEntry(
+			section=section,
+			subsection=subsection,
+			text=f"- {prefix}{text}",
+			sort_key=module or text.lower(),
+		),
+	]
+
+
 def commit_to_entries(  # noqa: PLR0913
 	commit: Commit,
 	section: str,
@@ -891,6 +1217,15 @@ def commit_to_entries(  # noqa: PLR0913
 		if entries:
 			return entries
 
+	if section == "refactoring":
+		return refactoring_to_entries(
+			commit,
+			section,
+			subsection,
+			plugins_meta,
+			refs,
+		)
+
 	if section == "bug_plugins" and modules:
 		for module in sorted(modules & plugins_before):
 			meta = plugins_meta["module"].get(module)
@@ -920,11 +1255,13 @@ def commit_to_entries(  # noqa: PLR0913
 		if entries:
 			return entries
 
+	_ctype, cscope, _desc = parse_conventional(commit.subject)
+	prefix = "" if section == "documentation" else scope_prefix(cscope, plugins_meta)
 	entries.append(
 		NoteEntry(
 			section=section,
 			subsection=subsection,
-			text=f"- {normalize_subject(commit.subject, commit.files, refs)}",
+			text=f"- {prefix}{normalize_subject(commit.subject, commit.files, refs)}",
 			sort_key=commit.subject.lower(),
 		),
 	)
@@ -997,53 +1334,6 @@ def referenced_numbers(commits: list[Commit]) -> set[str]:
 	}
 
 
-def uncommitted_entries() -> list[NoteEntry]:
-	status = subprocess.run(
-		["git", "status", "--porcelain"],
-		cwd=ROOT,
-		capture_output=True,
-		text=True,
-		check=True,
-	)
-	if status.returncode != 0 or not status.stdout.strip():
-		return []
-	entries: list[NoteEntry] = []
-	for line in status.stdout.splitlines():
-		if len(line) < 4:
-			continue
-		path = line[3:].strip()
-		if path.startswith("doc/releases/"):
-			continue
-		entries.append(
-			NoteEntry(
-				section="other",
-				subsection=None,
-				text=f"- *(uncommitted)* `{path}`",
-				sort_key=path,
-			),
-		)
-	diff_stat = subprocess.run(
-		["git", "diff", "--stat"],
-		cwd=ROOT,
-		capture_output=True,
-		text=True,
-		check=True,
-	)
-	if diff_stat.stdout.strip():
-		entries.append(
-			NoteEntry(
-				section="other",
-				subsection=None,
-				text=(
-					"- *(uncommitted)* working tree has unstaged changes"
-					" — review `git diff` before tagging"
-				),
-				sort_key="zzz-uncommitted",
-			),
-		)
-	return entries
-
-
 def render(entries: list[NoteEntry], prev_tag: str, version: str) -> str:
 	by_section: dict[str, list[NoteEntry]] = {key: [] for key, _ in SECTIONS}
 	for entry in entries:
@@ -1087,6 +1377,8 @@ def render(entries: list[NoteEntry], prev_tag: str, version: str) -> str:
 			lines.append("")
 
 	append_section("improvements", SECTION_HEADINGS["improvements"])
+	append_section("documentation", SECTION_HEADINGS["documentation"])
+	append_section("refactoring", SECTION_HEADINGS["refactoring"])
 	append_section("other", SECTION_HEADINGS["other"])
 
 	contributors = by_section.get("contributors", [])
@@ -1132,11 +1424,6 @@ def main() -> None:
 		help="End git ref (default: VERSION tag if it exists, else HEAD)",
 	)
 	parser.add_argument(
-		"--include-uncommitted",
-		action="store_true",
-		help="Append bullets for uncommitted changes (per release-notes rules)",
-	)
-	parser.add_argument(
 		"--no-github-lookup",
 		action="store_true",
 		help="Use cached GitHub metadata only; do not make API requests",
@@ -1147,13 +1434,19 @@ def main() -> None:
 		type=Path,
 		help="Output path (default: doc/releases/VERSION.md)",
 	)
+	parser.add_argument(
+		"-f",
+		"--force",
+		action="store_true",
+		help="Overwrite the output file without prompting",
+	)
 	args = parser.parse_args()
 
-	prev_tag = resolve_prev_tag(args.version, args.prev_tag)
 	end_ref = args.end_ref or resolve_end_ref(args.version)
+	prev_tag = resolve_prev_tag(args.version, args.prev_tag, end_ref)
 	output_path = args.output or (RELEASES_DIR / f"{args.version}.md")
 
-	if output_path.exists() and not confirm_overwrite(output_path):
+	if output_path.exists() and not args.force and not confirm_overwrite(output_path):
 		sys.exit(1)
 
 	plugins_meta = load_plugins_meta()
@@ -1169,6 +1462,13 @@ def main() -> None:
 		if is_skip_commit(commit):
 			continue
 		section, subsection = categorize_commit(commit, plugins_before, plugins_meta)
+		if section == "skip":
+			continue
+		# Changes to a plugin that did not exist in the previous release belong
+		# to its feature bullet, not to bug fixes, improvements, or cleanup.
+		modules = plugin_modules_in_files(commit.files)
+		if section != "feature_formats" and modules - plugins_before:
+			continue
 		entries.extend(
 			commit_to_entries(
 				commit,
@@ -1179,9 +1479,6 @@ def main() -> None:
 				github_refs,
 			),
 		)
-
-	if args.include_uncommitted:
-		entries.extend(uncommitted_entries())
 
 	seen_text: set[str] = set()
 	deduped: list[NoteEntry] = []
