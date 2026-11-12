@@ -18,6 +18,52 @@ except ModuleNotFoundError:
 	Archive = None
 
 
+class TestGlossaryZimRead(TestGlossaryBase):
+	def __init__(self, *args, **kwargs):
+		TestGlossaryBase.__init__(self, *args, **kwargs)
+
+		self.dataFile |= {
+			"9-en-en-zim.zim",
+			"9-en-en-zim.zim.txt",
+		}
+
+	def setUp(self):
+		TestGlossaryBase.setUp(self)
+
+	@unittest.skipUnless(Archive, "libzim is not installed")
+	def test_convert_zim_txt(self):
+		fname = "9-en-en-zim"
+		self.convert(
+			f"{fname}.zim",
+			f"{fname}-2.txt",
+			compareText=f"{fname}.zim.txt",
+		)
+
+	@unittest.skipUnless(Archive, "libzim is not installed")
+	def test_convert_zim_txt_resources(self):
+		fname = "9-en-en-zim"
+		outputName = f"{fname}-res.txt"
+		self.convert(f"{fname}.zim", outputName)
+		resDir = join(self.tempDir, f"{outputName}_res")
+
+		expected = {
+			"Bad mimetype": b"bad mime",
+			"logo.png": b"\x89PNG\r\n\x1a\n",
+			"other.bin": b"BIN",
+			"style.css": b"body{}",
+		}
+		if os.sep != "\\":
+			expected["pipe|alt.png"] = b"PIPE"
+		names = set(os.listdir(resDir))
+		for name, content in expected.items():
+			self.assertIn(name, names)
+			with open(join(resDir, name), mode="rb") as file:
+				self.assertEqual(file.read(), content, msg=name)
+
+		self.assertNotIn("undef", names)
+		self.assertNotIn("L" * 300, names)
+
+
 class TestGlossaryZimWrite(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)

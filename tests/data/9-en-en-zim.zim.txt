@@ -1,0 +1,6 @@
+##name	9-en-en-zim.zim
+##sourceLang	English
+##targetLang	English
+Article	<html><body><img src="./logo.png">article</body></html>
+Plain redirect	Redirect: <a href="bword://Plain text">Plain text</a>
+Plain text	plain body
