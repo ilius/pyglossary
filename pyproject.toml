@@ -493,6 +493,7 @@ exclude = [
 	"pyglossary/ui/progressbar/",
 	"pyglossary/ui/wcwidth/",
 	"build/",
+	".venv",
 	"pyglossary/plugins/babylon_bgl/bgl_gzip.py",
 ]
 exclude_toplevel_module = [
@@ -537,6 +538,8 @@ exclude_toplevel_module = [
 	"xxhash",
 	"yaml",
 	"rich",
+	"mdurl",
+	"weasyprint",
 ]
 
 [build-system]

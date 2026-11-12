@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 	from pyglossary.stubs.glossary_types import EntryType, ReaderGlossaryType
 
 
-__all__ = ["Reader"]
+__all__ = ["Pointer", "Reader", "SynSet", "WordNet"]
 
 
 # original expression from

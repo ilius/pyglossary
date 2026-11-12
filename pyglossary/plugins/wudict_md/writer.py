@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
-__all__ = ["Writer"]
+__all__ = ["Writer", "log"]
 
 # Info keys the header has its own place for, or that describe the conversion
 # rather than the dictionary.

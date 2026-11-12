@@ -48,6 +48,21 @@ from pyglossary.plugins.tabfile import (
 	website,
 	wiki,
 )
+from pyglossary.plugins.wudict_md import (
+	Reader,
+	Writer,
+	description,
+	enable,
+	extensionCreate,
+	extensions,
+	kind,
+	lname,
+	name,
+	optionsProp,
+	singleFile,
+	website,
+	wiki,
+)
 from pyglossary.sort_keys import LocaleNamedSortKey
 
 

@@ -18,8 +18,8 @@ from collections.abc import (
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
-	from .langs import Lang
-	from .sort_keys import NamedSortKey
+	from pyglossary.langs import Lang
+	from pyglossary.sort_keys import NamedSortKey
 
 __all__ = [
 	"Callable",

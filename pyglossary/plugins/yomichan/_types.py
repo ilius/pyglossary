@@ -11,6 +11,8 @@ from typing import Literal, NotRequired, Required
 
 from typing_extensions import TypedDict
 
+__all__ = ["DefinitionObj", "StructuredContent", "YomichanDefinition"]
+
 
 class DefinitionString(TypedDict):
 	"""Definition String."""

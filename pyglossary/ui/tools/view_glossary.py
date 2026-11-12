@@ -26,6 +26,8 @@ from pyglossary.glossary_v2 import Glossary
 from .colors import reset, yellow
 from .format_entry import formatEntry
 
+__all__ = ["viewGlossary"]
+
 if TYPE_CHECKING:
 	from collections.abc import Callable
 

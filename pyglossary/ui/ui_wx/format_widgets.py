@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 __all__ = [
 	"FormatOptionsWxDialog",
-	"OptionWxType",
 	"format_pick_dialog",
 ]
 

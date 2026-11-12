@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 		YomichanDefinition,
 	)
 
-__all__ = ["Reader"]
+__all__ = ["Reader", "_readSubStructuredContent"]
 
 FIELDS_TO_WRITE = ["title", "author", "description", "sourceLanguage", "targetLanguage"]
 TERM_BASE_PATTERN = re.compile(r"term_bank_(\d+).json\Z")

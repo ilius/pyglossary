@@ -36,6 +36,7 @@ if TYPE_CHECKING:
 
 __all__ = [
 	"CHUNK_SIZE",
+	"MAX_MARKDOWN",
 	"CleanError",
 	"Document",
 	"FormatError",

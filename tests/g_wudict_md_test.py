@@ -143,6 +143,7 @@ class TestGlossaryWudictMd(TestGlossaryBase):
 		self.assertEqual(dataFiles, {"images/icon.bin": b"PNG"})
 
 	def test_convert_wudict_txt_chunked(self):
+		print(wumd.CHUNK_SIZE)
 		with mock.patch.object(wumd, "CHUNK_SIZE", 1):
 			self.convert_wudict_txt("13-en-en", "13-en-en")
 

@@ -28,7 +28,7 @@ from tests.name_langs_test_data import nameLangsTestData
 if TYPE_CHECKING:
 	from collections.abc import Callable
 
-__all__ = ["TestGlossaryBase", "appTmpDir", "testLocalDataDir"]
+__all__ = ["ConvertArgs", "Glossary", "TestGlossaryBase", "appTmpDir", "testLocalDataDir"]
 
 tracemalloc.start()
 
