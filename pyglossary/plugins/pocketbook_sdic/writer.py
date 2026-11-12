@@ -352,6 +352,117 @@ def _resolve_metadata_file(
 	return os.path.join(defaults_dir, filename)
 
 
+def _collect_entries() -> Generator[None, EntryType, list[tuple[str, str]]]:
+	"""Consume glossary entries, returning (term, definition) pairs."""
+	entries: list[tuple[str, str]] = []
+	data_count = 0
+	while True:
+		entry = yield
+		if entry is None:
+			break
+		if entry.isData():
+			data_count += 1
+			continue
+		term = entry.l_term[0] if entry.l_term else entry.s_term
+		entries.append((term, entry.defi))
+
+	if data_count > 0:
+		log.warning(
+			f"Skipped {data_count} binary resource"
+			f" entr{'ies' if data_count != 1 else 'y'}"
+			f" (not supported by SDIC format)",
+		)
+
+	return entries
+
+
+def _sort_entries(
+	entries: list[tuple[str, str]],
+	collate: CollateTable,
+) -> list[tuple[str, str]]:
+	"""Sort entries by collated key, then raw term for determinism."""
+	return sorted(
+		entries,
+		key=lambda e: (get_collated_key(e[0], collate), e[0]),
+	)
+
+
+def _merge_entries(
+	entries: list[tuple[str, str]],
+	separator: str,
+) -> list[tuple[str, str]]:
+	"""Merge duplicate headwords using *separator*."""
+	if not entries:
+		return entries
+
+	merged: list[tuple[str, str]] = [entries[0]]
+	for term, defi in entries[1:]:
+		if term == merged[-1][0]:
+			merged[-1] = (term, merged[-1][1] + separator + defi)
+		else:
+			merged.append((term, defi))
+
+	if len(entries) != len(merged):
+		log.info(f"SDIC: merged {len(entries) - len(merged)} duplicate headwords")
+	return merged
+
+
+def _encode_entries(
+	entries: list[tuple[str, str]],
+) -> tuple[list[str], list[bytes], int]:
+	"""Encode entries, returning terms, payloads and the largest payload size."""
+	terms: list[str] = []
+	payloads: list[bytes] = []
+	max_entry_size = 0
+	for term, defi in entries:
+		body_bytes = encode_body(defi)
+		try:
+			payload = _encode_entry(term, body_bytes)
+		except struct.error:
+			# 'H' format requires 0 <= number <= 65535
+			log.warning(
+				f"SDIC: cannot encode entry for term {term!r}"
+				f", body length: {len(body_bytes)}"
+			)
+			continue
+		max_entry_size = max(max_entry_size, len(payload))
+		terms.append(term)
+		payloads.append(payload)
+
+	return terms, payloads, max_entry_size
+
+
+def _build_sections(
+	collate: CollateTable,
+	morphems: str,
+	keyboard: str,
+	sparse_index_raw: bytes,
+) -> tuple[bytes, bytes, bytes, bytes]:
+	"""Build collate, morphems, keyboard and sparse-index sections."""
+	return (
+		_prepare_collate_section(collate),
+		_prepare_morphems_section(morphems, collate),
+		_prepare_keyboard_section(keyboard),
+		_prepare_sparse_index_section(sparse_index_raw),
+	)
+
+
+def _write_sdic_file(
+	filename: str,
+	header: bytes,
+	metadata_section: bytes,
+	sections: tuple[bytes, ...],
+	blocks: list[bytes],
+) -> None:
+	"""Write the assembled SDIC file."""
+	with open(filename, "wb") as f:
+		f.write(header)
+		if metadata_section:
+			f.write(metadata_section)
+		f.writelines(sections)
+		f.writelines(blocks)
+
+
 class Writer:
 	"""Write glossary files in Pocketbook Sdic format."""
 
@@ -372,12 +483,14 @@ class Writer:
 	def finish(self) -> None:
 		self._filename = ""
 
-	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912
+	def _load_config(self) -> tuple[CollateTable, str, str, bytes]:
+		"""Resolve and load collate, morphems, keyboard and metadata sources."""
 		defaults_dir = os.path.join(
 			os.path.dirname(__file__),
 			"defaults",
 		)
 		metadata_dir = self._metadata_dir or None
+
 		collates_path = _resolve_metadata_file(
 			self._collates_path or None,
 			metadata_dir,
@@ -414,118 +527,55 @@ class Writer:
 			with open(metadata_json_path, encoding="utf-8") as f:
 				metadata_section = _prepare_metadata_section(f.read())
 
-		# Collect entries
-		entries: list[tuple[str, str]] = []
-		data_count = 0
-		while True:
-			entry = yield
-			if entry is None:
-				break
-			if entry.isData():
-				data_count += 1
-				continue
-			term = entry.l_term[0] if entry.l_term else entry.s_term
-			defi = entry.defi
-			entries.append((term, defi))
+		return collate, morphems, keyboard, metadata_section
 
-		if data_count > 0:
-			log.warning(
-				f"Skipped {data_count} binary resource"
-				f" entr{'ies' if data_count != 1 else 'y'}"
-				f" (not supported by SDIC format)",
-			)
+	def write(self) -> Generator[None, EntryType, None]:
+		collate, morphems, keyboard, metadata_section = self._load_config()
 
+		entries = yield from _collect_entries()
 		if not entries:
 			log.warning("No entries to write")
 			return
 
-		# Sort by collated key, then raw term for determinism
-		entries.sort(
-			key=lambda e: (get_collated_key(e[0], collate), e[0]),
-		)
+		entries = _sort_entries(entries, collate)
+		entries = _merge_entries(entries, self._merge_separator)
+		terms, payloads, max_entry_size = _encode_entries(entries)
 
-		# Merge duplicate headwords
-		merged: list[tuple[str, str]] = [entries[0]]
-		sep = self._merge_separator
-		for term, defi in entries[1:]:
-			if term == merged[-1][0]:
-				merged[-1] = (term, merged[-1][1] + sep + defi)
-			else:
-				merged.append((term, defi))
-		if len(entries) != len(merged):
-			log.info(f"SDIC: merged {len(entries) - len(merged)} duplicate headwords")
-			entries = merged
-
-		# Encode entries
-		terms: list[str] = []
-		payloads: list[bytes] = []
-		max_entry_size = 0
-		for term, defi in entries:
-			body_bytes = encode_body(defi)
-			try:
-				payload = _encode_entry(term, body_bytes)
-			except struct.error:
-				# 'H' format requires 0 <= number <= 65535
-				log.warning(
-					f"SDIC: cannot encode entry for term {term!r}"
-					f", body length: {len(body_bytes)}"
-				)
-				continue
-			max_entry_size = max(max_entry_size, len(payload))
-			terms.append(term)
-			payloads.append(payload)
-
-		# Pack into compressed blocks
-		blocks, counts, _max_block_size, widened_count = _pack_blocks(
-			payloads,
-		)
+		blocks, counts, _max_block_size, widened_count = _pack_blocks(payloads)
 		if widened_count > 0:
 			log.info(
 				f"SDIC: {widened_count} block(s) exceeded default compressed size limit",
 			)
 
-		# Build sections
 		sparse_index_raw = _build_sparse_index(terms, blocks, counts)
-		collate_section = _prepare_collate_section(collate)
-		morphems_section = _prepare_morphems_section(morphems, collate)
-		keyboard_section = _prepare_keyboard_section(keyboard)
-		sparse_index_section = _prepare_sparse_index_section(
+		sections = _build_sections(
+			collate,
+			morphems,
+			keyboard,
 			sparse_index_raw,
 		)
 
-		section_sizes = [
-			len(collate_section),
-			len(morphems_section),
-			len(keyboard_section),
-			len(sparse_index_section),
-		]
-
-		# Dictionary display name
 		name = (
 			self._glos.getInfo("bookname")
 			or self._glos.getInfo("name")
 			or self._glos.getInfo("description")
 			or "Dictionary"
 		)
-
 		header = _build_header(
 			entry_count=len(entries),
 			max_entry_size=max_entry_size,
 			name=name,
-			section_sizes=section_sizes,
+			section_sizes=[len(section) for section in sections],
 			metadata_len=len(metadata_section),
 		)
 
-		# Write the final file
-		with open(self._filename, "wb") as f:
-			f.write(header)
-			if metadata_section:
-				f.write(metadata_section)
-			f.write(collate_section)
-			f.write(morphems_section)
-			f.write(keyboard_section)
-			f.write(sparse_index_section)
-			f.writelines(blocks)
+		_write_sdic_file(
+			self._filename,
+			header,
+			metadata_section,
+			sections,
+			blocks,
+		)
 
 		log.info(
 			f"SDIC: wrote {len(entries)} entries"
