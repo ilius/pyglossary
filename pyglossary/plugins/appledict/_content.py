@@ -179,8 +179,7 @@ def _prepare_onclick(soup: BeautifulSoup.BeautifulSoup) -> None:
 		)
 
 
-# TODO: PLR0912 Too many branches (18 > 12)
-def prepare_content_with_soup(  # noqa: PLR0912
+def prepare_content_with_soup(
 	title: str | None,
 	body: str,
 	BeautifulSoup: BeautifulSoup,  # type: ignore[valid-type]
@@ -190,49 +189,18 @@ def prepare_content_with_soup(  # noqa: PLR0912
 	if soup.body:
 		soup = soup.body
 
-	for tag in soup(class_="sec"):
-		tag["class"].remove("sec")
-		if not tag["class"]:
-			del tag["class"]
-		tag["d:priority"] = "2"
-
-	for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
-		_remove_style(tag, "color:steelblue")
-		if "ex" not in tag.get("class", []):
-			tag["class"] = tag.get("class", []) + ["ex"]
-
-	for tag in soup(_is_green):
-		_remove_style(tag, "color:green")
-		if "p" not in tag.get("class", ""):
-			tag["class"] = tag.get("class", []) + ["c"]
-
-	for tag in soup(True):
-		if "style" in tag.attrs:
-			m = _re_margin.search(tag["style"])
-			if m:
-				_remove_style(tag, m.group(0))
-				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
-
-	for tag in soup(lambda x: "xhtml:" in x.name):
-		old_tag_name = tag.name
-		tag.name = old_tag_name[len("xhtml:") :]
-		if tag.string:
-			tag.string = f"{tag.string} "
+	_normalize_sec_tags(soup)
+	_normalize_steelblue_tags(soup)
+	_normalize_green_tags(soup)
+	_normalize_margin_styles(soup)
+	_normalize_xhtml_tags(soup)
 
 	for tag in soup.select("[href]"):
 		_prepare_href(tag)
 
 	_prepare_onclick(soup)
-
-	for tag in soup.select("[src]"):
-		src = tag["src"]
-		if src.startswith("/"):
-			tag["src"] = src[1:]
-	for tag in soup("u"):
-		tag.name = "span"
-		tag["class"] = tag.get("class", []) + ["u"]
-	for tag in soup("s"):
-		tag.name = "del"
+	_normalize_src_attrs(soup)
+	_normalize_u_and_s_tags(soup)
 
 	if title and "<h" not in body:
 		h1 = BeautifulSoup.Tag(name="h1")  # type: ignore
@@ -242,6 +210,60 @@ def prepare_content_with_soup(  # noqa: PLR0912
 	# hence the name BeautifulSoup
 	# soup.insert(0, head)
 	return toStr(soup.encode_contents())
+
+
+def _normalize_sec_tags(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup(class_="sec"):
+		tag["class"].remove("sec")
+		if not tag["class"]:
+			del tag["class"]
+		tag["d:priority"] = "2"
+
+
+def _normalize_steelblue_tags(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup(lambda x: "color:steelblue" in x.get("style", "")):
+		_remove_style(tag, "color:steelblue")
+		if "ex" not in tag.get("class", []):
+			tag["class"] = tag.get("class", []) + ["ex"]
+
+
+def _normalize_green_tags(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup(_is_green):
+		_remove_style(tag, "color:green")
+		if "p" not in tag.get("class", ""):
+			tag["class"] = tag.get("class", []) + ["c"]
+
+
+def _normalize_margin_styles(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup(True):
+		if "style" in tag.attrs:
+			m = _re_margin.search(tag["style"])
+			if m:
+				_remove_style(tag, m.group(0))
+				tag["class"] = tag.get("class", []) + ["m" + m.group(1)]
+
+
+def _normalize_xhtml_tags(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup(lambda x: "xhtml:" in x.name):
+		old_tag_name = tag.name
+		tag.name = old_tag_name[len("xhtml:") :]
+		if tag.string:
+			tag.string = f"{tag.string} "
+
+
+def _normalize_src_attrs(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup.select("[src]"):
+		src = tag["src"]
+		if src.startswith("/"):
+			tag["src"] = src[1:]
+
+
+def _normalize_u_and_s_tags(soup: BeautifulSoup.BeautifulSoup) -> None:
+	for tag in soup("u"):
+		tag.name = "span"
+		tag["class"] = tag.get("class", []) + ["u"]
+	for tag in soup("s"):
+		tag.name = "del"
 
 
 def _cleanup_link_target(href: str) -> str:
