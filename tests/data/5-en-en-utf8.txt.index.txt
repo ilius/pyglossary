@@ -1,0 +1,8 @@
+##name	5-en-en-utf8.txt.index
+##sourceLang	English
+##targetLang	English
+Apple	a round fruit<br />
+Café	a place that serves coffee<br />
+ice-cream	a frozen dessert<br />
+zebra	an African horse with black and white stripes<br />
+éclair	a French pastry filled with cream<br />

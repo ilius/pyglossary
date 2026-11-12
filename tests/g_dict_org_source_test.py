@@ -8,8 +8,9 @@ class TestGlossaryDictOrg(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
-		self.dataFileCRC32 |= {
-			"100-en-fa.dtxt": "05d6e939",
+		self.dataFile |= {
+			"5-fa-en.txt",
+			"5-fa-en.dtxt",
 		}
 
 		os.environ["CALC_FILE_SIZE"] = "1"
@@ -22,10 +23,10 @@ class TestGlossaryDictOrg(TestGlossaryBase):
 			**convertArgs,
 		)
 
-	def test_convert_txt_dict_org_source_1(self):
+	def test_convert_txt_dict_org_source_fa_en(self):
 		self.convert_txt_dict_org_source(
-			"100-en-fa",
-			"100-en-fa",
+			"5-fa-en",
+			"5-fa-en",
 		)
 
 

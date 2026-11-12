@@ -1,0 +1,9 @@
+##name	Synthetic Persian-English Sample
+##sourceLang	fa
+##targetLang	en
+##description	synthetic sample for PyGlossary tests
+آب	water
+آتش	fire
+کتاب	book
+مادر	mother
+نان	bread

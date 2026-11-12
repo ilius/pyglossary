@@ -31,6 +31,7 @@ class Reader:
 		self._glos = glos
 		self._filename = ""
 		self._dictdb: DictDB | None = None
+		self._entryCount = 0
 
 		# regular expression patterns used to prettify definition text
 		self._re_newline_in_braces = re.compile(
@@ -44,12 +45,41 @@ class Reader:
 		filename = filename.removesuffix(".index")
 		self._filename = filename
 		self._dictdb = DictDB(filename, "read", 1)
+		self._readMetadata()
+
+	def _readMetadata(self) -> None:
+		dictdb = self._dictdb
+		if dictdb is None:
+			raise RuntimeError("reading metadata while the reader is not open")
+		self._entryCount = 0
+		infoKeys = {
+			"00databaseurl": "website",
+			"00databaseshort": "name",
+			"00databaseinfo": "description",
+		}
+		for term in dictdb.getDefList():
+			name = term.replace("-", "")
+			if not name.startswith("00database"):
+				self._entryCount += 1
+				continue
+			key = infoKeys.get(name)
+			if key is None:
+				continue
+			value = b"\n\n".join(dictdb.getDef(term)).decode("utf-8", "ignore").strip()
+			# dictfmt and dictdlib may repeat the special headword in the
+			# definition before the actual metadata value.
+			firstLine, _, rest = value.partition("\n")
+			if firstLine.strip().replace("-", "") == name:
+				value = rest.strip()
+			if value and value != "unknown":
+				self._glos.setInfo(key, value)
 
 	def close(self) -> None:
 		if self._dictdb is not None:
 			self._dictdb.close()
 			# self._dictdb.finish()
 			self._dictdb = None
+		self._entryCount = 0
 
 	def prettifyDefinitionText(self, defi: str) -> str:
 		# Handle words in {}
@@ -70,15 +100,15 @@ class Reader:
 		return 0
 
 	def __len__(self) -> int:
-		if self._dictdb is None:
-			return 0
-		return len(self._dictdb)
+		return self._entryCount
 
 	def __iter__(self) -> Iterator[EntryType]:
 		if self._dictdb is None:
 			raise RuntimeError("iterating over a reader while it's not open")
 		dictdb = self._dictdb
 		for term in dictdb.getDefList():
+			if term.replace("-", "").startswith("00database"):
+				continue
 			b_defi = b"\n\n<hr>\n\n".join(dictdb.getDef(term))
 			try:
 				defi = b_defi.decode("utf_8", "ignore")

@@ -38,9 +38,19 @@ if typing.TYPE_CHECKING:
 __all__ = ["DictDB"]
 
 b64_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+# Special "00-database-*" headwords written by dictfmt. dictd treats them as
+# database metadata, not dictionary entries. Source (dictfmt/dictfmt.c):
+# https://github.com/cheusov/dictd/blob/master/dictfmt/dictfmt.c
+# Meaning of each header: https://manpages.debian.org/trixie/dictd/dictd.8.en.html
+#   00-database-url:   fmt_headword_for_url
+#   00-database-short: fmt_headword_for_shortname
+#   00-database-info:  fmt_headword_for_info
+#   00-database-utf8:  fmt_headword_for_utf8 (only written in utf8 mode)
 url_headword = "00-database-url"
 short_headword = "00-database-short"
 info_headword = "00-database-info"
+utf8_headword = "00-database-utf8"
+utf8_index_headword = "00databaseutf8"
 
 validdict = set(
 	string.ascii_letters + string.digits + " \t",
@@ -194,10 +204,12 @@ class DictDB:
 		"""Load the entire index off disk into memory."""
 		self.indexFile.seek(0)
 		for line in self.indexFile:
-			parts = line.decode("utf-8").rstrip().split("\t")
-			if parts[0] not in self.indexEntries:
-				self.indexEntries[parts[0]] = []
-			self.indexEntries[parts[0]].append(
+			parts = line.decode("utf-8").rstrip("\r\n").split("\t", 3)
+			# dictfmt --index-keep-orig stores the display headword in column 4.
+			word = parts[3] if len(parts) == 4 else parts[0]
+			if word not in self.indexEntries:
+				self.indexEntries[word] = []
+			self.indexEntries[word].append(
 				(
 					b64_decode(parts[1]),
 					b64_decode(parts[2]),
@@ -316,26 +328,55 @@ class DictDB:
 		if self.count % 1000 == 0:
 			self.update(f"Processed {self.count} records\r")
 
+	def _getIndexLines(self, utf8: bool) -> list[str]:
+		"""Build search keys, preserving display headwords in column 4."""
+		indexList: list[str] = []
+		for word, defs in self.indexEntries.items():
+			key = word
+			if utf8:
+				# Match dictfmt's tolower_alnumspace: lowercase letters and
+				# retain alphanumerics/spaces, without decomposing accents.
+				# towlower maps each character to a single character (even İ).
+				key = "".join(
+					" " if char.isspace() else char.lower()[0]
+					for char in word
+					if char.isspace() or char.isalnum()
+				)
+				key = " ".join(key.split())
+			for start, size in defs:
+				line = f"{key}\t{b64_encode(start)}\t{b64_encode(size)}"
+				if utf8 and key != word and not key.startswith("00database"):
+					line += f"\t{word}"
+				indexList.append(line)
+		return indexList
+
 	def finish(self, dosort: bool = True) -> None:
 		"""
 		Called to finish the writing process.
 		**REQUIRED IF OPENED WITH 'update' OR 'write' MODES**.
 		This will write the index and close the files.
 
-		dosort is optional and defaults to true.  If set to false,
-		dictlib will not sort the index file.  In this case, you
-		MUST manually sort it through "sort -df" before it can be used.
+		dosort is optional and defaults to true. If false, the caller must
+		sort column 1 bytewise for UTF-8 indexes, or use "sort -df" otherwise.
 		"""
 		self.update(f"Processed {self.count} records.\n")
 
-		if dosort:
-			self.update("Sorting index: converting")
+		# dictd only handles non-ASCII headwords correctly when the database
+		# is flagged as UTF-8 (same as `dictfmt --utf8`, see utf8_headword above).
+		# Like dictfmt, the headword has an empty definition.
+		hasUtf8Marker = self.hasDef(utf8_headword) or self.hasDef(utf8_index_headword)
+		utf8 = hasUtf8Marker or any(not word.isascii() for word in self.indexEntries)
+		if utf8 and not hasUtf8Marker:
+			self.addEntry("", [utf8_headword])
 
-			indexList: list[str] = [
-				f"{word}\t{b64_encode(thisdef[0])}\t{b64_encode(thisdef[1])}"
-				for word, defs in self.indexEntries.items()
-				for thisdef in defs
-			]
+		indexList = self._getIndexLines(utf8)
+
+		if dosort and utf8:
+			# The UTF-8 marker makes dictd compare normalized index keys
+			# byte-for-byte. Sort only column 1, just like dictfmt --utf8.
+			indexList.sort(key=lambda line: line.split("\t", 1)[0].encode("utf-8"))
+		elif dosort:
+			self.update("Sorting index: converting")
 
 			self.update(" mapping")
 

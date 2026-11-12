@@ -1,0 +1,10 @@
+:##name:Synthetic Persian-English Sample
+:##input_file_size:190
+:##sourceLang:fa
+:##targetLang:en
+:##description:synthetic sample for PyGlossary tests
+:آب:water
+:آتش:fire
+:کتاب:book
+:مادر:mother
+:نان:bread

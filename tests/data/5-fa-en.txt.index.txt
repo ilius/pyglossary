@@ -1,0 +1,8 @@
+##name	5-fa-en.txt.index
+##sourceLang	Persian
+##targetLang	English
+آب	water<br />
+آتش	fire<br />
+مادر	mother<br />
+نان	bread<br />
+کتاب	book<br />

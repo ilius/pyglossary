@@ -1,0 +1,9 @@
+##name	Sample Dictionary (accented headwords)
+##sourceLang	en
+##targetLang	en
+##description	synthetic sample for PyGlossary tests
+Apple	a round fruit
+Café	a place that serves coffee
+éclair	a French pastry filled with cream
+ice-cream	a frozen dessert
+zebra	an African horse with black and white stripes
