@@ -133,16 +133,8 @@ class Reader(
 		self.targetEncoding = None
 		####
 		self.bgl_numEntries = None
-		self.wordLenMax = 0
-		self.defiMaxBytes = 0
-		##
-		self.metadata2 = None
-		self.rawDumpFile = None
-		self.msgLogFile = None
-		self.samplesDumpFile = None
 		##
 		self.stripSlashAltKeyPattern = re.compile(r"(^|\s)/(\w)", re.UNICODE)
-		self.specialCharPattern = re.compile(r"[^\s\w.]", re.UNICODE)
 		###
 		self.file = None
 		# offset of gzip header, set in self.open()

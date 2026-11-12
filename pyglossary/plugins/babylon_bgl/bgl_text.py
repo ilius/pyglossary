@@ -50,7 +50,6 @@ __all__ = [
 u_pat_html_entry = re.compile("(?:&#x|&#|&)(\\w+);?", re.IGNORECASE)
 u_pat_html_entry_key = re.compile("(?:&#x|&#|&)(\\w+);", re.IGNORECASE)
 b_pat_ascii_char_ref = re.compile(b"(&#\\w+;)", re.IGNORECASE)
-u_pat_newline_escape = re.compile("[\\r\\n\\\\]")
 u_pat_strip_tags = re.compile("(?:<[/a-zA-Z].*?(?:>|$))+")
 u_pat_control_chars = re.compile("[\x00-\x08\x0c\x0e-\x1f]")
 u_pat_newline = re.compile("[\r\n]+")
@@ -118,13 +117,6 @@ def replaceHtmlEntryCB(u_match: re.Match[str]) -> str:
 	return xml_escape(u_res, quotation=False)
 
 
-# def replaceDingbat(u_match: "re.Match") -> str:
-# 	r"""Replace chars \\u008c-\\u0095 with \\u2776-\\u277f."""
-# 	ch = u_match.group(0)
-# 	code = ch + 0x2776 - 0x8C
-# 	return chr(code)
-
-
 def replaceHtmlEntries(u_text: str) -> str:
 	# &ldash;
 	# &#0147;
@@ -147,31 +139,6 @@ def replaceHtmlEntriesInKeys(u_text: str) -> str:
 		replaceHtmlEntryNoEscapeCB,
 		u_text,
 	)
-
-
-# def escapeNewlines(u_text: str) -> str:
-# 	r"""
-# 	Convert text to c-escaped string:
-# 	\ -> \\
-# 	new line -> \n or \r.
-# 	"""
-# 	if isDebug():
-# 		assert isinstance(u_text, str), f"{u_text=}"
-# 	return u_pat_newline_escape.sub(
-# 		escapeNewlinesCallback,
-# 		u_text,
-# 	)
-
-# def escapeNewlinesCallback(u_match: re.Match) -> str:
-# 	"""u_match: instance of _sre.SRE_Match."""
-# 	ch = u_match.group(0)
-# 	if ch == "\n":
-# 		return "\\n"
-# 	if ch == "\r":
-# 		return "\\r"
-# 	if ch == "\\":
-# 		return "\\\\"
-# 	return ch
 
 
 def stripHtmlTags(u_text: str) -> str:
@@ -276,9 +243,6 @@ def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 			break
 		d1 = b_word.find(b"$", d0 + 1)
 		if d1 == -1:
-			# log.debug(
-			# 	f"stripDollarIndexes({b_word}):\npaired $ is not found",
-			# )
 			b_word_main += b_word[i:]
 			break
 
@@ -294,7 +258,6 @@ def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 		# summary: we must remove any sequence of dollar signs longer
 		# than 1 chars
 		if d1 == d0 + 1:
-			# log.debug(f"stripDollarIndexes({b_word}):\nfound $$")
 			b_word_main += b_word[i:d0]
 			i = d1 + 1
 			while i < len(b_word) and b_word[i] == ord(b"$"):
@@ -305,7 +268,6 @@ def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 
 		if b_word[d0 + 1 : d1].strip(b"0123456789"):
 			# if has at least one non-digit char
-			# log.debug(f"stripDollarIndexes({b_word}):\nnon-digit between $$")
 			b_word_main += b_word[i:d1]
 			i = d1
 			continue

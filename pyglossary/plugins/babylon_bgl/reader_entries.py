@@ -143,9 +143,6 @@ class _BglReaderEntries:
 		b_name = block.data[pos : pos + Len]
 		pos += Len
 		b_data = block.data[pos:]
-		# if b_name in (b"C2EEF3F6.html", b"8EAF66FD.bmp"):
-		# 	log.debug(f"Skipping useless file {b_name!r}")
-		# 	return
 		u_name = b_name.decode(self.sourceEncoding)
 		return self._glos.newDataEntry(
 			u_name,
@@ -178,7 +175,7 @@ class _BglReaderEntries:
 			)
 			return None
 		b_word = block.data[pos : pos + Len]
-		u_word, u_word_html = self.processKey(b_word)
+		u_word = self.processKey(b_word)
 
 		# Entry keys may contain html text, for example:
 		# ante<font face'Lucida Sans Unicode'>&lt; meridiem
@@ -191,12 +188,10 @@ class _BglReaderEntries:
 		# them as such.
 
 		pos += Len
-		self.wordLenMax = max(self.wordLenMax, len(u_word))
 		return EntryWordData(
 			pos=pos,
 			u_word=u_word.strip(),
 			b_word=b_word.strip(),
-			u_word_html=u_word_html,
 		)
 
 	def readEntryDefi(
@@ -232,13 +227,6 @@ class _BglReaderEntries:
 			return Err
 		b_defi = block.data[pos : pos + Len]
 		u_defi = self.processDefi(b_defi, word.b_word)
-		# I was going to add this u_word_html or "formatted headword" to defi,
-		# so to lose this information, but after looking at the diff
-		# for 8 such glossaries, I decided it's not useful enough!
-		# if word.u_word_html:
-		# 	u_defi = f"<div><b>{word.u_word_html}</b></div>" + u_defi
-
-		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 
 		pos += Len
 		return True, pos, u_defi, b_defi
@@ -310,9 +298,8 @@ class _BglReaderEntries:
 			)
 			return Err
 		b_word = block.data[pos : pos + wordLen]
-		u_word, _u_word_html = self.processKey(b_word)
+		u_word = self.processKey(b_word)
 		pos += wordLen
-		self.wordLenMax = max(self.wordLenMax, len(u_word))
 
 		# reading alts and defi
 		if pos + 4 > len(block.data):
@@ -372,7 +359,6 @@ class _BglReaderEntries:
 			return Err
 		b_defi = block.data[pos : pos + defiLen]
 		u_defi = self.processDefi(b_defi, b_word)
-		self.defiMaxBytes = max(self.defiMaxBytes, len(b_defi))
 		pos += defiLen
 
 		return True, u_word, sorted(u_alts), u_defi

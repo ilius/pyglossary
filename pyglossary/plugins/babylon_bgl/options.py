@@ -38,20 +38,7 @@ from pyglossary.option import (
 if TYPE_CHECKING:
 	from pyglossary.option import Option
 
-__all__ = [
-	"debugReadOptions",
-	"optionsProp",
-]
-
-debugReadOptions = {
-	"search_char_samples",  # bool
-	"collect_metadata2",  # bool
-	"write_gz",  # bool
-	"char_samples_path",  # str, file path
-	"msg_log_path",  # str, file path
-	"raw_dump_path",  # str, file path
-	"unpacked_gzip_path",  # str, file path
-}
+__all__ = ["optionsProp"]
 
 optionsProp: dict[str, Option] = {
 	"default_encoding_overwrite": EncodingOption(
@@ -78,26 +65,5 @@ optionsProp: dict[str, Option] = {
 	"key_rstrip_chars": StrOption(
 		multiline=True,
 		comment="Characters to strip from right-side of keys",
-	),
-	"search_char_samples": BoolOption(
-		comment="(debug) Search character samples",
-	),
-	"collect_metadata2": BoolOption(
-		comment="(debug) Collect second pass metadata from definitions",
-	),
-	"write_gz": BoolOption(
-		comment="(debug) Create a file named *-data.gz",
-	),
-	"char_samples_path": StrOption(
-		comment="(debug) File path for character samples",
-	),
-	"msg_log_path": StrOption(
-		comment="(debug) File path for message log",
-	),
-	"raw_dump_path": StrOption(
-		comment="(debug) File path for writing raw blocks",
-	),
-	"unpacked_gzip_path": StrOption(
-		comment="(debug) Path to create unzipped file",
 	),
 }

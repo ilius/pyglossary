@@ -145,7 +145,6 @@ class _BglReaderMeta:
 			# this number is vary close to self.bgl_numEntries,
 			# but does not always equal to the number of entries
 			# see self.readType3, code == 12 as well
-			# num = uintFromBytes(block.data[1:])
 			pass
 		elif code == 8:
 			self.defaultCharset = charsetInfoDecode(block.data[1:])
@@ -164,7 +163,6 @@ class _BglReaderMeta:
 		code, b_value = uintFromBytes(block.data[:2]), block.data[2:]
 		if not b_value:
 			return
-		# if not b_value.strip(b"\x00"): return  # FIXME
 
 		try:
 			item = infoType3ByCode[code]

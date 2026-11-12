@@ -281,45 +281,6 @@
 				"type": "str",
 				"customValue": true,
 				"comment": "Characters to strip from right-side of keys"
-			},
-			"search_char_samples": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "(debug) Search character samples"
-			},
-			"collect_metadata2": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "(debug) Collect second pass metadata from definitions"
-			},
-			"write_gz": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "(debug) Create a file named *-data.gz"
-			},
-			"char_samples_path": {
-				"class": "StrOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "(debug) File path for character samples"
-			},
-			"msg_log_path": {
-				"class": "StrOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "(debug) File path for message log"
-			},
-			"raw_dump_path": {
-				"class": "StrOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "(debug) File path for writing raw blocks"
-			},
-			"unpacked_gzip_path": {
-				"class": "StrOption",
-				"type": "str",
-				"customValue": true,
-				"comment": "(debug) Path to create unzipped file"
 			}
 		},
 		"canRead": true,

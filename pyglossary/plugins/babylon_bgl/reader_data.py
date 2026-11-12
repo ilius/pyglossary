@@ -28,7 +28,6 @@ raw BGL bytes to HTML text for the main Babylon BGL reader.
 
 from __future__ import annotations
 
-import io
 import re
 from typing import NamedTuple
 
@@ -39,7 +38,6 @@ __all__ = [
 	"re_b_reference",
 	"re_charset_decode",
 ]
-file = io.BufferedReader
 
 re_charset_decode = re.compile(
 	b'(<charset\\s+c\\=[\'"]?(\\w)[""]?>|</charset>)',
@@ -54,7 +52,6 @@ class EntryWordData(NamedTuple):
 	pos: int
 	b_word: bytes
 	u_word: str
-	u_word_html: str
 
 
 class Block:
@@ -81,12 +78,7 @@ class DefinitionFields:
 	title
 	"""
 
-	# nameByCode = {
-	# }
 	def __init__(self) -> None:
-		# self.bytesByCode = {}
-		# self.strByCode = {}
-
 		self.encoding = None  # encoding of the definition
 		self.singleEncoding = True
 		# singleEncoding=True if the definition was encoded with
@@ -111,10 +103,3 @@ class DefinitionFields:
 		self.b_transcription_60 = None  # bytes
 		self.u_transcription_60 = None  # str
 		self.code_transcription_60 = None
-
-		self.b_field_1a = None  # bytes
-		self.u_field_1a = None  # str
-
-		self.b_field_07 = None  # bytes
-		self.b_field_06 = None  # bytes
-		self.b_field_13 = None  # bytes

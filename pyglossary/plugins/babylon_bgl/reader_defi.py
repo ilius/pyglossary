@@ -139,15 +139,6 @@ class _BglReaderDefi:
 					f", unknown code: {fields.code_transcription_60:#02x}",
 				)
 
-		if fields.b_field_1a:
-			fields.u_field_1a, _singleEncoding = self.decodeCharsetTags(
-				fields.b_field_1a,
-				self.sourceEncoding,
-			)
-			log.info(f"------- u_field_1a = {fields.u_field_1a}")
-
-		self.processDefiStat(fields, b_defi, b_key)
-
 		u_defi_format = ""
 		if fields.partOfSpeech or fields.u_title:
 			if fields.partOfSpeech:
@@ -169,14 +160,6 @@ class _BglReaderDefi:
 			u_defi_format += fields.u_defi
 
 		return u_defi_format.removesuffix("<br>").removesuffix("<BR>")
-
-	def processDefiStat(
-		self,
-		fields: DefinitionFields,
-		b_defi: bytes,
-		b_key: bytes,
-	) -> None:
-		pass
 
 	def findDefiFieldsStart(self, b_defi: bytes) -> int:
 		r"""
@@ -236,9 +219,6 @@ class _BglReaderDefi:
 
 		i = d0 + 1
 		while i < len(b_defi):
-			if self.metadata2:
-				self.metadata2.defiTrailingFields[b_defi[i]] += 1
-
 			code = b_defi[i]
 			if 0x40 <= code <= 0x4F:
 				next_i = self._collectField40(b_defi, b_key, fields, i)
@@ -288,23 +268,20 @@ class _BglReaderDefi:
 		self,
 		b_defi: bytes,
 		b_key: bytes,
-		fields: DefinitionFields,
+		_fields: DefinitionFields,
 		i: int,
 	) -> int | None:
 		# \x06<one byte>
-		if fields.b_field_06:
-			self._logDefiField(b_defi, b_key, "duplicate type 6")
 		if i + 1 >= len(b_defi):
 			self._logDefiField(b_defi, b_key, "b_defi ends after \\x06")
 			return None
-		fields.b_field_06 = b_defi[i + 1]
 		return i + 2
 
 	def _collectField07(
 		self,
 		b_defi: bytes,
 		b_key: bytes,
-		fields: DefinitionFields,
+		_fields: DefinitionFields,
 		i: int,
 	) -> int | None:
 		# \x07<two bytes>
@@ -312,14 +289,13 @@ class _BglReaderDefi:
 		if i + 3 > len(b_defi):
 			self._logDefiField(b_defi, b_key, "too few data after \\x07")
 			return None
-		fields.b_field_07 = b_defi[i + 1 : i + 3]
 		return i + 3
 
 	def _collectField13(
 		self,
 		b_defi: bytes,
 		b_key: bytes,
-		fields: DefinitionFields,
+		_fields: DefinitionFields,
 		i: int,
 	) -> int | None:
 		# "\x13"<one byte - length><data>
@@ -339,7 +315,6 @@ class _BglReaderDefi:
 		if i + length > len(b_defi):
 			self._logDefiField(b_defi, b_key, "too few data after \\x13")
 			return None
-		fields.b_field_13 = b_defi[i : i + length]
 		return i + length
 
 	def _collectTitle(
@@ -370,7 +345,7 @@ class _BglReaderDefi:
 		self,
 		b_defi: bytes,
 		b_key: bytes,
-		fields: DefinitionFields,
+		_fields: DefinitionFields,
 		i: int,
 	) -> int | None:
 		# "\x1a"<one byte - length><text>
@@ -386,7 +361,6 @@ class _BglReaderDefi:
 		if i + length > len(b_defi):
 			self._logDefiField(b_defi, b_key, "too few data after \\x1a")
 			return None
-		fields.b_field_1a = b_defi[i : i + length]
 		return i + length
 
 	def _collectTitleTrans(

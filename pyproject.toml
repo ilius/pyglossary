@@ -324,7 +324,6 @@ mccabe.max-complexity = 13
 "pyglossary/plugins/aard2_slob/test.py" = ["TC001", "TC003"]
 "pyglossary/ui/config.py" = ["TC001"]
 "pyglossary/ui/runner.py" = ["TC001", "TC003"]
-"pyglossary/plugins/babylon_bgl/reader_debug.py" = ["ANN", "FURB"]
 "pyglossary/ui/**/*.py" = [
 	"T201",
 	"PERF203",

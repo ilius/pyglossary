@@ -53,7 +53,6 @@ singleFile = True
 kind = "binary"
 wiki = ""
 website = None
-# progressbar = DEFAULT_YES
 
 # FIXME: document type of read/write options
 # (that would be specified in command line)

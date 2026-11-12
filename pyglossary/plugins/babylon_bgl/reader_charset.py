@@ -47,9 +47,6 @@ __all__ = ["_BglReaderCharset"]
 class _BglReaderCharset:
 	"""Headword / charset-tag decoding."""
 
-	def charReferencesStat(self, b_text: bytes, encoding: str) -> None:
-		pass
-
 	@staticmethod
 	def decodeCharsetTagsBabylonReference(b_text: bytes, b_text2: bytes) -> str:
 		b_refs = b_text2.split(b";")
@@ -83,7 +80,6 @@ class _BglReaderCharset:
 		if encoding == "babylon-reference":
 			return self.decodeCharsetTagsBabylonReference(b_text, b_text2)
 
-		self.charReferencesStat(b_text2, encoding)
 		if encoding == "cp1252":
 			b_text2 = replaceAsciiCharRefs(b_text2)
 		if self._strict_string_conversion:
@@ -173,11 +169,10 @@ class _BglReaderCharset:
 			)
 		return u_text, defaultEncodingOnly
 
-	def processKey(self, b_word: bytes) -> tuple[str, str]:
+	def processKey(self, b_word: bytes) -> str:
 		"""
 		b_word is a bytes instance
-		returns (u_word: str, u_word_html: str)
-		u_word_html is empty unless it's different from u_word.
+		returns u_word as str
 		"""
 		b_word, strip_count = stripDollarIndexes(b_word)
 		if strip_count > 1:
@@ -199,24 +194,15 @@ class _BglReaderCharset:
 		else:
 			u_word = b_word.decode(self.sourceEncoding, "ignore")
 
-		u_word_html = ""
 		if self._process_html_in_key:
 			u_word = replaceHtmlEntriesInKeys(u_word)
-			# u_word = u_word.replace("<BR>", "").replace("<BR/>", "")\
-			# 	.replace("<br>", "").replace("<br/>", "")
-			u_word_copy = u_word
 			u_word = stripHtmlTags(u_word)
-			if u_word != u_word_copy:
-				u_word_html = u_word_copy
-			# if(re.match(".*[&<>].*", _u_word_copy)):
-			# 	log.debug("original text: " + _u_word_copy + "\n" \
-			# 			  + "new      text: " + u_word + "\n")
 		u_word = removeControlChars(u_word)
 		u_word = removeNewlines(u_word)
 		u_word = u_word.lstrip()
 		if self._key_rstrip_chars:
 			u_word = u_word.rstrip(self._key_rstrip_chars)
-		return u_word, u_word_html
+		return u_word
 
 	def processAlternativeKey(self, b_word: bytes, b_key: bytes) -> str:
 		"""
@@ -244,12 +230,8 @@ class _BglReaderCharset:
 		)
 
 		if self._process_html_in_key:
-			# u_word_main_orig = u_word_main
 			u_word_main = stripHtmlTags(u_word_main)
 			u_word_main = replaceHtmlEntriesInKeys(u_word_main)
-			# if(re.match(".*[&<>].*", u_word_main_orig)):
-			# 	log.debug("original text: " + u_word_main_orig + "\n" \
-			# 			+ "new      text: " + u_word_main + "\n")
 		u_word_main = removeControlChars(u_word_main)
 		u_word_main = removeNewlines(u_word_main)
 		u_word_main = u_word_main.lstrip()
