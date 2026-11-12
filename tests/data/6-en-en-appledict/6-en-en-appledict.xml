@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+	<d:entry id="front_back_matter" d:title="Front Matter">
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<p>This entry is skipped.</p>
+		</div>
+	</d:entry>
+	<d:supplementary-info/>
+	<d:entry id="_1" d:title="alpha">
+		<d:index/>
+		<d:index d:value="alpha"/>
+		<d:index d:value="alpha-alt"/>
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<p>First <a href="x-dictionary:d:beta">beta</a><br/>line</p>
+		</div>
+	</d:entry>
+	<d:entry id="_2" title="beta">
+		<d:index value="beta"/>
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<p>Second definition</p>
+		</div>
+	</d:entry>
+	<d:entry id="_3" d:title="gamma">
+		<d:index d:value="gamma"/>
+		<d:index d:value="gamma-alt-one"/>
+		<d:index d:value="gamma-alt-two"/>
+		<d:index d:value="gamma-alt-one"/>
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<span>Third</span><br/>
+		</div>
+		<p>Trailing note</p>
+	</d:entry>
+	<d:entry id="_4" d:title="solo">
+		<d:index d:value="solo"/>
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<p>Solo definition with &amp; entity</p>
+		</div>
+	</d:entry>
+	<d:entry id="_5">
+		<d:index d:value="no-title"/>
+		<div xmlns="http://www.w3.org/1999/xhtml">
+			<p>This entry is skipped.</p>
+		</div>
+	</d:entry>
+</d:dictionary>

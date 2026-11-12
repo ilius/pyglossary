@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xdxf>
+	<meta_info>
+		<full_name>Tiny XDXF</full_name>
+	</meta_info>
+	<ar>
+		<k>xdxf</k>
+		<def><![CDATA[<b>xdxf definition</b>]]></def>
+	</ar>
+</xdxf>

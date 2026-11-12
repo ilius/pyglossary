@@ -7,6 +7,11 @@ from glossary_v2_test import TestGlossaryBase, testLocalDataDir
 
 from pyglossary.glossary_v2 import ConvertArgs, Glossary
 
+# This fixture exists to exercise the AppleDict writer: its headwords contain
+# HTML markup and one is empty. The BGL reader intentionally strips HTML from
+# keys, so the fixture cannot round-trip through BGL unchanged.
+SKIP_FILES = {"21-en-en-appledict-src.txt"}
+
 
 class TestBabylonBglWriter(TestGlossaryBase):
 	def _terms_signature(self, glos: Glossary) -> Counter[tuple[str, frozenset[str]]]:
@@ -30,6 +35,8 @@ class TestBabylonBglWriter(TestGlossaryBase):
 
 	def test_tabfile_to_bgl_readable_and_terms_preserved(self):
 		for txt_path in sorted(glob(join(testLocalDataDir, "*.txt"))):
+			if basename(txt_path) in SKIP_FILES:
+				continue
 			with self.subTest(file=basename(txt_path)):
 				gl0 = Glossary()
 				gl0.directRead(txt_path, formatName="Tabfile")

@@ -1,0 +1,21 @@
+plain	<p>Hello &amp; goodbye&nbsp;!</p>
+green	<i style="color:green">green</i><i class="p" style="color:green">p</i><span class="ex" style="color:steelblue">ex</span><span class="sec ex" style="color:steelblue">sec</span><span style="color:steelblue">blue only</span><span style="color:green;font-weight:bold">bold</span>
+margins	<div style="margin-left:2em">two</div><div class="ex" style="margin-left:3em;color:steelblue">three</div>
+xhtml	<xhtml:p>xhtml <u>under</u> <s>strike</s></xhtml:p><xhtml:span>plain xhtml</xhtml:span>
+links	<a href="http://example.com">http</a><a href="entry">entry</a><a href="bword://other">other</a><a href="sound://audio.mp3">sound</a><a href="phonetics">phon</a><a href="#anchor">anchor</a><a href="phonetics"><audio name="sound#1"/></a>
+media	<img src="/img/pic.png"/><div class="pic_thumb">thumb</div><div class="big_pic">big</div><pos onclick="toggle_infl(this)">pos</pos><br><hr><span class="sec">sec</span>
+русский	<p>кот</p>
+词	<p>cí</p>
+"alpha"	<p>quoted title</p>
+{beta}	<p>bracket title</p>
+a<b>c	<p>tag title</p>
+<i></i>	<p>empty title</p>
+КОТ	<p>upper</p>
+кот большой	<p>multiword</p>
+кот-кот	<p>hyphen</p>
+空	<p></p>
+多	<p>cí;sī</p>
+无	<h1>无</h1>
+下	<p>_</p>
+word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word	<p>long spaced</p>
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	<p>long unspaced</p>

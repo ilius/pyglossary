@@ -2,6 +2,7 @@ PyICU
 beautifulsoup4
 coverage
 biplist
+colorize-pinyin
 freezegun
 html5lib
 jaconv
@@ -13,3 +14,4 @@ polib
 prompt_toolkit
 pyparsing
 python-idzip
+pymorphy3

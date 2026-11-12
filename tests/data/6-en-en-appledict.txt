@@ -1,0 +1,7 @@
+##name	AppleDict Fixture
+##copyright	Copyright fixture
+##author	Fixture Author
+alpha|alpha-alt	<div>\n\t\t\t<p>First <a href="bword://beta">beta</a><br>line</p>\n\t\t</div>
+beta	<div>\n\t\t\t<p>Second definition</p>\n\t\t</div>
+gamma|gamma-alt-one|gamma-alt-two	<div>\n\t\t\t<span>Third</span><br>\n\t\t</div>\n\t\t<p xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">Trailing note</p>
+solo	<div>\n\t\t\t<p>Solo definition with &amp; entity</p>\n\t\t</div>
