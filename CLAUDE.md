@@ -4,6 +4,7 @@
 
 - Do not add files to `.gitignore` without explicit user approval. If a file is commonly ignored but is not already tracked, ask before committing it.
 - Never publish a security advisory unless the user explicitly asks to publish it.
+- Use commit subjects in the form `type(scope): summary`, for example `test(babylon_bgl): add coverage fixtures, plugin coverage: %60 -> %97`. For test commits that change plugin coverage, include the before/after percentages.
 
 ## Quality checks
 
@@ -20,6 +21,7 @@
 - Most importantly, avoid calling private methods or functions directly; call the public user-facing function that uses them instead.
 - Prioritize high-level tests over tests of internal helpers.
 - For plugins, cover as much code as possible through glossary conversion tests (like `test_convert_*` in `tests/g_*`).
+- For plugins, when asked to add tests or increase coverage, add fixtures that target uncovered branches, then run `python scripts/test-cover-html-plugin.py <plugin>`. Continue until plugin coverage is over 95%; if that is not possible because code is unreachable or vendored, report the remaining gaps.
 - Keep each test fixture under 16 KB and the overall fixture size under 100 KB.
 - Use `en-en` (English to English) fixtures unless asked otherwise.
 
@@ -32,6 +34,7 @@ Fixtures live under `tests/data/` and use this naming scheme:
 Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
 
 - Count: the numeric prefix must equal the actual entry count, including entries pulled in through XInclude. Do not copy another fixture's number.
+- Do not zero-pad new fixture names: use `14-en-en.tei`, not `014-en-en.tei`.
 - Never count entries by hand. After creating or changing a fixture, run `python scripts/fixture-count.py <path> --rename` (or without `--rename` to only check); it reads the file with the real reader and fixes the prefix. Files that are only the target of an `xi:include` are auxiliary and keep the parent's prefix.
 - Language codes: lowercase ISO 639 codes joined by a hyphen, in source-target order: `en-en`, `en-de`, `en-fa`, `ja-en`.
 - Variants: use a descriptive suffix for a test option or output behavior, for example `-remove_font_b`, `-sd`, or `-sd-merge-syns`.
