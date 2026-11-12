@@ -107,27 +107,26 @@ class Reader:
 			return
 		self._glos.setInfo(key, unescape_unicode(value))
 
+	def _setMetadataElement(
+		self,
+		header: Element,
+		tag: str,
+		key: str,
+	) -> None:
+		elem = header.find(f"./{tag}")
+		if elem is not None and elem.text:
+			self.setGlosInfo(key, elem.text)
+
 	def setMetadata(self, header: Element) -> None:
-		if (elem := header.find("./bookname")) is not None and elem.text:
-			self.setGlosInfo("name", elem.text)
-
-		if (elem := header.find("./author")) is not None and elem.text:
-			self.setGlosInfo("author", elem.text)
-
-		if (elem := header.find("./email")) is not None and elem.text:
-			self.setGlosInfo("email", elem.text)
-
-		if (elem := header.find("./website")) is not None and elem.text:
-			self.setGlosInfo("website", elem.text)
-
-		if (elem := header.find("./description")) is not None and elem.text:
-			self.setGlosInfo("description", elem.text)
-
-		if (elem := header.find("./bookname")) is not None and elem.text:
-			self.setGlosInfo("name", elem.text)
-
-		if (elem := header.find("./date")) is not None and elem.text:
-			self.setGlosInfo("creationTime", elem.text)
+		for tag, key in (
+			("bookname", "name"),
+			("author", "author"),
+			("email", "email"),
+			("website", "website"),
+			("description", "description"),
+			("date", "creationTime"),
+		):
+			self._setMetadataElement(header, tag, key)
 
 		# if (elem := header.find("./dicttype")) is not None and elem.text:
 		# 	self.setGlosInfo("dicttype", elem.text)
