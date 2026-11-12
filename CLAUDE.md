@@ -13,12 +13,12 @@
 ## Supported formats table
 
 - When adding a new reader or writer, update the "Supported formats" table in `README.md` in the same change: add a row for a new format, and set its Read or Write cell to ✅.
-- Leave a Read/Write cell blank for "not yet supported". Use ❌ only for "will not be supported".
+- Use exactly these cell glyphs, copied from the existing table: `✅` (supported), `❌` (will not be supported), or a blank cell (not yet supported). Do not use variants like `✓`, `☑`, or `✗`.
 
 ## Tests
 
-- Prioritize high-level tests over tests of internal helpers.
 - Most importantly, avoid calling private methods or functions directly; call the public user-facing function that uses them instead.
+- Prioritize high-level tests over tests of internal helpers.
 - For plugins, cover as much code as possible through glossary conversion tests (like `test_convert_*` in `tests/g_*`).
 - Keep each test fixture under 16 KB and the overall fixture size under 100 KB.
 - Use `en-en` (English to English) fixtures unless asked otherwise.
@@ -32,6 +32,7 @@ Fixtures live under `tests/data/` and use this naming scheme:
 Examples: `14-en-en.tei`, `14-en-en.txt`, `14-en-en.csv`.
 
 - Count: the numeric prefix must equal the actual entry count, including entries pulled in through XInclude. Do not copy another fixture's number.
+- Never count entries by hand. After creating or changing a fixture, run `python scripts/fixture-count.py <path> --rename` (or without `--rename` to only check); it reads the file with the real reader and fixes the prefix. Files that are only the target of an `xi:include` are auxiliary and keep the parent's prefix.
 - Language codes: lowercase ISO 639 codes joined by a hyphen, in source-target order: `en-en`, `en-de`, `en-fa`, `ja-en`.
 - Variants: use a descriptive suffix for a test option or output behavior, for example `-remove_font_b`, `-sd`, or `-sd-merge-syns`.
 - Versions: never add `-v2`, `-v4`, or `-v6` merely because an output was regenerated. Replace the canonical expected output instead. Add a version suffix only when the reader itself is changed and its output changes accordingly, so the version identifies the expected output for that reader behavior; then update the test to reference the new version.
