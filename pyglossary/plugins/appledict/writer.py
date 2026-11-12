@@ -48,7 +48,7 @@ from ._normalize import title_long as normalize_title_long
 
 if TYPE_CHECKING:
 	import io
-	from collections.abc import Generator
+	from collections.abc import Generator, Iterator
 
 	from pyglossary.stubs.glossary_types import EntryType, WriterGlossaryType
 
@@ -103,6 +103,45 @@ def _write_header(
 			toFile.write(file.read())
 
 
+def _write_entry(  # noqa: PLR0913
+	toFile: io.TextIOBase,
+	entry: EntryType,
+	myResDir: str,
+	xdxf_to_html: Any,
+	generate_id: Iterator[str],
+	generate_indexes: Any,
+) -> None:
+	if entry.isData():
+		entry.save(myResDir)
+		return
+
+	terms = entry.l_term
+	term, alts = terms[0], terms[1:]
+	defi = entry.defi
+
+	long_title = normalize_title_long(
+		normalize_title(term, BeautifulSoup),
+	)
+	if not long_title:
+		return
+
+	id_ = next(generate_id)
+	quoted_title = quote_string(long_title, BeautifulSoup)
+
+	content_title: str | None = long_title
+	if entry.defiFormat == "x":
+		defi = xdxf_to_html.transformByInnerString(defi)
+		content_title = None
+	content = prepare_content(content_title, defi, BeautifulSoup)
+
+	toFile.write(
+		f'<d:entry id="{id_}" d:title={quoted_title}>\n'
+		+ generate_indexes(long_title, alts, content, BeautifulSoup)
+		+ content
+		+ "\n</d:entry>\n",
+	)
+
+
 def _format_default_prefs(default_prefs: dict[str, Any] | None) -> str:
 	"""
 	:type default_prefs: dict or None
@@ -141,6 +180,61 @@ def _write_css(fname: str, css_file: str) -> None:
 			toFile.write(data)
 
 
+def _write_makefile(fname: str, fileNameBase: str) -> None:
+	with open(fname, mode="w", encoding="utf-8") as toFile:
+		toFile.write(
+			toStr(
+				pkgutil.get_data(
+					__name__,
+					"templates/Makefile",
+				),
+			).format(dict_name=fileNameBase),
+		)
+
+
+def _write_plist(  # noqa: PLR0913
+	fname: str,
+	fileNameBase: str,
+	glos: WriterGlossaryType,
+	copyright_: str,
+	front_back_matter: str | None,
+	xsl: str | None,
+	prefs_html: str | None,
+	default_prefs: dict[str, Any] | None,
+) -> None:
+	# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
+	# present in Info.plist, Dictionary.app will crash.
+	with open(fname, mode="w", encoding="utf-8") as toFile:
+		frontMatterReferenceID = (
+			"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
+			"\t<string>front_back_matter</string>"
+			if front_back_matter
+			else ""
+		)
+		bundle_id = glos.getInfo("CFBundleIdentifier")
+		if not bundle_id:
+			bundle_id = fileNameBase.replace(" ", "")
+		toFile.write(
+			toStr(
+				pkgutil.get_data(
+					__name__,
+					"templates/Info.plist",
+				),
+			).format(
+				# identifier must be unique
+				CFBundleIdentifier=bundle_id,
+				CFBundleDisplayName=glos.getInfo("name"),
+				CFBundleName=fileNameBase,
+				DCSDictionaryCopyright=copyright_,
+				DCSDictionaryManufacturerName=glos.author,
+				DCSDictionaryXSL=basename(xsl) if xsl else "",
+				DCSDictionaryDefaultPrefs=_format_default_prefs(default_prefs),
+				DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",
+				DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
+			),
+		)
+
+
 class Writer:
 	"""Write glossary files in AppleDict format."""
 
@@ -174,12 +268,11 @@ class Writer:
 			os.mkdir(dirname)
 
 	# TODO: PLR0915 Too many statements (74 > 50)
-	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0912, PLR0915
+	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0915
 		global BeautifulSoup
 		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		glos = self._glos
-		clean_html = self._clean_html
 		css: str | None = self._css
 		xsl: str | None = self._xsl
 		default_prefs = self._default_prefs
@@ -190,7 +283,7 @@ class Writer:
 
 		xdxf_to_html = XdxfTransformer(encoding="utf-8")
 
-		if clean_html:
+		if self._clean_html:
 			if BeautifulSoup is None:
 				_loadBeautifulSoup()
 			if BeautifulSoup is None:
@@ -224,34 +317,13 @@ class Writer:
 				entry = yield
 				if entry is None:
 					break
-				if entry.isData():
-					entry.save(myResDir)
-					continue
-
-				terms = entry.l_term
-				term, alts = terms[0], terms[1:]
-				defi = entry.defi
-
-				long_title = normalize_title_long(
-					normalize_title(term, BeautifulSoup),
-				)
-				if not long_title:
-					continue
-
-				id_ = next(generate_id)
-				quoted_title = quote_string(long_title, BeautifulSoup)
-
-				content_title: str | None = long_title
-				if entry.defiFormat == "x":
-					defi = xdxf_to_html.transformByInnerString(defi)
-					content_title = None
-				content = prepare_content(content_title, defi, BeautifulSoup)
-
-				toFile.write(
-					f'<d:entry id="{id_}" d:title={quoted_title}>\n'
-					+ generate_indexes(long_title, alts, content, BeautifulSoup)
-					+ content
-					+ "\n</d:entry>\n",
+				_write_entry(
+					toFile,
+					entry,
+					myResDir,
+					xdxf_to_html,
+					generate_id,
+					generate_indexes,
 				)
 
 			toFile.write("</d:dictionary>\n")
@@ -264,15 +336,7 @@ class Writer:
 
 		_write_css(filePathBase + ".css", css)
 
-		with open(join(dirname, "Makefile"), mode="w", encoding="utf-8") as toFile:
-			toFile.write(
-				toStr(
-					pkgutil.get_data(
-						__name__,
-						"templates/Makefile",
-					),
-				).format(dict_name=fileNameBase),
-			)
+		_write_makefile(join(dirname, "Makefile"), fileNameBase)
 
 		copyright_ = glos.getInfo("copyright")
 		if BeautifulSoup:
@@ -284,37 +348,16 @@ class Writer:
 				).text,
 			)
 
-		# if DCSDictionaryXSL provided but DCSDictionaryDefaultPrefs <dict/> not
-		# present in Info.plist, Dictionary.app will crash.
-		with open(filePathBase + ".plist", mode="w", encoding="utf-8") as toFile:
-			frontMatterReferenceID = (
-				"<key>DCSDictionaryFrontMatterReferenceID</key>\n"
-				"\t<string>front_back_matter</string>"
-				if front_back_matter
-				else ""
-			)
-			bundle_id = glos.getInfo("CFBundleIdentifier")
-			if not bundle_id:
-				bundle_id = fileNameBase.replace(" ", "")
-			toFile.write(
-				toStr(
-					pkgutil.get_data(
-						__name__,
-						"templates/Info.plist",
-					),
-				).format(
-					# identifier must be unique
-					CFBundleIdentifier=bundle_id,
-					CFBundleDisplayName=glos.getInfo("name"),
-					CFBundleName=fileNameBase,
-					DCSDictionaryCopyright=copyright_,
-					DCSDictionaryManufacturerName=glos.author,
-					DCSDictionaryXSL=basename(xsl) if xsl else "",
-					DCSDictionaryDefaultPrefs=_format_default_prefs(default_prefs),
-					DCSDictionaryPrefsHTML=basename(prefs_html) if prefs_html else "",
-					DCSDictionaryFrontMatterReferenceID=frontMatterReferenceID,
-				),
-			)
+		_write_plist(
+			filePathBase + ".plist",
+			fileNameBase,
+			glos,
+			copyright_,
+			front_back_matter,
+			xsl,
+			prefs_html,
+			default_prefs,
+		)
 
 		if jing:
 			from .jing import run as jing_run
