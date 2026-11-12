@@ -126,16 +126,12 @@ class Writer:
 			"description": self._getInfo("description"),
 		}
 
-	def _getExpressionsAndReadingFromEntry(
-		self,
-		entry: EntryType,
-	) -> tuple[list[str], str]:
+	def _getTermExpressions(self, entry: EntryType) -> list[str]:
 		term_expressions = entry.l_term
 
-		alternates_from_word_pattern = self.alternates_from_word_pattern
-		if alternates_from_word_pattern:
+		if self.alternates_from_word_pattern:
 			for term in entry.l_term:
-				term_expressions += alternates_from_word_pattern.findall(term)
+				term_expressions += self.alternates_from_word_pattern.findall(term)
 
 		if self.alternates_from_defi_pattern:
 			term_expressions += self.alternates_from_defi_pattern.findall(
@@ -143,31 +139,35 @@ class Writer:
 				re.MULTILINE,
 			)
 
-		delete_word_pattern = self.delete_word_pattern
-		if delete_word_pattern:
+		return term_expressions
+
+	def _filterTermExpressions(self, term_expressions: list[str]) -> list[str]:
+		if self.delete_word_pattern:
 			term_expressions = [
-				delete_word_pattern.sub("", expression) for expression in term_expressions
+				self.delete_word_pattern.sub("", expression)
+				for expression in term_expressions
 			]
 
-		ignore_word_with_pattern = self.ignore_word_with_pattern
-		if ignore_word_with_pattern:
+		if self.ignore_word_with_pattern:
 			term_expressions = [
 				expression
 				for expression in term_expressions
-				if not ignore_word_with_pattern.search(expression)
+				if not self.ignore_word_with_pattern.search(expression)
 			]
 
-		term_expressions = _uniqueList(term_expressions)
+		return _uniqueList(term_expressions)
 
-		try:
-			reading = next(
-				expression
-				for expression in entry.l_term + term_expressions
-				if all(map(_isKana, expression))
-			)
-		except StopIteration:
-			reading = ""
+	def _getReading(self, entry: EntryType, term_expressions: list[str]) -> str:
+		for expression in entry.l_term + term_expressions:
+			if all(map(_isKana, expression)):
+				return expression
+		return ""
 
+	def _applyTermOptions(
+		self,
+		term_expressions: list[str],
+		reading: str,
+	) -> list[str]:
 		if self._no_term_from_reading and len(term_expressions) > 1:
 			term_expressions = [
 				expression for expression in term_expressions if expression != reading
@@ -175,6 +175,16 @@ class Writer:
 
 		if self._term_from_headword_only:
 			term_expressions = term_expressions[:1]
+
+		return term_expressions
+
+	def _getExpressionsAndReadingFromEntry(
+		self,
+		entry: EntryType,
+	) -> tuple[list[str], str]:
+		term_expressions = self._filterTermExpressions(self._getTermExpressions(entry))
+		reading = self._getReading(entry, term_expressions)
+		term_expressions = self._applyTermOptions(term_expressions, reading)
 
 		return term_expressions, reading
 
