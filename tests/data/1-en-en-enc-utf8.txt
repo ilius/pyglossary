@@ -1,0 +1,10 @@
+##name	Encoding utf8 fixture
+##bgl_defaultEncoding	cp1252
+##bgl_sourceEncoding	utf-8
+##bgl_targetEncoding	utf-8
+##sourceCharset	UTF-8
+##targetCharset	UTF-8
+##bgl_utf8Encoding	True
+##bgl_spellingAlternatives	True
+##bgl_caseSensitive	False
+utf8key	café

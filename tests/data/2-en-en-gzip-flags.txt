@@ -1,0 +1,9 @@
+##name	Gzip flags fixture
+##bgl_defaultCharset	cp1252
+##bgl_defaultEncoding	cp1252
+##bgl_sourceEncoding	cp1252
+##bgl_targetEncoding	cp1252
+##sourceCharset	UTF-8
+##targetCharset	UTF-8
+one	first member
+two	second member

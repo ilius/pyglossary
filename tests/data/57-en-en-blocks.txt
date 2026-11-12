@@ -1,0 +1,81 @@
+##name	BGL coverage fixture
+##sourceLang	Chinese
+##sourceLang2	Traditional Chinese
+##targetLang	Chinese
+##targetLang2	Traditional Chinese
+##bgl_defaultCharset	cp1252
+##bgl_sourceCharset	cp1252
+##bgl_targetCharset	cp1252
+##bgl_defaultEncoding	cp1252
+##bgl_sourceEncoding	cp1252
+##bgl_targetEncoding	cp1252
+##sourceCharset	UTF-8
+##targetCharset	UTF-8
+##author	b'author\\x81'
+##email	author@example.com
+##description	Fixture description
+##bgl_browsingEnabled	True
+##bgl_utf8Encoding	False
+##bgl_spellingAlternatives	True
+##bgl_caseSensitive	True
+##creationTime	1971/02/21, 16:00
+##bgl_caseSensitive2	True
+##bgl_purchaseLicenseMsg	AB
+##bgl_purchaseAddress	purchase address
+##bgl_contractions	ABC
+##bgl_fontName	Arial Unicode MS
+##bgl_length	3
+##lastUpdated	1971/05/02, 02:40
+ab	x
+seven|alt7	<b>seven</b>
+ten|alt10	<b>ten</b>
+thirteen|alt13	<b>thirteen</b>
+z	d
+eleven|alt11|slash	<b>eleven</b>
+allfields|alt1|alt2	<font color="#007000">noun</font> Title<br>\nTrans<br>\n[GH]<br>\n[IJ]<br>\nMAIN &amp; A B bad � � � � &csdot; img.png<img src="A.png">\nend  x false-field
+dups	<font color="#007000">adjective</font> b<br>\nm
+posend	m
+posbad	m
+f06end	m
+f06ok	m
+f07bad	m
+f07ok	m
+f13end	m
+f13blank	m
+f13bad	m
+f13ok	m
+titleend	m
+titleblank	m
+titlebad	m
+f1aend	m
+f1ablank	m
+f1abad	m
+f1aok	m
+ttend	m
+ttblank	m
+ttbad	m
+ttok	TT<br>\nm
+f40bad	m
+f40ok	m
+t50end	m
+t50blank	m
+t50bad	m
+t50c10	m
+t50c18	m
+t50unk	m
+t50ok	[GH]<br>\nm
+t60end	m
+t60blank	m
+t60bad	m
+t60unk	m
+t60ok	[IJ]<br>\nm
+unknownctrl	m
+charsets	utf8:é keysrc:é encsrc:é gbk:你 unknown:é babylon:éè unbalanced:
+unclosed	main é
+asciirefs	“  È È � � Ĭ A
+make do/make /do|a$1x$b|ab|altword|end|single$|xy z	defi
+abc	defi
+badkey|alt	def�
+keyx	defi
+A&B|Alt&	defi
+final	THE END

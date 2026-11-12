@@ -73,6 +73,35 @@ class TestBabylonBglWriter(TestGlossaryBase):
 						msg=f"full entry mismatch for {txt_path!r}",
 					)
 
+	def test_long_entries_use_type11(self):
+		cases = [
+			("long headword", "a" * 300 + "|alt", "definition"),
+			("long alternative", "head|" + "b" * 300, "definition"),
+			("long definition", "long definition", "x" * 70000),
+		]
+		for name, line, defi in cases:
+			with self.subTest(case=name):
+				txt_path = self.newTempFilePath(f"{name}.txt")
+				with open(txt_path, "w", encoding="utf-8") as file:
+					file.write(f"{line}\t{defi}\n")
+
+				out_bgl = self.newTempFilePath(f"{name}.bgl")
+				glos = Glossary()
+				glos.convert(
+					ConvertArgs(
+						inputFilename=txt_path,
+						outputFilename=out_bgl,
+						inputFormat="Tabfile",
+						outputFormat="BabylonBgl",
+					),
+				)
+
+				gl0 = Glossary()
+				gl0.directRead(txt_path, formatName="Tabfile")
+				gl2 = Glossary()
+				gl2.directRead(out_bgl, formatName="BabylonBgl")
+				self.assertEqual(self._full_rows(gl0), self._full_rows(gl2))
+
 
 if __name__ == "__main__":
 	unittest.main()
