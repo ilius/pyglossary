@@ -47,10 +47,7 @@ __all__ = ["_BglReaderDefi"]
 class _BglReaderDefi:
 	"""Definition body parsing and HTML assembly."""
 
-	# TODO: break it down
-	# PLR0912 Too many branches (20 > 12)
-	# PLR0915 Too many statements (60 > 50)
-	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:  # noqa: PLR0912, PLR0915
+	def processDefi(self, b_defi: bytes, b_key: bytes) -> str:
 		"""
 		b_defi: bytes
 		b_key: bytes.
@@ -59,7 +56,26 @@ class _BglReaderDefi:
 		"""
 		fields = DefinitionFields()
 		self.collectDefiFields(b_defi, b_key, fields)
+		self._decodeFields(fields, b_defi, b_key)
+		return self._formatDefi(fields)
 
+	def _decodeText(self, b_text: bytes, encoding: str) -> str:
+		u_text, _singleEncoding = self.decodeCharsetTags(b_text, encoding)
+		u_text = replaceHtmlEntries(u_text)
+		return removeControlChars(u_text)
+
+	def _decodeFields(
+		self,
+		fields: DefinitionFields,
+		b_defi: bytes,
+		b_key: bytes,
+	) -> None:
+		self._decodeMainDefi(fields)
+		self._decodeTitleFields(fields)
+		self._decodeTranscription50(fields, b_defi, b_key)
+		self._decodeTranscription60(fields, b_defi, b_key)
+
+	def _decodeMainDefi(self, fields: DefinitionFields) -> None:
 		fields.u_defi, fields.singleEncoding = self.decodeCharsetTags(
 			fields.b_defi,
 			self.targetEncoding,
@@ -72,73 +88,75 @@ class _BglReaderDefi:
 		fields.u_defi = normalizeNewlines(fields.u_defi)
 		fields.u_defi = fields.u_defi.strip()
 
+	def _decodeTitleFields(self, fields: DefinitionFields) -> None:
 		if fields.b_title:
-			fields.u_title, _singleEncoding = self.decodeCharsetTags(
+			fields.u_title = self._decodeText(
 				fields.b_title,
 				self.sourceEncoding,
 			)
-			fields.u_title = replaceHtmlEntries(fields.u_title)
-			fields.u_title = removeControlChars(fields.u_title)
 
 		if fields.b_title_trans:
 			# sourceEncoding or targetEncoding ?
-			fields.u_title_trans, _singleEncoding = self.decodeCharsetTags(
+			fields.u_title_trans = self._decodeText(
 				fields.b_title_trans,
 				self.sourceEncoding,
 			)
-			fields.u_title_trans = replaceHtmlEntries(fields.u_title_trans)
-			fields.u_title_trans = removeControlChars(fields.u_title_trans)
 
-		if fields.b_transcription_50:
-			if fields.code_transcription_50 == 0x10:
-				# contains values like this (char codes):
-				# 00 18 00 19 00 1A 00 1B 00 1C 00 1D 00 1E 00 40 00 07
-				# this is not utf-16
-				# what is this?
-				pass
-			elif fields.code_transcription_50 == 0x1B:
-				fields.u_transcription_50, _singleEncoding = self.decodeCharsetTags(
-					fields.b_transcription_50,
-					self.sourceEncoding,
-				)
-				fields.u_transcription_50 = replaceHtmlEntries(
-					fields.u_transcription_50,
-				)
-				fields.u_transcription_50 = removeControlChars(
-					fields.u_transcription_50,
-				)
-			elif fields.code_transcription_50 == 0x18:
-				# incomplete text like:
-				# t c=T>02D0;</charset>g<charset c=T>0259;</charset>-
-				# This defi normally contains fields.b_transcription_60
-				# in this case.
-				pass
-			else:
-				log.debug(
-					f"processDefi({b_defi})\nb_key = {b_key}"
-					":\ndefi field 50"
-					f", unknown code: {fields.code_transcription_50:#02x}",
-				)
+	def _decodeTranscription50(
+		self,
+		fields: DefinitionFields,
+		b_defi: bytes,
+		b_key: bytes,
+	) -> None:
+		if not fields.b_transcription_50:
+			return
 
-		if fields.b_transcription_60:
-			if fields.code_transcription_60 == 0x1B:
-				fields.u_transcription_60, _singleEncoding = self.decodeCharsetTags(
-					fields.b_transcription_60,
-					self.sourceEncoding,
-				)
-				fields.u_transcription_60 = replaceHtmlEntries(
-					fields.u_transcription_60,
-				)
-				fields.u_transcription_60 = removeControlChars(
-					fields.u_transcription_60,
-				)
-			else:
-				log.debug(
-					f"processDefi({b_defi})\nb_key = {b_key}"
-					":\ndefi field 60"
-					f", unknown code: {fields.code_transcription_60:#02x}",
-				)
+		if fields.code_transcription_50 == 0x10:
+			# contains values like this (char codes):
+			# 00 18 00 19 00 1A 00 1B 00 1C 00 1D 00 1E 00 40 00 07
+			# this is not utf-16
+			# what is this?
+			pass
+		elif fields.code_transcription_50 == 0x1B:
+			fields.u_transcription_50 = self._decodeText(
+				fields.b_transcription_50,
+				self.sourceEncoding,
+			)
+		elif fields.code_transcription_50 == 0x18:
+			# incomplete text like:
+			# t c=T>02D0;</charset>g<charset c=T>0259;</charset>-
+			# This defi normally contains fields.b_transcription_60
+			# in this case.
+			pass
+		else:
+			log.debug(
+				f"processDefi({b_defi})\nb_key = {b_key}"
+				":\ndefi field 50"
+				f", unknown code: {fields.code_transcription_50:#02x}",
+			)
 
+	def _decodeTranscription60(
+		self,
+		fields: DefinitionFields,
+		b_defi: bytes,
+		b_key: bytes,
+	) -> None:
+		if not fields.b_transcription_60:
+			return
+
+		if fields.code_transcription_60 == 0x1B:
+			fields.u_transcription_60 = self._decodeText(
+				fields.b_transcription_60,
+				self.sourceEncoding,
+			)
+		else:
+			log.debug(
+				f"processDefi({b_defi})\nb_key = {b_key}"
+				":\ndefi field 60"
+				f", unknown code: {fields.code_transcription_60:#02x}",
+			)
+
+	def _formatDefi(self, fields: DefinitionFields) -> str:
 		u_defi_format = ""
 		if fields.partOfSpeech or fields.u_title:
 			if fields.partOfSpeech:
