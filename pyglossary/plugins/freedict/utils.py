@@ -1,13 +1,14 @@
 """
 FreeDict TEI import utility functions.
 
-Provides language detection, writing-system helpers, and shared parsing routines
-for FreeDict ``.tei`` sources. Used by the FreeDict reader during TEI conversion.
+Provides language detection, writing-system helpers, and shared rendering
+helpers for FreeDict ``.tei`` sources. Used by the FreeDict readers during TEI
+conversion.
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 from pyglossary.core import log
 from pyglossary.langs import langDict
@@ -19,91 +20,92 @@ if TYPE_CHECKING:
 	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
 
-__all__ = ["XMLLANG", "ReaderUtils"]
+__all__ = [
+	"XMLLANG",
+	"getLangDesc",
+	"getTitleTag",
+	"isRTL",
+	"makeList",
+	"tostring",
+]
 
 
 XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
-T = TypeVar("T")
 
+def tostring(elem: Element) -> str:
+	from lxml import etree as ET
 
-class ReaderUtils:
-	"""Reader Utils."""
-
-	@staticmethod
-	def tostring(elem: Element) -> str:
-		from lxml import etree as ET
-
-		return (
-			ET.tostring(
-				elem,
-				method="html",
-				pretty_print=True,
-			)
-			.decode("utf-8")
-			.strip()
+	return (
+		ET.tostring(
+			elem,
+			method="html",
+			pretty_print=True,
 		)
+		.decode("utf-8")
+		.strip()
+	)
 
-	@staticmethod
-	def makeList(  # noqa: PLR0913
-		hf: T_htmlfile,
-		input_objects: list[T],
-		processor: Callable[[T_htmlfile, T], None],
-		single_prefix: str = "",
-		skip_single: bool = True,
-		ordered: bool = True,
-		list_type: str = "",
-	) -> None:
-		"""Wrap elements into <ol> if more than one element."""
-		if not input_objects:
-			return
 
-		if skip_single and len(input_objects) == 1:
-			if single_prefix:
-				hf.write(single_prefix)
-			processor(hf, input_objects[0])
-			return
+def makeList[T](  # noqa: PLR0913
+	hf: T_htmlfile,
+	input_objects: list[T],
+	processor: Callable[[T_htmlfile, T], None],
+	single_prefix: str = "",
+	skip_single: bool = True,
+	ordered: bool = True,
+	list_type: str = "",
+) -> None:
+	"""Wrap elements into <ol> if more than one element."""
+	if not input_objects:
+		return
 
-		attrib: dict[str, str] = {}
-		if list_type:
-			attrib["type"] = list_type
+	if skip_single and len(input_objects) == 1:
+		if single_prefix:
+			hf.write(single_prefix)
+		processor(hf, input_objects[0])
+		return
 
-		with hf.element("ol" if ordered else "ul", attrib=attrib):
-			for el in input_objects:
-				with hf.element("li"):
-					processor(hf, el)
+	attrib: dict[str, str] = {}
+	if list_type:
+		attrib["type"] = list_type
 
-	@staticmethod
-	def getTitleTag(sample: str) -> str:
-		ws = getWritingSystemFromText(sample)
-		if ws:
-			return ws.titleTag
-		return "b"
+	with hf.element("ol" if ordered else "ul", attrib=attrib):
+		for el in input_objects:
+			with hf.element("li"):
+				processor(hf, el)
 
-	@staticmethod
-	def isRTL(elem: Element) -> bool:
-		lang = elem.get(XMLLANG)
-		if lang is None:
-			return False
+
+def getTitleTag(sample: str) -> str:
+	ws = getWritingSystemFromText(sample)
+	if ws:
+		return ws.titleTag
+	return "b"
+
+
+def isRTL(elem: Element) -> bool:
+	lang = elem.get(XMLLANG)
+	if lang is None:
+		return False
+	langObj = langDict[lang]
+	if langObj is None:
+		log.warning(f"unknown language {lang}")
+		return False
+	return bool(langObj.rtl)
+
+
+def getLangDesc(elem: Element) -> str | None:
+	lang = elem.attrib.get(XMLLANG)
+	if lang:
 		langObj = langDict[lang]
-		if langObj is None:
-			log.warning(f"unknown language {lang}")
-			return False
-		return bool(langObj.rtl)
+		if not langObj:
+			log.warning(f"unknown lang {lang!r} in {tostring(elem)}")
+			return None
+		return langObj.name
 
-	@classmethod
-	def getLangDesc(cls, elem: Element) -> str | None:
-		lang = elem.attrib.get(XMLLANG)
-		if lang:
-			langObj = langDict[lang]
-			if not langObj:
-				log.warning(f"unknown lang {lang!r} in {cls.tostring(elem)}")
-				return None
-			return langObj.name
+	orig = elem.attrib.get("orig")
+	if orig:
+		return orig
 
-		orig = elem.attrib.get("orig")
-		if orig:
-			return orig
-
-		log.warning(f"unknown lang name in {cls.tostring(elem)}")
-		return None
+	log.warning(f"unknown lang name in {tostring(elem)}")
+	return None

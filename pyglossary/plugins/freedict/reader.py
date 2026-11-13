@@ -43,6 +43,7 @@ from .parser import (
 	Text,
 	TransCit,
 )
+from .utils import makeList
 
 if TYPE_CHECKING:
 	from collections.abc import Callable, Iterator
@@ -63,7 +64,7 @@ class _PendingTags:
 	labels: list[Tag]
 
 
-class Reader(Parser):
+class Reader:
 	"""Read Freedict glossary files."""
 
 	useByteProgress = True
@@ -72,6 +73,7 @@ class Reader(Parser):
 		"lxml": "lxml",
 	}
 
+	_auto_rtl: bool = True
 	_auto_comma: bool = True
 	_comma: str = ", "
 	_word_title: bool = False
@@ -275,7 +277,7 @@ class Reader(Parser):
 
 		if sense.defs:
 			self._writePendingTags(hf, pending)
-		self.makeList(
+		makeList(
 			hf,
 			sense.defs,
 			self.writeDef,
@@ -285,7 +287,7 @@ class Reader(Parser):
 			self._writeGrams(hf, sense.grams, pending)
 		if sense.notes:
 			self._writePendingTags(hf, pending)
-		self.makeList(
+		makeList(
 			hf,
 			sense.notes,
 			self.writeNote,
@@ -354,7 +356,7 @@ class Reader(Parser):
 			pending.usages.clear()
 			self.writeTransCit(hf_, elem, prefix)
 
-		self.makeList(
+		makeList(
 			hf,
 			transCits,
 			writeFirstTransCit,
@@ -455,7 +457,7 @@ class Reader(Parser):
 			with hf_.element("div"):
 				self.writeSenseSense(hf_, subSense)
 
-		self.makeList(
+		makeList(
 			hf,
 			sense.subSenses,
 			writeSubSense,
@@ -474,7 +476,7 @@ class Reader(Parser):
 		if self._auto_rtl and self._senseIsRTL(senseList[0]):
 			# Use unordered list for just 2 items
 			with hf.element("div", dir="rtl"):
-				self.makeList(
+				makeList(
 					hf,
 					senseList,
 					self.writeSense,
@@ -482,7 +484,7 @@ class Reader(Parser):
 				)
 			return
 
-		self.makeList(
+		makeList(
 			hf,
 			senseList,
 			self.writeSense,
@@ -515,7 +517,7 @@ class Reader(Parser):
 		self,
 		entry: Element,
 	) -> EntryType:
-		parsedEntry = self.parseEntry(entry)
+		parsedEntry = self._p.parseEntry(entry)
 		defi = self.renderEntry(parsedEntry)
 		file = self._file
 		return self._glos.newEntry(
@@ -589,6 +591,7 @@ class Reader(Parser):
 		self._entryCount = 0
 		# real paths of the files from the top-level file down to this one
 		self._includeChain: frozenset[str] = frozenset()
+		self._p = Parser(self)
 
 	def countResourceFiles(self) -> int:
 		return 0
@@ -643,13 +646,13 @@ class Reader(Parser):
 				tag=f"{TEI}teiHeader",
 			)
 			for _, elem in context:
-				self.applyMetadata(self.parseMetadata(elem))  # type: ignore
+				self.applyMetadata(self._p.parseMetadata(elem))  # type: ignore
 				break
 		finally:
 			cfile.close()
 
 	def loadInclude(self, elem: Element) -> Reader | None:
-		href = self.parseIncludeHref(elem)
+		href = self._p.parseIncludeHref(elem)
 		if href is None:
 			return None
 		filename = join(self._dirname, href)
@@ -681,7 +684,7 @@ class Reader(Parser):
 		for _, elem_ in context:
 			elem = cast("Element", elem_)
 
-			if self.isIncludeElement(elem):
+			if self._p.isIncludeElement(elem):
 				reader = self.loadInclude(elem)
 				if reader is not None:
 					yield from reader
@@ -691,4 +694,4 @@ class Reader(Parser):
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from 1 GB to ~25 MB
-			self.dropPreviousSiblings(elem)
+			self._p.dropPreviousSiblings(elem)

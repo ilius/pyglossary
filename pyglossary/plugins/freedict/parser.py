@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any, cast
 from pyglossary.core import log
 from pyglossary.langs import langDict
 
-from .utils import XMLLANG, ReaderUtils
+from .utils import XMLLANG, getLangDesc, tostring
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -296,8 +296,7 @@ class TransCitCollector:
 
 	def _handleUnknown(self, child: Element) -> None:
 		log.warning(
-			f"unknown tag {child.tag!r} inside translation <cit>"
-			f": {self._parser.tostring(child)}",
+			f"unknown tag {child.tag!r} inside translation <cit>: {tostring(child)}",
 		)
 		# Keep the text of an unknown element as a note instead of dropping it.
 		text = _elementText(child)
@@ -320,10 +319,15 @@ class TransCitCollector:
 		)
 
 
-class Parser(ReaderUtils):
+class Parser:
 	"""Parse TEI elements into the dataclasses above."""
 
-	_auto_rtl: bool = True
+	def __init__(self, owner: Any) -> None:
+		self._owner = owner
+
+	@property
+	def _auto_rtl(self) -> bool:
+		return cast("bool", self._owner._auto_rtl)
 
 	posMapping: dict[str, str] = {
 		"n": "noun",
@@ -508,7 +512,7 @@ class Parser(ReaderUtils):
 		return Tag(kind, self._normalizeInlineWhitespace(content))
 
 	def _parseLang(self, elem: Element) -> Lang:
-		return Lang(self.getLangDesc(elem), elem.text or "")
+		return Lang(getLangDesc(elem), elem.text or "")
 
 	def _iterDefPieces(self, node: Element) -> Iterator[str | Ref]:
 		"""Yield the text and <ref> pieces of a <def>, recursing into other elements."""
@@ -525,7 +529,7 @@ class Parser(ReaderUtils):
 					if ref is not None:
 						yield ref
 				else:
-					log.warning(f"ref without text: {self.tostring(child)}")
+					log.warning(f"ref without text: {tostring(child)}")
 				continue
 			yield from self._iterDefPieces(child)
 
@@ -613,7 +617,7 @@ class Parser(ReaderUtils):
 				ps.refs.append(ref)
 		elif child.tag == f"{TEI}usg":
 			if not _elementText(child):
-				log.warning(f"empty usg: {self.tostring(child)}")
+				log.warning(f"empty usg: {tostring(child)}")
 				return
 			ps.usages.append(self._parseTag(child, "usg"))
 		elif child.tag == f"{TEI}lbl":
@@ -624,7 +628,7 @@ class Parser(ReaderUtils):
 		elif child.tag == f"{TEI}xr":
 			ps.xrList.append(self._parseInlineNodes(child))
 		elif child.tag not in {f"{TEI}sense", f"{TEI}gramGrp", f"{TEI}form"}:
-			log.warning(f"unknown tag {child.tag} in <sense>: {self.tostring(child)}")
+			log.warning(f"unknown tag {child.tag} in <sense>: {tostring(child)}")
 
 	def _parseSenseCit(self, ps: Sense, cit: Element) -> None:
 		typ = cit.attrib.get("type", "trans")
@@ -637,7 +641,7 @@ class Parser(ReaderUtils):
 		elif typ in {"abbrev", "abbreviation"}:
 			ps.notes.append(self._parseInlineNodes(cit))
 		else:
-			log.warning(f"unknown cit type: {self.tostring(cit)}")
+			log.warning(f"unknown cit type: {tostring(cit)}")
 			ps.notes.append(self._parseInlineNodes(cit))
 
 	def _parseSenseNote(self, ps: Sense, note: Element) -> None:
@@ -763,11 +767,11 @@ class Parser(ReaderUtils):
 	def _normalizeGram(self, elem: Element, text: str) -> str:
 		type_ = elem.get("type")
 		if not type_:
-			log.warning(f"<gram> with no type: {self.tostring(elem)}")
+			log.warning(f"<gram> with no type: {tostring(elem)}")
 			return text
 		mapping = self._mappingByName().get(type_)
 		if mapping is None:
-			log.warning(f"unrecognized type={type_!r}: {self.tostring(elem)}")
+			log.warning(f"unrecognized type={type_!r}: {tostring(elem)}")
 			return text
 		return mapping.get(text.lower(), text)
 
@@ -788,7 +792,7 @@ class Parser(ReaderUtils):
 				return mapping.get(text.lower(), text)
 
 		log.warning(
-			f"unrecognized GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}",
+			f"unrecognized GramGrp child tag: {elem.tag!r}: {tostring(elem)}",
 		)
 		return text
 
@@ -812,7 +816,7 @@ class Parser(ReaderUtils):
 			del parent[0]
 
 	def _stripParag(self, elem: Element) -> str:
-		text = self.tostring(elem)
+		text = tostring(elem)
 		return _p_pattern.sub("\\2", text)
 
 	def _stripParagList(self, elems: list[Element]) -> str:

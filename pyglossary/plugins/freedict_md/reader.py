@@ -68,7 +68,7 @@ class _PendingTags:
 	labels: list[Tag]
 
 
-class Reader(Parser):
+class Reader:
 	"""Parse FreeDict TEI; definitions written as Markdown (``defiFormat`` ``m``)."""
 
 	useByteProgress = True
@@ -77,6 +77,7 @@ class Reader(Parser):
 		"lxml": "lxml",
 	}
 
+	_auto_rtl: bool = True
 	_auto_comma: bool = True
 	_comma: str = ", "
 	_word_title: bool = False
@@ -85,39 +86,6 @@ class Reader(Parser):
 	_usage_color: str = "green"
 	_label_color: str = "darkblue"
 	_example_padding: int = 10
-
-	@staticmethod
-	def tostring(elem: Element) -> str:
-		from lxml import etree as ET
-
-		return (
-			ET.tostring(
-				elem,
-				method="html",
-				pretty_print=True,
-			)
-			.decode("utf-8")
-			.strip()
-		)
-
-	@classmethod
-	def getLangDesc(cls, elem: Element) -> str | None:
-		lang = elem.attrib.get(
-			"{http://www.w3.org/XML/1998/namespace}lang",
-		)
-		if lang:
-			langObj = langDict[lang]
-			if not langObj:
-				log.warning(f"unknown lang {lang!r} in {cls.tostring(elem)}")
-				return None
-			return langObj.name
-
-		orig = elem.attrib.get("orig")
-		if orig:
-			return orig
-
-		log.warning(f"unknown lang name in {cls.tostring(elem)}")
-		return None
 
 	@staticmethod
 	def makeList(  # noqa: PLR0913
@@ -560,7 +528,7 @@ class Reader(Parser):
 		self,
 		entry: Element,
 	) -> EntryType:
-		parsedEntry = self.parseEntry(entry)
+		parsedEntry = self._p.parseEntry(entry)
 
 		em = MdEmit()
 		em_hf = cast("T_htmlfile", em)
@@ -650,6 +618,7 @@ class Reader(Parser):
 		self._entryCount = 0
 		# real paths of the files from the top-level file down to this one
 		self._includeChain: frozenset[str] = frozenset()
+		self._p = Parser(self)
 
 	def countResourceFiles(self) -> int:
 		return 0
@@ -704,13 +673,13 @@ class Reader(Parser):
 				tag=f"{TEI}teiHeader",
 			)
 			for _, elem in context:
-				self.applyMetadata(self.parseMetadata(elem))  # type: ignore
+				self.applyMetadata(self._p.parseMetadata(elem))  # type: ignore
 				break
 		finally:
 			cfile.close()
 
 	def loadInclude(self, elem: Element) -> Reader | None:
-		href = self.parseIncludeHref(elem)
+		href = self._p.parseIncludeHref(elem)
 		if href is None:
 			return None
 		filename = join(self._dirname, href)
@@ -742,7 +711,7 @@ class Reader(Parser):
 		for _, elem_ in context:
 			elem = cast("Element", elem_)
 
-			if self.isIncludeElement(elem):
+			if self._p.isIncludeElement(elem):
 				reader = self.loadInclude(elem)
 				if reader is not None:
 					yield from reader
@@ -752,4 +721,4 @@ class Reader(Parser):
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from 1 GB to ~25 MB
-			self.dropPreviousSiblings(elem)
+			self._p.dropPreviousSiblings(elem)
