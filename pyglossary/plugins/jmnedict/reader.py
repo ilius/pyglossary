@@ -81,30 +81,31 @@ class Reader:
 				with hf.element("li"):
 					processor(hf, el)
 
+	@staticmethod
+	def _br() -> Element:
+		from lxml import etree as ET
+
+		return ET.Element("br")
+
 	def writeTrans(
 		self,
 		hf: T_htmlfile,
 		trans: Element,
 	) -> None:
-		from lxml import etree as ET
-
-		def br() -> Element:
-			return ET.Element("br")
-
 		for elem in trans.findall("name_type"):
 			if not elem.text:
 				continue
 			desc = elem.text
 			with hf.element("i"):
 				hf.write(desc.capitalize())
-			hf.write(br())
+			hf.write(self._br())
 
 		for elem in trans.findall("trans_det"):
 			if not elem.text:
 				continue
 			desc = elem.text
 			hf.write(desc)
-			hf.write(br())
+			hf.write(self._br())
 
 		relatedWords: list[str] = []
 		for elem in trans.findall("xref"):
@@ -122,9 +123,103 @@ class Reader:
 						hf.write(" | ")
 				with hf.element("a", href=f"bword://{term}"):
 					hf.write(term)
-			hf.write(br())
+			hf.write(self._br())
 
-	def getEntryByElem(  # noqa: PLR0912
+	def _readKanjiElements(
+		self,
+		entry: Element,
+		keywords: list[str],
+	) -> list[str]:
+		kebList: list[str] = []
+		for k_ele in entry.findall("k_ele"):
+			keb = k_ele.find("keb")
+			if keb is None:
+				continue
+			if not keb.text:
+				continue
+			kebList.append(keb.text)
+			keywords.append(keb.text)
+			# for elem in k_ele.findall("ke_pri"):
+			# 	log.info(elem.text)
+		return kebList
+
+	def _readReadingElements(
+		self,
+		entry: Element,
+		keywords: list[str],
+	) -> list[tuple[str, list[str]]]:
+		rebList: list[tuple[str, list[str]]] = []
+		for r_ele in entry.findall("r_ele"):
+			reb = r_ele.find("reb")
+			if reb is None:
+				continue
+			if not reb.text:
+				continue
+			props: list[str] = []
+			if r_ele.find("re_nokanji") is not None:
+				props.append("no kanji")
+			inf = r_ele.find("re_inf")
+			if inf is not None and inf.text:
+				props.append(
+					self.re_inf_mapping.get(inf.text, inf.text),
+				)
+			rebList.append((reb.text, props))
+			keywords.append(reb.text)
+			# for elem in r_ele.findall("re_pri"):
+			# 	log.info(elem.text)
+		return rebList
+
+	def _addCombinedKeywords(
+		self,
+		keywords: list[str],
+		kebList: list[str],
+		rebList: list[tuple[str, list[str]]],
+	) -> None:
+		# this is for making internal links valid
+		# this makes too many alternates!
+		# but we don't seem to have a choice
+		# except for scanning and indexing all words once
+		# and then starting over and fixing/optimizing links
+		for s_keb in kebList:
+			for s_reb, _ in rebList:
+				keywords.append(f"{s_keb}・{s_reb}")
+
+	def _writeKanjiDisplay(
+		self,
+		hf: T_htmlfile,
+		kebList: list[str],
+	) -> None:
+		if not kebList:
+			return
+		with hf.element("big"):
+			for i, s_keb in enumerate(kebList):
+				if i > 0:
+					with hf.element("font", color="red"):
+						hf.write(" | ")
+				hf.write(s_keb)
+		hf.write(self._br())
+
+	def _writeReadingDisplay(
+		self,
+		hf: T_htmlfile,
+		rebList: list[tuple[str, list[str]]],
+	) -> None:
+		if not rebList:
+			return
+		for i, (s_reb, props) in enumerate(rebList):
+			if i > 0:
+				with hf.element("font", color="red"):
+					hf.write(" | ")
+			with hf.element("font", color="green"):
+				hf.write(s_reb)
+			for prop in props:
+				hf.write(" ")
+				with hf.element("small"):
+					with hf.element("span", style=self.tagStyle):
+						hf.write(prop)
+		hf.write(self._br())
+
+	def getEntryByElem(
 		self,
 		entry: Element,
 	) -> EntryType:
@@ -133,76 +228,15 @@ class Reader:
 		keywords: list[str] = []
 		f = BytesIO()
 
-		def br() -> Element:
-			return ET.Element("br")
+		with ET.htmlfile(f, encoding="utf-8") as hf:
+			hf_ = cast("T_htmlfile", hf)
+			kebList = self._readKanjiElements(entry, keywords)
+			rebList = self._readReadingElements(entry, keywords)
+			self._addCombinedKeywords(keywords, kebList, rebList)
 
-		with ET.htmlfile(f, encoding="utf-8") as hf:  # noqa: PLR1702
-			kebList: list[str] = []
-			rebList: list[tuple[str, list[str]]] = []
-			with hf.element("div"):
-				for k_ele in entry.findall("k_ele"):
-					keb = k_ele.find("keb")
-					if keb is None:
-						continue
-					if not keb.text:
-						continue
-					kebList.append(keb.text)
-					keywords.append(keb.text)
-					# for elem in k_ele.findall("ke_pri"):
-					# 	log.info(elem.text)
-
-				for r_ele in entry.findall("r_ele"):
-					reb = r_ele.find("reb")
-					if reb is None:
-						continue
-					if not reb.text:
-						continue
-					props: list[str] = []
-					if r_ele.find("re_nokanji") is not None:
-						props.append("no kanji")
-					inf = r_ele.find("re_inf")
-					if inf is not None and inf.text:
-						props.append(
-							self.re_inf_mapping.get(inf.text, inf.text),
-						)
-					rebList.append((reb.text, props))
-					keywords.append(reb.text)
-					# for elem in r_ele.findall("re_pri"):
-					# 	log.info(elem.text)
-
-				# this is for making internal links valid
-				# this makes too many alternates!
-				# but we don't seem to have a choice
-				# except for scanning and indexing all words once
-				# and then starting over and fixing/optimizing links
-				for s_keb in kebList:
-					for s_reb, _ in rebList:
-						keywords.append(f"{s_keb}・{s_reb}")
-
-				if kebList:
-					with hf.element("big"):
-						for i, s_keb in enumerate(kebList):
-							if i > 0:
-								with hf.element("font", color="red"):
-									hf.write(" | ")
-							hf.write(s_keb)
-					hf.write(br())
-
-				if rebList:
-					for i, (s_reb, props) in enumerate(rebList):
-						if i > 0:
-							with hf.element("font", color="red"):
-								hf.write(" | ")
-						with hf.element("font", color="green"):
-							hf.write(s_reb)
-						for prop in props:
-							hf.write(" ")
-							with hf.element("small"):
-								with hf.element("span", style=self.tagStyle):
-									hf.write(prop)
-					hf.write(br())
-
-				hf_ = cast("T_htmlfile", hf)
+			with hf_.element("div"):
+				self._writeKanjiDisplay(hf_, kebList)
+				self._writeReadingDisplay(hf_, rebList)
 				self.makeList(
 					hf_,
 					entry.findall("trans"),
