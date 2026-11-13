@@ -3,8 +3,7 @@ Read FreeDict TEI XML dictionaries.
 
 Parses TEI ``<entry>`` elements (including XInclude), resolves FreeDict
 translation and orthography modules, detects source/target languages from
-``xml:lang``, and builds HTML definitions. Supports bzip2/gzip-compressed
-``.dct`` files.
+``xml:lang``, and builds HTML definitions.
 
 The TEI parsing lives in :mod:`pyglossary.plugins.freedict.parser`; this
 module only renders the parsed dataclasses.

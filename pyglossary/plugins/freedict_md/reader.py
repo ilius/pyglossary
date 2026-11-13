@@ -7,7 +7,10 @@ definitions keyed by headword.
 
 This reader depends only on the FreeDict TEI parser and keeps its own copy of
 the rendering and file-reading code, so it does not import the FreeDict HTML
-reader.
+reader. The duplicated renderer/file-I/O code is intentional: it keeps this
+plugin decoupled from ``freedict.reader``; only the parser and parsed
+dataclasses are shared. Keep this copy in sync when HTML rendering behavior
+changes.
 """
 
 from __future__ import annotations

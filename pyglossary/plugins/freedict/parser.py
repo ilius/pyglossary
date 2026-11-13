@@ -759,7 +759,7 @@ class Parser:
 			return text
 		mapping = self._mappingByName().get(type_)
 		if mapping is None:
-			log.warning(f"unrecognize type={type_!r}: {self.tostring(elem)}")
+			log.warning(f"unrecognized type={type_!r}: {self.tostring(elem)}")
 			return text
 		return mapping.get(text.lower(), text)
 
@@ -780,7 +780,7 @@ class Parser:
 				return mapping.get(text.lower(), text)
 
 		log.warning(
-			f"unrecognize GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}",
+			f"unrecognized GramGrp child tag: {elem.tag!r}: {self.tostring(elem)}",
 		)
 		return text
 
@@ -825,7 +825,7 @@ class Parser:
 		extent_elem = header.find(".//extent", NAMESPACE)
 		if extent_elem is None:
 			log.warning(
-				"did not find 'extent' tag in metedata, progress bar will not word",
+				"did not find 'extent' tag in metadata, progress bar will not work",
 			)
 			return None
 		extent = extent_elem.text or ""
