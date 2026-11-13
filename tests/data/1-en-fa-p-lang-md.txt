@@ -1,0 +1,4 @@
+##name	PyGlossary paragraph language test
+##input_file_size	630
+##description	Synthetic sample for PyGlossary tests
+hello	a greeting\n\nسلام دنیا

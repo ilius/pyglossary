@@ -1,0 +1,4 @@
+##name	PyGlossary labels and grammar test
+##input_file_size	1596
+##description	Synthetic sample for PyGlossary tests
+words	/wɜːd/\n\n**[archaic]** *noun*a unit of language\n1. **[figurative]** **[literally]** Wort*neutral*\n2.\n\t1. Ding\n\t2. **[rare]** ein Ding\n\n\t*noun, plural*\n3. **[abbr]** Vokabelextra text\n\n> **[informal]** a short word\n*verb*to word something

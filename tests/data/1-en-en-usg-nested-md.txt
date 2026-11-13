@@ -1,0 +1,4 @@
+##name	PyGlossary nested usage label test
+##input_file_size	787
+##description	Synthetic sample for PyGlossary tests
+hello	1. **[US informal]** hi\n2. **[fam.]** bye

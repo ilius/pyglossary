@@ -1,0 +1,4 @@
+##name	PyGlossary usage label whitespace test
+##input_file_size	851
+##description	Synthetic sample for PyGlossary tests
+baby	1. **[US informal]** infant\n2. **[fam plural form]** kid

@@ -1,0 +1,24 @@
+##name	Sample: English-English glossary
+##input_file_size	8169
+##edition	2026.11.05
+##copyright	Released under the <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a> public-domain dedication.
+##publisher	PyGlossary tests
+##creationTime	2026-11-05
+##website	https://github.com/ilius/pyglossary
+##description	Compiled for PyGlossary.\n\nSynthetic sample.
+##sourceLang	English
+##targetLang	English
+abandon|abandoned|abandoning	/əˈbæn.dən/\n\n**[literary]** **[formal]** *verb, transitive*\n1. to leave someone behind for good\n\t1. **[formal]** desert\n\t2. forsake\n\n\t*verb*Stronger than [leave](bword://leave).Related: [abandonment](bword://abandonment)[external](https://example.com/abandon)\n2. to give up an ideagive up\n3. lack of restraintrecklessness\n\t> **[literary]** They danced with abandon.\n\t> > The crowd cheered.
+alumna|alumnae	/əˈlʌm.nə/\n\n*noun, female, singular, chiefly US, alumnae association*a female graduategraduate
+alumnus	/əˈlʌm.nəs/\n\n*noun, male, singular*a male graduategraduate
+and	/ænd/\n\n*conjunction***[informal]** used to join words\n\nThe final d is often dropped.\n\nplus
+big|bigger|biggest	/bɪɡ/\n\n*adjective*\n1. of considerable size\n\t1. **[informal]** large\n\t2. great\n\n\t> The room was big.\n2. important or significantmajor
+child|children	/tʃaɪld/\n\n*noun, singular*\n1. a young personyoungsterRelated: [adult](bword://adult)\n2. a son or daughteroffspring
+criteria	/kraɪˈtɪə.ri.ə/\n\n*noun, plural*\n1. standards for judging something\n2. a standard\n\nThe singular is [criterion](bword://criterion).\n1. standards\n2. tests
+dog	/dɒɡ/\n\n1. *noun*a domesticated mammalcanine[puppy](bword://puppy)\n\t> **[informal]** The dog barked.\n2. **[archaic]** an unpleasant person*noun*, *dated*\n\t1. dated\n\t2. Use with care.\n\n\tscoundrel
+give|gave|given	/ɡɪv/\n\n*verb, transitive, intransitive*\n1. French: donnerLatin: donareto hand something to someone\n\t1. hand\n\t2. pass\n2. to yield or bend under pressure\n\t1. yield\n\t2.\n\t\t1. give way\n\t\t2. give in
+happy	/ˈhæp.i/\n\n*adjective*\n1. feeling pleasure\n\t1. glad\n\t2. cheerful\n2. luckylucky
+quickly	/ˈkwɪk.li/\n\n*adverb*at a fast speed\n1. rapidly\n2. swiftly\n\n> She finished quickly.
+run|ran|running	/rʌn/\n\n*verb, intransitive, transitive*\n1. to move quickly on foot\n\t1. sprint\n\t2. jog\n\n\t> **[informal]** He runs every morning.> They ran for the bus.\n2. to manage something\n\t1. manage\n\t2. operate
+salaam	/səˈlɑːm/\n\n*noun*a greeting meaning peace\n1. سلام\n2. السلام عليكم\n\n> سلام!
+zero	/ˈzɪə.rəʊ/\n\n*noun, singular*the number 0, or nothing at all\n1. nought\n2. nil\n\n> The score was zero.
