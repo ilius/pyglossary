@@ -22,6 +22,7 @@ from lxml import etree as ET
 from pyglossary.compress import compressionOpen, stdCompressions
 from pyglossary.core import log
 from pyglossary.utils.io_utils import nullBinaryIO
+from pyglossary.utils.lxml_utils import drop_previous_siblings
 
 __all__ = ["Reader"]
 
@@ -125,13 +126,8 @@ class Reader:
 						byteProgress=(self._file.tell(), self._fileSize),
 					)
 
-					parent = elem.getparent()
-					if parent is None:
-						continue
-					while elem.getprevious() is not None:
-						del parent[0]
-
-						elem.clear()
+					drop_previous_siblings(elem)
+					elem.clear()
 
 		except ET.XMLSyntaxError as e:
 			raise ValueError(f"Invalid XLIFF file: {e}") from e

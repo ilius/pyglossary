@@ -79,6 +79,7 @@ repo-maintained plugins. Their names and behavior may change without notice.
 | `pyglossary.utils.os_utils` | Use `os`, `shutil`, `pathlib`, or plugin-local code. |
 | `pyglossary.utils.io_utils` | Use `io` or your own null stream objects. |
 | `pyglossary.utils.iter_utils` | Use `itertools` or plugin-local code. |
+| `pyglossary.utils.lxml_utils` | Use lxml `getparent`/`getprevious` directly or plugin-local code. |
 | `pyglossary.utils.queued_iter` | Internal pipeline helper. |
 | `pyglossary.utils.image_utils` | Write extraction logic in the plugin if needed. |
 | `pyglossary.utils.apple_utils` | Apple Dictionary-specific helper used by a repo plugin. |

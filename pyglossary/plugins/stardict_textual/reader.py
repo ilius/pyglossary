@@ -17,6 +17,7 @@ from pyglossary.compress import (
 from pyglossary.core import exc_note, log, pip
 from pyglossary.utils.html_utils import unescape_unicode
 from pyglossary.utils.io_utils import nullBinaryIO
+from pyglossary.utils.lxml_utils import drop_previous_siblings
 
 if TYPE_CHECKING:
 	import io
@@ -216,8 +217,4 @@ class Reader:
 
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from >300 MB to ~25 MB
-			while elem.getprevious() is not None:
-				parent = elem.getparent()
-				if parent is None:
-					break
-				del parent[0]
+			drop_previous_siblings(elem)

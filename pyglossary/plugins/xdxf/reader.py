@@ -47,6 +47,7 @@ from pyglossary.compress import (
 )
 from pyglossary.core import log
 from pyglossary.utils.io_utils import nullBinaryIO
+from pyglossary.utils.lxml_utils import drop_previous_siblings
 from pyglossary.utils.text_utils import toStr
 
 __all__ = ["Reader"]
@@ -197,11 +198,7 @@ class Reader:
 			)
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from 1 GB to ~25 MB
-			parent = article.getparent()
-			if parent is None:
-				continue
-			while article.getprevious() is not None:
-				del parent[0]
+			drop_previous_siblings(article)
 
 	def close(self) -> None:
 		self._file.close()

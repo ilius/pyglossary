@@ -22,6 +22,7 @@ from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
 from pyglossary.utils.html_utils import unescape_unicode
 from pyglossary.utils.io_utils import nullBinaryIO
+from pyglossary.utils.lxml_utils import drop_previous_siblings
 
 from .parser import (
 	ENTRY,
@@ -694,4 +695,4 @@ class Reader:
 			yield self.getEntryByElem(elem)
 			# clean up preceding siblings to save memory
 			# this can reduce memory usage from 1 GB to ~25 MB
-			self._p.dropPreviousSiblings(elem)
+			drop_previous_siblings(elem)

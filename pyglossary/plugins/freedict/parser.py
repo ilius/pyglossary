@@ -807,14 +807,6 @@ class Parser:
 	def isIncludeElement(elem: Element) -> bool:
 		return elem.tag == INCLUDE
 
-	@staticmethod
-	def dropPreviousSiblings(elem: Element) -> None:
-		parent = elem.getparent()
-		if parent is None:
-			return
-		while elem.getprevious() is not None:
-			del parent[0]
-
 	def _stripParag(self, elem: Element) -> str:
 		text = tostring(elem)
 		return _p_pattern.sub("\\2", text)
