@@ -97,7 +97,7 @@ class _BglReaderCharset:
 
 		return u_text2
 
-	def decodeCharsetTags(  # noqa: PLR0912
+	def decodeCharsetTags(
 		self,
 		b_text: bytes,
 		defaultEncoding: str,
@@ -122,52 +122,61 @@ class _BglReaderCharset:
 				u_text += self.decodeCharsetTagsTextBlock(encoding, b_text, b_part)
 				if encoding != defaultEncoding:
 					defaultEncodingOnly = False
-				continue
-
-			if i % 3 == 1:  # <charset...> or </charset>
-				if b_part.startswith(b"</"):
-					# </charset>
-					if encodings:
-						encodings.pop()
-					else:
-						log.debug(
-							f"decoding charset tags, b_text={b_text!r}"
-							"\nunbalanced </charset> tag\n",
-						)
-					continue
-
-				# <charset c="?">
-				b_type = b_parts[i + 1].lower()
-				# b_type is a bytes instance, with length 1
-				if b_type == b"t":
-					encodings.append("babylon-reference")
-				elif b_type == b"u":
-					encodings.append("utf-8")
-				elif b_type == b"k":  # noqa: SIM114
-					encodings.append(self.sourceEncoding)
-				elif b_type == b"e":
-					encodings.append(self.sourceEncoding)
-				elif b_type == b"g":
-					# gbk or gb18030 encoding
-					# (not enough data to make distinction)
-					encodings.append("gbk")
-				else:
-					log.debug(
-						f"decoding charset tags, text = {b_text!r}"
-						f"\nunknown charset code = {ord(b_type):#02x}\n",
-					)
-					# add any encoding to prevent
-					# "unbalanced </charset> tag" error
-					encodings.append(defaultEncoding)
-				continue
-
-			# c attribute of charset tag if the previous tag was charset
+			elif i % 3 == 1:  # <charset...> or </charset>
+				self._decodeCharsetTag(b_text, b_parts, i, encodings, defaultEncoding)
 
 		if encodings:
 			log.debug(
 				f"decoding charset tags, text={b_text}\nunclosed <charset...> tag\n",
 			)
 		return u_text, defaultEncodingOnly
+
+	def _decodeCharsetTag(
+		self,
+		b_text: bytes,
+		b_parts: list[bytes],
+		i: int,
+		encodings: list[str],
+		defaultEncoding: str,
+	) -> None:
+		b_part = b_parts[i]
+		if b_part.startswith(b"</"):
+			if encodings:
+				encodings.pop()
+			else:
+				log.debug(
+					f"decoding charset tags, b_text={b_text!r}"
+					"\nunbalanced </charset> tag\n",
+				)
+			return
+
+		b_type = b_parts[i + 1].lower()
+		encodings.append(self._charsetCodeToEncoding(b_type, b_text, defaultEncoding))
+
+	def _charsetCodeToEncoding(
+		self,
+		b_type: bytes,
+		b_text: bytes,
+		defaultEncoding: str,
+	) -> str:
+		if b_type == b"t":
+			return "babylon-reference"
+		if b_type == b"u":
+			return "utf-8"
+		if b_type == b"k":
+			return self.sourceEncoding
+		if b_type == b"e":
+			return self.sourceEncoding
+		if b_type == b"g":
+			# gbk or gb18030 encoding
+			# (not enough data to make distinction)
+			return "gbk"
+		log.debug(
+			f"decoding charset tags, text = {b_text!r}"
+			f"\nunknown charset code = {ord(b_type):#02x}\n",
+		)
+		# add any encoding to prevent "unbalanced </charset> tag" error
+		return defaultEncoding
 
 	def processKey(self, b_word: bytes) -> str:
 		"""

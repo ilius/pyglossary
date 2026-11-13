@@ -46,10 +46,14 @@ __all__ = ["_BglReaderEntries"]
 class _BglReaderEntries:
 	"""Entry iteration and per-block entry parsing."""
 
-	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
+	def __iter__(self) -> Iterator[EntryType]:
 		if not self.file:
 			raise RuntimeError("iterating over a reader while it's not open")
 
+		yield from self._dataEntries()
+		yield from self._blockEntries()
+
+	def _dataEntries(self) -> Iterator[EntryType]:
 		for fname, iconData in self.iconDataList:
 			yield self._glos.newDataEntry(fname, iconData)
 
@@ -59,6 +63,7 @@ class _BglReaderEntries:
 				self.aboutBytes,
 			)
 
+	def _blockEntries(self) -> Iterator[EntryType]:
 		block = Block()
 		while not self.isEndOfDictData():
 			if not self.readBlock(block):
@@ -68,44 +73,54 @@ class _BglReaderEntries:
 
 			if block.type == 2:
 				yield self.readType2(block)
+				continue
 
-			elif block.type == 11:
-				succeed, u_word, u_alts, u_defi = self.readEntry_Type11(block)
-				if not succeed:
-					continue
+			entry = self._entryForBlock(block)
+			if entry is not None:
+				yield entry
 
-				yield self._glos.newEntry(
-					[u_word] + u_alts,
-					u_defi,
-				)
+	def _entryForBlock(self, block: Block) -> EntryType | None:
+		if block.type == 11:
+			succeed, u_word, u_alts, u_defi = self.readEntry_Type11(block)
+			if not succeed:
+				return None
+			return self._glos.newEntry(
+				[u_word] + u_alts,
+				u_defi,
+			)
 
-			elif block.type in {1, 7, 10, 11, 13}:
-				pos = 0
-				# word:
-				wordData = self.readEntryWord(block, pos)
-				if not wordData:
-					continue
-				pos = wordData.pos
-				# defi:
-				succeed, pos, u_defi, _b_defi = self.readEntryDefi(
-					block,
-					pos,
-					wordData,
-				)
-				if not succeed:
-					continue
-				# now pos points to the first char after definition
-				succeed, pos, u_alts = self.readEntryAlts(
-					block,
-					pos,
-					wordData,
-				)
-				if not succeed:
-					continue
-				yield self._glos.newEntry(
-					[wordData.u_word] + u_alts,
-					u_defi,
-				)
+		if block.type in {1, 7, 10, 11, 13}:
+			return self._entryForClassicBlock(block)
+
+		return None
+
+	def _entryForClassicBlock(self, block: Block) -> EntryType | None:
+		pos = 0
+		# word:
+		wordData = self.readEntryWord(block, pos)
+		if not wordData:
+			return None
+		pos = wordData.pos
+		# defi:
+		succeed, pos, u_defi, _b_defi = self.readEntryDefi(
+			block,
+			pos,
+			wordData,
+		)
+		if not succeed:
+			return None
+		# now pos points to the first char after definition
+		succeed, pos, u_alts = self.readEntryAlts(
+			block,
+			pos,
+			wordData,
+		)
+		if not succeed:
+			return None
+		return self._glos.newEntry(
+			[wordData.u_word] + u_alts,
+			u_defi,
+		)
 
 	def readType2(self, block: Block) -> EntryType | None:
 		"""

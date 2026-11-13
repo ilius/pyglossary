@@ -148,45 +148,18 @@ class GzipFile(BaseStream):
 		If omitted or None, the current time is used.
 
 		"""
-		if mode and ("t" in mode or "U" in mode):
-			raise ValueError(f"Invalid mode: {mode!r}")
-		if mode and "b" not in mode:
-			mode += "b"
-		if fileobj is None:
-			fileobj = self.myfileobj = builtins.open(filename, mode or "rb")
-		if filename is None:
-			filename = getattr(fileobj, "name", "")
-			if not isinstance(filename, (str, bytes)):
-				filename = ""
-		else:
-			filename = os.fspath(filename)
+		mode = self._normalize_mode(mode)
+		fileobj = self._open_fileobj(filename, mode, fileobj)
+		filename = self._resolve_filename(filename, fileobj)
+
 		origmode = mode
 		if mode is None:
 			mode = getattr(fileobj, "mode", "rb")
 
 		if mode.startswith("r"):
-			self.mode = READ
-			raw = _GzipReader(fileobj)
-			self._buffer = io.BufferedReader(raw)
-			self.name = filename
-
+			self._init_read(filename, fileobj)
 		elif mode.startswith(("w", "a", "x")):
-			if origmode is None:
-				import warnings
-
-				warnings.warn(
-					"GzipFile was opened for writing, but this will "
-					"change in future Python releases.  "
-					"Specify the mode argument for opening it for writing.",
-					FutureWarning,
-					2,
-				)
-			self.mode = WRITE
-			self._init_write(filename)
-			self.compress = zlib.compressobj(
-				compresslevel, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0
-			)
-			self._write_mtime = mtime
+			self._init_write_mode(filename, origmode, compresslevel, mtime)
 		else:
 			raise ValueError(f"Invalid mode: {mode!r}")
 
@@ -194,6 +167,62 @@ class GzipFile(BaseStream):
 
 		if self.mode == WRITE:
 			self._write_gzip_header(compresslevel)
+
+	def _normalize_mode(self, mode: str | None) -> str | None:
+		if mode and ("t" in mode or "U" in mode):
+			raise ValueError(f"Invalid mode: {mode!r}")
+		if mode and "b" not in mode:
+			mode += "b"
+		return mode
+
+	def _open_fileobj(
+		self,
+		filename: str | None,
+		mode: str | None,
+		fileobj: IO[bytes] | None,
+	) -> IO[bytes]:
+		if fileobj is None:
+			fileobj = self.myfileobj = builtins.open(filename, mode or "rb")
+		return fileobj
+
+	def _resolve_filename(self, filename: str | None, fileobj: IO[bytes]) -> str:
+		if filename is None:
+			filename = getattr(fileobj, "name", "")
+			if not isinstance(filename, (str, bytes)):
+				filename = ""
+		else:
+			filename = os.fspath(filename)
+		return filename
+
+	def _init_read(self, filename: str, fileobj: IO[bytes]) -> None:
+		self.mode = READ
+		raw = _GzipReader(fileobj)
+		self._buffer = io.BufferedReader(raw)
+		self.name = filename
+
+	def _init_write_mode(
+		self,
+		filename: str,
+		origmode: str | None,
+		compresslevel: int | None,
+		mtime: int | None,
+	) -> None:
+		if origmode is None:
+			import warnings
+
+			warnings.warn(
+				"GzipFile was opened for writing, but this will "
+				"change in future Python releases.  "
+				"Specify the mode argument for opening it for writing.",
+				FutureWarning,
+				2,
+			)
+		self.mode = WRITE
+		self._init_write(filename)
+		self.compress = zlib.compressobj(
+			compresslevel, zlib.DEFLATED, -zlib.MAX_WBITS, zlib.DEF_MEM_LEVEL, 0
+		)
+		self._write_mtime = mtime
 
 	@property
 	def filename(self) -> str:
@@ -408,7 +437,19 @@ def _read_exact(fp: IO[bytes], n: int) -> bytes:
 	return data
 
 
-def _read_gzip_header(fp: IO[bytes]) -> bytes:
+def _skip_extra_field(fp: IO[bytes]) -> None:
+	(extra_len,) = struct.unpack("<H", _read_exact(fp, 2))
+	_read_exact(fp, extra_len)
+
+
+def _skip_c_string(fp: IO[bytes]) -> None:
+	while True:
+		s = fp.read(1)
+		if not s or s == b"\000":
+			return
+
+
+def _read_gzip_header(fp: IO[bytes]) -> int | None:
 	"""
 	Read a gzip header from `fp` and progress to the end of the header.
 
@@ -426,23 +467,13 @@ def _read_gzip_header(fp: IO[bytes]) -> bytes:
 		raise BadGzipFile("Unknown compression method")
 
 	if flag & FEXTRA:
-		# Read & discard the extra field, if present
-		(extra_len,) = struct.unpack("<H", _read_exact(fp, 2))
-		_read_exact(fp, extra_len)
+		_skip_extra_field(fp)
 	if flag & FNAME:
-		# Read and discard a null-terminated string containing the filename
-		while True:
-			s = fp.read(1)
-			if not s or s == b"\000":
-				break
+		_skip_c_string(fp)
 	if flag & FCOMMENT:
-		# Read and discard a null-terminated string containing a comment
-		while True:
-			s = fp.read(1)
-			if not s or s == b"\000":
-				break
+		_skip_c_string(fp)
 	if flag & FHCRC:
-		_read_exact(fp, 2)  # Read & discard the 16-bit header CRC
+		_read_exact(fp, 2)
 	return last_mtime
 
 
