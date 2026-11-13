@@ -508,9 +508,76 @@ class Reader:
 			properties=properties,
 		)
 
-	# TODO: PLR0912 Too many branches (16 > 12)
-	# TODO: PLR0915 Too many statements (56 > 50)
-	def readKeyTextData(  # noqa: PLR0912, PLR0915
+	@staticmethod
+	def _readArticleAddress(
+		buff: io.BufferedIOBase,
+		properties: AppleDictProperties,
+	) -> ArticleAddress:
+		# the resulting number must match with Contents/Body.data
+		# address of the entry
+		if properties.body_has_sections:
+			chunkOffset = readInt(buff)
+			sectionOffset = readInt(buff)
+		else:
+			chunkOffset = 0x0
+			sectionOffset = readInt(buff)
+		return ArticleAddress(
+			sectionOffset=sectionOffset,
+			chunkOffset=chunkOffset,
+		)
+
+	@staticmethod
+	def _readKeyTextFixedFields(
+		buff: io.BufferedIOBase,
+		properties: AppleDictProperties,
+		bufferOffset: int,
+	) -> tuple[int, int] | None:
+		if not properties.key_text_fixed_fields:
+			return 0, 0
+		if len(properties.key_text_fixed_fields) != 1:
+			log.error(
+				f"Unknown private field: {properties.key_text_fixed_fields}",
+			)
+			return None
+		priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
+		# "DCSDictionaryLanguages" array inside plist file has a list of
+		# dictionaries inside this file
+		# This DCSPrivateFlag per each article provides not only priority
+		# and parental control, but also a flag of translation direction:
+		# 0x0-0x1f values are reserved for the first language from the
+		# DCSDictionaryLanguages array 0x20-0x3f values are reserved for
+		# the second language etc.
+		if priorityAndParentalControl >= 0x40:
+			log.error(
+				"WRONG priority or parental control:"
+				f"{priorityAndParentalControl} (section: {bufferOffset:#x})"
+				", skipping KeyText.data file",
+			)
+			return None
+		if priorityAndParentalControl >= 0x20:
+			priorityAndParentalControl -= 0x20
+		# d:parental-control="1"
+		parentalControl = priorityAndParentalControl % 2
+		# d:priority=".." between 0x00..0x12, priority = [0..9]
+		priority = (priorityAndParentalControl - parentalControl) // 2
+		return priority, parentalControl
+
+	@staticmethod
+	def _readKeyTextFields(
+		buff: io.BufferedIOBase,
+		next_lexeme_offset: int,
+	) -> tuple[str, ...]:
+		keyTextFields: list[str] = []
+		while buff.tell() < next_lexeme_offset:
+			word_form_len = read_2_bytes_here(buff)
+			if word_form_len == 0:
+				keyTextFields.append("")
+				continue
+			word_form = read_x_bytes_as_term(buff, word_form_len)
+			keyTextFields.append(word_form)
+		return tuple(keyTextFields)
+
+	def readKeyTextData(
 		self,
 		buff: io.BufferedIOBase,
 		bufferOffset: int,
@@ -542,68 +609,21 @@ class Reader:
 					small_len = read_2_bytes_here(buff)  # 0x2c
 				curr_offset = buff.tell()
 				next_lexeme_offset = curr_offset + small_len
-				# the resulting number must match with Contents/Body.data
-				# address of the entry
-				articleAddress: ArticleAddress
-				if properties.body_has_sections:
-					chunkOffset = readInt(buff)
-					sectionOffset = readInt(buff)
-					articleAddress = ArticleAddress(
-						sectionOffset=sectionOffset,
-						chunkOffset=chunkOffset,
-					)
-				else:
-					chunkOffset = 0x0
-					sectionOffset = readInt(buff)
-					articleAddress = ArticleAddress(
-						sectionOffset=sectionOffset,
-						chunkOffset=chunkOffset,
-					)
 
-				if not properties.key_text_fixed_fields:
-					priority = 0
-					parentalControl = 0
-				elif len(properties.key_text_fixed_fields) == 1:
-					priorityAndParentalControl = read_2_bytes_here(buff)  # 0x13
-					# "DCSDictionaryLanguages" array inside plist file has a list of
-					# dictionaries inside this file
-					# This DCSPrivateFlag per each article provides not only priority
-					# and parental control, but also a flag of translation direction:
-					# 0x0-0x1f values are reserved for the first language from the
-					# DCSDictionaryLanguages array 0x20-0x3f values are reserved for
-					# the second language etc.
-					if priorityAndParentalControl >= 0x40:
-						log.error(
-							"WRONG priority or parental control:"
-							f"{priorityAndParentalControl} (section: {bufferOffset:#x})"
-							", skipping KeyText.data file",
-						)
-						return
-					if priorityAndParentalControl >= 0x20:
-						priorityAndParentalControl -= 0x20
-					# d:parental-control="1"
-					parentalControl = priorityAndParentalControl % 2
-					# d:priority=".." between 0x00..0x12, priority = [0..9]
-					priority = (priorityAndParentalControl - parentalControl) // 2
-				else:
-					log.error(
-						f"Unknown private field: {properties.key_text_fixed_fields}",
-					)
+				articleAddress = self._readArticleAddress(buff, properties)
+				fixedFields = self._readKeyTextFixedFields(
+					buff,
+					properties,
+					bufferOffset,
+				)
+				if fixedFields is None:
 					return
-
-				keyTextFields: list[str] = []
-				while buff.tell() < next_lexeme_offset:
-					word_form_len = read_2_bytes_here(buff)
-					if word_form_len == 0:
-						keyTextFields.append("")
-						continue
-					word_form = read_x_bytes_as_term(buff, word_form_len)
-					keyTextFields.append(word_form)
+				priority, parentalControl = fixedFields
 
 				entryKeyTextData: RawKeyDataType = (
 					priority,
 					parentalControl,
-					tuple(keyTextFields),
+					self._readKeyTextFields(buff, next_lexeme_offset),
 				)
 				if articleAddress in keyTextData:
 					keyTextData[articleAddress].append(entryKeyTextData)
