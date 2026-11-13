@@ -412,47 +412,93 @@ class Writer:
 			+ "</nav>"
 		)
 
+	def _newPage(self) -> None:
+		self._fileObj = self.nextFile()
+		self._fileObj.write(
+			self._pageHeader(
+				self._header,
+				self._title,
+				len(self._filenameList) - 1,
+			),
+		)
+		self._fileObj.write(self._navBar())
+
+	def _writeEntry(self, entry: EntryType, entryIndex: int) -> None:
+		encoding = self._encoding
+
+		text = self._formatEntry(entry, entryIndex, self._title)
+		pos = self._fileObj.tell()
+		if pos > self._initFileSizeMax and pos > self._maxFileSize - len(
+			text.encode(encoding),
+		):
+			self._newPage()
+		pos = self._fileObj.tell()
+
+		tmpFilename = escapeNTB(self._filenameList[-1])
+		self._indexTxtFileObj.writelines(
+			f"{entryIndex}\t{escapeNTB(term)}\t{tmpFilename}\t{pos}\n"
+			for term in entry.l_term
+		)
+
+		text = self._replaceBword(text)
+		self._addLinks(
+			text,
+			pos,
+			self._linksTxtFileObj,
+			self._linkTargetSet,
+		)
+		self._fileObj.write(text)
+
+	def _finishWriting(self) -> None:
+		self._fileObj.close()
+		self._fileObj = None
+		self._indexTxtFileObj.close()
+
+		self._linksTxtFileObj.close()
+
+		if self._linkTargetSet:
+			log.info(f"{len(self._linkTargetSet)} link targets found")
+			log.info("Fixing links, please wait...")
+			self.fixLinks(self._linkTargetSet)
+
+		os.remove(join(self._filename, "links.txt"))
+
 	def write(self) -> Generator[None, EntryType, None]:
 		encoding = self._encoding
 		resources = self._resources
-		max_file_size = self._max_file_size
-
-		initFileSizeMax = 100
-
-		glos = self._glos
 		filename = self._filename
 
-		indexTxtFileObj = open(
+		self._maxFileSize = self._max_file_size
+		self._initFileSizeMax = 100
+		self._indexTxtFileObj = open(
 			join(filename, "index.txt"),
 			mode="w",
 			encoding="utf-8",
 		)
-		linksTxtFileObj = open(
+		self._linksTxtFileObj = open(
 			join(filename, "links.txt"),
 			mode="w",
 			encoding="utf-8",
 		)
 
-		title = glos.getInfo("name")
-		header = self._makeHeader()
+		self._title = self._glos.getInfo("name")
+		self._header = self._makeHeader()
 
 		tailSize = len(self._tail.encode(encoding))
 
-		if max_file_size < len(header) + tailSize:
-			raise ValueError(f"{max_file_size=} is too small")
+		if self._maxFileSize < len(self._header) + tailSize:
+			raise ValueError(f"{self._maxFileSize=} is too small")
 
-		max_file_size -= tailSize
+		self._maxFileSize -= tailSize
 
 		if not isdir(filename):
 			os.mkdir(filename)
 
-		self._fileObj = self.nextFile()
-		self._fileObj.write(self._pageHeader(header, title, 0))
-		self._fileObj.write(self._navBar())
+		self._newPage()
 
-		linkTargetSet: set[str] = set()
+		self._linkTargetSet = set()
 
-		self.writeInfo(filename, header)
+		self.writeInfo(filename, self._header)
 
 		entryIndex = -1
 		while True:
@@ -465,40 +511,6 @@ class Writer:
 					entry.save(self._resDir)
 				continue
 
-			text = self._formatEntry(entry, entryIndex, title)
-			pos = self._fileObj.tell()
-			if pos > initFileSizeMax and pos > max_file_size - len(
-				text.encode(encoding),
-			):
-				self._fileObj = self.nextFile()
-				self._fileObj.write(
-					self._pageHeader(
-						header,
-						title,
-						len(self._filenameList) - 1,
-					),
-				)
-				self._fileObj.write(self._navBar())
-			pos = self._fileObj.tell()
-			tmpFilename = escapeNTB(self._filenameList[-1])
-			indexTxtFileObj.writelines(
-				f"{entryIndex}\t{escapeNTB(term)}\t{tmpFilename}\t{pos}\n"
-				for term in entry.l_term
-			)
-			del tmpFilename
-			text = self._replaceBword(text)
-			self._addLinks(text, pos, linksTxtFileObj, linkTargetSet)
-			self._fileObj.write(text)
+			self._writeEntry(entry, entryIndex)
 
-		self._fileObj.close()
-		self._fileObj = None
-		indexTxtFileObj.close()
-
-		linksTxtFileObj.close()
-
-		if linkTargetSet:
-			log.info(f"{len(linkTargetSet)} link targets found")
-			log.info("Fixing links, please wait...")
-			self.fixLinks(linkTargetSet)
-
-		os.remove(join(filename, "links.txt"))
+		self._finishWriting()
