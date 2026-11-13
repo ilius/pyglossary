@@ -150,28 +150,42 @@ class Writer:
 			return _to_katakana(headword_entry)
 		return headword_entry
 
-	def write_groups(self) -> Generator[None, EntryType, None]:
-		import gzip
+	def _get_terms_by_prefix(self, terms: list[str]) -> dict[str, list[str]]:
+		termsByPrefix: dict[str, list[str]] = {}
+		for term in terms:
+			prefix = self.get_prefix(term)
+			termsByPrefix.setdefault(prefix, []).append(term)
+		return termsByPrefix
 
-		dataEntryCount = 0
-
-		htmlHeader = '<?xml version="1.0" encoding="utf-8"?><html>\n'
-
-		groupCounter = 0
-		htmlContents = htmlHeader
-
-		def writeGroup(lastPrefix: str) -> None:
-			nonlocal htmlContents
-			group_fname = _fixFilename(lastPrefix)
-			htmlContents += "</html>"
-			trace(
-				log,
-				f"writeGroup: {lastPrefix!r}, {group_fname!r}, count={groupCounter}",
+	def _entry_to_data(self, entry: EntryType) -> list[tuple[str, bytes]]:
+		termsByPrefix = self._get_terms_by_prefix(entry.l_term)
+		defi = self.fix_defi(entry.defi)
+		mainHeadword = entry.l_term[0]
+		rows: list[tuple[str, bytes]] = []
+		for prefix, p_terms in termsByPrefix.items():
+			headword, *variants = p_terms
+			if headword != mainHeadword:
+				headword = f"{mainHeadword}, {headword}"
+			rows.append(
+				(
+					prefix,
+					compress(
+						dumps(
+							(
+								headword,
+								variants,
+								defi,
+							),
+						),
+					),
+				),
 			)
-			with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
-				gzipFile.write(htmlContents.encode("utf-8"))
-			htmlContents = htmlHeader
+		return rows
 
+	def _collect_data(
+		self,
+	) -> Generator[None, EntryType, tuple[list[str], list[tuple[str, bytes]], int]]:
+		dataEntryCount = 0
 		allTerms: list[str] = []
 		# TODO: switch to SQLite, like StarDict writer
 		data: list[tuple[str, bytes]] = []
@@ -183,61 +197,72 @@ class Writer:
 			if entry.isData():
 				dataEntryCount += 1
 				continue
-			l_term = entry.l_term
-			allTerms += l_term
-			termsByPrefix: dict[str, list[str]] = {}
-			for term in l_term:
-				prefix = self.get_prefix(term)
-				if prefix in termsByPrefix:
-					termsByPrefix[prefix].append(term)
-				else:
-					termsByPrefix[prefix] = [term]
-			defi = self.fix_defi(entry.defi)
-			mainHeadword = l_term[0]
-			for prefix, p_terms in termsByPrefix.items():
-				headword, *variants = p_terms
-				if headword != mainHeadword:
-					headword = f"{mainHeadword}, {headword}"
-				data.append(
-					(
-						prefix,
-						compress(
-							dumps(
-								(
-									headword,
-									variants,
-									defi,
-								),
-							),
-						),
-					),
-				)
-			del entry
+			allTerms += entry.l_term
+			data += self._entry_to_data(entry)
+
+		return allTerms, data, dataEntryCount
+
+	@staticmethod
+	def _write_group(
+		lastPrefix: str,
+		htmlContents: str,
+		groupCounter: int,
+	) -> None:
+		import gzip
+
+		group_fname = _fixFilename(lastPrefix)
+		htmlContents += "</html>"
+		trace(
+			log,
+			f"writeGroup: {lastPrefix!r}, {group_fname!r}, count={groupCounter}",
+		)
+		with gzip.open(group_fname + ".html", mode="wb") as gzipFile:
+			gzipFile.write(htmlContents.encode("utf-8"))
+
+	def _format_html_entry(
+		self,
+		headword: str,
+		variants: list[str],
+		defi: str,
+	) -> str:
+		headword_entry = self.normalize_headword(headword)
+		htmlVariants = "".join(f'<variant name="{v.strip().lower()}"/>' for v in variants)
+		body = f"<div><b>{headword}</b><var>{htmlVariants}</var><br/>{defi}</div>"
+		return f'<w><a name="{headword_entry}" />{body}</w>\n'
+
+	def _write_data_groups(
+		self,
+		data: list[tuple[str, bytes]],
+		htmlHeader: str,
+	) -> None:
+		groupCounter = 0
+		htmlContents = htmlHeader
+		lastPrefix = ""
+		for prefix, row in data:
+			headword, variants, defi = loads(decompress(row))
+			if lastPrefix and prefix != lastPrefix:
+				self._write_group(lastPrefix, htmlContents, groupCounter)
+				htmlContents = htmlHeader
+				groupCounter = 0
+			lastPrefix = prefix
+
+			htmlContents += self._format_html_entry(headword, variants, defi)
+			groupCounter += 1
+
+		if groupCounter > 0:
+			self._write_group(lastPrefix, htmlContents, groupCounter)
+
+	def write_groups(self) -> Generator[None, EntryType, None]:
+		htmlHeader = '<?xml version="1.0" encoding="utf-8"?><html>\n'
+
+		allTerms, data, dataEntryCount = yield from self._collect_data()
 
 		log.info("Kobo: sorting entries...")
 		data.sort(key=itemgetter(0))
 
 		log.info("Kobo: writing entries...")
-
-		lastPrefix = ""
-		for prefix, row in data:
-			headword, variants, defi = loads(decompress(row))
-			headword_entry = self.normalize_headword(headword)
-			if lastPrefix and prefix != lastPrefix:
-				writeGroup(lastPrefix)
-				groupCounter = 0
-			lastPrefix = prefix
-
-			htmlVariants = "".join(
-				f'<variant name="{v.strip().lower()}"/>' for v in variants
-			)
-			body = f"<div><b>{headword}</b><var>{htmlVariants}</var><br/>{defi}</div>"
-			htmlContents += f'<w><a name="{headword_entry}" />{body}</w>\n'
-			groupCounter += 1
+		self._write_data_groups(data, htmlHeader)
 		del data
-
-		if groupCounter > 0:
-			writeGroup(lastPrefix)
 
 		if dataEntryCount > 0:
 			log.warning(
