@@ -22,9 +22,6 @@ __all__ = ["optionsProp"]
 
 
 optionsProp: dict[str, Option] = {
-	"resources": BoolOption(
-		comment="Enable resources / data files",
-	),
 	"auto_rtl": BoolOption(
 		comment="Auto-detect and mark Right-to-Left text",
 	),

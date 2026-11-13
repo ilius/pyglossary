@@ -949,11 +949,6 @@
 		],
 		"singleFile": true,
 		"optionsProp": {
-			"resources": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Enable resources / data files"
-			},
 			"auto_rtl": {
 				"class": "BoolOption",
 				"type": "bool",
@@ -1040,11 +1035,6 @@
 		"extensions": [],
 		"singleFile": true,
 		"optionsProp": {
-			"resources": {
-				"class": "BoolOption",
-				"type": "bool",
-				"comment": "Enable resources / data files"
-			},
 			"auto_rtl": {
 				"class": "BoolOption",
 				"type": "bool",
