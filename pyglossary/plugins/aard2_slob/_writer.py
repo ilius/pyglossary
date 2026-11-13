@@ -379,6 +379,82 @@ class Writer:
 		self._sort()
 		self._fire_event("end_resolve_aliases")
 
+	def _data_files(self) -> tuple[StructWriter, ...]:
+		return (
+			self.f_ref_positions,
+			self.f_refs,
+			self.f_store_positions,
+			self.f_store,
+		)
+
+	@staticmethod
+	def _write_tags(tags: MappingProxyType[str, Any], f: StructWriter) -> None:
+		f.write(pack(U_CHAR, len(tags)))
+		for key, value in tags.items():
+			f.write_tiny_text(key)
+			f.write_tiny_text(value, editable=True)
+
+	@staticmethod
+	def _write_content_types(
+		content_types: dict[str, int],
+		f: StructWriter,
+	) -> None:
+		f.write(pack(U_CHAR, len(content_types)))
+		types = sorted(content_types.items(), key=operator.itemgetter(1))
+		for content_type, _ in types:
+			f.write_text(content_type)
+
+	def _write_header(self, out: StructWriter, files: tuple[StructWriter, ...]) -> None:
+		out.write(MAGIC)
+		out.write(uuid4().bytes)
+		out.write_tiny_text(self.encoding, encoding=UTF8)
+		out.write_tiny_text(self.compression)
+		self._write_tags(self.tags, out)
+		self._write_content_types(self.content_types, out)
+
+		out.write_int(self.blob_count)
+		store_offset = (
+			out.tell()
+			+ U_LONG_LONG_SIZE
+			+ U_LONG_LONG_SIZE
+			+ U_INT_SIZE
+			+ os.stat(self.f_ref_positions.name).st_size
+			+ os.stat(self.f_refs.name).st_size
+		)
+		out.write_long(store_offset)
+		out.flush()
+
+		file_size = out.tell() + U_LONG_LONG_SIZE + 2 * U_INT_SIZE
+		file_size += sum(os.stat(f.name).st_size for f in files)
+		out.write_long(file_size)
+
+	def _move_file(self, src: StructWriter, out: StructWriter) -> None:
+		buf_size = 10 * 1024 * 1024
+		fname = src.name
+		self._fire_event("begin_move", fname)
+		with fopen(fname, mode="rb") as f:
+			while True:
+				data = f.read(buf_size)
+				if len(data) == 0:
+					break
+				out.write(data)
+				out.flush()
+		os.remove(fname)
+		self._fire_event("end_move", fname)
+
+	def _write_output(self, files: tuple[StructWriter, ...]) -> None:
+		with fopen(self.filename, mode="wb") as output_file:
+			out = StructWriter(output_file, self.encoding)
+			self._write_header(out, files)
+
+			out.write_int(self.ref_count)
+			self._move_file(self.f_ref_positions, out)
+			self._move_file(self.f_refs, out)
+
+			out.write_int(self.bin_count)
+			self._move_file(self.f_store_positions, out)
+			self._move_file(self.f_store, out)
+
 	def finalize(self) -> None:
 		self._fire_event("begin_finalize")
 		if self.current_bin is not None:
@@ -388,80 +464,11 @@ class Writer:
 		if self.max_redirects:
 			self._resolve_aliases()
 
-		files = (
-			self.f_ref_positions,
-			self.f_refs,
-			self.f_store_positions,
-			self.f_store,
-		)
+		files = self._data_files()
 		for f in files:
 			f.close()
 
-		buf_size = 10 * 1024 * 1024
-
-		def write_tags(tags: MappingProxyType[str, Any], f: StructWriter) -> None:
-			f.write(pack(U_CHAR, len(tags)))
-			for key, value in tags.items():
-				f.write_tiny_text(key)
-				f.write_tiny_text(value, editable=True)
-
-		with fopen(self.filename, mode="wb") as output_file:
-			out = StructWriter(output_file, self.encoding)
-			out.write(MAGIC)
-			out.write(uuid4().bytes)
-			out.write_tiny_text(self.encoding, encoding=UTF8)
-			out.write_tiny_text(self.compression)
-
-			write_tags(self.tags, out)
-
-			def write_content_types(
-				content_types: dict[str, int],
-				f: StructWriter,
-			) -> None:
-				count = len(content_types)
-				f.write(pack(U_CHAR, count))
-				types = sorted(content_types.items(), key=operator.itemgetter(1))
-				for content_type, _ in types:
-					f.write_text(content_type)
-
-			write_content_types(self.content_types, out)
-
-			out.write_int(self.blob_count)
-			store_offset = (
-				out.tell()
-				+ U_LONG_LONG_SIZE
-				+ U_LONG_LONG_SIZE
-				+ U_INT_SIZE
-				+ os.stat(self.f_ref_positions.name).st_size
-				+ os.stat(self.f_refs.name).st_size
-			)
-			out.write_long(store_offset)
-			out.flush()
-
-			file_size = out.tell() + U_LONG_LONG_SIZE + 2 * U_INT_SIZE
-			file_size += sum(os.stat(f.name).st_size for f in files)
-			out.write_long(file_size)
-
-			def mv(src: StructWriter, out: StructWriter) -> None:
-				fname = src.name
-				self._fire_event("begin_move", fname)
-				with fopen(fname, mode="rb") as f:
-					while True:
-						data = f.read(buf_size)
-						if len(data) == 0:
-							break
-						out.write(data)
-						out.flush()
-				os.remove(fname)
-				self._fire_event("end_move", fname)
-
-			out.write_int(self.ref_count)
-			mv(self.f_ref_positions, out)
-			mv(self.f_refs, out)
-
-			out.write_int(self.bin_count)
-			mv(self.f_store_positions, out)
-			mv(self.f_store, out)
+		self._write_output(files)
 
 		self.f_ref_positions = None  # type: ignore # noqa: PGH003
 		self.f_refs = None  # type: ignore # noqa: PGH003
@@ -475,13 +482,7 @@ class Writer:
 		# Use tell(), not os.stat().st_size: buffered writers (esp. Python 3.14+
 		# DEFAULT_BUFFER_SIZE 128KiB) may not have flushed to the file yet, so stat
 		# understates size
-		files = (
-			self.f_ref_positions,
-			self.f_refs,
-			self.f_store_positions,
-			self.f_store,
-		)
-		return sum(f.tell() for f in files)
+		return sum(f.tell() for f in self._data_files())
 
 	def __enter__(self) -> Self:
 		return self
