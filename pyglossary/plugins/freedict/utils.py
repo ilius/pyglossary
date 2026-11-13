@@ -7,7 +7,7 @@ for FreeDict ``.tei`` sources. Used by the FreeDict reader during TEI conversion
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from pyglossary.core import log
 from pyglossary.langs import langDict
@@ -15,7 +15,6 @@ from pyglossary.langs.writing_system import getWritingSystemFromText
 
 if TYPE_CHECKING:
 	from collections.abc import Callable
-	from typing import Any
 
 	from pyglossary.stubs.lxml_types import Element, T_htmlfile
 
@@ -24,6 +23,8 @@ __all__ = ["XMLLANG", "ReaderUtils"]
 
 
 XMLLANG = "{http://www.w3.org/XML/1998/namespace}lang"
+
+T = TypeVar("T")
 
 
 class ReaderUtils:
@@ -46,8 +47,8 @@ class ReaderUtils:
 	@staticmethod
 	def makeList(  # noqa: PLR0913
 		hf: T_htmlfile,
-		input_objects: list[Any],
-		processor: Callable[[T_htmlfile, Element], None],
+		input_objects: list[T],
+		processor: Callable[[T_htmlfile, T], None],
 		single_prefix: str = "",
 		skip_single: bool = True,
 		ordered: bool = True,

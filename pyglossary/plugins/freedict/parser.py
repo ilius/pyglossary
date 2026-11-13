@@ -10,12 +10,12 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from pyglossary.core import log
 from pyglossary.langs import langDict
 
-from .utils import XMLLANG
+from .utils import XMLLANG, ReaderUtils
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -49,7 +49,7 @@ __all__ = [
 TEI = "{http://www.tei-c.org/ns/1.0}"
 ENTRY = f"{TEI}entry"
 INCLUDE = "{http://www.w3.org/2001/XInclude}include"
-NAMESPACE = {None: "http://www.tei-c.org/ns/1.0"}
+NAMESPACE: Any = {None: "http://www.tei-c.org/ns/1.0"}
 _whitespaceRun = re.compile(r"\s+")
 _p_pattern = re.compile("<p( [^<>]*?)?>(.*?)</p>", re.DOTALL)
 _ref_pattern = re.compile('<ref target="(.*?)">(.*?)</ref>')
@@ -58,7 +58,15 @@ _website_pattern = re.compile('Home: <(ref|ptr) target="(.*)">(.*)</\\1>')
 
 def _elementText(elem: Element) -> str:
 	"""Return all text inside an element, including nested markup."""
-	return "".join(elem.itertext()).strip()
+	return "".join(cast("Iterator[str]", elem.itertext())).strip()
+
+
+def _childNodes(elem: Element) -> list[str | Element]:
+	return cast("list[str | Element]", elem.xpath("child::node()"))
+
+
+def _attribDict(elem: Element) -> dict[str, str]:
+	return {str(key): str(value) for key, value in elem.attrib.items()}
 
 
 # ---------------------------------------------------------------------------
@@ -205,7 +213,7 @@ class TransCitCollector:
 
 	def _collectBlocks(self, cit: Element) -> list[Block]:
 		scan = _CitScan(cit)
-		for child in cit.xpath("child::node()"):
+		for child in _childNodes(cit):
 			self._handleChild(scan, child)
 		self._flushText(scan)
 		if scan.tags:
@@ -307,12 +315,12 @@ class TransCitCollector:
 		# attributes so xml:lang (lang/dir) and type (class) apply to it as
 		# they do to real quotes.
 		return Block(
-			attrib=self._parser._blockAttrib(dict(cit.attrib)),
+			attrib=self._parser._blockAttrib(_attribDict(cit)),
 			children=[Text(text)],
 		)
 
 
-class Parser:
+class Parser(ReaderUtils):
 	"""Parse TEI elements into the dataclasses above."""
 
 	_auto_rtl: bool = True
@@ -402,7 +410,7 @@ class Parser:
 
 	def _parseInlineNodes(self, elem: Element) -> list[Inline]:
 		nodes: list[Inline] = []
-		for child in elem.xpath("child::node()"):
+		for child in _childNodes(elem):
 			if isinstance(child, str):
 				nodes.append(Text(child))
 				continue
@@ -420,7 +428,7 @@ class Parser:
 			if child.tag == f"{TEI}p":
 				# map xml:lang to lang (and dir), like the block parser does;
 				# passing the raw attribute would emit an ns0:lang attribute
-				attrib = dict(child.attrib)
+				attrib = _attribDict(child)
 				self.setAttribLangDir(attrib)
 				nodes.append(Elem("p", attrib, self._parseInlineNodes(child)))
 				continue
@@ -428,7 +436,7 @@ class Parser:
 				nodes.append(
 					Elem(
 						"div",
-						self._blockAttrib(dict(child.attrib)),
+						self._blockAttrib(_attribDict(child)),
 						self._parseInlineNodes(child),
 					),
 				)
@@ -437,7 +445,7 @@ class Parser:
 				nodes.append(
 					Elem(
 						"span",
-						self._blockAttrib(dict(child.attrib)),
+						self._blockAttrib(_attribDict(child)),
 						self._parseInlineNodes(child),
 					),
 				)
@@ -448,7 +456,7 @@ class Parser:
 
 	def _parseBlock(self, elem: Element) -> Block:
 		return Block(
-			attrib=self._blockAttrib(dict(elem.attrib)),
+			attrib=self._blockAttrib(_attribDict(elem)),
 			children=self._parseInlineNodes(elem),
 		)
 
@@ -504,7 +512,7 @@ class Parser:
 
 	def _iterDefPieces(self, node: Element) -> Iterator[str | Ref]:
 		"""Yield the text and <ref> pieces of a <def>, recursing into other elements."""
-		for child in node.xpath("child::node()"):
+		for child in _childNodes(node):
 			if isinstance(child, str):
 				yield child
 				continue
@@ -661,7 +669,7 @@ class Parser:
 			and _elementText(child)
 		]
 		for quote in citElem.findall("quote", NAMESPACE):
-			attrib = dict(quote.attrib)
+			attrib = _attribDict(quote)
 			if applyAttrib:
 				attrib.update(applyAttrib)
 			example.quotes.append(
@@ -677,7 +685,7 @@ class Parser:
 		for cit2 in citElem.findall("cit", NAMESPACE):
 			# The nested <cit> grammar, note and usage content belongs to the
 			# nested example; only its attributes are applied to its quotes.
-			example.subCits.append(self._parseExampleCit(cit2, dict(cit2.attrib)))
+			example.subCits.append(self._parseExampleCit(cit2, _attribDict(cit2)))
 		return example
 
 	@classmethod

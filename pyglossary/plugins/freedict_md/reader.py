@@ -15,10 +15,9 @@ changes.
 
 from __future__ import annotations
 
-# mypy: ignore-errors
 from dataclasses import dataclass
 from os.path import dirname, isfile, join, realpath
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
 from pyglossary.compress import compressionOpen, stdCompressions
 from pyglossary.core import exc_note, log, pip
@@ -57,6 +56,8 @@ if TYPE_CHECKING:
 
 
 __all__ = ["Reader"]
+
+T = TypeVar("T")
 
 
 @dataclass(slots=True)
@@ -121,8 +122,8 @@ class Reader(Parser):
 	@staticmethod
 	def makeList(  # noqa: PLR0913
 		hf: T_htmlfile,
-		input_objects: list,
-		processor: Callable[[T_htmlfile, object], None],
+		input_objects: list[T],
+		processor: Callable[[T_htmlfile, T], None],
 		single_prefix: str = "",
 		skip_single: bool = True,
 		ordered: bool = True,
@@ -645,7 +646,7 @@ class Reader(Parser):
 		self._dirname = ""
 		self._file: IOBase = nullBinaryIO
 		self._fileSize = 0
-		self._progress = True
+		self._progress: bool | int = True
 		self._entryCount = 0
 		# real paths of the files from the top-level file down to this one
 		self._includeChain: frozenset[str] = frozenset()
@@ -678,35 +679,35 @@ class Reader(Parser):
 		isTopLevel = not self._includeChain
 		self._includeChain = self._includeChain | {realpath(filename)}
 		cfile = compressionOpen(filename, mode="rb")
+		try:
+			if cfile.seekable():
+				cfile.seek(0, 2)
+				self._fileSize = cfile.tell()
+				cfile.seek(0)
+				if isTopLevel:
+					# only the top-level file defines the glossary's input size,
+					# included files must not overwrite it
+					self._glos.setInfo("input_file_size", str(self._fileSize))
+			else:
+				log.warning("FreeDict Reader: file is not seekable")
 
-		if cfile.seekable():
-			cfile.seek(0, 2)
-			self._fileSize = cfile.tell()
-			cfile.seek(0)
-			if isTopLevel:
-				# only the top-level file defines the glossary's input size,
-				# included files must not overwrite it
-				self._glos.setInfo("input_file_size", str(self._fileSize))
-		else:
-			log.warning("FreeDict Reader: file is not seekable")
+			self._progress = self._glos.progressbar and self._fileSize
 
-		self._progress = self._glos.progressbar and self._fileSize
+			self._glos.setDefaultDefiFormat("m")
 
-		self._glos.setDefaultDefiFormat("m")
+			if self._word_title:
+				self._glos.setInfo("definition_has_headwords", "True")
 
-		if self._word_title:
-			self._glos.setInfo("definition_has_headwords", "True")
-
-		context = ET.iterparse(  # type: ignore # noqa: PGH003
-			cfile,
-			events=("end",),
-			tag=f"{TEI}teiHeader",
-		)
-		for _, elem in context:
-			self.applyMetadata(self.parseMetadata(elem))  # type: ignore
-			break
-
-		cfile.close()
+			context = ET.iterparse(  # type: ignore # noqa: PGH003
+				cfile,
+				events=("end",),
+				tag=f"{TEI}teiHeader",
+			)
+			for _, elem in context:
+				self.applyMetadata(self.parseMetadata(elem))  # type: ignore
+				break
+		finally:
+			cfile.close()
 
 	def loadInclude(self, elem: Element) -> Reader | None:
 		href = self.parseIncludeHref(elem)
@@ -722,7 +723,11 @@ class Reader(Parser):
 		reader = Reader(self._glos)
 		self._copyOptionsTo(reader)
 		reader._includeChain = self._includeChain
-		reader.open(filename)
+		try:
+			reader.open(filename)
+		except Exception:
+			reader.close()
+			raise
 		return reader
 
 	def __iter__(self) -> Iterator[EntryType]:
