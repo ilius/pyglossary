@@ -106,18 +106,3 @@ class ReaderUtils:
 
 		log.warning(f"unknown lang name in {cls.tostring(elem)}")
 		return None
-
-	@classmethod
-	def writeLangTag(
-		cls,
-		hf: T_htmlfile,
-		elem: Element,
-	) -> None:
-		langDesc = cls.getLangDesc(elem)
-		if not langDesc:
-			return
-		# TODO: make it Italic or change font color?
-		if elem.text:
-			hf.write(f"{langDesc}: {elem.text}")
-		else:
-			hf.write(f"{langDesc}")
