@@ -86,7 +86,6 @@ Web interface
 | [Zim (Kiwix)](./doc/p/zim.md) | 🔢 | .zim | ✅ | ✅ |
 | [ABBYY Lingvo DSL](./doc/p/dsl.md) 🇷🇺 | 📝 | .dsl | ✅ | ❌ |
 | [Almaany.com](./doc/p/almaany.md) (Arabic) | 🛢️ | .db | ✅ | ❌ |
-| [cc-kedict](./doc/p/cc_kedict.md) 🇰🇷 | 📝 | | ✅ | ❌ |
 | [Dict.cc](./doc/p/dict_cc.md) 🇩🇪 | 🛢️ | .db | ✅ | |
 | [DigitalNK](./doc/p/digitalnk.md) 🇰🇵 | 🛢️ | .db | ✅ | |
 | [EDICT2 (CEDICT)](./doc/p/edict2.md) 🇨🇳 | 📝 | (.u8) | ✅ | ❌ |

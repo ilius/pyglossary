@@ -10,11 +10,6 @@
   - `apt install libxml2 libxslt`
   - `pip install lxml`
 
-- **Reading from cc-kedict**
-
-  - `apt install libxml2 libxslt`
-  - `pip install lxml PyYAML`
-
 - **Reading or writing Aard 2 (.slob)**
 
   - `pkg install libicu`

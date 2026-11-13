@@ -298,22 +298,6 @@
 		"writeOptions": {}
 	},
 	{
-		"module": "cc_kedict",
-		"lname": "cc_kedict",
-		"name": "cc-kedict",
-		"description": "cc-kedict",
-		"extensions": [],
-		"singleFile": true,
-		"optionsProp": {},
-		"canRead": true,
-		"canWrite": false,
-		"readOptions": {},
-		"readDepends": {
-			"yaml": "PyYAML",
-			"lxml": "lxml"
-		}
-	},
-	{
 		"module": "crawler_dir",
 		"lname": "crawler_dir",
 		"name": "CrawlerDir",

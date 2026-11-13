@@ -1,4 +1,3 @@
-PyYAML
 beautifulsoup4
 biplist
 colorize-pinyin

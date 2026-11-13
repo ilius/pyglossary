@@ -44,4 +44,3 @@ pip3 install lxml
 
 - [JMDict (xml)](./jmdict.md)
 - [JMnedict](./jmnedict.md)
-- [cc-kedict](./cc_kedict.md)

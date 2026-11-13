@@ -5,7 +5,6 @@
 | AppleDict Source | AppleDict | [appledict.md](./appledict.md) |
 | AppleDict Binary | AppleDictBin | [appledict_bin.md](./appledict_bin.md) |
 | Babylon (.BGL) | BabylonBgl | [babylon_bgl.md](./babylon_bgl.md) |
-| cc-kedict | cc-kedict | [cc_kedict.md](./cc_kedict.md) |
 | Crawler Directory | CrawlerDir | [crawler_dir.md](./crawler_dir.md) |
 | CSV (.csv) | Csv | [csv.md](./csv.md) |
 | DictionaryForMIDs | Dicformids | [dicformids.md](./dicformids.md) |
