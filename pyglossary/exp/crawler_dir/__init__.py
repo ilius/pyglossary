@@ -5,6 +5,11 @@ PyGlossary crawler directory format plugin.
 Directory of crawled web pages indexed as glossary entries (``.crawler/``).
 Registers ``Reader`` and ``Writer`` for offline mirrors with HTML definitions
 and relative link rewriting.
+
+To use this plugin, create a symbolic link from this directory to user plugins
+directory, which is ~/.pyglossary/plugins/ on Linux or *BSD
+See User Plugins section of README.md or
+https://github.com/ilius/pyglossary#user-plugins
 """
 
 from __future__ import annotations
