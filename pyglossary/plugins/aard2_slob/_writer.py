@@ -30,7 +30,7 @@ from uuid import uuid4
 
 import icu
 
-from ._blob import Blob
+from ._blob import Blob, KeydItemDict
 from ._collate import IDENTICAL, sortkey
 from ._compressions import COMPRESSIONS
 from ._constants import (
@@ -290,73 +290,88 @@ class Writer:
 		)
 		self._fire_event("end_sort")
 
-	def _resolve_aliases(self) -> None:  # noqa: PLR0912, C901
+	@staticmethod
+	def _read_key_frag(item: Blob, default_fragment: str) -> tuple[str, str]:
+		key_frag = pickle.loads(item.content)
+		if isinstance(key_frag, str):
+			return key_frag, default_fragment
+		to_key, fragment = key_frag
+		return to_key, fragment
+
+	def _build_resolved_aliases(self, ref_dict: KeydItemDict[Ref]) -> str:
 		from ._slob_obj import Slob
 
-		self._fire_event("begin_resolve_aliases")
-		self.f_aliases.finalize()
+		path = os.path.join(self.tmpdir.name, "resolved-aliases")
+		with Slob(self.aliases_path) as aliases_slob:
+			aliases = aliases_slob.as_dict()
+			alias_writer = Writer(
+				path,
+				workdir=self.tmpdir.name,
+				max_redirects=0,
+				compression=None,
+				version_info=False,
+			)
 
-		def read_key_frag(item: Blob, default_fragment: str) -> tuple[str, str]:
-			key_frag = pickle.loads(item.content)
-			if isinstance(key_frag, str):
-				return key_frag, default_fragment
-			to_key, fragment = key_frag
-			return to_key, fragment
-
-		with MultiFileReader(
-			self.f_ref_positions.name,
-			self.f_refs.name,
-		) as f_ref_list:
-			ref_list = RefList(f_ref_list, self.encoding, count=self.ref_count)
-			ref_dict = ref_list.as_dict()
-			with Slob(self.aliases_path) as aliasesSlob:
-				aliases = aliasesSlob.as_dict()
-				path = os.path.join(self.tmpdir.name, "resolved-aliases")
-				alias_writer = Writer(
-					path,
-					workdir=self.tmpdir.name,
-					max_redirects=0,
-					compression=None,
-					version_info=False,
+			for item in aliases_slob:
+				from_key = item.key
+				to_key, fragment = self._read_key_frag(item, item.fragment)
+				keys, to_key, fragment, count = self._resolve_redirect_chain(
+					from_key,
+					to_key,
+					fragment,
+					aliases,
 				)
+				if count > self.max_redirects:
+					self._fire_event("too_many_redirects", from_key)
+				try:
+					target_ref = cast("Ref", next(ref_dict[to_key]))
+				except StopIteration:
+					self._fire_event("alias_target_not_found", to_key)
+					continue
+				for key in keys:
+					ref = Ref(
+						key=key,
+						bin_index=target_ref.bin_index,
+						item_index=target_ref.item_index,
+						fragment=target_ref.fragment or fragment,
+					)
+					alias_writer.add(pickle.dumps(ref), key)
 
-				for item in aliasesSlob:
-					from_key = item.key
-					keys = set()
-					keys.add(from_key)
-					to_key, fragment = read_key_frag(item, item.fragment)
-					count = 0
-					while count <= self.max_redirects:
-						try:
-							alias_item = next(aliases[to_key])
-						except StopIteration:
-							break
-						assert isinstance(alias_item, Blob)
-						orig_to_key = to_key
-						to_key, fragment = read_key_frag(
-							alias_item,
-							fragment,
-						)
-						count += 1
-						keys.add(orig_to_key)
-					if count > self.max_redirects:
-						self._fire_event("too_many_redirects", from_key)
-					target_ref: Ref
-					try:
-						target_ref = cast("Ref", next(ref_dict[to_key]))
-					except StopIteration:
-						self._fire_event("alias_target_not_found", to_key)
-					else:
-						for key in keys:
-							ref = Ref(
-								key=key,
-								bin_index=target_ref.bin_index,
-								item_index=target_ref.item_index,
-								fragment=target_ref.fragment or fragment,
-							)
-							alias_writer.add(pickle.dumps(ref), key)
+			alias_writer.finalize()
 
-				alias_writer.finalize()
+		return path
+
+	def _resolve_redirect_chain(
+		self,
+		from_key: str,
+		to_key: str,
+		fragment: str,
+		aliases: KeydItemDict[Blob],
+	) -> tuple[set[str], str, str, int]:
+		keys = {from_key}
+		count = 0
+		while count <= self.max_redirects:
+			try:
+				alias_item = next(aliases[to_key])
+			except StopIteration:
+				break
+			assert isinstance(alias_item, Blob)
+			orig_to_key = to_key
+			to_key, fragment = self._read_key_frag(alias_item, fragment)
+			count += 1
+			keys.add(orig_to_key)
+		return keys, to_key, fragment, count
+
+	def _write_targets(
+		self,
+		key: str,
+		targets: set[tuple[int, int, str]],
+	) -> None:
+		for bin_index, item_index, fragment in sorted(targets):
+			self._write_ref(key, bin_index, item_index, fragment)
+
+	def _write_resolved_aliases(self, path: str) -> None:
+		from ._slob_obj import Slob
 
 		with Slob(path) as resolved_aliases_reader:
 			previous = None
@@ -365,17 +380,28 @@ class Writer:
 			for item in resolved_aliases_reader:
 				ref = pickle.loads(item.content)
 				if previous is not None and ref.key != previous.key:
-					for bin_index, item_index, fragment in sorted(targets):
-						self._write_ref(previous.key, bin_index, item_index, fragment)
+					self._write_targets(previous.key, targets)
 					targets.clear()
 				targets.add((ref.bin_index, ref.item_index, ref.fragment))
 				previous = ref
 
 			if targets:
 				assert previous is not None
-				for bin_index, item_index, fragment in sorted(targets):
-					self._write_ref(previous.key, bin_index, item_index, fragment)
+				self._write_targets(previous.key, targets)
 
+	def _resolve_aliases(self) -> None:
+		self._fire_event("begin_resolve_aliases")
+		self.f_aliases.finalize()
+
+		with MultiFileReader(
+			self.f_ref_positions.name,
+			self.f_refs.name,
+		) as f_ref_list:
+			ref_list = RefList(f_ref_list, self.encoding, count=self.ref_count)
+			ref_dict = ref_list.as_dict()
+			path = self._build_resolved_aliases(ref_dict)
+
+		self._write_resolved_aliases(path)
 		self._sort()
 		self._fire_event("end_resolve_aliases")
 
