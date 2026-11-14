@@ -48,6 +48,10 @@ if TYPE_CHECKING:
 __all__ = ["Writer"]
 
 
+def _escapeAlt(alt: str) -> str:
+	return alt.replace("\\", "\\\\").replace(",", "\\,")
+
+
 class Writer:
 	"""Write glossary files in Csv format."""
 
@@ -134,6 +138,6 @@ class Writer:
 				entry.detectDefiFormat()
 				row.append(entry.defiFormat)
 			if alts:
-				row.append(",".join(alts))
+				row.append(",".join(_escapeAlt(alt) for alt in alts))
 
 			writer.writerow(row)

@@ -1,0 +1,6 @@
+"#name","CSV escaping sample"
+"#sourceLang","en"
+"#targetLang","en"
+"apple","<p>An apple.</p>","a\,b,c\\d,e\\f"
+"banana","<p>A banana.</p>","plain"
+"cherry","<p>A cherry.</p>","x\,y"

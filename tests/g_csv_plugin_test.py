@@ -13,6 +13,11 @@ class TestGlossaryCSV(TestGlossaryBase):
 	def __init__(self, *args, **kwargs):
 		TestGlossaryBase.__init__(self, *args, **kwargs)
 
+		self.dataFile |= {
+			"3-en-en-csv-escape.csv",
+			"3-en-en-csv-escape.txt",
+			"3-en-en-csv-escape-escaped.csv",
+		}
 		self.dataFileCRC32 |= {
 			"100-en-de-v4.csv": "2890fb3e",
 			"100-en-fa.csv": "eb8b0474",
@@ -78,6 +83,21 @@ class TestGlossaryCSV(TestGlossaryBase):
 			"100-en-fa-semicolon",
 			"100-en-fa",
 			readOptions={"delimiter": ";"},
+			infoOverride={"input_file_size": None},
+		)
+
+	def test_convert_csv_txt_escape(self):
+		self.convert(
+			"3-en-en-csv-escape.csv",
+			"3-en-en-csv-escape-out.txt",
+			compareText="3-en-en-csv-escape.txt",
+		)
+
+	def test_convert_txt_csv_escape(self):
+		self.convert(
+			"3-en-en-csv-escape.txt",
+			"3-en-en-csv-escape-out.csv",
+			compareText="3-en-en-csv-escape-escaped.csv",
 			infoOverride={"input_file_size": None},
 		)
 

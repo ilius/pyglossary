@@ -1,0 +1,6 @@
+##name	CSV escaping sample
+##sourceLang	en
+##targetLang	en
+apple|a,b|c\\d|e\\f	<p>An apple.</p>
+banana|plain	<p>A banana.</p>
+cherry|x,y	<p>A cherry.</p>

@@ -50,10 +50,14 @@ Our supported CSV files consists of these columns:
 - Definition / translation / article
 - Comma-separated alternative terms (optional) (needs to be quoted for multiple terms)
 
+Inside the alternative terms column, a comma is escaped as `\,` and a
+backslash as `\\`. Any other backslash is kept as-is.
+
 For example, with default `delimiter=","`, a line would like like:
 
 ```csv
 word,translation,"inflection1,inflection2,inflection3"
+word,translation,"term\,with\,commas,normal"
 ```
 
 Here is a simple script that creates such CSV file (without pyglossary library):

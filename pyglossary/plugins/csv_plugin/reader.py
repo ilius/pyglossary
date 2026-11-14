@@ -47,6 +47,31 @@ if TYPE_CHECKING:
 __all__ = ["Reader"]
 
 
+def _splitAlts(text: str) -> list[str]:
+	alts: list[str] = []
+	current: list[str] = []
+	i = 0
+	while i < len(text):
+		char = text[i]
+		if char == "\\":
+			if i + 1 < len(text) and text[i + 1] in ("\\", ","):
+				current.append(text[i + 1])
+				i += 2
+				continue
+			current.append(char)
+			i += 1
+			continue
+		if char == ",":
+			alts.append("".join(current))
+			current = []
+			i += 1
+			continue
+		current.append(char)
+		i += 1
+	alts.append("".join(current))
+	return alts
+
+
 class Reader:
 	"""Read Csv glossary files."""
 
@@ -170,7 +195,7 @@ class Reader:
 			return None
 
 		try:
-			alts = row[2].split(",")
+			alts = _splitAlts(row[2])
 		except IndexError:
 			pass
 		else:
