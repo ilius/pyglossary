@@ -440,6 +440,70 @@ class DaijisenExtractor(KoujienExtractor):
 _EPWING_PAGE_SIZE = 2048
 _EPWING_CATALOG_SIZE = 164
 
+_CONTROL_STEPS = {
+	0x09: 4,
+	0x14: 4,
+	0x1A: 4,
+	0x1B: 4,
+	0x1C: 4,
+	0x1D: 4,
+	0x1E: 4,
+	0x1F: 4,
+	0x39: 46,
+	0x3C: 20,
+	0x41: 4,
+	0x44: 12,
+	0x45: 4,
+	0x4A: 18,
+	0x4B: 8,
+	0x4C: 4,
+	0x4D: 20,
+	0x4F: 34,
+	0x52: 8,
+	0x53: 10,
+	0x62: 8,
+	0x63: 8,
+	0x64: 8,
+	0xE0: 4,
+}
+
+_SKIP_CODE_OFFSETS = {
+	*range(0x35, 0x39),
+	0x3A,
+	0x3B,
+	0x3D,
+	0x3E,
+	0x3F,
+	0x49,
+	0x4E,
+	*range(0x70, 0x90),
+}
+
+
+def _control_step_length(data: mmap.mmap, offset: int, code: int) -> int:
+	step = _CONTROL_STEPS.get(code, 2)
+	if code == 0x42:
+		step = 4 if offset + 2 < len(data) and data[offset + 2] == 0 else 2
+	elif code == 0x45 and offset + 2 < len(data) and data[offset + 2] == 0x1F:
+		step = 2
+	elif (
+		code == 0x4B
+		and offset + 9 < len(data)
+		and data[offset + 8 : offset + 10] == b"\x1f\x6b"
+	):
+		step = 10
+	return step
+
+
+def _control_skip_code(code: int) -> int | None:
+	if code == 0x14:
+		return 0x15
+	if code in _SKIP_CODE_OFFSETS:
+		return code + 0x20
+	if code in range(0xE4, 0xFF, 2):
+		return code + 1
+	return None
+
 
 def _find_name(path: str, name: str) -> str:
 	"""Return a child path, matching its name without case sensitivity."""
@@ -651,66 +715,10 @@ class EpwingSubbook:
 
 	@staticmethod
 	def _control_step(data: mmap.mmap, offset: int, code: int) -> tuple[int, int | None]:
-		steps = {
-			0x09: 4,
-			0x14: 4,
-			0x1A: 4,
-			0x1B: 4,
-			0x1C: 4,
-			0x1D: 4,
-			0x1E: 4,
-			0x1F: 4,
-			0x39: 46,
-			0x3C: 20,
-			0x41: 4,
-			0x44: 12,
-			0x45: 4,
-			0x4A: 18,
-			0x4B: 8,
-			0x4C: 4,
-			0x4D: 20,
-			0x4F: 34,
-			0x52: 8,
-			0x53: 10,
-			0x62: 8,
-			0x63: 8,
-			0x64: 8,
-			0xE0: 4,
-		}
-		step = steps.get(code, 2)
-		if code == 0x42:
-			step = 4 if offset + 2 < len(data) and data[offset + 2] == 0 else 2
-		elif code == 0x45 and offset + 2 < len(data) and data[offset + 2] == 0x1F:
-			step = 2
-		elif (
-			code == 0x4B
-			and offset + 9 < len(data)
-			and data[offset + 8 : offset + 10] == b"\x1f\x6b"
-		):
-			step = 10
-
+		step = _control_step_length(data, offset, code)
 		if offset + step > len(data):
 			raise ValueError(f"Truncated EPWING control code {code:#x}")
-		if code == 0x14:
-			return step, 0x15
-		if code in {
-			0x35,
-			0x36,
-			0x37,
-			0x38,
-			0x3A,
-			0x3B,
-			0x3D,
-			0x3E,
-			0x3F,
-			0x49,
-			0x4E,
-			*range(0x70, 0x90),
-		}:
-			return step, code + 0x20
-		if code in range(0xE4, 0xFF, 2):
-			return step, code + 1
-		return step, None
+		return step, _control_skip_code(code)
 
 	@staticmethod
 	def _narrow_ascii(first: int, second: int) -> int | None:
