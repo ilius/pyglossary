@@ -103,6 +103,58 @@ def _write_header(
 			toFile.write(file.read())
 
 
+def _setup_beautifulsoup(clean_html: bool) -> None:
+	global BeautifulSoup
+	if not clean_html:
+		BeautifulSoup = None
+		return
+	if BeautifulSoup is None:
+		_loadBeautifulSoup()
+	if BeautifulSoup is None:
+		log.warning(
+			"clean_html option passed but BeautifulSoup not found. "
+			"to fix this run "
+			f"`{pip} install lxml beautifulsoup4 html5lib`",
+		)
+
+
+def _get_copyright_text(glos: WriterGlossaryType) -> str:
+	copyright_ = glos.getInfo("copyright")
+	if BeautifulSoup:
+		# strip html tags
+		copyright_ = str(
+			BeautifulSoup.BeautifulSoup(
+				copyright_,
+				features="lxml",
+			).text,
+		)
+	return copyright_
+
+
+def _write_dictionary_xml(  # noqa: PLR0913
+	toFile: io.TextIOBase,
+	front_back_matter: str | None,
+	myResDir: str,
+	xdxf_to_html: Any,
+	generate_id: Iterator[str],
+	generate_indexes: Any,
+) -> Generator[None, EntryType, None]:
+	_write_header(toFile, front_back_matter)
+	while True:
+		entry = yield
+		if entry is None:
+			break
+		_write_entry(
+			toFile,
+			entry,
+			myResDir,
+			xdxf_to_html,
+			generate_id,
+			generate_indexes,
+		)
+	toFile.write("</d:dictionary>\n")
+
+
 def _write_entry(  # noqa: PLR0913
 	toFile: io.TextIOBase,
 	entry: EntryType,
@@ -267,9 +319,7 @@ class Writer:
 		if not isdir(dirname):
 			os.mkdir(dirname)
 
-	# TODO: PLR0915 Too many statements (74 > 50)
-	def write(self) -> Generator[None, EntryType, None]:  # noqa: PLR0915
-		global BeautifulSoup
+	def write(self) -> Generator[None, EntryType, None]:
 		from pyglossary.xdxf.py_transform import XdxfTransformer
 
 		glos = self._glos
@@ -283,17 +333,7 @@ class Writer:
 
 		xdxf_to_html = XdxfTransformer(encoding="utf-8")
 
-		if self._clean_html:
-			if BeautifulSoup is None:
-				_loadBeautifulSoup()
-			if BeautifulSoup is None:
-				log.warning(
-					"clean_html option passed but BeautifulSoup not found. "
-					"to fix this run "
-					f"`{pip} install lxml beautifulsoup4 html5lib`",
-				)
-		else:
-			BeautifulSoup = None
+		_setup_beautifulsoup(self._clean_html)
 
 		dirname = self._dirname
 		fileNameBase = basename(dirname).replace(".", "_")
@@ -312,21 +352,14 @@ class Writer:
 			os.mkdir(myResDir)
 
 		with open(filePathBase + ".xml", mode="w", encoding="utf-8") as toFile:
-			_write_header(toFile, front_back_matter)
-			while True:
-				entry = yield
-				if entry is None:
-					break
-				_write_entry(
-					toFile,
-					entry,
-					myResDir,
-					xdxf_to_html,
-					generate_id,
-					generate_indexes,
-				)
-
-			toFile.write("</d:dictionary>\n")
+			yield from _write_dictionary_xml(
+				toFile,
+				front_back_matter,
+				myResDir,
+				xdxf_to_html,
+				generate_id,
+				generate_indexes,
+			)
 
 		if xsl:
 			shutil.copy(xsl, myResDir)
@@ -338,15 +371,7 @@ class Writer:
 
 		_write_makefile(join(dirname, "Makefile"), fileNameBase)
 
-		copyright_ = glos.getInfo("copyright")
-		if BeautifulSoup:
-			# strip html tags
-			copyright_ = str(
-				BeautifulSoup.BeautifulSoup(
-					copyright_,
-					features="lxml",
-				).text,
-			)
+		copyright_ = _get_copyright_text(glos)
 
 		_write_plist(
 			filePathBase + ".plist",
