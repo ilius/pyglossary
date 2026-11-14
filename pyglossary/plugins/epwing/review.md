@@ -62,7 +62,7 @@ documented or handled explicitly.
 
 ## 4. Missing test coverage
 
-`tests/epwing_test.py`
+`tests/g_epwing_test.py`
 
 - No integration/smoke test against a real EPWING dictionary tree.
 - The `errors="replace"` decode paths are not exercised (no malformed byte
