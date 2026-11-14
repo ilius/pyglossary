@@ -630,14 +630,22 @@ class EpwingSubbook:
 			if start_page := word_indexes.get(index_id):
 				yield from self._leaf_positions(data, start_page)
 
-	def _leaf_positions(  # noqa: PLR0912
+	def _leaf_positions(
 		self, data: mmap.mmap, page_number: int
 	) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
+		page_number = self._find_leaf_page(data, page_number)
+		while True:
+			page = self._page(data, page_number)
+			yield from self._leaf_entries(page, page_number)
+			if page[0] & 0x20:
+				break
+			page_number += 1
+
+	def _find_leaf_page(self, data: mmap.mmap, page_number: int) -> int:
 		for _depth in range(16):
 			page = self._page(data, page_number)
-			page_id = page[0]
-			if page_id & 0x80:
-				break
+			if page[0] & 0x80:
+				return page_number
 			entry_length = page[1]
 			entry_count = int.from_bytes(page[2:4], "big")
 			if not entry_count:
@@ -648,46 +656,47 @@ class EpwingSubbook:
 				key_length = page[4]
 				child_offset = 5 + key_length
 			page_number = int.from_bytes(page[child_offset : child_offset + 4], "big")
-		else:
-			raise ValueError("EPWING index is too deep")
+		raise ValueError("EPWING index is too deep")
 
-		while True:
-			page = self._page(data, page_number)
-			page_id = page[0]
-			if not page_id & 0x80:
-				raise ValueError(f"Expected EPWING leaf page {page_number}")
-			entry_length = page[1]
-			entry_count = int.from_bytes(page[2:4], "big")
-			offset = 4
+	def _leaf_entries(
+		self, page: bytes, page_number: int
+	) -> Iterator[tuple[tuple[int, int], tuple[int, int]]]:
+		page_id = page[0]
+		if not page_id & 0x80:
+			raise ValueError(f"Expected EPWING leaf page {page_number}")
+		entry_length = page[1]
+		entry_count = int.from_bytes(page[2:4], "big")
+		offset = 4
 
-			for _index in range(entry_count):
-				if page_id & 0x10:
-					group_id = page[offset]
-					key_length = page[offset + 1]
-					if group_id == 0x80:
-						offset += key_length + 4
-						continue
-					if group_id not in {0x00, 0xC0}:
-						raise ValueError(f"Invalid EPWING group ID {group_id:#x}")
-					position_offset = offset + key_length + 2
-					offset += key_length + 14
-				elif entry_length:
-					position_offset = offset + entry_length
-					offset += entry_length + 12
-				else:
-					key_length = page[offset]
-					position_offset = offset + key_length + 1
-					offset += key_length + 13
+		for _index in range(entry_count):
+			position_offset, next_offset = self._leaf_entry_offsets(
+				page, page_id, entry_length, offset
+			)
+			offset = next_offset
+			if position_offset is None:
+				continue
+			if offset > _EPWING_PAGE_SIZE:
+				raise ValueError(f"Invalid EPWING leaf page {page_number}")
+			text_pos = self._position(page, position_offset)
+			heading_pos = self._position(page, position_offset + 6)
+			yield text_pos, heading_pos
 
-				if offset > _EPWING_PAGE_SIZE:
-					raise ValueError(f"Invalid EPWING leaf page {page_number}")
-				text_pos = self._position(page, position_offset)
-				heading_pos = self._position(page, position_offset + 6)
-				yield text_pos, heading_pos
-
-			if page_id & 0x20:
-				break
-			page_number += 1
+	@staticmethod
+	def _leaf_entry_offsets(
+		page: bytes, page_id: int, entry_length: int, offset: int
+	) -> tuple[int | None, int]:
+		if page_id & 0x10:
+			group_id = page[offset]
+			key_length = page[offset + 1]
+			if group_id == 0x80:
+				return None, offset + key_length + 4
+			if group_id not in {0x00, 0xC0}:
+				raise ValueError(f"Invalid EPWING group ID {group_id:#x}")
+			return offset + key_length + 2, offset + key_length + 14
+		if entry_length:
+			return offset + entry_length, offset + entry_length + 12
+		key_length = page[offset]
+		return offset + key_length + 1, offset + key_length + 13
 
 	@staticmethod
 	def _page(data: mmap.mmap, page_number: int) -> bytes:
@@ -903,7 +912,7 @@ class MeikyouExtractor(KoujienExtractor):
 		self.read_group_exp = re.compile(r"[-‐・]+")
 		self.meta_exp = re.compile(r"〘([^〙]*)〙")
 
-	def extract_terms(  # noqa: PLR0912
+	def extract_terms(
 		self,
 		heading: str,
 		text: str,
@@ -916,8 +925,13 @@ class MeikyouExtractor(KoujienExtractor):
 		if not match:
 			return []
 
+		expressions = self._extract_expressions(match)
+		readings = self._extract_readings(match.group(1))
+		tags = self._extract_tags(text)
+		return self._build_terms(expressions, readings, text, tags, sequence)
+
+	def _extract_expressions(self, match: re.Match) -> list[str]:
 		expressions = []
-		readings = []
 
 		# Expression from 【...】
 		exp_match = match.group(2)
@@ -937,31 +951,41 @@ class MeikyouExtractor(KoujienExtractor):
 			foreign_match = foreign_match.replace("＋", " ")
 			expressions += foreign_match.split("・")
 
-		reading = match.group(1)
-		if reading:
-			reading = self.read_group_exp.sub("", reading)
-			readings.append(reading)
+		return expressions
 
+	def _extract_readings(self, reading: str) -> list[str]:
+		if not reading:
+			return []
+		return [self.read_group_exp.sub("", reading)]
+
+	def _extract_tags(self, text: str) -> list[str]:
 		tags = []
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
 				tags += m.group(1).split("・")
+		return tags
 
+	def _build_terms(
+		self,
+		expressions: list[str],
+		readings: list[str],
+		text: str,
+		tags: list[str],
+		sequence: int,
+	) -> list[dbTerm]:
 		terms = []
 		if not expressions:
 			for r in readings:
 				term = dbTerm(expression=r, glossary=[text], sequence=sequence)
 				self.export_rules(term, tags)
 				terms.append(term)
-		else:
-			for e in expressions:
-				for r in readings:
-					term = dbTerm(
-						expression=e, reading=r, glossary=[text], sequence=sequence
-					)
-					self.export_rules(term, tags)
-					terms.append(term)
+			return terms
+		for e in expressions:
+			for r in readings:
+				term = dbTerm(expression=e, reading=r, glossary=[text], sequence=sequence)
+				self.export_rules(term, tags)
+				terms.append(term)
 		return terms
 
 	def get_revision(self) -> str:
@@ -1013,7 +1037,7 @@ class GakkenExtractor(KoujienExtractor):
 			text = text.replace(k, v)
 		return text
 
-	def extract_terms(  # noqa: PLR0912
+	def extract_terms(
 		self,
 		heading: str,
 		text: str,
@@ -1027,33 +1051,49 @@ class GakkenExtractor(KoujienExtractor):
 		if not match:
 			return []
 
+		expressions = self._extract_expressions(match.group(2))
+		readings = self._extract_readings(match.group(1))
+		tags = self._extract_tags(text)
+
+		if not readings:
+			readings = [""]
+
+		return self._build_terms(expressions, readings, text, tags, sequence)
+
+	def _extract_expressions(self, expression_raw: str | None) -> list[str]:
 		expressions = []
-		readings = []
+		if not expression_raw:
+			return expressions
+		expression = self.meta_exp.sub("", expression_raw)
+		for split in re.split(r"・|】【", expression):
+			split_inc = self.exp_var_exp.sub(r"\1", split)
+			expressions.append(split_inc)
+			if split != split_inc:
+				split_exc = self.exp_var_exp.sub("", split)
+				expressions.append(split_exc)
+		return expressions
 
-		expression_raw = match.group(2)
-		if expression_raw:
-			expression = self.meta_exp.sub("", expression_raw)
-			for split in re.split(r"・|】【", expression):
-				split_inc = self.exp_var_exp.sub(r"\1", split)
-				expressions.append(split_inc)
-				if split != split_inc:
-					split_exc = self.exp_var_exp.sub("", split)
-					expressions.append(split_exc)
+	def _extract_readings(self, reading: str) -> list[str]:
+		if not reading:
+			return []
+		return [self.read_group_exp.sub("", reading)]
 
-		reading = match.group(1)
-		if reading:
-			reading = self.read_group_exp.sub("", reading)
-			readings.append(reading)
-
+	def _extract_tags(self, text: str) -> list[list[str]]:
 		tags = []
 		for line in text.split("\n"):
 			m = self.meta_exp.search(line)
 			if m:
 				tags.append(m.group(1).split("・"))
+		return tags
 
-		if not readings:
-			readings = [""]
-
+	def _build_terms(
+		self,
+		expressions: list[str],
+		readings: list[str],
+		text: str,
+		tags: list[list[str]],
+		sequence: int,
+	) -> list[dbTerm]:
 		terms = []
 		if not expressions:
 			for r in readings:
@@ -1062,14 +1102,12 @@ class GakkenExtractor(KoujienExtractor):
 				term = dbTerm(expression=r, glossary=[text], sequence=sequence)
 				self.export_rules(term, tags)
 				terms.append(term)
-		else:
-			for e in expressions:
-				for r in readings:
-					term = dbTerm(
-						expression=e, reading=r, glossary=[text], sequence=sequence
-					)
-					self.export_rules(term, tags)
-					terms.append(term)
+			return terms
+		for e in expressions:
+			for r in readings:
+				term = dbTerm(expression=e, reading=r, glossary=[text], sequence=sequence)
+				self.export_rules(term, tags)
+				terms.append(term)
 		return terms
 
 	def get_revision(self) -> str:
@@ -1095,48 +1133,79 @@ class WadaiExtractor(KoujienExtractor):
 		if not match:
 			return []
 
+		literal, preset = self._parse_literal(match.group(1))
+		reading = self._parse_reading(match.group(2) or "")
+		expressions = self._parse_expressions(match.group(3))
+		return self._build_terms(expressions, (literal, preset, reading), text, sequence)
+
+	def _parse_literal(self, literal: str) -> tuple[str, bool]:
 		preset = False
-		literal = match.group(1)
 		lit_match = self.literal_parts_exp.match(literal)
 		if lit_match:
 			preset = bool(lit_match.group(1))
 			literal = lit_match.group(2)
+		return literal, preset
 
-		reading = match.group(2) or ""
+	def _parse_reading(self, reading: str) -> str:
 		read_match = self.read_parts_exp.match(reading)
 		if read_match:
-			reading = read_match.group(1)
+			return read_match.group(1)
+		return reading
 
-		expressions = (match.group(3) or "").split("・")
+	@staticmethod
+	def _parse_expressions(expression_raw: str | None) -> list[str]:
+		expressions = (expression_raw or "").split("・")
 		if not expressions or expressions == [""]:
 			expressions = [""]
+		return expressions
 
+	def _build_terms(
+		self,
+		expressions: list[str],
+		heading: tuple[str, bool, str],
+		text: str,
+		sequence: int,
+	) -> list[dbTerm]:
+		literal, preset, reading = heading
 		terms = []
 		for expression_ in expressions:
-			expression = expression_
-			if preset:
-				expression = literal
-				reading = ""
-			elif not expression:
-				expression = literal
-
-			quoted_match = self.quoted_exp.match(reading)
-			if quoted_match:
-				reading = quoted_match.group(1)
-
-			if self.alpha_exp.match(expression) and reading:
-				expression = reading
-				reading = ""
-
-			expression = expression.strip()
+			expression, reading = self._normalize_expression(
+				expression_, literal, preset, reading
+			)
 			if not expression:
 				continue
-
-			term = dbTerm(
-				expression=expression, reading=reading, glossary=[text], sequence=sequence
+			terms.append(
+				dbTerm(
+					expression=expression,
+					reading=reading,
+					glossary=[text],
+					sequence=sequence,
+				)
 			)
-			terms.append(term)
 		return terms
+
+	def _normalize_expression(
+		self,
+		expression: str,
+		literal: str,
+		preset: bool,
+		reading: str,
+	) -> tuple[str, str]:
+		if preset:
+			expression = literal
+			reading = ""
+		elif not expression:
+			expression = literal
+
+		quoted_match = self.quoted_exp.match(reading)
+		if quoted_match:
+			reading = quoted_match.group(1)
+
+		if self.alpha_exp.match(expression) and reading:
+			expression = reading
+			reading = ""
+
+		return expression.strip(), reading
 
 	def get_revision(self) -> str:
 		return "wadai1"
