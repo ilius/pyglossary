@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xdxf version="1.0">
+	<meta_info>
+		<full_title>XDXF Reader Coverage</full_title>
+		<description>Synthetic sample for PyGlossary tests</description>
+		<author/>
+		<abbr_def>ignored abbreviation definitions</abbr_def>
+		<from xml:lang="en-US"/>
+		<to xml:lang="es-ES"/>
+	</meta_info>
+	<lexicon>
+		<ar>
+			<k>alpha</k>
+			<def>
+				<dtrn>first letter</dtrn>
+			</def>
+		</ar>
+		<ar>
+			<k/>
+			<def>
+				<dtrn>empty title</dtrn>
+			</def>
+		</ar>
+		<ar>
+			<k>opt<opt>ional</opt>s</k>
+			<def>
+				<dtrn>optional title</dtrn>
+			</def>
+		</ar>
+		<ar>
+			<k>pre<nu>1</nu>post</k>
+			<def>
+				<dtrn>numbered title</dtrn>
+			</def>
+		</ar>
+		<ar>
+			<k><![CDATA[]]><nu>2</nu>suffix</k>
+			<def>
+				<dtrn>leading number</dtrn>
+			</def>
+		</ar>
+	</lexicon>
+</xdxf>

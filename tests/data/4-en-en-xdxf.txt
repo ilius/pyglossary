@@ -1,0 +1,9 @@
+##name	XDXF Reader Coverage
+##description	Synthetic sample for PyGlossary tests
+##sourceLang	English
+##targetLang	Spanish
+##input_file_size	800
+alpha	<div class="article"><div class="k"><b>alpha</b></div><div>first letter<br/>\t\t\t</div></div>
+opts|optionals	<div class="article"><div class="k"><b>opt (ional)s</b></div><div>optional title<br/>\t\t\t</div></div>
+prepost	<div class="article"><div class="k"><b>pre1post</b></div><div>numbered title<br/>\t\t\t</div></div>
+suffix	<div class="article"><div class="k"><b>2suffix</b></div><div>leading number<br/>\t\t\t</div></div>
