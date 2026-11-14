@@ -139,11 +139,8 @@ class Reader:
 			a.attrib["href"] = f"bword://{href}"
 		return a
 
-	# TODO: PLR0912 Too many branches (17 > 12)
-	# TODO: PLR0915 Too many statements (60 > 50)
-	def open(self, filename: str) -> Iterator[tuple[int, int]]:  # noqa: PLR0912, PLR0915
-		from os.path import dirname
-
+	@staticmethod
+	def _checkDependencies() -> None:
 		try:
 			from lxml import etree  # noqa: F401
 		except ModuleNotFoundError as e:
@@ -155,36 +152,53 @@ class Reader:
 			exc_note(e, f"Run `{pip} install biplist` to install")
 			raise
 
-		self._defiFormat = "h" if self._html else "m"
-
-		dictDirPath: str
-		contentsPath: str
-		infoPlistPath: str
-		bodyDataPath: str
-		keyTextDataPath: str
+	@staticmethod
+	def _findContentsPath(filename: str) -> tuple[str, str]:
+		"""Return ``(dictDirPath, contentsPath)`` for a dictionary path."""
+		from os.path import dirname
 
 		if isdir(filename):
 			if split(filename)[-1] == "Contents":
-				contentsPath = filename
-				dictDirPath = dirname(filename)
-			elif isdir(join(filename, "Contents")):
-				contentsPath = join(filename, "Contents")
-				dictDirPath = filename
-			else:
-				raise OSError(f"invalid directory {filename}")
-		elif split(filename)[-1] == "Body.data":
-			# Maybe we should remove this support in a future release
-			parentPath = dirname(filename)
-			parentName = split(parentPath)[-1]
-			if parentName == "Contents":
-				contentsPath = parentPath
-			elif parentName == "Resources":
-				contentsPath = dirname(parentPath)
-			else:
-				raise OSError(f"invalid file path {filename}")
-			dictDirPath = dirname(contentsPath)
+				return dirname(filename), filename
+			if isdir(join(filename, "Contents")):
+				return filename, join(filename, "Contents")
+			raise OSError(f"invalid directory {filename}")
+
+		if split(filename)[-1] != "Body.data":
+			raise OSError(f"invalid file path {filename}")
+
+		# Maybe we should remove this support in a future release
+		parentPath = dirname(filename)
+		parentName = split(parentPath)[-1]
+		if parentName == "Contents":
+			contentsPath = parentPath
+		elif parentName == "Resources":
+			contentsPath = dirname(parentPath)
 		else:
 			raise OSError(f"invalid file path {filename}")
+		return dirname(contentsPath), contentsPath
+
+	@staticmethod
+	def _findBodyDataPaths(contentsPath: str) -> tuple[str, str]:
+		"""Return ``(bodyDataPath, keyTextDataPath)``."""
+		if isfile(join(contentsPath, "Body.data")):
+			return join(contentsPath, "Body.data"), join(contentsPath, "KeyText.data")
+		if isfile(join(contentsPath, "Resources/Body.data")):
+			return (
+				join(contentsPath, "Resources/Body.data"),
+				join(contentsPath, "Resources/KeyText.data"),
+			)
+		raise OSError(
+			"could not find Body.data file, "
+			"Please provide 'Contents/' folder of the dictionary",
+		)
+
+	def open(self, filename: str) -> Iterator[tuple[int, int]]:
+		self._checkDependencies()
+
+		self._defiFormat = "h" if self._html else "m"
+
+		dictDirPath, contentsPath = self._findContentsPath(filename)
 
 		if not isdir(contentsPath):
 			raise OSError(
@@ -192,20 +206,9 @@ class Reader:
 				"Please provide 'Contents/' folder of the dictionary",
 			)
 
-		infoPlistPath = join(contentsPath, "Info.plist")
-		if isfile(join(contentsPath, "Body.data")):
-			bodyDataPath = join(contentsPath, "Body.data")
-			keyTextDataPath = join(contentsPath, "KeyText.data")
-		elif isfile(join(contentsPath, "Resources/Body.data")):
-			bodyDataPath = join(contentsPath, "Resources/Body.data")
-			keyTextDataPath = join(contentsPath, "Resources/KeyText.data")
-		else:
-			raise OSError(
-				"could not find Body.data file, "
-				"Please provide 'Contents/' folder of the dictionary",
-			)
+		bodyDataPath, keyTextDataPath = self._findBodyDataPaths(contentsPath)
 
-		metadata = self.parseMetadata(infoPlistPath)
+		metadata = self.parseMetadata(join(contentsPath, "Info.plist"))
 		self.setMetadata(metadata)
 
 		yield from self.setKeyTextData(
