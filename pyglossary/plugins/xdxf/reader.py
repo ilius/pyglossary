@@ -99,15 +99,11 @@ class Reader:
 
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
-	def open(self, filename: str) -> None:  # noqa: PLR0912
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 
 		self._filename = filename
-		if self._html:
-			self.makeTransformer()
-			self._glos.setDefaultDefiFormat("h")
-		else:
-			self._glos.setDefaultDefiFormat("x")
+		self._setDefaultDefiFormat()
 
 		cfile = self._file = cast(
 			"io.IOBase",
@@ -117,6 +113,17 @@ class Reader:
 			),
 		)
 
+		self._readInfo(cfile)
+		self._setFileSize(cfile)
+
+	def _setDefaultDefiFormat(self) -> None:
+		if self._html:
+			self.makeTransformer()
+			self._glos.setDefaultDefiFormat("h")
+		else:
+			self._glos.setDefaultDefiFormat("x")
+
+	def _readInfo(self, cfile: io.IOBase) -> None:
 		context = ET.iterparse(
 			cfile,
 			events=("end",),
@@ -125,34 +132,36 @@ class Reader:
 			elem = cast("Element", elem_)
 			if elem.tag in {"meta_info", "ar", "k", "abr", "dtrn"}:
 				break
-			# every other tag before </meta_info> or </ar> is considered info
-			if elem.tag == "abbr_def":
-				continue
-			# in case of multiple <from> or multiple <to> tags, the last one
-			# will be stored.
-			# Very few formats support more than one language pair in their
-			# metadata, so it's not very useful to have multiple
-			if elem.tag == "from":
-				for key, value in elem.attrib.items():
-					if key.endswith("}lang"):
-						self._glos.sourceLangName = value.split("-")[0]
-						break
-				continue
-			if elem.tag == "to":
-				for key, value in elem.attrib.items():
-					if key.endswith("}lang"):
-						self._glos.targetLangName = value.split("-")[0]
-						break
-				continue
-			if not elem.text:
-				if elem.tag != "br":
-					log.warning(f"empty tag <{elem.tag}>")
-				continue
-			key = self.infoKeyMap.get(elem.tag, elem.tag)
-			self._glos.setInfo(key, elem.text)
+			self._setInfoFromElement(elem)
 
-		del context
+	def _setInfoFromElement(self, elem: Element) -> None:
+		# every other tag before </meta_info> or </ar> is considered info
+		if elem.tag == "abbr_def":
+			return
+		# in case of multiple <from> or multiple <to> tags, the last one
+		# will be stored.
+		# Very few formats support more than one language pair in their
+		# metadata, so it's not very useful to have multiple
+		if elem.tag == "from":
+			self._setLangFromElement(elem, "sourceLangName")
+			return
+		if elem.tag == "to":
+			self._setLangFromElement(elem, "targetLangName")
+			return
+		if not elem.text:
+			if elem.tag != "br":
+				log.warning(f"empty tag <{elem.tag}>")
+			return
+		key = self.infoKeyMap.get(elem.tag, elem.tag)
+		self._glos.setInfo(key, elem.text)
 
+	def _setLangFromElement(self, elem: Element, attr: str) -> None:
+		for key, value in elem.attrib.items():
+			if key.endswith("}lang"):
+				setattr(self._glos, attr, value.split("-")[0])
+				break
+
+	def _setFileSize(self, cfile: io.IOBase) -> None:
 		if cfile.seekable():
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
