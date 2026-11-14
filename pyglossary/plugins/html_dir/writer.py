@@ -167,14 +167,11 @@ class Writer:
 			(st[:i] + f'class="broken" href="{url}"' + st[j + 1 :]).encode("utf-8"),
 		)
 
-	def fixLinks(self, linkTargetSet: set[str]) -> None:  # noqa: PLR0912
-		import gc
-
-		gc.collect()
+	def _getFileByTerm(
+		self,
+		linkTargetSet: set[str],
+	) -> dict[str, list[tuple[str, int]]]:
 		dirn = self._filename
-
-		filenameList = self._filenameList
-
 		fileByTerm: dict[str, list[tuple[str, int]]] = {}
 		for line in open(join(dirn, "index.txt"), encoding="utf-8"):
 			line = line.rstrip("\n")  # noqa: PLW2901
@@ -193,6 +190,11 @@ class Writer:
 
 		# with open(join(dirn, "fileByTerm.json"), "w") as fileByTermFile:
 		# 	json.dump(fileByTerm, fileByTermFile, ensure_ascii=False, indent="\t")
+
+		return fileByTerm
+
+	def _writeLinks(self, fileByTerm: dict[str, list[tuple[str, int]]]) -> None:
+		dirn = self._filename
 
 		@lru_cache(maxsize=10)
 		def getLinksByFile(fileIndex: int) -> io.TextIOBase:
@@ -220,21 +222,14 @@ class Writer:
 			)
 			file.flush()
 
-		linkTargetSet.clear()
-		del fileByTerm, linkTargetSet
-		gc.collect()
-
-		if os.sep == "\\":
-			time.sleep(0.1)
-
-		entry_url_fmt = self._glos.getInfo("entry_url")
-
+	def _applyLinks(self, entry_url_fmt: str) -> None:
+		dirn = self._filename
 		re_href = re.compile(
 			b' href="[^<>"]*?"',
 			re.IGNORECASE,
 		)
 
-		for fileIndex, filename in enumerate(filenameList):
+		for fileIndex, filename in enumerate(self._filenameList):
 			if not isfile(join(dirn, f"links{fileIndex}")):
 				continue
 			with open(join(dirn, filename), mode="rb") as inFile:
@@ -252,6 +247,23 @@ class Writer:
 			os.remove(join(dirn, filename))
 			os.rename(join(dirn, f"{filename}.new"), join(dirn, filename))
 			os.remove(join(dirn, f"links{fileIndex}"))
+
+	def fixLinks(self, linkTargetSet: set[str]) -> None:
+		import gc
+
+		gc.collect()
+
+		fileByTerm = self._getFileByTerm(linkTargetSet)
+		self._writeLinks(fileByTerm)
+
+		linkTargetSet.clear()
+		del fileByTerm, linkTargetSet
+		gc.collect()
+
+		if os.sep == "\\":
+			time.sleep(0.1)
+
+		self._applyLinks(self._glos.getInfo("entry_url"))
 
 	def writeInfo(self, filename: str, header: str) -> None:
 		glos = self._glos
