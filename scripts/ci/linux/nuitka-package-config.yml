@@ -1,0 +1,10 @@
+---
+- module-name: 'icu'
+  import-hacks:
+    - package-system-dlls: 'yes'
+      when: 'linux and standalone'
+
+- module-name: 'lzo'
+  import-hacks:
+    - package-system-dlls: 'yes'
+      when: 'linux and standalone'
