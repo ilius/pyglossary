@@ -63,7 +63,6 @@ python -m nuitka \
   --include-module=pymorphy3 \
   --include-module=lxml \
   --include-module=polib \
-  --include-module=yaml \
   --include-module=bs4 \
   --include-module=html5lib \
   --include-module=icu \
