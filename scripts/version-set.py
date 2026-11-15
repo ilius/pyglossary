@@ -14,7 +14,6 @@ def main():
 	rootDir = dirname(dirname(abspath(__file__)))
 	replaceVar(join(rootDir, "pyglossary/core.py"), "VERSION", versionQuoted)
 	replaceVar(join(rootDir, "setup.py"), "VERSION", versionQuoted)
-	replaceVar(join(rootDir, "pyproject.toml"), "version", versionQuoted)
 
 	# update copyright year number
 	for fname in ("about", "_license-dialog"):

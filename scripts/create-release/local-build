@@ -56,7 +56,7 @@ echo "-------------- Check version in GUI: --------------"
 
 yes_or_no "Continue creating the release?" || exit 1
 
-git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
+git add setup.py pyglossary/core.py about _license-dialog
 git commit -m "version $VERSION" || echo "------ Already committed"
 git -p show || true
 git -p log || true

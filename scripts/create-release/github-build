@@ -61,7 +61,7 @@ if git cat-file tag $VERSION 2>/dev/null ; then
 	TAG_EXISTS=1
 else
 	$scriptsDir/version-set.py "$VERSION"
-	git add setup.py pyglossary/core.py pyproject.toml about _license-dialog
+	git add setup.py pyglossary/core.py about _license-dialog
 	git commit -m "version $VERSION" || echo "------ Already committed"
 	git -p show || true
 	TAG_EXISTS=
