@@ -298,36 +298,6 @@
 		"writeOptions": {}
 	},
 	{
-		"module": "crawler_dir",
-		"lname": "crawler_dir",
-		"name": "CrawlerDir",
-		"description": "Crawler Directory",
-		"extensions": [
-			".crawler"
-		],
-		"singleFile": true,
-		"optionsProp": {
-			"compression": {
-				"class": "StrOption",
-				"type": "str",
-				"customValue": false,
-				"values": [
-					"",
-					"gz",
-					"bz2",
-					"lzma"
-				],
-				"comment": "Compression Algorithm"
-			}
-		},
-		"canRead": true,
-		"canWrite": true,
-		"readOptions": {},
-		"writeOptions": {
-			"compression": ""
-		}
-	},
-	{
 		"module": "csv_plugin",
 		"lname": "csv",
 		"name": "Csv",
