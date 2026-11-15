@@ -29,7 +29,6 @@ from pyglossary.utils.text_utils import urlToPath
 
 from .about import exec_about_dialog
 from .constants import (
-	INPUT_FILE_DIALOG_USE_NON_NATIVE_QT,
 	OUTPUT_DIR_CUSTOM,
 	PATH_BTN_EMPTY,
 	PLUGIN_BY_DESC,
@@ -43,6 +42,7 @@ from .log_handler import QtLogHandler
 from .macos_icons import configure_macos_dock_icon
 from .qt_imports import (
 	QApplication,
+	QCheckBox,
 	QComboBox,
 	QDragEnterEvent,
 	QDragMoveEvent,
@@ -462,6 +462,12 @@ class UI(UIBase):
 			return
 		self.entry_output.setText(p)
 
+	def _apply_browsed_input(self, fn: str) -> None:
+		ap = abspath2(fn)
+		self.entry_input.setText(ap)
+		self.fcd_dir = ap if os.path.isdir(ap) else os.path.dirname(ap)
+		self.save_fcd_dir()
+
 	def _browse_input(self) -> None:
 		def norm(p: str) -> str:
 			return os.path.normpath(os.path.abspath(p))
@@ -491,12 +497,38 @@ class UI(UIBase):
 		dlg.setWindowTitle("Open glossary")
 		dlg.setFileMode(QFileDialog.FileMode.ExistingFile)
 		dlg.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)
-		# Native macOS panel often ignores selectFile; non-native honours it
-		# (see INPUT_FILE_DIALOG_USE_NON_NATIVE_QT).
+		# Non-native dialog is required to add the file/folder toggle.
+		dlg.setOption(QFileDialog.Option.DontUseNativeDialog, True)
 		dlg.setDirectory(dir_path)
-		if selected_existing and INPUT_FILE_DIALOG_USE_NON_NATIVE_QT:
-			dlg.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+		if selected_existing:
 			dlg.selectFile(selected_existing)
+
+		folderCheck = QCheckBox("Select Folder")
+
+		def setFolderMode(checked: bool) -> None:
+			fileNameEdit = dlg.findChild(QLineEdit)
+			if fileNameEdit is not None:
+				fileNameEdit.clear()
+			dlg.setFileMode(
+				QFileDialog.FileMode.Directory
+				if checked
+				else QFileDialog.FileMode.ExistingFile,
+			)
+			if checked:
+				dlg.setDirectory(dir_path)
+			elif selected_existing:
+				dlg.selectFile(selected_existing)
+
+		folderCheck.toggled.connect(setFolderMode)
+		layout = dlg.layout()
+		if layout is not None:
+			layout.addWidget(
+				folderCheck,
+				layout.rowCount(),
+				0,
+				1,
+				layout.columnCount(),
+			)
 
 		if dlg.exec() != QFileDialog.DialogCode.Accepted:
 			return
@@ -504,9 +536,7 @@ class UI(UIBase):
 		if not sel:
 			return
 		fn = sel[0]
-		self.entry_input.setText(abspath2(fn))
-		self.fcd_dir = os.path.dirname(abspath2(fn))
-		self.save_fcd_dir()
+		self._apply_browsed_input(fn)
 
 	def _xdg_user_dir(self, kind: str) -> str | None:
 		if sysName not in {"linux", "freebsd"}:
