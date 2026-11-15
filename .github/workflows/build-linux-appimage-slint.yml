@@ -1,0 +1,334 @@
+name: Build Linux x86_64 (Slint AppImage)
+
+on:
+  push:
+    branches:
+      - 'build-release-slint'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_SYSTEM_PYTHON: 0
+  PYTHONWARNINGS: ignore::EncodingWarning
+  PYTHONWARNDEFAULTENCODING: 0
+  APPNAME: PyGlossarySlint
+  DIST_DIR: dist.nuitka.slint
+  SLINT_VERSION: 1.18.1b1
+  PYTHON_VERSION: '3.13'
+  MAIN_SCRIPT: main.py
+  RESOURCE_DIR: resources
+  APPIMAGE_EXTRACT_AND_RUN: '1'
+
+jobs:
+  build_linux_appimage:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install system build and Slint runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            curl \
+            file \
+            libegl1 \
+            libffi-dev \
+            libfontconfig1 \
+            libfreetype6 \
+            libfuse2 \
+            libgl1 \
+            libicu-dev \
+            liblzo2-dev \
+            libwayland-client0 \
+            libwayland-cursor0 \
+            libwayland-egl1 \
+            libx11-6 \
+            libxcb-cursor0 \
+            libxcb1 \
+            libxkbcommon0 \
+            libxkbcommon-x11-0 \
+            patchelf \
+            pkg-config \
+            squashfs-tools
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: latest
+
+      - name: Cache uv
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-slint-linux-${{ env.PYTHON_VERSION }}
+
+      - name: Set release version
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> "$GITHUB_ENV"
+          echo "VERSION_WITH_HASH=$(git describe)" >> "$GITHUB_ENV"
+
+      - name: Create venv
+        run: |
+          python3 scripts/ci/mac/slint/build.py venv
+          echo "VIRTUAL_ENV=$PWD/.venv" >> "$GITHUB_ENV"
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      - name: Install PyGlossary and Slint build dependencies
+        run: |
+          uv pip install --upgrade nuitka
+          uv pip install "slint==${SLINT_VERSION}"
+
+          STATIC_DEPS=true uv pip install --no-binary PyICU PyICU
+          STATIC_DEPS=true uv pip install --no-binary python-lzo python-lzo
+
+          uv pip install -r requirements.txt
+
+      - name: Patch sources for the Slint UI build
+        run: python3 scripts/ci/mac/patch_sources.py
+        env:
+          MAIN_SCRIPT: ${{ env.MAIN_SCRIPT }}
+          APPNAME: ${{ env.APPNAME }}
+          DEFAULT_UI: slint
+
+      - name: Build Nuitka standalone application
+        env:
+          PYTHONWARNDEFAULTENCODING: 0
+        run: |
+          .venv/bin/python -m nuitka \
+            --user-package-configuration-file=scripts/ci/linux/nuitka-package-config.yml \
+            --standalone \
+            --assume-yes-for-downloads \
+            --follow-imports \
+            --include-package=pyglossary \
+            --include-package=slint \
+            --include-package-data=slint \
+            --nofollow-import-to=pyglossary.ui.ui_gtk \
+            --nofollow-import-to=pyglossary.ui.ui_gtk4 \
+            --nofollow-import-to=pyglossary.ui.ui_qt6 \
+            --nofollow-import-to=pyglossary.ui.ui_tk \
+            --nofollow-import-to=pyglossary.ui.ui_tk_wizard \
+            --nofollow-import-to=pyglossary.ui.ui_wx \
+            --nofollow-import-to=tkinter \
+            --nofollow-import-to=tkinterdnd2 \
+            --nofollow-import-to=gi \
+            --nofollow-import-to=gtk \
+            --nofollow-import-to=wx \
+            --nofollow-import-to=pyqt4 \
+            --nofollow-import-to=pyqt5 \
+            --nofollow-import-to=pyqt6 \
+            --nofollow-import-to=PySide6 \
+            --nofollow-import-to='*.tests' \
+            --noinclude-pytest-mode=nofollow \
+            --noinclude-setuptools-mode=nofollow \
+            --plugin-disable=pyqt5 \
+            --include-module=pymorphy3 \
+            --include-module=lxml \
+            --include-module=polib \
+            --include-module=yaml \
+            --include-module=bs4 \
+            --include-module=html5lib \
+            --include-module=icu \
+            --include-module=colorize_pinyin \
+            --include-package-data=pyglossary \
+            --noinclude-data-files='pyglossary/*.md' \
+            --noinclude-data-files='pyglossary/*.sh' \
+            --noinclude-data-files='pyglossary/*.DS_Store' \
+            --noinclude-data-files='pyglossary/*/.ruff_cache/*' \
+            --noinclude-data-files='pyglossary/ui/ui_slint/*.png' \
+            --include-data-files=about=about \
+            --include-module=_json \
+            --include-module=_bisect \
+            --include-data-files=_license-dialog=_license-dialog \
+            --include-data-dir=res=. \
+            --include-data-files=_license-dialog=license-dialog \
+            --nofollow-import-to=unittest \
+            --output-dir="${DIST_DIR}" \
+            --output-filename="${APPNAME}" \
+            "${APPNAME}.py"
+
+      - name: Audit native dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          DIST="dist.nuitka.slint/PyGlossarySlint.dist"
+          
+          for f in \
+              "$DIST/icu/_icu_.so" \
+              "$DIST/lzo.so" \
+              "$DIST/marisa_trie.so" \
+              "$DIST/xxhash/_xxhash.so" \
+              "$DIST/lxml/etree.so" \
+              "$DIST/libzim.so.9" \
+              "$DIST/slint/slint.so"
+          do
+              [ -f "$f" ] || continue
+          
+              echo
+              echo "========================================"
+              echo "BINARY: $f"
+              echo "========================================"
+          
+              readelf -d "$f" 2>/dev/null |
+                  grep NEEDED || true
+          
+              echo "--- Resolved dependencies ---"
+          
+              LD_LIBRARY_PATH="$DIST${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+                  ldd "$f" || true
+          
+          done      
+          echo "=== Other native libraries ==="
+      
+          find "$DIST" -type f \
+            \( -name '*.so' -o -name '*.so.*' \) -print
+      
+      - name: Assemble AppDir and create AppImage
+        run: |
+          set -euo pipefail
+
+          DIST_PATH="${DIST_DIR}/${APPNAME}.dist"
+          APPDIR="$RUNNER_TEMP/${APPNAME}.AppDir"
+          APPIMAGE_NAME="${APPNAME}-${VERSION}-Linux-x86_64.AppImage"
+
+          test -x "${DIST_PATH}/${APPNAME}"
+          test -f res/pyglossary.png
+
+          rm -rf "$APPDIR"
+          mkdir -p \
+            "$APPDIR/usr/bin" \
+            "$APPDIR/usr/share/applications" \
+            "$APPDIR/usr/share/icons/hicolor/64x64/apps"
+
+          # Keep Nuitka's complete standalone layout intact. This is important:
+          # the executable uses its sibling libraries and extension modules.
+          cp -a "${DIST_PATH}/." "$APPDIR/usr/bin/"
+
+          # Keep same layout for the Linux frozen application as macos
+          for asset in about AUTHORS _license-dialog config.json plugins-meta help res; do
+            if [ -e "$asset" ]; then
+              rm -rf "$APPDIR/usr/bin/$asset"
+              cp -a "$asset" "$APPDIR/usr/bin/"
+            fi
+          done
+
+          cp res/pyglossary.png "$APPDIR/pyglossary.png"
+          cp res/pyglossary.png \
+            "$APPDIR/usr/share/icons/hicolor/64x64/apps/pyglossary.png"
+          ln -s pyglossary.png "$APPDIR/.DirIcon"
+
+          cat > "$APPDIR/pyglossary.desktop" <<'DESKTOP'
+          [Desktop Entry]
+          Version=1.0
+          Type=Application
+          Name=PyGlossary (Slint)
+          Comment=Dictionary and glossary conversion tool
+          Exec=AppRun
+          Icon=pyglossary
+          Terminal=false
+          Categories=Office;Utility;
+          DESKTOP
+          cp "$APPDIR/pyglossary.desktop" \
+            "$APPDIR/usr/share/applications/pyglossary.desktop"
+
+          cat > "$APPDIR/AppRun" <<'APPRUN'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "$0")")"
+          exec "$HERE/usr/bin/PyGlossarySlint" "$@"
+          APPRUN
+          chmod +x "$APPDIR/AppRun" "$APPDIR/usr/bin/$APPNAME"
+
+          # Fail early if the frozen entry point still has unresolved ELF deps
+          # on the build image.
+          if ldd "$APPDIR/usr/bin/$APPNAME" | tee "$RUNNER_TEMP/pyglossary-ldd.txt" | grep -q 'not found'; then
+            echo "Unresolved shared-library dependency in the Nuitka build:" >&2
+            cat "$RUNNER_TEMP/pyglossary-ldd.txt" >&2
+            exit 1
+          fi
+
+          APPIMAGETOOL="$RUNNER_TEMP/appimagetool-x86_64.AppImage"
+          curl --fail --location --silent --show-error \
+            https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage \
+            --output "$APPIMAGETOOL"
+          chmod +x "$APPIMAGETOOL"
+
+          ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 \
+            "$APPIMAGETOOL" "$APPDIR" "$PWD/$APPIMAGE_NAME"
+          chmod +x "$APPIMAGE_NAME"
+
+          # Smoke-test the actual AppImage without requiring FUSE on the runner.
+          APPIMAGE_EXTRACT_AND_RUN=1 "./$APPIMAGE_NAME" --version
+          file "$APPIMAGE_NAME"
+          ls -lh "$APPIMAGE_NAME"
+
+          echo "APPIMAGE_NAME=$APPIMAGE_NAME" >> "$GITHUB_ENV"
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          overwrite: true
+          name: ${{ github.event.repository.name }}-slint-linux-x86_64-py${{ env.PYTHON_VERSION }}-${{ github.sha }}-${{ env.VERSION_WITH_HASH }}-AppImage
+          path: ${{ env.APPIMAGE_NAME }}
+          if-no-files-found: error
+
+  release:
+    needs: [build_linux_appimage]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set release variables
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> "$GITHUB_ENV"
+          echo "VERSION_WITH_HASH=$(git describe)" >> "$GITHUB_ENV"
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Show generated artifacts
+        run: |
+          find "${{ github.workspace }}/artifacts" -maxdepth 2 -type f -print
+          test -n "$(find "${{ github.workspace }}/artifacts" -maxdepth 2 -name '*.AppImage' -print -quit)"
+
+      - name: Create or update GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ env.VERSION }}
+          body: |
+            ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
+
+            ## Linux (Slint UI, beta)
+
+            - **x86_64 AppImage**, built with the Slint UI (`--slint` / `--ui=slint`).
+            - Download the `.AppImage`, make it executable, and run it. No package manager or root installation is required.
+            - On systems without FUSE support, try `APPIMAGE_EXTRACT_AND_RUN=1 ./PyGlossarySlint-<version>-x86_64.AppImage`.
+          artifacts: 'artifacts/*.AppImage'
+          artifactContentType: application/octet-stream
+          generateReleaseNotes: true
+          makeLatest: true
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          tag: ${{ env.VERSION }}
