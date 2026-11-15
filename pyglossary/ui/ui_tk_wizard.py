@@ -28,7 +28,7 @@ import logging
 import os
 import subprocess
 import tkinter as tk
-from os.path import isfile, join, splitext
+from os.path import isdir, isfile, join, splitext
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from tkinter import font as tkFont
@@ -71,7 +71,7 @@ __all__ = ["UI"]
 log: Logger = logging.getLogger("pyglossary")
 
 # Compact file-picker buttons:
-_PATH_BUTTON_PLACEHOLDER = "[Select...]"
+_PATH_BUTTON_PLACEHOLDER = "[Select File]"
 _PATH_BUTTON_WIDTH = 20  # characters
 
 # Step 2 output directory OptionMenu: opens a folder dialog when chosen.
@@ -422,14 +422,20 @@ class UI(tk.Frame, UIBase):
 
 		# self.status("Convert finished")
 
+	def _applyBrowsedInput(self, path: str) -> None:
+		if not path:
+			return
+		self.entryInputConvert.delete(0, "end")
+		self.entryInputConvert.insert(0, path)
+		self.inputEntryChanged()
+		self.fcd_dir = path if isdir(path) else os.path.dirname(path)
+		self.save_fcd_dir()
+
 	def browseInputConvert(self) -> None:
-		path = filedialog.askopenfilename(initialdir=self.fcd_dir)
-		if path:
-			self.entryInputConvert.delete(0, "end")
-			self.entryInputConvert.insert(0, path)
-			self.inputEntryChanged()
-			self.fcd_dir = os.path.dirname(path)
-			self.save_fcd_dir()
+		self._applyBrowsedInput(filedialog.askopenfilename(initialdir=self.fcd_dir))
+
+	def browseInputFolderConvert(self) -> None:
+		self._applyBrowsedInput(filedialog.askdirectory(initialdir=self.fcd_dir))
 
 	def _default_output_dir_for_output_step(self) -> str:
 		inp = self.entryInputConvert.get().strip()
@@ -774,12 +780,14 @@ class UI(tk.Frame, UIBase):
 		return name or p
 
 	def _sync_path_buttons(self) -> None:
-		self.inputPathButton.configure(
-			text=self._path_button_text(
-				self.entryInputConvert.get(),
-				_PATH_BUTTON_PLACEHOLDER,
-			),
-		)
+		path = self.entryInputConvert.get().strip()
+		pathText = self._path_button_text(path, _PATH_BUTTON_PLACEHOLDER)
+		if path and isdir(path):
+			self.inputPathButton.configure(text=_PATH_BUTTON_PLACEHOLDER)
+			self.inputFolderButton.configure(text=pathText)
+		else:
+			self.inputPathButton.configure(text=pathText)
+			self.inputFolderButton.configure(text="[Select Folder]")
 
 	def _page_inputs_complete(self, page_index: int | None = None) -> bool:
 		idx = self.currentPage if page_index is None else page_index
@@ -814,13 +822,22 @@ class UI(tk.Frame, UIBase):
 		)
 		entry = ttk.Entry(content)
 		self.entryInputConvert = entry
+		buttonFrame = ttk.Frame(content)
+		buttonFrame.grid(row=1, column=0, sticky="w", padx=5, pady=4)
 		self.inputPathButton = newButton(
-			content,
+			buttonFrame,
 			text="Select input file...",
 			command=self.browseInputConvert,
 			width=_PATH_BUTTON_WIDTH,
 		)
-		self.inputPathButton.grid(row=1, column=0, sticky="w", padx=5, pady=4)
+		self.inputPathButton.pack(side="left")
+		self.inputFolderButton = newButton(
+			buttonFrame,
+			text="Select input folder...",
+			command=self.browseInputFolderConvert,
+			width=_PATH_BUTTON_WIDTH,
+		)
+		self.inputFolderButton.pack(side="left")
 		return page
 
 	def _makePageOutput(self, parent: ttk.Frame) -> ttk.Frame:

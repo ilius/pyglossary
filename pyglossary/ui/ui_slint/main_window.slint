@@ -185,6 +185,7 @@ export component MainWindow inherits Window {
     in-out property <string> about-text;
 
     callback browse-input-file();
+    callback browse-input-folder();
     callback browse-output-file();
     callback choose-input-format();
     callback choose-output-format();
@@ -231,6 +232,11 @@ export component MainWindow inherits Window {
                         Button {
                             text: "Browse";
                             clicked => { root.browse-input-file(); }
+                        }
+
+                        Button {
+                            text: "Folder";
+                            clicked => { root.browse-input-folder(); }
                         }
                     }
 

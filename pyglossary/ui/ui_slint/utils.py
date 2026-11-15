@@ -6,7 +6,7 @@ import logging
 import shutil
 import subprocess
 import weakref
-from os.path import dirname, isdir, isfile, join
+from os.path import isdir, isfile, join
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -23,6 +23,7 @@ __all__ = [
 	"levelColor",
 	"loadFcdDir",
 	"load_slint",
+	"pickDirectory",
 	"pickFile",
 	"saveFcdDir",
 	"setSlintStyle",
@@ -204,6 +205,52 @@ def pickFile(save: bool, initialdir: str) -> str:
 	return ""
 
 
+def pickDirectory(initialdir: str) -> str:
+	if not isdir(initialdir):
+		initialdir = homeDir
+	if sysName == "darwin":
+		escaped = initialdir.replace("\\", "\\\\").replace('"', '\\"')
+		return _runCapture(
+			[
+				"osascript",
+				"-e",
+				(
+					'POSIX path of (choose folder with prompt "Select input folder"'
+					f' default location (POSIX file "{escaped}"))'
+				),
+			],
+		)
+	if sysName == "windows":
+		escaped = initialdir.replace("'", "''")
+		return _runCapture(
+			[
+				"powershell.exe",
+				"-NoProfile",
+				"-Command",
+				(
+					"Add-Type -AssemblyName System.Windows.Forms;"
+					"$d = New-Object System.Windows.Forms.FolderBrowserDialog;"
+					"$d.Description = 'Select input folder';"
+					f"$d.SelectedPath = '{escaped}';"
+					"if ($d.ShowDialog() -eq 'OK') { $d.SelectedPath }"
+				),
+			],
+		)
+	if shutil.which("zenity"):
+		return _runCapture(
+			[
+				"zenity",
+				"--file-selection",
+				"--directory",
+				f"--filename={join(initialdir, '')}",
+			],
+		)
+	if shutil.which("kdialog"):
+		return _runCapture(["kdialog", "--getexistingdirectory", initialdir])
+	log.error("no directory dialog tool found (need zenity or kdialog)")
+	return ""
+
+
 # ---------------------------------------------------------------------
 # Last-used browse directory
 # ---------------------------------------------------------------------
@@ -224,6 +271,6 @@ def loadFcdDir() -> str:
 def saveFcdDir(path: str) -> None:
 	try:
 		with open(_FCD_SAVE_PATH, mode="w", encoding="utf-8") as fp:
-			fp.write(dirname(path))
+			fp.write(path)
 	except Exception:
 		log.exception("")

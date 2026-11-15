@@ -30,6 +30,7 @@ from pyglossary.utils.text_utils import urlToPath
 
 from .about import exec_about_dialog
 from .constants import (
+	FOLDER_BTN_EMPTY,
 	OUTPUT_DIR_CUSTOM,
 	PATH_BTN_EMPTY,
 	PLUGIN_BY_DESC,
@@ -226,11 +227,22 @@ class UI(UIBase):
 		self.entry_input = wx.TextCtrl(panel)
 		self.entry_input.Hide()
 		self.entry_input.Bind(wx.EVT_TEXT, lambda _e: self._input_changed())
-		self.input_path_btn = wx.Button(panel, label=PATH_BTN_EMPTY, size=(280, -1))
+		self.input_path_btn = wx.Button(
+			panel,
+			label=PATH_BTN_EMPTY,
+			size=(200, -1),
+		)
 		self.input_path_btn.Bind(wx.EVT_BUTTON, lambda _e: self._browse_input())
+		self.input_folder_btn = wx.Button(
+			panel,
+			label=FOLDER_BTN_EMPTY,
+			size=(200, -1),
+		)
+		self.input_folder_btn.Bind(wx.EVT_BUTTON, lambda _e: self._browse_input_folder())
 		row = wx.BoxSizer(wx.HORIZONTAL)
 		row.AddStretchSpacer(1)
 		row.Add(self.input_path_btn, 0, wx.ALIGN_CENTER)
+		row.Add(self.input_folder_btn, 0, wx.ALIGN_CENTER | wx.LEFT, 8)
 		row.AddStretchSpacer(1)
 		v.Add(row, 0, wx.EXPAND)
 		panel.SetSizer(v)
@@ -368,6 +380,13 @@ class UI(UIBase):
 		self.entry_output.ChangeValue(p)
 		self.outputEntryChanged()
 
+	def _apply_browsed_input(self, fn: str) -> None:
+		ap = abspath2(fn)
+		self.entry_input.ChangeValue(ap)
+		self.fcd_dir = ap if os.path.isdir(ap) else os.path.dirname(ap)
+		self.save_fcd_dir()
+		self._input_changed()
+
 	def _browse_input(self) -> None:
 		def norm(p: str) -> str:
 			return os.path.normpath(os.path.abspath(p))
@@ -405,10 +424,23 @@ class UI(UIBase):
 			if dlg.ShowModal() != wx.ID_OK:
 				return
 			fn = dlg.GetPath()
-		self.entry_input.ChangeValue(abspath2(fn))
-		self.fcd_dir = os.path.dirname(abspath2(fn))
-		self.save_fcd_dir()
-		self._input_changed()
+		self._apply_browsed_input(fn)
+
+	def _browse_input_folder(self) -> None:
+		dir_path = (self.fcd_dir or "").strip()
+		if not dir_path or not os.path.isdir(dir_path):
+			dir_path = os.path.expanduser(self.entry_input.GetValue().strip())
+		if not dir_path or not os.path.isdir(dir_path):
+			dir_path = homeDir
+		with wx.DirDialog(
+			self._frame,
+			"Open glossary folder",
+			defaultPath=dir_path,
+		) as dlg:
+			if dlg.ShowModal() != wx.ID_OK:
+				return
+			fn = dlg.GetPath()
+		self._apply_browsed_input(fn)
 
 	def _xdg_user_dir(self, kind: str) -> str | None:
 		if sysName not in {"linux", "freebsd"}:
@@ -754,6 +786,21 @@ class UI(UIBase):
 	def outputFormatChangedAuto(self) -> None:
 		self.output_format_changed(self._out_format_display)
 
+	def _sync_input_buttons(self, path_i: str) -> None:
+		if not path_i:
+			self.input_path_btn.SetLabel(PATH_BTN_EMPTY)
+			self.input_folder_btn.SetLabel(FOLDER_BTN_EMPTY)
+			return
+		name = Path(path_i).name
+		if len(name) > 20:
+			name = name[:10] + "…" + name[-10:]
+		if os.path.isdir(path_i):
+			self.input_path_btn.SetLabel(PATH_BTN_EMPTY)
+			self.input_folder_btn.SetLabel(name or FOLDER_BTN_EMPTY)
+		else:
+			self.input_path_btn.SetLabel(name or PATH_BTN_EMPTY)
+			self.input_folder_btn.SetLabel(FOLDER_BTN_EMPTY)
+
 	def _input_changed(self) -> None:
 		path_i = self.entry_input.GetValue().strip()
 		if path_i.startswith("file://"):
@@ -763,11 +810,7 @@ class UI(UIBase):
 			return
 
 		self.pathI = path_i
-		if path_i:
-			btn_txt = Path(path_i).name
-			if len(btn_txt) > 20:
-				btn_txt = btn_txt[:10] + "…" + btn_txt[-10:]
-			self.input_path_btn.SetLabel(btn_txt or PATH_BTN_EMPTY)
+		self._sync_input_buttons(path_i)
 
 		desc = self._in_format_display
 		if not desc and path_i and self.config.get("ui_autoSetFormat", False):

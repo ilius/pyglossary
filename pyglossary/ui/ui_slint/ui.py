@@ -19,7 +19,7 @@ import logging
 import os
 import sys
 import threading
-from os.path import dirname, splitext
+from os.path import dirname, isdir, splitext
 from typing import TYPE_CHECKING, Any
 
 import slint
@@ -42,6 +42,7 @@ from .utils import (
 	clearSlintCache,
 	load_slint,
 	loadFcdDir,
+	pickDirectory,
 	pickFile,
 	saveFcdDir,
 	setSlintStyle,
@@ -112,6 +113,7 @@ class UI(UIBase):
 
 		w = self.win
 		w.browse_input_file = weakCallback(self._browseInput)
+		w.browse_input_folder = weakCallback(self._browseInputFolder)
 		w.browse_output_file = weakCallback(self._browseOutput)
 		w.choose_input_format = weakCallback(self._chooseInputFormat)
 		w.choose_output_format = weakCallback(self._chooseOutputFormat)
@@ -206,22 +208,25 @@ class UI(UIBase):
 	def _browseInput(self) -> None:
 		self._browse(save=False)
 
+	def _browseInputFolder(self) -> None:
+		self._browse(save=False, directory=True)
+
 	def _browseOutput(self) -> None:
 		self._browse(save=True)
 
-	def _browse(self, save: bool) -> None:
+	def _browse(self, save: bool, directory: bool = False) -> None:
 		initialdir = self.fcd_dir
 
 		def worker() -> None:
-			path = pickFile(save, initialdir)
+			path = pickDirectory(initialdir) if directory else pickFile(save, initialdir)
 			if path:
 				self._post(lambda: self._applyBrowsed(save, path))
 
 		threading.Thread(target=worker, daemon=True).start()
 
 	def _applyBrowsed(self, save: bool, path: str) -> None:
-		self.fcd_dir = dirname(path)
-		saveFcdDir(path)
+		self.fcd_dir = path if isdir(path) else dirname(path)
+		saveFcdDir(self.fcd_dir)
 		if save:
 			self.win.output_file_path = path
 			self._applyOutputPath(path)

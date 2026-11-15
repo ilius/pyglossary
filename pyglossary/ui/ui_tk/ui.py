@@ -27,7 +27,7 @@ from __future__ import annotations
 import logging
 import os
 import tkinter as tk
-from os.path import isfile, join, splitext
+from os.path import isdir, isfile, join, splitext
 from tkinter import filedialog, ttk
 from tkinter import font as tkFont
 from typing import TYPE_CHECKING, Any
@@ -186,14 +186,22 @@ class UI(tk.Frame, UIBase):
 		entry.bind_all("<KeyPress>", self.anyEntryChanged)
 		self.entryInputConvert = entry
 		##
+		browseFrame = ttk.Frame(convertFrame)
 		button = newButton(
-			convertFrame,
+			browseFrame,
 			text="Browse",
 			command=self.browseInputConvert,
 			# bg="#f0f000",
 			# activebackground="#f6f622",
 		)
-		button.grid(
+		folderButton = newButton(
+			browseFrame,
+			text="Folder",
+			command=self.browseInputFolderConvert,
+		)
+		button.pack(side="left")
+		folderButton.pack(side="left")
+		browseFrame.grid(
 			row=row,
 			column=3,
 			sticky=tk.W + tk.E,
@@ -630,14 +638,20 @@ class UI(tk.Frame, UIBase):
 		with open(self.fcd_dir_save_path, mode="w", encoding="utf-8") as fp:
 			fp.write(self.fcd_dir)
 
+	def _applyBrowsedInput(self, path: str) -> None:
+		if not path:
+			return
+		self.entryInputConvert.delete(0, "end")
+		self.entryInputConvert.insert(0, path)
+		self.inputEntryChanged()
+		self.fcd_dir = path if isdir(path) else os.path.dirname(path)
+		self.save_fcd_dir()
+
 	def browseInputConvert(self) -> None:
-		path = filedialog.askopenfilename(initialdir=self.fcd_dir)
-		if path:
-			self.entryInputConvert.delete(0, "end")
-			self.entryInputConvert.insert(0, path)
-			self.inputEntryChanged()
-			self.fcd_dir = os.path.dirname(path)
-			self.save_fcd_dir()
+		self._applyBrowsedInput(filedialog.askopenfilename(initialdir=self.fcd_dir))
+
+	def browseInputFolderConvert(self) -> None:
+		self._applyBrowsedInput(filedialog.askdirectory(initialdir=self.fcd_dir))
 
 	def browseOutputConvert(self) -> None:
 		path = filedialog.asksaveasfilename()

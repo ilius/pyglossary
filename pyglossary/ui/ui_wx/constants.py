@@ -18,6 +18,7 @@ from __future__ import annotations
 from pyglossary.glossary_v2 import Glossary
 
 __all__ = [
+	"FOLDER_BTN_EMPTY",
 	"OUTPUT_DIR_CUSTOM",
 	"PATH_BTN_EMPTY",
 	"PLUGIN_BY_DESC",
@@ -26,7 +27,8 @@ __all__ = [
 ]
 
 OUTPUT_DIR_CUSTOM = "Custom directory…"
-PATH_BTN_EMPTY = "[Select...]"
+FOLDER_BTN_EMPTY = "[Select Folder]"
+PATH_BTN_EMPTY = "[Select file]"
 PLUGIN_BY_DESC = {p.description: p for p in Glossary.plugins.values()}
 READ_DESC = [p.description for p in Glossary.plugins.values() if p.canRead]
 WRITE_DESC = [p.description for p in Glossary.plugins.values() if p.canWrite]
