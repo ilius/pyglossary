@@ -533,6 +533,41 @@ class Parser:
 				continue
 			yield from self._iterDefPieces(child)
 
+	@staticmethod
+	def _mergeAdjacentText(pieces: Iterator[str | Ref]) -> list[str | Ref]:
+		"""Merge runs of adjacent strings, keeping <ref> pieces in place."""
+		merged: list[str | Ref] = []
+		for piece in pieces:
+			if isinstance(piece, str) and merged and isinstance(merged[-1], str):
+				merged[-1] += piece
+			else:
+				merged.append(piece)
+		return merged
+
+	@staticmethod
+	def _normalizeDefPieces(pieces: list[str | Ref]) -> list[str | Ref]:
+		"""Collapse whitespace in text pieces and trim the definition ends."""
+		for i, piece in enumerate(pieces):
+			if isinstance(piece, str):
+				pieces[i] = _whitespaceRun.sub(" ", piece)
+		if pieces and isinstance(pieces[0], str):
+			pieces[0] = pieces[0].lstrip()
+		if pieces and isinstance(pieces[-1], str):
+			pieces[-1] = pieces[-1].rstrip()
+		return pieces
+
+	@staticmethod
+	def _inlineFromPieces(pieces: list[str | Ref]) -> list[Inline]:
+		"""Drop empty text pieces and convert the rest to inline nodes."""
+		nodes: list[Inline] = []
+		for piece in pieces:
+			if isinstance(piece, str):
+				if piece:
+					nodes.append(Text(piece))
+			else:
+				nodes.append(piece)
+		return nodes
+
 	def _parseDef(self, elem: Element) -> list[Inline]:
 		"""
 		Return the inline pieces of a <def>, ready to format.
@@ -541,29 +576,8 @@ class Parser:
 		around skipped comments and inline elements is kept. Leading and
 		trailing whitespace of the whole definition is removed.
 		"""
-		merged: list[str | Ref] = []
-		for piece in self._iterDefPieces(elem):
-			if isinstance(piece, str) and merged and isinstance(merged[-1], str):
-				merged[-1] += piece
-			else:
-				merged.append(piece)
-
-		for i, piece in enumerate(merged):
-			if isinstance(piece, str):
-				merged[i] = re.sub(r"\s+", " ", piece)
-		if merged and isinstance(merged[0], str):
-			merged[0] = merged[0].lstrip()
-		if merged and isinstance(merged[-1], str):
-			merged[-1] = merged[-1].rstrip()
-
-		pieces: list[Inline] = []
-		for piece in merged:
-			if isinstance(piece, str):
-				if piece:
-					pieces.append(Text(piece))
-			else:
-				pieces.append(piece)
-		return pieces
+		merged = self._mergeAdjacentText(self._iterDefPieces(elem))
+		return self._inlineFromPieces(self._normalizeDefPieces(merged))
 
 	def _parseGramGroup(self, gramGrp: Element) -> GramGroup | None:
 		parts: list[str] = []
