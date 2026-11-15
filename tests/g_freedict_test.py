@@ -35,6 +35,16 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"14-en-en-v2.txt",
 			"freedict-sample-2024-12-19-v4.txt",
 			"1-en-en-trans-cit-rerender.tei",
+			"1-en-de-labels-md.txt",
+			"1-en-en-comment-md.txt",
+			"1-en-en-empty-ref-md.txt",
+			"1-en-en-include-cycle-md.txt",
+			"1-en-en-usg-nested-md.txt",
+			"1-en-en-usg-whitespace-md.txt",
+			"1-en-fa-p-lang-md.txt",
+			"1-fr-en-example-note-md.txt",
+			"2-en-en-def-inline-md.txt",
+			"14-en-en-md.txt",
 		}
 		self.dataFileCRC32 |= {
 			"100-en-de.tei": "542c210e",
@@ -46,6 +56,15 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			f"{fname}.tei",
 			f"{fname}-2.txt",
 			compareText=f"{fname2}.txt",
+			**convertArgs,
+		)
+
+	def convert_tei_txt_md(self, fname, fname2, **convertArgs):
+		readOptions = {"defiFormat": "m", **convertArgs.pop("readOptions", {})}
+		self.convert_tei_txt(
+			fname,
+			fname2,
+			readOptions=readOptions,
 			**convertArgs,
 		)
 
@@ -136,8 +155,61 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-en-empty-ref",
 		)
 
-	def test_trans_cit_render_same_entry_twice(self):
-		# Rendering the same entry element twice must give the same output,
+	def test_convert_tei_txt_md_labels(self):
+		# <usg> and <lbl> are formatted as tags, including nested markup
+		self.convert_tei_txt_md("1-en-de-labels", "1-en-de-labels-md")
+
+	def test_convert_tei_txt_md_comments(self):
+		# XML comments inside <gramGrp> and <sense> must be skipped
+		self.convert_tei_txt_md("1-en-en-comment", "1-en-en-comment-md")
+
+	def test_convert_tei_txt_md_empty_ref(self):
+		# <ref/> without target or text must not produce bword://None
+		self.convert_tei_txt_md("1-en-en-empty-ref", "1-en-en-empty-ref-md")
+
+	def test_convert_tei_txt_md_include_cycle(self):
+		# a file that XIncludes itself must not recurse forever
+		self.convert_tei_txt_md(
+			"1-en-en-include-cycle",
+			"1-en-en-include-cycle-md",
+		)
+
+	def test_convert_tei_txt_md_usg_nested(self):
+		# <usg> whose text is inside child elements (<lang>, <hi>) must be kept
+		self.convert_tei_txt_md("1-en-en-usg-nested", "1-en-en-usg-nested-md")
+
+	def test_convert_tei_txt_md_usg_whitespace(self):
+		# line breaks and indentation inside <usg>/<lbl> must not leak into the tag
+		self.convert_tei_txt_md(
+			"1-en-en-usg-whitespace",
+			"1-en-en-usg-whitespace-md",
+		)
+
+	def test_convert_tei_txt_md_p_lang(self):
+		# xml:lang on <p> must become lang, not a namespaced ns0:lang attribute
+		self.convert_tei_txt_md("1-en-fa-p-lang", "1-en-fa-p-lang-md")
+
+	def test_convert_tei_txt_md_example_note(self):
+		# <note> inside <cit type="example"> must not be dropped
+		self.convert_tei_txt_md("1-fr-en-example-note", "1-fr-en-example-note-md")
+
+	def test_convert_tei_txt_md_def_inline(self):
+		# inline markup inside <def> keeps its spacing, without separators
+		self.convert_tei_txt_md("2-en-en-def-inline", "2-en-en-def-inline-md")
+
+	def test_convert_tei_txt_md_14_en_en(self):
+		self.convert_tei_txt_md("14-en-en", "14-en-en-md")
+
+	def test_direct_read_format_option(self):
+		inputFilename = self.downloadFile("1-en-en-usg-nested.tei")
+		glos = self.glos = Glossary()
+		self.assertTrue(glos.directRead(inputFilename, defiFormat="m"))
+		entry = next(iter(glos))
+		self.assertEqual(entry.defiFormat, "m")
+		self.assertIn("**[US informal]**", entry.defi)
+
+	def test_trans_cit_format_same_entry_twice(self):
+		# Formatting the same entry element twice must give the same output,
 		# and the source <cit> must be left unchanged: the grammar and note
 		# children of a translation <cit> are copied, not moved out of the tree.
 		from lxml import etree as ET

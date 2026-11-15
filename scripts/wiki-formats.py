@@ -111,7 +111,6 @@ willNotSupportWrite = {
 	"cc_cedict",
 	"cc_kedict",
 	"freedict",
-	"freedict_md",
 	"jmdict",
 	"octopus_mdict",
 	"wiktionary_dump",

@@ -1,8 +1,8 @@
 """
-Parse FreeDict TEI XML into renderer-independent dataclasses.
+Parse FreeDict TEI XML into formatter-independent dataclasses.
 
 Provides the parsed entry model (``Entry``, ``Sense``, ``TransCit``, ...)
-and the ``Parser`` mixin used by the FreeDict readers. The renderer only
+and the ``Parser`` mixin used by the FreeDict readers. The formatter only
 consumes the dataclasses produced here; it never walks the TEI tree.
 """
 
@@ -70,7 +70,7 @@ def _attribDict(elem: Element) -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# Parsed (renderer-independent) representation
+# Parsed (formatter-independent) representation
 # ---------------------------------------------------------------------------
 
 
@@ -183,7 +183,7 @@ class _CitScan:
 
 	cit: Element
 	blocks: list[Block] = field(default_factory=list)
-	# <usg> and <lbl> tags, rendered before the first block
+	# <usg> and <lbl> tags, formatted before the first block
 	tags: list[Tag] = field(default_factory=list)
 	# loose text, joined into one block before the next quote or nested <cit>
 	pendingText: list[str] = field(default_factory=list)
@@ -535,7 +535,7 @@ class Parser:
 
 	def _parseDef(self, elem: Element) -> list[Inline]:
 		"""
-		Return the inline pieces of a <def>, ready to render.
+		Return the inline pieces of a <def>, ready to format.
 
 		Adjacent text is merged before whitespace is collapsed, so spacing
 		around skipped comments and inline elements is kept. Leading and
@@ -692,8 +692,8 @@ class Parser:
 			example.subCits.append(self._parseExampleCit(cit2, _attribDict(cit2)))
 		return example
 
-	@classmethod
-	def isMetaSense(cls, sense: Element) -> bool:
+	@staticmethod
+	def isMetaSense(sense: Element) -> bool:
 		childTagSet = {
 			child.tag for child in sense.iterchildren() if isinstance(child.tag, str)
 		}

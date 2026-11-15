@@ -22,6 +22,10 @@ __all__ = ["optionsProp"]
 
 
 optionsProp: dict[str, Option] = {
+	"defiFormat": StrOption(
+		values=["h", "m"],
+		comment="Definition format: h (HTML) or m (Markdown)",
+	),
 	"auto_rtl": BoolOption(
 		comment="Auto-detect and mark Right-to-Left text",
 	),

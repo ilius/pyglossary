@@ -64,7 +64,6 @@ Web interface
 | [DIKT JSON](./doc/p/dikt_json.md) | 📝 | (.json) | | ✅ |
 | [EPUB-2 E-Book](./doc/p/epub2.md) | 📦 | .epub | ❌ | ✅ |
 | [FreeDict](./doc/p/freedict.md) | 📝 | .tei | ✅ | ❌ |
-| [FreeDict Markdown](./doc/p/freedict_md.md) | 📝 | .tei | ✅ | ❌ |
 | [Gettext Source](./doc/p/gettext_po.md) | 📝 | .po | ✅ | ✅ |
 | [HTML Directory (by file size)](./doc/p/html_dir.md) | 📁 | | ❌ | ✅ |
 | [JSON](./doc/p/json.md) | 📝 | .json | | ✅ |

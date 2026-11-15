@@ -1,7 +1,7 @@
 """
 FreeDict TEI import utility functions.
 
-Provides language detection, writing-system helpers, and shared rendering
+Provides language detection, writing-system helpers, and shared formatting
 helpers for FreeDict ``.tei`` sources. Used by the FreeDict readers during TEI
 conversion.
 """
@@ -15,9 +15,7 @@ from pyglossary.langs import langDict
 from pyglossary.langs.writing_system import getWritingSystemFromText
 
 if TYPE_CHECKING:
-	from collections.abc import Callable
-
-	from pyglossary.stubs.lxml_types import Element, T_htmlfile
+	from pyglossary.stubs.lxml_types import Element
 
 
 __all__ = [
@@ -25,7 +23,6 @@ __all__ = [
 	"getLangDesc",
 	"getTitleTag",
 	"isRTL",
-	"makeList",
 	"tostring",
 ]
 
@@ -45,35 +42,6 @@ def tostring(elem: Element) -> str:
 		.decode("utf-8")
 		.strip()
 	)
-
-
-def makeList[T](  # noqa: PLR0913
-	hf: T_htmlfile,
-	input_objects: list[T],
-	processor: Callable[[T_htmlfile, T], None],
-	single_prefix: str = "",
-	skip_single: bool = True,
-	ordered: bool = True,
-	list_type: str = "",
-) -> None:
-	"""Wrap elements into <ol> if more than one element."""
-	if not input_objects:
-		return
-
-	if skip_single and len(input_objects) == 1:
-		if single_prefix:
-			hf.write(single_prefix)
-		processor(hf, input_objects[0])
-		return
-
-	attrib: dict[str, str] = {}
-	if list_type:
-		attrib["type"] = list_type
-
-	with hf.element("ol" if ordered else "ul", attrib=attrib):
-		for el in input_objects:
-			with hf.element("li"):
-				processor(hf, el)
 
 
 def getTitleTag(sample: str) -> str:
