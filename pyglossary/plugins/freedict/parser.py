@@ -18,7 +18,7 @@ from pyglossary.langs import langDict
 from .utils import XMLLANG, getLangDesc, tostring
 
 if TYPE_CHECKING:
-	from collections.abc import Iterator
+	from collections.abc import Callable, Iterator
 
 	from pyglossary.stubs.lxml_types import Element
 
@@ -204,6 +204,22 @@ class TransCitCollector:
 		self._rest = Sense()
 		self._gramParts: list[str] = []
 		self._gramIndex: int | None = None
+		self._handlers: dict[
+			str,
+			Callable[[_CitScan, Element], None],
+		] = {
+			f"{TEI}quote": self._handleQuote,
+			f"{TEI}gramGrp": self._handleGramGroup,
+			f"{TEI}note": self._handleNote,
+			f"{TEI}usg": self._handleUsgOrLbl,
+			f"{TEI}lbl": self._handleUsgOrLbl,
+			f"{TEI}pos": self._handleGramPart,
+			f"{TEI}gen": self._handleGramPart,
+			f"{TEI}number": self._handleGramPart,
+			f"{TEI}num": self._handleGramPart,
+			f"{TEI}subc": self._handleGramPart,
+			f"{TEI}cit": self._handleNestedCit,
+		}
 
 	def collect(self, cit: Element) -> TransCit:
 		blocks = self._collectBlocks(cit)
@@ -222,7 +238,7 @@ class TransCitCollector:
 			scan.blocks[0].tags = scan.tags + scan.blocks[0].tags
 		return scan.blocks
 
-	def _handleChild(self, scan: _CitScan, child: str | Element) -> None:  # noqa: PLR0912
+	def _handleChild(self, scan: _CitScan, child: str | Element) -> None:
 		if isinstance(child, str):
 			text = child.strip()
 			if text:
@@ -233,50 +249,42 @@ class TransCitCollector:
 		if child.__class__.__name__ == "_Comment":
 			return
 
-		if child.tag == f"{TEI}quote":
-			self._flushText(scan)
-			scan.blocks.append(self._parser._parseBlock(child))
-			return
-
-		if child.tag == f"{TEI}gramGrp":
-			group = self._parser._parseGramGroup(child)
-			if group is not None:
-				self._rest.gramGroups.append(group)
-			return
-
-		if child.tag == f"{TEI}note":
-			self._rest.notes.append(self._parser._parseInlineNodes(child))
-			return
-
-		if child.tag in {f"{TEI}usg", f"{TEI}lbl"}:
-			# <usg> is kept here (not in the rest sense) because it gives the
-			# domain/context of the translation, e.g. "[archaic] word", so it
-			# must come first.
-			if _elementText(child):
-				scan.tags.append(
-					self._parser._parseTag(child, self._parser._tagKind(child)),
-				)
-			return
-
-		if child.tag in {
-			f"{TEI}pos",
-			f"{TEI}gen",
-			f"{TEI}number",
-			f"{TEI}num",
-			f"{TEI}subc",
-		}:
-			part = self._parser.normalizeGramGrpChild(child)
-			if part:
-				if self._gramIndex is None:
-					self._gramIndex = len(self._rest.gramGroups)
-				self._gramParts.append(part)
-			return
-
-		if child.tag == f"{TEI}cit":
-			self._handleNestedCit(scan, child)
+		handler = self._handlers.get(child.tag)
+		if handler is not None:
+			handler(scan, child)
 			return
 
 		self._handleUnknown(child)
+
+	def _handleQuote(self, scan: _CitScan, child: Element) -> None:
+		self._flushText(scan)
+		scan.blocks.append(self._parser._parseBlock(child))
+
+	def _handleGramGroup(self, _scan: _CitScan, child: Element) -> None:
+		group = self._parser._parseGramGroup(child)
+		if group is not None:
+			self._rest.gramGroups.append(group)
+
+	def _handleNote(self, _scan: _CitScan, child: Element) -> None:
+		self._rest.notes.append(self._parser._parseInlineNodes(child))
+
+	def _handleUsgOrLbl(self, scan: _CitScan, child: Element) -> None:
+		# <usg> is kept here (not in the rest sense) because it gives the
+		# domain/context of the translation, e.g. "[archaic] word", so it
+		# must come first.
+		if not _elementText(child):
+			return
+		scan.tags.append(
+			self._parser._parseTag(child, self._parser._tagKind(child)),
+		)
+
+	def _handleGramPart(self, _scan: _CitScan, child: Element) -> None:
+		part = self._parser.normalizeGramGrpChild(child)
+		if not part:
+			return
+		if self._gramIndex is None:
+			self._gramIndex = len(self._rest.gramGroups)
+		self._gramParts.append(part)
 
 	def _handleNestedCit(self, scan: _CitScan, child: Element) -> None:
 		typ = child.attrib.get("type", "trans")
