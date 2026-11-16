@@ -24,6 +24,8 @@ class TestGlossaryYomichan(TestGlossaryBase):
 
 		self.dataFile |= {
 			"02-yomichan-deinflection.zip",
+			"8-ja-ja-yomichan-term-meta.zip",
+			"8-ja-ja-yomichan-term-meta.txt",
 		}
 		self.dataFileCRC32 |= {
 			"050-JMdict-English-v3.txt": "6068b9a7",
@@ -77,6 +79,14 @@ class TestGlossaryYomichan(TestGlossaryBase):
 			"02-yomichan-deinflection.zip",
 			"02-yomichan-deinflection.txt",
 			sha1sum="2d4ca22a2bb93ba1830478dd68f0c75b8309f56f",
+			inputFormat="Yomichan",
+		)
+
+	def test_convert_yomichan_txt_term_meta(self):
+		self.convert(
+			"8-ja-ja-yomichan-term-meta.zip",
+			"8-ja-ja-yomichan-term-meta.txt",
+			compareText="8-ja-ja-yomichan-term-meta.txt",
 			inputFormat="Yomichan",
 		)
 

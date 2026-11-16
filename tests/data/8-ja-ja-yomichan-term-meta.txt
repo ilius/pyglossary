@@ -1,0 +1,10 @@
+##name	Test Dictionary
+##sourceLang	ja
+term1|reading1	term1 definition\npitch: 1\npitch: 0; devoice: 1; nasal: 2; tags: noun
+term2	term2 definition
+term2|reading2	frequency: 10
+term3|reading3	pitch: HL
+term4	frequency: 20th
+term5|reading5	ipa: ipa5; tags: a, b\nipa: ipa5b
+term6	frequency: 30
+term7	frequency: 40
