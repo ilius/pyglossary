@@ -79,7 +79,7 @@ jobs:
       - name: Set release version
         run: |
           echo "VERSION=$(git describe --abbrev=0)" >> "$GITHUB_ENV"
-          echo "VERSION_WITH_HASH=$(git describe)" >> "$GITHUB_ENV"
+          echo "VERSION_GIT=$(git describe --tags)" >> "$GITHUB_ENV"
 
       - name: Create venv
         run: |
@@ -138,7 +138,6 @@ jobs:
             --include-module=pymorphy3 \
             --include-module=lxml \
             --include-module=polib \
-            --include-module=yaml \
             --include-module=bs4 \
             --include-module=html5lib \
             --include-module=icu \
@@ -221,7 +220,7 @@ jobs:
           # Keep same layout for the Linux frozen application as macos
           for asset in about AUTHORS _license-dialog config.json plugins-meta help res; do
             if [ -e "$asset" ]; then
-              rm -rf "$APPDIR/usr/bin/$asset"
+              rm -rf "${APPDIR:?}/usr/bin/$asset"
               cp -a "$asset" "$APPDIR/usr/bin/"
             fi
           done
@@ -281,7 +280,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           overwrite: true
-          name: ${{ github.event.repository.name }}-slint-linux-x86_64-py${{ env.PYTHON_VERSION }}-${{ github.sha }}-${{ env.VERSION_WITH_HASH }}-AppImage
+          name: ${{ github.event.repository.name }}-slint-linux-x86_64-py${{ env.PYTHON_VERSION }}-${{ env.VERSION_GIT }}-AppImage
           path: ${{ env.APPIMAGE_NAME }}
           if-no-files-found: error
 
