@@ -2,6 +2,7 @@ import os
 import sys
 import tempfile
 import unittest
+import zipfile
 from os.path import abspath, dirname, join
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -189,6 +190,56 @@ class TestGlossaryDSL(TestGlossaryBase):
 			reader.close()
 
 		self.assertEqual(dataEntries, {"sub/ok.png": b"\x89PNG-ok"})
+
+	def test_resource_files_zip_companion(self):
+		dslPath = join(self.tempDir, "poc.dsl")
+		dsl = (
+			'#NAME "poc"\n#INDEX_LANGUAGE "English"\n'
+			'#CONTENTS_LANGUAGE "English"\n\n'
+			"hello\n"
+			"\t[s]img/photo.png[/s]\n"
+		)
+		with open(dslPath, "w", encoding="utf-8") as file:
+			file.write(dsl)
+		with zipfile.ZipFile(dslPath + ".files.zip", mode="w") as zf:
+			zf.writestr("img/photo.png", b"\x89PNG-zipped")
+
+		reader = Reader(Glossary())
+		reader.open(dslPath)
+		try:
+			dataEntries = {
+				entry.getFileName(): entry.data for entry in reader if entry.isData()
+			}
+			resCount = reader.countResourceFiles()
+		finally:
+			reader.close()
+
+		self.assertEqual(dataEntries, {"img/photo.png": b"\x89PNG-zipped"})
+		self.assertEqual(resCount, 1)
+
+	def test_resource_file_not_found(self):
+		dslPath = join(self.tempDir, "poc.dsl")
+		dsl = (
+			'#NAME "poc"\n#INDEX_LANGUAGE "English"\n'
+			'#CONTENTS_LANGUAGE "English"\n\n'
+			"hello\n"
+			"\t[s]missing.png[/s]\n"
+		)
+		with open(dslPath, "w", encoding="utf-8") as file:
+			file.write(dsl)
+
+		reader = Reader(Glossary())
+		reader.open(dslPath)
+		try:
+			dataEntries = {
+				entry.getFileName(): entry.data for entry in reader if entry.isData()
+			}
+			resCount = reader.countResourceFiles()
+		finally:
+			reader.close()
+
+		self.assertEqual(dataEntries, {})
+		self.assertEqual(resCount, 0)
 
 	def test_russianAmericanEnglish(self):
 		self.convert_dsl_txt(
