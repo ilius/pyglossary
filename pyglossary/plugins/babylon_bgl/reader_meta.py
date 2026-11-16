@@ -43,8 +43,7 @@ __all__ = ["_BglReaderMeta"]
 class _BglReaderMeta:
 	"""Dictionary metadata (first pass) and glossary info."""
 
-	# TODO: PLR0912 Too many branches (14 > 12)
-	def readInfo(self) -> None:  # noqa: PLR0912
+	def readInfo(self) -> None:
 		"""
 		Read meta information about the dictionary: author, description,
 		source and target languages, etc (articles are not read).
@@ -57,26 +56,34 @@ class _BglReaderMeta:
 			if not self.readBlock(block):
 				break
 			self.numBlocks += 1
-			if not block.data:
-				continue
-			if block.type == 0:
-				self.readType0(block)
-			elif block.type in {1, 7, 10, 11, 13}:
-				self.numEntries += 1
-			elif block.type == 2:
-				self.numResources += 1
-			elif block.type == 3:
-				self.readType3(block)
-			else:  # Unknown block.type
-				log.debug(
-					f"Unknown Block type {block.type!r}"
-					f", data_length = {len(block.data)}"
-					f", number = {self.numBlocks}",
-				)
+			self._processBlock(block)
 		self.file.seek(0)
 
 		self.detectEncoding()
+		self._checkNumEntries()
 
+		self.numBlocks = 0
+		self._decodeInfoValues()
+
+	def _processBlock(self, block: Block) -> None:
+		if not block.data:
+			return
+		if block.type == 0:
+			self.readType0(block)
+		elif block.type in {1, 7, 10, 11, 13}:
+			self.numEntries += 1
+		elif block.type == 2:
+			self.numResources += 1
+		elif block.type == 3:
+			self.readType3(block)
+		else:  # Unknown block.type
+			log.debug(
+				f"Unknown Block type {block.type!r}"
+				f", data_length = {len(block.data)}"
+				f", number = {self.numBlocks}",
+			)
+
+	def _checkNumEntries(self) -> None:
 		log.debug(f"numEntries = {self.numEntries}")
 		if self.bgl_numEntries and self.bgl_numEntries != self.numEntries:
 			# There are a number of cases when these numbers do not match.
@@ -88,17 +95,17 @@ class _BglReaderMeta:
 				f"bgl_numEntries={self.bgl_numEntries}, numEntries={self.numEntries}",
 			)
 
-		self.numBlocks = 0
-
+	def _decodeInfoValues(self) -> None:
 		encoding = self.targetEncoding  # FIXME: confirm this is correct
 		for key, value in self.info.items():
-			if isinstance(value, bytes):
-				try:
-					value = value.decode(encoding)  # noqa: PLW2901
-				except Exception:
-					log.warning(f"failed to decode info value: {key} = {value}")
-				else:
-					self.info[key] = value
+			if not isinstance(value, bytes):
+				continue
+			try:
+				value = value.decode(encoding)  # noqa: PLW2901
+			except Exception:
+				log.warning(f"failed to decode info value: {key} = {value}")
+			else:
+				self.info[key] = value
 
 	def setGlossaryInfo(self) -> None:
 		glos = self._glos
