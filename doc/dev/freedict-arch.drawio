@@ -58,41 +58,49 @@
           <mxGeometry height="70" width="280" x="340" y="480" as="geometry" />
         </mxCell>
 
+        <mxCell id="tei_note" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=8;dashed=1;" value="Why two stages?&#xa;Parser models the TEI tree (senses, forms, citations).&#xa;Layout resolves document order and list/tag placement.&#xa;Renderers therefore never see TEI tags." vertex="1">
+          <mxGeometry height="120" width="400" x="30" y="650" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=8;dashed=1;" value="Legend: solid = data flow; dashed = class inheritance.&#xa;Both readers share BaseReader, Parser, Layout and Renderer." vertex="1">
+          <mxGeometry height="60" width="580" x="40" y="735" as="geometry" />
+        </mxCell>
+
         <mxCell id="options" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=8;dashed=1;" value="Read options are assigned to the reader as _&lt;option&gt; attributes.&#xa;parser: auto_rtl&#xa;layout: auto_rtl, auto_comma, comma, word_title&#xa;renderer: pron_color, gram_color, usage_color, label_color, example_padding" vertex="1">
           <mxGeometry height="110" width="580" x="40" y="610" as="geometry" />
         </mxCell>
 
-        <mxCell id="e_reader_fd_base" parent="1" edge="1" source="reader_fd" target="base" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_reader_fd_base" parent="1" edge="1" source="reader_fd" target="base" value="open() / __iter__" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_reader_md_base" parent="1" edge="1" source="reader_md" target="base" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_reader_md_base" parent="1" edge="1" source="reader_md" target="base" value="open() / __iter__" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_base_parser" parent="1" edge="1" source="base" target="parser" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_base_parser" parent="1" edge="1" source="base" target="parser" value="parseEntry()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_parser_parsed" parent="1" edge="1" source="parser" target="parsed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_parser_parsed" parent="1" edge="1" source="parser" target="parsed" value="dataclasses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_parsed_layout" parent="1" edge="1" source="parsed" target="layout" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_parsed_layout" parent="1" edge="1" source="parsed" target="layout" value="layout" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_layout_tree" parent="1" edge="1" source="layout" target="tree" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_layout_tree" parent="1" edge="1" source="layout" target="tree" value="buildDocument()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_tree_renderer" parent="1" edge="1" source="tree" target="renderer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_tree_renderer" parent="1" edge="1" source="tree" target="renderer" value="renderDocument()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_html_renderer" parent="1" edge="1" source="html_renderer" target="renderer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;dashed=1;strokeColor=#9673a6;">
+        <mxCell id="e_html_renderer" parent="1" edge="1" source="html_renderer" target="renderer" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;dashed=1;strokeColor=#9673a6;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_md_renderer" parent="1" edge="1" source="md_renderer" target="renderer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;dashed=1;strokeColor=#9673a6;">
+        <mxCell id="e_md_renderer" parent="1" edge="1" source="md_renderer" target="renderer" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;dashed=1;strokeColor=#9673a6;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_html_sink" parent="1" edge="1" source="html_renderer" target="html_sink" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_html_sink" parent="1" edge="1" source="html_renderer" target="html_sink" value="writes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e_md_sink" parent="1" edge="1" source="md_renderer" target="md_sink" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+        <mxCell id="e_md_sink" parent="1" edge="1" source="md_renderer" target="md_sink" value="writes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
