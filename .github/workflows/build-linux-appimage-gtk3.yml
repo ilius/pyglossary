@@ -1,0 +1,397 @@
+name: Build Linux (Gtk3 AppImage)
+
+on:
+  push:
+    branches:
+      - 'build-release'
+      # - 'dev'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_SYSTEM_PYTHON: 0
+  PYTHONWARNINGS: ignore::EncodingWarning
+  PYTHONWARNDEFAULTENCODING: 0
+  APPNAME: PyGlossaryGtk3
+  DIST_DIR: dist.nuitka.gtk3
+  PYTHON_VERSION: '3.12'
+  MAIN_SCRIPT: main.py
+  RESOURCE_DIR: resources
+  APPIMAGE_EXTRACT_AND_RUN: '1'
+
+jobs:
+  build_linux_appimage:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            arch: x86_64
+          - runner: ubuntu-22.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install system build and GTK3 runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            adwaita-icon-theme \
+            build-essential \
+            curl \
+            dpkg-dev \
+            file \
+            gobject-introspection \
+            hicolor-icon-theme \
+            libcairo2-dev \
+            libffi-dev \
+            libgdk-pixbuf-2.0-dev \
+            libgdk-pixbuf2.0-bin \
+            libgirepository1.0-dev \
+            libglib2.0-bin \
+            libglib2.0-dev \
+            libgtk-3-0 \
+            libgtk-3-bin \
+            libgtk-3-dev \
+            libicu-dev \
+            liblzo2-dev \
+            libpango1.0-dev \
+            librsvg2-common \
+            librsvg2-dev \
+            libfuse2 \
+            patchelf \
+            pkg-config \
+            squashfs-tools \
+            xauth \
+            xvfb
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: latest
+
+      - name: Cache uv
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-${{ matrix.arch }}-uv-gtk3-linux-${{ env.PYTHON_VERSION }}
+
+      - name: Set release version
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> "$GITHUB_ENV"
+          echo "VERSION_GIT=$(git describe --tags)" >> "$GITHUB_ENV"
+
+      - name: Create venv
+        run: |
+          uv venv --python "${PYTHON_VERSION}" .venv
+          echo "VIRTUAL_ENV=$PWD/.venv" >> "$GITHUB_ENV"
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      - name: Install PyGlossary and GTK3 build dependencies
+        run: |
+          uv pip install --upgrade nuitka
+          uv pip install "pygobject==3.48.2"
+
+          STATIC_DEPS=true uv pip install --no-binary PyICU PyICU
+          STATIC_DEPS=true uv pip install --no-binary python-lzo python-lzo
+
+          uv pip install -r requirements.txt
+
+      - name: Patch Nuitka GI plugin for optional platform namespaces
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+
+          import nuitka.plugins.standard.GiPlugin as gi_plugin
+
+          path = Path(gi_plugin.__file__)
+          source = path.read_text(encoding="utf-8")
+          old = (
+              "    def _makeTypelibDataFile(self, namespace):\n"
+              "        namespace_info = self._getNamespaceInfo(namespace)\n"
+          )
+          new = (
+              "    def _makeTypelibDataFile(self, namespace):\n"
+              "        try:\n"
+              "            namespace_info = self._getNamespaceInfo(namespace)\n"
+              "        except Exception:\n"
+              "            return None\n"
+          )
+          if old not in source:
+              raise SystemExit(
+                  "Unexpected Nuitka GiPlugin.py layout; cannot apply "
+                  "optional-namespace patch"
+              )
+          path.write_text(source.replace(old, new, 1), encoding="utf-8")
+          PY
+
+      - name: Patch sources for the Gtk3 UI build
+        run: python3 scripts/ci/mac/patch_sources.py
+        env:
+          MAIN_SCRIPT: ${{ env.MAIN_SCRIPT }}
+          APPNAME: ${{ env.APPNAME }}
+          DEFAULT_UI: gtk3
+
+      - name: Build Nuitka standalone application
+        env:
+          PYTHONWARNDEFAULTENCODING: 0
+        run: |
+          .venv/bin/python -m nuitka \
+            --user-package-configuration-file=scripts/ci/linux/nuitka-package-config.yml \
+            --standalone \
+            --assume-yes-for-downloads \
+            --follow-imports \
+            --include-package=pyglossary \
+            --include-package=gi \
+            --include-package-data=gi \
+            --nofollow-import-to=gi.pygtkcompat \
+            --nofollow-import-to=pygtkcompat \
+            --nofollow-import-to=pyglossary.ui.ui_gtk4 \
+            --nofollow-import-to=pyglossary.ui.ui_qt6 \
+            --nofollow-import-to=pyglossary.ui.ui_slint \
+            --nofollow-import-to=pyglossary.ui.ui_tk \
+            --nofollow-import-to=pyglossary.ui.ui_tk_wizard \
+            --nofollow-import-to=pyglossary.ui.ui_wx \
+            --nofollow-import-to=tkinter \
+            --nofollow-import-to=tkinterdnd2 \
+            --nofollow-import-to=wx \
+            --nofollow-import-to=pyqt4 \
+            --nofollow-import-to=pyqt5 \
+            --nofollow-import-to=pyqt6 \
+            --nofollow-import-to=PySide6 \
+            --nofollow-import-to=slint \
+            --nofollow-import-to='*.tests' \
+            --noinclude-pytest-mode=nofollow \
+            --noinclude-setuptools-mode=nofollow \
+            --plugin-disable=pyqt5 \
+            --include-module=pymorphy3 \
+            --include-module=lxml \
+            --include-module=polib \
+            --include-module=bs4 \
+            --include-module=html5lib \
+            --include-module=icu \
+            --include-module=colorize_pinyin \
+            --include-package-data=pyglossary \
+            --noinclude-data-files='pyglossary/*.md' \
+            --noinclude-data-files='pyglossary/*.sh' \
+            --noinclude-data-files='pyglossary/*.DS_Store' \
+            --noinclude-data-files='pyglossary/*/.ruff_cache/*' \
+            --noinclude-data-files='pyglossary/ui/ui_slint/*.png' \
+            --include-data-files=about=about \
+            --include-module=_json \
+            --include-module=_bisect \
+            --include-data-files=_license-dialog=_license-dialog \
+            --include-data-dir=res=. \
+            --include-data-files=_license-dialog=license-dialog \
+            --nofollow-import-to=unittest \
+            --output-dir="${DIST_DIR}" \
+            --output-filename="${APPNAME}" \
+            "${APPNAME}.py"
+
+      - name: Assemble AppDir with linuxdeploy and the GTK3 plugin
+        run: |
+          set -euo pipefail
+
+          DIST_PATH="${DIST_DIR}/${APPNAME}.dist"
+          APPDIR="$RUNNER_TEMP/${APPNAME}.AppDir"
+          ICON="$APPDIR/${APPNAME}.png"
+          ARCH="${{ matrix.arch }}"
+
+          test -x "${DIST_PATH}/${APPNAME}"
+          test -f res/pyglossary.png
+
+          rm -rf "$APPDIR"
+          mkdir -p "$APPDIR/usr/bin"
+
+          # Keep Nuitka's complete standalone layout intact. This is important:
+          # the executable uses its sibling libraries and extension modules.
+          cp -a "${DIST_PATH}/." "$APPDIR/usr/bin/"
+
+          # Keep same layout for the Linux frozen application as macos
+          for asset in about AUTHORS _license-dialog config.json plugins-meta help res; do
+            if [ -e "$asset" ]; then
+              rm -rf "${APPDIR:?}/usr/bin/$asset"
+              cp -a "$asset" "$APPDIR/usr/bin/"
+            fi
+          done
+
+          cp res/pyglossary.png "$ICON"
+
+          cat > "$APPDIR/${APPNAME}.desktop" <<DESKTOP
+          [Desktop Entry]
+          Version=1.0
+          Type=Application
+          Name=PyGlossary (Gtk3)
+          Comment=Dictionary and glossary conversion tool
+          Exec=${APPNAME}
+          Icon=${APPNAME}
+          Terminal=false
+          Categories=Office;Utility;
+          DESKTOP
+
+          # linuxdeploy's GTK plugin bundles GTK3 modules, GSettings schemas,
+          # typelibs, pixbuf loaders and sets the matching runtime env vars in
+          # the generated AppRun. libgtk itself is only loaded through
+          # gobject-introspection at runtime, so it is passed explicitly.
+          LINUXDEPLOY="$RUNNER_TEMP/linuxdeploy-${ARCH}.AppImage"
+          curl --fail --location --silent --show-error \
+            "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${ARCH}.AppImage" \
+            --output "$LINUXDEPLOY"
+          chmod +x "$LINUXDEPLOY"
+
+          PLUGIN_DIR="$RUNNER_TEMP/linuxdeploy-plugins"
+          mkdir -p "$PLUGIN_DIR"
+          curl --fail --location --silent --show-error \
+            https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh \
+            --output "$PLUGIN_DIR/linuxdeploy-plugin-gtk"
+          chmod +x "$PLUGIN_DIR/linuxdeploy-plugin-gtk"
+          export PATH="$PLUGIN_DIR:$PATH"
+          export LINUXDEPLOY
+
+          GTK_LIBRARY="$(pkg-config --variable=libdir gtk+-3.0)/libgtk-3.so.0"
+
+          DEPLOY_GTK_VERSION=3 APPIMAGE_EXTRACT_AND_RUN=1 \
+            "$LINUXDEPLOY" --appdir "$APPDIR" \
+              --executable "$APPDIR/usr/bin/$APPNAME" \
+              --desktop-file "$APPDIR/${APPNAME}.desktop" \
+              --icon-file "$ICON" \
+              --library "$GTK_LIBRARY" \
+              --plugin gtk
+
+          test -x "$APPDIR/AppRun"
+          test -x "$APPDIR/usr/bin/$APPNAME"
+
+          # Nuitka keeps its runtime libraries next to the executable in
+          # usr/bin. linuxdeploy may replace the executable's RPATH, so make
+          # sure the frozen application directory is searched first.
+          mkdir -p "$APPDIR/apprun-hooks"
+          cat > "$APPDIR/apprun-hooks/10-pyglossary.sh" <<'HOOK'
+          export APPDIR="${APPDIR:-$(dirname "$(readlink -f "$0")")}"
+          export LD_LIBRARY_PATH="$APPDIR/usr/bin:$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+          HOOK
+
+          # The GTK plugin does not ship themes or icon sets; GTK finds these
+          # through XDG_DATA_DIRS, which the generated AppRun already points at
+          # the AppDir.
+          for theme in Adwaita hicolor; do
+            if [ -d "/usr/share/icons/$theme" ]; then
+              mkdir -p "$APPDIR/usr/share/icons"
+              cp -a "/usr/share/icons/$theme" "$APPDIR/usr/share/icons/"
+            fi
+          done
+
+          echo "APPDIR=$APPDIR" >> "$GITHUB_ENV"
+
+      - name: Create AppImage
+        run: |
+          set -euo pipefail
+
+          ARCH="${{ matrix.arch }}"
+          APPIMAGE_NAME="${APPNAME}-${VERSION}-Linux-${ARCH}.AppImage"
+          APPIMAGETOOL="$RUNNER_TEMP/appimagetool-${ARCH}.AppImage"
+
+          curl --fail --location --silent --show-error \
+            "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-${ARCH}.AppImage" \
+            --output "$APPIMAGETOOL"
+          chmod +x "$APPIMAGETOOL"
+
+          ARCH="$ARCH" APPIMAGE_EXTRACT_AND_RUN=1 \
+            "$APPIMAGETOOL" "$APPDIR" "$PWD/$APPIMAGE_NAME"
+          chmod +x "$APPIMAGE_NAME"
+
+          echo "APPIMAGE_NAME=$APPIMAGE_NAME" >> "$GITHUB_ENV"
+
+      - name: Smoke-test the AppImage
+        run: |
+          set -euo pipefail
+
+          APPIMAGE_EXTRACT_AND_RUN=1 "./$APPIMAGE_NAME" --version
+
+          # Launch the GTK3 UI under a virtual display. It should stay alive
+          # until the timeout kills it; a quick exit means a startup failure.
+          set +e
+          xvfb-run -a timeout 20 env APPIMAGE_EXTRACT_AND_RUN=1 \
+            "./$APPIMAGE_NAME" --ui=gtk3 > "$RUNNER_TEMP/gtk3-ui.log" 2>&1
+          status=$?
+          set -e
+
+          if [ "$status" -ne 124 ]; then
+            cat "$RUNNER_TEMP/gtk3-ui.log" >&2
+            echo "GTK3 UI exited unexpectedly with status $status" >&2
+            exit 1
+          fi
+          echo "GTK3 UI started successfully"
+
+          file "$APPIMAGE_NAME"
+          ls -lh "$APPIMAGE_NAME"
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          overwrite: true
+          name: ${{ github.event.repository.name }}-gtk3-linux-${{ matrix.arch }}-py${{ env.PYTHON_VERSION }}-${{ env.VERSION_GIT }}-AppImage
+          path: ${{ env.APPIMAGE_NAME }}
+          if-no-files-found: error
+
+  release:
+    needs: [build_linux_appimage]
+    if: startsWith(github.ref_name, 'build-release')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set release variables
+        run: |
+          echo "VERSION=$(git describe --abbrev=0)" >> "$GITHUB_ENV"
+          echo "VERSION_WITH_HASH=$(git describe)" >> "$GITHUB_ENV"
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Show generated artifacts
+        run: |
+          find "${{ github.workspace }}/artifacts" -maxdepth 2 -type f -print
+          test -n "$(find "${{ github.workspace }}/artifacts" -maxdepth 2 -name '*.AppImage' -print -quit)"
+
+      - name: Create or update GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ env.VERSION }}
+          body: |
+            ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
+
+            ## Linux (Gtk3 UI)
+
+            - **x86_64 and aarch64 AppImages**, built with the Gtk3 UI (`--gtk3` / `--ui=gtk3`).
+            - Download the `.AppImage` for your architecture, make it executable, and run it. No package manager or root installation is required.
+            - On systems without FUSE support, try `APPIMAGE_EXTRACT_AND_RUN=1 ./PyGlossaryGtk3-<version>-Linux-<arch>.AppImage`.
+          artifacts: 'artifacts/*.AppImage'
+          artifactContentType: application/octet-stream
+          generateReleaseNotes: true
+          makeLatest: true
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          tag: ${{ env.VERSION }}
