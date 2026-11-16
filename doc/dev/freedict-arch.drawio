@@ -1,0 +1,101 @@
+<mxfile host="Electron" version="24.7.17">
+  <diagram name="freedict-architecture" id="freedict-architecture">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1220" pageHeight="860" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="tei" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=15;" value="TEI-aware: parsing and layout" vertex="1">
+          <mxGeometry height="780" width="460" x="30" y="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="render" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;" value="TEI-free: neutral document and rendering" vertex="1">
+          <mxGeometry height="780" width="660" x="520" y="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="reader_fd" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;" value="freedict/reader.py&#xa;Reader (HTML)&#xa;rendererClass = HtmlRenderer" vertex="1">
+          <mxGeometry height="70" width="180" x="30" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="reader_md" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;" value="freedict_md/reader.py&#xa;Reader (Markdown)&#xa;rendererClass = MdRenderer" vertex="1">
+          <mxGeometry height="70" width="200" x="230" y="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="base" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=8;" value="freedict/reader_base.py&#xa;BaseReader&#xa;compression, progress, metadata,&#xa;XInclude chain, iterparse entry loop" vertex="1">
+          <mxGeometry height="80" width="400" x="30" y="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="parser" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacingLeft=8;" value="freedict/parser.py&#xa;Parser: TEI XML -&gt; parsed dataclasses&#xa;handles senses, forms, tags, notes, metadata" vertex="1">
+          <mxGeometry height="80" width="400" x="30" y="300" as="geometry" />
+        </mxCell>
+
+        <mxCell id="parsed" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacingLeft=8;" value="Parsed TEI dataclasses&#xa;Entry, Sense, TransCit, ExampleCit,&#xa;GramGroup, Tag, Block, Inline" vertex="1">
+          <mxGeometry height="80" width="400" x="30" y="420" as="geometry" />
+        </mxCell>
+
+        <mxCell id="layout" parent="tei" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacingLeft=8;" value="freedict/layout.py&#xa;buildDocument(): ordering, lists,&#xa;pending tags, RTL/commas, titles" vertex="1">
+          <mxGeometry height="80" width="400" x="30" y="540" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tree" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=8;" value="freedict/document.py&#xa;Neutral document tree&#xa;Text, LineBreak, Link, Tag, Grammar, InlineElement,&#xa;Block, ListBlock, Example, Pronunciation, Title" vertex="1">
+          <mxGeometry height="90" width="580" x="40" y="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="renderer" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=8;" value="freedict/renderer.py&#xa;Renderer: generic tree traversal into an htmlfile-compatible sink" vertex="1">
+          <mxGeometry height="70" width="580" x="40" y="210" as="geometry" />
+        </mxCell>
+
+        <mxCell id="html_renderer" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="HtmlRenderer&#xa;defiFormat = &quot;h&quot;" vertex="1">
+          <mxGeometry height="70" width="260" x="40" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="md_renderer" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" value="freedict_md/renderer.py&#xa;MdRenderer&#xa;defiFormat = &quot;m&quot;" vertex="1">
+          <mxGeometry height="70" width="280" x="340" y="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="html_sink" parent="render" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" value="lxml etree.htmlfile&#xa;-&gt; HTML definition" vertex="1">
+          <mxGeometry height="70" width="260" x="40" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="md_sink" parent="render" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" value="freedict_md/md_emit.py&#xa;MdEmit -&gt; Markdown definition" vertex="1">
+          <mxGeometry height="70" width="280" x="340" y="480" as="geometry" />
+        </mxCell>
+
+        <mxCell id="options" parent="render" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=8;dashed=1;" value="Read options are assigned to the reader as _&lt;option&gt; attributes.&#xa;parser: auto_rtl&#xa;layout: auto_rtl, auto_comma, comma, word_title&#xa;renderer: pron_color, gram_color, usage_color, label_color, example_padding" vertex="1">
+          <mxGeometry height="110" width="580" x="40" y="610" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_reader_fd_base" parent="1" edge="1" source="reader_fd" target="base" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_reader_md_base" parent="1" edge="1" source="reader_md" target="base" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_base_parser" parent="1" edge="1" source="base" target="parser" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_parser_parsed" parent="1" edge="1" source="parser" target="parsed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_parsed_layout" parent="1" edge="1" source="parsed" target="layout" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_layout_tree" parent="1" edge="1" source="layout" target="tree" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_tree_renderer" parent="1" edge="1" source="tree" target="renderer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_html_renderer" parent="1" edge="1" source="html_renderer" target="renderer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;dashed=1;strokeColor=#9673a6;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_md_renderer" parent="1" edge="1" source="md_renderer" target="renderer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;dashed=1;strokeColor=#9673a6;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_html_sink" parent="1" edge="1" source="html_renderer" target="html_sink" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_md_sink" parent="1" edge="1" source="md_renderer" target="md_sink" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#333333;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
