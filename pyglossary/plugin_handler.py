@@ -82,8 +82,9 @@ class PluginLoader:
 
 		return PluginProp.fromModule(module)
 
-	@staticmethod
+	@classmethod
 	def loadPluginsFromJson(
+		cls: type[PluginLoader],
 		jsonPath: str,
 		skipDisabled: bool = True,
 	) -> list[PluginProp]:
@@ -101,6 +102,7 @@ class PluginLoader:
 			if prop is None:
 				continue
 			if not prop.enable and skipDisabled:
+				cls.loadedModules.add(prop.moduleName)
 				continue
 			plugins.append(prop)
 		return plugins
