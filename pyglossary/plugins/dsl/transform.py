@@ -23,6 +23,34 @@ __all__ = ["Transformer"]
 
 _re_comment_block = re.compile(r"\{\{([^}]*)\}\}")
 
+_closeTagHtml = {
+	"m": "</p>",
+	"b": "</b>",
+	"u": "</u>",
+	"'": "</u>",
+	"i": "</i>",
+	"sup": "</sup>",
+	"sub": "</sub>",
+	"c": "</font>",
+	"t": "</font>",
+	"*": "</span>",
+	"ex": "</font></span>",
+}
+
+_closeTagIgnored = frozenset(
+	(
+		"ref",
+		"url",
+		"s",
+		"trn",
+		"!trn",
+		"trs",
+		"!trs",
+		"lang",
+		"com",
+	),
+)
+
 
 class Result(NamedTuple):
 	"""Result."""
@@ -134,40 +162,16 @@ class Transformer:
 
 	def closeTag(self, tag: str) -> None:
 		assert tag
-		if tag == "m":
-			self.addHtml("</p>")
-		elif tag == "b":
-			self.addHtml("</b>")
-		elif tag in {"u", "'"}:
-			self.addHtml("</u>")
-		elif tag == "i":
-			self.addHtml("</i>")
-		elif tag == "sup":
-			self.addHtml("</sup>")
-		elif tag == "sub":
-			self.addHtml("</sub>")
-		elif tag in {"c", "t"}:
-			self.addHtml("</font>")
-		elif tag == "p":
+		if tag == "p":
 			self.closeLabel()
-		elif tag == "*":
-			self.addHtml("</span>")
-		elif tag == "ex":
-			self.addHtml("</font></span>")
-		elif tag in {
-			"ref",
-			"url",
-			"s",
-			"trn",
-			"!trn",
-			"trs",
-			"!trs",
-			"lang",
-			"com",
-		}:
+		elif tag in _closeTagIgnored:
 			pass
 		else:
-			log.warning(f"unknown close tag {tag!r}")
+			html = _closeTagHtml.get(tag)
+			if html is None:
+				log.warning(f"unknown close tag {tag!r}")
+			else:
+				self.addHtml(html)
 		self.resetBuf()
 
 	def transform(self) -> tuple[Result | None, ErrorType]:
