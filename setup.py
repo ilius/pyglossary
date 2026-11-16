@@ -144,6 +144,16 @@ with open("README.md", encoding="utf-8") as fh:
 	long_description = fh.read()
 
 
+def getRequirements(filename: str = "requirements.txt") -> list[str]:
+	path = join(dirname(__file__), filename)
+	with open(path, encoding="utf-8") as fh:
+		return [
+			line.strip()
+			for line in fh
+			if line.strip() and not line.strip().startswith("#")
+		]
+
+
 setup(
 	name="pyglossary",
 	version=getPipSafeVersion(),
@@ -170,15 +180,6 @@ setup(
 		(f"{relRootDir}/res", res_files),
 	],
 	extras_require={
-		"full": [
-			"lxml",
-			"beautifulsoup4",
-			"pyicu",
-			"PyYAML",
-			"marisa-trie",
-			"libzim>=4.0",
-			"python-lzo",
-			"html5lib",
-		],
+		"full": getRequirements(),
 	},
 )
