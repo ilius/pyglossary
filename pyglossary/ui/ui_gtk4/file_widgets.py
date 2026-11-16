@@ -58,6 +58,7 @@ class InputFileBox(gtk.Box):
 			label="Browse",
 			actionSave=False,
 			title="Select Input File",
+			folderToggle=True,
 		)
 		pack(self, button)
 		if labelSizeGroup:

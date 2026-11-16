@@ -46,6 +46,7 @@ class BrowseButton(gtk.Button):
 		label: str = "Browse",
 		actionSave: bool = False,
 		title: str = "Select File",
+		folderToggle: bool = False,
 	) -> None:
 		gtk.Button.__init__(self)
 
@@ -59,6 +60,7 @@ class BrowseButton(gtk.Button):
 		self.actionSave = actionSave
 		self.setFilePathFunc = setFilePathFunc
 		self.title = title
+		self.folderToggle = folderToggle
 
 		self.connect("clicked", self.onClick)
 
@@ -88,7 +90,40 @@ class BrowseButton(gtk.Button):
 			return
 		self.setFilePathFunc(file.get_path())
 
+	def _runWithFolderToggle(self) -> None:
+		dialog = gtk.FileChooserDialog(
+			title=self.title,
+			transient_for=self.get_root(),
+			action=gtk.FileChooserAction.OPEN,
+		)
+		dialog.add_button("Cancel", gtk.ResponseType.CANCEL)
+		dialog.add_button("Open", gtk.ResponseType.ACCEPT)
+		folderCheck = gtk.CheckButton(label="Select Folder")
+
+		def onToggled(button: gtk.CheckButton) -> None:
+			dialog.set_action(
+				gtk.FileChooserAction.SELECT_FOLDER
+				if button.get_active()
+				else gtk.FileChooserAction.OPEN,
+			)
+
+		folderCheck.connect("toggled", onToggled)
+		dialog.get_content_area().append(folderCheck)
+
+		def onResponse(dlg: gtk.FileChooserDialog, response: int) -> None:
+			if response == gtk.ResponseType.ACCEPT:
+				file = dlg.get_file()
+				if file is not None:
+					self.setFilePathFunc(file.get_path())
+			dlg.destroy()
+
+		dialog.connect("response", onResponse)
+		dialog.show()
+
 	def onClick(self, _widget: gtk.Widget) -> None:
+		if self.folderToggle and not self.actionSave:
+			self._runWithFolderToggle()
+			return
 		dialog = gtk.FileDialog.new()
 		dialog.set_title(self.title)
 		# dialog.set_initial_folder(dir_name)

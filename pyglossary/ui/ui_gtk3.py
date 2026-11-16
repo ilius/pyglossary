@@ -858,6 +858,7 @@ class BrowseButton(gtk.Button):
 		label: str = "Browse",
 		actionSave: bool = False,
 		title: str = "Select File",
+		folderToggle: bool = False,
 	) -> None:
 		gtk.Button.__init__(self)
 
@@ -872,17 +873,48 @@ class BrowseButton(gtk.Button):
 		self.actionSave = actionSave
 		self.setFilePathFunc = setFilePathFunc
 		self.title = title
+		self.folderToggle = folderToggle
 
 		self.connect("clicked", self.onClick)
 
+	def _runWithFolderToggle(self) -> None:
+		fcd = gtk.FileChooserDialog(
+			title=self.title,
+			transient_for=(
+				self.get_root() if hasattr(self, "get_root") else self.get_toplevel()
+			),
+			action=gtk.FileChooserAction.OPEN,
+		)
+		fcd.add_button("Cancel", gtk.ResponseType.CANCEL)
+		fcd.add_button("Open", gtk.ResponseType.ACCEPT)
+		folderCheck = gtk.CheckButton(label="Select Folder")
+
+		def onToggled(button: gtk.CheckButton) -> None:
+			fcd.set_action(
+				gtk.FileChooserAction.SELECT_FOLDER
+				if button.get_active()
+				else gtk.FileChooserAction.OPEN,
+			)
+
+		folderCheck.connect("toggled", onToggled)
+		fcd.set_extra_widget(folderCheck)
+		if fcd.run() == gtk.ResponseType.ACCEPT:
+			self.setFilePathFunc(fcd.get_filename())
+		fcd.destroy()
+
 	def onClick(self, _widget: gtk.Widget) -> None:
+		if self.folderToggle and not self.actionSave:
+			self._runWithFolderToggle()
+			return
+		if self.actionSave:
+			action = gtk.FileChooserAction.SAVE
+		else:
+			action = gtk.FileChooserAction.OPEN
 		fcd = gtk.FileChooserNative(
 			transient_for=(
 				self.get_root() if hasattr(self, "get_root") else self.get_toplevel()
 			),
-			action=gtk.FileChooserAction.SAVE
-			if self.actionSave
-			else gtk.FileChooserAction.OPEN,
+			action=action,
 			title=self.title,
 		)
 		fcd.connect("response", lambda _w, _e: fcd.hide())
@@ -1335,6 +1367,7 @@ class MainWindow(gtk.Dialog):
 			label="Browse",
 			actionSave=False,
 			title="Select Input File",
+			folderToggle=True,
 		)
 		pack(hbox, button)
 		buttonSizeGroup.add_widget(button)
