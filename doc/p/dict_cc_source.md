@@ -1,4 +1,4 @@
-## Dict.cc translation export (tab-separated source file)
+## Dict.cc source (*.tsv)
 
 <!--
 This document is generated from source code. Do NOT edit.
@@ -11,8 +11,8 @@ To update, modify plugins/dict_cc_source/__init__.py file, then run ./scripts/ge
 | --------- | ----- |
 | Name | Dictcc_source |
 | snake_case_name | dict_cc_source |
-| Description | Dict.cc translation export (tab-separated source file) |
-| Extensions | `.txt` |
+| Description | Dict.cc source (*.tsv) |
+| Extensions | `.tsv` |
 | Read support | Yes |
 | Write support | No |
 | Single-file | Yes |

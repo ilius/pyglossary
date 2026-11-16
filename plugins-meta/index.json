@@ -411,9 +411,9 @@
 		"module": "dict_cc_source",
 		"lname": "dict_cc_source",
 		"name": "Dictcc_source",
-		"description": "Dict.cc translation export (tab-separated source file)",
+		"description": "Dict.cc source (*.tsv)",
 		"extensions": [
-			".txt"
+			".tsv"
 		],
 		"singleFile": true,
 		"optionsProp": {
