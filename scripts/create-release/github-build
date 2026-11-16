@@ -101,3 +101,7 @@ python3 "$scriptsDir/create-release/create-release-notes.py" --prev-tag "$CUR_VE
 
 echo "Created $MD_PATH"
 xdg-open "$MD_PATH"
+
+echo "-------------------------------------------------------"
+echo "Push to build-release branch after creating the release."
+echo "-------------------------------------------------------"
