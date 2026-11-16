@@ -335,6 +335,10 @@ class Reader:
 			yield from reader
 			reader.close()
 
+		yield from self._iterEntries()
+		yield from self._iterResourceEntries()
+
+	def _iterEntries(self) -> Iterator[EntryType]:
 		term_lines: list[str] = []
 		text_lines: list[str] = []
 		for line in self._iterLines():
@@ -355,20 +359,33 @@ class Reader:
 		if text_lines:
 			yield from self.parseEntryBlock(term_lines, text_lines)
 
+	def _iterResourceEntries(self) -> Iterator[EntryType]:
 		resFileSet = self._resFileSet.copy()
+		originalCount = len(resFileSet)
 
+		yield from self._iterZipResources(resFileSet)
+
+		zipCount = originalCount - len(resFileSet)
+		looseFiles = self._collectLooseFiles(resFileSet)
+		self._resCount = zipCount + len(looseFiles)
+		for fname, fpath in looseFiles.items():
+			with open(fpath, mode="rb") as file:
+				data = file.read()
+			yield self._glos.newDataEntry(fname, data)
+
+	def _iterZipResources(self, resFileSet: set[str]) -> Iterator[EntryType]:
 		resZipPath = self._filename + ".files.zip"
-		zipCount = 0
-		if isfile(resZipPath):
-			with zipfile.ZipFile(resZipPath, mode="r") as zf:
-				fnameList = zf.namelist()
-				zipCount = len(fnameList)
-				resFileSet -= set(fnameList)
-				for fname in sorted(fnameList):
-					with zf.open(fname) as file:
-						data = file.read()
-					yield self._glos.newDataEntry(fname, data)
+		if not isfile(resZipPath):
+			return
+		with zipfile.ZipFile(resZipPath, mode="r") as zf:
+			fnameList = zf.namelist()
+			resFileSet -= set(fnameList)
+			for fname in sorted(fnameList):
+				with zf.open(fname) as file:
+					data = file.read()
+				yield self._glos.newDataEntry(fname, data)
 
+	def _collectLooseFiles(self, resFileSet: set[str]) -> dict[str, str]:
 		resDir = dirname(self._filename)
 		looseFiles: dict[str, str] = {}
 		for fname in sorted(resFileSet):
@@ -380,11 +397,7 @@ class Reader:
 				log.warning(f"resource file not found: {fname}")
 				continue
 			looseFiles[fname] = fpath
-		self._resCount = zipCount + len(looseFiles)
-		for fname, fpath in looseFiles.items():
-			with open(fpath, mode="rb") as file:
-				data = file.read()
-			yield self._glos.newDataEntry(fname, data)
+		return looseFiles
 
 	def _parseTermLines(
 		self,
