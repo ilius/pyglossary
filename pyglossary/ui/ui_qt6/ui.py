@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import subprocess
 import sys
 from os.path import isfile, join, splitext
@@ -76,6 +77,21 @@ if TYPE_CHECKING:
 __all__ = ["UI"]
 
 log = logging.getLogger("pyglossary")
+
+
+def _read_file_name_filters() -> list[str]:
+	per_format: list[str] = []
+	for plugin in sorted(Glossary.plugins.values(), key=lambda p: p.description):
+		if not plugin.canRead:
+			continue
+		extensions = [ext for ext in plugin.extensions if ext]
+		if not extensions:
+			continue
+		patterns = [f"*{ext}" for ext in extensions]
+		description = re.sub(r"\s*\([^)]*\)", "", plugin.description)
+		per_format.append(f"{description} ({' '.join(patterns)})")
+
+	return ["All files (*)", *per_format]
 
 
 class _IoStepDropSurface(QWidget):
@@ -499,6 +515,7 @@ class UI(UIBase):
 		dlg.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)
 		# Non-native dialog is required to add the file/folder toggle.
 		dlg.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+		dlg.setNameFilters(_read_file_name_filters())
 		dlg.setDirectory(dir_path)
 		if selected_existing:
 			dlg.selectFile(selected_existing)
