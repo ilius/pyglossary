@@ -229,6 +229,59 @@ def fixImgLinks(u_text: str) -> str:
 	return u_text.replace("\x1e", "").replace("\x1f", "")
 
 
+def _skipDollarRun(b_word: bytes, i: int) -> int:
+	"""Return the index after the run of b'$' starting at i."""
+	while i < len(b_word) and b_word[i] == ord(b"$"):
+		i += 1
+	return i
+
+
+def _nextDollarSegment(b_word: bytes, i: int) -> tuple[bytes, int, bool]:
+	"""
+	Process the next dollar-related segment of b_word starting at i.
+
+	Return (segment_to_keep, next_index, removed_index), where
+	removed_index is True when a $<index>$ sequence was stripped.
+	"""
+	d0 = b_word.find(b"$", i)
+	if d0 == -1:
+		return b_word[i:], len(b_word), False
+	d1 = b_word.find(b"$", d0 + 1)
+	if d1 == -1:
+		return b_word[i:], len(b_word), False
+
+	# You may find keys (or alternative keys) like these:
+	# sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	# obscurantiste$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	# They all end on a sequence of b'$', key length including dollars
+	# is always 60 chars.
+	# You may find keys like these:
+	# extremidade-$$$-$$$-linha
+	# .FIRM$$$$$$$$$$$$$
+	# etc
+	# summary: we must remove any sequence of dollar signs longer
+	# than 1 chars
+	if d1 == d0 + 1:
+		return b_word[i:d0], _skipDollarRun(b_word, d1 + 1), False
+
+	if b_word[d0 + 1 : d1].strip(b"0123456789"):
+		# if has at least one non-digit char
+		return b_word[i:d1], d1, False
+
+	# Examples:
+	# make do$4$/make /do
+	# potere$1$<BR><BR>
+	# See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
+	# volere$1$<BR><BR>
+	# See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
+	# Ihre$1$Ihres
+	if d1 + 1 < len(b_word) and b_word[d1 + 1] != 0x20:
+		log.debug(
+			f"stripDollarIndexes({b_word!r}):\nsecond $ is followed by non-space",
+		)
+	return b_word[i:d0], d1 + 1, True
+
+
 def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 	if isDebug():
 		assert isinstance(b_word, bytes), f"{b_word=}"
@@ -237,54 +290,9 @@ def stripDollarIndexes(b_word: bytes) -> tuple[bytes, int]:
 	strip_count = 0  # number of sequences found
 	# strip $<index>$ sequences
 	while True:
-		d0 = b_word.find(b"$", i)
-		if d0 == -1:
-			b_word_main += b_word[i:]
+		segment, i, removed = _nextDollarSegment(b_word, i)
+		b_word_main += segment
+		strip_count += int(removed)
+		if i >= len(b_word):
 			break
-		d1 = b_word.find(b"$", d0 + 1)
-		if d1 == -1:
-			b_word_main += b_word[i:]
-			break
-
-		# You may find keys (or alternative keys) like these:
-		# sur l'arbre$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-		# obscurantiste$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-		# They all end on a sequence of b'$', key length including dollars
-		# is always 60 chars.
-		# You may find keys like these:
-		# extremidade-$$$-$$$-linha
-		# .FIRM$$$$$$$$$$$$$
-		# etc
-		# summary: we must remove any sequence of dollar signs longer
-		# than 1 chars
-		if d1 == d0 + 1:
-			b_word_main += b_word[i:d0]
-			i = d1 + 1
-			while i < len(b_word) and b_word[i] == ord(b"$"):
-				i += 1
-			if i >= len(b_word):
-				break
-			continue
-
-		if b_word[d0 + 1 : d1].strip(b"0123456789"):
-			# if has at least one non-digit char
-			b_word_main += b_word[i:d1]
-			i = d1
-			continue
-
-		# Examples:
-		# make do$4$/make /do
-		# potere$1$<BR><BR>
-		# See also <a href='file://ITAL-ENG POTERE 1249-1250.pdf'>notes...</A>
-		# volere$1$<BR><BR>
-		# See also <a href='file://ITAL-ENG VOLERE 1469-1470.pdf'>notes...</A>
-		# Ihre$1$Ihres
-		if d1 + 1 < len(b_word) and b_word[d1 + 1] != 0x20:
-			log.debug(
-				f"stripDollarIndexes({b_word!r}):\nsecond $ is followed by non-space",
-			)
-		b_word_main += b_word[i:d0]
-		i = d1 + 1
-		strip_count += 1
-
 	return b_word_main, strip_count
