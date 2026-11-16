@@ -58,9 +58,13 @@ class Reader(TextGlossaryReader):
 			value = ":".join(parts[1:])
 			glos.setInfo(key, value)
 
-	def nextBlock(self) -> tuple[str | list[str], str, None] | None:
-		if not self._file:
-			raise StopIteration
+	def _readBlock(self) -> tuple[str, list[str], bool]:
+		"""
+		Read lines up to an underscore separator or end of file.
+
+		Returns the headword, its definition lines, and whether the block ended
+		at a separator (rather than end of file).
+		"""
 		term = ""
 		defiLines: list[str] = []
 
@@ -77,9 +81,7 @@ class Reader(TextGlossaryReader):
 					continue
 				if not defiLines:
 					log.warning(f"no definition/value for {term!r}")
-				defi = unescapeDefi("\n".join(defiLines))
-				terms = term.split(self._headword_separator)
-				return terms, defi, None
+				return term, defiLines, True
 
 			if not term:
 				term = line
@@ -93,12 +95,24 @@ class Reader(TextGlossaryReader):
 
 			defiLines.append(line)
 
-		if term:
-			defi = unescapeDefi("\n".join(defiLines))
-			if term.startswith("00-database-") and defi == "unknown":
-				log.info(f"ignoring {term} -> {defi}")
-				return None
-			terms = term.split(self._headword_separator)
-			return terms, defi, None
+		if not term:
+			raise StopIteration
+		return term, defiLines, False
 
-		raise StopIteration
+	def nextBlock(self) -> tuple[str | list[str], str, None] | None:
+		if not self._file:
+			raise StopIteration
+
+		term, defiLines, endedWithSeparator = self._readBlock()
+		defi = unescapeDefi("\n".join(defiLines))
+
+		if (
+			not endedWithSeparator
+			and term.startswith("00-database-")
+			and defi == "unknown"
+		):
+			log.info(f"ignoring {term} -> {defi}")
+			return None
+
+		terms = term.split(self._headword_separator)
+		return terms, defi, None
