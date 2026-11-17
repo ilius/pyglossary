@@ -41,6 +41,7 @@ __all__ = [
 	"newLabelWithImage",
 	"newReadOnlyText",
 	"set_window_icon",
+	"showConfirmation",
 ]
 
 
@@ -70,6 +71,46 @@ def newButton(
 	button.bind("<Return>", onEnter)
 	button.bind("<KP_Enter>", onEnter)
 	return button
+
+
+def showConfirmation(
+	msg: str,
+	parent: tk.Misc | None = None,
+	title: str = "",
+) -> bool:
+	win = tk.Toplevel(parent)
+	win.title(title or "Confirm")
+	win.transient(parent)
+	win.resizable(False, False)
+
+	frame = ttk.Frame(win, padding=10)
+	frame.pack(fill="both", expand=True)
+	ttk.Label(frame, text=msg).pack(anchor="w")
+
+	result = False
+
+	def close(confirmed: bool) -> None:
+		nonlocal result
+		result = confirmed
+		win.destroy()
+
+	buttons = ttk.Frame(frame)
+	buttons.pack(fill="x", pady=(10, 0))
+	ttk.Button(
+		buttons,
+		text="Overwrite",
+		command=lambda: close(True),
+	).pack(side="right")
+	ttk.Button(
+		buttons,
+		text="Cancel",
+		command=lambda: close(False),
+	).pack(side="right", padx=(0, 5))
+
+	win.protocol("WM_DELETE_WINDOW", lambda: close(False))
+	win.grab_set()
+	win.wait_window()
+	return result
 
 
 def newLabelWithImage(parent: tk.Widget, file: str = "") -> ttk.Label:

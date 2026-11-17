@@ -45,6 +45,7 @@ from .qt_imports import (
 	QApplication,
 	QCheckBox,
 	QComboBox,
+	QDialog,
 	QDragEnterEvent,
 	QDragMoveEvent,
 	QDropEvent,
@@ -92,6 +93,29 @@ def _read_file_name_filters() -> list[str]:
 		per_format.append(f"{description} ({' '.join(patterns)})")
 
 	return ["All files (*)", *per_format]
+
+
+def _confirmOverwrite(parent: QWidget, msg: str) -> bool:
+	dlg = QDialog(parent)
+	dlg.setWindowTitle("Overwrite Output File?")
+	dlg.setModal(True)
+	layout = QVBoxLayout(dlg)
+	label = QLabel(msg)
+	label.setWordWrap(True)
+	layout.addWidget(label)
+
+	buttons = QHBoxLayout()
+	buttons.addStretch(1)
+	cancel = QPushButton("Cancel")
+	overwrite = QPushButton("Overwrite")
+	overwrite.setDefault(True)
+	cancel.clicked.connect(dlg.reject)
+	overwrite.clicked.connect(dlg.accept)
+	buttons.addWidget(cancel)
+	buttons.addWidget(overwrite)
+	layout.addLayout(buttons)
+
+	return dlg.exec() == QDialog.DialogCode.Accepted
 
 
 class _IoStepDropSurface(QWidget):
@@ -1129,6 +1153,12 @@ class UI(UIBase):
 			log.critical("Output format is empty!")
 			return
 		out_format = PLUGIN_BY_DESC[out_format_desc].name
+
+		if isfile(out_path) and not _confirmOverwrite(
+			self._mw,
+			f"Output file already exists:\n{out_path}\n\nOverwrite it?",
+		):
+			return
 
 		log.debug(f"config: {self.config}")
 

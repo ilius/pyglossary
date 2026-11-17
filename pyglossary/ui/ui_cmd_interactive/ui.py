@@ -31,13 +31,13 @@ import json
 import logging
 import os
 import shlex
-from os.path import join
+from os.path import isfile, join
 from typing import TYPE_CHECKING, Any
 
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import confirm
+from prompt_toolkit.shortcuts import button_dialog, confirm
 
 from pyglossary.core import confDir
 from pyglossary.glossary_v2 import Error, Glossary
@@ -842,6 +842,18 @@ class UI(ui_cmd.UI):
 				self.askInputOutputAgain()
 				continue
 			if not status:
+				return None
+			if (
+				isfile(self._session.outputFilename)
+				and not button_dialog(
+					title="Overwrite Output File?",
+					text=(
+						f"Output file already exists:\n"
+						f"{self._session.outputFilename}\n\nOverwrite it?"
+					),
+					buttons=[("Cancel", False), ("Overwrite", True)],
+				).run()
+			):
 				return None
 			try:
 				succeed = ui_cmd.UI.run(self, **self.getRunKeywordArgs())

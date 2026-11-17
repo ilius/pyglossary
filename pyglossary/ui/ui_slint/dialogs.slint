@@ -43,18 +43,20 @@ component DialogKeys inherits FocusScope {
 component OkCancelRow {
     callback ok();
     callback cancel();
+    in property <string> cancel-text: "Cancel";
+    in property <string> ok-text: "  OK  ";
     forward-focus: ok-btn;
 
     HorizontalLayout {
         spacing: 8px;
         alignment: end;
         Button {
-            text: "Cancel";
+            text: root.cancel-text;
             clicked => { root.cancel(); }
         }
 
         ok-btn := Button {
-            text: "  OK  ";
+            text: root.ok-text;
             primary: true;
             clicked => { root.ok(); }
         }
@@ -331,6 +333,46 @@ export component AlertDialog inherits Dialog {
     StandardButton {
         kind: ok;
         clicked => { root.ok-clicked(); }
+    }
+}
+
+// ============================================================
+// ConfirmDialog: message with Cancel / Overwrite
+// ============================================================
+export component ConfirmDialog inherits Window {
+    title: "Confirm";
+    preferred-width: 420px;
+    preferred-height: 170px;
+
+    in property <string> message: "";
+
+    callback ok-clicked();
+    callback cancel-clicked();
+
+    DialogKeys {
+        forward-focus: buttons;
+        submit => { root.ok-clicked(); }
+        dismiss => { root.cancel-clicked(); }
+
+        VerticalLayout {
+            spacing: 8px;
+            padding: 12px;
+
+            Text {
+                text: root.message;
+                wrap: word-wrap;
+            }
+
+            Rectangle {
+                vertical-stretch: 1;
+            }
+
+            buttons := OkCancelRow {
+                ok-text: "Overwrite";
+                ok => { root.ok-clicked(); }
+                cancel => { root.cancel-clicked(); }
+            }
+        }
     }
 }
 

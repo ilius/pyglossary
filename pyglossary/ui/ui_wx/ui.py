@@ -1019,6 +1019,29 @@ class UI(UIBase):
 			return
 		out_format = PLUGIN_BY_DESC[out_format_desc].name
 
+		if isfile(out_path):
+			dlg = wx.Dialog(self._frame, title="Overwrite Output File?")
+			sizer = wx.BoxSizer(wx.VERTICAL)
+			sizer.Add(
+				wx.StaticText(
+					dlg,
+					label=f"Output file already exists:\n{out_path}\n\nOverwrite it?",
+				),
+				0,
+				wx.ALL,
+				10,
+			)
+			buttons = wx.BoxSizer(wx.HORIZONTAL)
+			buttons.Add(wx.Button(dlg, wx.ID_CANCEL, "Cancel"), 0, wx.RIGHT, 5)
+			buttons.Add(wx.Button(dlg, wx.ID_OK, "Overwrite"), 0)
+			sizer.Add(buttons, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
+			dlg.SetSizer(sizer)
+			dlg.Fit()
+			overwrite = dlg.ShowModal() == wx.ID_OK
+			dlg.Destroy()
+			if not overwrite:
+				return
+
 		log.debug(f"config: {self.config}")
 
 		glos = Glossary(ui=self)

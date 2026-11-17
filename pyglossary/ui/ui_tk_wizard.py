@@ -59,6 +59,7 @@ from .ui_tk.utils import (
 	encodeLocation,
 	newButton,
 	set_window_icon,
+	showConfirmation,
 )
 
 if TYPE_CHECKING:
@@ -386,6 +387,13 @@ class UI(tk.Frame, UIBase):
 			log.critical("Output format is empty!")
 			return
 		outFormat = pluginByDesc[outFormatDesc].name
+
+		if isfile(outPath) and not showConfirmation(
+			f"Output file already exists:\n{outPath}\n\nOverwrite it?",
+			parent=self.rootWin,
+			title="Overwrite Output File?",
+		):
+			return
 
 		log.debug(f"config: {self.config}")
 

@@ -350,8 +350,8 @@ def showConfirmation(
 		win.destroy()
 
 	buttonBox = MyHButtonBox()
-	buttonBox.add_ok(onClick=onOkClicked)
-	buttonBox.add_cancel(onClick=onCancelClicked)
+	buttonBox.add_button(label="_Cancel", onClick=onCancelClicked)
+	buttonBox.add_button(label="_Overwrite", onClick=onOkClicked)
 	hbox = HBox()
 	pack(hbox, gtk.Label(), 1, 1)
 	pack(hbox, buttonBox, 0, 0)

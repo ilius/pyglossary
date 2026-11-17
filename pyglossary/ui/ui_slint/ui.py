@@ -19,7 +19,7 @@ import logging
 import os
 import sys
 import threading
-from os.path import dirname, isdir, splitext
+from os.path import dirname, isdir, isfile, splitext
 from typing import TYPE_CHECKING, Any
 
 import slint
@@ -31,6 +31,7 @@ from pyglossary.utils.os_utils import abspath2
 from pyglossary.utils.text_utils import urlToPath
 
 from .alert_dialog import AlertDialog
+from .confirm_dialog import ConfirmDialog
 from .format_picker import FormatPicker
 from .general_options import GeneralOptionsDialog
 from .info_dialog import InfoDialog
@@ -385,6 +386,28 @@ class UI(UIBase):
 			return
 		outFormat = self.pluginByDesc[self._outFormat].name
 
+		if isfile(outPath):
+			self._open(
+				ConfirmDialog,
+				message=f"Output file already exists:\n{outPath}\n\nOverwrite it?",
+				onConfirm=lambda: self._startConvert(
+					inPath,
+					outPath,
+					inFormat,
+					outFormat,
+				),
+			)
+			return
+
+		self._startConvert(inPath, outPath, inFormat, outFormat)
+
+	def _startConvert(
+		self,
+		inPath: str,
+		outPath: str,
+		inFormat: str,
+		outFormat: str,
+	) -> None:
 		if self.infoOverride:
 			log.info(f"infoOverride = {self.infoOverride}")
 		if self.convertOptions:

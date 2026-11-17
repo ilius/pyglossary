@@ -629,6 +629,11 @@
                     const outputFormat = form.outputFormat.value;
                     const allOptions = JSON.parse(localStorage.getItem(KEY_PG_OPTIONS) || '{}');
 
+                    if (await outputFileExists(outputFilename) &&
+                        !(await confirmOverwrite(outputFilename))) {
+                        return;
+                    }
+
 
                     try {
                         toggleConvertButton()
@@ -859,6 +864,53 @@
             const idx = Math.max(v.lastIndexOf('/'), v.lastIndexOf('\\'));
             if (idx === -1) return { dir: '~', prefix: v };
             return { dir: v.slice(0, idx), prefix: v.slice(idx + 1) };
+        }
+
+        function confirmOverwrite(path) {
+            return new Promise(resolve => {
+                const dlg = document.createElement('dialog');
+                const article = document.createElement('article');
+                const title = document.createElement('h3');
+                title.textContent = 'Overwrite Output File?';
+                const msg = document.createElement('p');
+                msg.textContent = `Output file already exists:\n${path}\n\nOverwrite it?`;
+                msg.style.whiteSpace = 'pre-wrap';
+                const footer = document.createElement('footer');
+                const cancel = document.createElement('button');
+                cancel.className = 'secondary';
+                cancel.textContent = 'Cancel';
+                const overwrite = document.createElement('button');
+                overwrite.textContent = 'Overwrite';
+                footer.append(cancel, overwrite);
+                article.append(title, msg, footer);
+                dlg.append(article);
+                document.body.append(dlg);
+                const finish = value => {
+                    dlg.close();
+                    dlg.remove();
+                    resolve(value);
+                };
+                cancel.addEventListener('click', () => finish(false));
+                overwrite.addEventListener('click', () => finish(true));
+                dlg.addEventListener('cancel', (event) => {
+                    event.preventDefault();
+                    finish(false);
+                });
+                dlg.showModal();
+            });
+        }
+
+        async function outputFileExists(path) {
+            if (!path) return false;
+            const { dir, prefix } = splitPathForAutocomplete(path);
+            if (!prefix) return false;
+            const listDir = dir || (path.startsWith('/') ? '/' : '~');
+            try {
+                const resp = await requestListDir('outputFilename', listDir, true);
+                return (resp.entries || []).some(e => !e.isDir && e.name === prefix);
+            } catch (e) {
+                return false;
+            }
         }
 
         // ---------------- Autocomplete ----------------
