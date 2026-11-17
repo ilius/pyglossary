@@ -1278,17 +1278,8 @@ class KotowazaExtractor(EpwingExtractor):
 		return "kotowaza1"
 
 
-def convert_epwing_to_yomichan(
-	input_path: str,
-	output_path: str,
-	title: str = "",
-	stride: int = 10000,
-	pretty: bool = False,
-) -> None:
-	log.info(f"EPWING: Converting {input_path}...")
-	book = EpwingBook(input_path)
-
-	extractors_map = {
+def _make_extractors() -> dict[str, EpwingExtractor]:
+	return {
 		"三省堂　スーパー大辞林": DaijirinExtractor(),
 		"大辞泉": DaijisenExtractor(),
 		"明鏡国語辞典": MeikyouExtractor(),
@@ -1303,6 +1294,11 @@ def convert_epwing_to_yomichan(
 		"学研漢和大字典": GakkenExtractor(),
 	}
 
+
+def _extract_entries(
+	book: EpwingBook,
+	extractors_map: dict[str, EpwingExtractor],
+) -> tuple[list[dbTerm], list[dbKanji], list[str], list[str]]:
 	all_terms = []
 	all_kanji = []
 	revisions = []
@@ -1328,11 +1324,35 @@ def convert_epwing_to_yomichan(
 		revisions.append(extractor.get_revision())
 		titles.append(subbook.title)
 
-	if not title:
-		title = ", ".join(titles)
+	return all_terms, all_kanji, revisions, titles
 
-	log.info(f"EPWING: Writing {len(all_terms)} terms to {output_path}")
 
+def _write_banks(
+	z: zipfile.ZipFile,
+	prefix: str,
+	items: list[dbTerm] | list[dbKanji],
+	stride: int,
+	pretty: bool,
+) -> None:
+	for i in range(0, len(items), stride):
+		batch = items[i : i + stride]
+		bank_num = (i // stride) + 1
+		content = [item.crush() for item in batch]
+		z.writestr(
+			f"{prefix}_bank_{bank_num}.json",
+			json.dumps(content, indent=4 if pretty else None, ensure_ascii=False),
+		)
+
+
+def _write_yomichan_zip(  # noqa: PLR0913
+	output_path: str,
+	title: str,
+	revisions: list[str],
+	all_terms: list[dbTerm],
+	all_kanji: list[dbKanji],
+	stride: int,
+	pretty: bool,
+) -> None:
 	with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as z:
 		index = {
 			"title": title,
@@ -1347,22 +1367,36 @@ def convert_epwing_to_yomichan(
 			json.dumps(index, indent=4 if pretty else None, ensure_ascii=False),
 		)
 
-		for i in range(0, len(all_terms), stride):
-			batch = all_terms[i : i + stride]
-			bank_num = (i // stride) + 1
-			content = [t.crush() for t in batch]
-			z.writestr(
-				f"term_bank_{bank_num}.json",
-				json.dumps(content, indent=4 if pretty else None, ensure_ascii=False),
-			)
+		_write_banks(z, "term", all_terms, stride, pretty)
+		_write_banks(z, "kanji", all_kanji, stride, pretty)
 
-		for i in range(0, len(all_kanji), stride):
-			batch = all_kanji[i : i + stride]
-			bank_num = (i // stride) + 1
-			content = [k.crush() for k in batch]
-			z.writestr(
-				f"kanji_bank_{bank_num}.json",
-				json.dumps(content, indent=4 if pretty else None, ensure_ascii=False),
-			)
 
+def convert_epwing_to_yomichan(
+	input_path: str,
+	output_path: str,
+	title: str = "",
+	stride: int = 10000,
+	pretty: bool = False,
+) -> None:
+	log.info(f"EPWING: Converting {input_path}...")
+	book = EpwingBook(input_path)
+
+	all_terms, all_kanji, revisions, titles = _extract_entries(
+		book,
+		_make_extractors(),
+	)
+
+	if not title:
+		title = ", ".join(titles)
+
+	log.info(f"EPWING: Writing {len(all_terms)} terms to {output_path}")
+	_write_yomichan_zip(
+		output_path,
+		title,
+		revisions,
+		all_terms,
+		all_kanji,
+		stride,
+		pretty,
+	)
 	log.info("EPWING: Conversion successful.")
