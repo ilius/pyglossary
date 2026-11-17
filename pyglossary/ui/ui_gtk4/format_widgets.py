@@ -609,11 +609,13 @@ class FormatBox(gtk.Box):
 		descList: list[str],
 		parent: gtk.Widget | None = None,
 		labelSizeGroup: gtk.SizeGroup = None,
+		onChange: Callable | None = None,
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL, spacing=3)
 
 		self.app = app
 		self._parent = parent
+		self._onChange = onChange
 		self.button = FormatButton(
 			descList,
 			parent=parent,
@@ -679,6 +681,9 @@ class FormatBox(gtk.Box):
 
 		self.dependsButton.pkgNames = uninstalled
 		self.dependsButton.set_visible(bool(uninstalled))
+
+		if self._onChange is not None:
+			self._onChange()
 
 
 class InputFormatBox(FormatBox):

@@ -82,6 +82,8 @@ class OutputFileBox(gtk.Box):
 		entryChanged: Callable[[gtk.Entry], None],
 		labelSizeGroup: gtk.SizeGroup = None,
 		buttonSizeGroup: gtk.SizeGroup = None,
+		setFilePathFunc: Callable[[str], None] | None = None,
+		folderOnly: bool = False,
 	) -> None:
 		gtk.Box.__init__(self, orientation=gtk.Orientation.HORIZONTAL, spacing=3)
 		label = gtk.Label(label=_("Output File:"))
@@ -90,10 +92,11 @@ class OutputFileBox(gtk.Box):
 		self.entry = gtk.Entry()
 		pack(self, self.entry, 1, 1)
 		button = BrowseButton(
-			self.entry.set_text,
+			setFilePathFunc or self.entry.set_text,
 			label="Browse",
-			actionSave=True,
-			title="Select Output File",
+			actionSave=not folderOnly,
+			title="Select Output Folder" if folderOnly else "Select Output File",
+			folderOnly=folderOnly,
 		)
 		pack(self, button)
 		if labelSizeGroup:

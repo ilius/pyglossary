@@ -28,7 +28,7 @@ from __future__ import annotations
 import ast
 import logging
 import traceback
-from os.path import exists, isfile
+from os.path import basename, isfile, join, splitext
 from typing import TYPE_CHECKING, Any, Protocol
 
 import gi
@@ -47,6 +47,7 @@ from .base import (
 	UIBase,
 	aboutText,
 	authors,
+	isFlatpak,
 	licenseText,
 	logo,
 )
@@ -853,13 +854,14 @@ class GtkSingleTextviewLogHandler(GtkTextviewLogHandler):
 class BrowseButton(gtk.Button):
 	"""Browse Button."""
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		setFilePathFunc: Callable[[str], None],
 		label: str = "Browse",
 		actionSave: bool = False,
 		title: str = "Select File",
 		folderToggle: bool = False,
+		folderOnly: bool = False,
 	) -> None:
 		gtk.Button.__init__(self)
 
@@ -875,6 +877,7 @@ class BrowseButton(gtk.Button):
 		self.setFilePathFunc = setFilePathFunc
 		self.title = title
 		self.folderToggle = folderToggle
+		self.folderOnly = folderOnly
 
 		self.connect("clicked", self.onClick)
 
@@ -904,10 +907,12 @@ class BrowseButton(gtk.Button):
 		fcd.destroy()
 
 	def onClick(self, _widget: gtk.Widget) -> None:
-		if self.folderToggle and not self.actionSave:
+		if self.folderToggle and not self.actionSave and not self.folderOnly:
 			self._runWithFolderToggle()
 			return
-		if self.actionSave:
+		if self.folderOnly:
+			action = gtk.FileChooserAction.SELECT_FOLDER
+		elif self.actionSave:
 			action = gtk.FileChooserAction.SAVE
 		else:
 			action = gtk.FileChooserAction.OPEN
@@ -1251,7 +1256,7 @@ class UI(UIBase, gtk.Application):
 	) -> None:
 		UIBase.__init__(self)
 		application_id = "apps.pyglossary"
-		if exists("/.flatpak-info"):
+		if isFlatpak:
 			application_id = "io.github.ilius.pyglossary"
 		gtk.Application.__init__(
 			self,
@@ -1347,6 +1352,8 @@ class MainWindow(gtk.Dialog):
 		self.assert_quit = False
 		self.path = ""
 		self.infoOverride: dict[str, str] = {}
+		self.outputFolder = ""
+		self._settingOutputEntry = False
 		# ____________________ Tab 1 - Convert ____________________ #
 		labelSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
 		buttonSizeGroup = gtk.SizeGroup(mode=gtk.SizeGroupMode.HORIZONTAL)
@@ -1407,10 +1414,11 @@ class MainWindow(gtk.Dialog):
 		self.convertOutputEntry = gtk.Entry()
 		pack(hbox, self.convertOutputEntry, 1, 1)
 		button = BrowseButton(
-			self.convertOutputEntry.set_text,
+			self.setOutputFolder if isFlatpak else self.convertOutputEntry.set_text,
 			label="Browse",
-			actionSave=True,
-			title="Select Output File",
+			actionSave=not isFlatpak,
+			title="Select Output Folder" if isFlatpak else "Select Output File",
+			folderOnly=isFlatpak,
 		)
 		pack(hbox, button)
 		buttonSizeGroup.add_widget(button)
@@ -1584,6 +1592,61 @@ class MainWindow(gtk.Dialog):
 
 	def onOutputFormatChange(self) -> None:
 		self.optionsButton.setEnableWriteOptions(self.outputFormatBox.hasOptions())
+		if self.outputFolder:
+			self._updateOutputPath()
+
+	def _setOutputEntry(self, path: str) -> None:
+		self._settingOutputEntry = True
+		try:
+			self.convertOutputEntry.set_text(path)
+		finally:
+			self._settingOutputEntry = False
+
+	def _outputPathFromFolder(self, outFormat: str = "") -> str:
+		folder = self.outputFolder
+		if not folder:
+			return ""
+		if not outFormat:
+			outFormat = self.outputFormatBox.getActive()
+		if not outFormat:
+			return ""
+		plugin = Glossary.plugins.get(outFormat)
+		ext = ""
+		if plugin is not None:
+			ext = plugin.extensionCreate or getattr(
+				plugin.module,
+				"extensionCreate",
+				"",
+			)
+			ext = ext.rstrip("/")
+			if not ext:
+				ext = plugin.ext
+		if ext and ext[0] not in (".", "-"):
+			ext = "." + ext
+		inPath = self.convertInputEntry.get_text()
+		stem = splitext(basename(inPath))[0] if inPath else ""
+		if not stem:
+			stem = "glossary"
+		return join(folder, stem + ext)
+
+	def _updateOutputPath(self, outFormat: str = "") -> str:
+		path = self._outputPathFromFolder(outFormat)
+		if path:
+			self._setOutputEntry(path)
+			self.status('Press "Convert"')
+		return path
+
+	def setOutputFolder(self, folder: str) -> None:
+		self.outputFolder = folder
+		if not self._updateOutputPath():
+			self._setOutputEntry(folder)
+			self.status("Select output format")
+
+	def _resolveOutputPath(self, outFormat: str) -> str:
+		if not outFormat:
+			log.critical("Output format is not selected!")
+			return ""
+		return self._updateOutputPath(outFormat)
 
 	def infoMetadataClicked(self, _widget: gtk.Widget | None = None) -> None:
 		dialog = PreConvertInfoDialog(self, self.infoOverride)
@@ -1608,7 +1671,8 @@ class MainWindow(gtk.Dialog):
 		if inputFilename:
 			self.convertInputEntry.set_text(abspath2(inputFilename))
 		if outputFilename:
-			self.convertOutputEntry.set_text(abspath2(outputFilename))
+			self.outputFolder = ""
+			self._setOutputEntry(abspath2(outputFilename))
 
 		if inputFormat and inputFormat not in Glossary.readFormats:
 			log.error(f"invalid {inputFormat=}")
@@ -1663,11 +1727,16 @@ class MainWindow(gtk.Dialog):
 			return
 		inFormat = self.inputFormatBox.getActive()
 
-		outPath = self.convertOutputEntry.get_text()
-		if not outPath:
-			log.critical("Output file path is empty!")
-			return
 		outFormat = self.outputFormatBox.getActive()
+		if self.outputFolder:
+			outPath = self._resolveOutputPath(outFormat)
+			if not outPath:
+				return
+		else:
+			outPath = self.convertOutputEntry.get_text()
+			if not outPath:
+				log.critical("Output file path is empty!")
+				return
 
 		if isfile(outPath) and not showConfirmation(
 			f"Output file already exists:\n{outPath}\n\nOverwrite it?",
@@ -1741,13 +1810,18 @@ class MainWindow(gtk.Dialog):
 		if not isfile(inPath):
 			return
 
-		self.status("Select output file")
+		if self.outputFolder:
+			self._updateOutputPath()
+
+		self.status("Select output folder" if isFlatpak else "Select output file")
 
 	def convertOutputEntryChanged(self, _widget: gtk.Widget | None = None) -> None:
 		outPath = self.convertOutputEntry.get_text()
 		outFormat = self.outputFormatBox.getActive()
 		if not outPath:
 			return
+		if self.outputFolder and not self._settingOutputEntry:
+			self.outputFolder = ""
 		if outPath.startswith("file://"):
 			outPath = urlToPath(outPath)
 			self.convertOutputEntry.set_text(outPath)

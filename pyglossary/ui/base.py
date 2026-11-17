@@ -28,7 +28,8 @@ command-line interfaces.
 from __future__ import annotations
 
 import logging
-from os.path import isfile, join
+import os
+from os.path import exists, isfile, join
 from typing import Any
 
 from pyglossary.core import (
@@ -40,7 +41,15 @@ from pyglossary.core import (
 
 from .config import configDefDict
 
-__all__ = ["UIBase", "aboutText", "authors", "fread", "licenseText", "logo"]
+__all__ = [
+	"UIBase",
+	"aboutText",
+	"authors",
+	"fread",
+	"isFlatpak",
+	"licenseText",
+	"logo",
+]
 
 
 def fread(path: str) -> str:
@@ -49,6 +58,10 @@ def fread(path: str) -> str:
 
 
 log = logging.getLogger("pyglossary")
+isFlatpak = exists("/.flatpak-info") or os.getenv(
+	"PYGLOSSARY_FLATPAK",
+	"",
+).lower() in ("1", "true", "yes")
 logo = join(appResDir, "pyglossary.png")
 aboutText = fread(join(dataDir, "about"))
 licenseText = fread(join(dataDir, "_license-dialog"))

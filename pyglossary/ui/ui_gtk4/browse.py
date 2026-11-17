@@ -40,13 +40,14 @@ __all__ = ["BrowseButton"]
 class BrowseButton(gtk.Button):
 	"""Browse Button."""
 
-	def __init__(
+	def __init__(  # noqa: PLR0913
 		self,
 		setFilePathFunc: Callable[[str], None],
 		label: str = "Browse",
 		actionSave: bool = False,
 		title: str = "Select File",
 		folderToggle: bool = False,
+		folderOnly: bool = False,
 	) -> None:
 		gtk.Button.__init__(self)
 
@@ -61,6 +62,7 @@ class BrowseButton(gtk.Button):
 		self.setFilePathFunc = setFilePathFunc
 		self.title = title
 		self.folderToggle = folderToggle
+		self.folderOnly = folderOnly
 
 		self.connect("clicked", self.onClick)
 
@@ -84,6 +86,19 @@ class BrowseButton(gtk.Button):
 	) -> None:
 		try:
 			file = filedialog.save_finish(task)
+		except glib.GError:
+			return
+		if file is None:
+			return
+		self.setFilePathFunc(file.get_path())
+
+	def onFiledialogSelectFolder(
+		self,
+		filedialog: gtk.FileDialog,
+		task: gio.Task,
+	) -> None:
+		try:
+			file = filedialog.select_folder_finish(task)
 		except glib.GError:
 			return
 		if file is None:
@@ -121,13 +136,19 @@ class BrowseButton(gtk.Button):
 		dialog.show()
 
 	def onClick(self, _widget: gtk.Widget) -> None:
-		if self.folderToggle and not self.actionSave:
+		if self.folderToggle and not self.actionSave and not self.folderOnly:
 			self._runWithFolderToggle()
 			return
 		dialog = gtk.FileDialog.new()
 		dialog.set_title(self.title)
 		# dialog.set_initial_folder(dir_name)
-		if self.actionSave:
+		if self.folderOnly:
+			dialog.select_folder(
+				parent=self.get_root(),
+				cancellable=None,
+				callback=self.onFiledialogSelectFolder,
+			)
+		elif self.actionSave:
 			dialog.save(
 				parent=self.get_root(),
 				cancellable=None,

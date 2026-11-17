@@ -25,7 +25,7 @@ Hosts file selection, format pickers, conversion actions, and embeds
 from __future__ import annotations
 
 import logging
-from os.path import isfile
+from os.path import basename, isfile, join, splitext
 from typing import TYPE_CHECKING, Any
 
 from gi.repository import Gdk as gdk
@@ -38,6 +38,7 @@ from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
 from pyglossary.ui.base import (
 	aboutText,
 	authors,
+	isFlatpak,
 	licenseText,
 	logo,
 )
@@ -233,6 +234,8 @@ progressbar progress, trough {min-height: 0.6em;}
 		self.writeOptions = {}
 		self.infoOverride: dict[str, str] = {}
 		self.generalOptionsdialog: gtk.Dialog | None = None
+		self.outputFolder = ""
+		self._settingOutputEntry = False
 		####
 		self.pages = []
 		self.convertOptions = {}
@@ -280,6 +283,8 @@ progressbar progress, trough {min-height: 0.6em;}
 			entryChanged=self.outputFileEntryChanged,
 			labelSizeGroup=labelSizeGroup,
 			buttonSizeGroup=buttonSizeGroup,
+			setFilePathFunc=self.setOutputFolder if isFlatpak else None,
+			folderOnly=isFlatpak,
 		)
 		self.inOutBoxes.append(self.outputFileBox)
 		pack(page, self.outputFileBox)
@@ -288,6 +293,7 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.app,
 			parent=self,
 			labelSizeGroup=labelSizeGroup,
+			onChange=self.onOutputFormatChange,
 		)
 		self.inOutBoxes.append(self.outputFormatBox)
 		pack(page, self.outputFormatBox)
@@ -470,7 +476,8 @@ progressbar progress, trough {min-height: 0.6em;}
 		if inputFilename:
 			self.inputFileBox.set_text(abspath2(inputFilename))
 		if outputFilename:
-			self.outputFileBox.set_text(abspath2(outputFilename))
+			self.outputFolder = ""
+			self._setOutputEntry(abspath2(outputFilename))
 
 		if inputFormat and inputFormat not in Glossary.readFormats:
 			log.error(f"invalid {inputFormat=}")
@@ -539,11 +546,16 @@ progressbar progress, trough {min-height: 0.6em;}
 			return
 		inFormat = self.inputFormatBox.getActive()
 
-		outPath = self.outputFileBox.get_text()
-		if not outPath:
-			log.critical("Output file path is empty!")
-			return
 		outFormat = self.outputFormatBox.getActive()
+		if self.outputFolder:
+			outPath = self._resolveOutputPath(outFormat)
+			if not outPath:
+				return
+		else:
+			outPath = self.outputFileBox.get_text()
+			if not outPath:
+				log.critical("Output file path is empty!")
+				return
 
 		if isfile(outPath):
 			showConfirmation(
@@ -611,6 +623,63 @@ progressbar progress, trough {min-height: 0.6em;}
 			self.assert_quit = False
 			self.progressTitle = ""
 
+	def onOutputFormatChange(self) -> None:
+		if self.outputFolder:
+			self._updateOutputPath()
+
+	def _setOutputEntry(self, path: str) -> None:
+		self._settingOutputEntry = True
+		try:
+			self.outputFileBox.set_text(path)
+		finally:
+			self._settingOutputEntry = False
+
+	def _outputPathFromFolder(self, outFormat: str = "") -> str:
+		folder = self.outputFolder
+		if not folder:
+			return ""
+		if not outFormat:
+			outFormat = self.outputFormatBox.getActive()
+		if not outFormat:
+			return ""
+		plugin = Glossary.plugins.get(outFormat)
+		ext = ""
+		if plugin is not None:
+			ext = plugin.extensionCreate or getattr(
+				plugin.module,
+				"extensionCreate",
+				"",
+			)
+			ext = ext.rstrip("/")
+			if not ext:
+				ext = plugin.ext
+		if ext and ext[0] not in (".", "-"):
+			ext = "." + ext
+		inPath = self.inputFileBox.get_text()
+		stem = splitext(basename(inPath))[0] if inPath else ""
+		if not stem:
+			stem = "glossary"
+		return join(folder, stem + ext)
+
+	def _updateOutputPath(self, outFormat: str = "") -> str:
+		path = self._outputPathFromFolder(outFormat)
+		if path:
+			self._setOutputEntry(path)
+			self.status('Press "Convert"')
+		return path
+
+	def setOutputFolder(self, folder: str) -> None:
+		self.outputFolder = folder
+		if not self._updateOutputPath():
+			self._setOutputEntry(folder)
+			self.status("Select output format")
+
+	def _resolveOutputPath(self, outFormat: str) -> str:
+		if not outFormat:
+			log.critical("Output format is not selected!")
+			return ""
+		return self._updateOutputPath(outFormat)
+
 	def inputFileEntryChanged(self, entry: gtk.Entry) -> None:
 		inPath = entry.get_text()
 		inFormat = self.inputFormatBox.getActive()
@@ -629,13 +698,18 @@ progressbar progress, trough {min-height: 0.6em;}
 		if not isfile(inPath):
 			return
 
-		self.status("Select output file")
+		if self.outputFolder:
+			self._updateOutputPath()
+
+		self.status("Select output folder" if isFlatpak else "Select output file")
 
 	def outputFileEntryChanged(self, entry: gtk.Entry) -> None:
 		outPath = entry.get_text()
 		outFormat = self.outputFormatBox.getActive()
 		if not outPath:
 			return
+		if self.outputFolder and not self._settingOutputEntry:
+			self.outputFolder = ""
 		if outPath.startswith("file://"):
 			outPath = urlToPath(outPath)
 			entry.set_text(outPath)
