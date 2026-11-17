@@ -96,7 +96,7 @@ class Reader:
 
 		self._htmlTr = XdxfTransformer(encoding=self._encoding)
 
-	def open(self, filename: str) -> None:  # noqa: PLR0912
+	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 
 		self._filename = filename
@@ -115,6 +115,13 @@ class Reader:
 			cfile,
 			events=("end",),
 		)
+		abbr_defs = self._load_metadata(context)
+		self._abbr_defs_js = self.generate_abbr_js(abbr_defs)
+		del context
+
+		self._update_file_size(cfile)
+
+	def _load_metadata(self, context: Iterator[tuple[str, Element]]) -> list[Element]:
 		abbr_defs: list[Element] = []
 		for _, elem_ in context:
 			elem = cast("Element", elem_)
@@ -129,16 +136,10 @@ class Reader:
 			# Very few formats support more than one language pair in their
 			# metadata, so it's not very useful to have multiple
 			if elem.tag == "from":
-				for key, value in elem.attrib.items():
-					if key.endswith("}lang"):
-						self._glos.sourceLangName = value.split("-")[0]
-						break
+				self._set_lang(elem, source=True)
 				continue
 			if elem.tag == "to":
-				for key, value in elem.attrib.items():
-					if key.endswith("}lang"):
-						self._glos.targetLangName = value.split("-")[0]
-						break
+				self._set_lang(elem, source=False)
 				continue
 			if not elem.text:
 				if elem.tag != "br":
@@ -146,9 +147,19 @@ class Reader:
 				continue
 			key = self.infoKeyMap.get(elem.tag, elem.tag)
 			self._glos.setInfo(key, elem.text)
-		self._abbr_defs_js = self.generate_abbr_js(abbr_defs)
-		del context
+		return abbr_defs
 
+	def _set_lang(self, elem: Element, source: bool) -> None:
+		for key, value in elem.attrib.items():
+			if key.endswith("}lang"):
+				lang = value.split("-")[0]
+				if source:
+					self._glos.sourceLangName = lang
+				else:
+					self._glos.targetLangName = lang
+				break
+
+	def _update_file_size(self, cfile: io.IOBase) -> None:
 		if cfile.seekable():
 			cfile.seek(0, 2)
 			self._fileSize = cfile.tell()
