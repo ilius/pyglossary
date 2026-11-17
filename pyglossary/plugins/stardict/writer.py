@@ -162,46 +162,53 @@ class Writer:
 				break
 			partIndex += 1
 
-	def open(self, filename: str) -> None:  # noqa: PLR0912
-		if self._autosqlite:
-			self._sqlite = self._glos.sqlite
-		log.debug(f"open: {filename = }, {self._sqlite = }")
-		fileBasePath = filename
-		##
+	def _resolveFileBasePath(self, filename: str) -> str:
 		if splitext(filename)[1].lower() == ".ifo":
-			fileBasePath = splitext(filename)[0]
-		elif filename.endswith(os.sep):
+			return splitext(filename)[0]
+		if filename.endswith(os.sep):
 			if not isdir(filename):
 				os.makedirs(filename)
-			fileBasePath = join(filename, split(filename[:-1])[-1])
-		elif isdir(filename):
-			fileBasePath = join(filename, split(filename)[-1])
+			return join(filename, split(filename[:-1])[-1])
+		if isdir(filename):
+			return join(filename, split(filename)[-1])
+		return filename
 
+	def _ensureParentDir(self, fileBasePath: str) -> None:
 		parentDir = split(fileBasePath)[0]
 		if not isdir(parentDir):
 			log.info(f"Creating directory {parentDir}")
 			os.mkdir(parentDir)
-		##
+
+	def _selectSametypesequence(self) -> None:
+		if self._sametypesequence:
+			log.debug(f"Using write option sametypesequence={self._sametypesequence}")
+			if self._sametypesequence == "-":
+				self._sametypesequence = ""
+			return
+		stat = self._glos.collectDefiFormat(100)
+		log.debug(f"defiFormat stat: {stat}")
+		if not stat:
+			return
+		if stat["m"] > 0.97:
+			log.info("Auto-selecting sametypesequence=m")
+			self._sametypesequence = "m"
+		elif stat["h"] > 0.5:
+			log.info("Auto-selecting sametypesequence=h")
+			self._sametypesequence = "h"
+
+	def open(self, filename: str) -> None:
+		if self._autosqlite:
+			self._sqlite = self._glos.sqlite
+		log.debug(f"open: {filename = }, {self._sqlite = }")
+		fileBasePath = self._resolveFileBasePath(filename)
+		self._ensureParentDir(fileBasePath)
 		if fileBasePath:
 			fileBasePath = realpath(fileBasePath)
 		self._filename = fileBasePath
 		self._resDir = join(dirname(fileBasePath), "res")
 		self._sourceLang = self._glos.sourceLang
 		self._targetLang = self._glos.targetLang
-		if self._sametypesequence:
-			log.debug(f"Using write option sametypesequence={self._sametypesequence}")
-			if self._sametypesequence == "-":
-				self._sametypesequence = ""
-		else:
-			stat = self._glos.collectDefiFormat(100)
-			log.debug(f"defiFormat stat: {stat}")
-			if stat:
-				if stat["m"] > 0.97:
-					log.info("Auto-selecting sametypesequence=m")
-					self._sametypesequence = "m"
-				elif stat["h"] > 0.5:
-					log.info("Auto-selecting sametypesequence=h")
-					self._sametypesequence = "h"
+		self._selectSametypesequence()
 
 	def write(self) -> Generator[None, EntryType, None]:
 		if not isdir(self._resDir):
