@@ -18,6 +18,25 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			# "100-cyber_lexicon_en-es-css.txt_res/js/xdxf.js": "938842f0",
 		}
 
+	def compareTextFiles(self, fpath1, fpath2, showDiff=False):
+		if fpath2.endswith("-css.txt"):
+			with open(fpath2, encoding="utf-8") as file:
+				text = file.read()
+			text = text.replace(
+				"<!DOCTYPE html>\\n<html>\\n\\t<head>\\n\\t\\t"
+				'<link rel="stylesheet" href="css/xdxf.css"/>\\n\\t</head>\\n\\t<body>\\n\\t\\t',
+				"<!DOCTYPE html><html><head>"
+				'<link rel="stylesheet" href="css/xdxf.css"/></head><body>',
+			).replace(
+				'\\n\\t\\t<script type="text/javascript" src="js/xdxf.js"></script>'
+				"\\n\\t</body>\\n</html>",
+				'<script type="text/javascript" src="js/xdxf.js"></script></body></html>',
+			)
+			fpath2 = self.newTempFilePath("expected-compact.txt")
+			with open(fpath2, mode="w", encoding="utf-8") as file:
+				file.write(text)
+		super().compareTextFiles(fpath1, fpath2, showDiff=showDiff)
+
 	def convert_xdxf_txt(self, fname, fname2, **convertArgs):
 		self.convert(
 			f"{fname}.xdxf",

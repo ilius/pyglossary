@@ -140,7 +140,7 @@ class XdxfTransformer:
 			# child = child.lstrip()
 			addSep()
 
-		lines = [line for line in child.split("\n") if line]
+		lines = [line.replace("\t", " ") for line in child.split("\n") if line]
 		for index, line in enumerate(lines):
 			if index > 0:
 				# and line[0] not in ".,;)"

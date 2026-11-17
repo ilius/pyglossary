@@ -6,7 +6,10 @@
 		<author/>
 		<from xml:lang="en-US"/>
 		<to xml:lang="es-ES"/>
-		<abbr_def><abbr_k>syn</abbr_k><abbr_v>synonym</abbr_v></abbr_def>
+		<abbr_def>
+			<abbr_k>syn</abbr_k>
+			<abbr_v>synonym</abbr_v>
+		</abbr_def>
 	</meta_info>
 	<lexicon>
 		<ar>

@@ -192,16 +192,13 @@ class Reader:
 			if len(terms) == 1:
 				defi = self._re_span_k.sub("", defi)
 
-			defi = f"""<!DOCTYPE html>
-<html>
-	<head>
-		<link rel="stylesheet" href="css/xdxf.css"/>
-	</head>
-	<body>
-		{defi}
-		<script type="text/javascript" src="js/xdxf.js"></script>
-	</body>
-</html>"""
+			defi = (
+				"<!DOCTYPE html><html><head>"
+				'<link rel="stylesheet" href="css/xdxf.css"/>'
+				f"</head><body>{defi}"
+				'<script type="text/javascript" src="js/xdxf.js"></script>'
+				"</body></html>"
+			)
 			# log.info(f"{defi=}, {words=}")
 			yield self._glos.newEntry(
 				terms,
@@ -222,7 +219,7 @@ class Reader:
 		for abbr_def in abbr_defs:
 			abbr_k_list: list[str] = []
 			abbr_v_text = ""
-			for child in abbr_def.xpath("child::node()"):
+			for child in abbr_def.iterchildren():
 				if child.tag == "abbr_k":
 					abbr_k_list.append(self._htmlTr.stringify_children(child))
 				if child.tag == "abbr_v":
