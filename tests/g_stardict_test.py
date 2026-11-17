@@ -1,7 +1,8 @@
 import gzip
+import os
 import sys
 import unittest
-from os.path import abspath, dirname, isfile
+from os.path import abspath, dirname, isdir, isfile, join
 from unittest.mock import patch
 
 rootDir = dirname(dirname(abspath(__file__)))
@@ -319,6 +320,59 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			"004-plain-html-alts.sd",
 			syn=True,
 		)
+
+	def test_write_to_new_dir_with_trailing_sep(self):
+		glos = self.glos = Glossary()
+		glos.addEntry(glos.newEntry(["word"], "defi"))
+
+		dirPath = self.newTempFilePath("sd-trailing-sep")
+		outputFilename = dirPath + os.sep
+
+		result = glos.write(
+			outputFilename,
+			formatName="Stardict",
+			sametypesequence="m",
+		)
+
+		self.assertTrue(isdir(outputFilename))
+		self.assertEqual(result, outputFilename)
+		self.assertTrue(isfile(join(dirPath, "sd-trailing-sep.ifo")))
+		self.assertTrue(isfile(join(dirPath, "sd-trailing-sep.idx")))
+		self.assertTrue(isfile(join(dirPath, "sd-trailing-sep.dict")))
+
+	def test_write_to_existing_dir_with_trailing_sep(self):
+		glos = self.glos = Glossary()
+		glos.addEntry(glos.newEntry(["word"], "defi"))
+
+		dirPath = self.newTempFilePath("sd-existing-dir")
+		os.makedirs(dirPath)
+		outputFilename = dirPath + os.sep
+
+		result = glos.write(
+			outputFilename,
+			formatName="Stardict",
+			sametypesequence="m",
+		)
+
+		self.assertEqual(result, outputFilename)
+		self.assertTrue(isfile(join(dirPath, "sd-existing-dir.ifo")))
+
+	def test_write_creates_missing_parent_dir(self):
+		glos = self.glos = Glossary()
+		glos.addEntry(glos.newEntry(["word"], "defi"))
+
+		parentDir = self.newTempFilePath("sd-missing-parent")
+		outputFilename = join(parentDir, "out.ifo")
+
+		result = glos.write(
+			outputFilename,
+			formatName="Stardict",
+			sametypesequence="m",
+		)
+
+		self.assertTrue(isdir(parentDir))
+		self.assertEqual(result, outputFilename)
+		self.assertTrue(isfile(outputFilename))
 
 	def test_convert_stardict_txt_res_dirs(self):
 		glos = self.glos = Glossary()
