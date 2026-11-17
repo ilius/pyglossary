@@ -163,16 +163,35 @@ class TextGlossaryWriter:
 		file.flush()
 		return file
 
+	def _formatEntry(self, entry: EntryType) -> tuple[str, str]:
+		term = entry.s_term
+		defi = entry.defi
+
+		# if self._glos.alts:  # FIXME
+
+		if self._word_title:
+			defi = self._glos.wordTitleStr(entry.l_term[0]) + defi
+
+		if self._termListEncodeFunc is not None:
+			term = self._termListEncodeFunc(entry.l_term)
+		elif self._termEscapeFunc is not None:
+			term = self._termEscapeFunc(term)
+
+		if self._defiEscapeFunc is not None:
+			defi = self._defiEscapeFunc(defi)
+
+		return term, defi
+
+	def _splitFile(self, fileIndex: int, glosName: str) -> tuple[io.TextIOBase, int]:
+		fileIndex += 1
+		log.info(f"Creating {self._filename}.{fileIndex}")
+		self._glos.setInfo("name", f"{glosName} part {fileIndex + 1}")
+		return self._open(f"{self._filename}.{fileIndex}"), fileIndex
+
 	def write(self) -> Generator[None, EntryType, None]:
-		glos = self._glos
 		file = self._file
 		entryFmt = self._entryFmt
-		termListEncodeFunc = self._termListEncodeFunc
-		termEscapeFunc = self._termEscapeFunc
-		defiEscapeFunc = self._defiEscapeFunc
 		resources = self._resources
-		word_title = self._word_title
-
 		file_size_approx = self._file_size_approx
 		entryCount = 0
 		fileIndex = 0
@@ -187,21 +206,7 @@ class TextGlossaryWriter:
 					entry.save(self._resDir)
 				continue
 
-			term = entry.s_term
-			defi = entry.defi
-
-			# if glos.alts:  # FIXME
-
-			if word_title:
-				defi = glos.wordTitleStr(entry.l_term[0]) + defi
-
-			if termListEncodeFunc is not None:
-				term = termListEncodeFunc(entry.l_term)
-			elif termEscapeFunc is not None:
-				term = termEscapeFunc(term)
-
-			if defiEscapeFunc is not None:
-				defi = defiEscapeFunc(defi)
+			term, defi = self._formatEntry(entry)
 			file.write(entryFmt.format(word=term, defi=defi))
 
 			if file_size_approx > 0:
@@ -210,10 +215,7 @@ class TextGlossaryWriter:
 					entryCount % file_size_check_every == 0
 					and file.tell() >= file_size_approx
 				):
-					fileIndex += 1
-					log.info(f"Creating {self._filename}.{fileIndex}")
-					self._glos.setInfo("name", f"{glosName} part {fileIndex + 1}")
-					file = self._open(f"{self._filename}.{fileIndex}")
+					file, fileIndex = self._splitFile(fileIndex, glosName)
 
 	def finish(self) -> None:
 		if self._tail:
