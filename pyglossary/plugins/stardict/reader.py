@@ -342,73 +342,86 @@ class Reader:
 			defis.append(defi)
 		return "\n<hr>\n".join(defis), "h"
 
-	def __iter__(self) -> Iterator[EntryType]:  # noqa: PLR0912
-		indexData = self._indexData
-		synDict = self._synDict
-		sametypesequence = self._sametypesequence
-		dictFile = self._dictFile
-		unicode_errors = self._unicode_errors
-
-		if not dictFile:
+	def __iter__(self) -> Iterator[EntryType]:
+		if not self._dictFile:
 			raise RuntimeError("iterating over a reader while it's not open")
 
-		if not indexData:
+		if not self._indexData:
 			log.warning("indexData is empty")
 			return
 
-		for entryIndex, (b_term, defiOffset, defiSize) in enumerate(indexData):
+		yield from self._iterEntries()
+		yield from self._iterResourceEntries()
+
+	def _iterEntries(self) -> Iterator[EntryType]:
+		for entryIndex, (b_term, defiOffset, defiSize) in enumerate(self._indexData):
 			if not b_term:
 				continue
+			entry = self._readEntry(entryIndex, b_term, defiOffset, defiSize)
+			if entry is not None:
+				yield entry
 
-			dictFile.seek(defiOffset)
-			if dictFile.tell() != defiOffset:
-				log.error(f"Unable to read definition for word {b_term!r}")
-				continue
+	def _readEntry(
+		self,
+		entryIndex: int,
+		b_term: bytes,
+		defiOffset: int,
+		defiSize: int,
+	) -> EntryType | None:
+		dictFile = self._dictFile
+		assert dictFile is not None
+		unicode_errors = self._unicode_errors
 
-			b_defiBlock = dictFile.read(defiSize)
+		dictFile.seek(defiOffset)
+		if dictFile.tell() != defiOffset:
+			log.error(f"Unable to read definition for word {b_term!r}")
+			return None
 
-			if len(b_defiBlock) != defiSize:
-				log.error(f"Unable to read definition for word {b_term!r}")
-				continue
+		b_defiBlock = dictFile.read(defiSize)
 
-			if sametypesequence:
-				rawDefiList = self.parseDefiBlockCompact(
-					b_defiBlock,
-					sametypesequence,
-				)
-			else:
-				rawDefiList = self.parseDefiBlockGeneral(b_defiBlock)
+		if len(b_defiBlock) != defiSize:
+			log.error(f"Unable to read definition for word {b_term!r}")
+			return None
 
-			if rawDefiList is None:
-				log.error(f"Data file is corrupted. Word {b_term!r}")
-				continue
-
-			term: str | list[str]
-			term = b_term.decode("utf-8", errors=unicode_errors)
-			try:
-				alts = synDict[entryIndex]
-			except KeyError:  # synDict is dict
-				pass
-			else:
-				term = [term] + alts
-
-			defi, defiFormat = self.renderRawDefiList(
-				rawDefiList,
-				unicode_errors,
+		if self._sametypesequence:
+			rawDefiList = self.parseDefiBlockCompact(
+				b_defiBlock,
+				self._sametypesequence,
 			)
+		else:
+			rawDefiList = self.parseDefiBlockGeneral(b_defiBlock)
 
-			# FIXME:
-			# defi = defi.replace(' src="./res/', ' src="./')
-			yield self._glos.newEntry(term, defi, defiFormat=defiFormat)
+		if rawDefiList is None:
+			log.error(f"Data file is corrupted. Word {b_term!r}")
+			return None
 
-		if isdir(self._resDir):
-			for fname in listFilesRecursiveRelPath(self._resDir):
-				fpath = join(self._resDir, fname)
-				with open(fpath, "rb") as file:
-					yield self._glos.newDataEntry(
-						fname,
-						file.read(),
-					)
+		term: str | list[str] = b_term.decode("utf-8", errors=unicode_errors)
+		try:
+			alts = self._synDict[entryIndex]
+		except KeyError:  # synDict is dict
+			pass
+		else:
+			term = [term] + alts
+
+		defi, defiFormat = self.renderRawDefiList(
+			rawDefiList,
+			unicode_errors,
+		)
+
+		# FIXME:
+		# defi = defi.replace(' src="./res/', ' src="./')
+		return self._glos.newEntry(term, defi, defiFormat=defiFormat)
+
+	def _iterResourceEntries(self) -> Iterator[EntryType]:
+		if not isdir(self._resDir):
+			return
+		for fname in listFilesRecursiveRelPath(self._resDir):
+			fpath = join(self._resDir, fname)
+			with open(fpath, "rb") as file:
+				yield self._glos.newDataEntry(
+					fname,
+					file.read(),
+				)
 
 	def readSynFile(self) -> dict[int, list[str]]:
 		"""Return synDict, a dict { entryIndex -> altList }."""
