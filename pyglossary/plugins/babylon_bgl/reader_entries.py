@@ -288,15 +288,18 @@ class _BglReaderEntries:
 		u_alts.discard(word.u_word)
 		return True, pos, sorted(u_alts)
 
-	def readEntry_Type11(
+	def _readType11Word(
 		self,
 		block: Block,
-	) -> tuple[bool, str | None, list[str] | None, str | None]:
-		"""Return (succeed, u_word, u_alts, u_defi)."""
-		Err = (False, None, None, None)
-		pos = 0
+		pos: int,
+	) -> tuple[bool, int | None, bytes | None, str | None]:
+		"""
+		Read the headword of a type 11 entry.
 
-		# reading headword
+		Return (False, None, None, None) on error, otherwise
+		(True, pos, b_word, u_word).
+		"""
+		Err = (False, None, None, None)
 		if pos + 5 > len(block.data):
 			log.error(
 				f"reading block offset={block.offset:#02x}"
@@ -315,18 +318,23 @@ class _BglReaderEntries:
 		b_word = block.data[pos : pos + wordLen]
 		u_word = self.processKey(b_word)
 		pos += wordLen
+		return True, pos, b_word, u_word
 
-		# reading alts and defi
-		if pos + 4 > len(block.data):
-			log.error(
-				f"reading block offset={block.offset:#02x}"
-				", reading defi size: pos + 4 > len(block.data)",
-			)
-			return Err
-		altsCount = uintFromBytes(block.data[pos : pos + 4])
-		pos += 4
+	def _readType11Alts(
+		self,
+		block: Block,
+		pos: int,
+		altsCount: int,
+		b_word: bytes,
+		u_word: str,
+	) -> tuple[bool, int | None, list[str] | None]:
+		"""
+		Read the alternative headwords of a type 11 entry.
 
-		# reading alts
+		Return (False, None, None) on error, otherwise
+		(True, pos, u_alts).
+		"""
+		Err = (False, None, None)
 		# use set instead of list to prevent duplicates
 		u_alts = set()
 		for _ in range(altsCount):
@@ -361,8 +369,20 @@ class _BglReaderEntries:
 			pos += altLen
 
 		u_alts.discard(u_word)
+		return True, pos, sorted(u_alts)
 
-		# reading defi
+	def _readType11Defi(
+		self,
+		block: Block,
+		pos: int,
+		b_word: bytes,
+	) -> tuple[bool, int | None, str | None]:
+		"""
+		Read the definition of a type 11 entry.
+
+		Return (False, None, None) on error, otherwise (True, pos, u_defi).
+		"""
+		Err = (False, None, None)
 		defiLen = uintFromBytes(block.data[pos : pos + 4])
 		pos += 4
 		if pos + defiLen > len(block.data):
@@ -375,5 +395,42 @@ class _BglReaderEntries:
 		b_defi = block.data[pos : pos + defiLen]
 		u_defi = self.processDefi(b_defi, b_word)
 		pos += defiLen
+		return True, pos, u_defi
 
-		return True, u_word, sorted(u_alts), u_defi
+	def readEntry_Type11(
+		self,
+		block: Block,
+	) -> tuple[bool, str | None, list[str] | None, str | None]:
+		"""Return (succeed, u_word, u_alts, u_defi)."""
+		Err = (False, None, None, None)
+		pos = 0
+
+		succeed, pos, b_word, u_word = self._readType11Word(block, pos)
+		if not succeed:
+			return Err
+
+		# reading alts and defi
+		if pos + 4 > len(block.data):
+			log.error(
+				f"reading block offset={block.offset:#02x}"
+				", reading defi size: pos + 4 > len(block.data)",
+			)
+			return Err
+		altsCount = uintFromBytes(block.data[pos : pos + 4])
+		pos += 4
+
+		succeed, pos, u_alts = self._readType11Alts(
+			block,
+			pos,
+			altsCount,
+			b_word,
+			u_word,
+		)
+		if not succeed:
+			return Err
+
+		succeed, pos, u_defi = self._readType11Defi(block, pos, b_word)
+		if not succeed:
+			return Err
+
+		return True, u_word, u_alts, u_defi
