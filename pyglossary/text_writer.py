@@ -112,8 +112,6 @@ class TextGlossaryWriter:
 		self._filename = filename
 		if not self._glos.getConfig("skip_resources", False):
 			self._resDir = f"{filename}_res"
-			if not isdir(self._resDir):
-				os.mkdir(self._resDir)
 
 	def _doWriteInfo(self, file: io.TextIOBase) -> None:
 		entryFmt = self._entryFmt
@@ -221,7 +219,7 @@ class TextGlossaryWriter:
 		if self._tail:
 			self._file.write(self._tail)
 		self._file.close()
-		if not os.listdir(self._resDir):
+		if self._resDir and isdir(self._resDir) and not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
 

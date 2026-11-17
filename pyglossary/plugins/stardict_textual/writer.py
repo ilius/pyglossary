@@ -130,9 +130,6 @@ class Writer:
 
 		self.writeInfo(maker, pretty=True)
 
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
-
 		pretty = True
 		while True:
 			entry = yield
@@ -169,5 +166,5 @@ class Writer:
 
 		file.write("</stardict>")
 
-		if not os.listdir(self._resDir):
+		if isdir(self._resDir) and not os.listdir(self._resDir):
 			os.rmdir(self._resDir)

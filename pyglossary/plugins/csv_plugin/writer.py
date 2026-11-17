@@ -85,15 +85,13 @@ class Writer:
 				newline=self._newline,
 			),
 		)
-		self._resDir = resDir = filename + "_res"
+		self._resDir = filename + "_res"
 		self._csvWriter = csv.writer(
 			self._file,
 			dialect="excel",
 			quoting=csv.QUOTE_ALL,  # FIXME
 			delimiter=self._delimiter,
 		)
-		if not isdir(resDir):
-			os.mkdir(resDir)
 		if self._enable_info:
 			for key, value in self._glos.iterInfo():
 				self._csvWriter.writerow([f"#{key}", value])
@@ -102,7 +100,7 @@ class Writer:
 		self._filename = ""
 		self._file.close()
 		self._file = nullTextIO
-		if not os.listdir(self._resDir):
+		if isdir(self._resDir) and not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
 	def write(self) -> Generator[None, EntryType, None]:

@@ -65,15 +65,13 @@ class Writer:
 
 	def finish(self) -> None:
 		self._file.close()
-		if not os.listdir(self._resDir):
+		if isdir(self._resDir) and not os.listdir(self._resDir):
 			os.rmdir(self._resDir)
 
 	def open(self, filename: str) -> None:
 		self._file = open(filename, "w", encoding=self._encoding)
 		# dictgen's ParseDictFile does not seem to support glossary info / metedata
 		self._resDir = filename + "_res"
-		if not isdir(self._resDir):
-			os.mkdir(self._resDir)
 
 	def write(
 		self,

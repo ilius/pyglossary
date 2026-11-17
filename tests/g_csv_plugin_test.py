@@ -1,12 +1,12 @@
 import os
 import sys
 import unittest
-from os.path import abspath, dirname
+from os.path import abspath, dirname, isdir
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
 
-from glossary_v2_test import TestGlossaryBase
+from glossary_v2_test import ConvertArgs, Glossary, TestGlossaryBase
 
 
 class TestGlossaryCSV(TestGlossaryBase):
@@ -85,6 +85,18 @@ class TestGlossaryCSV(TestGlossaryBase):
 			readOptions={"delimiter": ";"},
 			infoOverride={"input_file_size": None},
 		)
+
+	def test_convert_txt_csv_no_res_dir(self):
+		inputFilename = self.downloadFile("100-en-fa.txt")
+		outputFilename = self.newTempFilePath("100-en-fa-no-res.csv")
+		glos = self.glos = Glossary()
+		glos.convert(
+			ConvertArgs(
+				inputFilename,
+				outputFilename=outputFilename,
+			),
+		)
+		self.assertFalse(isdir(f"{outputFilename}_res"))
 
 	def test_convert_csv_txt_escape(self):
 		self.convert(

@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 import unittest
 import warnings
-from os.path import abspath, dirname, isfile, join
+from os.path import abspath, dirname, isdir, isfile, join
 
 rootDir = dirname(dirname(abspath(__file__)))
 sys.path.insert(0, rootDir)
@@ -103,6 +103,33 @@ class TestTextWriter(TestGlossaryBase):
 		writer = self.makeWriter(glos, resources=False)
 		self.writeEntries(writer, filename, entries)
 
+		self.assertFalse(isdir(f"{filename}_res"))
+		with open(filename, encoding="utf-8") as file:
+			self.assertEqual(file.read(), "word\tdefi\n")
+
+	def test_write_no_res_dir_without_data_entries(self):
+		glos = self.glos = Glossary()
+		entries = [glos.newEntry(["word"], "defi")]
+		filename = self.newTempFilePath("no_res.txt")
+		writer = self.makeWriter(glos, resources=True)
+		self.writeEntries(writer, filename, entries)
+
+		self.assertFalse(isdir(f"{filename}_res"))
+		with open(filename, encoding="utf-8") as file:
+			self.assertEqual(file.read(), "word\tdefi\n")
+
+	def test_write_skip_resources_config(self):
+		glos = self.glos = Glossary()
+		glos.config = {"skip_resources": True}
+		entries = [
+			glos.newEntry(["word"], "defi"),
+			glos.newDataEntry("img/icon.png", b"PNG"),
+		]
+		filename = self.newTempFilePath("skip_resources.txt")
+		writer = self.makeWriter(glos, resources=True)
+		self.writeEntries(writer, filename, entries)
+
+		self.assertFalse(isdir(f"{filename}_res"))
 		with open(filename, encoding="utf-8") as file:
 			self.assertEqual(file.read(), "word\tdefi\n")
 
