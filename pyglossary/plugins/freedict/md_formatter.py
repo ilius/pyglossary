@@ -141,59 +141,53 @@ class MdFormatter(Formatter):
 		self._list_levels.pop()
 		self._effective_append("\n")
 
-	def _writeListItem(self, item: Sequence[Node]) -> None:  # noqa: PLR0912
+	def _writeListItem(self, item: Sequence[Node]) -> None:
 		level = len(self._list_levels)
 		if not level:
 			self._writeNodes(item)
 			return
 
-		meta = self._list_levels[-1]
 		start = len(self._parts)
-
 		self._writeNodes(item)
-
-		raw = "".join(self._parts[start:])
+		block = "".join(self._parts[start:]).strip("\n")
 		del self._parts[start:]
-		block = raw.strip("\n")
 
 		tabs = "\t" * max(0, level - 1)
-		if meta["ordered"]:
-			n = meta["next"]
-			meta["next"] = n + 1
-			head = f"{tabs}{n}. "
-		else:
-			head = f"{tabs}- "
-
+		head = self._listItemHead(tabs)
 		if not block:
 			self._effective_append(head + "\n")
 			return
+		self._writeListItemBody(block, head, tabs + "\t")
 
+	def _listItemHead(self, tabs: str) -> str:
+		meta = self._list_levels[-1]
+		if not meta["ordered"]:
+			return f"{tabs}- "
+		n = meta["next"]
+		meta["next"] = n + 1
+		return f"{tabs}{n}. "
+
+	def _writeListItemBody(self, block: str, head: str, contTab: str) -> None:
 		lines = block.split("\n")
-		split_at = len(lines)
-		for i, ln in enumerate(lines):
-			if _LIST_LINE_RE.match(ln):
-				split_at = i
-				break
-
-		plain = lines[:split_at]
-		nested = lines[split_at:]
-		cont_tab = tabs + "\t"
-
+		splitAt = next(
+			(i for i, ln in enumerate(lines) if _LIST_LINE_RE.match(ln)),
+			len(lines),
+		)
+		plain = lines[:splitAt]
+		nested = lines[splitAt:]
 		if plain:
 			self._effective_append(head + plain[0] + "\n")
-			for ln in plain[1:]:
-				if _LIST_LINE_RE.match(ln):
-					self._effective_append(ln + "\n")
-				else:
-					self._effective_append(cont_tab + ln + "\n")
+			self._writeListItemLines(plain[1:], contTab)
 		else:
 			self._effective_append(head + "\n")
+		self._writeListItemLines(nested, contTab)
 
-		for ln in nested:
+	def _writeListItemLines(self, lines: Sequence[str], contTab: str) -> None:
+		for ln in lines:
 			if _LIST_LINE_RE.match(ln):
 				self._effective_append(ln + "\n")
 			else:
-				self._effective_append(cont_tab + ln + "\n")
+				self._effective_append(contTab + ln + "\n")
 
 	def _writeBlockquote(self, children: Sequence[Node]) -> None:
 		self._bufs = self._bufs or []
