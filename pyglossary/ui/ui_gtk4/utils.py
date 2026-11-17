@@ -45,6 +45,7 @@ __all__ = [
 	"hasLightTheme",
 	"pack",
 	"rgba_parse",
+	"showConfirmation",
 	"showInfo",
 ]
 
@@ -323,6 +324,40 @@ def showMsg(  # noqa: PLR0913
 
 	win.set_child(vbox)
 	# win.resize(600, 1)
+	win.show()
+
+
+def showConfirmation(
+	msg: str,
+	onConfirm: Callable[[], None],
+	parent: gtk.Window | None = None,
+	title: str = "",
+) -> None:
+	win = gtk.Window(transient_for=parent)
+	win.set_modal(True)
+	if title:
+		win.set_title(title)
+	label = gtk.Label(label=msg, selectable=True)
+	label.set_size_request(500, 1)
+	vbox = VBox()
+	pack(vbox, label)
+
+	def onOkClicked(_button: gtk.Button) -> None:
+		win.destroy()
+		onConfirm()
+
+	def onCancelClicked(_button: gtk.Button) -> None:
+		win.destroy()
+
+	buttonBox = MyHButtonBox()
+	buttonBox.add_ok(onClick=onOkClicked)
+	buttonBox.add_cancel(onClick=onCancelClicked)
+	hbox = HBox()
+	pack(hbox, gtk.Label(), 1, 1)
+	pack(hbox, buttonBox, 0, 0)
+	pack(vbox, hbox, 0, 0)
+
+	win.set_child(vbox)
 	win.show()
 
 

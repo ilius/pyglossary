@@ -69,6 +69,7 @@ from .gtk3_utils.utils import (  # noqa: E402
 	imageFromFile,
 	pack,
 	rgba_parse,
+	showConfirmation,
 	showInfo,
 )
 
@@ -1667,6 +1668,13 @@ class MainWindow(gtk.Dialog):
 			log.critical("Output file path is empty!")
 			return
 		outFormat = self.outputFormatBox.getActive()
+
+		if isfile(outPath) and not showConfirmation(
+			f"Output file already exists:\n{outPath}\n\nOverwrite it?",
+			parent=self,
+			title="Overwrite Output File?",
+		):
+			return
 
 		self.status("Converting...")
 		while gtk.events_pending():

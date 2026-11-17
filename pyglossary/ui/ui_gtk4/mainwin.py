@@ -58,6 +58,7 @@ from .utils import (
 	gtk_event_iteration_loop,
 	hasLightTheme,
 	pack,
+	showConfirmation,
 )
 
 if TYPE_CHECKING:
@@ -544,6 +545,29 @@ progressbar progress, trough {min-height: 0.6em;}
 			return
 		outFormat = self.outputFormatBox.getActive()
 
+		if isfile(outPath):
+			showConfirmation(
+				f"Output file already exists:\n{outPath}\n\nOverwrite it?",
+				onConfirm=lambda: self._convert(
+					inPath,
+					outPath,
+					inFormat,
+					outFormat,
+				),
+				parent=self,
+				title="Overwrite Output File?",
+			)
+			return
+
+		self._convert(inPath, outPath, inFormat, outFormat)
+
+	def _convert(
+		self,
+		inPath: str,
+		outPath: str,
+		inFormat: str,
+		outFormat: str,
+	) -> None:
 		self.status("Converting...")
 		self.setInOutBoxesSensivive(False)
 		gtk_event_iteration_loop()

@@ -44,6 +44,7 @@ __all__ = [
 	"imageFromFile",
 	"pack",
 	"rgba_parse",
+	"showConfirmation",
 	"showInfo",
 ]
 
@@ -165,6 +166,47 @@ def showMsg(  # noqa: PLR0913
 	win.resize(600, 1)
 	win.run()
 	win.destroy()
+
+
+def showConfirmation(
+	msg: str,
+	parent: gtk.Widget | None = None,
+	transient_for: gtk.Widget | None = None,
+	title: str = "",
+) -> bool:
+	win = gtk.Dialog(
+		parent=parent,
+		transient_for=transient_for,
+	)
+	win.set_modal(True)
+	if title:
+		win.set_title(title)
+	hbox = HBox(spacing=10)
+	hbox.set_border_width(10)
+	pack(hbox, imageFromIconName("dialog-question", gtk.IconSize.DIALOG))
+	label = gtk.Label(label=msg)
+	label.set_line_wrap(True)
+	label.set_line_wrap_mode(pango.WrapMode.WORD)
+	label.set_size_request(500, 1)
+	label.set_selectable(True)
+	pack(hbox, label)
+	hbox.show_all()
+	pack(win.vbox, hbox)
+	dialog_add_button(
+		win,
+		"gtk-cancel",
+		"_Cancel",
+		gtk.ResponseType.CANCEL,
+	)
+	dialog_add_button(
+		win,
+		"gtk-ok",
+		"_Overwrite",
+		gtk.ResponseType.OK,
+	)
+	result = win.run() == gtk.ResponseType.OK
+	win.destroy()
+	return result
 
 
 def showInfo(msg, **kwargs: Any) -> None:  # noqa: ANN001
