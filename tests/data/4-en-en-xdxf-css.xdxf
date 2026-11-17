@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xdxf version="1.0">
+	<meta_info>
+		<full_name>XDXF CSS Reader Coverage</full_name>
+		<description>Synthetic sample for PyGlossary tests</description>
+		<author/>
+		<from xml:lang="en-US"/>
+		<to xml:lang="es-ES"/>
+		<abbr_def><abbr_k>syn</abbr_k><abbr_v>synonym</abbr_v></abbr_def>
+	</meta_info>
+	<lexicon>
+		<ar>
+			<k>alpha</k>
+			<def>
+				<dtrn>first letter</dtrn>
+			</def>
+		</ar>
+		<ar>
+			<k>beta</k>
+			<def>
+				<dtrn>second letter</dtrn>
+			</def>
+		</ar>
+	</lexicon>
+</xdxf>

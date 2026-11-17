@@ -1,0 +1,9 @@
+##name	XDXF CSS Reader Coverage
+##description	Synthetic sample for PyGlossary tests
+##sourceLang	English
+##targetLang	Spanish
+##abbr_k	syn
+##abbr_v	synonym
+##input_file_size	527
+alpha	<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<link rel="stylesheet" href="css/xdxf.css"/>\n\t</head>\n\t<body>\n\t\t<div class="article"><div class="k">alpha</div><div>\t\t\t\tfirst letter<br/>\t\t\t</div><br/>\t\t</div>\n\t\t<script type="text/javascript" src="js/xdxf.js"></script>\n\t</body>\n</html>
+beta	<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<link rel="stylesheet" href="css/xdxf.css"/>\n\t</head>\n\t<body>\n\t\t<div class="article"><div class="k">beta</div><div>\t\t\t\tsecond letter<br/>\t\t\t</div><br/>\t\t</div>\n\t\t<script type="text/javascript" src="js/xdxf.js"></script>\n\t</body>\n</html>
