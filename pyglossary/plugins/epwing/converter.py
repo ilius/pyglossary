@@ -395,29 +395,9 @@ class DaijisenExtractor(KoujienExtractor):
 		if not match:
 			return []
 
-		expressions = []
-		expression_raw = match.group(2)
-		if expression_raw:
-			expression = self.exp_multi_exp.sub("・", expression_raw)
-			expression = self.exp_shapes_exp.sub("", expression)
-
-			for split in expression.split("・"):
-				split_inc = self.exp_var_exp.sub(r"\1", split)
-				expressions.append(split_inc)
-				if split != split_inc:
-					split_exc = self.exp_var_exp.sub("", split)
-					expressions.append(split_exc)
-
-		reading = match.group(1)
-		if reading:
-			reading = self.read_group_exp.sub("", reading)
-			reading = self.exp_var_exp.sub("", reading)
-
-		tags = []
-		for line in text.split("\n"):
-			m = self.meta_exp.search(line)
-			if m:
-				tags += m.group(1).split("・")
+		expressions = self._extract_expressions(match.group(2))
+		reading = self._extract_reading(match.group(1))
+		tags = self._extract_tags(text)
 
 		terms = []
 		if not expressions:
@@ -425,13 +405,45 @@ class DaijisenExtractor(KoujienExtractor):
 			self.export_rules(term, tags)
 			terms.append(term)
 		else:
-			for e in expressions:
+			for expression in expressions:
 				term = dbTerm(
-					expression=e, reading=reading, glossary=[text], sequence=sequence
+					expression=expression,
+					reading=reading,
+					glossary=[text],
+					sequence=sequence,
 				)
 				self.export_rules(term, tags)
 				terms.append(term)
 		return terms
+
+	def _extract_expressions(self, expression_raw: str | None) -> list[str]:
+		if not expression_raw:
+			return []
+		expression = self.exp_multi_exp.sub("・", expression_raw)
+		expression = self.exp_shapes_exp.sub("", expression)
+
+		expressions = []
+		for split in expression.split("・"):
+			split_inc = self.exp_var_exp.sub(r"\1", split)
+			expressions.append(split_inc)
+			if split != split_inc:
+				split_exc = self.exp_var_exp.sub("", split)
+				expressions.append(split_exc)
+		return expressions
+
+	def _extract_reading(self, read_raw: str | None) -> str:
+		if not read_raw:
+			return ""
+		reading = self.read_group_exp.sub("", read_raw)
+		return self.exp_var_exp.sub("", reading)
+
+	def _extract_tags(self, text: str) -> list[str]:
+		tags = []
+		for line in text.split("\n"):
+			m = self.meta_exp.search(line)
+			if m:
+				tags += m.group(1).split("・")
+		return tags
 
 	def get_revision(self) -> str:
 		return "daijisen2"
