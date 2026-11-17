@@ -1,3 +1,4 @@
+import gzip
 import sys
 import unittest
 from os.path import abspath, dirname, isfile
@@ -9,7 +10,9 @@ sys.path.insert(0, rootDir)
 from glossary_v2_errors_test import TestGlossaryErrorsBase
 
 from pyglossary.glossary_v2 import ConvertArgs, Error, Glossary
+from pyglossary.plugins.stardict.reader import Reader
 from pyglossary.plugins.stardict.writer import Writer
+from pyglossary.utils.text_utils import uint32ToBytes
 
 __all__ = ["TestGlossaryStarDictBase"]
 
@@ -369,6 +372,102 @@ sametypesequence=abcd
 			)
 
 		# self.assertLogCritical(f"Reading file {relpath(inputFilename)!r} failed.")
+
+	def writeStardictFixture(
+		self,
+		basename,
+		records,
+		dictBytes,
+		sametypesequence=None,
+		dictzip=False,
+	):
+		ifoPath = self.newTempFilePath(f"{basename}.ifo")
+		idxPath = self.newTempFilePath(f"{basename}.idx")
+		dictPath = self.newTempFilePath(
+			f"{basename}.dict.dz" if dictzip else f"{basename}.dict",
+		)
+
+		idxBytes = b""
+		for term, offset, size in records:
+			idxBytes += term + b"\x00" + uint32ToBytes(offset) + uint32ToBytes(size)
+
+		ifoLines = [
+			"StarDict's dict ifo file",
+			"version=3.0.0",
+			f"bookname={basename}",
+			f"wordcount={len(records)}",
+			f"idxfilesize={len(idxBytes)}",
+		]
+		if sametypesequence is not None:
+			ifoLines.append(f"sametypesequence={sametypesequence}")
+		with open(ifoPath, mode="w", encoding="utf-8") as file:
+			file.write("\n".join(ifoLines) + "\n")
+		with open(idxPath, mode="wb") as file:
+			file.write(idxBytes)
+		if dictzip:
+			with gzip.open(dictPath, mode="wb") as file:
+				file.write(dictBytes)
+		else:
+			with open(dictPath, mode="wb") as file:
+				file.write(dictBytes)
+
+		return ifoPath
+
+	def test_read_stardict_empty_index(self):
+		inputFilename = self.writeStardictFixture(
+			"empty-index",
+			records=[],
+			dictBytes=b"",
+		)
+
+		glos = self.glos = Glossary()
+		glos.directRead(inputFilename)
+		self.assertEqual(list(glos), [])
+		self.assertLogWarning("indexData is empty")
+
+	def test_read_stardict_corrupted_entries(self):
+		dictBytes = b"mhello\x00" + b"\x01bad\x00"
+		shortSize = len(dictBytes) + 10
+		inputFilename = self.writeStardictFixture(
+			"corrupted-entries",
+			records=[
+				(b"", 0, 7),
+				(b"ok", 0, 7),
+				(b"corrupt", 7, 5),
+				(b"short", 0, shortSize),
+			],
+			dictBytes=dictBytes,
+		)
+
+		glos = self.glos = Glossary()
+		glos.directRead(inputFilename)
+		entries = list(glos)
+
+		self.assertEqual([entry.s_term for entry in entries], ["ok"])
+		self.assertEqual(entries[0].defi, "hello")
+		self.assertLogError("Data file is corrupted. Word b'corrupt'")
+		self.assertLogError("Unable to read definition for word b'short'")
+
+	def test_read_stardict_dictzip_bad_offset(self):
+		inputFilename = self.writeStardictFixture(
+			"dictzip-bad-offset",
+			records=[(b"badoffset", 100000, 1)],
+			dictBytes=b"hello",
+			dictzip=True,
+		)
+
+		glos = self.glos = Glossary()
+		glos.directRead(inputFilename)
+		self.assertEqual(list(glos), [])
+		self.assertLogError("Unable to read definition for word b'badoffset'")
+
+	def test_iter_reader_not_open(self):
+		reader = Reader(Glossary())
+		with self.assertRaisesRegex(
+			RuntimeError,
+			"iterating over a reader while it's not open",
+		):
+			next(iter(reader))
 
 
 class TestGlossaryStarDictSplit(TestGlossaryErrorsBase):
