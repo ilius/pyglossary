@@ -22,6 +22,7 @@
 - Prioritize high-level tests over tests of internal helpers.
 - For plugins, cover as much code as possible through glossary conversion tests (like `test_convert_*` in `tests/g_*`).
 - For plugins, when asked to add tests or increase coverage, add fixtures that target uncovered branches, then run `python scripts/test-cover-html-plugin.py <plugin>`. Continue until plugin coverage is over 95%; if that is not possible because code is unreachable or vendored, report the remaining gaps.
+- Plugins under `~/.pyglossary/plugins/` are user plugins and are discovered by PyGlossary automatically. Use them as installed when testing: do not copy them into `pyglossary/plugins/` and do not modify their source code.
 - Keep each test fixture under 16 KB and the overall fixture size under 100 KB.
 - Use `en-en` (English to English) fixtures unless asked otherwise.
 
