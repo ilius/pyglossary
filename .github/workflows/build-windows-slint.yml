@@ -1,8 +1,8 @@
-name: Build for Windows x86_64 (Slint)
+name: Build Windows [Slint] x86_64
 on:
   push:
     branches:
-      - 'build-release-slint'
+      - 'build-release'
     paths-ignore:
       - 'doc/**'
       - '*.md'
@@ -15,7 +15,8 @@ concurrency:
 
 jobs:
 
-  build_windows_slint_x64:
+  build:
+    name: Build
     runs-on: windows-2022
 
     env:
@@ -115,8 +116,8 @@ jobs:
             Output\*.exe
 
   release:
-    if: true
-    needs: [build_windows_slint_x64]
+    name: Update Release
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -144,6 +145,12 @@ jobs:
           pwd
           echo ${{ github.workspace }}/artifacts
           find ${{ github.workspace }}/artifacts
+
+      - name: Skip artifacts that already exist on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ env.VERSION }}
+        run: python3 scripts/ci/release/skip-existing-assets.py
 
       - name: make release
         uses: ncipollo/release-action@v1

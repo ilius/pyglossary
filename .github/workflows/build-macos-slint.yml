@@ -1,10 +1,10 @@
-name: Build for MacOS x86_64 / arm64 (Slint)
+name: Build MacOS [Slint]
 # ALSO SEE: pyicu: https://github.com/googlefonts/pyfontaine/issues/109
 
 on:
   push:
     branches:
-      - 'build-release-slint'
+      - 'build-release'
   workflow_dispatch:
 
 concurrency:
@@ -27,7 +27,8 @@ env:
   RESOURCE_DIR: "resources"
 
 jobs:
-  build_macos_slint:
+  build:
+    name: Build
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -112,8 +113,7 @@ jobs:
             **/*.dmg
 
   release:
-    if: true
-    needs: [build_macos_slint]
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -142,30 +142,17 @@ jobs:
           echo ${{ github.workspace }}/artifacts
           find ${{ github.workspace }}/artifacts
 
-      - name: make release
+      - name: Skip artifacts that already exist on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ env.VERSION }}
+        run: python3 scripts/ci/release/skip-existing-assets.py
+
+      - name: update release
         uses: ncipollo/release-action@v1
         # https://github.com/ncipollo/release-action
         with:
           name: ${{ env.VERSION }}
-          body: |
-            ### ${{ github.event.repository.name }}-${{ env.VERSION_WITH_HASH }}
-            ## macOS (Slint UI, beta)
-            - __IMPORTANT__: macOS Intel-x64 & ARM64 DMG, built with the Slint UI (`--slint`/`--ui=slint`)
-
-            <blockquote>
-            <details>
-              <summary> :bulb: How to fix macOS security warning — "APP IS DAMAGED AND CAN'T BE OPENED" :question:</summary>
-
-            ![macos file quarantene](https://f002.backblazeb2.com/file/imatgas/macos-remove-quarantine1.png)
-            ### ⚠️ If macOS displays a warning that _the app is damaged and cannot be opened_ then move the unpacked bundle to `/Applications`, and run from the terminal.app:
-
-            ```bash
-            /usr/bin/xattr -d com.apple.quarantine /Applications/PyGlossarySlint.app
-            ```
-            Now you should be able to open the app by **right-clicking** on **/Applications/PyGlossarySlint.app** in Finder, selecting **Open** and confirming running an app unsigned by Apple (only needs to be done once).
-            </details>
-            </blockquote>
-
           artifacts: "artifacts/*.dmg"
           artifactContentType: application/zip
           generateReleaseNotes: true

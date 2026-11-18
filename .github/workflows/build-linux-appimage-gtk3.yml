@@ -1,4 +1,4 @@
-name: Build Linux (Gtk3 AppImage)
+name: Build Linux AppImage [Gtk3]
 
 on:
   push:
@@ -23,7 +23,8 @@ env:
   APPIMAGE_EXTRACT_AND_RUN: '1'
 
 jobs:
-  build_linux_appimage:
+  build:
+    name: Build
     strategy:
       fail-fast: false
       matrix:
@@ -348,7 +349,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [build_linux_appimage]
+    needs: [build]
     if: startsWith(github.ref_name, 'build-release')
     runs-on: ubuntu-latest
     permissions:
@@ -375,6 +376,12 @@ jobs:
         run: |
           find "${{ github.workspace }}/artifacts" -maxdepth 2 -type f -print
           test -n "$(find "${{ github.workspace }}/artifacts" -maxdepth 2 -name '*.AppImage' -print -quit)"
+
+      - name: Skip artifacts that already exist on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ env.VERSION }}
+        run: python3 scripts/ci/release/skip-existing-assets.py
 
       - name: Create or update GitHub release
         uses: ncipollo/release-action@v1
