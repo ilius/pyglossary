@@ -34,6 +34,8 @@ values. The location of this file depends on the operating system:
 - Linux or BSD: ``~/.pyglossary/config.json``
 - Mac: ``~/Library/Preferences/PyGlossary/config.json``
 - Windows: ``C:\\Users\\USERNAME\\AppData\\Roaming\\PyGlossary\\config.json``
+- Flatpak: ``~/.var/app/io.github.ilius.pyglossary/.pyglossary/config.json``
+  (the host user's ``~/.pyglossary/config.json`` is not used inside the sandbox)
 
 ${"Using as library"}
 ${"----------------"}
