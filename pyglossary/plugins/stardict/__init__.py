@@ -95,6 +95,10 @@ such as GoldenDict or AyanDict, are recommended instead.
 
 See the
 [StarDict HTML parsing plugin source](https://github.com/huzheng001/stardict-3/blob/master/dict/stardict-plugins/stardict-html-parsedata-plugin/stardict_html_parsedata.cpp).
+
+### File format specification
+
+See [doc/stardict-spec.md](./doc/stardict-spec.md).
 """
 
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
