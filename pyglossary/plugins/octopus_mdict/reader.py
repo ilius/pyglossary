@@ -187,9 +187,18 @@ class Reader:
 			log.error("trying to iterate on a closed MDX file")
 			return
 
+		yield from self._iterEntries()
+		yield from self._iterSameDirDataEntries()
+		yield from self._iterMddEntries()
+
+	def _iterEntries(self) -> Iterator[EntryType]:
+		mdx = self._mdx
+		if mdx is None:
+			return
+
 		glos = self._glos
 		linksDict = self._linksDict
-		for b_term, b_defi in self._mdx.items():
+		for b_term, b_defi in mdx.items():
 			term = b_term.decode("utf-8")
 			defi = b_defi.decode("utf-8").strip()
 			if defi.startswith("@@@LINK="):
@@ -206,25 +215,29 @@ class Reader:
 		self._linksDict = {}
 		gc.collect()
 
-		if self._same_dir_data_files:
-			dirPath = dirname(self._filename)
-			for fname in os.listdir(dirPath):
-				ext = splitext(fname)[1].lower()
-				if ext in {".mdx", ".mdd"}:
-					continue
-				fpath = join(dirPath, fname)
-				if not isfile(fpath):
-					continue
-				with open(fpath, mode="rb") as file:
-					b_data = file.read()
-				yield glos.newDataEntry(fname, b_data)
+	def _iterSameDirDataEntries(self) -> Iterator[EntryType]:
+		if not self._same_dir_data_files:
+			return
 
+		dirPath = dirname(self._filename)
+		for fname in os.listdir(dirPath):
+			ext = splitext(fname)[1].lower()
+			if ext in {".mdx", ".mdd"}:
+				continue
+			fpath = join(dirPath, fname)
+			if not isfile(fpath):
+				continue
+			with open(fpath, mode="rb") as file:
+				b_data = file.read()
+			yield self._glos.newDataEntry(fname, b_data)
+
+	def _iterMddEntries(self) -> Iterator[EntryType]:
 		for mdd in self._mdd:
 			try:
 				for b_fname, b_data in mdd.items():
 					fname = toStr(b_fname)
 					fname = fname.replace("\\", os.sep).lstrip(os.sep)
-					yield glos.newDataEntry(fname, b_data)
+					yield self._glos.newDataEntry(fname, b_data)
 			except Exception:  # noqa: PERF203
 				log.exception(f"Error reading {mdd.filename}")
 		self._mdd = []
