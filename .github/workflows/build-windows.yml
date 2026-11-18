@@ -1,4 +1,4 @@
-name: Build for Windows x86_64
+name: Build Windows [Tk] x86_64
 on:
   push:
     branches:
@@ -15,7 +15,8 @@ concurrency:
 
 jobs:
 
-  build_windows_x64:
+  build:
+    name: Build
     runs-on: windows-2022
 
     env:
@@ -111,8 +112,8 @@ jobs:
             Output\*.exe
             
   release:
-    if: true
-    needs: [build_windows_x64]
+    name: Update Release
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -140,7 +141,13 @@ jobs:
           pwd
           echo ${{ github.workspace }}/artifacts
           find ${{ github.workspace }}/artifacts
-            
+
+      - name: Skip artifacts that already exist on the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ env.VERSION }}
+        run: python3 scripts/ci/release/skip-existing-assets.py
+
       - name: make release
         uses: ncipollo/release-action@v1
         # https://github.com/ncipollo/release-action
