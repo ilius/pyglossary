@@ -458,6 +458,185 @@ class TestGlossaryDSL(TestGlossaryBase):
 			"test\thello &lt;&lt;world&gt;&gt;",
 		)
 
+	def test_tag_attr_unclosed(self):
+		for dsl in (
+			"headword\n [c red",
+			"headword\n [c color=   ",
+			'headword\n [c color="',
+			"headword\n [c color=value",
+			"headword\n [c color=value\\",
+		):
+			with self.subTest(dsl=dsl):
+				self.convert_string_dsl_txt(dsl, "")
+
+	def test_tag_attr_unquoted_space(self):
+		self.convert_string_dsl_txt(
+			"headword\n [c color=red green]x[/c]",
+			'headword\t<font color="green">x</font>',
+		)
+
+	def test_empty_tag(self):
+		for dsl in (
+			"headword\n []",
+			"headword\n    []",
+		):
+			with self.subTest(dsl=dsl):
+				self.convert_string_dsl_txt(dsl, "")
+
+	def test_ref_unclosed(self):
+		self.convert_string_dsl_txt(
+			"headword\n hello <<",
+			"headword\thello",
+		)
+
+	def test_ref_escaped_gt(self):
+		self.convert_string_dsl_txt(
+			"headword\n hello <<a\\>b>>",
+			'headword\thello <a href="bword://a&gt;b">a&gt;b</a>',
+		)
+
+	def test_ref_trailing_backslash(self):
+		self.convert_string_dsl_txt(
+			"headword\n hello <<a\\",
+			'headword\thello <a href="bword://a">a</a>',
+		)
+
+	def test_url_unclosed(self):
+		self.convert_string_dsl_txt("headword\n [url]", "")
+
+	def test_url_trailing_backslash(self):
+		self.convert_string_dsl_txt(
+			"headword\n [url]example.com/a\\",
+			'headword\t<a href="http://example.com/a">example.com/a</a>',
+		)
+
+	def test_url_escaped_bracket(self):
+		self.convert_string_dsl_txt(
+			"headword\n [url]example.com/a\\]b[/url]",
+			'headword\t<a href="http://example.com/a]b">example.com/a]b</a>',
+		)
+
+	def test_media_unclosed(self):
+		self.convert_string_dsl_txt("headword\n [s]", "")
+
+	def test_media_audio(self):
+		self.convert_string_dsl_txt(
+			"headword\n [s]sound.wav[/s]",
+			"headword\t"
+			'<object type="audio/x-wav" data="sound.wav" '
+			'width="40" height="40">'
+			'<param name="autoplay" value="false" />'
+			"</object>",
+		)
+
+	def test_tilde_current_key(self):
+		self.convert_string_dsl_txt(
+			"headword\n hello ~ world",
+			"headword\thello headword world",
+		)
+
+	def test_closing_bracket_before_open(self):
+		self.convert_string_dsl_txt(
+			"headword\n hello ]][world",
+			"headword\thello ]world",
+		)
+
+	def test_text_transform_error(self):
+		self.convert_string_dsl_txt("headword\n    [unclosed", "")
+
+	def test_headword_unclosed_paren(self):
+		self.convert_string_dsl_txt(
+			"headword (unclosed\n    test",
+			"headword unclosed|headword\ttest",
+		)
+
+	def test_headword_unclosed_paren_backslash(self):
+		self.convert_string_dsl_txt(
+			"headword (foo\\\n    test",
+			"headword foo|headword\ttest",
+		)
+
+	def test_headword_unclosed_curly(self):
+		self.convert_string_dsl_txt(
+			"headword {unclosed\n    test",
+			"headword\ttest",
+		)
+
+	def test_headword_unclosed_curly_backslash(self):
+		self.convert_string_dsl_txt(
+			"headword {foo\\\n    test",
+			"headword\ttest",
+		)
+
+	def test_headword_curly_escaped_backslash(self):
+		self.convert_string_dsl_txt(
+			"headword {foo\\ bar}\n    test",
+			"headword\t<b>headword foo&nbsp;bar</b><br/>test",
+		)
+
+	def test_resource_empty_and_root_paths_ignored(self):
+		dslPath = join(self.tempDir, "poc.dsl")
+		dsl = (
+			'#NAME "poc"\n#INDEX_LANGUAGE "English"\n'
+			'#CONTENTS_LANGUAGE "English"\n\n'
+			"hello\n"
+			"\t[s][/s]\n"
+			"\t[s].[/s]\n"
+		)
+		with open(dslPath, "w", encoding="utf-8") as file:
+			file.write(dsl)
+
+		reader = Reader(Glossary())
+		reader.open(dslPath)
+		try:
+			dataEntries = {
+				entry.getFileName(): entry.data for entry in reader if entry.isData()
+			}
+			resCount = reader.countResourceFiles()
+			readerLen = len(reader)
+		finally:
+			reader.close()
+
+		self.assertEqual(dataEntries, {})
+		self.assertEqual(resCount, 0)
+		self.assertEqual(readerLen, 0)
+
+	def test_detect_encoding_failure(self):
+		dslPath = join(self.tempDir, "bad.dsl")
+		with open(dslPath, "wb") as file:
+			file.write(b"\xff\xfe\x00")
+
+		reader = Reader(Glossary())
+		with self.assertRaises(ValueError):
+			reader.open(dslPath)
+
+	def test_abbrev_file_with_resource(self):
+		with open(join(self.tempDir, "main.dsl"), "w", encoding="utf-8") as file:
+			file.write(
+				'#NAME "main"\n#INDEX_LANGUAGE "English"\n'
+				'#CONTENTS_LANGUAGE "English"\n\n'
+				"term\n\t[p]abbr[/p] def\n"
+			)
+		with open(
+			join(self.tempDir, "main_abrv.dsl"),
+			"w",
+			encoding="utf-8",
+		) as file:
+			file.write('#NAME "abbr"\n\nabbr\n\t[s]x.wav[/s]\n')
+		with open(join(self.tempDir, "x.wav"), "wb") as file:
+			file.write(b"RIFF")
+
+		glos = self.glos = Glossary()
+		glos.directRead(join(self.tempDir, "main.dsl"))
+		entries = [entry for entry in glos if not entry.isData()]
+		self.assertEqual(len(entries), 1)
+		self.assertTrue(
+			entries[0].defi.startswith(
+				'<i class="p"><font color="green" title="&lt;object',
+			),
+		)
+		self.assertTrue(entries[0].defi.endswith("</font></i> def"))
+
 
 if __name__ == "__main__":
 	unittest.main()

@@ -26,7 +26,6 @@ example styling, and linked audio objects.
 
 from __future__ import annotations
 
-import html.entities
 import re
 import zipfile
 from os.path import (
@@ -60,35 +59,6 @@ if TYPE_CHECKING:
 
 
 __all__ = ["Reader"]
-
-htmlEntityPattern = re.compile(r"&#?\w+;")
-
-
-def _unescape(text: str) -> str:
-	def fixup(m: re.Match[str]) -> str:
-		text = m.group(0)
-		if text[:2] == "&#":
-			# character reference
-			try:
-				i = int(text[3:-1], 16) if text[:3] == "&#x" else int(text[2:-1])
-			except ValueError:
-				pass
-			else:
-				try:
-					return chr(i)
-				except ValueError:
-					# f"\\U{i:08x}", but no fb"..."
-					return (b"\\U%08x" % i).decode("unicode-escape")
-		else:
-			# named entity
-			try:
-				text = chr(html.entities.name2codepoint[text[1:-1]])
-			except KeyError:
-				pass
-		return text  # leave as is
-
-	return htmlEntityPattern.sub(fixup, text)
-
 
 # precompiled regexs
 _re_wrapped_in_quotes = re.compile("^(\\'|\")(.*)(\\1)$")
