@@ -14,6 +14,8 @@ from xml.sax.saxutils import escape, quoteattr
 from pyglossary.core import log
 
 if TYPE_CHECKING:
+	from collections.abc import Callable
+
 	from ._types import ErrorType, LexType, TransformerType
 
 __all__ = ["lexRoot"]
@@ -34,28 +36,9 @@ def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		tr.addText(c)
 		return None, None
 
-	if c == "\\":
-		return lexBackslash, None
-
-	if c == "[":
-		tr.resetBuf()
-		return lexTag, None
-
-	if c == "]":
-		tr.next()
-		if tr.follows("["):
-			tr.next()
-		tr.output += c
-		tr.resetBuf()
-		return lexRoot, None
-
-	if c == "~":
-		tr.addText(tr.currentKey)
-		tr.resetBuf()
-		return lexRoot, None
-
-	if c == "\n":
-		return lexRootNewline, None
+	handler = _rootHandlers.get(c)
+	if handler is not None:
+		return handler(tr)
 
 	if c == "<" and tr.follows("<"):
 		tr.next()
@@ -64,6 +47,26 @@ def lexRoot(tr: TransformerType) -> tuple[LexType, ErrorType]:
 	tr.addText(c)
 	tr.resetBuf()
 
+	return lexRoot, None
+
+
+def lexRootOpenBracket(tr: TransformerType) -> tuple[LexType, ErrorType]:
+	tr.resetBuf()
+	return lexTag, None
+
+
+def lexRootCloseBracket(tr: TransformerType) -> tuple[LexType, ErrorType]:
+	tr.next()
+	if tr.follows("["):
+		tr.next()
+	tr.output += "]"
+	tr.resetBuf()
+	return lexRoot, None
+
+
+def lexRootTilde(tr: TransformerType) -> tuple[LexType, ErrorType]:
+	tr.addText(tr.currentKey)
+	tr.resetBuf()
 	return lexRoot, None
 
 
@@ -86,6 +89,18 @@ def lexBackslash(tr: TransformerType) -> tuple[LexType, ErrorType]:
 		tr.addText(c)
 	tr.resetBuf()
 	return lexRoot, None
+
+
+_rootHandlers: dict[
+	str,
+	Callable[[TransformerType], tuple[LexType, ErrorType]],
+] = {
+	"\\": lexBackslash,
+	"[": lexRootOpenBracket,
+	"]": lexRootCloseBracket,
+	"~": lexRootTilde,
+	"\n": lexRootNewline,
+}
 
 
 def lexTag(tr: TransformerType) -> tuple[LexType, ErrorType]:
