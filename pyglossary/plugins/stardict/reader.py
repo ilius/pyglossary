@@ -8,7 +8,9 @@ count. Handles both 32-bit and 64-bit StarDict index layouts.
 
 from __future__ import annotations
 
+import base64
 import gzip
+import locale
 from os.path import (
 	dirname,
 	isdir,
@@ -48,6 +50,20 @@ def _verifySameTypeSequence(s: str) -> bool:
 	if not s.isalpha():
 		return False
 	return len(s) == 1
+
+
+def _sniffImageMime(data: bytes) -> str:
+	if data.startswith(b"\xff\xd8\xff"):
+		return "image/jpeg"
+	if data.startswith(b"\x89PNG\r\n\x1a\n"):
+		return "image/png"
+	if data.startswith((b"GIF87a", b"GIF89a")):
+		return "image/gif"
+	if data.startswith(b"BM"):
+		return "image/bmp"
+	if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
+		return "image/webp"
+	return "application/octet-stream"
 
 
 class Reader:
@@ -263,6 +279,19 @@ class Reader:
 		result += "</div>"
 		return "h", result
 
+	@staticmethod
+	def decodeDefiTypeW(b_defiPart: bytes) -> tuple[str, str]:
+		data = base64.b64encode(b_defiPart).decode("ascii")
+		result = f'<audio controls src="data:audio/wav;base64,{data}"></audio>'
+		return "h", result
+
+	@staticmethod
+	def decodeDefiTypeP(b_defiPart: bytes) -> tuple[str, str]:
+		mime = _sniffImageMime(b_defiPart)
+		data = base64.b64encode(b_defiPart).decode("ascii")
+		result = f'<img src="data:{mime};base64,{data}"/>'
+		return "h", result
+
 	def decodeRawDefiPart(
 		self,
 		b_defiPart: bytes,
@@ -272,6 +301,13 @@ class Reader:
 		type_ = chr(i_type)
 		if type_ == "r":
 			return self.decodeDefiTypeR(b_defiPart)
+		if type_ == "W":
+			return self.decodeDefiTypeW(b_defiPart)
+		if type_ == "P":
+			return self.decodeDefiTypeP(b_defiPart)
+		if type_ == "l":
+			encoding = locale.getpreferredencoding(False)
+			return "m", b_defiPart.decode(encoding, errors=unicode_errors)
 
 		format_ = {
 			"m": "m",

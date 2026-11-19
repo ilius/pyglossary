@@ -19,12 +19,12 @@ with a network byte-ordered guint32 giving the length of the following data
 | `g` | utf-8 string marked up with Pango text markup language | utf-8 string ending with `'\0'` | ✅ |
 | `t` | English phonetic string | utf-8 string ending with `'\0'` | ✅ |
 | `y` | Chinese YinBiao or Japanese KANA | utf-8 string ending with `'\0'` | ✅ |
-| `l` | Word's pure text meaning in locale encoding (discouraged) | string in locale encoding, ending with `'\0'` | ❌ |
+| `l` | Word's pure text meaning in locale encoding (discouraged) | string in locale encoding, ending with `'\0'` | ✅ |
+| `W` | wav file | guint32 length prefix, then file content | ✅ |
+| `P` | Picture file | guint32 length prefix, then file content | ✅ |
 | `k` | KingSoft PowerWord's data (XML format) | utf-8 string ending with `'\0'` | ❌ |
 | `w` | MediaWiki markup language | text | ❌ |
 | `n` | WordNet data | text | ❌ |
-| `W` | wav file | guint32 length prefix, then file content | ❌ |
-| `P` | Picture file | guint32 length prefix, then file content | ❌ |
 | `X` | Reserved for experimental extensions | — | ❌ |
 
 The PyGlossary column indicates whether the reader can decode the type.
@@ -131,6 +131,9 @@ The data is NOT a utf-8 string, but is instead a string in locale encoding,
 ending with `'\0'`. Sometimes using this type will save disk space, but its use
 is discouraged. This is only an idea.
 
+PyGlossary decodes this type using the preferred locale encoding and maps it to
+`m` (plain text).
+
 ### `k`
 
 [KingSoft](https://en.wikipedia.org/wiki/Kingsoft) [PowerWord](https://en.wikipedia.org/wiki/PowerWord)'s data.
@@ -152,6 +155,9 @@ file's size, immediately followed by the file's content.
 This is only an idea, it is better to use `r` Resource file list in most
 cases.
 
+PyGlossary renders this type as an HTML `<audio>` element with a base64 data
+URI.
+
 ### `P`
 
 Picture file.<br/>
@@ -159,6 +165,8 @@ The data begins with a network byte-ordered guint32 to identify the picture
 file's size, immediately followed by the file's content.<br/>
 This feature is implemented, as stardict-advertisement-plugin needs it.
 Anyway, it is better to use `r` Resource file list in most cases.
+
+PyGlossary renders this type as an HTML `<img>` element with a base64 data URI.
 
 ### `X`
 

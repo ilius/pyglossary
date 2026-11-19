@@ -307,6 +307,15 @@ class TestGlossaryStarDict(TestGlossaryStarDictBase):
 			readOptions={"xdxf_to_html": False},
 		)
 
+	def test_convert_stardict_txt_types_lwp(self):
+		self.convert_stardict_txt(
+			"3-en-en-lwp",
+			"3-en-en-lwp.sd",
+			"3-en-en-lwp",
+			"types-lwp",
+			syn=False,
+		)
+
 	def test_convert_txt_stardict_general_1(self):
 		self.convert_txt_stardict(
 			"002-plain-html",

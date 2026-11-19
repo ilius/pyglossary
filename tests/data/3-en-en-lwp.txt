@@ -1,0 +1,9 @@
+##name	3-en-en-lwp
+##version	3.0.0
+##wordcount	3
+##idxfilesize	45
+##sourceLang	English
+##targetLang	English
+audio	<audio controls src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IAAAAAAAAAAAAAAAAAAAAAA="></audio>
+locale	plain locale text
+picture	<img src="data:image/png;base64,iVBORw0KGgpwbmcgZGF0YQ=="/>
