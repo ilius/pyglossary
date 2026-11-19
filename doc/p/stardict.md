@@ -82,7 +82,7 @@ See the
 
 ### File format specification
 
-See [doc/stardict-spec.md](../stardict-spec.md).
+See [doc/stardict/spec.md](../stardict/spec.md).
 
 ### Dictionary Applications/Tools
 

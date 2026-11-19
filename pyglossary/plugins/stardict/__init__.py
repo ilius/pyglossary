@@ -98,7 +98,7 @@ See the
 
 ### File format specification
 
-See [doc/stardict-spec.md](./doc/stardict-spec.md).
+See [doc/stardict/spec.md](./doc/stardict/spec.md).
 """
 
 # https://github.com/huzheng001/stardict-3/blob/master/dict/doc/StarDictFileFormat
