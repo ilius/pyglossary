@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from xml.sax.saxutils import escape
 
+from pyglossary.core import log
 from pyglossary.utils.io_utils import nullTextIO
 
 if TYPE_CHECKING:
@@ -85,6 +86,7 @@ class Writer:
 
 	def write(self) -> Generator[None, EntryType, None]:
 		file = self._file
+		skippedEntries = 0
 		while True:
 			entry = yield
 			if entry is None:
@@ -92,6 +94,7 @@ class Writer:
 			if entry.isData():
 				continue
 			if entry.defiFormat != "x":
+				skippedEntries += 1
 				continue
 
 			defi = entry.defi.strip()
@@ -106,3 +109,5 @@ class Writer:
 				file.write(f"\t\t\t<def>{defi}</def>\n")
 
 			file.write("\t\t</ar>\n")
+		if skippedEntries > 0:
+			log.warning(f"Skipped {skippedEntries} entries that are not XDXF")
