@@ -46,6 +46,11 @@ __all__ = [
 _GRAM_COLOR = "green"
 _XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
+# FreeDict's XDXF formatter marks usage and label tags with a class; render
+# those as colored badges (white text on a colored background) like its HTML
+# formatter, while plain <c> tags keep their XDXF text-color meaning.
+_BADGE_CLASSES = frozenset({"usage", "label"})
+
 # XDXF tags whose output is a block-level HTML element (or ends with a line
 # break). A browser ignores leading whitespace after such elements, so we
 # collapse it instead of turning it into a redundant ``<br/>``.
@@ -311,6 +316,21 @@ class XdxfTransformer:
 			)
 		)
 
+	def _startCTag(self, tag: str, attrs: dict[str, str]) -> None:
+		cssClass = attrs.get("class")
+		if cssClass in _BADGE_CLASSES:
+			openHtml = (
+				f'<span class="{cssClass}" '
+				f'style="color:white;background:{attrs.get("c") or "transparent"};'
+				f'padding-left:3px;padding-right:3px;border-radius:0.5ex;">'
+			)
+			closeHtml = "</span>"
+		else:
+			openHtml = f'<font color="{attrs.get("c", self._gram_color)}">'
+			closeHtml = "</font>"
+		self._out.append(self._withAttrs(openHtml, self._langAttrs(attrs)))
+		self._stack.append(_StackItem(tag=tag, lastBlock=True, payload=closeHtml))
+
 	def _onStart(self, tag: str, attrs: dict[str, str], elem: Element) -> None:
 		if tag in {"kref", "iref"}:
 			# buffer the link text so the href can fall back to it
@@ -334,9 +354,7 @@ class XdxfTransformer:
 			self._stack.append(_StackItem(tag=tag, lastBlock=True, payload="</div>"))
 			return
 		if tag == "c":
-			openHtml = f'<font color="{attrs.get("c", self._gram_color)}">'
-			self._out.append(self._withAttrs(openHtml, self._langAttrs(attrs)))
-			self._stack.append(_StackItem(tag=tag, lastBlock=True, payload="</font>"))
+			self._startCTag(tag, attrs)
 			return
 		if tag == "tr":
 			if self._pron_color:

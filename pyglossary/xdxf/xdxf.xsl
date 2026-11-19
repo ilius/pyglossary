@@ -96,12 +96,24 @@
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="c[@c]">
-    <font color="{@c}"><xsl:apply-templates/></font>
-  </xsl:template>
-
   <xsl:template match="c">
-    <font color="{$gram_color}"><xsl:apply-templates/></font>
+    <xsl:choose>
+      <xsl:when test="@class='usage' or @class='label'">
+        <xsl:variable name="background">
+          <xsl:choose>
+            <xsl:when test="@c"><xsl:value-of select="@c"/></xsl:when>
+            <xsl:otherwise>transparent</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <span class="{@class}" style="color:white;background:{$background};padding-left:3px;padding-right:3px;border-radius:0.5ex;"><xsl:apply-templates/></span>
+      </xsl:when>
+      <xsl:when test="@c">
+        <font color="{@c}"><xsl:apply-templates/></font>
+      </xsl:when>
+      <xsl:otherwise>
+        <font color="{$gram_color}"><xsl:apply-templates/></font>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="kref">

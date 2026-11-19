@@ -308,6 +308,24 @@ class XdxfTransformer:
 		self.writeChildrenOf(hf, child)
 
 	def _write_c(self, hf: T_htmlfile, child: Element) -> None:
+		cssClass = child.attrib.get("class")
+		if cssClass in {"usage", "label"}:
+			background = child.attrib.get("c", "transparent")
+			with hf.element(
+				"span",
+				attrib={
+					"class": cssClass,
+					"style": (
+						"color:white;"
+						f"background:{background};"
+						"padding-left:3px;"
+						"padding-right:3px;"
+						"border-radius:0.5ex;"
+					),
+				},
+			):
+				self.writeChildrenOf(hf, child)
+			return
 		color = child.attrib.get("c", "green")
 		with hf.element("font", color=color):
 			self.writeChildrenOf(hf, child)

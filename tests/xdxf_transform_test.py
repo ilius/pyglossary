@@ -194,6 +194,22 @@ SAMPLES = [
 		),
 	),
 	(
+		"freedict_badges",  # usage/label classes render as background badges
+		(
+			'<k>tags</k>\n<dtrn><c class="usage" c="green">[informal]</c> '
+			'<c class="label" c="darkblue">[abbr]</c> text</dtrn>'
+		),
+		(
+			'<div class="article"><div class="k"><b>tags</b></div>'
+			'<span class="usage" style="color:white;background:green;'
+			'padding-left:3px;padding-right:3px;border-radius:0.5ex;">'
+			"[informal]</span> "
+			'<span class="label" style="color:white;background:darkblue;'
+			'padding-left:3px;padding-right:3px;border-radius:0.5ex;">'
+			"[abbr]</span> text</div>"
+		),
+	),
+	(
 		"basic_format",  # `basic_format` — basic inline formatting tags
 		(
 			"<k>format</k>\n<dtrn>normal <b>bold</b> <i>italic</i> <u>under</u> "
@@ -237,6 +253,23 @@ class XdxfTransformerTest(unittest.TestCase):
 		for name, inner, expected in SAMPLES:
 			with self.subTest(name=name):
 				self.case(inner, expected)
+
+	def test_usage_badge_all_transformers(self):
+		from pyglossary.xdxf.css_js_transform import XdxfTransformer as CssTransformer
+		from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
+
+		inner = '<c class="usage" c="green">[informal]</c>'
+		badge = (
+			'<span class="usage" style="color:white;background:green;'
+			'padding-left:3px;padding-right:3px;border-radius:0.5ex;">'
+			"[informal]</span>"
+		)
+		for transformer in (XslXdxfTransformer(), CssTransformer()):
+			with self.subTest(transformer=type(transformer).__module__):
+				self.assertIn(
+					badge,
+					transformer.transformByInnerString(inner),
+				)
 
 	def test_newline_after_keyword_no_br(self):
 		# newline between <k> (block) and the definition must not add a <br/>
