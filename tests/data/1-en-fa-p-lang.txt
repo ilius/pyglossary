@@ -1,4 +1,4 @@
 ##name	PyGlossary paragraph language test
 ##input_file_size	630
 ##description	Synthetic sample for PyGlossary tests
-hello	<div>a greeting<div class="note"><p lang="fa" dir="rtl">سلام دنیا</p></div></div>
+hello	<div><span class="def">a greeting</span><div class="note"><p lang="fa" dir="rtl">سلام دنیا</p></div></div>

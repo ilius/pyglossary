@@ -1,5 +1,5 @@
 ##name	PyGlossary inline definitions test
 ##input_file_size	784
 ##description	Synthetic sample for PyGlossary tests
-alpha	a letter <kref k="beta">beta</kref> follows it
-gamma	to be sad today
+alpha	<span class="def">a letter <kref k="beta">beta</kref> follows it</span>
+gamma	<span class="def">to be sad today</span>

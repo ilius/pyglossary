@@ -109,6 +109,17 @@ class _Builder:
 			result.append(Text(" "))
 		return result
 
+	def _def_nodes(self, definition: list[P.Inline]) -> list[Node]:
+		# A span keeps the definition on the same line as pending usage tags,
+		# while giving the formatter a class to style it with.
+		return [
+			InlineElement(
+				"span",
+				{"class": "def"},
+				self._inline_nodes(definition),
+			),
+		]
+
 	def _note_nodes(self, note: list[P.Inline]) -> list[Node]:
 		return [Block({"class": "note"}, self._inline_nodes(note))]
 
@@ -296,7 +307,7 @@ class _Builder:
 
 		if sense.defs:
 			result.extend(self._flushPendingTags(pending))
-		result.extend(self._make_list(sense.defs, self._inline_nodes))
+		result.extend(self._make_list(sense.defs, self._def_nodes))
 		if sense.grams:
 			result.extend(self._grams(sense.grams, pending))
 		if sense.notes:
