@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xdxf version="1.0">
+	<meta_info>
+		<full_name>Single nested definition</full_name>
+		<description>Synthetic sample for PyGlossary tests</description>
+		<from xml:lang="en-US"/>
+		<to xml:lang="en-GB"/>
+	</meta_info>
+	<ar>
+		<k>single</k>
+		<def>
+			<def>
+				<dtrn>only definition</dtrn>
+			</def>
+		</def>
+	</ar>
+</xdxf>

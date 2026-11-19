@@ -151,6 +151,7 @@ class _StackItem:
 	tag: str
 	lastBlock: bool
 	payload: str | dict[str, str] = ""
+	childDefsInList: bool = False
 
 
 @dataclass(slots=True)
@@ -276,19 +277,27 @@ class XdxfTransformer:
 
 	def _onDefStart(self, tag: str, elem: Element) -> None:
 		nestedCount = sum(1 for c in elem if c.tag == "def")
-		hasNested = nestedCount > 0
 		hasDeftext = any(c.tag == "deftext" for c in elem)
 		listTag = "ul" if nestedCount == 2 else "ol"
 		attrStr = self._langAttrs(elem.attrib)
-		parentTag = self._stack[-1].tag if self._stack else ""
+		parent = self._stack[-1] if self._stack else None
+		parentTag = parent.tag if parent else ""
+		parentInList = parent is not None and parent.childDefsInList
 		if parentTag in {"ar", "div"}:
-			if hasNested:
+			if nestedCount > 1:
 				openHtml, closeHtml = f"<{listTag}{attrStr}>", f"</{listTag}>"
 			else:
 				openHtml, closeHtml = f"<div{attrStr}>", "</div>"
+		elif parentTag == "def":
+			wrapper = "li" if parentInList else "div"
+			if hasDeftext or nestedCount <= 1:
+				openHtml, closeHtml = f"<{wrapper}{attrStr}>", f"</{wrapper}>"
+			else:
+				openHtml = f"<{wrapper}{attrStr}><{listTag}>"
+				closeHtml = f"</{listTag}></{wrapper}>"
 		elif hasDeftext:
 			openHtml, closeHtml = f"<li{attrStr}>", "</li>"
-		elif hasNested:
+		elif nestedCount > 1:
 			openHtml, closeHtml = f"<li{attrStr}><{listTag}>", f"</{listTag}></li>"
 		else:
 			openHtml, closeHtml = f"<li{attrStr}>", "</li>"
@@ -298,6 +307,7 @@ class XdxfTransformer:
 				tag=tag,
 				lastBlock=True,
 				payload=closeHtml,
+				childDefsInList=nestedCount > 1,
 			)
 		)
 

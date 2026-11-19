@@ -1,0 +1,6 @@
+##name	Single nested definition
+##description	Synthetic sample for PyGlossary tests
+##sourceLang	English
+##targetLang	English
+##input_file_size	362
+single	<div class="article"><div><div>only definition<br/>\t\t\t</div></div></div>

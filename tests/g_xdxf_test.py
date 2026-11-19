@@ -11,6 +11,8 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			"100-cyber_lexicon_en-es-v4.txt",
 			"100-cyber_lexicon_en-es-v5.txt",
 			"1-en-en-xdxf.xdxf",
+			"1-en-en-def-single.xdxf",
+			"1-en-en-def-single.txt",
 			"4-en-en-xdxf.xdxf",
 			"4-en-en-xdxf.txt",
 			"4-en-en-xdxf-raw.txt",
@@ -71,6 +73,12 @@ class TestGlossaryXDXF(TestGlossaryBase):
 		self.convert_xdxf_txt(
 			"2-en-en-xdxf",
 			"2-en-en-xdxf",
+		)
+
+	def test_convert_xdxf_txt_def_single(self):
+		self.convert_xdxf_txt(
+			"1-en-en-def-single",
+			"1-en-en-def-single",
 		)
 
 	def test_convert_xdxf_txt_wordtitle(self):
