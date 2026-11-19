@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Regenerate arch.avif from arch.drawio.
+#
+# Requires the draw.io CLI (drawio) and avifenc.
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$script_dir"
+
+drawio -x -f png -o arch.drawio.png arch.drawio
+avifenc -q 50 -s 6 arch.drawio.png arch.avif
