@@ -50,13 +50,12 @@ Web interface
 ## Supported formats
 
 | Format | | Extension | Read | Write |
-| ------------------------------------------------------- | :-: | :-------------: | :--: | :---: |
+| ------ | :-: | :-------: | :--: | :---: |
 | [Aard 2 (slob)](./doc/p/aard2_slob.md) | 🔢 | .slob | ✅ | ✅ |
 | [AppleDict Binary](./doc/p/appledict_bin.md) | 📁 | .dictionary | ✅ | ❌ |
 | [AppleDict Source](./doc/p/appledict.md) | 📁 | | ✅ | ✅ |
 | [Babylon BGL](./doc/p/babylon_bgl.md) | 🔢 | .bgl | ✅ | ✅ |
 | [CSV](./doc/p/csv.md) | 📝 | .csv | ✅ | ✅ |
-| [Dict.cc translation export](./doc/p/dict_cc_source.md) | 📝 | .txt | ✅ | ❌ |
 | [DICT.org / Dictd server](./doc/p/dict_org.md) | 📁 | (📝.index) | ✅ | ✅ |
 | [DICT.org / dictfmt source](./doc/p/dict_org_source.md) | 📝 | (.dtxt) | | ✅ |
 | [dictunformat output file](./doc/p/dictunformat.md) | 📝 | (.dictunformat) | ✅ | |
@@ -85,7 +84,8 @@ Web interface
 | [Zim (Kiwix)](./doc/p/zim.md) | 🔢 | .zim | ✅ | ✅ |
 | [ABBYY Lingvo DSL](./doc/p/dsl.md) 🇷🇺 | 📝 | .dsl | ✅ | ❌ |
 | [Almaany.com](./doc/p/almaany.md) (Arabic) | 🛢️ | .db | ✅ | ❌ |
-| [Dict.cc](./doc/p/dict_cc.md) 🇩🇪 | 🛢️ | .db | ✅ | |
+| [Dict.cc source](./doc/p/dict_cc_source.md) 🇩🇪 | 📝 | .tsv | ✅ | ❌ |
+| [Dict.cc](./doc/p/dict_cc.md) 🇩🇪 | 🛢️ | .db | ✅ | ❌ |
 | [DigitalNK](./doc/p/digitalnk.md) 🇰🇵 | 🛢️ | .db | ✅ | |
 | [EDICT2 (CEDICT)](./doc/p/edict2.md) 🇨🇳 | 📝 | (.u8) | ✅ | ❌ |
 | [EPWING](./doc/p/epwing.md) 🇯🇵 | 📁 | | ✅ | ❌ |
