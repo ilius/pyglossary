@@ -94,7 +94,9 @@ class HtmlFormatter(Formatter):
 	def _writeLink(self, link: Link) -> None:
 		target = linkTarget(link)
 		attrib: dict[str, str] = {}
-		if link.target and "://" in link.target:
+		if target.startswith("bword://"):
+			attrib["class"] = "kref"
+		elif "://" in target:
 			attrib["class"] = "external"
 		with self._hf.element("a", href=target, attrib=attrib):
 			self._writeNodes(link.children)

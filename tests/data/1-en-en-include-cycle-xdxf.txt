@@ -1,4 +1,4 @@
 ##name	PyGlossary include cycle test
 ##input_file_size	677
 ##description	Synthetic sample for PyGlossary tests
-loop	<span class="def">a file that includes itself</span>
+loop	a file that includes itself

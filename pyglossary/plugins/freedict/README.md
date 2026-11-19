@@ -113,11 +113,11 @@ usage tags share the line of its first translation; the formatter only sees
 | ---- | ------ | -------------- | ------------------ | --------------- |
 | `Text` | `text` | written as-is | written as-is | XML-escaped text |
 | `LineBreak` | – | `<br>` | line break | `<br/>` |
-| `Link` | `target`, `children` | `<a href="...">`; external URLs get `class="external"`; missing targets become `bword://text` | `[text](url)` | `<kref k="...">` for `bword://` targets, otherwise `<iref href="...">` |
-| `Tag` | `kind`, `children` | `<span class="tag" style="...">[children]</span>`, colored by usage/label option | `**children**` | `<c c="...">[children]</c>`, colored by usage/label option |
+| `Link` | `target`, `children` | `<a href="...">`; `bword://` targets get `class="kref"`, external URLs get `class="external"`; missing targets become `bword://text` | `[text](url)` | `<kref k="...">` for `bword://` targets, otherwise `<iref href="...">` |
+| `Tag` | `kind`, `children` | `<span class="usage" style="...">[children]</span>` or `class="label"`, colored by option | `**children**` | `<c c="...">[children]</c>`, colored by usage/label option |
 | `Grammar` | `text` | `<font class="grammar" color="...">text</font>` | `*text*` | `<gr>text</gr>` |
 | `InlineElement` | `tag`, `attrib`, `children` | element opened with the given tag/attributes | `<p>` adds paragraph breaks; `<div>`/`<span>` are transparent | `<p>`/`<div>` become block lines, `<span>` keeps its attributes |
-| `Block` | `attrib`, `children` | `<div>` with attributes | children in order | block line; attributes keep a `<div>` wrapper |
+| `Block` | `attrib`, `children` | `<div>` with attributes; layout marks translations, notes, related and xref blocks with their own class | children in order | block line; attributes keep a `<div>` wrapper |
 | `ListBlock` | `ordered`, `items` | `<ol>`/`<ul>` with `<li>` per item | numbered or bulleted list, nested by depth | nested `<def>` elements |
 | `Example` | `children` | `<div class="example" style="padding: ...">` | blockquote (`> ...`) | `<ex>...</ex>` |
 | `Pronunciation` | `items`, `separators` | `/` + colored font + `/` per item, then `<br>` | `/pron/` per item | `<tr>...</tr>` with the configured separators |
@@ -168,7 +168,7 @@ The HTML formatter then produces (wrapped here for readability):
 
 ```html
 <div>/<font color="gray">wɜːd</font>/<br>
-<div><font class="grammar" color="green">noun</font></div><span class="tag"
+<div><font class="grammar" color="green">noun</font></div><span class="usage"
 style="...">[archaic]</span> a unit of language<div>Wort</div></div>
 ```
 

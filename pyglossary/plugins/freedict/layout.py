@@ -109,6 +109,9 @@ class _Builder:
 			result.append(Text(" "))
 		return result
 
+	def _note_nodes(self, note: list[P.Inline]) -> list[Node]:
+		return [Block({"class": "note"}, self._inline_nodes(note))]
+
 	# -----------------------------------------------------------------------
 	# Blocks and lists
 	# -----------------------------------------------------------------------
@@ -134,6 +137,7 @@ class _Builder:
 		self,
 		block: P.Block,
 		prefix: list[P.Tag] | None = None,
+		blockClass: str | None = None,
 	) -> Block:
 		children: list[Node] = []
 		# The prefix shares the line with the content, before the block's own
@@ -143,7 +147,10 @@ class _Builder:
 		if block.tags:
 			children.extend(self._tag_nodes(block.tags))
 		children.extend(self._inline_nodes(block.children))
-		return Block(dict(block.attrib), children)
+		attrib = dict(block.attrib)
+		if blockClass:
+			attrib.setdefault("class", blockClass)
+		return Block(attrib, children)
 
 	def _gram_groups(self, gramGrpList: list[P.GramGroup]) -> list[Node]:
 		result: list[Node] = []
@@ -185,7 +192,7 @@ class _Builder:
 			if i > 0:
 				children.append(Text(" | "))
 			children.append(Link(ref.target, [Text(ref.text)]))
-		return [Block({}, children)]
+		return [Block({"class": "related"}, children)]
 
 	# -----------------------------------------------------------------------
 	# Citations and senses
@@ -200,7 +207,9 @@ class _Builder:
 		elif example.tags:
 			result.append(Block({}, self._tag_nodes(example.tags)))
 		# <note> holds the translation of the example, so it follows the quote.
-		result.extend(Block({}, self._inline_nodes(note)) for note in example.notes)
+		result.extend(
+			Block({"class": "note"}, self._inline_nodes(note)) for note in example.notes
+		)
 		for subCit in example.subCits:
 			result.extend(self._example_cit(subCit))
 		return result
@@ -216,11 +225,19 @@ class _Builder:
 			result.extend(self._tag_nodes(prefix))
 
 		if len(blocks) == 1:
-			result.append(self._block(blocks[0], prefix))
+			result.append(self._block(blocks[0], prefix, blockClass="trans"))
 		elif blocks:
 			items: list[list[Node]] = []
 			for i, block in enumerate(blocks):
-				items.append([self._block(block, prefix if i == 0 else None)])
+				items.append(
+					[
+						self._block(
+							block,
+							prefix if i == 0 else None,
+							blockClass="trans",
+						),
+					],
+				)
 			result.append(ListBlock(True, items))
 
 		if self._senseHasContent(transCit.rest):
@@ -284,12 +301,14 @@ class _Builder:
 			result.extend(self._grams(sense.grams, pending))
 		if sense.notes:
 			result.extend(self._flushPendingTags(pending))
-		result.extend(self._make_list(sense.notes, self._inline_nodes))
+		result.extend(self._make_list(sense.notes, self._note_nodes))
 		if sense.transCits:
 			result.extend(self._trans_cits(sense.transCits, pending))
 		result.extend(self._flushPendingTags(pending))
 		result.extend(self._related(sense.refs))
-		result.extend(Block({}, self._inline_nodes(xr)) for xr in sense.xrList)
+		result.extend(
+			Block({"class": "xref"}, self._inline_nodes(xr)) for xr in sense.xrList
+		)
 		result.extend(
 			Example(self._example_cit(example)) for example in sense.exampleCits
 		)
