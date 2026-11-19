@@ -22,8 +22,8 @@ with a network byte-ordered guint32 giving the length of the following data
 | `l` | Word's pure text meaning in locale encoding (discouraged) | string in locale encoding, ending with `'\0'` | ✅ |
 | `W` | wav file | guint32 length prefix, then file content | ✅ |
 | `P` | Picture file | guint32 length prefix, then file content | ✅ |
+| `w` | MediaWiki markup language | text | ✅ |
 | `k` | KingSoft PowerWord's data (XML format) | utf-8 string ending with `'\0'` | ❌ |
-| `w` | MediaWiki markup language | text | ❌ |
 | `n` | WordNet data | text | ❌ |
 | `X` | Reserved for experimental extensions | — | ❌ |
 
@@ -142,6 +142,9 @@ The data is a utf-8 string ending with `'\0'`. And it's in XML format.
 ### `w`
 
 [MediaWiki markup language](https://www.mediawiki.org/wiki/Help:Formatting).
+
+PyGlossary currently maps this type to `m` (plain text). A dedicated
+defiFormat for MediaWiki markup may be added later.
 
 ### `n`
 

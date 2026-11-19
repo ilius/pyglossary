@@ -309,10 +309,13 @@ class Reader:
 			encoding = locale.getpreferredencoding(False)
 			return "m", b_defiPart.decode(encoding, errors=unicode_errors)
 
+		# TODO: Add a dedicated defiFormat for MediaWiki markup (type "w")
+		# instead of mapping it to plain text and losing the markup on output.
 		format_ = {
 			"m": "m",
 			"t": "m",
 			"y": "m",
+			"w": "m",
 			"g": "h",
 			"h": "h",
 			"x": "x",
