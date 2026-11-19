@@ -10,6 +10,7 @@ class TestGlossaryXDXF(TestGlossaryBase):
 		self.dataFile |= {
 			"100-cyber_lexicon_en-es-v4.txt",
 			"100-cyber_lexicon_en-es-v5.txt",
+			"1-en-en-xdxf.xdxf",
 			"4-en-en-xdxf.xdxf",
 			"4-en-en-xdxf.txt",
 			"4-en-en-xdxf-raw.txt",
@@ -58,6 +59,70 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			"4-en-en-xdxf",
 			"4-en-en-xdxf-raw",
 			readOptions={"html": False},
+		)
+
+	def _write_xdxf(self, fname):
+		from pyglossary.glossary_v2 import ConvertArgs, Glossary
+
+		inputFilename = self.downloadFile(f"{fname}.xdxf")
+		outputFilename = self.newTempFilePath(f"{fname}-tmp.xdxf")
+		glos = self.glos = Glossary()
+		glos.convert(
+			ConvertArgs(
+				inputFilename=inputFilename,
+				outputFilename=outputFilename,
+				readOptions={"html": False},
+			),
+		)
+		return outputFilename
+
+	def _assertTextFilesEqualIgnoringInputFileSize(self, fpath1, fpath2):
+		def readLines(path):
+			with open(path, encoding="utf-8") as file:
+				return [
+					line for line in file if not line.startswith("##input_file_size\t")
+				]
+
+		self.assertEqual(readLines(fpath1), readLines(fpath2))
+
+	def _normalizedXdxfArticles(self, filename):
+		from lxml import etree as ET
+
+		parser = ET.XMLParser(remove_blank_text=True)
+		tree = ET.parse(filename, parser)
+		articles = []
+		for article in tree.iter("ar"):
+			if not any("".join(key.itertext()).strip() for key in article.findall("k")):
+				continue
+			articles.append(ET.tostring(article, method="c14n"))
+		return articles
+
+	def test_convert_xdxf_xdxf(self):
+		for fname in ("1-en-en-xdxf", "4-en-en-xdxf"):
+			with self.subTest(fname=fname):
+				inputFilename = self.downloadFile(f"{fname}.xdxf")
+				outputFilename = self._write_xdxf(fname)
+				self.assertEqual(
+					self._normalizedXdxfArticles(inputFilename),
+					self._normalizedXdxfArticles(outputFilename),
+				)
+
+	def test_convert_xdxf_xdxf_txt(self):
+		from pyglossary.glossary_v2 import ConvertArgs, Glossary
+
+		outputXdxf = self._write_xdxf("4-en-en-xdxf")
+		outputTxt = self.newTempFilePath("4-en-en-xdxf-tmp.txt")
+		glos = self.glos = Glossary()
+		glos.convert(
+			ConvertArgs(
+				inputFilename=outputXdxf,
+				outputFilename=outputTxt,
+				readOptions={"html": False},
+			),
+		)
+		self._assertTextFilesEqualIgnoringInputFileSize(
+			outputTxt,
+			self.downloadFile("4-en-en-xdxf-raw.txt"),
 		)
 
 	def test_reader_api(self):

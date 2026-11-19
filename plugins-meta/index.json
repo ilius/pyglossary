@@ -2037,11 +2037,12 @@
 			}
 		},
 		"canRead": true,
-		"canWrite": false,
+		"canWrite": true,
 		"readOptions": {
 			"html": true,
 			"xsl": false
 		},
+		"writeOptions": {},
 		"readDepends": {
 			"lxml": "lxml"
 		},

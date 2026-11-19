@@ -136,7 +136,7 @@ class Reader:
 
 	def _setInfoFromElement(self, elem: Element) -> None:
 		# every other tag before </meta_info> or </ar> is considered info
-		if elem.tag == "abbr_def":
+		if elem.tag in {"abbr_def", "abbreviations", "authors", "languages"}:
 			return
 		# in case of multiple <from> or multiple <to> tags, the last one
 		# will be stored.
@@ -236,19 +236,20 @@ class Reader:
 
 		titles: list[str] = []
 		for title_element in article.findall("k"):
-			if title_element.text is None:
-				# TODO: look for <opt> tag?
-				log.warning(f"empty title element: {self.tostring(title_element)}")
-				continue
 			n_opts = len([c for c in title_element if c.tag == "opt"])
 			if n_opts:
-				titles += [
+				new_titles = [
 					self._mktitle(title_element, comb)
 					for j in range(n_opts + 1)
 					for comb in combinations(list(range(n_opts)), j)
 				]
 			else:
-				titles.append(self._mktitle(title_element))
+				new_titles = [self._mktitle(title_element)]
+			new_titles = [title for title in new_titles if title]
+			if not new_titles:
+				log.warning(f"empty title element: {self.tostring(title_element)}")
+				continue
+			titles += new_titles
 
 		return titles
 

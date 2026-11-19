@@ -2,8 +2,8 @@
 PyGlossary XDXF format plugin.
 
 XML Dictionary Exchange Format files (``.xdxf``) with structured dictionary
-markup. Read-only ``Reader`` parses XDXF entries and can transform definitions
-to HTML for downstream formats.
+markup. ``Reader`` parses XDXF entries and can transform definitions to HTML for
+downstream formats. ``Writer`` exports entries whose definition format is XDXF.
 """
 
 from __future__ import annotations
@@ -13,12 +13,14 @@ from typing import TYPE_CHECKING
 from pyglossary.option import BoolOption
 
 from .reader import Reader
+from .writer import Writer
 
 if TYPE_CHECKING:
 	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",
+	"Writer",
 	"description",
 	"enable",
 	"extensionCreate",
@@ -82,3 +84,9 @@ old format
 	...
 </xdxf>
 """
+
+docTail = """### Write support
+
+The XDXF writer only writes entries that are already XDXF-formatted, so it is
+only useful when reading from StarDict or FreeDict, or when modifying an existing
+XDXF glossary."""

@@ -162,24 +162,6 @@ class TestGlossaryErrors(TestGlossaryErrorsBase):
 		self.assertIsNone(res)
 		self.assertLogCritical("No filename nor format is given for output file")
 
-	def test_detectOutputFormat_err4_1(self):
-		res = Glossary.detectOutputFormat(
-			filename="",
-			formatName="Xdxf",
-			inputFilename="test3.xdxf",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("plugin Xdxf does not support writing")
-
-	def test_detectOutputFormat_err4_2(self):
-		res = Glossary.detectOutputFormat(
-			filename="test.xdxf",
-			formatName="",
-			inputFilename="",
-		)
-		self.assertIsNone(res)
-		self.assertLogCritical("plugin Xdxf does not support writing")
-
 	def test_detectOutputFormat_err5(self):
 		res = Glossary.detectOutputFormat(
 			filename="test",

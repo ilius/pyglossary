@@ -80,7 +80,7 @@ Web interface
 | [Tabfile](./doc/p/tabfile.md) | 📝 | .txt, .tab | ✅ | ✅ |
 | [TMX](./doc/p/tmx.md) | 📝 | .tmx | ✅ | |
 | [Wiktextract](./doc/p/wiktextract.md) | 📝 | .jsonl | ✅ | ❌ |
-| [XDXF](./doc/p/xdxf.md) | 📝 | .xdxf | ✅ | ❌ |
+| [XDXF](./doc/p/xdxf.md) | 📝 | .xdxf | ✅ | ✅ |
 | [XLIFF](./doc/p/xliff.md) | 📝 | .xlf, .xliff | ✅ | |
 | [Zim (Kiwix)](./doc/p/zim.md) | 🔢 | .zim | ✅ | ✅ |
 | [ABBYY Lingvo DSL](./doc/p/dsl.md) 🇷🇺 | 📝 | .dsl | ✅ | ❌ |
@@ -110,6 +110,10 @@ Legend:
 must select the format yourself, either in the UI or with the `--read-format` flag.
 Do not confuse SQLite-based formats with [SQLite mode](#sqlite-mode), which is a
 separate feature.
+
+**Note**: The XDXF writer only writes entries that are already XDXF-formatted,
+so it is only useful when reading from StarDict or FreeDict, or when modifying an
+existing XDXF glossary.
 
 ## Requirements
 

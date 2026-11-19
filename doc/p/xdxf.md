@@ -14,9 +14,11 @@ To update, modify plugins/xdxf/__init__.py file, then run ./scripts/gen
 | Description | XDXF (.xdxf) |
 | Extensions | `.xdxf` |
 | Read support | Yes |
-| Write support | No |
+| Write support | Yes |
 | Single-file | Yes |
 | Kind | 📝 text |
+| Sort-on-write | No (by default) |
+| Sort key | (`headword_lower`) |
 | Wiki | [XDXF](https://en.wikipedia.org/wiki/XDXF) |
 | Website | [XDXF standard - @soshial/xdxf_makedict](https://github.com/soshial/xdxf_makedict/tree/master/format_standard) |
 
@@ -36,6 +38,12 @@ To install, run:
 ```sh
 pip3 install lxml
 ```
+
+### Write support
+
+The XDXF writer only writes entries that are already XDXF-formatted, so it is
+only useful when reading from StarDict or FreeDict, or when modifying an existing
+XDXF glossary.
 
 ### Dictionary Applications/Tools
 
