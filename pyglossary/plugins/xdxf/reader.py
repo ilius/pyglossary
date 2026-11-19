@@ -72,6 +72,7 @@ class Reader:
 
 	_html: bool = True
 	_xsl: bool = False
+	_auto_rtl: bool = True
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -97,7 +98,10 @@ class Reader:
 
 		from pyglossary.xdxf.py_transform import XdxfTransformer
 
-		self._htmlTr = XdxfTransformer(encoding=self._encoding)
+		self._htmlTr = XdxfTransformer(
+			encoding=self._encoding,
+			auto_rtl=self._auto_rtl,
+		)
 
 	def open(self, filename: str) -> None:
 		# <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">

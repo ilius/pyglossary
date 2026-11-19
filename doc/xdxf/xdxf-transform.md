@@ -104,9 +104,13 @@ subset of HTML and no CSS.
   ([#532](https://github.com/ilius/pyglossary/issues/532)).
 - `<ex>` examples are grey and indented
   ([#532](https://github.com/ilius/pyglossary/issues/532)).
-- Multiple/nested `<def>` elements render as a numbered list, and `<co>`
-  context is wrapped in parentheses, matching the XDXF-with-CSS plugin's
-  presentation.
+- Multiple/nested `<def>` elements render as a list: unordered for exactly two
+  items and numbered for more, and `<co>` context is wrapped in parentheses.
+- `xml:lang` (or plain `lang`) attributes become `lang` and, with the
+  `auto_rtl` read option, a `dir` of `rtl` or `ltr`; an explicit `dir`
+  attribute in the source is preserved and takes precedence.
+- `<div>` containers are kept as block elements so their `lang`/`dir`
+  attributes are not discarded.
 - `<br/>`, `<img>`, `<nu>` markers and other empty tags are no longer dropped.
 - The whole whitespace and nesting machinery is ~200 lines smaller and each
   event has exactly one handler, so the transform is much easier to reason
@@ -145,7 +149,7 @@ Each example below was rendered with the pure-Python transformer (XSLT disabled)
 
 ![ex_orig_tran](res/ex_orig_tran.svg)
 
-### `nested_defs` — nested <def> renders as a numbered list
+### `nested_defs` — 2 nested <def> elements render as an unordered list
 
 ![nested_defs](res/nested_defs.svg)
 

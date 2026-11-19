@@ -70,7 +70,7 @@ SAMPLES = [
 	(
 		"nested_defs",
 		"<k>polysemy</k><def><def>first meaning</def><def>second meaning</def></def>",
-		"nested <def> renders as a numbered list",
+		"2 nested <def> elements render as an unordered list",
 	),
 	(
 		"single_def",

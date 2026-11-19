@@ -22,13 +22,13 @@ SAMPLES = [
 		),
 		(
 			'<div class="article"><div class="k"><b>grzebiący</b></div>'
-			'<ol><li><span class="pos"><font color="green"><i>прич. от</i>'
+			'<ul><li><span class="pos"><font color="green"><i>прич. от</i>'
 			"</font></span> <b>grzebać</b>; </li>"
 			'<li><span class="co">(grzebiące, grzebiących)</span> '
 			'<span class="pos"><font color="green"><i>мн. зоол.</i>'
 			'</font></span> кури́ные <span class="pos">'
 			'<font color="green"><i>lm</i></font></span>'
-			" (Galliformes) </li></ol></div>"
+			" (Galliformes) </li></ul></div>"
 		),
 	),
 	(
@@ -91,11 +91,27 @@ SAMPLES = [
 		),
 	),
 	(
-		"nested_defs",  # nested <def> renders as a numbered list
+		"nested_defs",  # 2 nested <def> elements render as an unordered list
 		"<k>polysemy</k><def><def>first meaning</def><def>second meaning</def></def>",
 		(
 			'<div class="article"><div class="k"><b>polysemy</b></div>'
-			"<ol><li>first meaning</li><li>second meaning</li></ol></div>"
+			"<ul><li>first meaning</li><li>second meaning</li></ul></div>"
+		),
+	),
+	(
+		"nested_defs_three",  # 3 nested <def> elements render as a numbered list
+		("<k>polysemy</k><def><def>first</def><def>second</def><def>third</def></def>"),
+		(
+			'<div class="article"><div class="k"><b>polysemy</b></div>'
+			"<ol><li>first</li><li>second</li><li>third</li></ol></div>"
+		),
+	),
+	(
+		"nested_defs_deep",  # 2 nested <def> elements at every level
+		"<k>deep</k><def><def><def>a</def><def>b</def></def><def>c</def></def>",
+		(
+			'<div class="article"><div class="k"><b>deep</b></div>'
+			"<ul><li><ul><li>a</li><li>b</li></ul></li><li>c</li></ul></div>"
 		),
 	),
 	(
@@ -237,6 +253,81 @@ class XdxfTransformerTest(unittest.TestCase):
 			'<div class="article"><div class="k"><b>ADSL</b></div>'
 			'See: <a class="kref" href="bword://asymmetrical%20digital%20subscriber%20line">'
 			"asymmetrical digital subscriber line</a></div>",
+		)
+
+	def test_auto_rtl(self):
+		tr = XdxfTransformer()
+		article = ET.fromstring('<ar><k>x</k><def xml:lang="fa">سلام</def></ar>')
+		self.assertEqual(
+			tr.transform(article),
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div lang="fa" dir="rtl">سلام</div></div>',
+		)
+
+	def test_auto_rtl_lang(self):
+		cases = (
+			("fa", "rtl"),
+			("fa-IR", "rtl"),
+			("en", "ltr"),
+			("en-US", "ltr"),
+		)
+		for lang, direction in cases:
+			with self.subTest(lang=lang):
+				article = ET.fromstring(
+					f'<ar><k>x</k><def xml:lang="{lang}">text</def></ar>',
+				)
+				self.assertIn(
+					f' lang="{lang}" dir="{direction}"',
+					XdxfTransformer().transform(article),
+				)
+
+	def test_auto_rtl_disabled(self):
+		tr = XdxfTransformer(auto_rtl=False)
+		article = ET.fromstring('<ar><k>x</k><def xml:lang="fa">سلام</def></ar>')
+		self.assertEqual(
+			tr.transform(article),
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div lang="fa">سلام</div></div>',
+		)
+
+	def test_auto_rtl_nested(self):
+		inner = (
+			'<k>x</k><def xml:lang="fa"><def xml:lang="fa">a</def>'
+			'<def xml:lang="en">b</def></def>'
+		)
+		self.case(
+			inner,
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<ul lang="fa" dir="rtl"><li lang="fa" dir="rtl">a</li>'
+			'<li lang="en" dir="ltr">b</li></ul></div>',
+		)
+
+	def test_div_dir(self):
+		self.case(
+			'<k>x</k><def><div dir="rtl">سلام</div></def>',
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div><div dir="rtl">سلام</div></div></div>',
+		)
+
+	def test_div_lang_auto_rtl(self):
+		self.case(
+			'<k>x</k><def><div lang="fa">سلام</div></def>',
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div><div lang="fa" dir="rtl">سلام</div></div></div>',
+		)
+
+	def test_div_explicit_dir_overrides_auto_rtl(self):
+		self.case(
+			'<k>x</k><def><div xml:lang="en" dir="rtl">a</div></def>',
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div><div lang="en" dir="rtl">a</div></div></div>',
+		)
+
+	def test_div_inside_definition_list(self):
+		self.case(
+			'<k>x</k><def><div dir="rtl"><def><def>a</def><def>b</def></def></div></def>',
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div><div dir="rtl"><ul><li>a</li><li>b</li></ul></div></div></div>',
 		)
 
 

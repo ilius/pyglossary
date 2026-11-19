@@ -74,6 +74,7 @@ class Reader:
 
 	_html: bool = True
 	_xsl: bool = False
+	_auto_rtl: bool = True
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -138,7 +139,10 @@ class Reader:
 			if self._xsl:
 				self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
 			else:
-				self._htmlTr = XdxfTransformer(encoding=self._encoding)
+				self._htmlTr = XdxfTransformer(
+					encoding=self._encoding,
+					auto_rtl=self._auto_rtl,
+				)
 			self._glos.setDefaultDefiFormat("h")
 		else:
 			self._glos.setDefaultDefiFormat("x")

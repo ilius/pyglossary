@@ -2034,13 +2034,19 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Use XSL transformation"
+			},
+			"auto_rtl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Auto-detect and mark Right-to-Left text"
 			}
 		},
 		"canRead": true,
 		"canWrite": true,
 		"readOptions": {
 			"html": true,
-			"xsl": false
+			"xsl": false,
+			"auto_rtl": true
 		},
 		"writeOptions": {},
 		"readDepends": {
@@ -2097,13 +2103,19 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Use XSL transformation"
+			},
+			"auto_rtl": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Auto-detect and mark Right-to-Left text"
 			}
 		},
 		"canRead": true,
 		"canWrite": false,
 		"readOptions": {
 			"html": true,
-			"xsl": false
+			"xsl": false,
+			"auto_rtl": true
 		},
 		"readDepends": {
 			"lxml": "lxml"

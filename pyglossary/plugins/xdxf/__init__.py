@@ -53,6 +53,9 @@ optionsProp: dict[str, Option] = {
 	"xsl": BoolOption(
 		comment="Use XSL transformation",
 	),
+	"auto_rtl": BoolOption(
+		comment="Auto-detect and mark Right-to-Left text",
+	),
 }
 
 """

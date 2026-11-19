@@ -2,7 +2,7 @@
 <!DOCTYPE xdxf SYSTEM "http://xdxf.sourceforge.net/xdxf_lousy.dtd">
 <xdxf lang_from="eng" lang_to="eng" format="visual">
 	<full_name>nested_defs</full_name>
-	<description>nested &lt;def&gt; renders as a numbered list</description>
+	<description>2 nested &lt;def&gt; elements render as an unordered list</description>
 	<lexicon>
 		<ar>
 			<k>polysemy</k><def><def>first meaning</def><def>second meaning</def></def>

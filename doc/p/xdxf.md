@@ -28,6 +28,7 @@ To update, modify plugins/xdxf/__init__.py file, then run ./scripts/gen
 | ---- | ------- | ---- | ------- |
 | html | `True` | bool | Entries are HTML |
 | xsl | `False` | bool | Use XSL transformation |
+| auto_rtl | `True` | bool | Auto-detect and mark Right-to-Left text |
 
 ### Dependencies for reading
 

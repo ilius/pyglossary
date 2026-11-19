@@ -30,6 +30,8 @@ from xml.sax.saxutils import escape, quoteattr
 
 from lxml import etree as ET
 
+from pyglossary.langs import langDict
+
 if TYPE_CHECKING:
 	from collections.abc import Iterator
 
@@ -43,6 +45,7 @@ __all__ = [
 
 _GRAM_COLOR = "green"
 _EX_STYLE = "margin: 0px 0px 0px 20px; color: #888888;"
+_XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 # XDXF tags whose output is a block-level HTML element (or ends with a line
 # break). A browser ignores leading whitespace after such elements, so we
@@ -57,6 +60,7 @@ _BLOCK_TAGS = frozenset(
 		"gr",
 		"tr",
 		"br",
+		"div",
 	},
 )
 
@@ -90,6 +94,7 @@ _OPEN_HTML = {
 	"abbr": "<i>",
 	"categ": '<span style="background-color: green;">',
 	"span": "<span>",
+	"div": "<div>",
 	"ex_orig": "<i>",
 	"ex_tran": "<i>",
 	"ex_transl": "<i>",
@@ -133,6 +138,7 @@ _CLOSE_HTML = {
 	"abbr": "</i>",
 	"categ": "</span>",
 	"span": "</span>",
+	"div": "</div>",
 	"ex_orig": "</i>",
 	"ex_tran": "</i>",
 	"ex_transl": "</i>",
@@ -195,12 +201,37 @@ class XdxfTransformer:
 	_gram_color: str = _GRAM_COLOR
 	_ex_style: str = _EX_STYLE
 
-	def __init__(self, encoding: str = "utf-8") -> None:
+	def __init__(self, encoding: str = "utf-8", auto_rtl: bool = True) -> None:
 		self._encoding = encoding
+		self._auto_rtl = auto_rtl
 		# state, reset by ``transform``:
 		self._out: list[str] = []
 		self._stack: list[_StackItem] = []
 		self._buf: str | None = None
+
+	def _langAttrs(self, attrs: dict[str, str]) -> str:
+		lang = attrs.get(_XML_LANG) or attrs.get("lang")
+		direction = attrs.get("dir")
+		result = ""
+		if lang:
+			result = f" lang={quoteattr(lang)}"
+			if not direction and self._auto_rtl:
+				langObj = langDict[lang.split("-")[0].lower()]
+				if langObj:
+					direction = "rtl" if langObj.rtl else "ltr"
+		if direction:
+			result += f" dir={quoteattr(direction)}"
+		return result
+
+	@staticmethod
+	def _withAttrs(openHtml: str, attrStr: str) -> str:
+		if not attrStr:
+			return openHtml
+		if openHtml.endswith("/>"):
+			return openHtml[:-2] + attrStr + "/>"
+		if openHtml.endswith(">"):
+			return openHtml[:-1] + attrStr + ">"
+		return openHtml
 
 	@staticmethod
 	def tostring(elem: Element) -> str:
@@ -235,17 +266,23 @@ class XdxfTransformer:
 		item.lastBlock = False
 
 	def _onDefStart(self, tag: str, elem: Element) -> None:
-		hasNested = any(c.tag == "def" for c in elem)
+		nestedCount = sum(1 for c in elem if c.tag == "def")
+		hasNested = nestedCount > 0
 		hasDeftext = any(c.tag == "deftext" for c in elem)
+		listTag = "ul" if nestedCount == 2 else "ol"
+		attrStr = self._langAttrs(elem.attrib)
 		parentTag = self._stack[-1].tag if self._stack else ""
-		if parentTag == "ar":
-			openHtml, closeHtml = ("<ol>", "</ol>") if hasNested else ("<div>", "</div>")
+		if parentTag in {"ar", "div"}:
+			if hasNested:
+				openHtml, closeHtml = f"<{listTag}{attrStr}>", f"</{listTag}>"
+			else:
+				openHtml, closeHtml = f"<div{attrStr}>", "</div>"
 		elif hasDeftext:
-			openHtml, closeHtml = "<li>", "</li>"
+			openHtml, closeHtml = f"<li{attrStr}>", "</li>"
 		elif hasNested:
-			openHtml, closeHtml = "<li><ol>", "</ol></li>"
+			openHtml, closeHtml = f"<li{attrStr}><{listTag}>", f"</{listTag}></li>"
 		else:
-			openHtml, closeHtml = "<li>", "</li>"
+			openHtml, closeHtml = f"<li{attrStr}>", "</li>"
 		self._out.append(openHtml)
 		self._stack.append(
 			_StackItem(
@@ -271,14 +308,18 @@ class XdxfTransformer:
 			self._onDefStart(tag, elem)
 			return
 		if tag == "c":
-			self._out.append(f'<font color="{attrs.get("c", self._gram_color)}">')
+			openHtml = f'<font color="{attrs.get("c", self._gram_color)}">'
+			self._out.append(self._withAttrs(openHtml, self._langAttrs(attrs)))
 			self._stack.append(_StackItem(tag=tag, lastBlock=True, payload="</font>"))
 			return
 		if tag == "img":
 			attrStr = "".join(
-				f" {key}={quoteattr(value)}" for key, value in attrs.items()
+				f" {key}={quoteattr(value)}"
+				for key, value in attrs.items()
+				if key != _XML_LANG
 			)
-			self._out.append(f"<img{attrStr}/>")
+			openHtml = self._withAttrs(f"<img{attrStr}/>", self._langAttrs(attrs))
+			self._out.append(openHtml)
 			self._stack.append(_StackItem(tag=tag, lastBlock=False))
 			return
 		if tag in {"nu", "rref"}:
@@ -287,6 +328,7 @@ class XdxfTransformer:
 			return
 		openHtml = _OPEN_HTML.get(tag)
 		if openHtml is not None:
+			openHtml = self._withAttrs(openHtml, self._langAttrs(attrs))
 			self._out.append(openHtml)
 		self._stack.append(
 			_StackItem(
@@ -303,21 +345,26 @@ class XdxfTransformer:
 			assert isinstance(attrs, dict)
 			buf = self._buf or ""
 			self._buf = None
+			langAttrs = self._langAttrs(attrs)
 			if item.tag == "kref":
 				if not buf:
 					log.warning("kref with no text")
 				href = attrs.get("k", buf)
 				self._out.append(
 					'<a class="kref" href='
-					f"{quoteattr('bword://' + _urlencode(href))}>{escape(buf)}</a>"
+					f"{quoteattr('bword://' + _urlencode(href))}{langAttrs}>"
+					f"{escape(buf)}</a>"
 				)
 			else:
 				href = _urlencode(attrs.get("href", buf))
 				if href.endswith((".mp3", ".wav", ".aac", ".ogg")):
-					self._out.append(f'<a class="iref" href={quoteattr(href)}>🔊</a>')
+					self._out.append(
+						f'<a class="iref" href={quoteattr(href)}{langAttrs}>🔊</a>',
+					)
 				else:
 					self._out.append(
-						f'<a class="iref" href={quoteattr(href)}>{escape(buf)}</a>'
+						f'<a class="iref" href={quoteattr(href)}{langAttrs}>'
+						f"{escape(buf)}</a>",
 					)
 			isBlock = False
 		else:
