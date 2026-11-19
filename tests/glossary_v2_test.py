@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import random
+import shutil
 import sys
 import tempfile
 import time
@@ -50,6 +51,8 @@ os.makedirs(testCacheDir, exist_ok=True)
 os.chdir(testCacheDir)
 
 os.makedirs(join(tmpDir, "pyglossary"), exist_ok=True)
+
+convertedInputPaths: set[str] = set()
 
 
 class TestGlossaryBase(unittest.TestCase):
@@ -173,6 +176,18 @@ class TestGlossaryBase(unittest.TestCase):
 	def compareTextFiles(self, fpath1, fpath2, showDiff=False):
 		self.assertTrue(isfile(fpath1), f"{fpath1 = }")
 		self.assertTrue(isfile(fpath2), f"{fpath2 = }")
+		if os.getenv("PYGLOSSARY_UPDATE_TEST_DATA"):
+			dataDir = realpath(testLocalDataDir)
+			expectedPath = realpath(fpath2)
+			if expectedPath.startswith(dataDir + os.sep) and expectedPath.endswith(
+				".txt",
+			):
+				if expectedPath in convertedInputPaths:
+					print(f"kept {fpath2} (also used as input)")
+					return
+				shutil.copyfile(fpath1, fpath2)
+				print(f"updated {fpath2}")
+				return
 		with open(fpath1, encoding="utf-8") as file1:
 			text1 = file1.read().rstrip("\n")
 		with open(fpath2, encoding="utf-8") as file2:
@@ -267,6 +282,7 @@ class TestGlossaryBase(unittest.TestCase):
 		**convertKWArgs,
 	):
 		inputFilename = self.downloadFile(fname)
+		convertedInputPaths.add(realpath(inputFilename))
 		outputFilename = self.newTempFilePath(fname2)
 		glos = self.glos = Glossary()
 		if name is not None:
