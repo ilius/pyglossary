@@ -24,7 +24,7 @@ To update, modify plugins/freedict/__init__.py file, then run ./scripts/gen
 
 | Name | Default | Type | Comment |
 | ---- | ------- | ---- | ------- |
-| defiFormat | `h` | str | Definition format: h (HTML) or m (Markdown) |
+| defiFormat | `h` | str | Definition format: h (HTML), m (Markdown) or x (XDXF) |
 | auto_rtl | `True` | bool | Auto-detect and mark Right-to-Left text |
 | auto_comma | `True` | bool | Auto-detect comma sign based on text |
 | comma | `, ` | str | Comma sign (following space) to use as separator |

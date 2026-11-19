@@ -1,8 +1,8 @@
 # FreeDict plugin review
 
-Scope: `parser.py`, `reader.py`, `formatter.py`, `html_formatter.py`, `md_formatter.py`, `utils.py`, `options.py`, `__init__.py` in this directory, `doc/p/freedict.md`, and `tests/g_freedict_test.py`.
+Scope: `parser.py`, `reader.py`, `formatter.py`, `html_formatter.py`, `md_formatter.py`, `xdxf_formatter.py`, `utils.py`, `options.py`, `__init__.py` in this directory, `doc/p/freedict.md`, and `tests/g_freedict_test.py`.
 
-Status: `tests/g_freedict_test.py` passes for both HTML and Markdown definitions; `ruff check` and `mypy` are clean for these modules.
+Status: `tests/g_freedict_test.py` passes for HTML, Markdown and XDXF definitions; `ruff check` and `mypy` are clean for these modules.
 
 ## Tests and docs
 
@@ -12,4 +12,4 @@ Status: `tests/g_freedict_test.py` passes for both HTML and Markdown definitions
 ## Suggested order
 
 1. Add a non-Latin `auto_comma` fixture and tests for the uncovered options; rename fixtures per CLAUDE.md and regenerate outputs (items 2, 3, 4, 5).
-2. TEI entries are laid out into the neutral tree in `freedict/document.py` by `freedict/layout.py`; formatting is a generic dispatch in `freedict/formatter.py` with HTML and Markdown implementations in `freedict/html_formatter.py` and `freedict/md_formatter.py`, and file I/O lives in `freedict/reader.py`. The single reader chooses the formatter from the `defiFormat` option.
+2. TEI entries are laid out into the neutral tree in `freedict/document.py` by `freedict/layout.py`; formatting is a generic dispatch in `freedict/formatter.py` with HTML, Markdown and XDXF implementations in `freedict/html_formatter.py`, `freedict/md_formatter.py` and `freedict/xdxf_formatter.py`, and file I/O lives in `freedict/reader.py`. The single reader chooses the formatter from the `defiFormat` option.

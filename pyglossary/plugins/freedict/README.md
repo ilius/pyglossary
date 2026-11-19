@@ -1,8 +1,8 @@
 # FreeDict plugin architecture
 
 Design notes for the `freedict` plugin, which reads FreeDict TEI sources and
-can produce either HTML (the default) or Markdown definitions through the
-`defiFormat` read option. Both outputs share one parser, one layout pass, and one
+can produce HTML (the default), Markdown or XDXF definitions through the
+`defiFormat` read option. All outputs share one parser, one layout pass, and one
 generic formatter traversal; they differ only in the formatter subclass that
 turns the neutral document into output.
 
@@ -34,11 +34,12 @@ These rules keep the layers from leaking into each other:
 ## Pipeline
 
 ```text
-Reader (freedict, defiFormat = h or m)
+Reader (freedict, defiFormat = h, m or x)
   -> Parser                TEI XML -> parsed TEI dataclasses
   -> layout.buildDocument  parsed dataclasses -> neutral document tree
   -> Formatter             neutral document tree -> generic node methods
-  -> HtmlFormatter/MdFormatter  HTML (lxml) or Markdown output
+  -> HtmlFormatter/MdFormatter/XdxfFormatter
+                           HTML (lxml), Markdown or XDXF output
 ```
 
 The reader returns one glossary entry per TEI `<entry>`. The entry's headwords
@@ -57,6 +58,7 @@ pyglossary/plugins/freedict/
   formatter.py       generic Formatter node dispatch
   html_formatter.py  HtmlFormatter
   md_formatter.py    MdFormatter
+  xdxf_formatter.py  XdxfFormatter
   utils.py           TEI helper functions
   README.md          this file
 ```
@@ -65,13 +67,14 @@ pyglossary/plugins/freedict/
 
 | Module | Responsibility | TEI-aware |
 | ------ | -------------- | --------- |
-| `freedict/reader.py` | `Reader`: compression, byte progress, TEI header metadata, XInclude resolution/cycles, include chain, `iterparse` entry loop, option copying into included readers; selects `HtmlFormatter` or `MdFormatter` from the `defiFormat` option. | partly (iterparse tags) |
+| `freedict/reader.py` | `Reader`: compression, byte progress, TEI header metadata, XInclude resolution/cycles, include chain, `iterparse` entry loop, option copying into included readers; selects `HtmlFormatter`, `MdFormatter` or `XdxfFormatter` from the `defiFormat` option. | partly (iterparse tags) |
 | `freedict/parser.py` | Parses TEI elements into `Entry`, `Sense`, `TransCit`, `ExampleCit`, `GramGroup`, `Tag`, `Block`, `Inline` dataclasses. Also parses metadata. | yes |
 | `freedict/layout.py` | Converts parsed dataclasses into the neutral tree. Owns ordering decisions: pending usage/label tags, definition/note/translation lists, sub-senses, RTL sense lists, grammar grouping, example structure, comma separators and optional headword titles. | yes |
 | `freedict/document.py` | Neutral node definitions used by all formatters. | no |
 | `freedict/formatter.py` | `Formatter`: generic traversal of the neutral tree that dispatches each node to an output method. | no |
 | `freedict/html_formatter.py` | `HtmlFormatter`: implements the node methods with lxml `htmlfile`, HTML tags and attributes. | no |
 | `freedict/md_formatter.py` | `MdFormatter`: implements the node methods with Markdown syntax, lists and blockquotes. | no |
+| `freedict/xdxf_formatter.py` | `XdxfFormatter`: implements the node methods with XDXF tags (`gr`, `tr`, `c`, `kref`, `iref`, `def`, `ex`). | no |
 | `freedict/options.py` | Read options. | no |
 | `freedict/utils.py` | TEI helpers: language description, RTL detection, title tag, serialization. | yes |
 
@@ -106,22 +109,22 @@ usage tags share the line of its first translation; the formatter only sees
 
 ### Node reference
 
-| Node | Fields | HTML formatting | Markdown formatting |
-| ---- | ------ | -------------- | ------------------ |
-| `Text` | `text` | written as-is | written as-is |
-| `LineBreak` | – | `<br>` | line break |
-| `Link` | `target`, `children` | `<a href="...">`; external URLs get `class="external"`; missing targets become `bword://text` | `[text](url)` |
-| `Tag` | `kind`, `children` | `<span class="tag" style="...">[children]</span>`, colored by usage/label option | `**children**` |
-| `Grammar` | `text` | `<font class="grammar" color="...">text</font>` | `*text*` |
-| `InlineElement` | `tag`, `attrib`, `children` | element opened with the given tag/attributes | `<p>` adds paragraph breaks; `<div>`/`<span>` are transparent |
-| `Block` | `attrib`, `children` | `<div>` with attributes | children in order |
-| `ListBlock` | `ordered`, `items` | `<ol>`/`<ul>` with `<li>` per item | numbered or bulleted list, nested by depth |
-| `Example` | `children` | `<div class="example" style="padding: ...">` | blockquote (`> ...`) |
-| `Pronunciation` | `items`, `separators` | `/` + colored font + `/` per item, then `<br>` | `/pron/` per item |
-| `Title` | `text` | `glos.titleTag(text)` element (or plain text), then `<br>` | bold/heading depending on the title tag |
+| Node | Fields | HTML formatting | Markdown formatting | XDXF formatting |
+| ---- | ------ | -------------- | ------------------ | --------------- |
+| `Text` | `text` | written as-is | written as-is | XML-escaped text |
+| `LineBreak` | – | `<br>` | line break | `<br/>` |
+| `Link` | `target`, `children` | `<a href="...">`; external URLs get `class="external"`; missing targets become `bword://text` | `[text](url)` | `<kref k="...">` for `bword://` targets, otherwise `<iref href="...">` |
+| `Tag` | `kind`, `children` | `<span class="tag" style="...">[children]</span>`, colored by usage/label option | `**children**` | `<c c="...">[children]</c>`, colored by usage/label option |
+| `Grammar` | `text` | `<font class="grammar" color="...">text</font>` | `*text*` | `<gr>text</gr>` |
+| `InlineElement` | `tag`, `attrib`, `children` | element opened with the given tag/attributes | `<p>` adds paragraph breaks; `<div>`/`<span>` are transparent | `<p>`/`<div>` become block lines, `<span>` keeps its attributes |
+| `Block` | `attrib`, `children` | `<div>` with attributes | children in order | block line; attributes keep a `<div>` wrapper |
+| `ListBlock` | `ordered`, `items` | `<ol>`/`<ul>` with `<li>` per item | numbered or bulleted list, nested by depth | nested `<def>` elements |
+| `Example` | `children` | `<div class="example" style="padding: ...">` | blockquote (`> ...`) | `<ex>...</ex>` |
+| `Pronunciation` | `items`, `separators` | `/` + colored font + `/` per item, then `<br>` | `/pron/` per item | `<tr>...</tr>` with the configured separators |
+| `Title` | `text` | `glos.titleTag(text)` element (or plain text), then `<br>` | bold/heading depending on the title tag | `<b>`/`<big>` or plain text, then `<br/>` |
 
 `HtmlFormatter` wraps the whole document in an outer `<div>`; `MdFormatter`
-does not add a wrapper.
+and `XdxfFormatter` do not add a wrapper.
 
 ## Worked example
 
@@ -232,6 +235,9 @@ attributes: `<div>`, `<ol>`/`<ul>`, `<li>`, `<span>`, `<font>` and `<br>`.
 `MdFormatter` implements the same methods directly with Markdown: numbered or
 bullet lists, blockquotes, bold tags, italic grammar and Markdown links. It also
 cleans up trailing spaces and collapses more than two consecutive newlines.
+`XdxfFormatter` builds an XDXF article body directly, escaping text and using
+`<gr>`, `<tr>`, `<c>`, `<kref>`, `<iref>`, `<def>`, `<ex>` and `<br/>`; the
+headwords are not repeated because PyGlossary stores them separately.
 
 ## Options
 
@@ -240,7 +246,7 @@ layer reads the options it needs:
 
 | Option | Default | Used by |
 | ------ | ------- | ------- |
-| `defiFormat` | `"h"` | reader (selects `HtmlFormatter` or `MdFormatter`) |
+| `defiFormat` | `"h"` | reader (selects `HtmlFormatter`, `MdFormatter` or `XdxfFormatter`) |
 | `auto_rtl` | `True` | parser (language attributes), layout (RTL sense lists) |
 | `auto_comma` | `True` | layout (grammar and pronunciation separators) |
 | `comma` | `", "` | layout (fallback separator) |
@@ -275,8 +281,9 @@ Included readers receive the same options through `Reader._copyOptionsTo`.
 
 ## Trade-offs
 
-- HTML is the reference output. Markdown is produced from the same neutral tree
-  through the same formatter methods, so both formats stay semantically aligned.
+- HTML is the reference output. Markdown and XDXF are produced from the same
+  neutral tree through the same formatter methods, so all formats stay
+  semantically aligned.
 - Some document nodes are deliberately flat (`Tag`, `Text`, `Block` siblings)
   to preserve the original line flow without a second layout pass.
 - The layout layer carries TEI-specific ordering knowledge. This keeps the

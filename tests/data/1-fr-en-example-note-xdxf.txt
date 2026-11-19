@@ -1,0 +1,4 @@
+##name	PyGlossary example note test
+##input_file_size	1337
+##description	Synthetic sample for PyGlossary tests. Contains one entry from the French-English FreeDict Dictionary (fra-eng).
+falloir	<tr>falwaʀ</tr><br/><gr>verb</gr><def><def><ex>Il faut quelque chose<div class="note">We need something</div></ex></def><def><ex>Il faut faire<div class="note">You have to</div></ex></def><def><ex>Il faut que<div class="note">It is necessary that</div></ex></def></def>

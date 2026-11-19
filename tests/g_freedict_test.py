@@ -36,15 +36,27 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"freedict-sample-2024-12-19-v4.txt",
 			"1-en-en-trans-cit-rerender.tei",
 			"1-en-de-labels-md.txt",
+			"1-en-de-labels-xdxf.txt",
+			"1-en-de-labels-xdxf-word_title.txt",
 			"1-en-en-comment-md.txt",
+			"1-en-en-comment-xdxf.txt",
 			"1-en-en-empty-ref-md.txt",
+			"1-en-en-empty-ref-xdxf.txt",
 			"1-en-en-include-cycle-md.txt",
+			"1-en-en-include-cycle-xdxf.txt",
 			"1-en-en-usg-nested-md.txt",
+			"1-en-en-usg-nested-xdxf.txt",
+			"1-en-en-usg-nested-xdxf-no-colors.txt",
 			"1-en-en-usg-whitespace-md.txt",
+			"1-en-en-usg-whitespace-xdxf.txt",
 			"1-en-fa-p-lang-md.txt",
+			"1-en-fa-p-lang-xdxf.txt",
 			"1-fr-en-example-note-md.txt",
+			"1-fr-en-example-note-xdxf.txt",
 			"2-en-en-def-inline-md.txt",
+			"2-en-en-def-inline-xdxf.txt",
 			"14-en-en-md.txt",
+			"14-en-en-xdxf.txt",
 		}
 		self.dataFileCRC32 |= {
 			"100-en-de.tei": "542c210e",
@@ -61,6 +73,15 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 
 	def convert_tei_txt_md(self, fname, fname2, **convertArgs):
 		readOptions = {"defiFormat": "m", **convertArgs.pop("readOptions", {})}
+		self.convert_tei_txt(
+			fname,
+			fname2,
+			readOptions=readOptions,
+			**convertArgs,
+		)
+
+	def convert_tei_txt_xdxf(self, fname, fname2, **convertArgs):
+		readOptions = {"defiFormat": "x", **convertArgs.pop("readOptions", {})}
 		self.convert_tei_txt(
 			fname,
 			fname2,
@@ -200,6 +221,86 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 	def test_convert_tei_txt_md_14_en_en(self):
 		self.convert_tei_txt_md("14-en-en", "14-en-en-md")
 
+	def test_convert_tei_txt_xdxf_labels(self):
+		self.convert_tei_txt_xdxf(
+			"1-en-de-labels",
+			"1-en-de-labels-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_labels_word_title(self):
+		self.convert_tei_txt_xdxf(
+			"1-en-de-labels",
+			"1-en-de-labels-xdxf-word_title",
+			readOptions={"word_title": True},
+		)
+
+	def test_convert_tei_txt_xdxf_comments(self):
+		# XML comments inside <gramGrp> and <sense> must be skipped
+		self.convert_tei_txt_xdxf(
+			"1-en-en-comment",
+			"1-en-en-comment-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_empty_ref(self):
+		# <ref/> without target or text must not produce bword://None
+		self.convert_tei_txt_xdxf(
+			"1-en-en-empty-ref",
+			"1-en-en-empty-ref-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_include_cycle(self):
+		# a file that XIncludes itself must not recurse forever
+		self.convert_tei_txt_xdxf(
+			"1-en-en-include-cycle",
+			"1-en-en-include-cycle-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_usg_nested(self):
+		# <usg> whose text is inside child elements (<lang>, <hi>) must be kept
+		self.convert_tei_txt_xdxf(
+			"1-en-en-usg-nested",
+			"1-en-en-usg-nested-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_usg_nested_no_colors(self):
+		# empty usage/label colours omit the <c c="..."> attribute
+		self.convert_tei_txt_xdxf(
+			"1-en-en-usg-nested",
+			"1-en-en-usg-nested-xdxf-no-colors",
+			readOptions={"usage_color": "", "label_color": ""},
+		)
+
+	def test_convert_tei_txt_xdxf_usg_whitespace(self):
+		# line breaks and indentation inside <usg>/<lbl> must not leak into the tag
+		self.convert_tei_txt_xdxf(
+			"1-en-en-usg-whitespace",
+			"1-en-en-usg-whitespace-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_p_lang(self):
+		# xml:lang on <p> must become lang, not a namespaced ns0:lang attribute
+		self.convert_tei_txt_xdxf(
+			"1-en-fa-p-lang",
+			"1-en-fa-p-lang-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_example_note(self):
+		# <note> inside <cit type="example"> must not be dropped
+		self.convert_tei_txt_xdxf(
+			"1-fr-en-example-note",
+			"1-fr-en-example-note-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_def_inline(self):
+		# inline markup inside <def> keeps its spacing, without separators
+		self.convert_tei_txt_xdxf(
+			"2-en-en-def-inline",
+			"2-en-en-def-inline-xdxf",
+		)
+
+	def test_convert_tei_txt_xdxf_14_en_en(self):
+		self.convert_tei_txt_xdxf("14-en-en", "14-en-en-xdxf")
+
 	def test_direct_read_format_option(self):
 		inputFilename = self.downloadFile("1-en-en-usg-nested.tei")
 		glos = self.glos = Glossary()
@@ -207,6 +308,14 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 		entry = next(iter(glos))
 		self.assertEqual(entry.defiFormat, "m")
 		self.assertIn("**[US informal]**", entry.defi)
+
+	def test_direct_read_format_option_xdxf(self):
+		inputFilename = self.downloadFile("1-en-en-usg-nested.tei")
+		glos = self.glos = Glossary()
+		self.assertTrue(glos.directRead(inputFilename, defiFormat="x"))
+		entry = next(iter(glos))
+		self.assertEqual(entry.defiFormat, "x")
+		self.assertIn('<c class="usage" c="green">[US informal]</c>', entry.defi)
 
 	def test_trans_cit_format_same_entry_twice(self):
 		# Formatting the same entry element twice must give the same output,

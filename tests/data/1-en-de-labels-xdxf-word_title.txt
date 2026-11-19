@@ -1,0 +1,5 @@
+##name	PyGlossary labels and grammar test
+##input_file_size	1596
+##definition_has_headwords	True
+##description	Synthetic sample for PyGlossary tests
+words	<b>words</b><br/><tr>wɜːd</tr><c class="usage" c="green">[archaic]</c> <br/><gr>noun</gr><span class="def">a unit of language</span><def><def><div class="trans"><c class="usage" c="green">[figurative]</c> <c class="label" c="darkblue">[literally]</c> Wort</div><br/><gr>neutral</gr></def><def><def><def><div class="trans">Ding</div></def><def><div class="trans"><c class="usage" c="green">[rare]</c> ein Ding</div></def></def><br/><gr>noun, plural</gr></def><def><div class="trans"><c class="label" c="darkblue">[abbr]</c> Vokabel</div><div class="note">extra text</div></def></def><ex><c class="usage" c="green">[informal]</c> a short word</ex><br/><gr>verb</gr><span class="def">to word something</span>

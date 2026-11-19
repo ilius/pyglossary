@@ -4,7 +4,7 @@ PyGlossary FreeDict format plugin.
 TEI XML dictionaries from the FreeDict project (``.tei``). Read-only
 ``Reader`` parses TEI entries, resolves XIncludes, and builds definitions with
 detected source/target languages. The ``defiFormat`` read option selects HTML
-(default) or Markdown definitions.
+(default), Markdown or XDXF definitions.
 """
 
 from .options import optionsProp

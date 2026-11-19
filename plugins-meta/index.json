@@ -925,9 +925,10 @@
 				"customValue": false,
 				"values": [
 					"h",
-					"m"
+					"m",
+					"x"
 				],
-				"comment": "Definition format: h (HTML) or m (Markdown)"
+				"comment": "Definition format: h (HTML), m (Markdown) or x (XDXF)"
 			},
 			"auto_rtl": {
 				"class": "BoolOption",

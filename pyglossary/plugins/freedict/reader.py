@@ -1,15 +1,16 @@
 """
-Read FreeDict TEI XML dictionaries as HTML or Markdown definitions.
+Read FreeDict TEI XML dictionaries as HTML, Markdown or XDXF definitions.
 
 Parses TEI ``<entry>`` elements (including XInclude), resolves FreeDict
 translation and orthography modules, and detects source/target languages from
 ``xml:lang``. The ``defiFormat`` read option selects the definition format:
-``h`` for HTML (default) or ``m`` for Markdown.
+``h`` for HTML (default), ``m`` for Markdown or ``x`` for XDXF.
 
 The TEI parsing lives in :mod:`pyglossary.plugins.freedict.parser`, the neutral
 document layout in :mod:`pyglossary.plugins.freedict.layout`, and the formatting
-in :mod:`pyglossary.plugins.freedict.html_formatter` and
-:mod:`pyglossary.plugins.freedict.md_formatter`.
+in :mod:`pyglossary.plugins.freedict.html_formatter`,
+:mod:`pyglossary.plugins.freedict.md_formatter` and
+:mod:`pyglossary.plugins.freedict.xdxf_formatter`.
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ from .html_formatter import HtmlFormatter
 from .layout import buildDocument
 from .md_formatter import MdFormatter
 from .parser import ENTRY, INCLUDE, TEI, Metadata, Parser
+from .xdxf_formatter import XdxfFormatter
 
 if TYPE_CHECKING:
 	from collections.abc import Iterator
@@ -61,9 +63,11 @@ class Reader:
 	_label_color: str = "darkblue"
 	_example_padding: int = 10
 
-	def _newFormatter(self) -> HtmlFormatter | MdFormatter:
+	def _newFormatter(self) -> HtmlFormatter | MdFormatter | XdxfFormatter:
 		if self._defiFormat == "m":
 			return MdFormatter(self)
+		if self._defiFormat == "x":
+			return XdxfFormatter(self)
 		return HtmlFormatter(self)
 
 	def _copyOptionsTo(self, other: Reader) -> None:
