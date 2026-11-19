@@ -1,6 +1,6 @@
 <mxfile host="Electron">
   <diagram name="arch" id="arch">
-    <mxGraphModel dx="1373" dy="822" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1375" pageHeight="1062.5" math="0" shadow="0">
+    <mxGraphModel dx="956" dy="621" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1375" pageHeight="1062.5" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -49,32 +49,50 @@
         <mxCell id="web" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Web / WebSocket" vertex="1">
           <mxGeometry height="50" width="161.25" x="20.833333333333336" y="171.25" as="geometry" />
         </mxCell>
+        <mxCell id="utilities" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fontFamily=Droid Sans;fontSize=14;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;pyglossary-view&lt;br&gt;pyglossary-diff&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="151.58" x="667" y="255.5" as="geometry" />
+        </mxCell>
         <mxCell id="uibase-web" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=classic;startFill=1;curved=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;" target="web">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="core" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=1;fontFamily=Droid Sans;fontSize=17.5;" value="Core library" vertex="1">
-          <mxGeometry height="262.5" width="537.5" x="61.25" y="417.5" as="geometry" />
-        </mxCell>
-        <mxCell id="filters" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Entry Filters" vertex="1">
-          <mxGeometry height="50" width="200" x="30" y="187.5" as="geometry" />
+          <mxGeometry height="430" width="537.5" x="61.25" y="417.5" as="geometry" />
         </mxCell>
         <mxCell id="gloss" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Glossary, PluginHandler" vertex="1">
-          <mxGeometry height="75" width="238.75" x="268.75" y="60" as="geometry" />
+          <mxGeometry height="60" width="250" x="150" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="filters" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Entry Filters" vertex="1">
+          <mxGeometry height="50" width="200" x="30" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="info" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Glossary info (title, author, langs)" vertex="1">
+          <mxGeometry height="50" width="210" x="300" y="130" as="geometry" />
         </mxCell>
         <mxCell id="entries" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="EntryList / SQLite-backed lists" vertex="1">
-          <mxGeometry height="50" width="257.5" x="259.375" y="187.5" as="geometry" />
+          <mxGeometry height="50" width="270" x="140" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="entrymodel" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Entry / DataEntry model" vertex="1">
+          <mxGeometry height="50" width="270" x="140" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="sortkeys" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Sort keys (sort_keys)" vertex="1">
+          <mxGeometry height="50" width="270" x="140" y="355" as="geometry" />
         </mxCell>
         <mxCell id="gloss-entries" edge="1" parent="core" source="gloss" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;curved=1;fontFamily=Droid Sans;fontSize=17.5;" target="entries">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="plugins" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontFamily=Droid Sans;fontSize=17.5;" value="Format Plugins" vertex="1">
-          <mxGeometry height="216.25" width="281.25" x="643.75" y="406.25" as="geometry" />
+          <mxGeometry height="300" width="281.25" x="643.75" y="406.25" as="geometry" />
+        </mxCell>
+        <mxCell id="pluginmeta" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;wrap=1;fontFamily=Droid Sans;fontSize=14;" value="PluginProp / PluginLoader (index.json, user plugin dir)" vertex="1">
+          <mxGeometry height="60" width="230" x="25" y="45" as="geometry" />
         </mxCell>
         <mxCell id="r" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Reader classes" vertex="1">
-          <mxGeometry height="50" width="175" x="58.75" y="62.5" as="geometry" />
+          <mxGeometry height="50" width="175" x="53" y="120" as="geometry" />
         </mxCell>
         <mxCell id="w" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=17.5;" value="Writer classes" vertex="1">
-          <mxGeometry height="50" width="175" x="60" y="125" as="geometry" />
+          <mxGeometry height="50" width="175" x="53" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="compress" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fontFamily=Droid Sans;fontSize=14;" value="compress: gz / bz2 / zip I/O" vertex="1">
+          <mxGeometry height="35" width="230" x="25" y="250" as="geometry" />
         </mxCell>
         <mxCell id="ui-gloss" edge="1" parent="1" source="ui" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontFamily=Droid Sans;fontSize=17.5;" target="gloss">
           <mxGeometry relative="1" as="geometry" />
@@ -82,11 +100,22 @@
         <mxCell id="gloss-filters" edge="1" parent="1" source="gloss" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;curved=1;fontFamily=Droid Sans;fontSize=17.5;" target="filters">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="r-gloss" edge="1" parent="1" source="r" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;startArrow=open;startFill=0;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;" target="gloss">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="r-gloss" edge="1" parent="1" source="r" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;startArrow=open;startFill=0;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;edgeStyle=orthogonalEdgeStyle;curved=1;" target="gloss">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="696.83" y="540" />
+              <mxPoint x="590.03" y="540" />
+              <mxPoint x="590.03" y="497.49" />
+            </Array>
+          </mxGeometry>
         </mxCell>
-        <mxCell id="w-gloss" edge="1" parent="1" source="w" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;startArrow=open;startFill=0;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;" target="gloss">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="w-gloss" edge="1" parent="1" source="w" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;startArrow=open;startFill=0;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;edgeStyle=orthogonalEdgeStyle;curved=1;" target="gloss">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="696.83" y="540" />
+              <mxPoint x="336.31" y="540" />
+            </Array>
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
