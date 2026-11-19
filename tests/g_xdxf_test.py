@@ -14,6 +14,11 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			"4-en-en-xdxf.xdxf",
 			"4-en-en-xdxf.txt",
 			"4-en-en-xdxf-raw.txt",
+			"2-en-en-xdxf.xdxf",
+			"2-en-en-xdxf.txt",
+			"2-en-en-xdxf-colors.txt",
+			"2-en-en-xdxf-colors-xsl.txt",
+			"2-en-en-xdxf-wordtitle.txt",
 		}
 		self.dataFileCRC32 |= {
 			"100-cyber_lexicon_en-es.xdxf": "8d9ba394",
@@ -38,20 +43,21 @@ class TestGlossaryXDXF(TestGlossaryBase):
 		self.convert_xdxf_txt(
 			"100-cyber_lexicon_en-es",
 			"100-cyber_lexicon_en-es-v4",
-			readOptions={"xsl": True},
+			readOptions={"xsl": True, "word_title": True},
 		)
 
 	def test_convert_xdxf_txt_2(self):
 		self.convert_xdxf_txt(
 			"100-cyber_lexicon_en-es",
 			"100-cyber_lexicon_en-es-v5",
-			readOptions={"xsl": False},
+			readOptions={"xsl": False, "word_title": True},
 		)
 
 	def test_convert_xdxf_txt_3(self):
 		self.convert_xdxf_txt(
 			"4-en-en-xdxf",
 			"4-en-en-xdxf",
+			readOptions={"word_title": True},
 		)
 
 	def test_convert_xdxf_txt_4(self):
@@ -59,6 +65,40 @@ class TestGlossaryXDXF(TestGlossaryBase):
 			"4-en-en-xdxf",
 			"4-en-en-xdxf-raw",
 			readOptions={"html": False},
+		)
+
+	def test_convert_xdxf_txt(self):
+		self.convert_xdxf_txt(
+			"2-en-en-xdxf",
+			"2-en-en-xdxf",
+		)
+
+	def test_convert_xdxf_txt_wordtitle(self):
+		self.convert_xdxf_txt(
+			"2-en-en-xdxf",
+			"2-en-en-xdxf-wordtitle",
+			readOptions={"word_title": True},
+		)
+
+	def test_convert_xdxf_txt_colors(self):
+		self.convert_xdxf_txt(
+			"2-en-en-xdxf",
+			"2-en-en-xdxf-colors",
+			readOptions={
+				"pron_color": "blue",
+				"gram_color": "red",
+			},
+		)
+
+	def test_convert_xdxf_txt_colors_xsl(self):
+		self.convert_xdxf_txt(
+			"2-en-en-xdxf",
+			"2-en-en-xdxf-colors-xsl",
+			readOptions={
+				"xsl": True,
+				"pron_color": "blue",
+				"gram_color": "red",
+			},
 		)
 
 	def _write_xdxf(self, fname):

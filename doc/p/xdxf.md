@@ -30,6 +30,9 @@ To update, modify plugins/xdxf/__init__.py file, then run ./scripts/gen
 | xsl | `False` | bool | Use XSL transformation |
 | auto_rtl | `True` | bool | Auto-detect and mark Right-to-Left text |
 | example_padding | `10` | int | Padding for examples (in px) |
+| word_title | `False` | bool | Add headwords title to beginning of definition |
+| pron_color | `gray` | str | Pronunciation color |
+| gram_color | `green` | str | Grammar color |
 
 ### Dependencies for reading
 

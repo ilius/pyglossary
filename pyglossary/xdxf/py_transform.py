@@ -197,6 +197,7 @@ class XdxfTransformer:
 	"""Xdxf Transformer."""
 
 	_gram_color: str = _GRAM_COLOR
+	_pron_color: str = "gray"
 	_example_padding: int = 10
 
 	def __init__(
@@ -204,10 +205,14 @@ class XdxfTransformer:
 		encoding: str = "utf-8",
 		auto_rtl: bool = True,
 		example_padding: int = 10,
+		pron_color: str = "gray",
+		gram_color: str = _GRAM_COLOR,
 	) -> None:
 		self._encoding = encoding
 		self._auto_rtl = auto_rtl
 		self._example_padding = example_padding
+		self._pron_color = pron_color
+		self._gram_color = gram_color
 		# state, reset by ``transform``:
 		self._out: list[str] = []
 		self._stack: list[_StackItem] = []
@@ -323,6 +328,16 @@ class XdxfTransformer:
 			self._out.append(self._withAttrs(openHtml, self._langAttrs(attrs)))
 			self._stack.append(_StackItem(tag=tag, lastBlock=True, payload="</font>"))
 			return
+		if tag == "tr":
+			if self._pron_color:
+				openHtml = f'/<font color="{self._pron_color}">'
+				closeHtml = "</font>/<br/>"
+			else:
+				openHtml = "/"
+				closeHtml = "/<br/>"
+			self._out.append(self._withAttrs(openHtml, self._langAttrs(attrs)))
+			self._stack.append(_StackItem(tag=tag, lastBlock=True, payload=closeHtml))
+			return
 		if tag == "img":
 			attrStr = "".join(
 				f" {key}={quoteattr(value)}"
@@ -339,6 +354,8 @@ class XdxfTransformer:
 			return
 		openHtml = _OPEN_HTML.get(tag)
 		if openHtml is not None:
+			if tag in {"pos", "abr", "gr", "categ"}:
+				openHtml = openHtml.replace("green", self._gram_color)
 			openHtml = self._withAttrs(openHtml, self._langAttrs(attrs))
 			self._out.append(openHtml)
 		self._stack.append(

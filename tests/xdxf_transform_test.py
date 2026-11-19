@@ -64,7 +64,8 @@ SAMPLES = [
 		),
 		(
 			'<div class="article"><div class="k"><b>abstinence</b></div>'
-			'[ˈæbstɪnən(t)s]<br/><span class="abr"><font color="green">'
+			'/<font color="gray">ˈæbstɪnən(t)s</font>/<br/>'
+			'<span class="abr"><font color="green">'
 			"<i>сущ.</i></font></span><br/> 1) "
 			'<font color="green"><span class="co">(= abstention)</span></font>'
 			"<br/>  а) воздержание; умеренность<br/>   "
@@ -123,14 +124,15 @@ SAMPLES = [
 		),
 	),
 	(
-		"transcription",  # transcription in brackets, <c>/<co>/<abr> inline formatting
+		"transcription",  # transcription between slashes, <c>/<co>/<abr> inline formatting
 		(
 			"<k>'Arry</k>\n<tr>ˈærɪ</tr>\n <abr>сущ.</abr>\n "
 			"1) <c><dtrn><co><abr><i>прост.</i></abr>; = <kref>Harry</kref></co></dtrn></c>"
 		),
 		(
 			'<div class="article"><div class="k"><b>\'Arry</b></div>'
-			'[ˈærɪ]<br/><span class="abr"><font color="green"><i>сущ.</i>'
+			'/<font color="gray">ˈærɪ</font>/<br/>'
+			'<span class="abr"><font color="green"><i>сущ.</i>'
 			"</font></span><br/> 1) "
 			'<font color="green"><span class="co">(<span class="abr">'
 			'<font color="green"><i><i>прост.</i></i></font></span>; = '
@@ -262,6 +264,33 @@ class XdxfTransformerTest(unittest.TestCase):
 			tr.transform(article),
 			'<div class="article"><div class="k"><b>x</b></div>'
 			'<div class="example" style="padding: 25px 0px;">example</div></div>',
+		)
+
+	def test_pron_color(self):
+		tr = XdxfTransformer(pron_color="blue")
+		article = ET.fromstring("<ar><k>x</k><tr>wɜːd</tr></ar>")
+		self.assertEqual(
+			tr.transform(article),
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'/<font color="blue">wɜːd</font>/<br/></div>',
+		)
+
+	def test_pron_color_empty(self):
+		tr = XdxfTransformer(pron_color="")
+		article = ET.fromstring("<ar><k>x</k><tr>wɜːd</tr></ar>")
+		self.assertEqual(
+			tr.transform(article),
+			'<div class="article"><div class="k"><b>x</b></div>/wɜːd/<br/></div>',
+		)
+
+	def test_gram_color(self):
+		tr = XdxfTransformer(gram_color="red")
+		article = ET.fromstring("<ar><k>x</k><pos>noun</pos><c>text</c></ar>")
+		self.assertEqual(
+			tr.transform(article),
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<span class="pos"><font color="red"><i>noun</i></font></span>'
+			'<font color="red">text</font></div>',
 		)
 
 	def test_auto_rtl(self):

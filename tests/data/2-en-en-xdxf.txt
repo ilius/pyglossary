@@ -1,0 +1,7 @@
+##name	XDXF Options Coverage
+##description	Synthetic sample for PyGlossary tests
+##sourceLang	English
+##targetLang	English
+##input_file_size	527
+alpha	<div class="article">/<font color="gray">ˈælfə</font>/<br/><span class="pos"><font color="green"><i>noun</i></font></span><br/>\t\t\t<div>first letter<br/>\t\t\t</div></div>
+beta	<div class="article">/<font color="gray">ˈbiːtə</font>/<br/><span class="pos"><font color="green"><i>noun</i></font></span><br/>\t\t\t<div>second letter<br/>\t\t\t</div></div>

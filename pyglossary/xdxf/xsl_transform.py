@@ -32,12 +32,15 @@ class XslXdxfTransformer:
 	"""Xsl Xdxf Transformer."""
 
 	_gram_color: str = "green"
+	_pron_color: str = "gray"
 	_example_padding: int = 10
 
 	def __init__(
 		self,
 		encoding: str = "utf-8",
 		example_padding: int = 10,
+		pron_color: str = "gray",
+		gram_color: str = "green",
 	) -> None:
 		try:
 			from lxml import etree as ET
@@ -55,6 +58,8 @@ class XslXdxfTransformer:
 		self._transform = ET.XSLT(xslt)
 		self._encoding = encoding
 		self._example_padding = example_padding
+		self._pron_color = pron_color
+		self._gram_color = gram_color
 
 	@staticmethod
 	def tostring(elem: _XSLTResultTree | Element) -> str:
@@ -72,9 +77,13 @@ class XslXdxfTransformer:
 		)
 
 	def transform(self, article: Element) -> str:
+		from lxml import etree as ET
+
 		result_tree = self._transform(
 			article,
 			example_padding=str(self._example_padding),
+			pron_color=ET.XSLT.strparam(self._pron_color),
+			gram_color=ET.XSLT.strparam(self._gram_color),
 		)
 		text = self.tostring(result_tree)
 		text = text.replace("<br> ", "<br/>")

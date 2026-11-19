@@ -5,6 +5,8 @@
   <xsl:output method="html"/>
 
   <xsl:param name="example_padding" select="10"/>
+  <xsl:param name="pron_color" select="'gray'"/>
+  <xsl:param name="gram_color" select="'green'"/>
 
   <xsl:template name="last-substring-after">
     <xsl:param name="text"/>
@@ -46,7 +48,16 @@
   <xsl:template match="br[name(preceding-sibling::*[1])='blockquote' or name(following-sibling::*[1])='blockquote']" />
 
   <xsl:template match="tr">
-    <span class="tr">[<xsl:apply-templates/>]</span>
+    <xsl:text>/</xsl:text>
+    <xsl:choose>
+      <xsl:when test="$pron_color != ''">
+        <font color="{$pron_color}"><xsl:apply-templates/></font>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>/</xsl:text>
   </xsl:template>
 
   <xsl:template match="k">
@@ -74,7 +85,7 @@
   </xsl:template>
 
   <xsl:template match="pos | abr | abbr | gr">
-    <span class="abr"><font color="green"><i><xsl:apply-templates/></i></font></span>
+    <span class="abr"><font color="{$gram_color}"><i><xsl:apply-templates/></i></font></span>
   </xsl:template>
 
   <xsl:template match="co">
@@ -90,7 +101,7 @@
   </xsl:template>
 
   <xsl:template match="c">
-    <font color="green"><xsl:apply-templates/></font>
+    <font color="{$gram_color}"><xsl:apply-templates/></font>
   </xsl:template>
 
   <xsl:template match="kref">
@@ -133,7 +144,7 @@
   </xsl:template>
 
   <xsl:template match="categ">
-    <span class="category" style="background-color: green;"><xsl:apply-templates/></span>
+    <span class="category" style="background-color: {$gram_color};"><xsl:apply-templates/></span>
   </xsl:template>
 
   <xsl:template match="opt">

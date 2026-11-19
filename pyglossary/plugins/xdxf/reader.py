@@ -28,7 +28,6 @@ directives from the XML source.
 
 from __future__ import annotations
 
-import re
 import typing
 from typing import TYPE_CHECKING, cast
 
@@ -74,6 +73,9 @@ class Reader:
 	_xsl: bool = False
 	_auto_rtl: bool = True
 	_example_padding: int = 10
+	_word_title: bool = False
+	_pron_color: str = "gray"
+	_gram_color: str = "green"
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -86,9 +88,6 @@ class Reader:
 		self._file: io.IOBase = nullBinaryIO
 		self._encoding = "utf-8"
 		self._htmlTr: TransformerType | None = None
-		self._re_span_k = re.compile(
-			'<span class="k">[^<>]*</span>(<br/>)?',
-		)
 
 	def makeTransformer(self) -> None:
 		if self._xsl:
@@ -97,6 +96,8 @@ class Reader:
 			self._htmlTr = XslXdxfTransformer(
 				encoding=self._encoding,
 				example_padding=self._example_padding,
+				pron_color=self._pron_color,
+				gram_color=self._gram_color,
 			)
 			return
 
@@ -106,6 +107,8 @@ class Reader:
 			encoding=self._encoding,
 			auto_rtl=self._auto_rtl,
 			example_padding=self._example_padding,
+			pron_color=self._pron_color,
+			gram_color=self._gram_color,
 		)
 
 	def open(self, filename: str) -> None:
@@ -198,10 +201,11 @@ class Reader:
 			article.tail = None
 			terms = [toStr(w) for w in self.titles(article)]
 			if self._htmlTr:
+				if not self._word_title:
+					for titleElement in article.findall("k"):
+						article.remove(titleElement)
 				defi = self._htmlTr.transform(article)
 				defiFormat = "h"
-				if len(terms) == 1:
-					defi = self._re_span_k.sub("", defi)
 			else:
 				b_defi = cast("bytes", ET.tostring(article, encoding=self._encoding))
 				defi = b_defi[4:-5].decode(self._encoding).strip()

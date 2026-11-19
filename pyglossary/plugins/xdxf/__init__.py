@@ -8,15 +8,9 @@ downstream formats. ``Writer`` exports entries whose definition format is XDXF.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from pyglossary.option import BoolOption, IntOption
-
+from .options import optionsProp
 from .reader import Reader
 from .writer import Writer
-
-if TYPE_CHECKING:
-	from pyglossary.option import Option
 
 __all__ = [
 	"Reader",
@@ -48,20 +42,6 @@ website = (
 	"XDXF standard - @soshial/xdxf_makedict",
 )
 relatedFormats: list[str] = ["XdxfCss", "XdxfLax"]
-optionsProp: dict[str, Option] = {
-	"html": BoolOption(comment="Entries are HTML"),
-	"xsl": BoolOption(
-		comment="Use XSL transformation",
-	),
-	"auto_rtl": BoolOption(
-		comment="Auto-detect and mark Right-to-Left text",
-	),
-	"example_padding": IntOption(
-		comment="Padding for examples (in px)",
-		minim=0,
-		maxim=10000,
-	),
-}
 
 """
 new format

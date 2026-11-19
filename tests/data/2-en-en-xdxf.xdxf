@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xdxf version="1.0">
+	<meta_info>
+		<full_title>XDXF Options Coverage</full_title>
+		<description>Synthetic sample for PyGlossary tests</description>
+		<from xml:lang="en-US"/>
+		<to xml:lang="en-GB"/>
+	</meta_info>
+	<lexicon>
+		<ar>
+			<k>alpha</k>
+			<tr>ˈælfə</tr>
+			<pos>noun</pos>
+			<def>
+				<dtrn>first letter</dtrn>
+			</def>
+		</ar>
+		<ar>
+			<k>beta</k>
+			<tr>ˈbiːtə</tr>
+			<pos>noun</pos>
+			<def>
+				<dtrn>second letter</dtrn>
+			</def>
+		</ar>
+	</lexicon>
+</xdxf>

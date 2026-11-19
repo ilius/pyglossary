@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.option import BoolOption, IntOption
+from pyglossary.option import BoolOption, IntOption, StrOption
 
 from .reader import Reader
 
@@ -58,5 +58,14 @@ optionsProp: dict[str, Option] = {
 		comment="Padding for examples (in px)",
 		minim=0,
 		maxim=10000,
+	),
+	"word_title": BoolOption(
+		comment="Add headwords title to beginning of definition",
+	),
+	"pron_color": StrOption(
+		comment="Pronunciation color",
+	),
+	"gram_color": StrOption(
+		comment="Grammar color",
 	),
 }

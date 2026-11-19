@@ -2045,6 +2045,23 @@
 				"type": "int",
 				"customValue": true,
 				"comment": "Padding for examples (in px)"
+			},
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add headwords title to beginning of definition"
+			},
+			"pron_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Pronunciation color"
+			},
+			"gram_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Grammar color"
 			}
 		},
 		"canRead": true,
@@ -2053,7 +2070,10 @@
 			"html": true,
 			"xsl": false,
 			"auto_rtl": true,
-			"example_padding": 10
+			"example_padding": 10,
+			"word_title": false,
+			"pron_color": "gray",
+			"gram_color": "green"
 		},
 		"writeOptions": {},
 		"readDepends": {
@@ -2121,6 +2141,23 @@
 				"type": "int",
 				"customValue": true,
 				"comment": "Padding for examples (in px)"
+			},
+			"word_title": {
+				"class": "BoolOption",
+				"type": "bool",
+				"comment": "Add headwords title to beginning of definition"
+			},
+			"pron_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Pronunciation color"
+			},
+			"gram_color": {
+				"class": "StrOption",
+				"type": "str",
+				"customValue": true,
+				"comment": "Grammar color"
 			}
 		},
 		"canRead": true,
@@ -2129,7 +2166,10 @@
 			"html": true,
 			"xsl": false,
 			"auto_rtl": true,
-			"example_padding": 10
+			"example_padding": 10,
+			"word_title": false,
+			"pron_color": "gray",
+			"gram_color": "green"
 		},
 		"readDepends": {
 			"lxml": "lxml"

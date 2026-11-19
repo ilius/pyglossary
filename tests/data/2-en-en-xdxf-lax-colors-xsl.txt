@@ -1,0 +1,7 @@
+##name	2-en-en-xdxf.xdxf
+##description	Synthetic sample for PyGlossary tests
+##input_file_size	527
+##sourceLang	English
+##targetLang	English
+alpha	<div class="article">\n<br>\t\t\t/<font color="blue">ˈælfə</font>/<br>\t\t\t<span class="abr"><font color="red"><i>noun</i></font></span><br>\t\t\t<br>\t\t\t\tfirst letter<br>\t\t\t<br>\t\t</div>
+beta	<div class="article">\n<br>\t\t\t/<font color="blue">ˈbiːtə</font>/<br>\t\t\t<span class="abr"><font color="red"><i>noun</i></font></span><br>\t\t\t<br>\t\t\t\tsecond letter<br>\t\t\t<br>\t\t</div>
