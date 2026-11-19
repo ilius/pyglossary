@@ -11,7 +11,7 @@ from pyglossary.xdxf.py_transform import XdxfTransformer
 
 # (name, inner XDXF markup, expected HTML).
 # Cover issue #562 (spaces around tags), issue #532 (spaces before kref,
-# newline rendering, indents, grey <ex>) and other tag handling.
+# newline rendering, indents, padded <ex>) and other tag handling.
 SAMPLES = [
 	(
 		"issue562",  # issue #562: spaces between tags preserved
@@ -53,7 +53,7 @@ SAMPLES = [
 		),
 	),
 	(
-		"lingvo_entry",  # issue #532: Lingvo-style entry with numbered defs, grey indented examples
+		"lingvo_entry",  # issue #532: Lingvo-style entry with numbered defs, padded examples
 		(
 			"<k>abstinence</k>\n<tr>ˈæbstɪnən(t)s</tr> \n <abr>сущ.</abr>\n"
 			" 1) <c><dtrn><co>= abstention</co></dtrn></c>\n"
@@ -68,17 +68,17 @@ SAMPLES = [
 			"<i>сущ.</i></font></span><br/> 1) "
 			'<font color="green"><span class="co">(= abstention)</span></font>'
 			"<br/>  а) воздержание; умеренность<br/>   "
-			'<div class="example" style="margin: 0px 0px 0px 20px; color: #888888;">'
+			'<div class="example" style="padding: 10px 0px;">'
 			"abstinence from meat — вегетарианство</div>"
 			"2) "
 			'<span class="abr"><font color="green"><i>рел.</i></font></span> '
 			"соблюдение поста, пост<br/>  "
-			'<div class="example" style="margin: 0px 0px 0px 20px; color: #888888;">'
+			'<div class="example" style="padding: 10px 0px;">'
 			"day of abstinence — постный день</div></div>"
 		),
 	),
 	(
-		"ex_orig_tran",  # issue #532: <ex> grey + indented, ex_orig/ex_tran inline
+		"ex_orig_tran",  # issue #532: <ex> padded, ex_orig/ex_tran inline
 		(
 			"<k>example</k>\n<dtrn>definition text</dtrn>\n"
 			"<ex>Пример <ex_orig>original</ex_orig> <ex_tran>translation</ex_tran></ex>"
@@ -86,7 +86,7 @@ SAMPLES = [
 		(
 			'<div class="article"><div class="k"><b>example</b></div>'
 			"definition text<br/>"
-			'<div class="example" style="margin: 0px 0px 0px 20px; color: #888888;">'
+			'<div class="example" style="padding: 10px 0px;">'
 			"Пример <i>original</i> <i>translation</i></div></div>"
 		),
 	),
@@ -146,7 +146,7 @@ SAMPLES = [
 		(
 			'<div class="article"><div class="k"><b>image</b></div>'
 			'see <img src="pic.png" alt="pic"/><br/>'
-			'<div class="example" style="margin: 0px 0px 0px 20px; color: #888888;">'
+			'<div class="example" style="padding: 10px 0px;">'
 			'with an <img src="ex.png"/></div></div>'
 		),
 	),
@@ -253,6 +253,15 @@ class XdxfTransformerTest(unittest.TestCase):
 			'<div class="article"><div class="k"><b>ADSL</b></div>'
 			'See: <a class="kref" href="bword://asymmetrical%20digital%20subscriber%20line">'
 			"asymmetrical digital subscriber line</a></div>",
+		)
+
+	def test_example_padding(self):
+		tr = XdxfTransformer(example_padding=25)
+		article = ET.fromstring("<ar><k>x</k><ex>example</ex></ar>")
+		self.assertEqual(
+			tr.transform(article),
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div class="example" style="padding: 25px 0px;">example</div></div>',
 		)
 
 	def test_auto_rtl(self):

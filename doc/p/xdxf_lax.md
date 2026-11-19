@@ -27,6 +27,7 @@ To update, modify plugins/xdxf_lax/__init__.py file, then run ./scripts/gen
 | html | `True` | bool | Entries are HTML |
 | xsl | `False` | bool | Use XSL transformation |
 | auto_rtl | `True` | bool | Auto-detect and mark Right-to-Left text |
+| example_padding | `10` | int | Padding for examples (in px) |
 
 ### Dependencies for reading
 

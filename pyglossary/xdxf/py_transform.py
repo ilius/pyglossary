@@ -44,7 +44,6 @@ __all__ = [
 ]
 
 _GRAM_COLOR = "green"
-_EX_STYLE = "margin: 0px 0px 0px 20px; color: #888888;"
 _XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 # XDXF tags whose output is a block-level HTML element (or ends with a line
@@ -85,7 +84,6 @@ _OPEN_HTML = {
 	"small": "<small>",
 	"blockquote": '<div class="m">',
 	"sr": '<div class="sr">',
-	"ex": f'<div class="example" style="{_EX_STYLE}">',
 	"k": '<div class="k"><b>',
 	"mrkd": '<span class="mrkd"><b>',
 	"pos": '<span class="pos"><font color="green"><i>',
@@ -199,11 +197,17 @@ class XdxfTransformer:
 	"""Xdxf Transformer."""
 
 	_gram_color: str = _GRAM_COLOR
-	_ex_style: str = _EX_STYLE
+	_example_padding: int = 10
 
-	def __init__(self, encoding: str = "utf-8", auto_rtl: bool = True) -> None:
+	def __init__(
+		self,
+		encoding: str = "utf-8",
+		auto_rtl: bool = True,
+		example_padding: int = 10,
+	) -> None:
 		self._encoding = encoding
 		self._auto_rtl = auto_rtl
+		self._example_padding = example_padding
 		# state, reset by ``transform``:
 		self._out: list[str] = []
 		self._stack: list[_StackItem] = []
@@ -306,6 +310,13 @@ class XdxfTransformer:
 			return
 		if tag == "def":
 			self._onDefStart(tag, elem)
+			return
+		if tag == "ex":
+			openHtml = (
+				f'<div class="example" style="padding: {self._example_padding}px 0px;">'
+			)
+			self._out.append(self._withAttrs(openHtml, self._langAttrs(attrs)))
+			self._stack.append(_StackItem(tag=tag, lastBlock=True, payload="</div>"))
 			return
 		if tag == "c":
 			openHtml = f'<font color="{attrs.get("c", self._gram_color)}">'

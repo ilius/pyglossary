@@ -4,6 +4,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
 
+  <xsl:param name="example_padding" select="10"/>
+
   <xsl:template name="last-substring-after">
     <xsl:param name="text"/>
     <xsl:param name="separator"/>
@@ -56,7 +58,7 @@
   </xsl:template>
 
   <xsl:template match="ex">
-    <span class="example" style="padding: 10px 0px;"><xsl:apply-templates/></span>
+    <div class="example" style="padding: {$example_padding}px 0px;"><xsl:apply-templates/></div>
   </xsl:template>
 
   <xsl:template match="ex_orig">

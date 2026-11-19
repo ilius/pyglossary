@@ -2039,6 +2039,12 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Auto-detect and mark Right-to-Left text"
+			},
+			"example_padding": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Padding for examples (in px)"
 			}
 		},
 		"canRead": true,
@@ -2046,7 +2052,8 @@
 		"readOptions": {
 			"html": true,
 			"xsl": false,
-			"auto_rtl": true
+			"auto_rtl": true,
+			"example_padding": 10
 		},
 		"writeOptions": {},
 		"readDepends": {
@@ -2108,6 +2115,12 @@
 				"class": "BoolOption",
 				"type": "bool",
 				"comment": "Auto-detect and mark Right-to-Left text"
+			},
+			"example_padding": {
+				"class": "IntOption",
+				"type": "int",
+				"customValue": true,
+				"comment": "Padding for examples (in px)"
 			}
 		},
 		"canRead": true,
@@ -2115,7 +2128,8 @@
 		"readOptions": {
 			"html": true,
 			"xsl": false,
-			"auto_rtl": true
+			"auto_rtl": true,
+			"example_padding": 10
 		},
 		"readDepends": {
 			"lxml": "lxml"

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pyglossary.option import BoolOption
+from pyglossary.option import BoolOption, IntOption
 
 from .reader import Reader
 from .writer import Writer
@@ -55,6 +55,11 @@ optionsProp: dict[str, Option] = {
 	),
 	"auto_rtl": BoolOption(
 		comment="Auto-detect and mark Right-to-Left text",
+	),
+	"example_padding": IntOption(
+		comment="Padding for examples (in px)",
+		minim=0,
+		maxim=10000,
 	),
 }
 

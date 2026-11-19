@@ -34,7 +34,11 @@ class XslXdxfTransformer:
 	_gram_color: str = "green"
 	_example_padding: int = 10
 
-	def __init__(self, encoding: str = "utf-8") -> None:
+	def __init__(
+		self,
+		encoding: str = "utf-8",
+		example_padding: int = 10,
+	) -> None:
 		try:
 			from lxml import etree as ET
 		except ModuleNotFoundError as e:
@@ -50,6 +54,7 @@ class XslXdxfTransformer:
 		xslt = ET.XML(xslt_txt)
 		self._transform = ET.XSLT(xslt)
 		self._encoding = encoding
+		self._example_padding = example_padding
 
 	@staticmethod
 	def tostring(elem: _XSLTResultTree | Element) -> str:
@@ -67,7 +72,10 @@ class XslXdxfTransformer:
 		)
 
 	def transform(self, article: Element) -> str:
-		result_tree = self._transform(article)
+		result_tree = self._transform(
+			article,
+			example_padding=str(self._example_padding),
+		)
 		text = self.tostring(result_tree)
 		text = text.replace("<br> ", "<br/>")
 		text = text.replace("</div>\n<br/>", "</div>\n")

@@ -73,6 +73,7 @@ class Reader:
 	_html: bool = True
 	_xsl: bool = False
 	_auto_rtl: bool = True
+	_example_padding: int = 10
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -93,7 +94,10 @@ class Reader:
 		if self._xsl:
 			from pyglossary.xdxf.xsl_transform import XslXdxfTransformer
 
-			self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
+			self._htmlTr = XslXdxfTransformer(
+				encoding=self._encoding,
+				example_padding=self._example_padding,
+			)
 			return
 
 		from pyglossary.xdxf.py_transform import XdxfTransformer
@@ -101,6 +105,7 @@ class Reader:
 		self._htmlTr = XdxfTransformer(
 			encoding=self._encoding,
 			auto_rtl=self._auto_rtl,
+			example_padding=self._example_padding,
 		)
 
 	def open(self, filename: str) -> None:

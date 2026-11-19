@@ -75,6 +75,7 @@ class Reader:
 	_html: bool = True
 	_xsl: bool = False
 	_auto_rtl: bool = True
+	_example_padding: int = 10
 
 	infoKeyMap = {
 		"full_name": "name",
@@ -137,11 +138,15 @@ class Reader:
 		self._filename = filename
 		if self._html:
 			if self._xsl:
-				self._htmlTr = XslXdxfTransformer(encoding=self._encoding)
+				self._htmlTr = XslXdxfTransformer(
+					encoding=self._encoding,
+					example_padding=self._example_padding,
+				)
 			else:
 				self._htmlTr = XdxfTransformer(
 					encoding=self._encoding,
 					auto_rtl=self._auto_rtl,
+					example_padding=self._example_padding,
 				)
 			self._glos.setDefaultDefiFormat("h")
 		else:
