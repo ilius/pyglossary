@@ -102,7 +102,13 @@ class HtmlFormatter(Formatter):
 	def _writeTag(self, tag: Tag) -> None:
 		color = self._label_color if tag.kind == "label" else self._usage_color
 		style = self.tagStyle.format(color or "transparent")
-		with self._hf.element("span", attrib={"class": "tag", "style": style}):
+		with self._hf.element(
+			"span",
+			attrib={
+				"class": tag.kind,
+				"style": style,
+			},
+		):
 			self._hf.write("[")
 			self._writeNodes(tag.children)
 			self._hf.write("]")

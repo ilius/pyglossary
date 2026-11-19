@@ -32,7 +32,7 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 			"1-en-en-usg-whitespace.tei",
 			"1-en-en-usg-whitespace.txt",
 			"14-en-en-include.tei",
-			"14-en-en-v2.txt",
+			"14-en-en-v3.txt",
 			"freedict-sample-2024-12-19-v4.txt",
 			"1-en-en-trans-cit-rerender.tei",
 			"1-en-de-labels-md.txt",
@@ -89,7 +89,7 @@ class TestGlossaryFreeDict(TestGlossaryBase):
 	def test_convert_tei_txt_14_en_en(self):
 		self.convert_tei_txt(
 			"14-en-en",
-			"14-en-en-v2",
+			"14-en-en-v3",
 			readOptions={"auto_comma": True},
 		)
 
