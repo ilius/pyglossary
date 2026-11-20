@@ -1,121 +1,117 @@
 <mxfile host="Electron">
   <diagram name="arch" id="arch">
-    <mxGraphModel dx="1380" dy="1060" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1375" pageHeight="1062.5" math="0" shadow="0">
+    <mxGraphModel dx="783" dy="424" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1375" pageHeight="1062.5" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="ui" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Droid Sans;fontSize=20;" value="User Interfaces" vertex="1">
+        <mxCell id="ui" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#AAFFCC;strokeColor=#007200;fontFamily=Droid Sans;fontSize=20;curved=0;strokeWidth=1.5;" value="User Interfaces" vertex="1">
           <mxGeometry height="337.5" width="854.1666666666667" x="24.166666666666668" y="32.5" as="geometry" />
         </mxCell>
-        <mxCell id="uibase" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="UI base and config" vertex="1">
-          <mxGeometry height="50" width="190.84" x="179.16" y="262.5" as="geometry" />
+        <mxCell id="uibase" parent="ui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#E1EFFF;strokeColor=#0000CC;curved=0;strokeWidth=1.5;" value="UI base and config" vertex="1">
+          <mxGeometry height="50" width="216.84" x="163.16" y="262.5" as="geometry" />
         </mxCell>
-        <mxCell id="cmd" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Standard CLI" vertex="1">
+        <mxCell id="cmd" parent="ui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#E1EFFF;strokeColor=#0000CC;curved=0;strokeWidth=1.5;" value="Standard CLI" vertex="1">
           <mxGeometry height="50" width="143.33" x="200" y="171.25" as="geometry" />
         </mxCell>
-        <mxCell id="cmdi" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;labelBackgroundColor=none;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Interactive CLI" vertex="1">
-          <mxGeometry height="50" width="151.58" x="191.75" y="75" as="geometry" />
+        <mxCell id="cmdi" parent="ui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;labelBackgroundColor=none;fillColor=#E1EFFF;strokeColor=#0000CC;curved=0;strokeWidth=1.5;" value="Interactive CLI" vertex="1">
+          <mxGeometry height="50" width="158.58" x="192.25" y="75" as="geometry" />
         </mxCell>
-        <mxCell id="gui" parent="ui" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#E6FFCC;strokeColor=#82b366;fontFamily=Droid Sans;fontSize=20;" value="GUI" vertex="1">
+        <mxCell id="gui" parent="ui" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#DFFFDF;strokeColor=#82b366;fontFamily=Droid Sans;fontSize=20;curved=0;strokeWidth=1.5;" value="GUI" vertex="1">
           <mxGeometry height="181.25" width="450" x="380.83333333333337" y="56.25" as="geometry" />
         </mxCell>
-        <mxCell id="qt" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#E3FFCC,#CCFFCC);strokeColor=#2D7600;fontColor=default;" value="Qt6" vertex="1">
+        <mxCell id="qt" parent="gui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=#DFFFDF;strokeColor=#66CC00;fontColor=default;curved=0;strokeWidth=1.5;" value="Qt6" vertex="1">
           <mxGeometry height="50" width="125" x="18.75" y="55" as="geometry" />
         </mxCell>
-        <mxCell id="gtk3" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#E3FFCC,#CCFFCC);strokeColor=#2D7600;fontColor=default;" value="Gtk3" vertex="1">
-          <mxGeometry height="50" width="125" x="168.75" y="55" as="geometry" />
+        <mxCell id="gtk3" parent="gui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=#DFFFDF;strokeColor=#66CC00;fontColor=default;curved=0;strokeWidth=1.5;" value="Gtk3" vertex="1">
+          <mxGeometry height="50" width="125" x="162.75" y="55" as="geometry" />
         </mxCell>
-        <mxCell id="gtk4" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#E3FFCC,#CCFFCC);strokeColor=#2D7600;fontColor=default;" value="Gtk4" vertex="1">
-          <mxGeometry height="50" width="125" x="168.75" y="117.5" as="geometry" />
+        <mxCell id="gtk4" parent="gui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=#DFFFDF;strokeColor=#66CC00;fontColor=default;curved=0;strokeWidth=1.5;" value="Gtk4" vertex="1">
+          <mxGeometry height="50" width="125" x="162.75" y="117.5" as="geometry" />
         </mxCell>
-        <mxCell id="tk" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#E3FFCC,#CCFFCC);strokeColor=#2D7600;fontColor=default;" value="Tkinter" vertex="1">
+        <mxCell id="tk" parent="gui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=#DFFFDF;strokeColor=#66CC00;fontColor=default;curved=0;strokeWidth=1.5;" value="Tkinter" vertex="1">
           <mxGeometry height="50" width="125" x="18.75" y="117.5" as="geometry" />
         </mxCell>
-        <mxCell id="slint" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#E3FFCC,#CCFFCC);strokeColor=#2D7600;fontColor=default;" value="Slint" vertex="1">
+        <mxCell id="slint" parent="gui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=#DFFFDF;strokeColor=#66CC00;fontColor=default;curved=0;strokeWidth=1.5;" value="Slint" vertex="1">
           <mxGeometry height="50" width="125" x="306.25" y="55" as="geometry" />
         </mxCell>
-        <mxCell id="s1ce6EvR2SXb7nznxv0C-1" parent="gui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#E3FFCC,#CCFFCC);strokeColor=#2D7600;fontColor=default;" value="wxWidgets" vertex="1">
+        <mxCell id="s1ce6EvR2SXb7nznxv0C-1" parent="gui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=#DFFFDF;strokeColor=#66CC00;fontColor=default;curved=0;strokeWidth=1.5;" value="wxWidgets" vertex="1">
           <mxGeometry height="50" width="125" x="306.25" y="117.5" as="geometry" />
         </mxCell>
-        <mxCell id="ui-cmd" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=classicThin;startFill=1;fontFamily=Droid Sans;fontSize=17.5;" target="cmd">
+        <mxCell id="ui-cmd" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=classicThin;startFill=1;fontFamily=Droid Sans;fontSize=22;curved=0;strokeWidth=1.5;" target="cmd">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cmd-cmdi" edge="1" parent="ui" source="cmd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=classicThin;startFill=1;fontFamily=Droid Sans;fontSize=17.5;" target="cmdi">
+        <mxCell id="cmd-cmdi" edge="1" parent="ui" source="cmd" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=classicThin;startFill=1;fontFamily=Droid Sans;fontSize=22;curved=0;strokeWidth=1.5;" target="cmdi">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="uibase-gui" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;curved=1;startArrow=classic;startFill=1;fontFamily=Droid Sans;fontSize=17.5;" target="gui">
+        <mxCell id="uibase-gui" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;curved=0;startArrow=classicThin;startFill=1;fontFamily=Droid Sans;fontSize=17.5;strokeWidth=1.5;" target="gui">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="web" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Web / WebSocket" vertex="1">
+        <mxCell id="web" parent="ui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=#DFFFDF;strokeColor=#00CC00;curved=0;strokeWidth=1.5;" value="Web / WebSocket" vertex="1">
           <mxGeometry height="50" width="175" x="7.08" y="171.25" as="geometry" />
         </mxCell>
-        <mxCell id="utilities" parent="ui" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=light-dark(#DAE8FC,#CCE5FF);" value="&lt;font&gt;pyglossary-view&lt;br&gt;pyglossary-diff&lt;/font&gt;" vertex="1">
-          <mxGeometry height="60" width="158.58" x="660" y="255.5" as="geometry" />
+        <mxCell id="utilities" parent="ui" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=light-dark(#E1EFFF,#CCE5FF);curved=0;strokeColor=#0000CC;strokeWidth=1.5;" value="&lt;font&gt;pyglossary-view&lt;br&gt;pyglossary-diff&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="175" x="659" y="255.5" as="geometry" />
         </mxCell>
-        <mxCell id="uibase-web" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=classic;startFill=1;curved=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;" target="web">
+        <mxCell id="uibase-web" edge="1" parent="ui" source="uibase" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=classicThin;startFill=1;curved=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;strokeWidth=1.5;" target="web">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="core" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontFamily=Droid Sans;fontSize=21;" value="Core library" vertex="1">
-          <mxGeometry height="430" width="537.5" x="61.25" y="417.5" as="geometry" />
+        <mxCell id="core" parent="1" style="swimlane;fontStyle=1;align=left;startSize=30;html=1;rounded=1;fillColor=#FFCAFF;fontFamily=Droid Sans;fontSize=21;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="&lt;blockquote style=&quot;margin: 0px 0px 0px 40px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; padding: 0px;&quot;&gt;Core Library&lt;/blockquote&gt;" vertex="1">
+          <mxGeometry height="430" width="537.5" x="22.25" y="417.5" as="geometry" />
         </mxCell>
-        <mxCell id="gloss" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=light-dark(#FFEEC8,#FFFF99);" value="Glossary, PluginHandler" vertex="1">
-          <mxGeometry height="60" width="250" x="150" y="50" as="geometry" />
+        <mxCell id="gloss" parent="core" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#FFEFFF;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="Glossary, PluginHandler" vertex="1">
+          <mxGeometry height="60" width="270" x="140" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="filters" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#FFEEC8,#FFFF99);" value="Entry Filters" vertex="1">
-          <mxGeometry height="50" width="200" x="30" y="130" as="geometry" />
+        <mxCell id="filters" parent="core" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#FFEFFF;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="Entry Filters" vertex="1">
+          <mxGeometry height="50" width="200" x="48" y="134" as="geometry" />
         </mxCell>
-        <mxCell id="info" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=light-dark(#FFEEC8,#FFFF99);" value="Glossary info / metadata" vertex="1">
+        <mxCell id="info" parent="core" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=20;fillColor=#FFEFFF;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="Glossary info / metadata" vertex="1">
           <mxGeometry height="50" width="210" x="300" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="chasz-BpBWXxaMCr2p4F-1" edge="1" parent="core" source="entries" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" value="">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="490" y="230" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="entries" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#FFEEC8,#FFFF99);" value="EntryList / SQLite-backed lists" vertex="1">
+        <mxCell id="entries" parent="core" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#FFEFFF;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="Entry List (Memory / SQLite)" vertex="1">
           <mxGeometry height="50" width="330" x="110" y="205" as="geometry" />
         </mxCell>
-        <mxCell id="entrymodel" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#FFEEC8,#FFFF99);" value="Entry / DataEntry model" vertex="1">
+        <mxCell id="entrymodel" parent="core" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#FFEFFF;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="Entry / DataEntry model" vertex="1">
           <mxGeometry height="50" width="270" x="140" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="sortkeys" parent="core" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#FFEEC8,#FFFF99);" value="Sort keys (sort_keys)" vertex="1">
+        <mxCell id="sortkeys" parent="core" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#FFEFFF;curved=0;strokeColor=#CC00CC;strokeWidth=1.5;" value="Sort Keys" vertex="1">
           <mxGeometry height="50" width="270" x="140" y="355" as="geometry" />
         </mxCell>
-        <mxCell id="gloss-entries" edge="1" parent="core" source="gloss" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;curved=1;fontFamily=Droid Sans;fontSize=20;" target="entries">
+        <mxCell id="gloss-entries" edge="1" parent="core" source="gloss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;curved=0;fontFamily=Droid Sans;fontSize=20;fillColor=#f8cecc;strokeColor=#000000;strokeWidth=1.5;" target="entries">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="plugins" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#FFFFCC;strokeColor=#d6b656;fontFamily=Droid Sans;fontSize=21;" value="Format Plugins" vertex="1">
-          <mxGeometry height="273.75" width="281.25" x="643.75" y="415.25" as="geometry" />
+        <mxCell id="gloss-filters" edge="1" parent="core" source="gloss" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;fontFamily=Droid Sans;fontSize=20;exitX=0.076;exitY=0.993;exitDx=0;exitDy=0;exitPerimeter=0;curved=0;fillColor=#f8cecc;strokeColor=#0E0606;strokeWidth=1.5;" target="filters">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="168.75" y="112.5" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="pluginmeta" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;wrap=1;fontFamily=Droid Sans;fontSize=22;fillColor=light-dark(#FFFFCC,#FFFF99);strokeColor=#d6b656;" value="PluginProp / PluginLoader" vertex="1">
-          <mxGeometry height="60" width="230" x="25" y="45" as="geometry" />
+        <mxCell id="plugins" parent="1" style="swimlane;fontStyle=1;align=center;startSize=30;html=1;rounded=1;fillColor=#FFFFAA;strokeColor=#D6D600;fontFamily=Droid Sans;fontSize=21;curved=0;strokeWidth=1.5;" value="Format Plugins" vertex="1">
+          <mxGeometry height="264.75" width="281.25" x="604.75" y="415.25" as="geometry" />
         </mxCell>
-        <mxCell id="r" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=23;fillColor=light-dark(#FFFFCC,#FFFF99);" value="Reader classes" vertex="1">
-          <mxGeometry height="50" width="175" x="53" y="125" as="geometry" />
+        <mxCell id="pluginmeta" parent="plugins" style="rounded=1;whiteSpace=wrap;html=1;wrap=1;fontFamily=Droid Sans;fontSize=24;fillColor=light-dark(#FFFFD1,#FFFF99);strokeColor=#FFCC99;curved=0;strokeWidth=1.5;" value="PluginProp / PluginLoader" vertex="1">
+          <mxGeometry height="65" width="230" x="25" y="45" as="geometry" />
         </mxCell>
-        <mxCell id="w" parent="plugins" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=22;fillColor=#FFFFCC;" value="Writer classes" vertex="1">
-          <mxGeometry height="50" width="175" x="53" y="190" as="geometry" />
+        <mxCell id="r" parent="plugins" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=light-dark(#FFFFD1,#FFFF99);curved=0;strokeColor=#FFCC99;strokeWidth=1.5;" value="Reader classes" vertex="1">
+          <mxGeometry height="50" width="200" x="40.5" y="125" as="geometry" />
         </mxCell>
-        <mxCell id="ui-gloss" edge="1" parent="1" source="ui" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;fontFamily=Droid Sans;fontSize=17.5;" target="gloss">
+        <mxCell id="w" parent="plugins" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Droid Sans;fontSize=24;fillColor=light-dark(#FFFFD1,#FFFF99);curved=0;strokeColor=#FFCC99;strokeWidth=1.5;" value="Writer classes" vertex="1">
+          <mxGeometry height="50" width="200" x="40.5" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="ui-gloss" edge="1" parent="1" source="uibase" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;endFill=1;fontFamily=Droid Sans;fontSize=17.5;strokeWidth=1.5;strokeColor=#000000;curved=0;" target="gloss">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="gloss-filters" edge="1" parent="1" source="gloss" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;curved=1;fontFamily=Droid Sans;fontSize=20;" target="filters">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="r-gloss" edge="1" parent="1" source="r" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;startArrow=open;startFill=0;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;edgeStyle=orthogonalEdgeStyle;curved=1;" target="gloss">
+        <mxCell id="r-gloss" edge="1" parent="1" source="r" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;startArrow=classicThin;startFill=1;endFill=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.3333;entryDx=0;entryDy=0;fontFamily=Droid Sans;fontSize=17.5;curved=0;strokeWidth=1.5;" target="gloss">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="696.83" y="540" />
-              <mxPoint x="590.03" y="540" />
-              <mxPoint x="590.03" y="497.49" />
+              <mxPoint x="586" y="565.3" />
+              <mxPoint x="586" y="487.51" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="w-gloss" edge="1" parent="1" source="w" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;startArrow=open;startFill=0;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Droid Sans;fontSize=17.5;edgeStyle=orthogonalEdgeStyle;curved=1;" target="gloss">
+        <mxCell id="w-gloss" edge="1" parent="1" source="w" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classicThin;startArrow=classicThin;startFill=1;endFill=1;exitX=0;exitY=0.145;exitDx=0;exitDy=0;entryX=1;entryY=0.875;entryDx=0;entryDy=0;fontFamily=Droid Sans;fontSize=17.5;curved=0;strokeWidth=1.5;" target="gloss">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="696.83" y="540" />
-              <mxPoint x="336.31" y="540" />
+              <mxPoint x="576" y="612.5" />
+              <mxPoint x="576" y="520" />
             </Array>
           </mxGeometry>
         </mxCell>
