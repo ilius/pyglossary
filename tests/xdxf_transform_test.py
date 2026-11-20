@@ -92,6 +92,98 @@ SAMPLES = [
 		),
 	),
 	(
+		"ex_transl",  # <ex_transl> is an alias of <ex_tran>
+		(
+			"<k>example</k>\n<ex>Пример <ex_orig>original</ex_orig> "
+			"<ex_transl>translation</ex_transl></ex>"
+		),
+		(
+			'<div class="article"><div class="k"><b>example</b></div>'
+			'<div class="example" style="padding: 10px 0px;">'
+			"Пример <i>original</i> <i>translation</i></div></div>"
+		),
+	),
+	(
+		"inline_format_extra",  # <mrkd>, <big> and <small>
+		(
+			"<k>mark</k>\n<dtrn><mrkd>marked</mrkd> <big>big</big> "
+			"<small>small</small> text</dtrn>"
+		),
+		(
+			'<div class="article"><div class="k"><b>mark</b></div>'
+			'<span class="mrkd"><b>marked</b></span> <big>big</big> '
+			"<small>small</small> text</div>"
+		),
+	),
+	(
+		"sr_categ_span",  # <sr>, <categ> and <span>
+		(
+			"<k>cat</k>\n<sr>sense region</sr>\n"
+			"<dtrn><categ>category</categ> <span>span text</span></dtrn>"
+		),
+		(
+			'<div class="article"><div class="k"><b>cat</b></div>'
+			'<div class="sr">sense region</div>'
+			'<span style="background-color: green;">category</span> '
+			"<span>span text</span></div>"
+		),
+	),
+	(
+		"rref",  # <rref> renders its text without a link
+		"<k>r</k>\n<dtrn>see <rref>reference</rref></dtrn>",
+		'<div class="article"><div class="k"><b>r</b></div>see reference</div>',
+	),
+	(
+		"deftext",  # <deftext> term inside a definition
+		"<k>d</k><def><deftext>term</deftext><def>meaning</def></def>",
+		(
+			'<div class="article"><div class="k"><b>d</b></div>'
+			"<div>term<div>meaning</div></div></div>"
+		),
+	),
+	(
+		"def_under_ex",  # <def> under a non-container parent becomes a list item
+		"<k>x</k><ex><def>inside example</def></ex>",
+		(
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div class="example" style="padding: 10px 0px;">'
+			"<li>inside example</li></div></div>"
+		),
+	),
+	(
+		"deftext_under_ex",  # <def> with <deftext> under a non-container parent
+		"<k>x</k><ex><def><deftext>term</deftext><def>meaning</def></def></ex>",
+		(
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div class="example" style="padding: 10px 0px;">'
+			"<li>term<div>meaning</div></li></div></div>"
+		),
+	),
+	(
+		"nested_defs_under_other",  # nested <def> elements under a non-container parent
+		"<k>x</k><blockquote><def><def>a</def><def>b</def></def></blockquote>",
+		(
+			'<div class="article"><div class="k"><b>x</b></div>'
+			'<div class="m"><li><ul><li>a</li><li>b</li></ul></li></div></div>'
+		),
+	),
+	(
+		"img_lang",  # <img> with xml:lang keeps auto-RTL attributes
+		'<k>i</k><dtrn><img src="a.png" xml:lang="fa"/></dtrn>',
+		(
+			'<div class="article"><div class="k"><b>i</b></div>'
+			'<img src="a.png" lang="fa" dir="rtl"/></div>'
+		),
+	),
+	(
+		"kref_no_text",  # <kref> without text logs a warning and links to nothing
+		"<k>k</k><dtrn><kref></kref></dtrn>",
+		(
+			'<div class="article"><div class="k"><b>k</b></div>'
+			'<a class="kref" href="bword://"></a></div>'
+		),
+	),
+	(
 		"nested_defs",  # 2 nested <def> elements render as an unordered list
 		"<k>polysemy</k><def><def>first meaning</def><def>second meaning</def></def>",
 		(
@@ -400,6 +492,20 @@ class XdxfTransformerTest(unittest.TestCase):
 			'<div class="article"><div class="k"><b>x</b></div>'
 			'<div><div dir="rtl"><ul><li>a</li><li>b</li></ul></div></div></div>',
 		)
+
+	def test_transform_by_inner_string(self):
+		self.assertEqual(
+			self.tr.transformByInnerString("<k>x</k><dtrn>def</dtrn>"),
+			'<div class="article"><div class="k"><b>x</b></div>def</div>',
+		)
+
+	def test_bad_inner_string_returned_unchanged(self):
+		inner = "<k>broken</k"
+		self.assertEqual(self.tr.transformByInnerString(inner), inner)
+
+	def test_tostring(self):
+		elem = ET.fromstring("<ar><k>x</k></ar>")
+		self.assertEqual(XdxfTransformer.tostring(elem), "<ar><k>x</k></ar>")
 
 
 if __name__ == "__main__":
